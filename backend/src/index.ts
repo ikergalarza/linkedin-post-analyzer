@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -29,6 +30,13 @@ app.use('/api/creators', analysisRouter);
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Serve frontend static files in production
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 runMigrations()
