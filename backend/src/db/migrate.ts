@@ -49,7 +49,7 @@ const migration = `
   CREATE INDEX IF NOT EXISTS idx_posts_content_type ON posts(content_type);
 `;
 
-async function migrate() {
+export async function runMigrations() {
   const client = await pool.connect();
   try {
     await client.query(migration);
@@ -59,8 +59,10 @@ async function migrate() {
     throw err;
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
-migrate();
+// Allow running directly: npx tsx src/db/migrate.ts
+if (require.main === module) {
+  runMigrations().then(() => pool.end());
+}
