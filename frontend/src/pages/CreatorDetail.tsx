@@ -1,12 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useApi, apiPost } from '../hooks/useApi';
 import { SkeletonChart } from '../components/Skeleton';
 import EngagementChart from '../components/EngagementChart';
 import ContentTypeBreakdown from '../components/ContentTypeBreakdown';
 import ConsistencyHeatmap from '../components/ConsistencyHeatmap';
 import PatternInsights from '../components/PatternInsights';
 import OutlierTable from '../components/OutlierTable';
+
+const BASE = import.meta.env.VITE_API_URL || '';
+
+async function fetchJson<T>(path: string): Promise<T> {
+  const res = await fetch(`${BASE}${path}`);
+  if (!res.ok) {
+    const text = await res.text();
+    let msg = `API error ${res.status}`;
+    try { msg = JSON.parse(text).error || msg; } catch {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
 
 interface Creator {
   id: string;
@@ -15,12 +27,6 @@ interface Creator {
   profile_image_url: string | null;
   followers_count: number;
   linkedin_url: string;
-  stats: {
-    total_posts: string;
-    total_outliers: string;
-    avg_engagement: string;
-    median_engagement: string;
-  };
 }
 
 interface Stats {
@@ -36,50 +42,72 @@ interface Stats {
   outlier_content_type_distribution: { content_type: string; count: string }[];
 }
 
-interface TimelinePoint {
-  published_at: string;
-  engagement_score: number;
-  is_outlier: boolean;
-  content_type: string;
-  hook_text: string | null;
-}
-
-interface Pattern {
-  type: string;
-  title: string;
-  value: string;
-  detail: string;
-}
-
-interface PostsResponse {
-  posts: any[];
-  total: number;
+interface AllData {
+  creator: Creator;
+  stats: Stats;
+  timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null }[];
+  patterns: { type: string; title: string; value: string; detail: string }[];
+  outlierPosts: any[];
+  allPosts: any[];
 }
 
 export default function CreatorDetail() {
-  const { id } = useParams<{ id: string }>();
-  const { data: creator, loading: creatorLoading, error: creatorError } = useApi<Creator>(`/api/creators/${id}`);
-  const { data: stats, loading: statsLoading } = useApi<Stats>(`/api/creators/${id}/stats`);
-  const { data: timeline, loading: timelineLoading } = useApi<TimelinePoint[]>(`/api/creators/${id}/timeline`);
-  const { data: patterns } = useApi<Pattern[]>(`/api/creators/${id}/patterns`);
-  const { data: outlierPosts } = useApi<PostsResponse>(`/api/creators/${id}/posts?outliers_only=true&limit=100`);
-  const { data: allPosts } = useApi<PostsResponse>(`/api/creators/${id}/posts?limit=100&sort=engagement_desc`);
-
+  const { id } = useParams();
+  const [data, setData] = useState<AllData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [postFilter, setPostFilter] = useState('');
-  const [postSort, setPostSort] = useState('engagement_desc');
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+
+    setLoading(true);
+    setError(null);
+
+    (async () => {
+      try {
+        // Load creator first
+        const creator = await fetchJson<Creator>(`/api/creators/${id}`);
+        if (cancelled) return;
+
+        // Load everything else in parallel
+        const [stats, timeline, patterns, outlierRes, allRes] = await Promise.all([
+          fetchJson<Stats>(`/api/creators/${id}/stats`),
+          fetchJson<any[]>(`/api/creators/${id}/timeline`),
+          fetchJson<any[]>(`/api/creators/${id}/patterns`),
+          fetchJson<{ posts: any[] }>(`/api/creators/${id}/posts?outliers_only=true&limit=100`),
+          fetchJson<{ posts: any[] }>(`/api/creators/${id}/posts?limit=100&sort=engagement_desc`),
+        ]);
+
+        if (cancelled) return;
+        setData({
+          creator,
+          stats,
+          timeline,
+          patterns,
+          outlierPosts: outlierRes.posts,
+          allPosts: allRes.posts,
+        });
+      } catch (err: any) {
+        if (!cancelled) setError(err.message);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [id]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await apiPost(`/api/creators/${id}/refresh`, {});
-    } catch {
-      // ignore
-    }
+      await fetch(`${BASE}/api/creators/${id}/refresh`, { method: 'POST' });
+    } catch {}
     setRefreshing(false);
   };
 
-  if (creatorLoading) {
+  if (loading) {
     return (
       <div className="space-y-6">
         <SkeletonChart />
@@ -88,14 +116,16 @@ export default function CreatorDetail() {
     );
   }
 
-  if (!creator) {
+  if (error || !data) {
     return (
       <div className="text-center py-16">
         <p className="text-text-muted">Creator not found.</p>
-        {creatorError && <p className="text-danger text-sm mt-2">Error: {creatorError}</p>}
+        {error && <p className="text-danger text-sm mt-2">{error}</p>}
       </div>
     );
   }
+
+  const { creator, stats, timeline, patterns, outlierPosts, allPosts } = data;
 
   return (
     <div className="space-y-6">
@@ -127,100 +157,50 @@ export default function CreatorDetail() {
       </div>
 
       {/* KPIs */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {[
-            { label: 'Avg Engagement', value: stats.avg_engagement.toLocaleString() },
-            { label: 'Median', value: stats.median_engagement.toLocaleString() },
-            { label: 'Total Posts', value: stats.total_posts },
-            { label: 'Outliers', value: stats.total_outliers, accent: true },
-            { label: 'Posts/Week', value: stats.posts_per_week },
-            { label: 'Outlier Rate', value: `${stats.outlier_rate}%`, accent: true },
-          ].map((kpi, i) => (
-            <div key={i} className="bg-bg-card rounded-lg p-4 text-center">
-              <p className="text-text-muted text-xs mb-1">{kpi.label}</p>
-              <p className={`text-xl font-bold ${kpi.accent ? 'text-accent' : 'text-text-primary'}`}>
-                {kpi.value}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {[
+          { label: 'Avg Engagement', value: stats.avg_engagement.toLocaleString() },
+          { label: 'Median', value: stats.median_engagement.toLocaleString() },
+          { label: 'Total Posts', value: stats.total_posts },
+          { label: 'Outliers', value: stats.total_outliers, accent: true },
+          { label: 'Posts/Week', value: stats.posts_per_week },
+          { label: 'Outlier Rate', value: `${stats.outlier_rate}%`, accent: true },
+        ].map((kpi, i) => (
+          <div key={i} className="bg-bg-card rounded-lg p-4 text-center">
+            <p className="text-text-muted text-xs mb-1">{kpi.label}</p>
+            <p className={`text-xl font-bold ${kpi.accent ? 'text-accent' : 'text-text-primary'}`}>
+              {kpi.value}
+            </p>
+          </div>
+        ))}
+      </div>
 
       {/* Timeline */}
-      {timelineLoading ? (
-        <SkeletonChart />
-      ) : timeline && stats ? (
+      {timeline.length > 0 && (
         <EngagementChart data={timeline} avgEngagement={stats.avg_engagement} />
-      ) : null}
+      )}
 
-      {/* Content Type + Heatmap side by side */}
+      {/* Content Type + Heatmap */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {stats && (
-          <ContentTypeBreakdown
-            all={stats.content_type_distribution}
-            outliers={stats.outlier_content_type_distribution}
-          />
-        )}
-        {timeline && <ConsistencyHeatmap data={timeline} />}
+        <ContentTypeBreakdown
+          all={stats.content_type_distribution}
+          outliers={stats.outlier_content_type_distribution}
+        />
+        {timeline.length > 0 && <ConsistencyHeatmap data={timeline} />}
       </div>
 
       {/* Patterns */}
-      {patterns && <PatternInsights patterns={patterns} />}
+      {patterns.length > 0 && <PatternInsights patterns={patterns} />}
 
       {/* Outlier posts table */}
-      {outlierPosts && (
-        <OutlierTable posts={outlierPosts.posts} title="Outlier Posts" />
+      {outlierPosts.length > 0 && (
+        <OutlierTable posts={outlierPosts} title="Outlier Posts" />
       )}
 
       {/* All posts table */}
-      {allPosts && (
-        <div className="bg-bg-card rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">All Posts</h3>
-            <div className="flex gap-2">
-              <select
-                value={postFilter}
-                onChange={(e) => setPostFilter(e.target.value)}
-                className="bg-bg-secondary border border-border rounded px-3 py-1.5 text-sm text-text-secondary"
-              >
-                <option value="">All types</option>
-                <option value="text_only">Text</option>
-                <option value="image">Image</option>
-                <option value="carousel">Carousel</option>
-                <option value="video">Video</option>
-                <option value="poll">Poll</option>
-                <option value="article">Article</option>
-                <option value="document">Document</option>
-              </select>
-              <select
-                value={postSort}
-                onChange={(e) => setPostSort(e.target.value)}
-                className="bg-bg-secondary border border-border rounded px-3 py-1.5 text-sm text-text-secondary"
-              >
-                <option value="engagement_desc">Engagement (high)</option>
-                <option value="engagement_asc">Engagement (low)</option>
-                <option value="date_desc">Newest</option>
-                <option value="date_asc">Oldest</option>
-                <option value="outlier_ratio_desc">Outlier ratio</option>
-              </select>
-            </div>
-          </div>
-          <AllPostsFiltered creatorId={id!} filter={postFilter} sort={postSort} />
-        </div>
+      {allPosts.length > 0 && (
+        <OutlierTable posts={allPosts} title="All Posts" />
       )}
     </div>
   );
-}
-
-function AllPostsFiltered({ creatorId, filter, sort }: { creatorId: string; filter: string; sort: string }) {
-  const params = new URLSearchParams({ limit: '100', sort });
-  if (filter) params.set('content_type', filter);
-
-  const { data, loading } = useApi<{ posts: any[] }>(`/api/creators/${creatorId}/posts?${params.toString()}`);
-
-  if (loading) return <div className="text-text-muted text-sm py-4">Loading...</div>;
-  if (!data || data.posts.length === 0) return <div className="text-text-muted text-sm py-4">No posts found.</div>;
-
-  return <OutlierTable posts={data.posts} title="" />;
 }
