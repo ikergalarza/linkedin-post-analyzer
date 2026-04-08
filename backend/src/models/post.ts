@@ -21,6 +21,13 @@ export interface Post {
   has_emoji: boolean;
   has_call_to_action: boolean;
   language: string | null;
+  char_count: number;
+  line_break_count: number;
+  has_aggressive_spacing: boolean;
+  hook_type: string;
+  post_structure: string;
+  comment_like_ratio: number;
+  share_like_ratio: number;
   post_url: string | null;
   raw_data: any;
   created_at: Date;
@@ -62,7 +69,10 @@ export const PostModel = {
       `SELECT id, creator_id, linkedin_post_id, content_text, content_type,
               published_at, likes_count, comments_count, reposts_count,
               impressions_count, engagement_score, outlier_ratio, is_outlier,
-              hook_text, word_count, has_hashtags, hashtags, has_emoji,
+              hook_text, word_count, char_count, line_break_count,
+              has_aggressive_spacing, hook_type, post_structure,
+              comment_like_ratio, share_like_ratio,
+              has_hashtags, hashtags, has_emoji,
               has_call_to_action, language, post_url, created_at
        FROM posts WHERE ${conditions.join(' AND ')}
        ORDER BY ${orderBy} LIMIT $${idx} OFFSET $${idx + 1}`,
@@ -89,9 +99,12 @@ export const PostModel = {
             creator_id, linkedin_post_id, content_text, content_type,
             published_at, likes_count, comments_count, reposts_count,
             impressions_count, engagement_score, outlier_ratio, is_outlier,
-            hook_text, word_count, has_hashtags, hashtags, has_emoji,
+            hook_text, word_count, char_count, line_break_count,
+            has_aggressive_spacing, hook_type, post_structure,
+            comment_like_ratio, share_like_ratio,
+            has_hashtags, hashtags, has_emoji,
             has_call_to_action, language, post_url, raw_data
-          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)
           ON CONFLICT (linkedin_post_id) DO UPDATE SET
             likes_count = EXCLUDED.likes_count,
             comments_count = EXCLUDED.comments_count,
@@ -100,12 +113,22 @@ export const PostModel = {
             engagement_score = EXCLUDED.engagement_score,
             outlier_ratio = EXCLUDED.outlier_ratio,
             is_outlier = EXCLUDED.is_outlier,
+            char_count = EXCLUDED.char_count,
+            line_break_count = EXCLUDED.line_break_count,
+            has_aggressive_spacing = EXCLUDED.has_aggressive_spacing,
+            hook_type = EXCLUDED.hook_type,
+            post_structure = EXCLUDED.post_structure,
+            comment_like_ratio = EXCLUDED.comment_like_ratio,
+            share_like_ratio = EXCLUDED.share_like_ratio,
             raw_data = EXCLUDED.raw_data`,
           [
             post.creator_id, post.linkedin_post_id, post.content_text, post.content_type,
             post.published_at, post.likes_count || 0, post.comments_count || 0, post.reposts_count || 0,
             post.impressions_count, post.engagement_score || 0, post.outlier_ratio || 0, post.is_outlier || false,
-            post.hook_text, post.word_count || 0, post.has_hashtags || false, post.hashtags || [],
+            post.hook_text, post.word_count || 0, post.char_count || 0, post.line_break_count || 0,
+            post.has_aggressive_spacing || false, post.hook_type || 'other', post.post_structure || 'other',
+            post.comment_like_ratio || 0, post.share_like_ratio || 0,
+            post.has_hashtags || false, post.hashtags || [],
             post.has_emoji || false, post.has_call_to_action || false, post.language, post.post_url,
             post.raw_data ? JSON.stringify(post.raw_data) : null,
           ]
@@ -153,7 +176,8 @@ export const PostModel = {
 
   async getTimeline(creatorId: string) {
     const { rows } = await pool.query(
-      `SELECT published_at, engagement_score, is_outlier, content_type, hook_text
+      `SELECT published_at, engagement_score, is_outlier, content_type, hook_text,
+              hook_type, outlier_ratio
        FROM posts WHERE creator_id = $1 AND published_at IS NOT NULL
        ORDER BY published_at ASC`,
       [creatorId]
@@ -166,7 +190,8 @@ export const PostModel = {
       `SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,
               p.published_at, p.likes_count, p.comments_count, p.reposts_count,
               p.engagement_score, p.outlier_ratio, p.is_outlier,
-              p.hook_text, p.post_url,
+              p.hook_text, p.hook_type, p.post_structure,
+              p.comment_like_ratio, p.share_like_ratio, p.post_url,
               c.name as creator_name, c.profile_image_url as creator_image
        FROM posts p JOIN creators c ON p.creator_id = c.id
        WHERE p.is_outlier = TRUE

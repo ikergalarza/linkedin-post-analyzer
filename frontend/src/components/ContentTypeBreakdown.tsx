@@ -27,7 +27,7 @@ export default function ContentTypeBreakdown({ all, outliers }: Props) {
   const outlierData = outliers.map((d) => ({ name: typeLabels[d.content_type] || d.content_type, value: parseInt(d.count, 10) }));
 
   return (
-    <div className="bg-bg-card rounded-xl p-6">
+    <div className="bg-bg-card rounded-xl p-6 min-w-0 overflow-hidden">
       <h3 className="text-lg font-semibold mb-4">Content Type Distribution</h3>
       <div className="grid grid-cols-2 gap-4">
         <div>

@@ -47,6 +47,15 @@ const migration = `
   CREATE INDEX IF NOT EXISTS idx_posts_is_outlier ON posts(is_outlier);
   CREATE INDEX IF NOT EXISTS idx_posts_published_at ON posts(published_at);
   CREATE INDEX IF NOT EXISTS idx_posts_content_type ON posts(content_type);
+
+  -- v2: text structure & engagement ratio fields
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS char_count INTEGER DEFAULT 0;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS line_break_count INTEGER DEFAULT 0;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS has_aggressive_spacing BOOLEAN DEFAULT FALSE;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS hook_type TEXT DEFAULT 'other';
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS post_structure TEXT DEFAULT 'other';
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS comment_like_ratio FLOAT DEFAULT 0;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS share_like_ratio FLOAT DEFAULT 0;
 `;
 
 export async function runMigrations() {

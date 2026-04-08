@@ -6,28 +6,20 @@ import ContentTypeBreakdown from '../components/ContentTypeBreakdown';
 import ConsistencyHeatmap from '../components/ConsistencyHeatmap';
 import PatternInsights from '../components/PatternInsights';
 import OutlierTable from '../components/OutlierTable';
+import HookTypeChart from '../components/HookTypeChart';
+import StructureChart from '../components/StructureChart';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
 async function fetchJson<T>(path: string): Promise<T> {
-  console.log(`[fetchJson] START ${path}`);
   const res = await fetch(`${BASE}${path}`);
-  console.log(`[fetchJson] Response ${path}: status=${res.status}, content-type=${res.headers.get('content-type')}`);
   const text = await res.text();
-  console.log(`[fetchJson] Body ${path}: length=${text.length}, first100=${text.substring(0, 100)}`);
   if (!res.ok) {
     let msg = `API error ${res.status}`;
     try { msg = JSON.parse(text).error || msg; } catch {}
     throw new Error(msg);
   }
-  try {
-    const parsed = JSON.parse(text);
-    console.log(`[fetchJson] PARSED OK ${path}`, typeof parsed);
-    return parsed;
-  } catch (e: any) {
-    console.error(`[fetchJson] PARSE FAILED ${path}:`, e.message);
-    throw e;
-  }
+  return JSON.parse(text);
 }
 
 interface Creator {
@@ -48,14 +40,19 @@ interface Stats {
   outlier_rate: number;
   posts_per_week: number;
   best_day: string | null;
+  engagement_rate: number;
+  avg_comment_like_ratio: number;
+  avg_share_like_ratio: number;
   content_type_distribution: { content_type: string; count: string }[];
   outlier_content_type_distribution: { content_type: string; count: string }[];
+  hook_type_breakdown: { type: string; count: number; avg_engagement: number }[];
+  structure_breakdown: { structure: string; count: number; avg_engagement: number }[];
 }
 
 interface AllData {
   creator: Creator;
   stats: Stats;
-  timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null }[];
+  timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null; hook_type?: string; outlier_ratio?: number }[];
   patterns: { type: string; title: string; value: string; detail: string }[];
   outlierPosts: any[];
   allPosts: any[];
@@ -77,11 +74,9 @@ export default function CreatorDetail() {
 
     (async () => {
       try {
-        // Load creator first
         const creator = await fetchJson<Creator>(`/api/creators/${id}`);
         if (cancelled) return;
 
-        // Load everything else in parallel
         const [stats, timeline, patterns, outlierRes, allRes] = await Promise.all([
           fetchJson<Stats>(`/api/creators/${id}/stats`),
           fetchJson<any[]>(`/api/creators/${id}/timeline`),
@@ -91,14 +86,7 @@ export default function CreatorDetail() {
         ]);
 
         if (cancelled) return;
-        setData({
-          creator,
-          stats,
-          timeline,
-          patterns,
-          outlierPosts: outlierRes.posts,
-          allPosts: allRes.posts,
-        });
+        setData({ creator, stats, timeline, patterns, outlierPosts: outlierRes.posts, allPosts: allRes.posts });
       } catch (err: any) {
         if (!cancelled) setError(err.message);
       } finally {
@@ -115,6 +103,10 @@ export default function CreatorDetail() {
       await fetch(`${BASE}/api/creators/${id}/refresh`, { method: 'POST' });
     } catch {}
     setRefreshing(false);
+  };
+
+  const handleExport = () => {
+    window.open(`${BASE}/api/creators/${id}/export`, '_blank');
   };
 
   if (loading) {
@@ -151,23 +143,31 @@ export default function CreatorDetail() {
           )}
           <div>
             <h1 className="text-2xl font-bold">{creator.name || 'Unknown'}</h1>
-            <p className="text-text-secondary text-sm">{creator.headline || '—'}</p>
+            <p className="text-text-secondary text-sm">{creator.headline || '--'}</p>
             <p className="text-text-muted text-xs mt-1">
-              {creator.followers_count.toLocaleString()} followers
+              {creator.followers_count > 0 ? `${creator.followers_count.toLocaleString()} followers` : 'Followers unknown'}
             </p>
           </div>
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="px-4 py-2 bg-bg-secondary border border-border rounded-lg text-sm text-text-secondary hover:text-text-primary hover:border-accent transition-colors disabled:opacity-50"
-        >
-          {refreshing ? 'Refreshing...' : 'Refresh Data'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleExport}
+            className="px-4 py-2 bg-bg-secondary border border-border rounded-lg text-sm text-text-secondary hover:text-text-primary hover:border-accent transition-colors"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="px-4 py-2 bg-bg-secondary border border-border rounded-lg text-sm text-text-secondary hover:text-text-primary hover:border-accent transition-colors disabled:opacity-50"
+          >
+            {refreshing ? 'Refreshing...' : 'Refresh Data'}
+          </button>
+        </div>
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         {[
           { label: 'Avg Engagement', value: stats.avg_engagement.toLocaleString() },
           { label: 'Median', value: stats.median_engagement.toLocaleString() },
@@ -175,6 +175,8 @@ export default function CreatorDetail() {
           { label: 'Outliers', value: stats.total_outliers, accent: true },
           { label: 'Posts/Week', value: stats.posts_per_week },
           { label: 'Outlier Rate', value: `${stats.outlier_rate}%`, accent: true },
+          { label: 'Eng. Rate', value: stats.engagement_rate > 0 ? `${stats.engagement_rate}%` : 'N/A', accent: stats.engagement_rate > 0 },
+          { label: 'Comment/Like', value: stats.avg_comment_like_ratio > 0 ? `${Math.round(stats.avg_comment_like_ratio * 100)}%` : 'N/A' },
         ].map((kpi, i) => (
           <div key={i} className="bg-bg-card rounded-lg p-4 text-center">
             <p className="text-text-muted text-xs mb-1">{kpi.label}</p>
@@ -188,6 +190,14 @@ export default function CreatorDetail() {
       {/* Timeline */}
       {timeline.length > 0 && (
         <EngagementChart data={timeline} avgEngagement={stats.avg_engagement} />
+      )}
+
+      {/* Hook Type + Structure Breakdown */}
+      {stats.hook_type_breakdown && stats.hook_type_breakdown.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <HookTypeChart data={stats.hook_type_breakdown} />
+          <StructureChart data={stats.structure_breakdown || []} />
+        </div>
       )}
 
       {/* Content Type + Heatmap */}

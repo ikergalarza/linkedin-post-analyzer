@@ -14,7 +14,9 @@ interface UnipileProfile {
   public_identifier?: string;
   network_info?: {
     followers_count?: number;
+    follower_count?: number;
     connections_count?: number;
+    connection_count?: number;
   };
   [key: string]: any;
 }
@@ -190,10 +192,16 @@ export class UnipileService {
   normalizeProfile(raw: UnipileProfile, linkedinUrl: string) {
     const followersCount = raw.followers_count
       || raw.network_info?.followers_count
+      || raw.follower_count
+      || raw.network_info?.follower_count
       || 0;
     const connectionsCount = raw.connections_count
       || raw.network_info?.connections_count
+      || raw.connection_count
+      || raw.network_info?.connection_count
       || 0;
+
+    console.log(`[Unipile] Profile normalize: followers=${followersCount}, connections=${connectionsCount}, raw_keys=${Object.keys(raw).join(',')}, network_info_keys=${raw.network_info ? Object.keys(raw.network_info).join(',') : 'none'}`);
 
     return {
       linkedin_url: linkedinUrl,

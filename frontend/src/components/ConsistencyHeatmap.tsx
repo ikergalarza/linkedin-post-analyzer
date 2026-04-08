@@ -54,9 +54,9 @@ export default function ConsistencyHeatmap({ data }: Props) {
   const dayLabels = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
 
   return (
-    <div className="bg-bg-card rounded-xl p-6">
+    <div className="bg-bg-card rounded-xl p-6 min-w-0 overflow-hidden">
       <h3 className="text-lg font-semibold mb-4">Posting Consistency</h3>
-      <div className="flex gap-1">
+      <div className="flex gap-1 overflow-x-auto">
         <div className="flex flex-col gap-1 mr-2 text-[10px] text-text-muted">
           {dayLabels.map((l, i) => (
             <div key={i} className="h-[14px] flex items-center">{l}</div>

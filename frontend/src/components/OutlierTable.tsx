@@ -13,6 +13,10 @@ interface Post {
   outlier_ratio: number;
   is_outlier: boolean;
   hook_text: string | null;
+  hook_type?: string;
+  post_structure?: string;
+  comment_like_ratio?: number;
+  share_like_ratio?: number;
   post_url: string | null;
 }
 
@@ -44,24 +48,28 @@ function ratioBadge(ratio: number) {
   );
 }
 
+const hookLabels: Record<string, string> = {
+  question: 'Question', statistic: 'Data/Stat', controversy: 'Controversy',
+  pov: 'POV', storytelling: 'Story', list: 'List',
+  bold_statement: 'Bold', curiosity: 'Curiosity', other: '--',
+};
+
+const structLabels: Record<string, string> = {
+  list: 'List', problem_solution: 'Prob>Sol', story_lesson: 'Story>Lesson',
+  short_punchy: 'Short', long_form: 'Long', other: '--',
+};
+
 interface Props {
   posts: Post[];
   title?: string;
-  showCreator?: boolean;
-  creatorName?: string;
 }
 
 const typeIcons: Record<string, string> = {
-  text_only: '📝',
-  image: '🖼️',
-  carousel: '🎠',
-  video: '🎬',
-  poll: '📊',
-  article: '📰',
-  document: '📄',
+  text_only: '📝', image: '🖼️', carousel: '🎠', video: '🎬',
+  poll: '📊', article: '📰', document: '📄',
 };
 
-export default function OutlierTable({ posts, title = 'Outlier Posts', showCreator }: Props) {
+export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
@@ -76,6 +84,8 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', showCreat
               <tr className="text-text-secondary text-left border-b border-border">
                 <th className="pb-3 font-medium">Date</th>
                 <th className="pb-3 font-medium">Hook</th>
+                <th className="pb-3 font-medium">Hook Type</th>
+                <th className="pb-3 font-medium">Structure</th>
                 <th className="pb-3 font-medium">Type</th>
                 <th className="pb-3 font-medium text-right">Likes</th>
                 <th className="pb-3 font-medium text-right">Comments</th>
@@ -94,13 +104,23 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', showCreat
                     onClick={() => setExpandedId(expandedId === post.id ? null : post.id)}
                   >
                     <td className="py-3 whitespace-nowrap text-text-secondary">
-                      {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                      {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '--'}
                     </td>
-                    <td className="py-3 max-w-[300px] truncate" title={post.hook_text || ''}>
-                      {post.hook_text || '—'}
+                    <td className="py-3 max-w-[250px] truncate" title={post.hook_text || ''}>
+                      {post.hook_text || '--'}
+                    </td>
+                    <td className="py-3 whitespace-nowrap">
+                      <span className="text-xs text-text-muted bg-bg-secondary px-1.5 py-0.5 rounded">
+                        {hookLabels[post.hook_type || ''] || post.hook_type || '--'}
+                      </span>
+                    </td>
+                    <td className="py-3 whitespace-nowrap">
+                      <span className="text-xs text-text-muted bg-bg-secondary px-1.5 py-0.5 rounded">
+                        {structLabels[post.post_structure || ''] || post.post_structure || '--'}
+                      </span>
                     </td>
                     <td className="py-3">
-                      <span title={post.content_type}>{typeIcons[post.content_type] || '❓'}</span>
+                      <span title={post.content_type}>{typeIcons[post.content_type] || '?'}</span>
                     </td>
                     <td className="py-3 text-right tabular-nums">{post.likes_count.toLocaleString()}</td>
                     <td className="py-3 text-right tabular-nums">{post.comments_count.toLocaleString()}</td>
@@ -125,7 +145,15 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', showCreat
                   </tr>
                   {expandedId === post.id && (
                     <tr key={`${post.id}-expanded`}>
-                      <td colSpan={9} className="bg-bg-secondary p-4">
+                      <td colSpan={11} className="bg-bg-secondary p-4">
+                        <div className="flex gap-4 mb-2 text-xs text-text-muted">
+                          {post.comment_like_ratio != null && post.comment_like_ratio > 0 && (
+                            <span>Comment/Like: {Math.round(post.comment_like_ratio * 100)}%</span>
+                          )}
+                          {post.share_like_ratio != null && post.share_like_ratio > 0 && (
+                            <span>Share/Like: {Math.round(post.share_like_ratio * 100)}%</span>
+                          )}
+                        </div>
                         <p className="text-text-primary text-sm whitespace-pre-wrap leading-relaxed">
                           {post.content_text || 'No content available'}
                         </p>
