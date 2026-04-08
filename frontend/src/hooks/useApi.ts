@@ -7,11 +7,14 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
+  const text = await res.text();
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `API error ${res.status}`);
+    let msg = `API error ${res.status}`;
+    try { msg = JSON.parse(text).error || msg; } catch {}
+    throw new Error(msg);
   }
-  return res.json();
+  if (!text) return undefined as T;
+  return JSON.parse(text);
 }
 
 export function useApi<T>(path: string | null) {
