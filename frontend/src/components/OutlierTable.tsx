@@ -22,6 +22,28 @@ function getLinkedInUrl(post: Post): string | null {
   return null;
 }
 
+function ratioBadge(ratio: number) {
+  if (ratio >= 10) {
+    return (
+      <span className="bg-diamond/20 text-diamond px-2 py-0.5 rounded text-xs font-bold shadow-[0_0_8px_rgba(103,232,249,0.3)]">
+        {ratio}x
+      </span>
+    );
+  }
+  if (ratio >= 3) {
+    return (
+      <span className="bg-accent/20 text-accent px-2 py-0.5 rounded text-xs font-bold">
+        {ratio}x
+      </span>
+    );
+  }
+  return (
+    <span className="bg-bg-hover text-text-muted px-2 py-0.5 rounded text-xs">
+      {ratio}x
+    </span>
+  );
+}
+
 interface Props {
   posts: Post[];
   title?: string;
@@ -85,11 +107,7 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', showCreat
                     <td className="py-3 text-right tabular-nums">{post.reposts_count.toLocaleString()}</td>
                     <td className="py-3 text-right tabular-nums font-medium text-accent">{post.engagement_score.toLocaleString()}</td>
                     <td className="py-3 text-right">
-                      {post.is_outlier && (
-                        <span className="bg-accent/20 text-accent px-2 py-0.5 rounded text-xs font-bold">
-                          {post.outlier_ratio}x
-                        </span>
-                      )}
+                      {post.outlier_ratio > 0 && ratioBadge(post.outlier_ratio)}
                     </td>
                     <td className="py-3 text-right">
                       {getLinkedInUrl(post) && (

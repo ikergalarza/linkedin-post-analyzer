@@ -26,6 +26,28 @@ function getLinkedInUrl(post: PostData): string | null {
   return null;
 }
 
+function ratioBadge(ratio: number) {
+  if (ratio >= 10) {
+    return (
+      <span className="bg-diamond/20 text-diamond px-2 py-0.5 rounded text-xs font-bold shadow-[0_0_8px_rgba(103,232,249,0.3)]">
+        {ratio}x
+      </span>
+    );
+  }
+  if (ratio >= 3) {
+    return (
+      <span className="bg-accent/20 text-accent px-2 py-0.5 rounded text-xs font-bold">
+        {ratio}x
+      </span>
+    );
+  }
+  return (
+    <span className="bg-bg-hover text-text-muted px-2 py-0.5 rounded text-xs">
+      {ratio}x
+    </span>
+  );
+}
+
 const typeLabels: Record<string, string> = {
   text_only: 'Text',
   image: 'Image',
@@ -66,11 +88,7 @@ export default function PostCard({ post }: Props) {
           <span className="bg-bg-hover px-2 py-0.5 rounded text-text-secondary">
             {typeLabels[post.content_type] || post.content_type}
           </span>
-          {post.is_outlier && (
-            <span className="bg-accent/20 text-accent px-2 py-0.5 rounded font-bold">
-              {post.outlier_ratio}x
-            </span>
-          )}
+          {post.outlier_ratio > 0 && ratioBadge(post.outlier_ratio)}
         </div>
       </div>
 
