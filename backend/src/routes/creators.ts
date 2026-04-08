@@ -30,21 +30,27 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(409).json({ error: 'Creator already exists', creator: existing });
     }
 
-    // Fetch profile from Unipile
+    // Step 1: Fetch profile from Unipile to get the provider_id (internal ID)
     let profileData;
+    let rawProfile;
     try {
-      const rawProfile = await unipileService.getProfile(normalized);
+      rawProfile = await unipileService.getProfile(normalized);
       profileData = unipileService.normalizeProfile(rawProfile, normalized);
+      console.log(`Profile resolved: name=${profileData.name}, linkedin_id=${profileData.linkedin_id}`);
     } catch (err: any) {
       console.error('Unipile profile fetch failed:', err.message);
-      // Create with minimal data
-      profileData = { linkedin_url: normalized, linkedin_id: null, name: null, headline: null, followers_count: 0, connections_count: 0, profile_image_url: null };
+      return res.status(422).json({ error: `Could not fetch LinkedIn profile: ${err.message}` });
+    }
+
+    if (!profileData.linkedin_id) {
+      console.error('No provider_id found in profile response. Raw keys:', rawProfile ? Object.keys(rawProfile) : 'none');
+      return res.status(422).json({ error: 'Could not resolve LinkedIn internal ID from profile. Check Unipile account connection.' });
     }
 
     const creator = await CreatorModel.create(profileData);
 
-    // Scrape posts in background
-    scrapeCreatorPosts(creator.id, profileData.linkedin_id || unipileService.extractLinkedInIdentifier(normalized))
+    // Step 2: Scrape posts using the provider_id (NOT the public username)
+    scrapeCreatorPosts(creator.id, profileData.linkedin_id)
       .catch((err) => console.error(`Post scraping failed for ${creator.id}:`, err));
 
     res.status(201).json(creator);
@@ -98,8 +104,10 @@ router.post('/:id/refresh', async (req: Request, res: Response) => {
     const creator = await CreatorModel.findById(paramId(req));
     if (!creator) return res.status(404).json({ error: 'Creator not found' });
 
-    const identifier = creator.linkedin_id || unipileService.extractLinkedInIdentifier(creator.linkedin_url);
-    scrapeCreatorPosts(creator.id, identifier)
+    if (!creator.linkedin_id) {
+      return res.status(422).json({ error: 'No LinkedIn internal ID stored. Delete and re-add this creator.' });
+    }
+    scrapeCreatorPosts(creator.id, creator.linkedin_id)
       .catch((err) => console.error(`Refresh failed for ${creator.id}:`, err));
 
     res.json({ message: 'Refresh started' });
