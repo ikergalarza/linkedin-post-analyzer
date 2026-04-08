@@ -4,9 +4,10 @@ import { PostModel } from '../models/post';
 import { unipileService } from '../services/unipile';
 import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { normalizeLinkedInUrl, isValidLinkedInUrl } from '../utils/linkedin';
+import pool from '../db';
 
 function paramId(req: Request): string {
-  return paramId(req) as string;
+  return req.params.id as string;
 }
 
 const router = Router();
@@ -91,7 +92,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   console.log(`[GET /:id] START id=${reqId}`);
   try {
     console.log(`[GET /:id] Step 1: querying creator...`);
-    const { rows } = await (await import('../db')).default.query(
+    const { rows } = await pool.query(
       'SELECT id, linkedin_url, linkedin_id, name, headline, followers_count, connections_count, profile_image_url, last_scraped_at, created_at FROM creators WHERE id = $1',
       [reqId]
     );
@@ -106,7 +107,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     console.log(`[GET /:id] Step 3: creator name=${creator.name}`);
 
     console.log(`[GET /:id] Step 4: querying stats...`);
-    const statsResult = await (await import('../db')).default.query(
+    const statsResult = await pool.query(
       `SELECT COUNT(*)::int as total_posts,
               COUNT(*) FILTER (WHERE is_outlier = TRUE)::int as total_outliers,
               COALESCE(AVG(engagement_score), 0)::float as avg_engagement,

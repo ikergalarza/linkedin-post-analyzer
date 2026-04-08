@@ -4,7 +4,7 @@ import { CreatorModel } from '../models/creator';
 import { detectPatterns, getCrossCreatorPatterns } from '../services/patterns';
 
 function paramId(req: Request): string {
-  return paramId(req) as string;
+  return req.params.id as string;
 }
 
 const router = Router();

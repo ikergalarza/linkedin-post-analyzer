@@ -3,7 +3,7 @@ import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 
 function paramId(req: Request): string {
-  return paramId(req) as string;
+  return req.params.id as string;
 }
 
 const router = Router();
