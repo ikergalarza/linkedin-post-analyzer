@@ -64,6 +64,7 @@ export default function CreatorDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadKey, setLoadKey] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -95,13 +96,21 @@ export default function CreatorDetail() {
     })();
 
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, loadKey]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await fetch(`${BASE}/api/creators/${id}/refresh`, { method: 'POST' });
-    } catch {}
+      const res = await fetch(`${BASE}/api/creators/${id}/refresh`, { method: 'POST' });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Refresh failed (${res.status})`);
+      }
+      // Reload all data
+      setLoadKey((k) => k + 1);
+    } catch (err: any) {
+      setError(err.message);
+    }
     setRefreshing(false);
   };
 

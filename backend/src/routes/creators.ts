@@ -157,10 +157,9 @@ router.post('/:id/refresh', async (req: Request, res: Response) => {
     if (!creator.linkedin_id) {
       return res.status(422).json({ error: 'No LinkedIn internal ID stored. Delete and re-add this creator.' });
     }
-    scrapeCreatorPosts(creator.id, creator.linkedin_id)
-      .catch((err) => console.error(`Refresh failed for ${creator.id}:`, err));
 
-    res.json({ message: 'Refresh started' });
+    await scrapeCreatorPosts(creator.id, creator.linkedin_id);
+    res.json({ message: 'Refresh complete' });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
