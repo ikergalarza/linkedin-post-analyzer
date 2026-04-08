@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -21,26 +21,45 @@ export function useApi<T>(path: string | null) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(!!path);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    if (!path) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await apiFetch<T>(path);
-      setData(result);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [path]);
+  const lastPath = useRef(path);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (!path) {
+      setLoading(false);
+      return;
+    }
 
-  return { data, loading, error, refetch: fetchData };
+    let cancelled = false;
+    lastPath.current = path;
+
+    setLoading(true);
+    setError(null);
+
+    apiFetch<T>(path)
+      .then((result) => {
+        if (!cancelled) setData(result);
+      })
+      .catch((err: any) => {
+        if (!cancelled) setError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [path]);
+
+  const refetch = () => {
+    if (!lastPath.current) return;
+    setLoading(true);
+    setError(null);
+    apiFetch<T>(lastPath.current)
+      .then(setData)
+      .catch((err: any) => setError(err.message))
+      .finally(() => setLoading(false));
+  };
+
+  return { data, loading, error, refetch };
 }
 
 export async function apiPost<T>(path: string, body: any): Promise<T> {
