@@ -163,7 +163,7 @@ export const PostModel = {
 
   async getTopOutliersGlobal(limit = 20) {
     const { rows } = await pool.query(
-      `SELECT p.id, p.creator_id, p.content_text, p.content_type,
+      `SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,
               p.published_at, p.likes_count, p.comments_count, p.reposts_count,
               p.engagement_score, p.outlier_ratio, p.is_outlier,
               p.hook_text, p.post_url,

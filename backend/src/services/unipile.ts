@@ -228,9 +228,16 @@ export class UnipileService {
       comments_count: comments,
       reposts_count: reposts,
       impressions_count: impressions,
-      post_url: raw.url || raw.post_url || null,
+      post_url: raw.url || raw.post_url || this.buildPostUrl(raw) || null,
       raw_data: raw,
     };
+  }
+
+  private buildPostUrl(raw: UnipilePost): string | null {
+    const postId = raw.social_id || raw.id;
+    if (!postId) return null;
+    // LinkedIn activity/update URLs
+    return `https://www.linkedin.com/feed/update/${postId}/`;
   }
 
   private detectContentType(raw: UnipilePost): string {

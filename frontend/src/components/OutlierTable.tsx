@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 interface Post {
   id: string;
+  linkedin_post_id?: string | null;
   content_text: string | null;
   content_type: string;
   published_at: string | null;
@@ -13,6 +14,12 @@ interface Post {
   is_outlier: boolean;
   hook_text: string | null;
   post_url: string | null;
+}
+
+function getLinkedInUrl(post: Post): string | null {
+  if (post.post_url) return post.post_url;
+  if (post.linkedin_post_id) return `https://www.linkedin.com/feed/update/${post.linkedin_post_id}/`;
+  return null;
 }
 
 interface Props {
@@ -85,9 +92,9 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', showCreat
                       )}
                     </td>
                     <td className="py-3 text-right">
-                      {post.post_url && (
+                      {getLinkedInUrl(post) && (
                         <a
-                          href={post.post_url}
+                          href={getLinkedInUrl(post)!}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-accent hover:text-accent-light text-xs"

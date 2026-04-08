@@ -1,20 +1,29 @@
+interface PostData {
+  id: string;
+  linkedin_post_id?: string | null;
+  content_text: string | null;
+  content_type: string;
+  published_at: string | null;
+  likes_count: number;
+  comments_count: number;
+  reposts_count: number;
+  engagement_score: number;
+  outlier_ratio: number;
+  is_outlier: boolean;
+  hook_text: string | null;
+  post_url: string | null;
+  creator_name?: string;
+  creator_image?: string;
+}
+
 interface Props {
-  post: {
-    id: string;
-    content_text: string | null;
-    content_type: string;
-    published_at: string | null;
-    likes_count: number;
-    comments_count: number;
-    reposts_count: number;
-    engagement_score: number;
-    outlier_ratio: number;
-    is_outlier: boolean;
-    hook_text: string | null;
-    post_url: string | null;
-    creator_name?: string;
-    creator_image?: string;
-  };
+  post: PostData;
+}
+
+function getLinkedInUrl(post: PostData): string | null {
+  if (post.post_url) return post.post_url;
+  if (post.linkedin_post_id) return `https://www.linkedin.com/feed/update/${post.linkedin_post_id}/`;
+  return null;
 }
 
 const typeLabels: Record<string, string> = {
@@ -69,9 +78,9 @@ export default function PostCard({ post }: Props) {
         <span className="text-xs text-text-muted">
           {post.published_at ? new Date(post.published_at).toLocaleDateString() : '—'}
         </span>
-        {post.post_url && (
+        {getLinkedInUrl(post) && (
           <a
-            href={post.post_url}
+            href={getLinkedInUrl(post)!}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-accent hover:text-accent-light"
