@@ -88,17 +88,37 @@ router.get('/', async (_req: Request, res: Response) => {
 // GET /api/creators/:id — Get creator detail
 router.get('/:id', async (req: Request, res: Response) => {
   const reqId = paramId(req);
-  console.log(`[GET /creators/:id] id=${reqId}`);
+  console.log(`[GET /:id] START id=${reqId}`);
   try {
-    const creator = await CreatorModel.findById(reqId as string);
-    console.log(`[GET /creators/:id] creator found: ${!!creator}`);
-    if (!creator) return res.status(404).json({ error: 'Creator not found' });
+    console.log(`[GET /:id] Step 1: querying creator...`);
+    const { rows } = await (await import('../db')).default.query(
+      'SELECT id, linkedin_url, linkedin_id, name, headline, followers_count, connections_count, profile_image_url, last_scraped_at, created_at FROM creators WHERE id = $1',
+      [reqId]
+    );
+    console.log(`[GET /:id] Step 2: got ${rows.length} rows`);
 
-    console.log(`[GET /creators/:id] creator keys: ${Object.keys(creator)}`);
-    console.log(`[GET /creators/:id] creator prototype: ${Object.getPrototypeOf(creator)?.constructor?.name}`);
+    if (rows.length === 0) {
+      console.log(`[GET /:id] Not found`);
+      return res.status(404).json({ error: 'Creator not found' });
+    }
 
-    // Explicitly pick fields to avoid any circular reference from pg
-    const safeCreator = {
+    const creator = rows[0];
+    console.log(`[GET /:id] Step 3: creator name=${creator.name}`);
+
+    console.log(`[GET /:id] Step 4: querying stats...`);
+    const statsResult = await (await import('../db')).default.query(
+      `SELECT COUNT(*)::int as total_posts,
+              COUNT(*) FILTER (WHERE is_outlier = TRUE)::int as total_outliers,
+              COALESCE(AVG(engagement_score), 0)::float as avg_engagement,
+              COALESCE(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY engagement_score), 0)::float as median_engagement,
+              COALESCE(STDDEV(engagement_score), 0)::float as stddev_engagement
+       FROM posts WHERE creator_id = $1`,
+      [reqId]
+    );
+    const stats = statsResult.rows[0];
+    console.log(`[GET /:id] Step 5: stats=`, stats);
+
+    const response = {
       id: creator.id,
       linkedin_url: creator.linkedin_url,
       linkedin_id: creator.linkedin_id,
@@ -109,24 +129,20 @@ router.get('/:id', async (req: Request, res: Response) => {
       profile_image_url: creator.profile_image_url,
       last_scraped_at: creator.last_scraped_at,
       created_at: creator.created_at,
+      stats: {
+        total_posts: Number(stats.total_posts) || 0,
+        total_outliers: Number(stats.total_outliers) || 0,
+        avg_engagement: Number(stats.avg_engagement) || 0,
+        median_engagement: Number(stats.median_engagement) || 0,
+        stddev_engagement: Number(stats.stddev_engagement) || 0,
+      },
     };
-    console.log(`[GET /creators/:id] safeCreator JSON OK: ${JSON.stringify(safeCreator).length} bytes`);
 
-    const stats = await PostModel.getStats(creator.id);
-    const safeStats = {
-      total_posts: stats.total_posts,
-      total_outliers: stats.total_outliers,
-      avg_engagement: stats.avg_engagement,
-      median_engagement: stats.median_engagement,
-      stddev_engagement: stats.stddev_engagement,
-      first_post_date: stats.first_post_date,
-      last_post_date: stats.last_post_date,
-    };
-    console.log(`[GET /creators/:id] safeStats JSON OK: ${JSON.stringify(safeStats).length} bytes`);
-
-    res.json({ ...safeCreator, stats: safeStats });
+    console.log(`[GET /:id] Step 6: sending response...`);
+    res.json(response);
+    console.log(`[GET /:id] Step 7: DONE`);
   } catch (err: any) {
-    console.error(`[GET /creators/:id] ERROR:`, err.message, err.stack?.substring(0, 500));
+    console.error(`[GET /:id] ERROR:`, err.message, err.stack);
     res.status(500).json({ error: err.message });
   }
 });

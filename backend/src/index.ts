@@ -5,6 +5,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Catch process-level crashes
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err.message, err.stack);
+});
+process.on('unhandledRejection', (err: any) => {
+  console.error('UNHANDLED REJECTION:', err?.message, err?.stack);
+});
+
 import { runMigrations } from './db/migrate';
 import creatorsRouter from './routes/creators';
 import postsRouter from './routes/posts';
@@ -13,28 +21,35 @@ import analysisRouter from './routes/analysis';
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true,
-}));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
+
+// Log every request
+app.use((req, _res, next) => {
+  console.log(`[REQ] ${req.method} ${req.path}`);
+  next();
+});
 
 // Routes
 app.use('/api/creators', creatorsRouter);
 app.use('/api/creators', postsRouter);
-app.use('/api/analysis', analysisRouter);
-
-// Mount creator-specific analysis routes
 app.use('/api/creators', analysisRouter);
+app.use('/api/analysis', analysisRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Catch-all for unknown API routes (return 404 JSON, not HTML)
+// Catch-all for unknown API routes
 app.all('/api/*', (_req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
+});
+
+// Express error handler
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error('[EXPRESS ERROR]', err.message, err.stack);
+  res.status(500).json({ error: err.message });
 });
 
 // Serve frontend static files in production
