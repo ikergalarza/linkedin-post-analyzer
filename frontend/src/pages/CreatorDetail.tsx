@@ -58,7 +58,7 @@ interface PostsResponse {
 
 export default function CreatorDetail() {
   const { id } = useParams<{ id: string }>();
-  const { data: creator, loading: creatorLoading } = useApi<Creator>(`/api/creators/${id}`);
+  const { data: creator, loading: creatorLoading, error: creatorError } = useApi<Creator>(`/api/creators/${id}`);
   const { data: stats, loading: statsLoading } = useApi<Stats>(`/api/creators/${id}/stats`);
   const { data: timeline, loading: timelineLoading } = useApi<TimelinePoint[]>(`/api/creators/${id}/timeline`);
   const { data: patterns } = useApi<Pattern[]>(`/api/creators/${id}/patterns`);
@@ -89,7 +89,12 @@ export default function CreatorDetail() {
   }
 
   if (!creator) {
-    return <div className="text-text-muted text-center py-16">Creator not found.</div>;
+    return (
+      <div className="text-center py-16">
+        <p className="text-text-muted">Creator not found.</p>
+        {creatorError && <p className="text-danger text-sm mt-2">Error: {creatorError}</p>}
+      </div>
+    );
   }
 
   return (

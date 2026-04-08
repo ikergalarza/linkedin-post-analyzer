@@ -19,7 +19,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
 export function useApi<T>(path: string | null) {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(!!path);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
