@@ -10,14 +10,24 @@ import OutlierTable from '../components/OutlierTable';
 const BASE = import.meta.env.VITE_API_URL || '';
 
 async function fetchJson<T>(path: string): Promise<T> {
+  console.log(`[fetchJson] START ${path}`);
   const res = await fetch(`${BASE}${path}`);
+  console.log(`[fetchJson] Response ${path}: status=${res.status}, content-type=${res.headers.get('content-type')}`);
+  const text = await res.text();
+  console.log(`[fetchJson] Body ${path}: length=${text.length}, first100=${text.substring(0, 100)}`);
   if (!res.ok) {
-    const text = await res.text();
     let msg = `API error ${res.status}`;
     try { msg = JSON.parse(text).error || msg; } catch {}
     throw new Error(msg);
   }
-  return res.json();
+  try {
+    const parsed = JSON.parse(text);
+    console.log(`[fetchJson] PARSED OK ${path}`, typeof parsed);
+    return parsed;
+  } catch (e: any) {
+    console.error(`[fetchJson] PARSE FAILED ${path}:`, e.message);
+    throw e;
+  }
 }
 
 interface Creator {

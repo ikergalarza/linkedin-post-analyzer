@@ -87,13 +87,23 @@ router.get('/', async (_req: Request, res: Response) => {
 
 // GET /api/creators/:id — Get creator detail
 router.get('/:id', async (req: Request, res: Response) => {
+  const reqId = paramId(req);
+  console.log(`[GET /creators/:id] id=${reqId}`);
   try {
-    const creator = await CreatorModel.findById(paramId(req) as string);
+    const creator = await CreatorModel.findById(reqId as string);
+    console.log(`[GET /creators/:id] creator found: ${!!creator}`);
     if (!creator) return res.status(404).json({ error: 'Creator not found' });
 
     const stats = await PostModel.getStats(creator.id);
-    res.json({ ...creator, stats });
+    console.log(`[GET /creators/:id] stats:`, JSON.stringify(stats).substring(0, 200));
+
+    const response = { ...creator, stats };
+    const jsonStr = JSON.stringify(response);
+    console.log(`[GET /creators/:id] response JSON length: ${jsonStr.length}`);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(jsonStr);
   } catch (err: any) {
+    console.error(`[GET /creators/:id] ERROR:`, err.message, err.stack?.substring(0, 300));
     res.status(500).json({ error: err.message });
   }
 });
