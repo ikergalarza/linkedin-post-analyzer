@@ -1,0 +1,37 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+import creatorsRouter from './routes/creators';
+import postsRouter from './routes/posts';
+import analysisRouter from './routes/analysis';
+
+const app = express();
+const PORT = parseInt(process.env.PORT || '3001', 10);
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+}));
+app.use(express.json());
+
+// Routes
+app.use('/api/creators', creatorsRouter);
+app.use('/api/creators', postsRouter);
+app.use('/api/analysis', analysisRouter);
+
+// Mount creator-specific analysis routes
+app.use('/api/creators', analysisRouter);
+
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+});
+
+export default app;
