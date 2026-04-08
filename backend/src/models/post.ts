@@ -59,7 +59,12 @@ export const PostModel = {
     const offset = filters.offset || 0;
 
     const { rows } = await pool.query(
-      `SELECT * FROM posts WHERE ${conditions.join(' AND ')}
+      `SELECT id, creator_id, linkedin_post_id, content_text, content_type,
+              published_at, likes_count, comments_count, reposts_count,
+              impressions_count, engagement_score, outlier_ratio, is_outlier,
+              hook_text, word_count, has_hashtags, hashtags, has_emoji,
+              has_call_to_action, language, post_url, created_at
+       FROM posts WHERE ${conditions.join(' AND ')}
        ORDER BY ${orderBy} LIMIT $${idx} OFFSET $${idx + 1}`,
       [...values, limit, offset]
     );
@@ -158,7 +163,11 @@ export const PostModel = {
 
   async getTopOutliersGlobal(limit = 20) {
     const { rows } = await pool.query(
-      `SELECT p.*, c.name as creator_name, c.profile_image_url as creator_image
+      `SELECT p.id, p.creator_id, p.content_text, p.content_type,
+              p.published_at, p.likes_count, p.comments_count, p.reposts_count,
+              p.engagement_score, p.outlier_ratio, p.is_outlier,
+              p.hook_text, p.post_url,
+              c.name as creator_name, c.profile_image_url as creator_image
        FROM posts p JOIN creators c ON p.creator_id = c.id
        WHERE p.is_outlier = TRUE
        ORDER BY p.outlier_ratio DESC
