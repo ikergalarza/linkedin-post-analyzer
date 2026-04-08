@@ -188,8 +188,19 @@ async function scrapeCreatorPosts(creatorId: string, linkedinIdentifier: string)
 
   if (rawPosts.length === 0) return;
 
+  // Filter out reposts — only keep original content
+  const originalPosts = rawPosts.filter((raw) => {
+    if (raw.type === 'repost' || raw.type === 'RESHARE' || raw.type === 'reshare') return false;
+    if (raw.is_repost || raw.is_reshare) return false;
+    if (raw.reshared_post || raw.original_post) return false;
+    return true;
+  });
+  console.log(`Filtered to ${originalPosts.length} original posts (removed ${rawPosts.length - originalPosts.length} reposts)`);
+
+  if (originalPosts.length === 0) return;
+
   // Normalize and enrich posts
-  let posts = rawPosts.map((raw) => {
+  let posts = originalPosts.map((raw) => {
     const normalized = unipileService.normalizePost(raw, creatorId);
     const enriched = enrichPost(normalized);
     return { ...normalized, ...enriched };
