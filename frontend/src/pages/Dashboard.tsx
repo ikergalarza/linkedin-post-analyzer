@@ -1,7 +1,7 @@
 import { useApi, apiDelete } from '../hooks/useApi';
 import CreatorForm from '../components/CreatorForm';
 import { SkeletonCard } from '../components/Skeleton';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface Creator {
   id: string;
@@ -17,7 +17,6 @@ interface Creator {
 
 export default function Dashboard() {
   const { data: creators, loading, error, refetch } = useApi<Creator[]>('/api/creators');
-  const navigate = useNavigate();
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,10 +61,10 @@ export default function Dashboard() {
       {creators && creators.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {creators.map((creator) => (
-            <div
+            <Link
               key={creator.id}
-              onClick={() => navigate(`/creator/${creator.id}`)}
-              className="bg-bg-card rounded-xl p-6 border border-border hover:border-accent/30 cursor-pointer transition-all hover:shadow-lg hover:shadow-accent/5 group"
+              to={`/creator/${creator.id}`}
+              className="block bg-bg-card rounded-xl p-6 border border-border hover:border-accent/30 cursor-pointer transition-all hover:shadow-lg hover:shadow-accent/5 group no-underline text-inherit"
             >
               <div className="flex items-center gap-4 mb-4">
                 {creator.profile_image_url ? (
@@ -110,7 +109,7 @@ export default function Dashboard() {
                   Last updated: {new Date(creator.last_scraped_at).toLocaleDateString()}
                 </p>
               )}
-            </div>
+            </Link>
           ))}
         </div>
       )}

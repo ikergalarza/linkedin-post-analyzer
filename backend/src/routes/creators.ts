@@ -94,16 +94,39 @@ router.get('/:id', async (req: Request, res: Response) => {
     console.log(`[GET /creators/:id] creator found: ${!!creator}`);
     if (!creator) return res.status(404).json({ error: 'Creator not found' });
 
-    const stats = await PostModel.getStats(creator.id);
-    console.log(`[GET /creators/:id] stats:`, JSON.stringify(stats).substring(0, 200));
+    console.log(`[GET /creators/:id] creator keys: ${Object.keys(creator)}`);
+    console.log(`[GET /creators/:id] creator prototype: ${Object.getPrototypeOf(creator)?.constructor?.name}`);
 
-    const response = { ...creator, stats };
-    const jsonStr = JSON.stringify(response);
-    console.log(`[GET /creators/:id] response JSON length: ${jsonStr.length}`);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(jsonStr);
+    // Explicitly pick fields to avoid any circular reference from pg
+    const safeCreator = {
+      id: creator.id,
+      linkedin_url: creator.linkedin_url,
+      linkedin_id: creator.linkedin_id,
+      name: creator.name,
+      headline: creator.headline,
+      followers_count: creator.followers_count,
+      connections_count: creator.connections_count,
+      profile_image_url: creator.profile_image_url,
+      last_scraped_at: creator.last_scraped_at,
+      created_at: creator.created_at,
+    };
+    console.log(`[GET /creators/:id] safeCreator JSON OK: ${JSON.stringify(safeCreator).length} bytes`);
+
+    const stats = await PostModel.getStats(creator.id);
+    const safeStats = {
+      total_posts: stats.total_posts,
+      total_outliers: stats.total_outliers,
+      avg_engagement: stats.avg_engagement,
+      median_engagement: stats.median_engagement,
+      stddev_engagement: stats.stddev_engagement,
+      first_post_date: stats.first_post_date,
+      last_post_date: stats.last_post_date,
+    };
+    console.log(`[GET /creators/:id] safeStats JSON OK: ${JSON.stringify(safeStats).length} bytes`);
+
+    res.json({ ...safeCreator, stats: safeStats });
   } catch (err: any) {
-    console.error(`[GET /creators/:id] ERROR:`, err.message, err.stack?.substring(0, 300));
+    console.error(`[GET /creators/:id] ERROR:`, err.message, err.stack?.substring(0, 500));
     res.status(500).json({ error: err.message });
   }
 });
