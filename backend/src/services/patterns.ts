@@ -287,34 +287,47 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
     }
   }
 
-  // Frequency vs engagement by creator
-  const creatorStats: Record<string, { posts: number; totalEngagement: number; firstDate?: Date; lastDate?: Date }> = {};
+  // Best days and hours for outliers (cross-creator, UTC)
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayStats: Record<number, { total: number; outliers: number; totalRatio: number }> = {};
+  const hourStats: Record<number, { total: number; outliers: number; totalRatio: number }> = {};
   for (const p of allPosts) {
-    if (!creatorStats[p.creator_id]) {
-      creatorStats[p.creator_id] = { posts: 0, totalEngagement: 0 };
-    }
-    creatorStats[p.creator_id].posts++;
-    creatorStats[p.creator_id].totalEngagement += p.engagement_score;
-    if (p.published_at) {
-      const d = new Date(p.published_at);
-      if (!creatorStats[p.creator_id].firstDate || d < creatorStats[p.creator_id].firstDate!) {
-        creatorStats[p.creator_id].firstDate = d;
-      }
-      if (!creatorStats[p.creator_id].lastDate || d > creatorStats[p.creator_id].lastDate!) {
-        creatorStats[p.creator_id].lastDate = d;
-      }
-    }
+    if (!p.published_at) continue;
+    const d = new Date(p.published_at);
+    const day = d.getUTCDay();
+    const hour = d.getUTCHours();
+    if (!dayStats[day]) dayStats[day] = { total: 0, outliers: 0, totalRatio: 0 };
+    dayStats[day].total++;
+    if (p.is_outlier) { dayStats[day].outliers++; dayStats[day].totalRatio += p.outlier_ratio; }
+    if (!hourStats[hour]) hourStats[hour] = { total: 0, outliers: 0, totalRatio: 0 };
+    hourStats[hour].total++;
+    if (p.is_outlier) { hourStats[hour].outliers++; hourStats[hour].totalRatio += p.outlier_ratio; }
   }
 
-  const frequencyCorrelation = Object.values(creatorStats)
-    .filter((s) => s.firstDate && s.lastDate && s.posts >= 5)
-    .map((s) => {
-      const weeks = Math.max(1, (s.lastDate!.getTime() - s.firstDate!.getTime()) / (7 * 24 * 60 * 60 * 1000));
-      return {
-        postsPerWeek: Math.round((s.posts / weeks) * 10) / 10,
-        avgEngagement: Math.round(s.totalEngagement / s.posts),
-      };
-    });
+  const bestDays = Object.entries(dayStats)
+    .map(([day, s]) => ({
+      day: parseInt(day),
+      day_name: dayNames[parseInt(day)],
+      total_posts: s.total,
+      outliers: s.outliers,
+      outlier_rate: s.total > 0 ? Math.round((s.outliers / s.total) * 100) : 0,
+      avg_outlier_ratio: s.outliers > 0 ? Math.round((s.totalRatio / s.outliers) * 100) / 100 : 0,
+    }))
+    .sort((a, b) => b.outlier_rate - a.outlier_rate);
+
+  const bestHours = Object.entries(hourStats)
+    .filter(([, s]) => s.total >= 2)
+    .map(([hour, s]) => ({
+      hour: parseInt(hour),
+      hour_label: `${parseInt(hour).toString().padStart(2, '0')}:00`,
+      total_posts: s.total,
+      outliers: s.outliers,
+      outlier_rate: s.total > 0 ? Math.round((s.outliers / s.total) * 100) : 0,
+      avg_outlier_ratio: s.outliers > 0 ? Math.round((s.totalRatio / s.outliers) * 100) / 100 : 0,
+    }))
+    .sort((a, b) => b.outlier_rate - a.outlier_rate);
+
+  const outlierTiming = { best_days: bestDays, best_hours: bestHours };
 
   // Tone analysis — compute dynamically to avoid stale DB values
   // Classify each post's tone live
@@ -389,7 +402,7 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
     avg_word_count: Math.round(avgWords),
     cta_rate: Math.round(ctaRate * 100),
     common_traits: commonTraits,
-    frequency_correlation: frequencyCorrelation,
+    outlier_timing: outlierTiming,
     text_patterns: textPatterns,
     archetypes,
   };

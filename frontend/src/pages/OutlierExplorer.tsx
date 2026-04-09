@@ -78,7 +78,10 @@ interface CrossCreatorData {
     avg_word_count: number;
     cta_rate: number;
     common_traits: string[];
-    frequency_correlation: { postsPerWeek: number; avgEngagement: number }[];
+    outlier_timing?: {
+      best_days: { day: number; day_name: string; total_posts: number; outliers: number; outlier_rate: number; avg_outlier_ratio: number }[];
+      best_hours: { hour: number; hour_label: string; total_posts: number; outliers: number; outlier_rate: number; avg_outlier_ratio: number }[];
+    };
     archetypes?: Archetype[];
     text_patterns: {
       opening_patterns: { pattern: string; count: number; pct: number; examples: string[] }[];
@@ -611,19 +614,66 @@ export default function OutlierExplorer() {
             </div>
           )}
 
-          {/* Frequency vs Engagement */}
-          {data.patterns.frequency_correlation && data.patterns.frequency_correlation.length >= 2 && (
-            <div className="bg-bg-card rounded-xl p-6">
-              <h3 className="text-lg font-semibold mb-3">Posting Frequency vs Avg Engagement</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {data.patterns.frequency_correlation
-                  .sort((a, b) => b.avgEngagement - a.avgEngagement)
-                  .map((c, i) => (
-                    <div key={i} className="bg-bg-secondary rounded-lg p-3 text-center">
-                      <p className="text-text-muted text-xs">{c.postsPerWeek} posts/week</p>
-                      <p className="text-text-primary font-bold text-lg">{c.avgEngagement.toLocaleString()} avg eng</p>
-                    </div>
-                  ))}
+          {/* Best days and hours for outliers */}
+          {data.patterns.outlier_timing && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Best days */}
+              <div className="bg-bg-card rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-1">Best Days for Outliers</h3>
+                <p className="text-text-muted text-xs mb-4">Days with highest outlier rate across all creators (UTC)</p>
+                <div className="space-y-2">
+                  {data.patterns.outlier_timing.best_days.map((d) => {
+                    const maxRate = Math.max(...data.patterns.outlier_timing!.best_days.map((x) => x.outlier_rate), 1);
+                    return (
+                      <div key={d.day} className="flex items-center gap-3">
+                        <span className="text-xs text-text-secondary w-20 font-medium">{d.day_name}</span>
+                        <div className="flex-1 bg-bg-secondary rounded-full h-5 overflow-hidden relative">
+                          <div
+                            className="bg-accent h-full rounded-full transition-all"
+                            style={{ width: `${(d.outlier_rate / maxRate) * 100}%` }}
+                          />
+                          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-text-primary font-medium">
+                            {d.outlier_rate}% outlier rate
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-text-muted w-20 text-right">
+                          {d.outliers}/{d.total_posts} posts
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Best hours */}
+              <div className="bg-bg-card rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-1">Best Hours for Outliers</h3>
+                <p className="text-text-muted text-xs mb-4">Hours with highest outlier rate (UTC) — top 10</p>
+                <div className="space-y-2">
+                  {data.patterns.outlier_timing.best_hours.slice(0, 10).map((h) => {
+                    const maxRate = Math.max(...data.patterns.outlier_timing!.best_hours.slice(0, 10).map((x) => x.outlier_rate), 1);
+                    return (
+                      <div key={h.hour} className="flex items-center gap-3">
+                        <span className="text-xs text-text-secondary w-14 font-mono font-medium">{h.hour_label}</span>
+                        <div className="flex-1 bg-bg-secondary rounded-full h-5 overflow-hidden relative">
+                          <div
+                            className="bg-success h-full rounded-full transition-all"
+                            style={{ width: `${(h.outlier_rate / maxRate) * 100}%` }}
+                          />
+                          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-text-primary font-medium">
+                            {h.outlier_rate}% outlier rate
+                          </span>
+                        </div>
+                        <div className="text-right w-24">
+                          <span className="text-[10px] text-text-muted">{h.outliers}/{h.total_posts}</span>
+                          {h.avg_outlier_ratio > 0 && (
+                            <span className="text-[10px] text-accent ml-1">{h.avg_outlier_ratio}x</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
