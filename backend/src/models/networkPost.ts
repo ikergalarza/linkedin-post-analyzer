@@ -39,6 +39,21 @@ export const NetworkPostModel = {
     return rows;
   },
 
+  async findByIdWithCreator(id: string): Promise<NetworkPostWithCreator | null> {
+    const { rows } = await pool.query(
+      `SELECT np.*,
+              nc.name as creator_name,
+              nc.tier as creator_tier,
+              nc.profile_image_url as creator_image,
+              nc.headline as creator_headline
+       FROM network_posts np
+       JOIN network_creators nc ON np.network_creator_id = nc.id
+       WHERE np.id = $1`,
+      [id]
+    );
+    return rows[0] || null;
+  },
+
   async bulkUpsert(posts: Partial<NetworkPost>[]): Promise<void> {
     const client = await pool.connect();
     try {

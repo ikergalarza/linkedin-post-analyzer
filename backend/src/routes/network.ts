@@ -219,9 +219,7 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
       return res.status(400).json({ error: 'Please configure your commenter profile first' });
     }
 
-    // Load the post with creator info
-    const feedPosts = await NetworkPostModel.findWeekly(new Date('2000-01-01'), new Date('2100-01-01'));
-    const post = feedPosts.find((p) => p.id === paramId(req));
+    const post = await NetworkPostModel.findByIdWithCreator(paramId(req));
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
     const generated = await generateComments({
