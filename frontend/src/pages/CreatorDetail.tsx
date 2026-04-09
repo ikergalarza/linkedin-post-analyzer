@@ -74,6 +74,7 @@ export default function CreatorDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshPhase, setRefreshPhase] = useState<string | null>(null);
   const [loadKey, setLoadKey] = useState(0);
 
   useEffect(() => {
@@ -110,18 +111,21 @@ export default function CreatorDetail() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
+    setRefreshPhase('Fetching profile & posts from LinkedIn...');
     try {
       const res = await fetch(`${BASE}/api/creators/${id}/refresh`, { method: 'POST' });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || `Refresh failed (${res.status})`);
       }
+      setRefreshPhase('Reloading analytics...');
       // Reload all data
       setLoadKey((k) => k + 1);
     } catch (err: any) {
       setError(err.message);
     }
     setRefreshing(false);
+    setRefreshPhase(null);
   };
 
   const handleExport = () => {
@@ -186,6 +190,19 @@ export default function CreatorDetail() {
           </button>
         </div>
       </div>
+
+      {/* Refresh progress bar */}
+      {refreshing && refreshPhase && (
+        <div className="bg-bg-card border border-border rounded-lg p-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-text-secondary">{refreshPhase}</span>
+          </div>
+          <div className="w-full bg-bg-secondary rounded-full h-2 overflow-hidden">
+            <div className="h-full rounded-full bg-accent animate-pulse" style={{ width: '100%', opacity: 0.6 }} />
+          </div>
+        </div>
+      )}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">

@@ -27,7 +27,7 @@ export default function Dashboard() {
   const { data: creators, loading, error, refetch } = useApi<Creator[]>('/api/creators');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [refreshing, setRefreshing] = useState(false);
-  const [refreshStatus, setRefreshStatus] = useState<string | null>(null);
+  const [refreshProgress, setRefreshProgress] = useState<{ current: number; total: number; currentName: string | null; errors: number } | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>('avg_engagement');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [filter, setFilter] = useState('');
@@ -50,22 +50,36 @@ export default function Dashboard() {
   };
 
   const handleBatchRefresh = async () => {
+    if (!creators) return;
     setRefreshing(true);
-    setRefreshStatus('Refreshing...');
-    try {
-      const ids = selectedIds.size > 0 ? Array.from(selectedIds) : null;
-      const res = await fetch(`${BASE}/api/creators/refresh-batch`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids }),
-      });
-      const data = await res.json();
-      setRefreshStatus(`Done: ${data.refreshed}/${data.total} refreshed`);
-      refetch();
-      setTimeout(() => setRefreshStatus(null), 4000);
-    } catch (err: any) {
-      setRefreshStatus(`Error: ${err.message}`);
+
+    // Determine which creators to refresh
+    const toRefresh = selectedIds.size > 0
+      ? creators.filter((c) => selectedIds.has(c.id))
+      : creators;
+
+    let errors = 0;
+    setRefreshProgress({ current: 0, total: toRefresh.length, currentName: null, errors: 0 });
+
+    // Sequential refresh — one at a time
+    for (let i = 0; i < toRefresh.length; i++) {
+      const creator = toRefresh[i];
+      setRefreshProgress({ current: i, total: toRefresh.length, currentName: creator.name || 'Unknown', errors });
+      try {
+        const res = await fetch(`${BASE}/api/creators/${creator.id}/refresh`, { method: 'POST' });
+        if (!res.ok) errors++;
+      } catch {
+        errors++;
+      }
     }
+
+    setRefreshProgress({ current: toRefresh.length, total: toRefresh.length, currentName: null, errors });
+    refetch();
+
+    // Clear progress after a few seconds
+    setTimeout(() => {
+      setRefreshProgress(null);
+    }, 3000);
     setRefreshing(false);
   };
 
@@ -188,26 +202,53 @@ export default function Dashboard() {
           </div>
 
           {/* Batch actions */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={selectAll}
-              className="text-xs text-text-secondary hover:text-text-primary transition-colors"
-            >
-              {selectedIds.size === creators.length ? 'Deselect all' : 'Select all'}
-            </button>
-            <button
-              onClick={handleBatchRefresh}
-              disabled={refreshing}
-              className="px-4 py-2 bg-accent text-bg-primary rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
-            >
-              {refreshing
-                ? 'Refreshing...'
-                : selectedIds.size > 0
-                  ? `Refresh ${selectedIds.size} selected`
-                  : 'Refresh All'}
-            </button>
-            {refreshStatus && (
-              <span className="text-xs text-text-muted">{refreshStatus}</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={selectAll}
+                className="text-xs text-text-secondary hover:text-text-primary transition-colors"
+              >
+                {selectedIds.size === creators.length ? 'Deselect all' : 'Select all'}
+              </button>
+              <button
+                onClick={handleBatchRefresh}
+                disabled={refreshing}
+                className="px-4 py-2 bg-accent text-bg-primary rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
+              >
+                {refreshing
+                  ? 'Refreshing...'
+                  : selectedIds.size > 0
+                    ? `Refresh ${selectedIds.size} selected`
+                    : 'Refresh All'}
+              </button>
+            </div>
+
+            {/* Progress bar */}
+            {refreshProgress && (
+              <div className="bg-bg-card border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-text-secondary">
+                    {refreshProgress.current < refreshProgress.total
+                      ? `Refreshing: ${refreshProgress.currentName}`
+                      : `Done! ${refreshProgress.total - refreshProgress.errors}/${refreshProgress.total} refreshed`}
+                  </span>
+                  <span className="text-xs text-text-muted">
+                    {refreshProgress.current}/{refreshProgress.total}
+                    {refreshProgress.errors > 0 && (
+                      <span className="text-danger ml-1">({refreshProgress.errors} errors)</span>
+                    )}
+                  </span>
+                </div>
+                <div className="w-full bg-bg-secondary rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 ease-out"
+                    style={{
+                      width: `${refreshProgress.total > 0 ? (refreshProgress.current / refreshProgress.total) * 100 : 0}%`,
+                      backgroundColor: refreshProgress.current >= refreshProgress.total ? '#34d399' : '#e8935a',
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </div>
 
