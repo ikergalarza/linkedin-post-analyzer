@@ -18,6 +18,7 @@ import creatorsRouter from './routes/creators';
 import postsRouter from './routes/posts';
 import analysisRouter from './routes/analysis';
 import chatRouter from './routes/chat';
+import networkRouter from './routes/network';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -37,6 +38,7 @@ app.use('/api/creators', postsRouter);
 app.use('/api/creators', analysisRouter);
 app.use('/api/analysis', analysisRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/network', networkRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

@@ -64,6 +64,60 @@ const migration = `
   ALTER TABLE creators ADD COLUMN IF NOT EXISTS location TEXT;
   ALTER TABLE creators ADD COLUMN IF NOT EXISTS timezone TEXT;
   ALTER TABLE creators ADD COLUMN IF NOT EXISTS utc_offset FLOAT;
+
+  -- v5: Strategic Network module
+  CREATE TABLE IF NOT EXISTS commenter_profile (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    headline TEXT,
+    niche TEXT,
+    expertise TEXT,
+    tone TEXT DEFAULT 'direct' CHECK (tone IN ('direct','provocative','empathetic','technical')),
+    objectives TEXT,
+    topics TEXT[] DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE TABLE IF NOT EXISTS network_creators (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    linkedin_url TEXT UNIQUE NOT NULL,
+    linkedin_id TEXT,
+    name TEXT,
+    headline TEXT,
+    followers_count INTEGER DEFAULT 0,
+    profile_image_url TEXT,
+    tier INTEGER NOT NULL DEFAULT 2 CHECK (tier IN (1,2,3)),
+    last_fetched_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE TABLE IF NOT EXISTS network_posts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    network_creator_id UUID NOT NULL REFERENCES network_creators(id) ON DELETE CASCADE,
+    linkedin_post_id TEXT UNIQUE,
+    content_text TEXT,
+    hook_text TEXT,
+    published_at TIMESTAMPTZ,
+    likes_count INTEGER DEFAULT 0,
+    comments_count INTEGER DEFAULT 0,
+    reposts_count INTEGER DEFAULT 0,
+    post_url TEXT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending','commented','skipped')),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_network_posts_creator ON network_posts(network_creator_id);
+  CREATE INDEX IF NOT EXISTS idx_network_posts_published ON network_posts(published_at);
+  CREATE INDEX IF NOT EXISTS idx_network_posts_status ON network_posts(status);
+
+  CREATE TABLE IF NOT EXISTS network_comments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    network_post_id UUID NOT NULL REFERENCES network_posts(id) ON DELETE CASCADE,
+    angle TEXT NOT NULL CHECK (angle IN ('personal_experience','provocative_question','plot_twist')),
+    comment_text TEXT NOT NULL,
+    is_selected BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_network_comments_post ON network_comments(network_post_id);
 `;
 
 export async function runMigrations() {

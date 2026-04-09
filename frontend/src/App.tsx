@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard'
 import CreatorDetail from './pages/CreatorDetail'
 import OutlierExplorer from './pages/OutlierExplorer'
 import PostCreator from './pages/PostCreator'
+import StrategicNetwork from './pages/StrategicNetwork'
 
 export default function App() {
   const location = useLocation();
@@ -28,6 +29,7 @@ export default function App() {
           <div className="flex gap-6 text-sm">
             {navLink('/', 'Dashboard')}
             {navLink('/explore', 'Explorer')}
+            {navLink('/network', 'Network')}
             {navLink('/create', 'Post Creator')}
           </div>
         </div>
@@ -37,6 +39,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/creator/:id" element={<CreatorDetail />} />
           <Route path="/explore" element={<OutlierExplorer />} />
+          <Route path="/network" element={<StrategicNetwork />} />
           <Route path="/create" element={<PostCreator />} />
         </Routes>
       </main>
