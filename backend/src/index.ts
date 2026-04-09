@@ -17,6 +17,7 @@ import { runMigrations } from './db/migrate';
 import creatorsRouter from './routes/creators';
 import postsRouter from './routes/posts';
 import analysisRouter from './routes/analysis';
+import chatRouter from './routes/chat';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -35,6 +36,7 @@ app.use('/api/creators', creatorsRouter);
 app.use('/api/creators', postsRouter);
 app.use('/api/creators', analysisRouter);
 app.use('/api/analysis', analysisRouter);
+app.use('/api/chat', chatRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {
