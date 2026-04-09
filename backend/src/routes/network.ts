@@ -11,7 +11,7 @@ import { extractHook } from '../services/engagement';
 const router = Router();
 
 function paramId(req: Request): string {
-  return paramId(req) as string;
+  return req.params.id as string;
 }
 
 // ─── Commenter Profile ───
