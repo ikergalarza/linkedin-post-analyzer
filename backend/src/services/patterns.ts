@@ -207,7 +207,7 @@ export function detectPatterns(allPosts: Post[]): PatternInsight[] {
   return insights;
 }
 
-export function getCrossCreatorPatterns(allPosts: Post[]) {
+export function getCrossCreatorPatterns(allPosts: Post[], creatorTimezones: Record<string, number> = {}) {
   const outliers = allPosts.filter((p) => p.is_outlier);
   const nonOutliers = allPosts.filter((p) => !p.is_outlier);
 
@@ -287,15 +287,19 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
     }
   }
 
-  // Best days and hours for outliers (cross-creator, UTC)
+  // Best days and hours for outliers (cross-creator, converted to each creator's local time)
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const dayStats: Record<number, { total: number; outliers: number; totalRatio: number }> = {};
   const hourStats: Record<number, { total: number; outliers: number; totalRatio: number }> = {};
   for (const p of allPosts) {
     if (!p.published_at) continue;
     const d = new Date(p.published_at);
-    const day = d.getUTCDay();
-    const hour = d.getUTCHours();
+    // Convert to creator's local time using their UTC offset
+    const utcOffset = creatorTimezones[p.creator_id] ?? 0;
+    const localMs = d.getTime() + utcOffset * 60 * 60 * 1000;
+    const localDate = new Date(localMs);
+    const day = localDate.getUTCDay();
+    const hour = localDate.getUTCHours();
     if (!dayStats[day]) dayStats[day] = { total: 0, outliers: 0, totalRatio: 0 };
     dayStats[day].total++;
     if (p.is_outlier) { dayStats[day].outliers++; dayStats[day].totalRatio += p.outlier_ratio; }

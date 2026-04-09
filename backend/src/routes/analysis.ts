@@ -254,7 +254,13 @@ router.get('/cross-creators', async (_req: Request, res: Response) => {
       allPosts = allPosts.concat(posts);
     }
 
-    const patterns = getCrossCreatorPatterns(allPosts);
+    // Build creator timezone map for local time conversion
+    const creatorTimezones: Record<string, number> = {};
+    for (const c of creators) {
+      creatorTimezones[c.id] = c.utc_offset ?? 0;
+    }
+
+    const patterns = getCrossCreatorPatterns(allPosts, creatorTimezones);
 
     // Add per-post deep analysis
     const enrichedOutliers = topOutliers.map((post: any) => {

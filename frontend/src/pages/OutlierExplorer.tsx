@@ -620,7 +620,7 @@ export default function OutlierExplorer() {
               {/* Best days */}
               <div className="bg-bg-card rounded-xl p-6">
                 <h3 className="text-lg font-semibold mb-1">Best Days for Outliers</h3>
-                <p className="text-text-muted text-xs mb-4">Days with highest outlier rate across all creators (UTC)</p>
+                <p className="text-text-muted text-xs mb-4">Days with highest outlier rate across all creators (each creator's local time)</p>
                 <div className="space-y-2">
                   {data.patterns.outlier_timing.best_days.map((d) => {
                     const maxRate = Math.max(...data.patterns.outlier_timing!.best_days.map((x) => x.outlier_rate), 1);
@@ -648,7 +648,7 @@ export default function OutlierExplorer() {
               {/* Best hours */}
               <div className="bg-bg-card rounded-xl p-6">
                 <h3 className="text-lg font-semibold mb-1">Best Hours for Outliers</h3>
-                <p className="text-text-muted text-xs mb-4">Hours with highest outlier rate (UTC) — top 10</p>
+                <p className="text-text-muted text-xs mb-4">Hours with highest outlier rate (each creator's local time) — top 10</p>
                 <div className="space-y-2">
                   {data.patterns.outlier_timing.best_hours.slice(0, 10).map((h) => {
                     const maxRate = Math.max(...data.patterns.outlier_timing!.best_hours.slice(0, 10).map((x) => x.outlier_rate), 1);
