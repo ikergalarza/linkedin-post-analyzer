@@ -51,7 +51,11 @@ function ratioBadge(ratio: number) {
 const hookLabels: Record<string, string> = {
   question: 'Question', statistic: 'Data/Stat', controversy: 'Controversy',
   pov: 'POV', storytelling: 'Story', list: 'List',
-  bold_statement: 'Bold', curiosity: 'Curiosity', other: '--',
+  bold_statement: 'Bold', curiosity: 'Curiosity', prediction: 'Prediction',
+  confession: 'Confession', how_to: 'How-to', social_proof: 'Social Proof',
+  challenge: 'Challenge', announcement: 'Announce', analogy: 'Analogy',
+  contrarian: 'Contrarian', relatable: 'Relatable', motivational: 'Motivational',
+  observation: 'Observation', direct_address: 'Direct', other: '--',
 };
 
 const structLabels: Record<string, string> = {

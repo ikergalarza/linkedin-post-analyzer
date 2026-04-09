@@ -313,11 +313,37 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
       };
     });
 
+  // Tone distribution across outliers
+  const toneCounts: Record<string, number> = {};
+  for (const p of outliers) {
+    const tone = p.text_tone || 'neutral';
+    toneCounts[tone] = (toneCounts[tone] || 0) + 1;
+  }
+
+  // Tone performance across ALL posts
+  const tonePerformance: Record<string, { count: number; totalEngagement: number }> = {};
+  for (const p of allPosts) {
+    const tone = p.text_tone || 'neutral';
+    if (!tonePerformance[tone]) tonePerformance[tone] = { count: 0, totalEngagement: 0 };
+    tonePerformance[tone].count++;
+    tonePerformance[tone].totalEngagement += p.engagement_score;
+  }
+  const toneBreakdown = Object.entries(tonePerformance)
+    .filter(([k]) => k !== 'neutral')
+    .map(([tone, data]) => ({
+      tone,
+      count: data.count,
+      avg_engagement: data.count > 0 ? Math.round(data.totalEngagement / data.count) : 0,
+    }))
+    .sort((a, b) => b.avg_engagement - a.avg_engagement);
+
   return {
     total_outliers: outliers.length,
     content_type_distribution: typeCounts,
     hook_type_distribution: hookTypeCounts,
     structure_distribution: structureCounts,
+    tone_distribution: toneCounts,
+    tone_breakdown: toneBreakdown,
     avg_word_count: Math.round(avgWords),
     cta_rate: Math.round(ctaRate * 100),
     common_traits: commonTraits,
@@ -335,6 +361,18 @@ function formatHookType(type: string): string {
     list: 'List/Framework',
     bold_statement: 'Bold Statement',
     curiosity: 'Curiosity Gap',
+    prediction: 'Prediction',
+    confession: 'Confession',
+    how_to: 'How-to',
+    social_proof: 'Social Proof',
+    challenge: 'Challenge',
+    announcement: 'Announcement',
+    analogy: 'Analogy',
+    contrarian: 'Contrarian',
+    relatable: 'Relatable',
+    motivational: 'Motivational',
+    observation: 'Observation',
+    direct_address: 'Direct Address',
     other: 'Other',
   };
   return labels[type] || type;

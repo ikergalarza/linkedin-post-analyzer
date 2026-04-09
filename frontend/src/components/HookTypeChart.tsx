@@ -19,10 +19,22 @@ const hookLabels: Record<string, string> = {
   list: 'List',
   bold_statement: 'Bold Statement',
   curiosity: 'Curiosity',
+  prediction: 'Prediction',
+  confession: 'Confession',
+  how_to: 'How-to',
+  social_proof: 'Social Proof',
+  challenge: 'Challenge',
+  announcement: 'Announcement',
+  analogy: 'Analogy',
+  contrarian: 'Contrarian',
+  relatable: 'Relatable',
+  motivational: 'Motivational',
+  observation: 'Observation',
+  direct_address: 'Direct Address',
   other: 'Other',
 };
 
-const COLORS = ['#e8935a', '#67e8f9', '#34d399', '#a78bfa', '#f87171', '#fbbf24', '#6366f1', '#38bdf8', '#4b5563'];
+const COLORS = ['#e8935a', '#67e8f9', '#34d399', '#a78bfa', '#f87171', '#fbbf24', '#6366f1', '#38bdf8', '#f472b6', '#fb923c', '#4ade80', '#818cf8', '#22d3ee', '#facc15', '#c084fc', '#f87171', '#94a3b8', '#2dd4bf', '#e879f9', '#4b5563'];
 
 export default function HookTypeChart({ data }: Props) {
   const chartData = data

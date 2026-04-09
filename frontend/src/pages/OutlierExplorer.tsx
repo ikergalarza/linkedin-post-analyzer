@@ -27,6 +27,8 @@ interface CrossCreatorData {
     content_type_distribution: Record<string, number>;
     hook_type_distribution: Record<string, number>;
     structure_distribution: Record<string, number>;
+    tone_distribution: Record<string, number>;
+    tone_breakdown: { tone: string; count: number; avg_engagement: number }[];
     avg_word_count: number;
     cta_rate: number;
     common_traits: string[];
@@ -60,12 +62,37 @@ interface CompareData {
 const hookLabels: Record<string, string> = {
   question: 'Question', statistic: 'Data/Stat', controversy: 'Controversy',
   pov: 'POV', storytelling: 'Storytelling', list: 'List',
-  bold_statement: 'Bold Statement', curiosity: 'Curiosity', other: 'Other',
+  bold_statement: 'Bold Statement', curiosity: 'Curiosity', prediction: 'Prediction',
+  confession: 'Confession', how_to: 'How-to', social_proof: 'Social Proof',
+  challenge: 'Challenge', announcement: 'Announcement', analogy: 'Analogy',
+  contrarian: 'Contrarian', relatable: 'Relatable', motivational: 'Motivational',
+  observation: 'Observation', direct_address: 'Direct Address', other: 'Other',
 };
 
 const structLabels: Record<string, string> = {
   list: 'List', problem_solution: 'Problem>Solution', story_lesson: 'Story>Lesson',
   short_punchy: 'Short&Punchy', long_form: 'Long-form', other: 'Other',
+};
+
+const toneLabels: Record<string, { label: string; emoji: string; desc: string }> = {
+  urgency: { label: 'Urgency', emoji: '🔥', desc: 'Time pressure, scarcity, "act now"' },
+  authority: { label: 'Authority', emoji: '👑', desc: 'Expertise, credentials, proven results' },
+  social_proof: { label: 'Social Proof', emoji: '👥', desc: 'Others validate, trending, "everyone"' },
+  fomo: { label: 'FOMO', emoji: '😰', desc: 'Fear of missing out, competitors ahead' },
+  aspirational: { label: 'Aspirational', emoji: '🚀', desc: 'Dreams, transformation, next level' },
+  empathy: { label: 'Empathy', emoji: '🤝', desc: 'Understanding pain, "been there"' },
+  provocative: { label: 'Provocative', emoji: '💣', desc: 'Strong opinions, divisive, "wake up"' },
+  educational: { label: 'Educational', emoji: '📚', desc: 'Teaching, explaining, frameworks' },
+  vulnerable: { label: 'Vulnerable', emoji: '💔', desc: 'Failure, fear, personal weakness' },
+  humorous: { label: 'Humorous', emoji: '😂', desc: 'Jokes, irony, self-deprecation' },
+  neutral: { label: 'Neutral', emoji: '📄', desc: 'Balanced, informational' },
+};
+
+const toneColors: Record<string, string> = {
+  urgency: '#f87171', authority: '#fbbf24', social_proof: '#a78bfa',
+  fomo: '#fb923c', aspirational: '#34d399', empathy: '#38bdf8',
+  provocative: '#e8935a', educational: '#6366f1', vulnerable: '#f472b6',
+  humorous: '#22d3ee', neutral: '#4b5563',
 };
 
 const BASE = import.meta.env.VITE_API_URL || '';
@@ -199,6 +226,67 @@ export default function OutlierExplorer() {
               </div>
             )}
           </div>
+
+          {/* Text Psychology / Tone Analysis */}
+          {data.patterns.tone_breakdown && data.patterns.tone_breakdown.length > 0 && (
+            <div className="bg-bg-card rounded-xl p-6">
+              <h3 className="text-lg font-semibold mb-1">Text Psychology of Outliers</h3>
+              <p className="text-text-muted text-xs mb-4">What psychological triggers are the top posts using? Ranked by avg engagement.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {data.patterns.tone_breakdown.map((t) => {
+                  const info = toneLabels[t.tone] || { label: t.tone, emoji: '📄', desc: '' };
+                  const color = toneColors[t.tone] || '#4b5563';
+                  return (
+                    <div key={t.tone} className="bg-bg-secondary rounded-lg p-4 border border-border/50 hover:border-border transition-colors">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xl">{info.emoji}</span>
+                        <span className="font-semibold text-text-primary">{info.label}</span>
+                        <span className="ml-auto text-xs text-text-muted">{t.count} posts</span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex-1 bg-bg-primary rounded-full h-2.5 overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all"
+                            style={{
+                              width: `${Math.min(100, (t.avg_engagement / Math.max(...data.patterns.tone_breakdown.map(x => x.avg_engagement))) * 100)}%`,
+                              backgroundColor: color,
+                            }}
+                          />
+                        </div>
+                        <span className="text-sm font-bold text-text-primary">{t.avg_engagement.toLocaleString()}</span>
+                      </div>
+                      <p className="text-[10px] text-text-muted">{info.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Tone distribution in outliers */}
+          {data.patterns.tone_distribution && Object.keys(data.patterns.tone_distribution).length > 0 && (
+            <div className="bg-bg-card rounded-xl p-6">
+              <h3 className="text-sm font-semibold mb-3 text-text-secondary">Dominant Tone in Outlier Posts</h3>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(data.patterns.tone_distribution)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([tone, count]) => {
+                    const info = toneLabels[tone] || { label: tone, emoji: '📄', desc: '' };
+                    const total = Object.values(data.patterns.tone_distribution).reduce((s, v) => s + v, 0);
+                    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                    return (
+                      <span
+                        key={tone}
+                        className="px-3 py-1.5 rounded-lg text-sm border"
+                        style={{ borderColor: toneColors[tone] || '#4b5563', color: toneColors[tone] || '#9ca3af', backgroundColor: `${toneColors[tone] || '#4b5563'}15` }}
+                      >
+                        {info.emoji} {info.label} {pct}%
+                      </span>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
 
           {/* Frequency vs Engagement */}
           {data.patterns.frequency_correlation && data.patterns.frequency_correlation.length >= 2 && (
