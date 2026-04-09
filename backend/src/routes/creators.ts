@@ -148,6 +148,38 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/creators/refresh-batch — Re-scrape multiple creators
+router.post('/refresh-batch', async (req: Request, res: Response) => {
+  try {
+    const { ids } = req.body; // array of creator IDs, or empty/null for all
+    let creators: NonNullable<Awaited<ReturnType<typeof CreatorModel.findById>>>[];
+    if (ids && Array.isArray(ids) && ids.length > 0) {
+      const found = await Promise.all(ids.map((id: string) => CreatorModel.findById(id)));
+      creators = found.filter((c): c is NonNullable<typeof c> => c != null);
+    } else {
+      creators = await CreatorModel.findAll();
+    }
+
+    const results: { id: string; name: string | null; status: string }[] = [];
+    for (const creator of creators) {
+      if (!creator.linkedin_id) {
+        results.push({ id: creator.id, name: creator.name, status: 'skipped: no linkedin_id' });
+        continue;
+      }
+      try {
+        await scrapeCreatorPosts(creator.id, creator.linkedin_id);
+        results.push({ id: creator.id, name: creator.name, status: 'ok' });
+      } catch (err: any) {
+        results.push({ id: creator.id, name: creator.name, status: `error: ${err.message}` });
+      }
+    }
+
+    res.json({ refreshed: results.filter(r => r.status === 'ok').length, total: creators.length, results });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/creators/:id/refresh — Re-scrape posts
 router.post('/:id/refresh', async (req: Request, res: Response) => {
   try {
