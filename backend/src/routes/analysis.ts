@@ -51,37 +51,41 @@ router.get('/:id/stats', async (req: Request, res: Response) => {
       ? Math.round((parseFloat(stats.avg_engagement || '0') / creator.followers_count) * 10000) / 100
       : 0;
 
-    // Hook type breakdown
-    const hookTypeCounts: Record<string, { count: number; totalEngagement: number }> = {};
+    // Hook type breakdown — sorted by avg outlier ratio (primary), engagement as secondary
+    const hookTypeCounts: Record<string, { count: number; totalEngagement: number; totalRatio: number }> = {};
     for (const p of allPosts) {
       const ht = p.hook_type || 'other';
-      if (!hookTypeCounts[ht]) hookTypeCounts[ht] = { count: 0, totalEngagement: 0 };
+      if (!hookTypeCounts[ht]) hookTypeCounts[ht] = { count: 0, totalEngagement: 0, totalRatio: 0 };
       hookTypeCounts[ht].count++;
       hookTypeCounts[ht].totalEngagement += p.engagement_score;
+      hookTypeCounts[ht].totalRatio += p.outlier_ratio;
     }
     const hookTypeBreakdown = Object.entries(hookTypeCounts)
       .map(([type, data]) => ({
         type,
         count: data.count,
+        avg_ratio: data.count > 0 ? Math.round((data.totalRatio / data.count) * 100) / 100 : 0,
         avg_engagement: data.count > 0 ? Math.round(data.totalEngagement / data.count) : 0,
       }))
-      .sort((a, b) => b.avg_engagement - a.avg_engagement);
+      .sort((a, b) => b.avg_ratio - a.avg_ratio);
 
-    // Structure breakdown
-    const structureCounts: Record<string, { count: number; totalEngagement: number }> = {};
+    // Structure breakdown — sorted by avg outlier ratio
+    const structureCounts: Record<string, { count: number; totalEngagement: number; totalRatio: number }> = {};
     for (const p of allPosts) {
       const ps = p.post_structure || 'other';
-      if (!structureCounts[ps]) structureCounts[ps] = { count: 0, totalEngagement: 0 };
+      if (!structureCounts[ps]) structureCounts[ps] = { count: 0, totalEngagement: 0, totalRatio: 0 };
       structureCounts[ps].count++;
       structureCounts[ps].totalEngagement += p.engagement_score;
+      structureCounts[ps].totalRatio += p.outlier_ratio;
     }
     const structureBreakdown = Object.entries(structureCounts)
       .map(([structure, data]) => ({
         structure,
         count: data.count,
+        avg_ratio: data.count > 0 ? Math.round((data.totalRatio / data.count) * 100) / 100 : 0,
         avg_engagement: data.count > 0 ? Math.round(data.totalEngagement / data.count) : 0,
       }))
-      .sort((a, b) => b.avg_engagement - a.avg_engagement);
+      .sort((a, b) => b.avg_ratio - a.avg_ratio);
 
     // Average engagement ratios
     const avgCommentLikeRatio = allPosts.length > 0

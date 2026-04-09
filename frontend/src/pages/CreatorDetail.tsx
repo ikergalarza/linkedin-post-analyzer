@@ -49,8 +49,8 @@ interface Stats {
   avg_share_like_ratio: number;
   content_type_distribution: { content_type: string; count: string }[];
   outlier_content_type_distribution: { content_type: string; count: string }[];
-  hook_type_breakdown: { type: string; count: number; avg_engagement: number }[];
-  structure_breakdown: { structure: string; count: number; avg_engagement: number }[];
+  hook_type_breakdown: { type: string; count: number; avg_ratio: number; avg_engagement: number }[];
+  structure_breakdown: { structure: string; count: number; avg_ratio: number; avg_engagement: number }[];
   timing_heatmap: { day: number; hour: number; count: number; avg_engagement: number; outliers: number; outlier_rate: number }[];
   best_timing_slots: { day: number; hour: number; count: number; avg_engagement: number; outliers: number; outlier_rate: number }[];
   creator_location: string | null;

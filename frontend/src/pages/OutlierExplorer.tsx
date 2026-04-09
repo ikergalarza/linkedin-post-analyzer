@@ -65,9 +65,11 @@ interface CrossCreatorData {
     tone_comparison: {
       tone: string;
       outlier_count: number;
+      outlier_avg_ratio: number;
       outlier_avg_engagement: number;
       outlier_pct: number;
       normal_count: number;
+      normal_avg_ratio: number;
       normal_avg_engagement: number;
       normal_pct: number;
     }[];
@@ -510,12 +512,12 @@ export default function OutlierExplorer() {
                 </span>
               </div>
 
-              {/* Comparative cards */}
+              {/* Comparative cards — sorted by outlier ratio */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {data.patterns.tone_comparison.map((t) => {
-                  const info = toneLabels[t.tone] || { label: t.tone, emoji: '📄', desc: '' };
+                  const info = toneLabels[t.tone] || { label: t.tone, emoji: '', desc: '' };
                   const color = toneColors[t.tone] || '#4b5563';
-                  const maxEng = Math.max(...data.patterns.tone_comparison.map((x) => x.outlier_avg_engagement), 1);
+                  const maxRatio = Math.max(...data.patterns.tone_comparison.map((x) => x.outlier_avg_ratio || 0), 1);
                   const diff = t.outlier_pct - t.normal_pct;
                   return (
                     <div key={t.tone} className="bg-bg-secondary rounded-lg p-4 border border-border/50 hover:border-border transition-colors">
@@ -529,19 +531,24 @@ export default function OutlierExplorer() {
                         )}
                       </div>
 
-                      {/* Engagement bar */}
-                      <div className="flex items-center gap-2 mb-2">
+                      {/* Ratio bar (primary) */}
+                      <div className="flex items-center gap-2 mb-1">
                         <div className="flex-1 bg-bg-primary rounded-full h-2.5 overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
-                              width: `${Math.min(100, (t.outlier_avg_engagement / maxEng) * 100)}%`,
+                              width: `${Math.min(100, ((t.outlier_avg_ratio || 0) / maxRatio) * 100)}%`,
                               backgroundColor: color,
                             }}
                           />
                         </div>
-                        <span className="text-sm font-bold text-text-primary">{t.outlier_avg_engagement.toLocaleString()}</span>
+                        <span className="text-sm font-bold text-text-primary">{t.outlier_avg_ratio || 0}x</span>
                       </div>
+
+                      {/* Engagement as secondary */}
+                      <p className="text-[10px] text-text-muted mb-2">
+                        {t.outlier_avg_engagement.toLocaleString()} avg eng
+                      </p>
 
                       {/* Outlier vs Normal comparison */}
                       <div className="flex gap-4 text-[10px] mb-1">
@@ -582,14 +589,14 @@ export default function OutlierExplorer() {
                         <span className="text-sm font-semibold text-text-primary">{a.label}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-accent">{a.avg_engagement.toLocaleString()}</span>
-                        <span className="text-[10px] text-text-muted ml-1">avg eng</span>
+                        <span className="text-sm font-bold text-accent">{a.avg_outlier_ratio}x</span>
+                        <span className="text-[10px] text-text-muted ml-1">avg ratio</span>
                       </div>
                     </div>
                     <p className="text-xs text-text-secondary mb-2">{a.description}</p>
                     <div className="flex items-center gap-3 text-[10px] text-text-muted">
                       <span>{a.count} posts</span>
-                      <span>{a.avg_outlier_ratio}x avg ratio</span>
+                      <span>{a.avg_engagement.toLocaleString()} avg eng</span>
                     </div>
                     {a.example_hooks.length > 0 && (
                       <div className="mt-2 space-y-1">

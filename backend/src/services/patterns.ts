@@ -45,53 +45,54 @@ export function detectPatterns(allPosts: Post[]): PatternInsight[] {
     });
   }
 
-  // 3. Hook type analysis
-  const hookTypeCounts: Record<string, { count: number; totalEngagement: number }> = {};
+  // 3. Hook type analysis — ranked by avg outlier ratio (not raw engagement)
+  const hookTypeCounts: Record<string, { count: number; totalRatio: number; totalEngagement: number }> = {};
   for (const p of allPosts) {
     const ht = p.hook_type || 'other';
-    if (!hookTypeCounts[ht]) hookTypeCounts[ht] = { count: 0, totalEngagement: 0 };
+    if (!hookTypeCounts[ht]) hookTypeCounts[ht] = { count: 0, totalRatio: 0, totalEngagement: 0 };
     hookTypeCounts[ht].count++;
+    hookTypeCounts[ht].totalRatio += p.outlier_ratio;
     hookTypeCounts[ht].totalEngagement += p.engagement_score;
   }
   const hookTypeEntries = Object.entries(hookTypeCounts)
     .filter(([k]) => k !== 'other')
     .map(([type, data]) => ({
       type,
+      avgRatio: data.count > 0 ? Math.round((data.totalRatio / data.count) * 100) / 100 : 0,
       avgEng: data.count > 0 ? data.totalEngagement / data.count : 0,
       count: data.count,
     }))
-    .sort((a, b) => b.avgEng - a.avgEng);
+    .sort((a, b) => b.avgRatio - a.avgRatio);
 
   if (hookTypeEntries.length > 0) {
     const best = hookTypeEntries[0];
     const worst = hookTypeEntries[hookTypeEntries.length - 1];
-    const ratio = worst.avgEng > 0 ? Math.round(best.avgEng / worst.avgEng * 10) / 10 : 0;
     insights.push({
       type: 'hook_type',
       title: 'Best performing hook type',
       value: formatHookType(best.type),
-      detail: ratio > 0
-        ? `"${formatHookType(best.type)}" hooks average ${Math.round(best.avgEng)} engagement (${ratio}x more than "${formatHookType(worst.type)}").`
-        : `"${formatHookType(best.type)}" hooks average ${Math.round(best.avgEng)} engagement across ${best.count} posts.`,
+      detail: `"${formatHookType(best.type)}" hooks average ${best.avgRatio}x ratio (${worst.avgRatio > 0 ? Math.round(best.avgRatio / worst.avgRatio * 10) / 10 : ''}x more than "${formatHookType(worst.type)}") across ${best.count} posts.`,
     });
   }
 
-  // 4. Post structure analysis
-  const structureCounts: Record<string, { count: number; totalEngagement: number }> = {};
+  // 4. Post structure analysis — ranked by avg outlier ratio
+  const structureCounts: Record<string, { count: number; totalRatio: number; totalEngagement: number }> = {};
   for (const p of allPosts) {
     const ps = p.post_structure || 'other';
-    if (!structureCounts[ps]) structureCounts[ps] = { count: 0, totalEngagement: 0 };
+    if (!structureCounts[ps]) structureCounts[ps] = { count: 0, totalRatio: 0, totalEngagement: 0 };
     structureCounts[ps].count++;
+    structureCounts[ps].totalRatio += p.outlier_ratio;
     structureCounts[ps].totalEngagement += p.engagement_score;
   }
   const structEntries = Object.entries(structureCounts)
     .filter(([k]) => k !== 'other')
     .map(([structure, data]) => ({
       structure,
+      avgRatio: data.count > 0 ? Math.round((data.totalRatio / data.count) * 100) / 100 : 0,
       avgEng: data.count > 0 ? data.totalEngagement / data.count : 0,
       count: data.count,
     }))
-    .sort((a, b) => b.avgEng - a.avgEng);
+    .sort((a, b) => b.avgRatio - a.avgRatio);
 
   if (structEntries.length > 0) {
     const best = structEntries[0];
@@ -99,7 +100,7 @@ export function detectPatterns(allPosts: Post[]): PatternInsight[] {
       type: 'post_structure',
       title: 'Best performing structure',
       value: formatStructure(best.structure),
-      detail: `"${formatStructure(best.structure)}" posts average ${Math.round(best.avgEng)} engagement (${best.count} posts).`,
+      detail: `"${formatStructure(best.structure)}" posts average ${best.avgRatio}x ratio (${best.count} posts).`,
     });
   }
 
@@ -323,41 +324,45 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
   };
 
   // Outlier tones
-  const outlierTones: Record<string, { count: number; totalEng: number }> = {};
+  const outlierTones: Record<string, { count: number; totalEng: number; totalRatio: number }> = {};
   for (const p of outliers) {
     const tone = getTone(p);
-    if (!outlierTones[tone]) outlierTones[tone] = { count: 0, totalEng: 0 };
+    if (!outlierTones[tone]) outlierTones[tone] = { count: 0, totalEng: 0, totalRatio: 0 };
     outlierTones[tone].count++;
     outlierTones[tone].totalEng += p.engagement_score;
+    outlierTones[tone].totalRatio += p.outlier_ratio;
   }
 
   // Normal post tones (for comparison)
-  const normalTones: Record<string, { count: number; totalEng: number }> = {};
+  const normalTones: Record<string, { count: number; totalEng: number; totalRatio: number }> = {};
   for (const p of nonOutliers) {
     const tone = getTone(p);
-    if (!normalTones[tone]) normalTones[tone] = { count: 0, totalEng: 0 };
+    if (!normalTones[tone]) normalTones[tone] = { count: 0, totalEng: 0, totalRatio: 0 };
     normalTones[tone].count++;
     normalTones[tone].totalEng += p.engagement_score;
+    normalTones[tone].totalRatio += p.outlier_ratio;
   }
 
-  // Build comparative breakdown
+  // Build comparative breakdown — sorted by avg outlier ratio (not raw engagement)
   const allToneKeys = new Set([...Object.keys(outlierTones), ...Object.keys(normalTones)]);
   const toneComparison = [...allToneKeys]
     .filter((k) => k !== 'neutral')
     .map((tone) => {
-      const o = outlierTones[tone] || { count: 0, totalEng: 0 };
-      const n = normalTones[tone] || { count: 0, totalEng: 0 };
+      const o = outlierTones[tone] || { count: 0, totalEng: 0, totalRatio: 0 };
+      const n = normalTones[tone] || { count: 0, totalEng: 0, totalRatio: 0 };
       return {
         tone,
         outlier_count: o.count,
+        outlier_avg_ratio: o.count > 0 ? Math.round((o.totalRatio / o.count) * 100) / 100 : 0,
         outlier_avg_engagement: o.count > 0 ? Math.round(o.totalEng / o.count) : 0,
         outlier_pct: outliers.length > 0 ? Math.round((o.count / outliers.length) * 100) : 0,
         normal_count: n.count,
+        normal_avg_ratio: n.count > 0 ? Math.round((n.totalRatio / n.count) * 100) / 100 : 0,
         normal_avg_engagement: n.count > 0 ? Math.round(n.totalEng / n.count) : 0,
         normal_pct: nonOutliers.length > 0 ? Math.round((n.count / nonOutliers.length) * 100) : 0,
       };
     })
-    .sort((a, b) => b.outlier_avg_engagement - a.outlier_avg_engagement);
+    .sort((a, b) => b.outlier_avg_ratio - a.outlier_avg_ratio);
 
   // Neutral stats
   const neutralOutlierPct = outliers.length > 0
@@ -1008,18 +1013,18 @@ function formatStructure(structure: string): string {
 }
 
 function generateToneInterpretation(
-  toneComparison: { tone: string; outlier_count: number; outlier_avg_engagement: number; outlier_pct: number; normal_count: number; normal_avg_engagement: number; normal_pct: number }[],
+  toneComparison: { tone: string; outlier_count: number; outlier_avg_ratio: number; outlier_avg_engagement: number; outlier_pct: number; normal_count: number; normal_avg_ratio: number; normal_avg_engagement: number; normal_pct: number }[],
   totalOutliers: number,
   totalNormal: number,
   neutralOutlierPct: number,
 ): string {
   const lines: string[] = [];
 
-  // Top performing tones by engagement
-  const topByEng = toneComparison.filter((t) => t.outlier_count >= 2).slice(0, 3);
-  if (topByEng.length > 0) {
-    const names = topByEng.map((t) => `${formatToneLabel(t.tone)} (${t.outlier_avg_engagement.toLocaleString()} avg)`);
-    lines.push(`The tones with highest engagement in outliers are: ${names.join(', ')}.`);
+  // Top performing tones by outlier ratio (primary metric)
+  const topByRatio = toneComparison.filter((t) => t.outlier_count >= 2).slice(0, 3);
+  if (topByRatio.length > 0) {
+    const names = topByRatio.map((t) => `${formatToneLabel(t.tone)} (${t.outlier_avg_ratio}x avg ratio)`);
+    lines.push(`The tones with highest outlier ratio are: ${names.join(', ')}.`);
   }
 
   // Tones that are more prevalent in outliers vs normal
@@ -1043,14 +1048,14 @@ function generateToneInterpretation(
     lines.push(`Only ${neutralOutlierPct}% of outliers are neutral — emotional/psychological triggers play a strong role in viral performance.`);
   }
 
-  // Best engagement tone
-  if (topByEng.length > 0 && topByEng[0].outlier_avg_engagement > 0) {
-    const best = topByEng[0];
+  // Best vs worst tone ratio
+  if (topByRatio.length > 0 && topByRatio[0].outlier_avg_ratio > 0) {
+    const best = topByRatio[0];
     const worst = toneComparison.filter((t) => t.outlier_count >= 2).slice(-1)[0];
-    if (worst && worst.outlier_avg_engagement > 0) {
-      const ratio = Math.round(best.outlier_avg_engagement / worst.outlier_avg_engagement * 10) / 10;
-      if (ratio > 1.5) {
-        lines.push(`"${formatToneLabel(best.tone)}" posts get ${ratio}x more engagement than "${formatToneLabel(worst.tone)}" posts.`);
+    if (worst && worst.outlier_avg_ratio > 0) {
+      const diff = Math.round((best.outlier_avg_ratio / worst.outlier_avg_ratio) * 10) / 10;
+      if (diff > 1.3) {
+        lines.push(`"${formatToneLabel(best.tone)}" posts achieve ${diff}x higher outlier ratio than "${formatToneLabel(worst.tone)}" posts.`);
       }
     }
   }
@@ -1179,7 +1184,7 @@ export function detectArchetypes(allPosts: Post[]): {
       const avgRatio = Math.round((data.totalRatio / data.posts.length) * 100) / 100;
       const exampleHooks = data.posts
         .filter((p) => p.hook_text)
-        .sort((a, b) => b.engagement_score - a.engagement_score)
+        .sort((a, b) => b.outlier_ratio - a.outlier_ratio)
         .slice(0, 3)
         .map((p) => p.hook_text!.substring(0, 80));
 
@@ -1189,7 +1194,7 @@ export function detectArchetypes(allPosts: Post[]): {
       return {
         archetype: key,
         label: archetypeName,
-        description: `When a "${formatHookType(hook)}" hook is combined with "${formatStructure(structure)}" structure and "${formatToneLabel(tone)}" tone, posts average ${avgEng.toLocaleString()} engagement (${avgRatio}x ratio).`,
+        description: `When a "${formatHookType(hook)}" hook is combined with "${formatStructure(structure)}" structure and "${formatToneLabel(tone)}" tone, posts average ${avgRatio}x ratio (${avgEng.toLocaleString()} eng).`,
         hook_type: hook,
         structure,
         tone,
@@ -1199,7 +1204,7 @@ export function detectArchetypes(allPosts: Post[]): {
         example_hooks: exampleHooks,
       };
     })
-    .sort((a, b) => b.avg_engagement - a.avg_engagement)
+    .sort((a, b) => b.avg_outlier_ratio - a.avg_outlier_ratio)
     .slice(0, 15);
 }
 
