@@ -367,11 +367,8 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
   // Generate interpretation
   const interpretation = generateToneInterpretation(toneComparison, outliers.length, nonOutliers.length, neutralOutlierPct);
 
-  // Generate global AI analysis
-  const globalAnalysis = generateGlobalAnalysis(
-    outliers, nonOutliers, typeCounts, hookTypeCounts, structureCounts,
-    toneComparison, neutralOutlierPct, avgWords, ctaRate, commonTraits,
-  );
+  // Analyze actual text patterns in outlier content
+  const textPatterns = analyzeTextPatterns(outliers, nonOutliers);
 
   return {
     total_outliers: outliers.length,
@@ -385,96 +382,293 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
     cta_rate: Math.round(ctaRate * 100),
     common_traits: commonTraits,
     frequency_correlation: frequencyCorrelation,
-    global_analysis: globalAnalysis,
+    text_patterns: textPatterns,
   };
 }
 
-function generateGlobalAnalysis(
-  outliers: Post[],
-  nonOutliers: Post[],
-  typeCounts: Record<string, number>,
-  hookTypeCounts: Record<string, number>,
-  structureCounts: Record<string, number>,
-  toneComparison: { tone: string; outlier_count: number; outlier_avg_engagement: number; outlier_pct: number; normal_pct: number }[],
-  neutralPct: number,
-  avgWords: number,
-  ctaRate: number,
-  commonTraits: string[],
-): string {
-  if (outliers.length < 3) return 'Not enough outlier data to generate a meaningful analysis.';
+// Stopwords to exclude from keyword analysis (EN + ES)
+const STOPWORDS = new Set([
+  // English
+  'the','a','an','is','are','was','were','be','been','being','have','has','had',
+  'do','does','did','will','would','shall','should','may','might','must','can','could',
+  'i','me','my','we','us','our','you','your','he','him','his','she','her','it','its',
+  'they','them','their','this','that','these','those','what','which','who','whom',
+  'and','but','or','nor','not','no','so','if','then','than','too','very','just',
+  'about','above','after','again','all','also','am','any','as','at','back','because',
+  'before','between','both','by','come','day','de','down','each','even','every',
+  'first','for','from','get','go','got','here','how','in','into','know','like',
+  'make','many','more','most','much','new','now','of','on','one','only','or','other',
+  'out','over','own','people','per','really','right','said','same','say','see','some',
+  'still','take','tell','there','thing','think','time','to','two','up','use','want',
+  'way','well','when','where','why','with','work','year','don\'t','didn\'t','won\'t',
+  'isn\'t','aren\'t','wasn\'t','weren\'t','doesn\'t','it\'s','i\'m','you\'re','they\'re',
+  'we\'re','i\'ve','you\'ve','we\'ve','they\'ve','i\'ll','you\'ll','he\'ll','she\'ll',
+  'that\'s','let','ve','re','ll','s','t','m','d',
+  // Spanish
+  'el','la','los','las','un','una','unos','unas','de','del','al','en','con','por',
+  'para','es','son','fue','ser','estar','que','se','no','si','lo','le','su','sus',
+  'me','te','nos','mi','tu','yo','ya','más','muy','como','pero','sin','sobre',
+  'entre','hasta','desde','donde','cuando','todo','esta','este','ese','eso','aquí',
+  'hay','tiene','hacer','puede','cada','porque','también','bien','o','ni','e','y',
+  'era','han','he','ha','hemos','tiene','hay','va','algo','nada','otro','otra',
+  'otros','muchos','poco','tan','después','antes','solo','mucho',
+]);
 
-  const sections: string[] = [];
+function analyzeTextPatterns(outliers: Post[], nonOutliers: Post[]) {
+  const texts = outliers.map((p) => p.content_text || '').filter((t) => t.length > 10);
+  const normalTexts = nonOutliers.map((p) => p.content_text || '').filter((t) => t.length > 10);
 
-  // 1. Content format analysis
-  const typeEntries = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
-  const topFormat = typeEntries[0];
-  if (topFormat) {
-    const pct = Math.round((topFormat[1] / outliers.length) * 100);
-    const normalTypeCounts: Record<string, number> = {};
-    for (const p of nonOutliers) normalTypeCounts[p.content_type] = (normalTypeCounts[p.content_type] || 0) + 1;
-    const normalPct = nonOutliers.length > 0 ? Math.round(((normalTypeCounts[topFormat[0]] || 0) / nonOutliers.length) * 100) : 0;
+  if (texts.length < 3) {
+    return {
+      opening_patterns: [],
+      closing_patterns: [],
+      recurring_phrases: [],
+      power_words: [],
+      formatting_style: null,
+      writing_analysis: 'Not enough outlier text data for analysis.',
+    };
+  }
 
-    if (pct > normalPct + 10) {
-      sections.push(`Content format matters: ${pct}% of outliers are "${topFormat[0]}" vs ${normalPct}% in normal posts. This format clearly resonates more with the audience.`);
-    } else if (typeEntries.length > 1) {
-      sections.push(`Outliers come from diverse formats: ${typeEntries.slice(0, 3).map(([t, c]) => `${t} (${Math.round((c / outliers.length) * 100)}%)`).join(', ')}. No single format dominates.`);
+  // ---- 1. Opening line patterns ----
+  const openingLines = texts.map((t) => {
+    const firstLine = t.split('\n').find((l) => l.trim().length > 0) || '';
+    return firstLine.trim();
+  }).filter((l) => l.length > 5);
+
+  // Classify openings by pattern
+  const openingPatterns: Record<string, { count: number; examples: string[] }> = {};
+  for (const line of openingLines) {
+    const pattern = classifyOpeningPattern(line);
+    if (!openingPatterns[pattern]) openingPatterns[pattern] = { count: 0, examples: [] };
+    openingPatterns[pattern].count++;
+    if (openingPatterns[pattern].examples.length < 3) {
+      openingPatterns[pattern].examples.push(line.substring(0, 80) + (line.length > 80 ? '...' : ''));
     }
   }
 
-  // 2. Hook strategy
-  const hookEntries = Object.entries(hookTypeCounts).filter(([k]) => k !== 'other').sort((a, b) => b[1] - a[1]);
-  if (hookEntries.length >= 2) {
-    const top2 = hookEntries.slice(0, 2);
-    const top2Pct = Math.round(((top2[0][1] + top2[1][1]) / outliers.length) * 100);
-    sections.push(`Hook strategy: the top 2 hook types ("${formatHookType(top2[0][0])}" and "${formatHookType(top2[1][0])}") account for ${top2Pct}% of outliers. ${top2Pct > 50 ? 'There\'s a clear winning formula here.' : 'Successful hooks are diverse — variety works.'}`);
-  }
+  // ---- 2. Closing line patterns ----
+  const closingLines = texts.map((t) => {
+    const lines = t.split('\n').filter((l) => l.trim().length > 0);
+    return (lines[lines.length - 1] || '').trim();
+  }).filter((l) => l.length > 3);
 
-  // 3. Structure insight
-  const structEntries = Object.entries(structureCounts).filter(([k]) => k !== 'other').sort((a, b) => b[1] - a[1]);
-  if (structEntries.length >= 1) {
-    const topStruct = structEntries[0];
-    const pct = Math.round((topStruct[1] / outliers.length) * 100);
-    if (pct >= 30) {
-      sections.push(`Structure: "${formatStructure(topStruct[0])}" is the dominant structure in ${pct}% of outliers.`);
+  const closingPatterns: Record<string, { count: number; examples: string[] }> = {};
+  for (const line of closingLines) {
+    const pattern = classifyClosingPattern(line);
+    if (!closingPatterns[pattern]) closingPatterns[pattern] = { count: 0, examples: [] };
+    closingPatterns[pattern].count++;
+    if (closingPatterns[pattern].examples.length < 3) {
+      closingPatterns[pattern].examples.push(line.substring(0, 80) + (line.length > 80 ? '...' : ''));
     }
   }
 
-  // 4. Length insight
-  const avgWordsNormal = nonOutliers.length > 0 ? nonOutliers.reduce((s, p) => s + p.word_count, 0) / nonOutliers.length : 0;
-  const lengthDiff = avgWordsNormal > 0 ? Math.round(((avgWords - avgWordsNormal) / avgWordsNormal) * 100) : 0;
-  if (Math.abs(lengthDiff) > 15) {
-    sections.push(`Post length: outliers average ${Math.round(avgWords)} words (${lengthDiff > 0 ? `${lengthDiff}% longer` : `${Math.abs(lengthDiff)}% shorter`} than normal posts). ${lengthDiff > 0 ? 'Longer, more in-depth content tends to go viral.' : 'Short, punchy content outperforms.'}`);
+  // ---- 3. Recurring 2-3 word phrases (ngrams) ----
+  const outlierNgrams = extractNgrams(texts);
+  const normalNgrams = extractNgrams(normalTexts);
+
+  // Find phrases that appear more in outliers than normal
+  const recurringPhrases = Object.entries(outlierNgrams)
+    .filter(([phrase, count]) => count >= 3)
+    .map(([phrase, count]) => {
+      const normalCount = normalNgrams[phrase] || 0;
+      const outlierRate = count / texts.length;
+      const normalRate = normalTexts.length > 0 ? normalCount / normalTexts.length : 0;
+      return { phrase, count, outlier_pct: Math.round(outlierRate * 100), normal_pct: Math.round(normalRate * 100), overindex: normalRate > 0 ? Math.round((outlierRate / normalRate) * 10) / 10 : 99 };
+    })
+    .sort((a, b) => b.overindex - a.overindex)
+    .slice(0, 15);
+
+  // ---- 4. Power words (high-impact single words) ----
+  const outlierWords = extractWordFrequency(texts);
+  const normalWords = extractWordFrequency(normalTexts);
+
+  const powerWords = Object.entries(outlierWords)
+    .filter(([word, count]) => count >= 4 && word.length >= 4)
+    .map(([word, count]) => {
+      const normalCount = normalWords[word] || 0;
+      const outlierRate = count / texts.length;
+      const normalRate = normalTexts.length > 0 ? normalCount / normalTexts.length : 0;
+      return { word, count, outlier_pct: Math.round(outlierRate * 100), normal_pct: Math.round(normalRate * 100), overindex: normalRate > 0 ? Math.round((outlierRate / normalRate) * 10) / 10 : 99 };
+    })
+    .filter((w) => w.overindex > 1.2 || w.outlier_pct >= 20)
+    .sort((a, b) => b.overindex - a.overindex)
+    .slice(0, 20);
+
+  // ---- 5. Formatting / writing style ----
+  const avgSentenceLen = texts.map((t) => {
+    const sentences = t.split(/[.!?]+/).filter((s) => s.trim().length > 3);
+    return sentences.length > 0 ? t.split(/\s+/).length / sentences.length : 0;
+  });
+  const avgSentenceLenOutlier = avg(avgSentenceLen);
+
+  const normalAvgSentenceLen = normalTexts.map((t) => {
+    const sentences = t.split(/[.!?]+/).filter((s) => s.trim().length > 3);
+    return sentences.length > 0 ? t.split(/\s+/).length / sentences.length : 0;
+  });
+  const avgSentenceLenNormal = avg(normalAvgSentenceLen);
+
+  const avgLineBreaksOutlier = avg(outliers.map((p) => p.line_break_count || 0));
+  const avgLineBreaksNormal = avg(nonOutliers.map((p) => p.line_break_count || 0));
+
+  const avgWordCountOutlier = avg(outliers.map((p) => p.word_count));
+  const avgWordCountNormal = avg(nonOutliers.map((p) => p.word_count));
+
+  const emojiRateOutlier = outliers.filter((p) => p.has_emoji).length / Math.max(1, outliers.length);
+  const emojiRateNormal = nonOutliers.filter((p) => p.has_emoji).length / Math.max(1, nonOutliers.length);
+
+  const hashtagRateOutlier = outliers.filter((p) => p.has_hashtags).length / Math.max(1, outliers.length);
+  const hashtagRateNormal = nonOutliers.filter((p) => p.has_hashtags).length / Math.max(1, nonOutliers.length);
+
+  const questionRateOutlier = texts.filter((t) => t.includes('?')).length / Math.max(1, texts.length);
+  const questionRateNormal = normalTexts.filter((t) => t.includes('?')).length / Math.max(1, normalTexts.length);
+
+  const formattingStyle = {
+    avg_sentence_length: { outlier: Math.round(avgSentenceLenOutlier * 10) / 10, normal: Math.round(avgSentenceLenNormal * 10) / 10 },
+    avg_line_breaks: { outlier: Math.round(avgLineBreaksOutlier * 10) / 10, normal: Math.round(avgLineBreaksNormal * 10) / 10 },
+    avg_word_count: { outlier: Math.round(avgWordCountOutlier), normal: Math.round(avgWordCountNormal) },
+    emoji_rate: { outlier: Math.round(emojiRateOutlier * 100), normal: Math.round(emojiRateNormal * 100) },
+    hashtag_rate: { outlier: Math.round(hashtagRateOutlier * 100), normal: Math.round(hashtagRateNormal * 100) },
+    question_rate: { outlier: Math.round(questionRateOutlier * 100), normal: Math.round(questionRateNormal * 100) },
+  };
+
+  // ---- 6. Synthesize text-based analysis ----
+  const analysisLines: string[] = [];
+
+  // Opening analysis
+  const topOpening = Object.entries(openingPatterns).sort((a, b) => b[1].count - a[1].count);
+  if (topOpening.length > 0) {
+    const top = topOpening[0];
+    const topPct = Math.round((top[1].count / texts.length) * 100);
+    analysisLines.push(`Opening pattern: ${topPct}% of outliers open with a "${top[0]}". Examples: "${top[1].examples[0]}"`);
+    if (topOpening.length >= 2) {
+      const second = topOpening[1];
+      analysisLines[analysisLines.length - 1] += `. Second most common: "${second[0]}" (${Math.round((second[1].count / texts.length) * 100)}%).`;
+    }
   }
 
-  // 5. Emotional triggers
-  const emotionalTones = toneComparison.filter((t) => t.outlier_pct > t.normal_pct + 3);
-  if (emotionalTones.length > 0 && neutralPct < 70) {
-    sections.push(`Emotional triggers: ${emotionalTones.map((t) => `"${formatToneLabel(t.tone)}" (+${t.outlier_pct - t.normal_pct}pp vs normal)`).join(', ')} are overrepresented in outliers. Leveraging these tones increases the chance of going viral.`);
-  } else if (neutralPct >= 70) {
-    sections.push(`Interestingly, ${neutralPct}% of outliers use a neutral tone — going viral here is about delivering high-value content rather than emotional manipulation.`);
+  // Closing analysis
+  const topClosing = Object.entries(closingPatterns).sort((a, b) => b[1].count - a[1].count);
+  if (topClosing.length > 0) {
+    const top = topClosing[0];
+    const topPct = Math.round((top[1].count / texts.length) * 100);
+    analysisLines.push(`Closing pattern: ${topPct}% of outliers close with a "${top[0]}". Example: "${top[1].examples[0]}"`);
   }
 
-  // 6. CTA & engagement pattern
-  if (ctaRate > 0.4) {
-    sections.push(`Call-to-action: ${Math.round(ctaRate * 100)}% of outliers include a CTA, suggesting that explicitly asking for engagement works.`);
-  } else if (ctaRate < 0.15) {
-    sections.push(`Surprisingly, only ${Math.round(ctaRate * 100)}% of outliers include a CTA — the content itself drives engagement without needing to ask for it.`);
+  // Recurring phrases
+  const overindexedPhrases = recurringPhrases.filter((p) => p.overindex > 1.5).slice(0, 5);
+  if (overindexedPhrases.length > 0) {
+    analysisLines.push(`Key phrases that appear more in outliers: ${overindexedPhrases.map((p) => `"${p.phrase}" (${p.outlier_pct}% of outliers vs ${p.normal_pct}% normal)`).join(', ')}.`);
   }
 
-  // 7. Engagement quality
-  const avgCommentRatioOutlier = outliers.length > 0
-    ? outliers.reduce((s, p) => s + (p.comment_like_ratio || 0), 0) / outliers.length : 0;
-  const avgCommentRatioNormal = nonOutliers.length > 0
-    ? nonOutliers.reduce((s, p) => s + (p.comment_like_ratio || 0), 0) / nonOutliers.length : 0;
-  if (avgCommentRatioOutlier > avgCommentRatioNormal * 1.3 && avgCommentRatioOutlier > 0.05) {
-    sections.push(`Outliers generate ${Math.round(avgCommentRatioOutlier * 100)}% comment-to-like ratio vs ${Math.round(avgCommentRatioNormal * 100)}% for normal posts — viral content sparks conversations, not just passive likes.`);
+  // Power words
+  const topPowerWords = powerWords.filter((w) => w.overindex > 1.5).slice(0, 8);
+  if (topPowerWords.length > 0) {
+    analysisLines.push(`Power words overrepresented in outliers: ${topPowerWords.map((w) => `"${w.word}" (${w.overindex}x more frequent)`).join(', ')}.`);
   }
 
-  if (sections.length === 0) {
-    return 'The outlier patterns are diverse — no single dominant strategy emerges. Experiment across different formats, hooks, and tones.';
+  // Writing style diff
+  if (Math.abs(avgSentenceLenOutlier - avgSentenceLenNormal) > 2) {
+    const shorter = avgSentenceLenOutlier < avgSentenceLenNormal;
+    analysisLines.push(`Sentence style: outliers use ${shorter ? 'shorter' : 'longer'} sentences (avg ${Math.round(avgSentenceLenOutlier)} words/sentence vs ${Math.round(avgSentenceLenNormal)} in normal posts). ${shorter ? 'Punchy, broken-up writing gets more engagement.' : 'Deeper, more developed sentences resonate.'}`);
   }
 
-  return sections.join('\n\n');
+  if (avgLineBreaksOutlier > avgLineBreaksNormal * 1.3) {
+    analysisLines.push(`Formatting: outliers use ${Math.round((avgLineBreaksOutlier / Math.max(1, avgLineBreaksNormal) - 1) * 100)}% more line breaks — white space and visual rhythm matter.`);
+  }
+
+  const wordDiff = avgWordCountNormal > 0 ? Math.round(((avgWordCountOutlier - avgWordCountNormal) / avgWordCountNormal) * 100) : 0;
+  if (Math.abs(wordDiff) > 15) {
+    analysisLines.push(`Post length: outliers average ${Math.round(avgWordCountOutlier)} words (${wordDiff > 0 ? `${wordDiff}% longer` : `${Math.abs(wordDiff)}% shorter`} than normal). ${wordDiff > 0 ? 'In-depth content performs best.' : 'Concise content wins.'}`);
+  }
+
+  if (Math.abs(questionRateOutlier - questionRateNormal) > 10) {
+    analysisLines.push(`Questions: ${Math.round(questionRateOutlier * 100)}% of outliers contain questions vs ${Math.round(questionRateNormal * 100)}% in normal posts — ${questionRateOutlier > questionRateNormal ? 'asking questions drives engagement.' : 'statements outperform questions.'}`);
+  }
+
+  return {
+    opening_patterns: topOpening.map(([pattern, data]) => ({
+      pattern,
+      count: data.count,
+      pct: Math.round((data.count / texts.length) * 100),
+      examples: data.examples,
+    })),
+    closing_patterns: topClosing.map(([pattern, data]) => ({
+      pattern,
+      count: data.count,
+      pct: Math.round((data.count / texts.length) * 100),
+      examples: data.examples,
+    })),
+    recurring_phrases: recurringPhrases,
+    power_words: powerWords,
+    formatting_style: formattingStyle,
+    writing_analysis: analysisLines.join('\n\n'),
+  };
+}
+
+function classifyOpeningPattern(line: string): string {
+  const l = line.toLowerCase().trim();
+  if (l.endsWith('?') || l.includes('?')) return 'Question';
+  if (/^\d|^[0-9]/.test(l)) return 'Number/Stat';
+  if (/^(i |i\'m |i\'ve |i was |i had |i used |i remember|i quit|i lost|i failed|i got)/i.test(l)) return 'Personal "I" statement';
+  if (/^(you |you\'re |you\'ve |your )/i.test(l)) return 'Direct "You" address';
+  if (/^(stop |don\'t |never |no one |nobody |forget |quit |avoid )/i.test(l)) return 'Negative/Prohibition';
+  if (/^(here|here\'s|here are|these|this is how|this is why|this is what)/i.test(l)) return 'Direct reveal ("Here is...")';
+  if (/^(the |a |an )?(truth|problem|reality|secret|reason|thing|mistake|myth)/i.test(l)) return 'Truth/Revelation opener';
+  if (/^(most |everyone |nobody |people |they |99%|90%|80%)/i.test(l)) return '"Most people..." generalization';
+  if (/^(if |when |imagine |picture |what if)/i.test(l)) return 'Hypothetical/Conditional';
+  if (/^(how |why |what |where |who )/i.test(l)) return 'Question word';
+  if (/^(un |una |el |la |no |si |yo |tu |es |lo )/i.test(l)) return 'Spanish opener';
+  if (l.length < 30) return 'Short punchy statement';
+  return 'Declarative statement';
+}
+
+function classifyClosingPattern(line: string): string {
+  const l = line.toLowerCase().trim();
+  if (l.endsWith('?')) return 'Ends with question (CTA)';
+  if (/follow|like|comment|share|repost|save|subscribe|tag|dm/i.test(l)) return 'Explicit CTA (follow/like/share)';
+  if (/agree|disagree|thoughts|opinion|what do you/i.test(l)) return 'Opinion request';
+  if (/👇|⬇|below|comment below|drop/i.test(l)) return 'Comment CTA (👇)';
+  if (/#\w+/.test(l)) return 'Hashtag line';
+  if (/💡|🔥|🚀|✅|❤|🙏|🎯|💪|👊/i.test(l)) return 'Emoji emphasis';
+  if (/ps:|p\.s\.|ps\./i.test(l)) return 'P.S. postscript';
+  if (l.length < 25) return 'Short closing statement';
+  if (/remember|don\'t forget|lesson|takeaway|bottom line|key|moral/i.test(l)) return 'Lesson/Takeaway';
+  return 'Statement ending';
+}
+
+function extractNgrams(texts: string[]): Record<string, number> {
+  const ngrams: Record<string, number> = {};
+  for (const text of texts) {
+    const words = text.toLowerCase().replace(/[^\w\sáéíóúñü']/g, '').split(/\s+/).filter((w) => w.length >= 2 && !STOPWORDS.has(w));
+    // Bigrams
+    for (let i = 0; i < words.length - 1; i++) {
+      const bigram = `${words[i]} ${words[i + 1]}`;
+      if (words[i].length >= 3 || words[i + 1].length >= 3) {
+        ngrams[bigram] = (ngrams[bigram] || 0) + 1;
+      }
+    }
+    // Trigrams
+    for (let i = 0; i < words.length - 2; i++) {
+      const trigram = `${words[i]} ${words[i + 1]} ${words[i + 2]}`;
+      ngrams[trigram] = (ngrams[trigram] || 0) + 1;
+    }
+  }
+  return ngrams;
+}
+
+function extractWordFrequency(texts: string[]): Record<string, number> {
+  const freq: Record<string, number> = {};
+  for (const text of texts) {
+    const words = text.toLowerCase().replace(/[^\w\sáéíóúñü']/g, '').split(/\s+/).filter((w) => w.length >= 3 && !STOPWORDS.has(w));
+    const seen = new Set<string>(); // Count once per post
+    for (const w of words) {
+      if (!seen.has(w)) {
+        freq[w] = (freq[w] || 0) + 1;
+        seen.add(w);
+      }
+    }
+  }
+  return freq;
 }
 
 /**
@@ -586,7 +780,22 @@ export function generatePostExplanation(post: {
     reasons.push('Short and punchy — concise delivery that\'s easy to consume and share');
   }
 
-  return reasons.slice(0, 4).join('. ') + '.';
+  // Text-level analysis
+  const text = post.content_text || '';
+  if (text.length > 20) {
+    const lineCount = text.split('\n').filter((l) => l.trim()).length;
+    if (lineCount > 10) reasons.push('High-density formatting with many short lines — easy to scan and read');
+
+    const questionCount = (text.match(/\?/g) || []).length;
+    if (questionCount >= 3) reasons.push(`Uses ${questionCount} questions — keeps the reader engaged and thinking`);
+
+    const listItems = (text.match(/^[\s]*[-•→✅🔹\d+\.]/gm) || []).length;
+    if (listItems >= 3) reasons.push(`List-based format with ${listItems} items — structured, scannable content`);
+
+    if (/\n\n/.test(text) && lineCount > 5) reasons.push('Uses aggressive spacing between ideas — improves readability on mobile');
+  }
+
+  return reasons.slice(0, 5).join('. ') + '.';
 }
 
 function formatHookType(type: string): string {

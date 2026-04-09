@@ -43,7 +43,21 @@ interface CrossCreatorData {
     cta_rate: number;
     common_traits: string[];
     frequency_correlation: { postsPerWeek: number; avgEngagement: number }[];
-    global_analysis: string;
+    text_patterns: {
+      opening_patterns: { pattern: string; count: number; pct: number; examples: string[] }[];
+      closing_patterns: { pattern: string; count: number; pct: number; examples: string[] }[];
+      recurring_phrases: { phrase: string; count: number; outlier_pct: number; normal_pct: number; overindex: number }[];
+      power_words: { word: string; count: number; outlier_pct: number; normal_pct: number; overindex: number }[];
+      formatting_style: {
+        avg_sentence_length: { outlier: number; normal: number };
+        avg_line_breaks: { outlier: number; normal: number };
+        avg_word_count: { outlier: number; normal: number };
+        emoji_rate: { outlier: number; normal: number };
+        hashtag_rate: { outlier: number; normal: number };
+        question_rate: { outlier: number; normal: number };
+      } | null;
+      writing_analysis: string;
+    };
   };
 }
 
@@ -204,18 +218,158 @@ export default function OutlierExplorer() {
             </div>
           )}
 
-          {/* AI Global Analysis */}
-          {data.patterns.global_analysis && (
+          {/* AI Text Pattern Analysis */}
+          {data.patterns.text_patterns && (
             <div className="bg-bg-card rounded-xl p-6 border border-accent/20">
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">🧠</span>
-                <h3 className="text-lg font-semibold">AI Pattern Analysis</h3>
+                <h3 className="text-lg font-semibold">Text Pattern Analysis</h3>
               </div>
-              <div className="space-y-3">
-                {data.patterns.global_analysis.split('\n\n').map((paragraph, i) => (
-                  <p key={i} className="text-sm text-text-secondary leading-relaxed">{paragraph}</p>
-                ))}
+              <p className="text-text-muted text-xs mb-5">Patterns found in the actual text of outlier posts vs normal posts.</p>
+
+              {/* Writing analysis summary */}
+              {data.patterns.text_patterns.writing_analysis && (
+                <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-5">
+                  <div className="space-y-2">
+                    {data.patterns.text_patterns.writing_analysis.split('\n\n').map((p, i) => (
+                      <p key={i} className="text-sm text-text-secondary leading-relaxed">{p}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Opening patterns */}
+                {data.patterns.text_patterns.opening_patterns.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-text-secondary mb-3">How Outliers Open</h4>
+                    <div className="space-y-2">
+                      {data.patterns.text_patterns.opening_patterns.slice(0, 6).map((p) => (
+                        <div key={p.pattern} className="bg-bg-secondary rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-text-primary">{p.pattern}</span>
+                            <span className="text-xs text-accent font-bold">{p.pct}%</span>
+                          </div>
+                          <div className="w-full bg-bg-primary rounded-full h-1.5 mb-2">
+                            <div className="bg-accent h-full rounded-full" style={{ width: `${p.pct}%` }} />
+                          </div>
+                          {p.examples[0] && (
+                            <p className="text-[10px] text-text-muted italic truncate">"{p.examples[0]}"</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Closing patterns */}
+                {data.patterns.text_patterns.closing_patterns.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-text-secondary mb-3">How Outliers Close</h4>
+                    <div className="space-y-2">
+                      {data.patterns.text_patterns.closing_patterns.slice(0, 6).map((p) => (
+                        <div key={p.pattern} className="bg-bg-secondary rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-text-primary">{p.pattern}</span>
+                            <span className="text-xs text-success font-bold">{p.pct}%</span>
+                          </div>
+                          <div className="w-full bg-bg-primary rounded-full h-1.5 mb-2">
+                            <div className="bg-success h-full rounded-full" style={{ width: `${p.pct}%` }} />
+                          </div>
+                          {p.examples[0] && (
+                            <p className="text-[10px] text-text-muted italic truncate">"{p.examples[0]}"</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Recurring phrases + Power words */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                {data.patterns.text_patterns.recurring_phrases.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-text-secondary mb-3">Recurring Phrases in Outliers</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {data.patterns.text_patterns.recurring_phrases.map((p) => (
+                        <span
+                          key={p.phrase}
+                          className="px-2.5 py-1 rounded-lg text-xs border"
+                          style={{
+                            borderColor: p.overindex > 2 ? '#e8935a' : '#374151',
+                            color: p.overindex > 2 ? '#e8935a' : '#9ca3af',
+                            backgroundColor: p.overindex > 2 ? '#e8935a15' : '#37415115',
+                          }}
+                          title={`${p.outlier_pct}% of outliers vs ${p.normal_pct}% normal (${p.overindex}x overindex)`}
+                        >
+                          "{p.phrase}" ({p.count}x)
+                          {p.overindex > 2 && <span className="ml-1 font-bold">{p.overindex}x</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {data.patterns.text_patterns.power_words.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-text-secondary mb-3">Power Words (more frequent in outliers)</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {data.patterns.text_patterns.power_words.map((w) => (
+                        <span
+                          key={w.word}
+                          className="px-2.5 py-1 rounded-lg text-xs border"
+                          style={{
+                            borderColor: w.overindex > 2 ? '#34d399' : '#374151',
+                            color: w.overindex > 2 ? '#34d399' : '#9ca3af',
+                            backgroundColor: w.overindex > 2 ? '#34d39915' : '#37415115',
+                          }}
+                          title={`${w.outlier_pct}% of outliers vs ${w.normal_pct}% normal`}
+                        >
+                          {w.word}
+                          {w.overindex < 99 && <span className="ml-1 font-bold">{w.overindex}x</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Writing style comparison */}
+              {data.patterns.text_patterns.formatting_style && (
+                <div className="mt-6">
+                  <h4 className="text-sm font-semibold text-text-secondary mb-3">Writing Style: Outliers vs Normal</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+                    {[
+                      { label: 'Words/post', o: data.patterns.text_patterns.formatting_style.avg_word_count.outlier, n: data.patterns.text_patterns.formatting_style.avg_word_count.normal },
+                      { label: 'Words/sentence', o: data.patterns.text_patterns.formatting_style.avg_sentence_length.outlier, n: data.patterns.text_patterns.formatting_style.avg_sentence_length.normal },
+                      { label: 'Line breaks', o: data.patterns.text_patterns.formatting_style.avg_line_breaks.outlier, n: data.patterns.text_patterns.formatting_style.avg_line_breaks.normal },
+                      { label: 'Use emojis', o: data.patterns.text_patterns.formatting_style.emoji_rate.outlier, n: data.patterns.text_patterns.formatting_style.emoji_rate.normal, suffix: '%' },
+                      { label: 'Use hashtags', o: data.patterns.text_patterns.formatting_style.hashtag_rate.outlier, n: data.patterns.text_patterns.formatting_style.hashtag_rate.normal, suffix: '%' },
+                      { label: 'Have questions', o: data.patterns.text_patterns.formatting_style.question_rate.outlier, n: data.patterns.text_patterns.formatting_style.question_rate.normal, suffix: '%' },
+                    ].map((stat) => {
+                      const diff = stat.n > 0 ? ((stat.o - stat.n) / stat.n) : 0;
+                      const isHigher = stat.o > stat.n;
+                      return (
+                        <div key={stat.label} className="bg-bg-secondary rounded-lg p-3 text-center">
+                          <p className="text-text-muted text-[10px] mb-1">{stat.label}</p>
+                          <p className={`text-lg font-bold ${isHigher ? 'text-accent' : 'text-text-primary'}`}>
+                            {stat.o}{stat.suffix || ''}
+                          </p>
+                          <p className="text-[10px] text-text-muted">
+                            vs {stat.n}{stat.suffix || ''} normal
+                          </p>
+                          {Math.abs(diff) > 0.1 && (
+                            <p className={`text-[10px] font-bold ${isHigher ? 'text-success' : 'text-danger'}`}>
+                              {isHigher ? '+' : ''}{Math.round(diff * 100)}%
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
