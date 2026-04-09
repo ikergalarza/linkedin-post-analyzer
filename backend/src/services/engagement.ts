@@ -85,71 +85,109 @@ export function hasAggressiveSpacing(text: string | null): boolean {
   return doubleBreaks >= 3 || (countLineBreaks(text) / lines.length) > 1.5;
 }
 
-// Hook type classification — expanded to minimize "other"
+// Hook type classification — analyzes tension type and narrative mechanism
 export function classifyHook(text: string | null): string {
   if (!text) return 'other';
   const hook = text.split(/\r?\n/)[0].trim();
   const h = hook.toLowerCase();
+  // Also check second line as context
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  const first3 = lines.slice(0, 3).join(' ').toLowerCase();
 
-  // Question — any hook ending or containing ?
-  if (/\?/.test(h)) return 'question';
+  // ---- HIGH SPECIFICITY (check first) ----
 
-  // List/framework — "X things/ways/tips" or starts with number + noun
-  if (/^\d+\s+\w/i.test(h)) return 'list';
+  // Pattern interrupt: invalidates something the reader is doing right now
+  // "Stop sending proposals", "If you're doing X, you're wrong"
+  if (/^(stop |deja de |para de |if you['']re (still |doing |sending |using |writing |posting )|si (sigues|estás) )/i.test(h)) return 'pattern_interrupt';
+  if (/^(you['']re (doing|making|wasting|losing|missing)|estás (haciendo|perdiendo|cometiendo))/i.test(h)) return 'pattern_interrupt';
 
-  // Data/statistic — percentages, numbers with context, studies
-  if (/^\d|%|\bstat\b|\bdata\b|\bstudy\b|\bestudio\b|\bdato\b|\bresearch\b|\bsurvey\b|\baccording\b|\bsegún\b|\bresult\b/i.test(h)) return 'statistic';
+  // Belief breaker: contradicts a common assumption
+  if (/^(myth:|mito:|\w+ (is|are|es) (dead|a lie|a myth|overrated|wrong|fake|a scam|broken|not what)|you don['']t (actually )?need|no necesitas|forget everything|olvida todo|everything you (know|learned|were told) (about |is ))/i.test(h)) return 'belief_breaker';
+  if (/^(the (biggest )?lie |la (mayor )?mentira |what (no one|nobody) (tells|told|teaches)|lo que nadie te (dice|enseña|cuenta))/i.test(h)) return 'belief_breaker';
 
-  // Controversy / unpopular opinion
-  if (/unpopular opinion|hot take|controversial|impopular|polémic|nobody talks|nadie habla|disagree|i don['']t care what|me da igual|harsh truth|verdad incómoda|i['']ll say it|lo digo/i.test(h)) return 'controversy';
+  // Curiosity gap: creates an open loop that MUST be resolved
+  if (/^(this (one |single )?(thing|habit|mistake|trick|change|hack)|lo que (cambió|aprendí|nadie|descubrí)|the (real |#1 |biggest |only )?(reason|secret|truth|difference|key|mistake)|what (happened|changed|I learned|nobody|most people))/i.test(h)) return 'curiosity_gap';
+  if (/(changed (my |everything)|most people (don['']t|get wrong|miss|overlook)|nadie te (ha )?dicho|no one (told|tells|teaches) you|here['']s (the thing|what)|after \d+ (years|months|hours|días|años|meses).*[,:] )/i.test(h)) return 'curiosity_gap';
 
-  // Bold statement / provocative assertion
-  if (/^(stop|never|always|don['']t|no one|the truth|la verdad|forget|you['']re wrong|estás equivocado|enough|basta|quit|wake up|despierta|this is broken|the problem with|el problema de)/i.test(h)) return 'bold_statement';
+  // Data shock: leads with a surprising number or statistic
+  if (/^(\d[\d,.]*%|\d[\d,.]+ (people|companies|users|posts|clients|businesses|of |out of ))/i.test(h)) return 'data_shock';
+  if (/^(only |just |less than )?\d[\d,.]*%/i.test(h)) return 'data_shock';
+  if (/^\$[\d,.]+|^[\d,.]+ (million|billion|k |M )/i.test(h)) return 'data_shock';
 
-  // Prediction / future-oriented
-  if (/^(in \d+ years|en \d+ años|the future|el futuro|by 20\d\d|will (become|replace|die|disappear)|prediction|predic|mark my words|va a (cambiar|desaparecer|morir))/i.test(h)) return 'prediction';
+  // Unpopular opinion / hot take
+  if (/unpopular opinion|hot take|controversial|impopular|polémic|i['']ll say it|i said what i said|harsh truth|verdad incómoda|fight me|don['']t @ me/i.test(h)) return 'hot_take';
 
-  // Confession / vulnerability
-  if (/^(i failed|i lost|i was wrong|i quit|i got fired|me equivoqué|fracasé|perdí|me despidieron|truth is|la verdad es|i['']m scared|i almost|confession|confesión|i['']ll be honest|my biggest mistake|mi mayor error)/i.test(h)) return 'confession';
+  // Personal confession: vulnerability + first person
+  if (/^(i (failed|lost|quit|got fired|was wrong|was broke|almost|cried|struggled)|me (equivoqué|despidieron)|fracasé|perdí|renuncié|confession|confesión|i['']ll be honest|my biggest (mistake|failure|regret)|truth is,? i)/i.test(h)) return 'personal_confession';
 
-  // How-to / educational
-  if (/^(how to|how i|cómo|here['']?s how|the guide|a guide|tutorial|step[- ]by[- ]step|paso a paso|the framework|the system|el sistema|the method|el método|the playbook|learn to|aprende a)/i.test(h)) return 'how_to';
+  // Story opener: temporal marker or narrative setup
+  if (/^(i |yo )/i.test(h) && /^(i (was|had|remember|walked|sat|woke|got|received|opened|looked|called)|yo (estaba|tenía|recuerdo|me))/i.test(h)) return 'story_opener';
+  if (/^(last (year|month|week|night|tuesday)|el (año|mes|lunes) pasado|hace \d|one day|un día|yesterday|ayer|this morning|esta mañana|back in|en 20\d\d|it was 20\d\d|era 20\d\d|\d+ (years|months|days|años|meses) ago)/i.test(h)) return 'story_opener';
+  if (/^(when i|cuando yo|the day (i|my|that)|el día que)/i.test(h)) return 'story_opener';
 
-  // POV
-  if (/^pov[\s:]/i.test(h) || /^point of view/i.test(h)) return 'pov';
+  // Question (specific subtypes)
+  if (/\?/.test(h)) {
+    if (/^(what if|imagine if|qué pasaría si|y si )/i.test(h)) return 'hypothetical_question';
+    if (/^(why (do|does|don['']t|are|is|did)|por qué )/i.test(h)) return 'why_question';
+    if (/^(how (do|does|can|did|would|many|much)|cómo )/i.test(h)) return 'how_question';
+    if (/^(do you|have you|are you|can you|would you|did you)/i.test(h)) return 'direct_question';
+    if (/^(what|which|where|when|who|whose|cuál|qué |quién|dónde|cuándo)/i.test(h)) return 'open_question';
+    return 'rhetorical_question';
+  }
 
-  // Storytelling — personal narratives, temporal markers
-  if (/^(i |yo |cuando |when |last (year|month|week)|el (año|mes) pasado|hace \d|one day|un día|yesterday|ayer|the day|2 years ago|this morning|esta mañana|back in|en 20\d\d|it was|era )/i.test(h)) return 'storytelling';
+  // List promise: "X things/ways/tips/lessons"
+  if (/^\d+\s+(things?|ways?|tips?|lessons?|rules?|steps?|reasons?|signs?|habits?|mistakes?|secrets?|principles?|ideas?|strategies?|cosas?|formas?|consejos?|lecciones?|reglas?|pasos?|razones?|señales?|hábitos?|errores?|secretos?|principios?|ideas?|estrategias?)/i.test(h)) return 'list_promise';
+  if (/^\d+\s+\w/i.test(h)) return 'list_promise';
 
-  // Social proof / authority
-  if (/^(i['']ve (helped|worked|built|coached|trained|sold|generated|managed)|after \d+|helped \d+|tras \d+|he ayudado|he trabajado|llevo \d+|\d+ (years|años|clients|clientes|companies|empresas))/i.test(h)) return 'social_proof';
+  // Prediction / future
+  if (/^(in \d+ years|en \d+ años|the future|el futuro|by 20\d\d|prediction|predic|mark my words|will (become|replace|die|disappear)|va a (cambiar|desaparecer|morir)|20\d\d will be)/i.test(h)) return 'prediction';
 
-  // Challenge / dare
-  if (/^(i challenge|i dare|try this|prueba esto|do this for|haz esto|take the|el reto|the challenge|30[- ]day|7[- ]day)/i.test(h)) return 'challenge';
+  // How-to / educational framework
+  if (/^(how to|how i|cómo|here['']?s how|here['']?s my|the (complete |ultimate |simple )?guide|a guide|tutorial|step[- ]by[- ]step|paso a paso|the (framework|system|method|playbook|formula|blueprint|template)|el (sistema|método)|learn to|aprende a)/i.test(h)) return 'how_to_framework';
+
+  // Bold claim + proof setup
+  if (/^(the (best|worst|fastest|easiest|hardest|most important|biggest)|el (mejor|peor|más rápido|más fácil|más difícil|más importante))/i.test(h)) return 'bold_claim';
+  if (/^(stop|never|always|you must|everyone should|nadie debería|deberías|you need to|necesitas)/i.test(h)) return 'bold_claim';
+
+  // "The mistake everyone makes" pattern
+  if (/(mistake|error|wrong|fail).*?(everyone|most people|99%|la mayoría|todos)/i.test(h) ||
+      /(everyone|most people|99%|la mayoría|todos).*?(mistake|error|wrong|fail)/i.test(h)) return 'common_mistake';
+
+  // Direct callout: speaks to a specific audience
+  if (/^(if you['']re a |if you (work|run|manage|lead|want|need|struggle)|si (eres|trabajas|diriges|lideras|quieres|necesitas)|dear |querido |to (every|all|the) |para (todos|cada|los) |attention |atención )/i.test(h)) return 'direct_callout';
+  if (/^(you |your |tu |tus )/i.test(h)) return 'direct_callout';
 
   // Announcement / news
-  if (/^(announcing|just launched|big news|exciting|i['']m thrilled|we just|acabamos de|anuncio|gran noticia|new:|nuevo:|just released|breaking|update:|launching)/i.test(h)) return 'announcement';
+  if (/^(announcing|just launched|big news|exciting|i['']m (thrilled|excited|proud|happy to)|we just|acabamos de|anuncio|gran noticia|new:|nuevo:|just released|breaking|update:|launching|we['']re hiring|hemos lanzado)/i.test(h)) return 'announcement';
+
+  // Social proof opener
+  if (/^(i['']ve (helped|built|coached|trained|worked|managed|sold|generated)|after (helping )?\d+|helped \d+|he (ayudado|construido|formado|trabajado)|llevo \d+|\d+ (years|años|clients|clientes|companies|empresas) (later|después))/i.test(h)) return 'social_proof_opener';
 
   // Analogy / metaphor
-  if (/^(\w+ (is|are|es) (like|the new|como|el nuevo))|^(imagine|imagina|think of|piensa en)|( is the new | es el nuevo )/i.test(h)) return 'analogy';
+  if (/^(\w+ (is|are|es) (like|the new|como|el nuevo))|^(imagine |imagina |think of |piensa en )/i.test(h)) return 'analogy';
+  if (/ is (like |the new )| es (como |el nuevo )/i.test(h)) return 'analogy';
 
-  // Contrarian / myth-busting
-  if (/^(myth:|mito:|wrong[.!]|lies|mentiras|overrated|sobrevalorado|you don['']t need|no necesitas|forget everything|olvida todo|everything you know about|todo lo que sabes de)/i.test(h)) return 'contrarian';
+  // Contrarian take
+  if (/^(actually|en realidad|here['']s why .* (wrong|bad|doesn['']t work)|the truth about|la verdad sobre|overrated|sobrevalorad|unpopular|underrated|infravalorad)/i.test(h)) return 'contrarian_take';
 
-  // Relatable / humor
-  if (/^(me:|yo:|that feeling|esa sensación|when you|cuando tu|nobody:|nadie:|pov:|we all|todos|real talk|raise your hand|levanta la mano)/i.test(h)) return 'relatable';
+  // Relatable moment
+  if (/^(me:|yo:|that (feeling|moment|face)|esa (sensación|cara)|when (you|your|the)|cuando (tu|el|la|un)|nobody:|nadie:|we['']ve all|todos hemos|raise your hand|levanta la mana|real talk)/i.test(h)) return 'relatable_moment';
 
-  // Curiosity gap — things that make you want to read more
-  if (/secret|nobody knows|no one told|nadie te dijo|most people|la mayoría|this is why|por esto|what nobody|lo que nadie|the real reason|la verdadera razón|what I wish|you won['']t believe|here['']s what|esto es lo que/i.test(h)) return 'curiosity';
+  // Motivational / aspirational
+  if (/^(you can|tú puedes|believe|don['']t (give up|quit|stop)|no te rindas|keep going|sigue|you deserve|mereces|it['']s (never too|your time|possible)|es (posible|tu momento))/i.test(h)) return 'motivational';
 
-  // Motivational / inspirational
-  if (/^(you can|tú puedes|believe|cree en|don['']t give up|no te rindas|keep going|sigue|it['']s possible|es posible|you deserve|mereces|your time|tu momento|dream|sueña|greatness)/i.test(h)) return 'motivational';
+  // Observation / insight
+  if (/^(i (noticed|realized|observed|learned|discovered)|here['']s the thing|here['']s what (most|I)|the (thing|difference|problem|issue|challenge|trick) (about|with|is)|something (most|I|nobody)|lo que (noté|descubrí|aprendí)|me di cuenta)/i.test(h)) return 'observation';
 
-  // Observation / insight — "I noticed", "Here's the thing"
-  if (/^(i noticed|i realized|here['']s the thing|here['']s what|the thing about|something i|lo que noté|me di cuenta|hay algo que|the best .* i['']ve seen)/i.test(h)) return 'observation';
+  // Challenge / dare
+  if (/^(i challenge|i dare|try this|prueba esto|do this|haz esto|take the|the challenge|el reto|\d+[- ]day)/i.test(h)) return 'challenge';
 
-  // Direct address — "You" focused hooks
-  if (/^(you |your |if you|si tú|si tu|dear |querido)/i.test(h)) return 'direct_address';
+  // ---- FALLBACK: analyze the text more broadly ----
+  // Check if first 3 lines create any recognizable pattern
+  if (/^(i |my |when i |yo |mi |cuando )/i.test(h) && lines.length > 3) return 'story_opener';
+  if (h.length < 40 && /[.!]$/.test(h)) return 'bold_claim';
+  if (/secret|nobody|everyone|most people|la mayoría|todos|nadie|the truth|la verdad/i.test(first3)) return 'curiosity_gap';
+  if (/\d+/.test(h) && h.length < 60) return 'data_shock';
 
   return 'other';
 }
@@ -378,33 +416,104 @@ export function classifyTone(text: string | null): string {
   return sorted[0][0];
 }
 
-// Post structure pattern detection
+// Post structure pattern detection — analyzes narrative framework
 export function classifyStructure(text: string | null): string {
   if (!text) return 'other';
   const lower = text.toLowerCase();
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
   const lineCount = lines.length;
+  const wordCount = text.trim().split(/\s+/).length;
+  const firstLine = (lines[0] || '').trim().toLowerCase();
+  const lastLine = (lines[lines.length - 1] || '').trim().toLowerCase();
+  const midText = lines.slice(1, -1).join(' ').toLowerCase();
 
   // Check for list structure (numbered or bulleted items)
-  const listLines = lines.filter((l) => /^\s*(\d+[\.\)]\s|[-•]\s|→|✅|❌|▸)/.test(l));
-  if (listLines.length >= 3 && listLines.length / lineCount > 0.4) return 'list';
+  const listLines = lines.filter((l) => /^\s*(\d+[\.\)]\s|[-•]\s|→|✅|❌|▸|🔹|▪|◾|➡|►)/.test(l));
+  const isListHeavy = listLines.length >= 3 && listLines.length / lineCount > 0.35;
 
-  // Problem → Solution → CTA
-  const hasProblem = /problem|issue|struggle|challenge|mistake|error|problema|reto|difícil|wrong/i.test(lower);
-  const hasSolution = /solution|instead|here['']?s how|así es como|the fix|try this|do this|la solución/i.test(lower);
+  // ---- COMPOUND STRUCTURES (check first — most specific) ----
+
+  // Hook → List → CTA (very common viral pattern)
+  const hasCTA = /\?$|comment|comparte|follow|like|repost|save|what do you|qué opinas|agree|tag|drop|👇|⬇/i.test(lastLine);
+  if (isListHeavy && hasCTA && lineCount > 4) return 'hook_list_cta';
+
+  // Hook → Story → Lesson → CTA
+  const hasStoryMarkers = /^(i |yo |cuando |when |last |one day|un día|back in|hace |this morning|yesterday|ayer|era |it was )/i.test(firstLine);
+  const hasLesson = /lesson|takeaway|moraleja|aprendí|learned|the point|lo que aprendí|moral|key (takeaway|insight)|bottom line|in short|en resumen|the truth is|la verdad es/i.test(lower);
+  if (hasStoryMarkers && hasLesson && hasCTA) return 'hook_story_lesson_cta';
+
+  // Hook → Problem → Agitate → Solve (PAS framework)
+  const hasProblem = /problem|issue|struggle|challenge|mistake|error|problema|reto|difícil|wrong|pain|frustrat|failing|broken/i.test(lower);
+  const hasAgitate = /worse|even more|the real issue|but it gets|pero lo peor|y encima|not only|no solo|imagine|worst part|lo peor/i.test(lower);
+  const hasSolution = /solution|instead|here['']?s how|así es como|the fix|try this|do this|la solución|what works|lo que funciona|the answer|here['']?s what/i.test(lower);
+  if (hasProblem && hasAgitate && hasSolution) return 'problem_agitate_solve';
+
+  // Hook → Contrarian → Proof → Reframe
+  const hasContrarian = /unpopular|hot take|controversial|everyone thinks|la mayoría cree|most people|you['']ve been told|te han dicho|myth|mito|lie |mentira|wrong about/i.test(lower);
+  const hasProof = /but (actually|here['']s|the truth|in reality)|pero (en realidad|la verdad)|data shows|research|study|the evidence|proof|example|because/i.test(midText);
+  const hasReframe = /reframe|rethink|reconsider|instead think|the real |lo que realmente|what (actually|really)|so next time|así que|en cambio/i.test(lower);
+  if (hasContrarian && (hasProof || hasReframe)) return 'contrarian_proof_reframe';
+
+  // Hook → Confession → Insight → Takeaway
+  const hasConfession = /^(i failed|i lost|i quit|i was wrong|i almost|confession|i['']ll be honest|truth is|me equivoqué|fracasé|perdí|renuncié|confesión)/i.test(firstLine);
+  const hasInsight = /what i (learned|realized|discovered|understood)|lo que (aprendí|descubrí|entendí)|now i (know|understand|see)|ahora (sé|entiendo)|the insight|here['']s the thing/i.test(lower);
+  if (hasConfession && (hasInsight || hasLesson)) return 'confession_insight_takeaway';
+
+  // ---- SINGLE STRUCTURES ----
+
+  // Pure list / framework
+  if (isListHeavy) return 'list_framework';
+
+  // Problem → Solution (without agitate)
   if (hasProblem && hasSolution) return 'problem_solution';
 
-  // Story → Lesson
-  const hasStory = /^(i |yo |cuando |when |last |one day|un día)/i.test(lines[0]?.trim() || '');
-  const hasLesson = /lesson|takeaway|moraleja|aprendí|learned|the point|lo que aprendí/i.test(lower);
-  if (hasStory || (lineCount > 5 && hasLesson)) return 'story_lesson';
+  // Story → Lesson (narrative arc)
+  if (hasStoryMarkers && hasLesson) return 'story_lesson';
+  // Longer text with narrative markers throughout
+  if (hasStoryMarkers && lineCount > 6 && /then|después|but then|pero entonces|so i|así que|turns out|resulta que/i.test(midText)) return 'story_lesson';
+
+  // Before/After transformation
+  if (/before|antes|used to|solía|old me|yo antes/i.test(lower) && /after|después|now i|ahora|today|new me|yo ahora/i.test(lower)) return 'before_after';
+
+  // Step-by-step / How-to
+  if (/step[- ]?(\d|by|1)|paso[- ]?(\d|a paso|1)|first.*then.*finally|primero.*luego.*finalmente/i.test(lower)) return 'step_by_step';
+  if (/^(how to|how i|cómo|here['']?s how|guide|tutorial)/i.test(firstLine) && lineCount > 4) return 'step_by_step';
+
+  // Myth-busting / belief break
+  if (hasContrarian && lineCount > 3) return 'myth_busting';
+
+  // Question → Answer / FAQ
+  if (/\?/.test(firstLine) && lineCount > 3 && !hasCTA) return 'question_answer';
+
+  // Observation → Insight
+  if (/^(i (noticed|realized|observed)|here['']?s the thing|here['']?s what|the (thing|difference|problem|trick)|something|lo que (noté|descubrí)|me di cuenta)/i.test(firstLine) && lineCount > 3) return 'observation_insight';
+
+  // Prediction / Future vision
+  if (/^(in \d+ years|the future|by 20\d\d|prediction|20\d\d will|en \d+ años|el futuro)/i.test(firstLine)) return 'prediction_vision';
+
+  // Motivational / manifesto
+  if (/^(you can|believe|don['']t (give up|quit)|keep going|you deserve|it['']s (never|your|possible)|tú puedes|no te rindas|sigue|mereces)/i.test(firstLine) && lineCount > 3) return 'motivational_manifesto';
+
+  // Social proof → Framework (authority-led)
+  if (/^(i['']ve (helped|built|coached|trained|worked)|after (helping )?\d+|helped \d+|\d+ (years|clients|companies))/i.test(firstLine) && lineCount > 4) return 'authority_framework';
+
+  // Comparison / versus
+  if (/(vs\.?|versus| vs | or\?|compared to|frente a|contra )/i.test(lower) && lineCount > 3) return 'comparison';
 
   // Short and punchy (under 50 words, few lines)
-  const wordCount = text.trim().split(/\s+/).length;
   if (wordCount < 50 && lineCount <= 5) return 'short_punchy';
 
-  // Thread/long-form
-  if (wordCount > 300) return 'long_form';
+  // Long-form essay/thread
+  if (wordCount > 300) return 'long_form_essay';
+
+  // Medium-length with story arc
+  if (lineCount > 5 && /then|después|but|pero|so |así que|turns out|resulta/i.test(midText)) return 'narrative_arc';
+
+  // Medium post with CTA ending
+  if (hasCTA && lineCount > 3) return 'content_with_cta';
+
+  // Numbered/data-driven analysis
+  if (/\d+%|\d+x|\$\d/i.test(lower) && lineCount > 3) return 'data_driven';
 
   return 'other';
 }

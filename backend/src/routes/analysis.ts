@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
-import { detectPatterns, getCrossCreatorPatterns, generatePostExplanation } from '../services/patterns';
+import { detectPatterns, getCrossCreatorPatterns, generatePostExplanation, analyzeNarrativeRhythm, detectViralityDriver } from '../services/patterns';
 import { formatUtcOffset } from '../utils/timezone';
 
 function paramId(req: Request): string {
@@ -252,11 +252,16 @@ router.get('/cross-creators', async (_req: Request, res: Response) => {
 
     const patterns = getCrossCreatorPatterns(allPosts);
 
-    // Add per-post AI explanation
-    const enrichedOutliers = topOutliers.map((post: any) => ({
-      ...post,
-      ai_explanation: generatePostExplanation(post),
-    }));
+    // Add per-post deep analysis
+    const enrichedOutliers = topOutliers.map((post: any) => {
+      const explanation = generatePostExplanation(post);
+      const rhythm = analyzeNarrativeRhythm(post);
+      return {
+        ...post,
+        ai_explanation: explanation,
+        narrative_rhythm: rhythm,
+      };
+    });
 
     res.json({ top_outliers: enrichedOutliers, patterns });
   } catch (err: any) {

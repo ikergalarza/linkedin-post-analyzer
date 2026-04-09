@@ -3,6 +3,37 @@ import { useApi } from '../hooks/useApi';
 import PostCard from '../components/PostCard';
 import { SkeletonCard } from '../components/Skeleton';
 
+interface PostExplanation {
+  summary: string;
+  narrative_mechanism: string;
+  hook_tension: string;
+  virality_driver: { driver: string; label: string; explanation: string };
+  comment_driver: string;
+  abstract_template: string;
+}
+
+interface NarrativeRhythm {
+  hook_zone: { lines: number; avg_words_per_line: number; style: string };
+  body: { style: string; has_list: boolean; has_tension_relief: boolean; mini_hooks: number };
+  closing: { style: string; cta_type: string | null };
+  sentence_rhythm: { short_long_alternation: number; avg_line_length: number };
+  scroll_stops: number;
+  scroll_stop_types: string[];
+}
+
+interface Archetype {
+  archetype: string;
+  label: string;
+  description: string;
+  hook_type: string;
+  structure: string;
+  tone: string;
+  count: number;
+  avg_engagement: number;
+  avg_outlier_ratio: number;
+  example_hooks: string[];
+}
+
 interface CrossCreatorData {
   top_outliers: {
     id: string;
@@ -18,10 +49,13 @@ interface CrossCreatorData {
     is_outlier: boolean;
     hook_text: string | null;
     hook_type?: string;
+    post_structure?: string;
+    text_tone?: string;
     post_url: string | null;
     creator_name: string;
     creator_image: string | null;
-    ai_explanation?: string;
+    ai_explanation?: PostExplanation;
+    narrative_rhythm?: NarrativeRhythm;
   }[];
   patterns: {
     total_outliers: number;
@@ -43,11 +77,12 @@ interface CrossCreatorData {
     cta_rate: number;
     common_traits: string[];
     frequency_correlation: { postsPerWeek: number; avgEngagement: number }[];
+    archetypes?: Archetype[];
     text_patterns: {
       opening_patterns: { pattern: string; count: number; pct: number; examples: string[] }[];
       closing_patterns: { pattern: string; count: number; pct: number; examples: string[] }[];
       recurring_phrases: { phrase: string; count: number; outlier_pct: number; normal_pct: number; overindex: number }[];
-      power_words: { word: string; count: number; outlier_pct: number; normal_pct: number; overindex: number }[];
+      semantic_categories?: { category: string; label: string; outlier_density: number; normal_density: number; diff_pct: number }[];
       formatting_style: {
         avg_sentence_length: { outlier: number; normal: number };
         avg_line_breaks: { outlier: number; normal: number };
@@ -85,18 +120,38 @@ interface CompareData {
 }
 
 const hookLabels: Record<string, string> = {
-  question: 'Question', statistic: 'Data/Stat', controversy: 'Controversy',
-  pov: 'POV', storytelling: 'Storytelling', list: 'List',
-  bold_statement: 'Bold Statement', curiosity: 'Curiosity', prediction: 'Prediction',
-  confession: 'Confession', how_to: 'How-to', social_proof: 'Social Proof',
-  challenge: 'Challenge', announcement: 'Announcement', analogy: 'Analogy',
-  contrarian: 'Contrarian', relatable: 'Relatable', motivational: 'Motivational',
-  observation: 'Observation', direct_address: 'Direct Address', other: 'Other',
+  pattern_interrupt: 'Pattern Interrupt', belief_breaker: 'Belief Breaker',
+  curiosity_gap: 'Curiosity Gap', data_shock: 'Data Shock', hot_take: 'Hot Take',
+  personal_confession: 'Personal Confession', story_opener: 'Story Opener',
+  hypothetical_question: 'Hypothetical Q', why_question: 'Why Question',
+  how_question: 'How Question', direct_question: 'Direct Question',
+  open_question: 'Open Question', rhetorical_question: 'Rhetorical Q',
+  list_promise: 'List Promise', prediction: 'Prediction',
+  how_to_framework: 'How-To', bold_claim: 'Bold Claim',
+  common_mistake: 'Common Mistake', direct_callout: 'Direct Callout',
+  announcement: 'Announcement', social_proof_opener: 'Social Proof',
+  analogy: 'Analogy', contrarian_take: 'Contrarian', relatable_moment: 'Relatable',
+  motivational: 'Motivational', observation: 'Observation', challenge: 'Challenge',
+  other: 'Other',
 };
 
 const structLabels: Record<string, string> = {
-  list: 'List', problem_solution: 'Problem>Solution', story_lesson: 'Story>Lesson',
-  short_punchy: 'Short&Punchy', long_form: 'Long-form', other: 'Other',
+  hook_list_cta: 'Hook>List>CTA', hook_story_lesson_cta: 'Hook>Story>Lesson>CTA',
+  problem_agitate_solve: 'Problem>Agitate>Solve', contrarian_proof_reframe: 'Contrarian>Proof>Reframe',
+  confession_insight_takeaway: 'Confession>Insight>Takeaway', list_framework: 'List/Framework',
+  problem_solution: 'Problem>Solution', story_lesson: 'Story>Lesson',
+  before_after: 'Before/After', step_by_step: 'Step-by-Step',
+  myth_busting: 'Myth Busting', question_answer: 'Question>Answer',
+  observation_insight: 'Observation>Insight', prediction_vision: 'Prediction',
+  motivational_manifesto: 'Motivational', authority_framework: 'Authority>Framework',
+  comparison: 'Comparison', short_punchy: 'Short&Punchy',
+  long_form_essay: 'Long-form', narrative_arc: 'Narrative Arc',
+  content_with_cta: 'Content+CTA', data_driven: 'Data-Driven', other: 'Other',
+};
+
+const viralityDriverColors: Record<string, string> = {
+  social_currency: '#fbbf24', controversy: '#f87171', identity: '#a78bfa',
+  belonging: '#38bdf8', utility: '#34d399', emotion: '#f472b6', aspiration: '#22d3ee',
 };
 
 const toneLabels: Record<string, { label: string; emoji: string; desc: string }> = {
@@ -286,7 +341,7 @@ export default function OutlierExplorer() {
                 )}
               </div>
 
-              {/* Recurring phrases + Power words */}
+              {/* Recurring phrases + Semantic categories */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                 {data.patterns.text_patterns.recurring_phrases.length > 0 && (
                   <div>
@@ -311,25 +366,31 @@ export default function OutlierExplorer() {
                   </div>
                 )}
 
-                {data.patterns.text_patterns.power_words.length > 0 && (
+                {data.patterns.text_patterns.semantic_categories && data.patterns.text_patterns.semantic_categories.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-text-secondary mb-3">Power Words (more frequent in outliers)</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {data.patterns.text_patterns.power_words.map((w) => (
-                        <span
-                          key={w.word}
-                          className="px-2.5 py-1 rounded-lg text-xs border"
-                          style={{
-                            borderColor: w.overindex > 2 ? '#34d399' : '#374151',
-                            color: w.overindex > 2 ? '#34d399' : '#9ca3af',
-                            backgroundColor: w.overindex > 2 ? '#34d39915' : '#37415115',
-                          }}
-                          title={`${w.outlier_pct}% of outliers vs ${w.normal_pct}% normal`}
-                        >
-                          {w.word}
-                          {w.overindex < 99 && <span className="ml-1 font-bold">{w.overindex}x</span>}
-                        </span>
-                      ))}
+                    <h4 className="text-sm font-semibold text-text-secondary mb-3">Language Patterns: Outliers vs Normal</h4>
+                    <div className="space-y-2">
+                      {data.patterns.text_patterns.semantic_categories.map((c) => {
+                        const isHigher = c.diff_pct > 0;
+                        return (
+                          <div key={c.category} className="bg-bg-secondary rounded-lg p-3">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-medium text-text-primary">{c.label}</span>
+                              <span className={`text-xs font-bold ${isHigher ? 'text-success' : c.diff_pct < -10 ? 'text-danger' : 'text-text-muted'}`}>
+                                {isHigher ? '+' : ''}{c.diff_pct}%
+                              </span>
+                            </div>
+                            <div className="flex gap-2 items-center">
+                              <div className="flex-1">
+                                <div className="flex gap-1 items-center text-[10px] text-text-muted">
+                                  <span className="text-accent">Outlier: {c.outlier_density}/100w</span>
+                                  <span className="text-text-muted ml-2">Normal: {c.normal_density}/100w</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -502,6 +563,47 @@ export default function OutlierExplorer() {
             </div>
           )}
 
+          {/* Viral Archetypes — cross hook×structure×tone recipes */}
+          {data.patterns.archetypes && data.patterns.archetypes.length > 0 && (
+            <div className="bg-bg-card rounded-xl p-6 border border-accent/20">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">🧬</span>
+                <h3 className="text-lg font-semibold">Viral Archetypes</h3>
+              </div>
+              <p className="text-text-muted text-xs mb-5">
+                Cross-variable recipes: combinations of hook type + structure + tone that produce the highest engagement.
+              </p>
+              <div className="space-y-3">
+                {data.patterns.archetypes.slice(0, 10).map((a, i) => (
+                  <div key={a.archetype} className="bg-bg-secondary rounded-lg p-4 border border-border/50">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <span className="text-xs text-accent font-bold mr-2">#{i + 1}</span>
+                        <span className="text-sm font-semibold text-text-primary">{a.label}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-accent">{a.avg_engagement.toLocaleString()}</span>
+                        <span className="text-[10px] text-text-muted ml-1">avg eng</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-text-secondary mb-2">{a.description}</p>
+                    <div className="flex items-center gap-3 text-[10px] text-text-muted">
+                      <span>{a.count} posts</span>
+                      <span>{a.avg_outlier_ratio}x avg ratio</span>
+                    </div>
+                    {a.example_hooks.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {a.example_hooks.map((h, j) => (
+                          <p key={j} className="text-[10px] text-text-muted italic truncate">"{h}"</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Frequency vs Engagement */}
           {data.patterns.frequency_correlation && data.patterns.frequency_correlation.length >= 2 && (
             <div className="bg-bg-card rounded-xl p-6">
@@ -639,25 +741,106 @@ export default function OutlierExplorer() {
                 </div>
               </div>
 
-              {/* Outlier cards with AI explanation */}
+              {/* Outlier cards with deep analysis */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredOutliers.map((post) => (
                   <div key={post.id} className="flex flex-col">
                     <PostCard post={post} />
-                    {/* AI explanation */}
+                    {/* Deep analysis panel */}
                     {post.ai_explanation && (
                       <div className="bg-bg-card border-x border-b border-border rounded-b-xl -mt-3 pt-4 px-5 pb-4">
                         <button
                           onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                          className="text-[11px] text-accent hover:text-accent-light transition-colors flex items-center gap-1"
+                          className="text-[11px] text-accent hover:text-accent-light transition-colors flex items-center gap-1 w-full"
                         >
                           <span>🧠</span>
-                          {expandedPost === post.id ? 'Hide analysis' : 'Why did this work?'}
+                          <span>{expandedPost === post.id ? 'Hide analysis' : 'Why did this work?'}</span>
+                          {post.ai_explanation.virality_driver && (
+                            <span
+                              className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-bold"
+                              style={{
+                                backgroundColor: (viralityDriverColors[post.ai_explanation.virality_driver.driver] || '#4b5563') + '20',
+                                color: viralityDriverColors[post.ai_explanation.virality_driver.driver] || '#4b5563',
+                              }}
+                            >
+                              {post.ai_explanation.virality_driver.label}
+                            </span>
+                          )}
                         </button>
                         {expandedPost === post.id && (
-                          <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-                            {post.ai_explanation}
-                          </p>
+                          <div className="mt-3 space-y-3">
+                            {/* Summary */}
+                            <p className="text-xs text-text-secondary leading-relaxed">
+                              {post.ai_explanation.summary}
+                            </p>
+
+                            {/* Narrative mechanism */}
+                            <div className="bg-bg-secondary rounded-lg p-3">
+                              <p className="text-[10px] text-text-muted font-semibold mb-1">Narrative Mechanism</p>
+                              <p className="text-xs text-text-secondary">{post.ai_explanation.narrative_mechanism}</p>
+                            </div>
+
+                            {/* Hook tension */}
+                            <div className="bg-bg-secondary rounded-lg p-3">
+                              <p className="text-[10px] text-text-muted font-semibold mb-1">Hook Tension</p>
+                              <p className="text-xs text-text-secondary">{post.ai_explanation.hook_tension}</p>
+                            </div>
+
+                            {/* Virality driver */}
+                            <div className="bg-bg-secondary rounded-lg p-3">
+                              <p className="text-[10px] text-text-muted font-semibold mb-1">
+                                Virality Driver:
+                                <span
+                                  className="ml-1 px-1.5 py-0.5 rounded font-bold"
+                                  style={{
+                                    backgroundColor: (viralityDriverColors[post.ai_explanation.virality_driver.driver] || '#4b5563') + '20',
+                                    color: viralityDriverColors[post.ai_explanation.virality_driver.driver] || '#4b5563',
+                                  }}
+                                >
+                                  {post.ai_explanation.virality_driver.label}
+                                </span>
+                              </p>
+                              <p className="text-xs text-text-secondary mt-1">{post.ai_explanation.virality_driver.explanation}</p>
+                            </div>
+
+                            {/* Comment driver */}
+                            <div className="bg-bg-secondary rounded-lg p-3">
+                              <p className="text-[10px] text-text-muted font-semibold mb-1">Why People Comment</p>
+                              <p className="text-xs text-text-secondary">{post.ai_explanation.comment_driver}</p>
+                            </div>
+
+                            {/* Abstract template */}
+                            <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
+                              <p className="text-[10px] text-accent font-semibold mb-1">Replicable Template</p>
+                              <p className="text-xs text-text-secondary font-mono">{post.ai_explanation.abstract_template}</p>
+                            </div>
+
+                            {/* Narrative rhythm */}
+                            {post.narrative_rhythm && (
+                              <div className="bg-bg-secondary rounded-lg p-3">
+                                <p className="text-[10px] text-text-muted font-semibold mb-2">Narrative Rhythm</p>
+                                <div className="grid grid-cols-3 gap-2 text-[10px]">
+                                  <div>
+                                    <span className="text-text-muted">Hook: </span>
+                                    <span className="text-text-secondary">{post.narrative_rhythm.hook_zone.style.replace(/_/g, ' ')}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-text-muted">Body: </span>
+                                    <span className="text-text-secondary">{post.narrative_rhythm.body.style.replace(/_/g, ' ')}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-text-muted">Close: </span>
+                                    <span className="text-text-secondary">{post.narrative_rhythm.closing.style.replace(/_/g, ' ')}</span>
+                                  </div>
+                                </div>
+                                <div className="flex gap-3 mt-2 text-[10px] text-text-muted">
+                                  <span>Scroll stops: {post.narrative_rhythm.scroll_stops}</span>
+                                  <span>Rhythm variation: {post.narrative_rhythm.sentence_rhythm.short_long_alternation}%</span>
+                                  {post.narrative_rhythm.body.mini_hooks > 0 && <span>Mini-hooks: {post.narrative_rhythm.body.mini_hooks}</span>}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}

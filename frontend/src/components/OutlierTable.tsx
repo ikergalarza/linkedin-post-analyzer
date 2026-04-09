@@ -49,18 +49,33 @@ function ratioBadge(ratio: number) {
 }
 
 const hookLabels: Record<string, string> = {
-  question: 'Question', statistic: 'Data/Stat', controversy: 'Controversy',
-  pov: 'POV', storytelling: 'Story', list: 'List',
-  bold_statement: 'Bold', curiosity: 'Curiosity', prediction: 'Prediction',
-  confession: 'Confession', how_to: 'How-to', social_proof: 'Social Proof',
-  challenge: 'Challenge', announcement: 'Announce', analogy: 'Analogy',
-  contrarian: 'Contrarian', relatable: 'Relatable', motivational: 'Motivational',
-  observation: 'Observation', direct_address: 'Direct', other: '--',
+  pattern_interrupt: 'Pattern Int.', belief_breaker: 'Belief Break',
+  curiosity_gap: 'Curiosity Gap', data_shock: 'Data Shock', hot_take: 'Hot Take',
+  personal_confession: 'Confession', story_opener: 'Story',
+  hypothetical_question: 'Hypothetical', why_question: 'Why Q',
+  how_question: 'How Q', direct_question: 'Direct Q',
+  open_question: 'Open Q', rhetorical_question: 'Rhetorical Q',
+  list_promise: 'List Promise', prediction: 'Prediction',
+  how_to_framework: 'How-To', bold_claim: 'Bold Claim',
+  common_mistake: 'Mistake', direct_callout: 'Callout',
+  announcement: 'Announce', social_proof_opener: 'Social Proof',
+  analogy: 'Analogy', contrarian_take: 'Contrarian', relatable_moment: 'Relatable',
+  motivational: 'Motivational', observation: 'Observation', challenge: 'Challenge',
+  other: '--',
 };
 
 const structLabels: Record<string, string> = {
-  list: 'List', problem_solution: 'Prob>Sol', story_lesson: 'Story>Lesson',
-  short_punchy: 'Short', long_form: 'Long', other: '--',
+  hook_list_cta: 'Hook>List>CTA', hook_story_lesson_cta: 'Story>Lesson>CTA',
+  problem_agitate_solve: 'PAS', contrarian_proof_reframe: 'Contrarian>Reframe',
+  confession_insight_takeaway: 'Confess>Insight', list_framework: 'List',
+  problem_solution: 'Prob>Sol', story_lesson: 'Story>Lesson',
+  before_after: 'Before/After', step_by_step: 'Step-by-Step',
+  myth_busting: 'Myth Bust', question_answer: 'Q&A',
+  observation_insight: 'Observation', prediction_vision: 'Prediction',
+  motivational_manifesto: 'Motivational', authority_framework: 'Authority',
+  comparison: 'Compare', short_punchy: 'Short',
+  long_form_essay: 'Long', narrative_arc: 'Narrative',
+  content_with_cta: 'Content+CTA', data_driven: 'Data', other: '--',
 };
 
 interface Props {
