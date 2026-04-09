@@ -214,13 +214,16 @@ router.patch('/posts/:id/status', async (req: Request, res: Response) => {
 
 router.post('/posts/:id/generate-comments', async (req: Request, res: Response) => {
   try {
+    console.log('[COMMENT GEN] Step 1: Getting profile...');
     const profile = await CommenterProfileModel.get();
     if (!profile) {
       return res.status(400).json({ error: 'Please configure your commenter profile first' });
     }
+    console.log('[COMMENT GEN] Step 2: Profile found, getting post...');
 
     const post = await NetworkPostModel.findByIdWithCreator(paramId(req));
     if (!post) return res.status(404).json({ error: 'Post not found' });
+    console.log('[COMMENT GEN] Step 3: Post found, calling AI...', { postId: post.id, contentLen: post.content_text?.length });
 
     const generated = await generateComments({
       postContent: post.content_text || '',
@@ -235,6 +238,7 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
         topics: profile.topics || [],
       },
     });
+    console.log('[COMMENT GEN] Step 4: AI response received, saving...');
 
     // Delete existing comments for regeneration
     await NetworkCommentModel.deleteByPost(post.id);
@@ -245,10 +249,11 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
       { network_post_id: post.id, angle: 'provocative_question' as const, comment_text: generated.provocative_question },
       { network_post_id: post.id, angle: 'plot_twist' as const, comment_text: generated.plot_twist },
     ]);
+    console.log('[COMMENT GEN] Step 5: Done, returning comments');
 
     res.json(comments);
   } catch (err: any) {
-    console.error('[COMMENT GEN ERROR]', err.message);
+    console.error('[COMMENT GEN ERROR]', err.message, err.stack);
     res.status(500).json({ error: err.message });
   }
 });
