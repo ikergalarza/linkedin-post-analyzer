@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { estimateTimezone } from '../utils/timezone';
+
 interface UnipileProfile {
   id?: string;
   provider_id?: string;
@@ -201,7 +203,37 @@ export class UnipileService {
       || raw.network_info?.connection_count
       || 0;
 
-    console.log(`[Unipile] Profile normalize: followers=${followersCount}, connections=${connectionsCount}, raw_keys=${Object.keys(raw).join(',')}, network_info_keys=${raw.network_info ? Object.keys(raw.network_info).join(',') : 'none'}`);
+    // Extract location from various possible fields
+    // Unipile may use different field names depending on API version
+    const locationCandidates = [
+      raw.location,
+      raw.location_name,
+      raw.geo_location_name,
+      raw.geo_location?.name,
+      raw.geo_location?.full,
+      typeof raw.geo_location === 'string' ? raw.geo_location : null,
+      raw.geo_country_name,
+      raw.address,
+      raw.city,
+      raw.region,
+      raw.country,
+      raw.country_name,
+      raw.country_code,
+    ];
+    const location = locationCandidates.find((v) => v && typeof v === 'string' && v.trim().length > 0) || null;
+
+    // Debug: log all location-related fields found in raw profile
+    const locationKeys = Object.keys(raw).filter((k) =>
+      /location|geo|city|region|country|address|area|place|state|province/i.test(k)
+    );
+    console.log(`[Unipile] Profile normalize: followers=${followersCount}, connections=${connectionsCount}, location="${location}", location_related_keys=[${locationKeys.join(',')}], location_values={${locationKeys.map(k => `${k}=${JSON.stringify(raw[k])}`).join(', ')}}`);
+    console.log(`[Unipile] All raw profile keys: ${Object.keys(raw).join(', ')}`);
+
+    // Estimate timezone from location
+    const tz = estimateTimezone(location);
+    if (tz) {
+      console.log(`[Unipile] Timezone estimated: ${tz.timezone} (UTC${tz.utc_offset >= 0 ? '+' : ''}${tz.utc_offset}) from "${location}"`);
+    }
 
     return {
       linkedin_url: linkedinUrl,
@@ -212,6 +244,9 @@ export class UnipileService {
       followers_count: followersCount,
       connections_count: connectionsCount,
       profile_image_url: raw.profile_picture_url || null,
+      location: location,
+      timezone: tz?.timezone || null,
+      utc_offset: tz?.utc_offset ?? null,
     };
   }
 

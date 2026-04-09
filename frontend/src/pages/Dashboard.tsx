@@ -12,6 +12,9 @@ interface Creator {
   headline: string | null;
   profile_image_url: string | null;
   followers_count: number;
+  location: string | null;
+  timezone: string | null;
+  utc_offset: number | null;
   last_scraped_at: string | null;
   total_posts: number;
   total_outliers: number;
@@ -241,6 +244,9 @@ export default function Dashboard() {
                         {creator.name || 'Unknown'}
                       </h3>
                       <p className="text-text-secondary text-sm truncate">{creator.headline || '--'}</p>
+                      {creator.location && (
+                        <p className="text-text-muted text-xs truncate">{creator.location}</p>
+                      )}
                     </div>
                     <button
                       onClick={(e) => handleDelete(creator.id, e)}

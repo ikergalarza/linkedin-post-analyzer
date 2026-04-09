@@ -9,6 +9,9 @@ export interface Creator {
   followers_count: number;
   connections_count: number;
   profile_image_url: string | null;
+  location: string | null;
+  timezone: string | null;
+  utc_offset: number | null;
   last_scraped_at: Date | null;
   created_at: Date;
 }
@@ -33,8 +36,8 @@ export const CreatorModel = {
 
   async create(data: Partial<Creator>): Promise<Creator> {
     const { rows } = await pool.query(
-      `INSERT INTO creators (linkedin_url, linkedin_id, name, headline, followers_count, connections_count, profile_image_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO creators (linkedin_url, linkedin_id, name, headline, followers_count, connections_count, profile_image_url, location, timezone, utc_offset)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
         data.linkedin_url,
@@ -44,6 +47,9 @@ export const CreatorModel = {
         data.followers_count || 0,
         data.connections_count || 0,
         data.profile_image_url || null,
+        data.location || null,
+        data.timezone || null,
+        data.utc_offset ?? null,
       ]
     );
     return rows[0];

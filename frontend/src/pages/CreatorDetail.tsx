@@ -30,6 +30,9 @@ interface Creator {
   profile_image_url: string | null;
   followers_count: number;
   linkedin_url: string;
+  location: string | null;
+  timezone: string | null;
+  utc_offset: number | null;
 }
 
 interface Stats {
@@ -50,6 +53,10 @@ interface Stats {
   structure_breakdown: { structure: string; count: number; avg_engagement: number }[];
   timing_heatmap: { day: number; hour: number; count: number; avg_engagement: number; outliers: number; outlier_rate: number }[];
   best_timing_slots: { day: number; hour: number; count: number; avg_engagement: number; outliers: number; outlier_rate: number }[];
+  creator_location: string | null;
+  creator_timezone: string | null;
+  creator_utc_offset: number | null;
+  creator_utc_label: string;
 }
 
 interface AllData {
@@ -158,6 +165,8 @@ export default function CreatorDetail() {
             <p className="text-text-secondary text-sm">{creator.headline || '--'}</p>
             <p className="text-text-muted text-xs mt-1">
               {creator.followers_count > 0 ? `${creator.followers_count.toLocaleString()} followers` : 'Followers unknown'}
+              {creator.location && <span className="ml-2">· {creator.location}</span>}
+              {stats.creator_utc_label && stats.creator_utc_label !== 'UTC' && <span className="ml-1 text-accent">({stats.creator_utc_label})</span>}
             </p>
           </div>
         </div>
@@ -214,7 +223,12 @@ export default function CreatorDetail() {
 
       {/* Optimal Timing */}
       {stats.timing_heatmap && stats.timing_heatmap.length > 0 && (
-        <TimingHeatmap heatmap={stats.timing_heatmap} bestSlots={stats.best_timing_slots || []} />
+        <TimingHeatmap
+          heatmap={stats.timing_heatmap}
+          bestSlots={stats.best_timing_slots || []}
+          timezoneLabel={stats.creator_utc_label || 'UTC'}
+          location={stats.creator_location || undefined}
+        />
       )}
 
       {/* Content Type + Posting Consistency */}

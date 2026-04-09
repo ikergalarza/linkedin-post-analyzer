@@ -19,6 +19,8 @@ interface BestSlot {
 interface Props {
   heatmap: TimingSlot[];
   bestSlots: BestSlot[];
+  timezoneLabel?: string;
+  location?: string;
 }
 
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -31,7 +33,7 @@ function formatHour(h: number): string {
   return `${h - 12}pm`;
 }
 
-export default function TimingHeatmap({ heatmap, bestSlots }: Props) {
+export default function TimingHeatmap({ heatmap, bestSlots, timezoneLabel, location }: Props) {
   // Build a lookup: day-hour → slot
   const lookup: Record<string, TimingSlot> = {};
   for (const s of heatmap) {
@@ -99,9 +101,17 @@ export default function TimingHeatmap({ heatmap, bestSlots }: Props) {
 
   return (
     <div className="bg-bg-card rounded-xl p-6 min-w-0 overflow-hidden">
-      <h3 className="text-lg font-semibold mb-1">Optimal Posting Time</h3>
+      <div className="flex items-center gap-3 mb-1">
+        <h3 className="text-lg font-semibold">Optimal Posting Time</h3>
+        {timezoneLabel && (
+          <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-md font-medium">
+            {timezoneLabel}
+          </span>
+        )}
+      </div>
       <p className="text-text-muted text-xs mb-4">
-        Day x Hour heatmap (UTC). Orange = has outliers. Green = normal posts only. Brighter = higher engagement.
+        Day x Hour heatmap{location ? ` (${location} local time)` : timezoneLabel && timezoneLabel !== 'UTC' ? ` (${timezoneLabel})` : ' (UTC)'}.
+        Orange = has outliers. Green = normal posts only. Brighter = higher engagement.
       </p>
 
       {/* Summary cards */}

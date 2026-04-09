@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { detectPatterns, getCrossCreatorPatterns } from '../services/patterns';
+import { formatUtcOffset } from '../utils/timezone';
 
 function paramId(req: Request): string {
   return req.params.id as string;
@@ -91,12 +92,17 @@ router.get('/:id/stats', async (req: Request, res: Response) => {
       : 0;
 
     // Day x Hour heatmap — avg engagement and outlier rate per slot
+    // Convert to creator's local time if timezone is known
+    const utcOffset = creator.utc_offset ?? 0;
     const dayHourMap: Record<string, { count: number; totalEng: number; outliers: number }> = {};
     for (const p of allPosts) {
       if (!p.published_at) continue;
       const d = new Date(p.published_at);
-      const day = d.getUTCDay(); // 0=Sun
-      const hour = d.getUTCHours();
+      // Apply UTC offset to get local time
+      const localMs = d.getTime() + utcOffset * 60 * 60 * 1000;
+      const localDate = new Date(localMs);
+      const day = localDate.getUTCDay(); // 0=Sun (using UTC methods on the shifted date)
+      const hour = localDate.getUTCHours();
       const key = `${day}-${hour}`;
       if (!dayHourMap[key]) dayHourMap[key] = { count: 0, totalEng: 0, outliers: 0 };
       dayHourMap[key].count++;
@@ -125,6 +131,10 @@ router.get('/:id/stats', async (req: Request, res: Response) => {
     res.json({
       total_posts: totalPosts,
       total_outliers: parseInt(stats.total_outliers, 10) || 0,
+      creator_location: creator.location || null,
+      creator_timezone: creator.timezone || null,
+      creator_utc_offset: creator.utc_offset ?? null,
+      creator_utc_label: creator.utc_offset != null ? formatUtcOffset(creator.utc_offset) : 'UTC',
       avg_engagement: stats.avg_engagement ? Math.round(parseFloat(stats.avg_engagement)) : 0,
       median_engagement: stats.median_engagement ? Math.round(parseFloat(stats.median_engagement)) : 0,
       stddev_engagement: stats.stddev_engagement ? Math.round(parseFloat(stats.stddev_engagement)) : 0,

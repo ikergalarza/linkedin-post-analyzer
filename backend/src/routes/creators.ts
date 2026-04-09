@@ -4,6 +4,7 @@ import { PostModel } from '../models/post';
 import { unipileService } from '../services/unipile';
 import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { normalizeLinkedInUrl, isValidLinkedInUrl } from '../utils/linkedin';
+import { estimateTimezone } from '../utils/timezone';
 import pool from '../db';
 
 function paramId(req: Request): string {
@@ -93,7 +94,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   try {
     console.log(`[GET /:id] Step 1: querying creator...`);
     const { rows } = await pool.query(
-      'SELECT id, linkedin_url, linkedin_id, name, headline, followers_count, connections_count, profile_image_url, last_scraped_at, created_at FROM creators WHERE id = $1',
+      'SELECT id, linkedin_url, linkedin_id, name, headline, followers_count, connections_count, profile_image_url, location, timezone, utc_offset, last_scraped_at, created_at FROM creators WHERE id = $1',
       [reqId]
     );
     console.log(`[GET /:id] Step 2: got ${rows.length} rows`);
@@ -128,6 +129,9 @@ router.get('/:id', async (req: Request, res: Response) => {
       followers_count: creator.followers_count,
       connections_count: creator.connections_count,
       profile_image_url: creator.profile_image_url,
+      location: creator.location,
+      timezone: creator.timezone,
+      utc_offset: creator.utc_offset,
       last_scraped_at: creator.last_scraped_at,
       created_at: creator.created_at,
       stats: {
@@ -188,6 +192,26 @@ router.post('/:id/refresh', async (req: Request, res: Response) => {
 
     if (!creator.linkedin_id) {
       return res.status(422).json({ error: 'No LinkedIn internal ID stored. Delete and re-add this creator.' });
+    }
+
+    // Always try to update profile data (location, timezone, followers, etc.)
+    try {
+      const rawProfile = await unipileService.getProfile(creator.linkedin_url);
+      const profileData = unipileService.normalizeProfile(rawProfile, creator.linkedin_url);
+      const updateFields: any = {};
+      if (profileData.location) updateFields.location = profileData.location;
+      if (profileData.timezone) updateFields.timezone = profileData.timezone;
+      if (profileData.utc_offset != null) updateFields.utc_offset = profileData.utc_offset;
+      if (profileData.followers_count > 0) updateFields.followers_count = profileData.followers_count;
+      if (profileData.name) updateFields.name = profileData.name;
+      if (profileData.headline) updateFields.headline = profileData.headline;
+      if (profileData.profile_image_url) updateFields.profile_image_url = profileData.profile_image_url;
+      if (Object.keys(updateFields).length > 0) {
+        await CreatorModel.update(creator.id, updateFields);
+        console.log(`[Refresh] Updated profile fields: ${Object.keys(updateFields).join(', ')}`);
+      }
+    } catch (err: any) {
+      console.log(`Could not refresh profile data: ${err.message}`);
     }
 
     await scrapeCreatorPosts(creator.id, creator.linkedin_id);

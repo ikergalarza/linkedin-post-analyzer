@@ -59,6 +59,11 @@ const migration = `
 
   -- v3: text psychology/tone analysis
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS text_tone TEXT DEFAULT 'neutral';
+
+  -- v4: creator location & timezone
+  ALTER TABLE creators ADD COLUMN IF NOT EXISTS location TEXT;
+  ALTER TABLE creators ADD COLUMN IF NOT EXISTS timezone TEXT;
+  ALTER TABLE creators ADD COLUMN IF NOT EXISTS utc_offset FLOAT;
 `;
 
 export async function runMigrations() {

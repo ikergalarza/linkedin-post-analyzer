@@ -27,8 +27,17 @@ interface CrossCreatorData {
     content_type_distribution: Record<string, number>;
     hook_type_distribution: Record<string, number>;
     structure_distribution: Record<string, number>;
-    tone_distribution: Record<string, number>;
-    tone_breakdown: { tone: string; count: number; avg_engagement: number }[];
+    tone_comparison: {
+      tone: string;
+      outlier_count: number;
+      outlier_avg_engagement: number;
+      outlier_pct: number;
+      normal_count: number;
+      normal_avg_engagement: number;
+      normal_pct: number;
+    }[];
+    tone_interpretation: string;
+    neutral_outlier_pct: number;
     avg_word_count: number;
     cta_rate: number;
     common_traits: string[];
@@ -227,63 +236,83 @@ export default function OutlierExplorer() {
             )}
           </div>
 
-          {/* Text Psychology / Tone Analysis */}
-          {data.patterns.tone_breakdown && data.patterns.tone_breakdown.length > 0 && (
+          {/* Text Psychology / Tone Analysis — Outliers vs Normal comparison */}
+          {data.patterns.tone_comparison && data.patterns.tone_comparison.length > 0 && (
             <div className="bg-bg-card rounded-xl p-6">
-              <h3 className="text-lg font-semibold mb-1">Text Psychology of Outliers</h3>
-              <p className="text-text-muted text-xs mb-4">What psychological triggers are the top posts using? Ranked by avg engagement.</p>
+              <h3 className="text-lg font-semibold mb-1">Text Psychology: Outliers vs Normal</h3>
+              <p className="text-text-muted text-xs mb-4">
+                Comparing psychological triggers between outlier posts and regular posts. Sorted by outlier engagement.
+              </p>
+
+              {/* Interpretation box */}
+              {data.patterns.tone_interpretation && (
+                <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-5">
+                  <p className="text-sm text-text-secondary leading-relaxed">{data.patterns.tone_interpretation}</p>
+                </div>
+              )}
+
+              {/* Neutral stat */}
+              <div className="flex items-center gap-3 mb-5">
+                <span className="text-text-muted text-xs">Neutral tone in outliers:</span>
+                <span className={`text-sm font-bold ${data.patterns.neutral_outlier_pct > 50 ? 'text-text-muted' : 'text-accent'}`}>
+                  {data.patterns.neutral_outlier_pct}%
+                </span>
+                <span className="text-text-muted text-[10px]">
+                  {data.patterns.neutral_outlier_pct > 50
+                    ? '(content value matters more than emotional triggers)'
+                    : '(emotional triggers drive performance)'}
+                </span>
+              </div>
+
+              {/* Comparative cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {data.patterns.tone_breakdown.map((t) => {
+                {data.patterns.tone_comparison.map((t) => {
                   const info = toneLabels[t.tone] || { label: t.tone, emoji: '📄', desc: '' };
                   const color = toneColors[t.tone] || '#4b5563';
+                  const maxEng = Math.max(...data.patterns.tone_comparison.map((x) => x.outlier_avg_engagement), 1);
+                  const diff = t.outlier_pct - t.normal_pct;
                   return (
                     <div key={t.tone} className="bg-bg-secondary rounded-lg p-4 border border-border/50 hover:border-border transition-colors">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xl">{info.emoji}</span>
                         <span className="font-semibold text-text-primary">{info.label}</span>
-                        <span className="ml-auto text-xs text-text-muted">{t.count} posts</span>
+                        {diff !== 0 && (
+                          <span className={`ml-auto text-[10px] font-bold ${diff > 0 ? 'text-success' : 'text-danger'}`}>
+                            {diff > 0 ? '+' : ''}{diff}pp in outliers
+                          </span>
+                        )}
                       </div>
+
+                      {/* Engagement bar */}
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex-1 bg-bg-primary rounded-full h-2.5 overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
-                              width: `${Math.min(100, (t.avg_engagement / Math.max(...data.patterns.tone_breakdown.map(x => x.avg_engagement))) * 100)}%`,
+                              width: `${Math.min(100, (t.outlier_avg_engagement / maxEng) * 100)}%`,
                               backgroundColor: color,
                             }}
                           />
                         </div>
-                        <span className="text-sm font-bold text-text-primary">{t.avg_engagement.toLocaleString()}</span>
+                        <span className="text-sm font-bold text-text-primary">{t.outlier_avg_engagement.toLocaleString()}</span>
                       </div>
+
+                      {/* Outlier vs Normal comparison */}
+                      <div className="flex gap-4 text-[10px] mb-1">
+                        <div>
+                          <span className="text-accent">Outliers: </span>
+                          <span className="text-text-secondary">{t.outlier_count} posts ({t.outlier_pct}%)</span>
+                        </div>
+                        <div>
+                          <span className="text-text-muted">Normal: </span>
+                          <span className="text-text-secondary">{t.normal_count} posts ({t.normal_pct}%)</span>
+                        </div>
+                      </div>
+
                       <p className="text-[10px] text-text-muted">{info.desc}</p>
                     </div>
                   );
                 })}
-              </div>
-            </div>
-          )}
-
-          {/* Tone distribution in outliers */}
-          {data.patterns.tone_distribution && Object.keys(data.patterns.tone_distribution).length > 0 && (
-            <div className="bg-bg-card rounded-xl p-6">
-              <h3 className="text-sm font-semibold mb-3 text-text-secondary">Dominant Tone in Outlier Posts</h3>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(data.patterns.tone_distribution)
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([tone, count]) => {
-                    const info = toneLabels[tone] || { label: tone, emoji: '📄', desc: '' };
-                    const total = Object.values(data.patterns.tone_distribution).reduce((s, v) => s + v, 0);
-                    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-                    return (
-                      <span
-                        key={tone}
-                        className="px-3 py-1.5 rounded-lg text-sm border"
-                        style={{ borderColor: toneColors[tone] || '#4b5563', color: toneColors[tone] || '#9ca3af', backgroundColor: `${toneColors[tone] || '#4b5563'}15` }}
-                      >
-                        {info.emoji} {info.label} {pct}%
-                      </span>
-                    );
-                  })}
               </div>
             </div>
           )}

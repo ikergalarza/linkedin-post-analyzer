@@ -1,4 +1,5 @@
 import { Post } from '../models/post';
+import { classifyTone } from './engagement';
 
 interface PatternInsight {
   type: string;
@@ -207,6 +208,7 @@ export function detectPatterns(allPosts: Post[]): PatternInsight[] {
 
 export function getCrossCreatorPatterns(allPosts: Post[]) {
   const outliers = allPosts.filter((p) => p.is_outlier);
+  const nonOutliers = allPosts.filter((p) => !p.is_outlier);
 
   // Content type distribution across all outliers
   const typeCounts: Record<string, number> = {};
@@ -313,37 +315,66 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
       };
     });
 
-  // Tone distribution across outliers
-  const toneCounts: Record<string, number> = {};
+  // Tone analysis — compute dynamically to avoid stale DB values
+  // Classify each post's tone live
+  const getTone = (p: Post) => {
+    const live = classifyTone(p.content_text);
+    return live !== 'neutral' ? live : (p.text_tone || 'neutral');
+  };
+
+  // Outlier tones
+  const outlierTones: Record<string, { count: number; totalEng: number }> = {};
   for (const p of outliers) {
-    const tone = p.text_tone || 'neutral';
-    toneCounts[tone] = (toneCounts[tone] || 0) + 1;
+    const tone = getTone(p);
+    if (!outlierTones[tone]) outlierTones[tone] = { count: 0, totalEng: 0 };
+    outlierTones[tone].count++;
+    outlierTones[tone].totalEng += p.engagement_score;
   }
 
-  // Tone performance across ALL posts
-  const tonePerformance: Record<string, { count: number; totalEngagement: number }> = {};
-  for (const p of allPosts) {
-    const tone = p.text_tone || 'neutral';
-    if (!tonePerformance[tone]) tonePerformance[tone] = { count: 0, totalEngagement: 0 };
-    tonePerformance[tone].count++;
-    tonePerformance[tone].totalEngagement += p.engagement_score;
+  // Normal post tones (for comparison)
+  const normalTones: Record<string, { count: number; totalEng: number }> = {};
+  for (const p of nonOutliers) {
+    const tone = getTone(p);
+    if (!normalTones[tone]) normalTones[tone] = { count: 0, totalEng: 0 };
+    normalTones[tone].count++;
+    normalTones[tone].totalEng += p.engagement_score;
   }
-  const toneBreakdown = Object.entries(tonePerformance)
-    .filter(([k]) => k !== 'neutral')
-    .map(([tone, data]) => ({
-      tone,
-      count: data.count,
-      avg_engagement: data.count > 0 ? Math.round(data.totalEngagement / data.count) : 0,
-    }))
-    .sort((a, b) => b.avg_engagement - a.avg_engagement);
+
+  // Build comparative breakdown
+  const allToneKeys = new Set([...Object.keys(outlierTones), ...Object.keys(normalTones)]);
+  const toneComparison = [...allToneKeys]
+    .filter((k) => k !== 'neutral')
+    .map((tone) => {
+      const o = outlierTones[tone] || { count: 0, totalEng: 0 };
+      const n = normalTones[tone] || { count: 0, totalEng: 0 };
+      return {
+        tone,
+        outlier_count: o.count,
+        outlier_avg_engagement: o.count > 0 ? Math.round(o.totalEng / o.count) : 0,
+        outlier_pct: outliers.length > 0 ? Math.round((o.count / outliers.length) * 100) : 0,
+        normal_count: n.count,
+        normal_avg_engagement: n.count > 0 ? Math.round(n.totalEng / n.count) : 0,
+        normal_pct: nonOutliers.length > 0 ? Math.round((n.count / nonOutliers.length) * 100) : 0,
+      };
+    })
+    .sort((a, b) => b.outlier_avg_engagement - a.outlier_avg_engagement);
+
+  // Neutral stats
+  const neutralOutlierPct = outliers.length > 0
+    ? Math.round(((outlierTones['neutral']?.count || 0) / outliers.length) * 100)
+    : 0;
+
+  // Generate interpretation
+  const interpretation = generateToneInterpretation(toneComparison, outliers.length, nonOutliers.length, neutralOutlierPct);
 
   return {
     total_outliers: outliers.length,
     content_type_distribution: typeCounts,
     hook_type_distribution: hookTypeCounts,
     structure_distribution: structureCounts,
-    tone_distribution: toneCounts,
-    tone_breakdown: toneBreakdown,
+    tone_comparison: toneComparison,
+    tone_interpretation: interpretation,
+    neutral_outlier_pct: neutralOutlierPct,
     avg_word_count: Math.round(avgWords),
     cta_rate: Math.round(ctaRate * 100),
     common_traits: commonTraits,
@@ -388,6 +419,71 @@ function formatStructure(structure: string): string {
     other: 'Other',
   };
   return labels[structure] || structure;
+}
+
+function generateToneInterpretation(
+  toneComparison: { tone: string; outlier_count: number; outlier_avg_engagement: number; outlier_pct: number; normal_count: number; normal_avg_engagement: number; normal_pct: number }[],
+  totalOutliers: number,
+  totalNormal: number,
+  neutralOutlierPct: number,
+): string {
+  const lines: string[] = [];
+
+  // Top performing tones by engagement
+  const topByEng = toneComparison.filter((t) => t.outlier_count >= 2).slice(0, 3);
+  if (topByEng.length > 0) {
+    const names = topByEng.map((t) => `${formatToneLabel(t.tone)} (${t.outlier_avg_engagement.toLocaleString()} avg)`);
+    lines.push(`The tones with highest engagement in outliers are: ${names.join(', ')}.`);
+  }
+
+  // Tones that are more prevalent in outliers vs normal
+  const outlierSkewed = toneComparison.filter((t) => t.outlier_pct > t.normal_pct + 5 && t.outlier_count >= 2);
+  if (outlierSkewed.length > 0) {
+    const skewedNames = outlierSkewed.map((t) => `${formatToneLabel(t.tone)} (${t.outlier_pct}% in outliers vs ${t.normal_pct}% in normal)`);
+    lines.push(`Tones more common in outliers: ${skewedNames.join(', ')}.`);
+  }
+
+  // Tones that perform better in normal posts (surprising)
+  const normalSkewed = toneComparison.filter((t) => t.normal_pct > t.outlier_pct + 5 && t.normal_count >= 2);
+  if (normalSkewed.length > 0) {
+    const names = normalSkewed.map((t) => formatToneLabel(t.tone));
+    lines.push(`Tones more common in regular posts: ${names.join(', ')} — these don't drive outlier performance.`);
+  }
+
+  // Neutral commentary
+  if (neutralOutlierPct > 50) {
+    lines.push(`${neutralOutlierPct}% of outliers have neutral tone — this means the content succeeds through value/topic rather than emotional triggers.`);
+  } else if (neutralOutlierPct < 30) {
+    lines.push(`Only ${neutralOutlierPct}% of outliers are neutral — emotional/psychological triggers play a strong role in viral performance.`);
+  }
+
+  // Best engagement tone
+  if (topByEng.length > 0 && topByEng[0].outlier_avg_engagement > 0) {
+    const best = topByEng[0];
+    const worst = toneComparison.filter((t) => t.outlier_count >= 2).slice(-1)[0];
+    if (worst && worst.outlier_avg_engagement > 0) {
+      const ratio = Math.round(best.outlier_avg_engagement / worst.outlier_avg_engagement * 10) / 10;
+      if (ratio > 1.5) {
+        lines.push(`"${formatToneLabel(best.tone)}" posts get ${ratio}x more engagement than "${formatToneLabel(worst.tone)}" posts.`);
+      }
+    }
+  }
+
+  if (lines.length === 0) {
+    lines.push('Not enough data to generate meaningful tone insights. Add more creators and refresh data.');
+  }
+
+  return lines.join(' ');
+}
+
+function formatToneLabel(tone: string): string {
+  const labels: Record<string, string> = {
+    urgency: 'Urgency', authority: 'Authority', social_proof: 'Social Proof',
+    fomo: 'FOMO', aspirational: 'Aspirational', empathy: 'Empathy',
+    provocative: 'Provocative', educational: 'Educational', vulnerable: 'Vulnerable',
+    humorous: 'Humorous', neutral: 'Neutral',
+  };
+  return labels[tone] || tone;
 }
 
 function avg(nums: number[]): number {
