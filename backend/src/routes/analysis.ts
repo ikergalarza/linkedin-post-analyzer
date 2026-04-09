@@ -90,6 +90,38 @@ router.get('/:id/stats', async (req: Request, res: Response) => {
       ? Math.round(allPosts.reduce((s, p) => s + (p.share_like_ratio || 0), 0) / allPosts.length * 1000) / 1000
       : 0;
 
+    // Day x Hour heatmap — avg engagement and outlier rate per slot
+    const dayHourMap: Record<string, { count: number; totalEng: number; outliers: number }> = {};
+    for (const p of allPosts) {
+      if (!p.published_at) continue;
+      const d = new Date(p.published_at);
+      const day = d.getUTCDay(); // 0=Sun
+      const hour = d.getUTCHours();
+      const key = `${day}-${hour}`;
+      if (!dayHourMap[key]) dayHourMap[key] = { count: 0, totalEng: 0, outliers: 0 };
+      dayHourMap[key].count++;
+      dayHourMap[key].totalEng += p.engagement_score;
+      if (p.is_outlier) dayHourMap[key].outliers++;
+    }
+
+    const timingHeatmap = Object.entries(dayHourMap).map(([key, v]) => {
+      const [day, hour] = key.split('-').map(Number);
+      return {
+        day,
+        hour,
+        count: v.count,
+        avg_engagement: v.count > 0 ? Math.round(v.totalEng / v.count) : 0,
+        outliers: v.outliers,
+        outlier_rate: v.count > 0 ? Math.round((v.outliers / v.count) * 100) : 0,
+      };
+    });
+
+    // Best slots for outliers vs normal
+    const bestSlots = [...timingHeatmap]
+      .filter((s) => s.count >= 2)
+      .sort((a, b) => b.avg_engagement - a.avg_engagement)
+      .slice(0, 5);
+
     res.json({
       total_posts: totalPosts,
       total_outliers: parseInt(stats.total_outliers, 10) || 0,
@@ -108,6 +140,8 @@ router.get('/:id/stats', async (req: Request, res: Response) => {
       outlier_content_type_distribution: outlierContentDist,
       hook_type_breakdown: hookTypeBreakdown,
       structure_breakdown: structureBreakdown,
+      timing_heatmap: timingHeatmap,
+      best_timing_slots: bestSlots,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });

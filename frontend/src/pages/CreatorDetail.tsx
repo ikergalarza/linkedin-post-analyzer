@@ -8,6 +8,7 @@ import PatternInsights from '../components/PatternInsights';
 import OutlierTable from '../components/OutlierTable';
 import HookTypeChart from '../components/HookTypeChart';
 import StructureChart from '../components/StructureChart';
+import TimingHeatmap from '../components/TimingHeatmap';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -47,6 +48,8 @@ interface Stats {
   outlier_content_type_distribution: { content_type: string; count: string }[];
   hook_type_breakdown: { type: string; count: number; avg_engagement: number }[];
   structure_breakdown: { structure: string; count: number; avg_engagement: number }[];
+  timing_heatmap: { day: number; hour: number; count: number; avg_engagement: number; outliers: number; outlier_rate: number }[];
+  best_timing_slots: { day: number; hour: number; count: number; avg_engagement: number; outliers: number; outlier_rate: number }[];
 }
 
 interface AllData {
@@ -209,7 +212,12 @@ export default function CreatorDetail() {
         </div>
       )}
 
-      {/* Content Type + Heatmap */}
+      {/* Optimal Timing */}
+      {stats.timing_heatmap && stats.timing_heatmap.length > 0 && (
+        <TimingHeatmap heatmap={stats.timing_heatmap} bestSlots={stats.best_timing_slots || []} />
+      )}
+
+      {/* Content Type + Posting Consistency */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ContentTypeBreakdown
           all={stats.content_type_distribution}
