@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useApi } from '../hooks/useApi';
 import PostCard from '../components/PostCard';
 import { SkeletonCard } from '../components/Skeleton';
@@ -21,6 +21,7 @@ interface CrossCreatorData {
     post_url: string | null;
     creator_name: string;
     creator_image: string | null;
+    ai_explanation?: string;
   }[];
   patterns: {
     total_outliers: number;
@@ -42,6 +43,7 @@ interface CrossCreatorData {
     cta_rate: number;
     common_traits: string[];
     frequency_correlation: { postsPerWeek: number; avgEngagement: number }[];
+    global_analysis: string;
   };
 }
 
@@ -112,6 +114,20 @@ export default function OutlierExplorer() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [compareData, setCompareData] = useState<CompareData[] | null>(null);
   const [comparing, setComparing] = useState(false);
+  const [contentTypeFilter, setContentTypeFilter] = useState<string>('all');
+  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+
+  const contentTypes = useMemo(() => {
+    if (!data) return [];
+    const types = new Set(data.top_outliers.map((p) => p.content_type));
+    return ['all', ...Array.from(types).sort()];
+  }, [data]);
+
+  const filteredOutliers = useMemo(() => {
+    if (!data) return [];
+    if (contentTypeFilter === 'all') return data.top_outliers;
+    return data.top_outliers.filter((p) => p.content_type === contentTypeFilter);
+  }, [data, contentTypeFilter]);
 
   const toggleCreator = (id: string) => {
     setSelectedIds((prev) =>
@@ -183,6 +199,21 @@ export default function OutlierExplorer() {
                   <span key={i} className="bg-accent/10 text-accent border border-accent/20 px-3 py-1.5 rounded-lg text-sm">
                     {trait}
                   </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* AI Global Analysis */}
+          {data.patterns.global_analysis && (
+            <div className="bg-bg-card rounded-xl p-6 border border-accent/20">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-lg">🧠</span>
+                <h3 className="text-lg font-semibold">AI Pattern Analysis</h3>
+              </div>
+              <div className="space-y-3">
+                {data.patterns.global_analysis.split('\n\n').map((paragraph, i) => (
+                  <p key={i} className="text-sm text-text-secondary leading-relaxed">{paragraph}</p>
                 ))}
               </div>
             </div>
@@ -418,10 +449,65 @@ export default function OutlierExplorer() {
             </div>
           ) : (
             <>
-              <h2 className="text-xl font-bold">Top Outliers Across All Creators</h2>
+              {/* Header + filter */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <h2 className="text-xl font-bold">
+                  All Outliers
+                  <span className="text-text-muted text-sm font-normal ml-2">
+                    ({filteredOutliers.length}{contentTypeFilter !== 'all' ? ` of ${data.top_outliers.length}` : ''})
+                  </span>
+                </h2>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-text-muted text-xs">Filter:</span>
+                  {contentTypes.map((type) => {
+                    const typeLabel: Record<string, string> = {
+                      all: 'All', text_only: 'Text', image: 'Image',
+                      carousel: 'Carousel', video: 'Video', poll: 'Poll',
+                      article: 'Article', document: 'Document',
+                    };
+                    const count = type === 'all'
+                      ? data.top_outliers.length
+                      : data.top_outliers.filter((p) => p.content_type === type).length;
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => setContentTypeFilter(type)}
+                        className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                          contentTypeFilter === type
+                            ? 'bg-accent/20 text-accent border border-accent/30'
+                            : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                        }`}
+                      >
+                        {typeLabel[type] || type} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Outlier cards with AI explanation */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {data.top_outliers.map((post) => (
-                  <PostCard key={post.id} post={post} />
+                {filteredOutliers.map((post) => (
+                  <div key={post.id} className="flex flex-col">
+                    <PostCard post={post} />
+                    {/* AI explanation */}
+                    {post.ai_explanation && (
+                      <div className="bg-bg-card border-x border-b border-border rounded-b-xl -mt-3 pt-4 px-5 pb-4">
+                        <button
+                          onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
+                          className="text-[11px] text-accent hover:text-accent-light transition-colors flex items-center gap-1"
+                        >
+                          <span>🧠</span>
+                          {expandedPost === post.id ? 'Hide analysis' : 'Why did this work?'}
+                        </button>
+                        {expandedPost === post.id && (
+                          <p className="text-xs text-text-secondary mt-2 leading-relaxed">
+                            {post.ai_explanation}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </>

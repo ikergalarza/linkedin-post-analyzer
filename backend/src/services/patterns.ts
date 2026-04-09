@@ -367,6 +367,12 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
   // Generate interpretation
   const interpretation = generateToneInterpretation(toneComparison, outliers.length, nonOutliers.length, neutralOutlierPct);
 
+  // Generate global AI analysis
+  const globalAnalysis = generateGlobalAnalysis(
+    outliers, nonOutliers, typeCounts, hookTypeCounts, structureCounts,
+    toneComparison, neutralOutlierPct, avgWords, ctaRate, commonTraits,
+  );
+
   return {
     total_outliers: outliers.length,
     content_type_distribution: typeCounts,
@@ -379,7 +385,208 @@ export function getCrossCreatorPatterns(allPosts: Post[]) {
     cta_rate: Math.round(ctaRate * 100),
     common_traits: commonTraits,
     frequency_correlation: frequencyCorrelation,
+    global_analysis: globalAnalysis,
   };
+}
+
+function generateGlobalAnalysis(
+  outliers: Post[],
+  nonOutliers: Post[],
+  typeCounts: Record<string, number>,
+  hookTypeCounts: Record<string, number>,
+  structureCounts: Record<string, number>,
+  toneComparison: { tone: string; outlier_count: number; outlier_avg_engagement: number; outlier_pct: number; normal_pct: number }[],
+  neutralPct: number,
+  avgWords: number,
+  ctaRate: number,
+  commonTraits: string[],
+): string {
+  if (outliers.length < 3) return 'Not enough outlier data to generate a meaningful analysis.';
+
+  const sections: string[] = [];
+
+  // 1. Content format analysis
+  const typeEntries = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
+  const topFormat = typeEntries[0];
+  if (topFormat) {
+    const pct = Math.round((topFormat[1] / outliers.length) * 100);
+    const normalTypeCounts: Record<string, number> = {};
+    for (const p of nonOutliers) normalTypeCounts[p.content_type] = (normalTypeCounts[p.content_type] || 0) + 1;
+    const normalPct = nonOutliers.length > 0 ? Math.round(((normalTypeCounts[topFormat[0]] || 0) / nonOutliers.length) * 100) : 0;
+
+    if (pct > normalPct + 10) {
+      sections.push(`Content format matters: ${pct}% of outliers are "${topFormat[0]}" vs ${normalPct}% in normal posts. This format clearly resonates more with the audience.`);
+    } else if (typeEntries.length > 1) {
+      sections.push(`Outliers come from diverse formats: ${typeEntries.slice(0, 3).map(([t, c]) => `${t} (${Math.round((c / outliers.length) * 100)}%)`).join(', ')}. No single format dominates.`);
+    }
+  }
+
+  // 2. Hook strategy
+  const hookEntries = Object.entries(hookTypeCounts).filter(([k]) => k !== 'other').sort((a, b) => b[1] - a[1]);
+  if (hookEntries.length >= 2) {
+    const top2 = hookEntries.slice(0, 2);
+    const top2Pct = Math.round(((top2[0][1] + top2[1][1]) / outliers.length) * 100);
+    sections.push(`Hook strategy: the top 2 hook types ("${formatHookType(top2[0][0])}" and "${formatHookType(top2[1][0])}") account for ${top2Pct}% of outliers. ${top2Pct > 50 ? 'There\'s a clear winning formula here.' : 'Successful hooks are diverse — variety works.'}`);
+  }
+
+  // 3. Structure insight
+  const structEntries = Object.entries(structureCounts).filter(([k]) => k !== 'other').sort((a, b) => b[1] - a[1]);
+  if (structEntries.length >= 1) {
+    const topStruct = structEntries[0];
+    const pct = Math.round((topStruct[1] / outliers.length) * 100);
+    if (pct >= 30) {
+      sections.push(`Structure: "${formatStructure(topStruct[0])}" is the dominant structure in ${pct}% of outliers.`);
+    }
+  }
+
+  // 4. Length insight
+  const avgWordsNormal = nonOutliers.length > 0 ? nonOutliers.reduce((s, p) => s + p.word_count, 0) / nonOutliers.length : 0;
+  const lengthDiff = avgWordsNormal > 0 ? Math.round(((avgWords - avgWordsNormal) / avgWordsNormal) * 100) : 0;
+  if (Math.abs(lengthDiff) > 15) {
+    sections.push(`Post length: outliers average ${Math.round(avgWords)} words (${lengthDiff > 0 ? `${lengthDiff}% longer` : `${Math.abs(lengthDiff)}% shorter`} than normal posts). ${lengthDiff > 0 ? 'Longer, more in-depth content tends to go viral.' : 'Short, punchy content outperforms.'}`);
+  }
+
+  // 5. Emotional triggers
+  const emotionalTones = toneComparison.filter((t) => t.outlier_pct > t.normal_pct + 3);
+  if (emotionalTones.length > 0 && neutralPct < 70) {
+    sections.push(`Emotional triggers: ${emotionalTones.map((t) => `"${formatToneLabel(t.tone)}" (+${t.outlier_pct - t.normal_pct}pp vs normal)`).join(', ')} are overrepresented in outliers. Leveraging these tones increases the chance of going viral.`);
+  } else if (neutralPct >= 70) {
+    sections.push(`Interestingly, ${neutralPct}% of outliers use a neutral tone — going viral here is about delivering high-value content rather than emotional manipulation.`);
+  }
+
+  // 6. CTA & engagement pattern
+  if (ctaRate > 0.4) {
+    sections.push(`Call-to-action: ${Math.round(ctaRate * 100)}% of outliers include a CTA, suggesting that explicitly asking for engagement works.`);
+  } else if (ctaRate < 0.15) {
+    sections.push(`Surprisingly, only ${Math.round(ctaRate * 100)}% of outliers include a CTA — the content itself drives engagement without needing to ask for it.`);
+  }
+
+  // 7. Engagement quality
+  const avgCommentRatioOutlier = outliers.length > 0
+    ? outliers.reduce((s, p) => s + (p.comment_like_ratio || 0), 0) / outliers.length : 0;
+  const avgCommentRatioNormal = nonOutliers.length > 0
+    ? nonOutliers.reduce((s, p) => s + (p.comment_like_ratio || 0), 0) / nonOutliers.length : 0;
+  if (avgCommentRatioOutlier > avgCommentRatioNormal * 1.3 && avgCommentRatioOutlier > 0.05) {
+    sections.push(`Outliers generate ${Math.round(avgCommentRatioOutlier * 100)}% comment-to-like ratio vs ${Math.round(avgCommentRatioNormal * 100)}% for normal posts — viral content sparks conversations, not just passive likes.`);
+  }
+
+  if (sections.length === 0) {
+    return 'The outlier patterns are diverse — no single dominant strategy emerges. Experiment across different formats, hooks, and tones.';
+  }
+
+  return sections.join('\n\n');
+}
+
+/**
+ * Generate a per-post explanation of why an outlier post worked.
+ * Called for each post in the top outliers list.
+ */
+export function generatePostExplanation(post: {
+  content_type: string;
+  hook_type?: string;
+  post_structure?: string;
+  text_tone?: string;
+  word_count?: number;
+  has_emoji?: boolean;
+  has_hashtags?: boolean;
+  has_call_to_action?: boolean;
+  comment_like_ratio?: number;
+  share_like_ratio?: number;
+  outlier_ratio: number;
+  engagement_score: number;
+  likes_count: number;
+  comments_count: number;
+  reposts_count: number;
+  content_text?: string | null;
+}): string {
+  const reasons: string[] = [];
+
+  // Ratio context
+  if (post.outlier_ratio >= 10) {
+    reasons.push(`Extraordinary performance at ${post.outlier_ratio}x the creator's average`);
+  } else if (post.outlier_ratio >= 5) {
+    reasons.push(`Strong viral performance at ${post.outlier_ratio}x the creator's average`);
+  } else {
+    reasons.push(`Solid outlier at ${post.outlier_ratio}x the creator's average`);
+  }
+
+  // Content format
+  const formatInsights: Record<string, string> = {
+    carousel: 'Carousels drive high saves & shares — the swipe format keeps people engaged',
+    video: 'Video content gets priority in the LinkedIn algorithm and higher watch-time engagement',
+    image: 'Visual content stops the scroll — images increase engagement vs text-only',
+    document: 'Document/PDF posts get high engagement as they provide downloadable value',
+    poll: 'Polls drive massive engagement through low-friction interaction',
+    text_only: 'Pure text post — the writing alone carried this without visual support',
+  };
+  if (formatInsights[post.content_type]) {
+    reasons.push(formatInsights[post.content_type]);
+  }
+
+  // Hook type
+  if (post.hook_type && post.hook_type !== 'other') {
+    const hookInsights: Record<string, string> = {
+      question: 'Opens with a question — triggers curiosity and invites comments',
+      statistic: 'Leads with data — establishes credibility immediately',
+      controversy: 'Controversial opener — polarizing content drives debate and shares',
+      storytelling: 'Storytelling hook — personal narratives create emotional connection',
+      bold_statement: 'Bold claim upfront — grabs attention by being direct',
+      curiosity: 'Curiosity gap — makes people need to read more',
+      confession: 'Vulnerability in the opening — people connect with authenticity',
+      contrarian: 'Goes against the grain — contrarian views spark strong reactions',
+      social_proof: 'Social proof opener — numbers and results build instant trust',
+      how_to: 'Practical "how-to" — promises actionable value immediately',
+      list: 'List/framework format — clear structure promises organized value',
+      pov: 'Strong POV — takes a definitive stance that resonates',
+      prediction: 'Prediction — forward-looking content gets attention',
+      challenge: 'Challenge-based — provokes the reader to take action',
+      relatable: 'Relatable situation — people share content that mirrors their experience',
+      motivational: 'Motivational tone — aspirational content gets shared widely',
+      observation: 'Keen observation — insightful take on something everyone notices but doesn\'t articulate',
+      analogy: 'Analogy — makes complex ideas accessible through comparison',
+      announcement: 'News/announcement — novelty captures attention',
+      direct_address: 'Directly speaks to the reader — creates personal connection',
+    };
+    if (hookInsights[post.hook_type]) {
+      reasons.push(hookInsights[post.hook_type]);
+    }
+  }
+
+  // Comment ratio = debate
+  if ((post.comment_like_ratio || 0) > 0.15) {
+    reasons.push(`High debate factor (${Math.round((post.comment_like_ratio || 0) * 100)}% comment/like ratio) — this sparked real conversation`);
+  }
+
+  // Share ratio = viral spread
+  if ((post.share_like_ratio || 0) > 0.1) {
+    reasons.push(`High share rate (${Math.round((post.share_like_ratio || 0) * 100)}% share/like ratio) — people wanted others to see this`);
+  }
+
+  // Tone
+  if (post.text_tone && post.text_tone !== 'neutral') {
+    const toneInsights: Record<string, string> = {
+      provocative: 'Provocative tone triggers emotional reactions and debate',
+      vulnerable: 'Vulnerability creates deep emotional connection and empathy',
+      aspirational: 'Aspirational tone — people share content that represents who they want to be',
+      urgency: 'Urgency tone — creates FOMO and immediate action',
+      humorous: 'Humor makes content memorable and highly shareable',
+      empathy: 'Empathetic tone — people feel understood and engage to share their own experience',
+      authority: 'Authority tone — expert positioning builds trust and credibility',
+      educational: 'Educational value — people save and share content that teaches them something',
+    };
+    if (toneInsights[post.text_tone]) {
+      reasons.push(toneInsights[post.text_tone]);
+    }
+  }
+
+  // Length factor
+  if ((post.word_count || 0) > 200) {
+    reasons.push('Long-form depth — detailed content shows expertise and gets saved');
+  } else if ((post.word_count || 0) < 50 && (post.word_count || 0) > 0) {
+    reasons.push('Short and punchy — concise delivery that\'s easy to consume and share');
+  }
+
+  return reasons.slice(0, 4).join('. ') + '.';
 }
 
 function formatHookType(type: string): string {

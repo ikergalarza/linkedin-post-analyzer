@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
-import { detectPatterns, getCrossCreatorPatterns } from '../services/patterns';
+import { detectPatterns, getCrossCreatorPatterns, generatePostExplanation } from '../services/patterns';
 import { formatUtcOffset } from '../utils/timezone';
 
 function paramId(req: Request): string {
@@ -240,7 +240,7 @@ router.get('/compare', async (req: Request, res: Response) => {
 // GET /api/analysis/cross-creators
 router.get('/cross-creators', async (_req: Request, res: Response) => {
   try {
-    const topOutliers = await PostModel.getTopOutliersGlobal(20);
+    const topOutliers = await PostModel.getTopOutliersGlobal(500);
 
     // Get all posts for cross-creator patterns
     const creators = await CreatorModel.findAll();
@@ -252,7 +252,13 @@ router.get('/cross-creators', async (_req: Request, res: Response) => {
 
     const patterns = getCrossCreatorPatterns(allPosts);
 
-    res.json({ top_outliers: topOutliers, patterns });
+    // Add per-post AI explanation
+    const enrichedOutliers = topOutliers.map((post: any) => ({
+      ...post,
+      ai_explanation: generatePostExplanation(post),
+    }));
+
+    res.json({ top_outliers: enrichedOutliers, patterns });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

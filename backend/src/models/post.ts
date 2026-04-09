@@ -187,12 +187,13 @@ export const PostModel = {
     return rows;
   },
 
-  async getTopOutliersGlobal(limit = 20) {
+  async getTopOutliersGlobal(limit = 500) {
     const { rows } = await pool.query(
       `SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,
               p.published_at, p.likes_count, p.comments_count, p.reposts_count,
               p.engagement_score, p.outlier_ratio, p.is_outlier,
               p.hook_text, p.hook_type, p.post_structure, p.text_tone,
+              p.word_count, p.has_emoji, p.has_hashtags, p.has_call_to_action,
               p.comment_like_ratio, p.share_like_ratio, p.post_url,
               c.name as creator_name, c.profile_image_url as creator_image
        FROM posts p JOIN creators c ON p.creator_id = c.id
