@@ -249,16 +249,26 @@ export class UnipileService {
   }
 
   private detectContentType(raw: UnipilePost): string {
+    // Log media-related fields for debugging (first few posts)
+    const mediaKeys = ['attachments', 'media', 'images', 'documents', 'video', 'poll', 'article',
+      'image', 'image_url', 'thumbnail', 'thumbnail_url', 'type', 'content_type', 'media_type'].filter(k => raw[k] != null);
+    if (mediaKeys.length > 0) {
+      console.log(`[Unipile] detectContentType: mediaKeys=[${mediaKeys.join(',')}], attachments=${JSON.stringify(raw.attachments?.map(a => ({ type: a.type, size: a.size })))}, type=${raw.type}`);
+    }
+
     if (raw.poll) return 'poll';
     if (raw.article) return 'article';
 
     // Check attachments (Unipile's standard field)
     if (raw.attachments && raw.attachments.length > 0) {
-      const types = raw.attachments.map(a => a.type?.toLowerCase() || '');
+      const types = raw.attachments.map(a => (a.type || '').toLowerCase());
       if (types.some(t => t.includes('video'))) return 'video';
       if (types.some(t => t.includes('document') || t.includes('pdf'))) return 'document';
+      // Multiple images = carousel
+      const imageCount = types.filter(t => t.includes('image') || t.includes('photo')).length;
+      if (raw.attachments.length > 1 && imageCount > 1) return 'carousel';
       if (raw.attachments.length > 1) return 'carousel';
-      if (types.some(t => t.includes('image'))) return 'image';
+      if (imageCount >= 1) return 'image';
     }
 
     if (raw.video) return 'video';
@@ -272,6 +282,10 @@ export class UnipileService {
       if (m.type === 'document' || m.media_type === 'document') return 'document';
       return 'image';
     }
+
+    // Fallback: check for single image fields
+    if (raw.image || raw.image_url || raw.thumbnail || raw.thumbnail_url) return 'image';
+
     return 'text_only';
   }
 }
