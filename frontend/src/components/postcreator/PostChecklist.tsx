@@ -377,19 +377,33 @@ export default function PostChecklist({ text, onImproved }: Props) {
     let best = scorePost(current).overall;
     setBestScore(best);
 
+    // Multi-turn conversation so the AI learns from its own critique each iteration
+    const improveMessages: { role: 'user' | 'assistant'; content: string }[] = [];
+
     try {
       for (let i = 1; i <= 5; i++) {
         setIteration(i);
         const score = scorePost(current);
         if (score.overall >= 80) break;
 
+        const failingList = score.failing
+          .slice(0, 12)
+          .map((f: any) => `- ${f.label}${f.hint ? ' → ' + f.hint : ''}`)
+          .join('\n');
+
+        let userContent: string;
+        if (i === 1) {
+          userContent = `CURRENT POST:\n${current}\n\nCURRENT SCORE: ${score.overall}/100\n\nISSUES TO FIX (from outlier checklist):\n${failingList}\n\nRewrite the post fixing as many of these issues as possible. Return ONLY the rewritten post text — no preamble, no explanation.`;
+        } else {
+          userContent = `Score after last rewrite: ${score.overall}/100 (best so far: ${best}/100)\n\nThe following checks STILL FAIL — try DIFFERENT techniques than what you used before:\n${failingList}\n\nRewrite the post again addressing these remaining issues with fresh approaches. Return ONLY the rewritten post text.`;
+        }
+
+        improveMessages.push({ role: 'user', content: userContent });
+
         const res = await fetch(`${BASE}/api/chat/improve`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: current,
-            suggestions: score.failing.slice(0, 12),
-          }),
+          body: JSON.stringify({ messages: improveMessages }),
         });
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
@@ -399,10 +413,13 @@ export default function PostChecklist({ text, onImproved }: Props) {
         const improved = (data.text || '').trim();
         if (!improved) throw new Error('Empty response from AI');
 
+        // Add AI response to conversation history so next iteration has full context
+        improveMessages.push({ role: 'assistant', content: improved });
+
         const newScore = scorePost(improved).overall;
-        // Only accept iteration if it improves (avoid regressions)
+        // Always update current post (even on plateau) so AI sees its own output
+        current = improved;
         if (newScore >= best) {
-          current = improved;
           best = newScore;
           setBestScore(best);
           onImproved(improved);

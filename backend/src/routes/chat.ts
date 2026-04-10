@@ -266,12 +266,12 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/chat/improve — single-shot rewrite based on checklist suggestions
+// POST /api/chat/improve — iterative rewrite with full conversation history
 router.post('/improve', async (req: Request, res: Response) => {
   try {
-    const { text, suggestions } = req.body;
-    if (!text || typeof text !== 'string') {
-      return res.status(400).json({ error: 'text required' });
+    const { messages } = req.body;
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'messages array required' });
     }
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
@@ -281,19 +281,21 @@ router.post('/improve', async (req: Request, res: Response) => {
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
 
-    const system = `You are a LinkedIn viral content editor. Your job is to rewrite the user's post to fix specific issues while PRESERVING their voice, core message, and authentic style. Return ONLY the rewritten post text — no preamble, no explanation, no markdown fences, no quotes around it. Keep the same language as the input.${profileContext}`;
+    // System prompt: editor that learns from its own critique across iterations
+    const system = `You are a LinkedIn viral content editor working in an iterative improvement loop. Each turn you receive the current post and a list of checklist items that still fail. Your goal is to rewrite the post to fix as many failing items as possible.
 
-    const issueList = Array.isArray(suggestions) && suggestions.length > 0
-      ? suggestions.map((s: any) => `- ${typeof s === 'string' ? s : s.label + (s.hint ? ' → ' + s.hint : '')}`).join('\n')
-      : '- Make the post more viral: sharper hook, more specific numbers, stronger emotion, clear CTA';
-
-    const userMsg = `CURRENT POST:\n${text}\n\nISSUES TO FIX (from outlier checklist):\n${issueList}\n\nRewrite the post fixing these issues. Return ONLY the rewritten post text.`;
+Rules:
+- PRESERVE the author's voice, core message, and authentic style
+- Return ONLY the rewritten post text — no preamble, no explanation, no markdown fences, no quotes
+- Keep the same language as the input (Spanish or English)
+- If an issue persisted from a previous iteration, try a DIFFERENT technique to address it — do not repeat the same approach
+- Each iteration should produce a meaningfully different (and better) version${profileContext}`;
 
     const result = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 2048,
       system,
-      messages: [{ role: 'user', content: userMsg }],
+      messages: messages.map((m: any) => ({ role: m.role, content: m.content })),
     });
 
     const block = result.content[0];
