@@ -17,63 +17,144 @@ const RATIO_VALUES: Record<ImageRatio, number> = {
   '1.91:1': 1.91,
 };
 
-const TRUNCATE: Record<ViewMode, number> = {
-  desktop: 700,
-  mobile: 210,
-};
-
 const MAX_CHARS = 3000;
 
+// Card content widths (card width minus 32px horizontal padding)
+// Desktop card: 555px → content: 523px. Mobile card: 347px → content: 315px.
+// At 14px system font, average char ≈ 7.1px → chars per line:
+const CHARS_PER_LINE: Record<ViewMode, number> = {
+  desktop: Math.floor(523 / 7.1), // ≈ 73
+  mobile: Math.floor(315 / 7.1),  // ≈ 44
+};
+
+// Max visible lines before "ver más"
+// Desktop text-only: 5, desktop with media: 3, mobile (any): 2
+const MAX_LINES = {
+  desktop: { text: 5, withMedia: 3 },
+  mobile:  { text: 2, withMedia: 2 },
+};
+
 function charCount(text: string): number {
-  // Emojis count as 2, flag emojis as 4-7 — approximate via spread
   return [...text].reduce((n, ch) => {
     const cp = ch.codePointAt(0) ?? 0;
-    if (cp > 0xffff) return n + 2; // surrogate pairs (most emojis)
-    return n + 1;
+    return cp > 0xffff ? n + 2 : n + 1;
   }, 0);
 }
 
-function PostText({ text, view }: { text: string; view: ViewMode }) {
+/**
+ * Counts how many visual lines a piece of text occupies given a chars-per-line width.
+ * Blank lines count as 1 line each.
+ */
+function countVisualLines(text: string, charsPerLine: number): number {
+  return text.split('\n').reduce((total, seg) => {
+    if (seg.trim() === '') return total + 1;
+    return total + Math.max(1, Math.ceil(seg.length / charsPerLine));
+  }, 0);
+}
+
+/**
+ * Returns the visible portion of text that fits within maxLines, respecting
+ * LinkedIn's line-counting rules (blank lines = 1 line, wrap counts too).
+ */
+function truncateByLines(
+  text: string,
+  maxLines: number,
+  charsPerLine: number,
+): { visible: string; truncated: boolean; linesUsed: number; totalLines: number } {
+  const totalLines = countVisualLines(text, charsPerLine);
+  if (totalLines <= maxLines) {
+    return { visible: text, truncated: false, linesUsed: totalLines, totalLines };
+  }
+
+  const segments = text.split('\n');
+  let linesConsumed = 0;
+  const visibleParts: string[] = [];
+
+  for (const seg of segments) {
+    const segLines = seg.trim() === '' ? 1 : Math.max(1, Math.ceil(seg.length / charsPerLine));
+
+    if (linesConsumed + segLines > maxLines) {
+      // Fit as many chars from this segment as the remaining lines allow
+      const remainingLines = maxLines - linesConsumed;
+      if (remainingLines > 0 && seg.trim() !== '') {
+        const maxChars = remainingLines * charsPerLine;
+        visibleParts.push(seg.slice(0, maxChars).trimEnd());
+      }
+      break;
+    }
+
+    linesConsumed += segLines;
+    visibleParts.push(seg);
+
+    if (linesConsumed >= maxLines) break;
+  }
+
+  return {
+    visible: visibleParts.join('\n').trimEnd(),
+    truncated: true,
+    linesUsed: maxLines,
+    totalLines,
+  };
+}
+
+function PostText({
+  text,
+  view,
+  hasMedia,
+}: {
+  text: string;
+  view: ViewMode;
+  hasMedia: boolean;
+}) {
   const [expanded, setExpanded] = useState(false);
-  const limit = TRUNCATE[view];
-  const chars = charCount(text);
-  const truncate = !expanded && chars > limit;
-  // Truncate by char index (approximate by slicing chars array)
-  const visibleText = truncate ? [...text].slice(0, limit).join('') : text;
+
+  const maxLines = hasMedia ? MAX_LINES[view].withMedia : MAX_LINES[view].text;
+  const charsPerLine = CHARS_PER_LINE[view];
+  const { visible, truncated, linesUsed, totalLines } = truncateByLines(text, maxLines, charsPerLine);
 
   return (
-    <div
-      style={{
-        fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
-        fontSize: 14,
-        lineHeight: 1.5,
-        color: '#191919',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-      }}
-    >
-      {visibleText}
-      {truncate && (
-        <>
-          {'… '}
-          <span
-            onClick={() => setExpanded(true)}
-            style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
-          >
-            …ver más
-          </span>
-        </>
-      )}
-      {expanded && (
-        <>
-          {' '}
-          <span
-            onClick={() => setExpanded(false)}
-            style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
-          >
-            ver menos
-          </span>
-        </>
+    <div>
+      <div
+        style={{
+          fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+          fontSize: 14,
+          lineHeight: 1.5,
+          color: '#191919',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+        }}
+      >
+        {expanded ? text : visible}
+        {truncated && !expanded && (
+          <>
+            {'… '}
+            <span
+              onClick={() => setExpanded(true)}
+              style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
+            >
+              …ver más
+            </span>
+          </>
+        )}
+        {expanded && (
+          <>
+            {' '}
+            <span
+              onClick={() => setExpanded(false)}
+              style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
+            >
+              ver menos
+            </span>
+          </>
+        )}
+      </div>
+      {/* Line count hint below text */}
+      {!expanded && (
+        <div style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>
+          {truncated
+            ? `${linesUsed} líneas visibles de ${totalLines} totales · ${maxLines} max ${hasMedia ? '(con imagen)' : '(solo texto)'}`
+            : `${totalLines} líneas · sin truncar`}
+        </div>
       )}
     </div>
   );
@@ -114,7 +195,7 @@ export default function LinkedInPostPreview({
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const CARD_WIDTH = view === 'desktop' ? 555 : 390;
+  const CARD_WIDTH = view === 'desktop' ? 555 : 347;
   const chars = charCount(text);
   const charPct = Math.min(chars / MAX_CHARS, 1);
   const charColor = chars > 2800 ? '#ef4444' : chars > 2400 ? '#f59e0b' : '#10b981';
@@ -306,7 +387,7 @@ export default function LinkedInPostPreview({
           {/* Post text */}
           <div style={{ padding: '0 16px 12px' }}>
             {text ? (
-              <PostText text={text} view={view} />
+              <PostText text={text} view={view} hasMedia={!!imageUrl} />
             ) : (
               <span style={{ color: '#aaa', fontSize: 13, fontStyle: 'italic' }}>
                 El contenido del post aparecerá aquí…
@@ -481,17 +562,12 @@ export default function LinkedInPostPreview({
         </div>
       </div>
 
-      {/* Truncation info */}
-      <div style={{ fontSize: 10, color: '#64748b', textAlign: 'center' }}>
-        Truncado en {TRUNCATE[view]} chars ({view === 'desktop' ? 'escritorio' : 'móvil'}) ·{' '}
-        {chars > TRUNCATE[view] ? (
-          <span style={{ color: '#f59e0b' }}>
-            el feed muestra hasta "…ver más" → {chars - TRUNCATE[view]} chars ocultos
-          </span>
-        ) : (
-          <span style={{ color: '#10b981' }}>post completo visible sin truncar</span>
-        )}
-      </div>
+      {/* Blank-line warning */}
+      {text && /\n\s*\n/.test(text) && (
+        <div style={{ fontSize: 10, color: '#f59e0b', textAlign: 'center' }}>
+          ⚠ Tienes líneas en blanco — cada una consume 1 línea de las visibles antes del "ver más"
+        </div>
+      )}
     </div>
   );
 }
