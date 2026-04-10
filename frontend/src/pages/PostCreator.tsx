@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import LinkedInPostPreview from '../components/postcreator/LinkedInPostPreview';
 import CreatorProfileForm from '../components/postcreator/CreatorProfileForm';
+import PostChecklist from '../components/postcreator/PostChecklist';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -383,6 +384,9 @@ export default function PostCreator() {
                       Copy
                     </button>
                   </div>
+                </div>
+                <div className="mt-4 max-w-lg mx-auto">
+                  <PostChecklist text={activePreviewText} />
                 </div>
               </>
             ) : (
