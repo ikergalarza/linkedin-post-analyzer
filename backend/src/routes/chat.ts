@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { getCrossCreatorPatterns } from '../services/patterns';
+import { CreatorProfileModel } from '../models/creatorProfile';
 
 const router = Router();
 
@@ -160,6 +161,35 @@ async function getAnalysisContext(): Promise<string> {
   return cachedContext;
 }
 
+async function buildProfileContext(): Promise<string> {
+  const profile = await CreatorProfileModel.get();
+  if (!profile) return '';
+
+  const lines: string[] = [];
+  lines.push('\n\n=== USER PROFILE (who is writing the post) ===');
+  if (profile.name) lines.push(`Name: ${profile.name}`);
+  if (profile.headline) lines.push(`Headline: ${profile.headline}`);
+  if (profile.followers_count) lines.push(`Followers: ${profile.followers_count}`);
+  if (profile.company) lines.push(`Company: ${profile.company}`);
+  if (profile.product) lines.push(`Product: ${profile.product}`);
+  if (profile.positioning) lines.push(`Positioning / What they want to stand for: ${profile.positioning}`);
+  if (profile.tone_style) lines.push(`Tone & style preference: ${profile.tone_style}`);
+
+  if (profile.my_posts && profile.my_posts.length > 0) {
+    lines.push('');
+    lines.push(`--- Top ${Math.min(profile.my_posts.length, 10)} posts by this user (for voice/style reference) ---`);
+    for (const p of profile.my_posts.slice(0, 10)) {
+      lines.push(`\n[${p.likes_count} likes, ${p.comments_count} comments, ${p.reposts_count} reposts]`);
+      lines.push(p.content_text.substring(0, 600));
+      lines.push('---');
+    }
+  }
+
+  lines.push('');
+  lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above. Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic.');
+  return lines.join('\n');
+}
+
 const SYSTEM_PROMPT = `You are a LinkedIn viral content strategist and copywriter. You have access to real data from analyzing thousands of LinkedIn posts across multiple creators, identifying which posts became "outliers" (3x+ their creator's average engagement).
 
 Your job is to help the user create LinkedIn posts that have the highest chance of going viral, based on the real patterns you've observed in the data.
@@ -197,8 +227,9 @@ router.post('/', async (req: Request, res: Response) => {
 
     const client = new Anthropic({ apiKey });
     const analysisContext = await getAnalysisContext();
+    const profileContext = await buildProfileContext();
 
-    const systemPrompt = `${SYSTEM_PROMPT}\n\nHere is the real analysis data from the LinkedIn posts database:\n\n${analysisContext}`;
+    const systemPrompt = `${SYSTEM_PROMPT}\n\nHere is the real analysis data from the LinkedIn posts database:\n\n${analysisContext}${profileContext}`;
 
     // Stream the response
     res.setHeader('Content-Type', 'text/event-stream');

@@ -118,6 +118,25 @@ const migration = `
     created_at TIMESTAMPTZ DEFAULT NOW()
   );
   CREATE INDEX IF NOT EXISTS idx_network_comments_post ON network_comments(network_post_id);
+
+  -- v6: Creator profile for Post Creator (single-row)
+  CREATE TABLE IF NOT EXISTS creator_profile (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    linkedin_url TEXT,
+    linkedin_id TEXT,
+    name TEXT,
+    headline TEXT,
+    profile_image_url TEXT,
+    followers_count INTEGER DEFAULT 0,
+    company TEXT,
+    product TEXT,
+    positioning TEXT,
+    tone_style TEXT,
+    my_posts JSONB DEFAULT '[]',
+    last_fetched_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
 `;
 
 export async function runMigrations() {

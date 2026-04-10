@@ -37,7 +37,7 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
 
   return (
     <div className="bg-bg-card rounded-xl p-6 min-w-0 overflow-hidden">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-start justify-between mb-1">
         <h3 className="text-lg font-semibold">Engagement Timeline</h3>
         <div className="flex items-center gap-4 text-xs text-text-muted">
           <span className="flex items-center gap-1">
@@ -47,6 +47,11 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
             <span className="w-3 h-0.5 bg-[#67e8f9] inline-block" /> MA(10)
           </span>
         </div>
+      </div>
+      <div className="text-[11px] text-text-muted mb-4 space-y-0.5">
+        <p><span className="text-text-secondary font-medium">Engagement</span>: weighted score per post (likes + comments×2 + reposts×3).</p>
+        <p><span className="text-text-secondary font-medium">Avg</span>: creator's overall average engagement across all posts.</p>
+        <p><span className="text-text-secondary font-medium">MA(10)</span>: moving average of the previous 10 posts — shows recent trend without single-post noise.</p>
       </div>
       <ResponsiveContainer width="100%" height={320}>
         <ComposedChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
