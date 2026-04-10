@@ -1,7 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+const BASE = import.meta.env.VITE_API_URL || '';
 
 interface Props {
   text: string;
+  onImproved?: (newText: string) => void;
 }
 
 type Category = 'hook' | 'structure' | 'emotion' | 'format' | 'cta' | 'topic';
@@ -321,40 +324,97 @@ function buildCtx(text: string): TextCtx {
   return { text: trimmed, lower, hook, hookLower: hook.toLowerCase(), lines, words, wordsHook, paragraphs };
 }
 
-export default function PostChecklist({ text }: Props) {
+export function scorePost(text: string) {
+  const ctx = buildCtx(text);
+  const byCategory: Record<Category, { items: { item: ChecklistItem; passed: boolean }[]; score: number }> = {
+    hook: { items: [], score: 0 },
+    structure: { items: [], score: 0 },
+    emotion: { items: [], score: 0 },
+    format: { items: [], score: 0 },
+    cta: { items: [], score: 0 },
+    topic: { items: [], score: 0 },
+  };
+  for (const item of CHECKLIST) {
+    let passed = false;
+    try {
+      passed = item.test(ctx);
+    } catch {
+      passed = false;
+    }
+    byCategory[item.category].items.push({ item, passed });
+    if (passed) byCategory[item.category].score += item.weight;
+  }
+  let total = 0;
+  for (const cat of Object.keys(byCategory) as Category[]) {
+    total += byCategory[cat].score * CATEGORY_META[cat].weight;
+  }
+  const overall = Math.round(total * 100);
+  const failing = CHECKLIST.filter((item) =>
+    !byCategory[item.category].items.find((i) => i.item.id === item.id)?.passed
+  ).map((item) => ({ label: item.label, hint: item.hint || '' }));
+  return { byCategory, overall, ctx, failing };
+}
+
+export default function PostChecklist({ text, onImproved }: Props) {
+  const [improving, setImproving] = useState(false);
+  const [iteration, setIteration] = useState(0);
+  const [improveError, setImproveError] = useState<string | null>(null);
+  const [bestScore, setBestScore] = useState<number | null>(null);
+
   const result = useMemo(() => {
     if (!text || text.trim().length < 20) return null;
-    const ctx = buildCtx(text);
-
-    const byCategory: Record<Category, { items: { item: ChecklistItem; passed: boolean }[]; score: number }> = {
-      hook: { items: [], score: 0 },
-      structure: { items: [], score: 0 },
-      emotion: { items: [], score: 0 },
-      format: { items: [], score: 0 },
-      cta: { items: [], score: 0 },
-      topic: { items: [], score: 0 },
-    };
-
-    for (const item of CHECKLIST) {
-      let passed = false;
-      try {
-        passed = item.test(ctx);
-      } catch {
-        passed = false;
-      }
-      byCategory[item.category].items.push({ item, passed });
-      if (passed) byCategory[item.category].score += item.weight;
-    }
-
-    // Overall weighted score
-    let total = 0;
-    for (const cat of Object.keys(byCategory) as Category[]) {
-      total += byCategory[cat].score * CATEGORY_META[cat].weight;
-    }
-    const overall = Math.round(total * 100);
-
-    return { byCategory, overall, ctx };
+    return scorePost(text);
   }, [text]);
+
+  const runAutoImprove = async () => {
+    if (!text || !onImproved) return;
+    setImproving(true);
+    setImproveError(null);
+    setIteration(0);
+    setBestScore(null);
+
+    let current = text;
+    let best = scorePost(current).overall;
+    setBestScore(best);
+
+    try {
+      for (let i = 1; i <= 5; i++) {
+        setIteration(i);
+        const score = scorePost(current);
+        if (score.overall >= 80) break;
+
+        const res = await fetch(`${BASE}/api/chat/improve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: current,
+            suggestions: score.failing.slice(0, 12),
+          }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `Error ${res.status}`);
+        }
+        const data = await res.json();
+        const improved = (data.text || '').trim();
+        if (!improved) throw new Error('Empty response from AI');
+
+        const newScore = scorePost(improved).overall;
+        // Only accept iteration if it improves (avoid regressions)
+        if (newScore >= best) {
+          current = improved;
+          best = newScore;
+          setBestScore(best);
+          onImproved(improved);
+        }
+        if (best >= 80) break;
+      }
+    } catch (err: any) {
+      setImproveError(err.message);
+    } finally {
+      setImproving(false);
+    }
+  };
 
   if (!result) {
     return (
@@ -407,7 +467,26 @@ export default function PostChecklist({ text }: Props) {
             {result.ctx.words} words · hook {result.ctx.wordsHook}w
           </p>
         </div>
+        {onImproved && (
+          <button
+            onClick={runAutoImprove}
+            disabled={improving || overall >= 80}
+            title={overall >= 80 ? 'Already above 80 — you\'re good' : 'Iteratively rewrite with AI until score ≥ 80 (max 5 passes)'}
+            className="px-3 py-2 bg-accent/10 text-accent border border-accent/30 rounded-lg text-[11px] font-medium hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+          >
+            {improving ? `Improving ${iteration}/5…` : '✨ Auto-improve'}
+          </button>
+        )}
       </div>
+
+      {improving && (
+        <div className="text-[10px] text-text-muted">
+          Iteration {iteration}/5 · best score so far: {bestScore ?? overall}
+        </div>
+      )}
+      {improveError && (
+        <div className="text-[10px] text-danger">Auto-improve failed: {improveError}</div>
+      )}
 
       {/* Category bars */}
       <div className="space-y-2">

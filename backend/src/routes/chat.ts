@@ -266,4 +266,49 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/chat/improve — single-shot rewrite based on checklist suggestions
+router.post('/improve', async (req: Request, res: Response) => {
+  try {
+    const { text, suggestions } = req.body;
+    if (!text || typeof text !== 'string') {
+      return res.status(400).json({ error: 'text required' });
+    }
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured.' });
+    }
+
+    const client = new Anthropic({ apiKey });
+    const profileContext = await buildProfileContext();
+
+    const system = `You are a LinkedIn viral content editor. Your job is to rewrite the user's post to fix specific issues while PRESERVING their voice, core message, and authentic style. Return ONLY the rewritten post text — no preamble, no explanation, no markdown fences, no quotes around it. Keep the same language as the input.${profileContext}`;
+
+    const issueList = Array.isArray(suggestions) && suggestions.length > 0
+      ? suggestions.map((s: any) => `- ${typeof s === 'string' ? s : s.label + (s.hint ? ' → ' + s.hint : '')}`).join('\n')
+      : '- Make the post more viral: sharper hook, more specific numbers, stronger emotion, clear CTA';
+
+    const userMsg = `CURRENT POST:\n${text}\n\nISSUES TO FIX (from outlier checklist):\n${issueList}\n\nRewrite the post fixing these issues. Return ONLY the rewritten post text.`;
+
+    const result = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      system,
+      messages: [{ role: 'user', content: userMsg }],
+    });
+
+    const block = result.content[0];
+    let improved = block && block.type === 'text' ? block.text.trim() : '';
+    // Strip possible markdown fences or surrounding quotes
+    improved = improved.replace(/^```[\w]*\n?/, '').replace(/\n?```$/, '').trim();
+    if ((improved.startsWith('"') && improved.endsWith('"')) || (improved.startsWith('\u201C') && improved.endsWith('\u201D'))) {
+      improved = improved.slice(1, -1).trim();
+    }
+
+    res.json({ text: improved });
+  } catch (err: any) {
+    console.error('[IMPROVE ERROR]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

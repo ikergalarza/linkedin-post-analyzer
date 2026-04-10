@@ -386,7 +386,7 @@ export default function PostCreator() {
                   </div>
                 </div>
                 <div className="mt-4 max-w-lg mx-auto">
-                  <PostChecklist text={activePreviewText} />
+                  <PostChecklist text={activePreviewText} onImproved={setManualPreview} />
                 </div>
               </>
             ) : (
