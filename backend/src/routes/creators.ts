@@ -234,6 +234,85 @@ router.delete('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/creators/reclassify — scan raw_data of text_only posts and fix content_type
+router.post('/reclassify', async (_req: Request, res: Response) => {
+  try {
+    // Fetch all posts (not just text_only — re-check everything)
+    const { rows: posts } = await pool.query(
+      `SELECT id, content_type, raw_data FROM posts WHERE raw_data IS NOT NULL`
+    );
+
+    let updated = 0;
+    const errors: string[] = [];
+
+    for (const post of posts) {
+      try {
+        const raw = post.raw_data || {};
+        const detected = detectContentTypeFromRaw(raw);
+        if (detected !== post.content_type) {
+          await pool.query('UPDATE posts SET content_type = $1 WHERE id = $2', [detected, post.id]);
+          updated++;
+        }
+      } catch (e: any) {
+        errors.push(`${post.id}: ${e.message}`);
+      }
+    }
+
+    res.json({ total: posts.length, updated, errors: errors.slice(0, 10) });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Standalone content type detector that works on raw_data objects
+function detectContentTypeFromRaw(raw: any): string {
+  if (raw.poll) return 'poll';
+  if (raw.article) return 'article';
+
+  if (Array.isArray(raw.attachments) && raw.attachments.length > 0) {
+    const types = raw.attachments.map((a: any) => (a.type || '').toLowerCase());
+    if (types.some((t: string) => t.includes('video'))) return 'video';
+    if (types.some((t: string) => t.includes('document') || t.includes('pdf'))) return 'document';
+    const imageCount = types.filter((t: string) => t.includes('image') || t.includes('photo') || t.includes('picture')).length;
+    if (raw.attachments.length > 1) return imageCount > 1 ? 'carousel' : 'carousel';
+    if (imageCount >= 1) return 'image';
+    // attachment exists but type unknown — check for url
+    if (raw.attachments.some((a: any) => a.url || a.download_url)) return 'image';
+  }
+
+  if (raw.video) return 'video';
+  if (Array.isArray(raw.documents) && raw.documents.length > 0) return 'document';
+  if (Array.isArray(raw.images)) {
+    if (raw.images.length > 1) return 'carousel';
+    if (raw.images.length === 1) return 'image';
+  }
+  if (Array.isArray(raw.media)) {
+    if (raw.media.length > 1) return 'carousel';
+    if (raw.media.length === 1) {
+      const m = raw.media[0];
+      const t = (m.type || m.media_type || '').toLowerCase();
+      if (t.includes('video')) return 'video';
+      if (t.includes('document')) return 'document';
+      return 'image';
+    }
+  }
+
+  // Single image fallback fields
+  if (raw.image_url || raw.image || raw.thumbnail_url || raw.thumbnail) return 'image';
+
+  // Check any key that ends in _url or _image and has a non-empty string value
+  for (const key of Object.keys(raw)) {
+    if ((key.endsWith('_url') || key.includes('image') || key.includes('photo')) && typeof raw[key] === 'string' && raw[key].startsWith('http')) {
+      // Only count it if the key isn't profile-related
+      if (!key.includes('profile') && !key.includes('author') && !key.includes('avatar')) {
+        return 'image';
+      }
+    }
+  }
+
+  return 'text_only';
+}
+
 // Background scraping function
 async function scrapeCreatorPosts(creatorId: string, linkedinIdentifier: string) {
   console.log(`Scraping posts for creator ${creatorId}...`);
