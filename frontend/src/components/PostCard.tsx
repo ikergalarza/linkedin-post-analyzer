@@ -94,12 +94,13 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
   };
 
   if (state === 'idle') {
+    const icon = TYPE_CONFIG[contentType]?.icon || '🖼️';
     return (
       <button
         onClick={load}
-        className="text-[11px] text-accent hover:text-accent-light border border-accent/30 hover:border-accent/60 px-2.5 py-1 rounded-lg transition-colors"
+        className="text-[11px] text-text-muted hover:text-accent border border-border hover:border-accent/40 px-2.5 py-1 rounded-lg transition-colors"
       >
-        {TYPE_CONFIG[contentType]?.icon || '🖼️'} Ver creatividad
+        {icon} Ver creatividad
       </button>
     );
   }
@@ -111,12 +112,13 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
   if (state === 'error' || !media || media.items.length === 0) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-[11px] text-text-muted">URL expirada —</span>
+        <span className="text-[11px] text-text-muted">Sin media guardada</span>
         {linkedinUrl && (
           <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-accent hover:text-accent-light">
-            ver en LinkedIn ↗
+            — ver en LinkedIn ↗
           </a>
         )}
+        <button onClick={() => setState('idle')} className="text-[10px] text-text-muted hover:text-text-secondary ml-1">✕</button>
       </div>
     );
   }
@@ -184,8 +186,29 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
   );
 }
 
+const PREVIEW_CHARS = 280;
+
+function ExpandableText({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const needsTrunc = text.length > PREVIEW_CHARS;
+  return (
+    <div className="mb-3">
+      <p className="text-text-primary text-sm leading-relaxed whitespace-pre-wrap">
+        {expanded || !needsTrunc ? text : text.slice(0, PREVIEW_CHARS) + '…'}
+      </p>
+      {needsTrunc && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-[11px] text-accent hover:text-accent-light mt-1"
+        >
+          {expanded ? 'Ver menos ↑' : 'Ver más ↓'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function PostCard({ post }: Props) {
-  const cfg = TYPE_CONFIG[post.content_type];
   const linkedinUrl = getLinkedInUrl(post);
 
   return (
@@ -203,9 +226,7 @@ export default function PostCard({ post }: Props) {
         </div>
       )}
 
-      <p className="text-text-primary text-sm mb-3 line-clamp-4 leading-relaxed">
-        {post.content_text || 'No content'}
-      </p>
+      <ExpandableText text={post.content_text || 'No content'} />
 
       <div className="flex items-center justify-between text-xs text-text-muted">
         <div className="flex gap-3">
@@ -219,12 +240,10 @@ export default function PostCard({ post }: Props) {
         </div>
       </div>
 
-      {/* Media viewer — only shown for media content types */}
-      {cfg?.hasMedia && (
-        <div className="mt-3">
-          <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={linkedinUrl} />
-        </div>
-      )}
+      {/* Media viewer — always available (content_type can be misclassified if Unipile missed the attachment) */}
+      <div className="mt-3">
+        <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={linkedinUrl} />
+      </div>
 
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
         <span className="text-xs text-text-muted">
