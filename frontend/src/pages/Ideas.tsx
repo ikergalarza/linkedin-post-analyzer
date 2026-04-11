@@ -1,8 +1,18 @@
 import { useState, useRef } from 'react';
-import { useApi, apiPost } from '../hooks/useApi';
+import { useApi } from '../hooks/useApi';
 import { scorePost } from '../components/postcreator/PostChecklist';
 
 const BASE = import.meta.env.VITE_API_URL || '';
+
+interface ArchetypeVariant {
+  archetype_key: string;
+  archetype_label: string;
+  archetype_desc: string;
+  hook_type: string;
+  post_structure: string;
+  avg_ratio: number;
+  text: string;
+}
 
 interface PostIdea {
   id: string;
@@ -11,17 +21,24 @@ interface PostIdea {
   tags: string[];
   generated_post: string | null;
   generation_score: number | null;
+  generated_variants: ArchetypeVariant[] | null;
   status: 'draft' | 'generating' | 'ready';
   created_at: string;
 }
 
 const SOURCE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
-  manual:       { icon: '💡', label: 'Idea',        color: 'text-accent bg-accent/10' },
-  book_quote:   { icon: '📚', label: 'Libro',       color: 'text-purple-400 bg-purple-400/10' },
-  demo_moment:  { icon: '🎯', label: 'Demo',        color: 'text-blue-400 bg-blue-400/10' },
-  observation:  { icon: '👁️', label: 'Observación', color: 'text-amber-400 bg-amber-400/10' },
-  meeting:      { icon: '🤝', label: 'Reunión',     color: 'text-green-400 bg-green-400/10' },
+  manual:      { icon: '💡', label: 'Idea',        color: 'text-accent bg-accent/10' },
+  book_quote:  { icon: '📚', label: 'Libro',       color: 'text-purple-400 bg-purple-400/10' },
+  demo_moment: { icon: '🎯', label: 'Demo',        color: 'text-blue-400 bg-blue-400/10' },
+  observation: { icon: '👁️', label: 'Observación', color: 'text-amber-400 bg-amber-400/10' },
+  meeting:     { icon: '🤝', label: 'Reunión',     color: 'text-green-400 bg-green-400/10' },
 };
+
+const ARCHETYPE_COLORS = [
+  { border: 'border-accent/30', bg: 'bg-accent/5', badge: 'bg-accent/15 text-accent', btn: 'bg-accent text-bg-primary hover:bg-accent-light' },
+  { border: 'border-purple-400/30', bg: 'bg-purple-400/5', badge: 'bg-purple-400/15 text-purple-400', btn: 'bg-purple-500/80 text-white hover:bg-purple-500' },
+  { border: 'border-blue-400/30', bg: 'bg-blue-400/5', badge: 'bg-blue-400/15 text-blue-400', btn: 'bg-blue-500/80 text-white hover:bg-blue-500' },
+];
 
 function scoreColor(score: number) {
   if (score >= 80) return 'text-green-400';
@@ -29,26 +46,21 @@ function scoreColor(score: number) {
   return 'text-danger';
 }
 
-// ─── Voice recording hook ─────────────────────────────────────────────────────
+// ─── Voice capture ────────────────────────────────────────────────────────────
 function useVoiceCapture(onResult: (text: string) => void) {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
   const start = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Tu navegador no soporta dictado por voz. Usa Chrome en móvil.');
-      return;
-    }
-    const rec = new SpeechRecognition();
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { alert('Tu navegador no soporta dictado por voz. Usa Chrome en móvil.'); return; }
+    const rec = new SR();
     rec.continuous = true;
     rec.interimResults = false;
     rec.lang = navigator.language || 'es-ES';
     rec.onresult = (e: any) => {
-      const transcript = Array.from(e.results)
-        .map((r: any) => r[0].transcript)
-        .join(' ');
-      onResult(transcript);
+      const t = Array.from(e.results).map((r: any) => r[0].transcript).join(' ');
+      onResult(t);
     };
     rec.onerror = () => setListening(false);
     rec.onend = () => setListening(false);
@@ -57,114 +69,220 @@ function useVoiceCapture(onResult: (text: string) => void) {
     setListening(true);
   };
 
-  const stop = () => {
-    recognitionRef.current?.stop();
-    setListening(false);
-  };
-
+  const stop = () => { recognitionRef.current?.stop(); setListening(false); };
   return { listening, start, stop };
 }
 
-// ─── Idea card with inline generate+improve ───────────────────────────────────
-function IdeaCard({ idea, onUpdate, onDelete }: {
-  idea: PostIdea;
-  onUpdate: (id: string, data: Partial<PostIdea>) => void;
-  onDelete: (id: string) => void;
+// ─── Post editor with auto-improve ───────────────────────────────────────────
+function PostEditor({ ideaId, initialText, initialScore, onSave }: {
+  ideaId: string;
+  initialText: string;
+  initialScore: number;
+  onSave: (text: string, score: number) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const [generating, setGenerating] = useState(false);
+  const [postText, setPostText] = useState(initialText);
+  const [score, setScore] = useState(initialScore);
   const [improving, setImproving] = useState(false);
-  const [postText, setPostText] = useState(idea.generated_post || '');
-  const [score, setScore] = useState<number | null>(idea.generation_score);
   const [iterLog, setIterLog] = useState<{ iter: number; score: number; accepted: boolean }[]>([]);
   const [copied, setCopied] = useState(false);
-
-  const cfg = SOURCE_CONFIG[idea.source_type] || SOURCE_CONFIG.manual;
-
-  const handleGenerate = async () => {
-    setGenerating(true);
-    setExpanded(true);
-    setIterLog([]);
-    try {
-      const res = await apiPost<{ text: string }>(`/api/ideas/${idea.id}/generate`, {});
-      setPostText(res.text);
-      const s = scorePost(res.text).overall;
-      setScore(s);
-      onUpdate(idea.id, { status: 'ready', generated_post: res.text, generation_score: s });
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setGenerating(false);
-    }
-  };
+  const [errMsg, setErrMsg] = useState<string | null>(null);
 
   const handleAutoImprove = async () => {
-    if (!postText) return;
     setImproving(true);
     setIterLog([]);
+    setErrMsg(null);
 
     let bestText = postText;
     let bestScore = scorePost(postText).overall;
     const conversation: { role: 'user' | 'assistant'; content: string }[] = [];
-    const MAX_ITERS = 5;
 
-    for (let i = 0; i < MAX_ITERS; i++) {
-      if (bestScore >= 80) break;
+    try {
+      for (let i = 0; i < 5; i++) {
+        if (bestScore >= 80) break;
 
-      const { byCategory, failing } = scorePost(bestText);
-      const passingLabels = Object.entries(byCategory)
-        .flatMap(([, checks]) => checks.filter((c: any) => c.passed).map((c: any) => c.label));
-      const failingList = failing.map((c: any) => `- ${c.label}: ${c.description}`).join('\n');
+        const { byCategory, failing } = scorePost(bestText);
+        const passingLabels = Object.entries(byCategory)
+          .flatMap(([, checks]) => (checks as any[]).filter((c) => c.passed).map((c) => c.label));
+        const failingList = (failing as any[]).map((c) => `- ${c.label}: ${c.description}`).join('\n');
 
-      const userMsg = i === 0
-        ? `ORIGINAL POST — LOCKED REFERENCE (do not change the core idea or topic):\n\`\`\`\n${bestText}\n\`\`\`\n\nAlready passing (DO NOT break these): ${passingLabels.join(', ') || 'none'}\n\nNeed to fix:\n${failingList}`
-        : `Already passing: ${passingLabels.join(', ') || 'none'}\n\nStill need to fix:\n${failingList}`;
+        const userMsg = i === 0
+          ? `ORIGINAL POST — LOCKED (keep core idea):\n\`\`\`\n${bestText}\n\`\`\`\n\nPassing (protect): ${passingLabels.join(', ') || 'none'}\n\nFix:\n${failingList}`
+          : `Passing: ${passingLabels.join(', ') || 'none'}\n\nStill fix:\n${failingList}`;
 
-      conversation.push({ role: 'user', content: userMsg });
+        conversation.push({ role: 'user', content: userMsg });
 
-      let raw = '';
-      try {
-        const res = await apiPost<{ text: string; raw: string }>('/api/chat/improve', { messages: conversation });
-        raw = res.raw || res.text;
-      } catch {
-        break;
+        let raw = '';
+        try {
+          const resp = await fetch(`${BASE}/api/chat/improve`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: conversation }),
+          });
+          if (!resp.ok) { setErrMsg(`Error del servidor: ${resp.status}`); break; }
+          const data = await resp.json();
+          raw = data.raw || data.text || '';
+        } catch (e: any) {
+          setErrMsg(e.message); break;
+        }
+
+        if (!raw) break;
+
+        // Extract post text after --- separator
+        const parts = raw.split('---');
+        const newText = parts.length >= 2 ? parts.slice(1).join('---').trim() : raw.trim();
+        if (!newText) break;
+
+        const newScore = scorePost(newText).overall;
+
+        if (newScore > bestScore) {
+          bestText = newText;
+          bestScore = newScore;
+          conversation.push({ role: 'assistant', content: raw });
+          setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: true }]);
+        } else {
+          conversation.push({
+            role: 'assistant',
+            content: `${raw}\n\n[SYSTEM NOTE: scored ${newScore}/100 — lower than best ${bestScore}/100. Rejected.]`,
+          });
+          setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: false }]);
+        }
+
+        setPostText(bestText);
+        setScore(bestScore);
       }
-
-      const newText = raw.includes('---') ? raw.split('---').slice(1).join('---').trim() : raw.trim();
-      const newScore = scorePost(newText).overall;
-
-      if (newScore > bestScore) {
-        bestText = newText;
-        bestScore = newScore;
-        conversation.push({ role: 'assistant', content: raw });
-        setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: true }]);
-      } else {
-        conversation.push({
-          role: 'assistant',
-          content: `${raw}\n\n[SYSTEM NOTE: scored ${newScore}/100 — lower than best ${bestScore}/100. Rejected. Do NOT repeat this approach.]`,
-        });
-        setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: false }]);
-      }
-
-      setPostText(bestText);
-      setScore(bestScore);
+    } finally {
+      setImproving(false);
     }
 
     // Save final result
-    await fetch(`${BASE}/api/ideas/${idea.id}/save-post`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ generated_post: bestText, generation_score: bestScore }),
-    }).catch(() => {});
-
-    onUpdate(idea.id, { generated_post: bestText, generation_score: bestScore, status: 'ready' });
-    setImproving(false);
+    try {
+      await fetch(`${BASE}/api/ideas/${ideaId}/save-post`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ generated_post: bestText, generation_score: bestScore }),
+      });
+      onSave(bestText, bestScore);
+    } catch {}
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(postText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="space-y-3 mt-4">
+      <textarea
+        value={postText}
+        onChange={(e) => {
+          setPostText(e.target.value);
+          setScore(scorePost(e.target.value).overall);
+        }}
+        className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-sm text-text-primary resize-none focus:outline-none focus:border-accent"
+        rows={12}
+      />
+
+      {/* Score bar */}
+      <div className="flex items-center gap-3">
+        <span className={`text-lg font-bold tabular-nums ${scoreColor(score)}`}>{score}/100</span>
+        <div className="flex-1 bg-bg-secondary rounded-full h-2 overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${score}%`,
+              backgroundColor: score >= 80 ? '#34d399' : score >= 60 ? '#fbbf24' : '#f87171',
+            }}
+          />
+        </div>
+        {score >= 80 && <span className="text-green-400 text-xs font-medium">✓ Listo</span>}
+      </div>
+
+      {/* Iteration log */}
+      {iterLog.length > 0 && (
+        <div className="space-y-0.5 text-[11px]">
+          {iterLog.map((log) => (
+            <div key={log.iter} className="flex items-center gap-2">
+              <span className={log.accepted ? 'text-green-400' : 'text-danger'}>{log.accepted ? '✓' : '✗'}</span>
+              <span className="text-text-muted">
+                Iter {log.iter}: {log.score}/100 {log.accepted ? '(aceptado)' : '(rechazado)'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {errMsg && <p className="text-danger text-xs">{errMsg}</p>}
+
+      {/* Buttons */}
+      <div className="flex gap-2">
+        <button
+          onClick={handleAutoImprove}
+          disabled={improving || score >= 80}
+          className="flex-1 py-2 bg-accent text-bg-primary rounded-lg text-xs font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
+        >
+          {improving
+            ? `Mejorando… (${iterLog.length}/5)`
+            : score >= 80 ? '✓ Score ≥ 80' : '⚡ Auto-improve hasta 80 (5 iter.)'}
+        </button>
+        <button
+          onClick={handleCopy}
+          className="px-4 py-2 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs hover:border-accent/40 hover:text-text-primary transition-colors"
+        >
+          {copied ? '✓' : 'Copiar'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Idea card ────────────────────────────────────────────────────────────────
+function IdeaCard({ idea, onUpdate, onDelete }: {
+  idea: PostIdea;
+  onUpdate: (id: string, data: Partial<PostIdea>) => void;
+  onDelete: (id: string) => void;
+}) {
+  const [generating, setGenerating] = useState(false);
+  const [variants, setVariants] = useState<ArchetypeVariant[]>(idea.generated_variants || []);
+  const [selectedVariant, setSelectedVariant] = useState<ArchetypeVariant | null>(
+    idea.generated_post ? { archetype_key: 'saved', archetype_label: 'Guardado', archetype_desc: '', hook_type: '', post_structure: '', avg_ratio: 0, text: idea.generated_post } : null
+  );
+  const [genError, setGenError] = useState<string | null>(null);
+  const [showVariants, setShowVariants] = useState(variants.length > 0 && !idea.generated_post);
+
+  const cfg = SOURCE_CONFIG[idea.source_type] || SOURCE_CONFIG.manual;
+  const hasVariants = variants.length > 0;
+  const hasSelectedPost = selectedVariant !== null;
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setGenError(null);
+    setSelectedVariant(null);
+    try {
+      const res = await fetch(`${BASE}/api/ideas/${idea.id}/generate`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) { setGenError(data.error || `Error ${res.status}`); return; }
+      const v: ArchetypeVariant[] = data.variants || [];
+      setVariants(v);
+      setShowVariants(true);
+      onUpdate(idea.id, { status: 'ready', generated_variants: v });
+    } catch (e: any) {
+      setGenError(e.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleSelectVariant = (v: ArchetypeVariant) => {
+    setSelectedVariant(v);
+    setShowVariants(false);
+    // Save selected post immediately
+    fetch(`${BASE}/api/ideas/${idea.id}/save-post`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ generated_post: v.text, generation_score: scorePost(v.text).overall }),
+    }).catch(() => {});
+    onUpdate(idea.id, { generated_post: v.text, generation_score: scorePost(v.text).overall });
   };
 
   return (
@@ -176,120 +294,121 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
             {cfg.icon} {cfg.label}
           </span>
           {idea.tags.map((tag) => (
-            <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-bg-secondary text-text-muted border border-border">
-              {tag}
-            </span>
+            <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-bg-secondary text-text-muted border border-border">{tag}</span>
           ))}
-          {score !== null && (
-            <span className={`text-xs font-bold ${scoreColor(score)}`}>{score}/100</span>
+          {idea.generation_score !== null && (
+            <span className={`text-xs font-bold ${scoreColor(idea.generation_score)}`}>{idea.generation_score}/100</span>
           )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-[10px] text-text-muted">
-            {new Date(idea.created_at).toLocaleDateString()}
-          </span>
-          <button
-            onClick={() => onDelete(idea.id)}
-            className="text-text-muted hover:text-danger text-sm transition-colors"
-          >✕</button>
+          <span className="text-[10px] text-text-muted">{new Date(idea.created_at).toLocaleDateString()}</span>
+          <button onClick={() => onDelete(idea.id)} className="text-text-muted hover:text-danger text-sm transition-colors">✕</button>
         </div>
       </div>
 
       {/* Raw content */}
-      <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap mb-4">
-        {idea.raw_content}
-      </p>
+      <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap mb-4">{idea.raw_content}</p>
 
-      {/* Actions */}
-      <div className="flex gap-2">
-        {!idea.generated_post ? (
-          <button
-            onClick={handleGenerate}
-            disabled={generating || idea.status === 'generating'}
-            className="flex-1 py-2 bg-accent/15 text-accent rounded-lg text-xs font-medium hover:bg-accent/25 disabled:opacity-50 transition-colors"
-          >
-            {generating ? '✨ Generando…' : '✨ Generar post con IA'}
-          </button>
-        ) : (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="flex-1 py-2 bg-bg-secondary text-text-secondary rounded-lg text-xs hover:text-text-primary transition-colors border border-border"
-          >
-            {expanded ? '▲ Ocultar post' : `▼ Ver post${score !== null ? ` (${score}/100)` : ''}`}
-          </button>
-        )}
-      </div>
+      {/* Generate button */}
+      {!hasSelectedPost && (
+        <button
+          onClick={hasVariants && !showVariants ? () => setShowVariants(true) : handleGenerate}
+          disabled={generating}
+          className="w-full py-2 bg-accent/15 text-accent rounded-lg text-xs font-medium hover:bg-accent/25 disabled:opacity-50 transition-colors mb-4"
+        >
+          {generating
+            ? '✨ Generando 3 variantes…'
+            : hasVariants && !showVariants
+              ? '✨ Ver 3 variantes'
+              : hasVariants
+                ? '🔄 Regenerar 3 variantes'
+                : '✨ Generar 3 variantes con IA'}
+        </button>
+      )}
 
-      {/* Expanded post panel */}
-      {expanded && (
-        <div className="mt-4 space-y-3">
-          {/* Post textarea */}
-          <textarea
-            value={postText}
-            onChange={(e) => {
-              setPostText(e.target.value);
-              setScore(scorePost(e.target.value).overall);
-            }}
-            className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-sm text-text-primary resize-none focus:outline-none focus:border-accent"
-            rows={12}
-          />
+      {genError && <p className="text-danger text-xs mb-3">{genError}</p>}
 
-          {/* Score bar */}
-          {score !== null && (
-            <div className="flex items-center gap-3">
-              <span className={`text-lg font-bold ${scoreColor(score)}`}>{score}/100</span>
-              <div className="flex-1 bg-bg-secondary rounded-full h-2 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${score}%`,
-                    backgroundColor: score >= 80 ? '#34d399' : score >= 60 ? '#fbbf24' : '#f87171',
-                  }}
-                />
-              </div>
-              {score >= 80 && <span className="text-green-400 text-xs font-medium">✓ Listo</span>}
+      {/* Loading skeleton for variants */}
+      {generating && (
+        <div className="grid grid-cols-1 gap-3 mb-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border border-border rounded-xl p-4 animate-pulse">
+              <div className="h-3 bg-bg-secondary rounded w-1/3 mb-2" />
+              <div className="h-2 bg-bg-secondary rounded w-1/2 mb-3" />
+              <div className="h-2 bg-bg-secondary rounded w-full mb-1" />
+              <div className="h-2 bg-bg-secondary rounded w-3/4" />
             </div>
-          )}
+          ))}
+        </div>
+      )}
 
-          {/* Iteration log */}
-          {iterLog.length > 0 && (
-            <div className="space-y-1">
-              {iterLog.map((log) => (
-                <div key={log.iter} className="flex items-center gap-2 text-[11px]">
-                  <span className={log.accepted ? 'text-green-400' : 'text-danger'}>
-                    {log.accepted ? '✓' : '✗'}
-                  </span>
-                  <span className="text-text-muted">
-                    Iter {log.iter}: {log.score}/100 {log.accepted ? '(aceptado)' : '(rechazado)'}
-                  </span>
+      {/* 3 variant cards */}
+      {!generating && showVariants && variants.length > 0 && (
+        <div className="space-y-3 mb-4">
+          <p className="text-xs text-text-muted">Elige el arquetipo que mejor encaja:</p>
+          {variants.map((v, i) => {
+            const colors = ARCHETYPE_COLORS[i % ARCHETYPE_COLORS.length];
+            const previewScore = scorePost(v.text).overall;
+            return (
+              <div key={v.archetype_key} className={`border rounded-xl p-4 ${colors.border} ${colors.bg}`}>
+                {/* Archetype badge + score */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${colors.badge}`}>
+                      {v.archetype_label}
+                    </span>
+                    <span className="text-[10px] text-text-muted">{v.archetype_desc}</span>
+                  </div>
+                  <span className={`text-xs font-bold tabular-nums ${scoreColor(previewScore)}`}>{previewScore}/100</span>
                 </div>
-              ))}
-            </div>
-          )}
 
-          {/* Action buttons */}
-          <div className="flex gap-2">
-            <button
-              onClick={handleAutoImprove}
-              disabled={improving || score === null || score >= 80}
-              className="flex-1 py-2 bg-accent text-bg-primary rounded-lg text-xs font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
-            >
-              {improving ? 'Mejorando…' : score !== null && score >= 80 ? '✓ Score ≥ 80' : '⚡ Auto-improve (hasta 80)'}
-            </button>
-            <button
-              onClick={handleCopy}
-              className="px-4 py-2 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs hover:border-accent/40 hover:text-text-primary transition-colors"
-            >
-              {copied ? '✓ Copiado' : 'Copiar'}
-            </button>
+                {/* Post preview */}
+                <p className="text-text-secondary text-xs leading-relaxed whitespace-pre-wrap mb-3 line-clamp-5">
+                  {v.text}
+                </p>
+
+                {/* Select button */}
+                <button
+                  onClick={() => handleSelectVariant(v)}
+                  className={`w-full py-2 rounded-lg text-xs font-medium transition-colors ${colors.btn}`}
+                >
+                  Elegir este arquetipo →
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Selected post editor */}
+      {hasSelectedPost && selectedVariant && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-text-muted">
+              Arquetipo: <span className="text-text-secondary font-medium">{selectedVariant.archetype_label}</span>
+            </span>
+            {hasVariants && (
+              <button
+                onClick={() => { setShowVariants(true); setSelectedVariant(null); }}
+                className="text-[11px] text-accent hover:text-accent-light transition-colors"
+              >
+                ← Cambiar variante
+              </button>
+            )}
           </div>
+          <PostEditor
+            ideaId={idea.id}
+            initialText={selectedVariant.text}
+            initialScore={scorePost(selectedVariant.text).overall}
+            onSave={(text, score) => onUpdate(idea.id, { generated_post: text, generation_score: score })}
+          />
         </div>
       )}
     </div>
   );
 }
 
-// ─── Capture form ─────────────────────────────────────────────────────────────
+// ─── Capture form ────────────────────────────────────────────────────────────
 function CaptureForm({ onCreated }: { onCreated: () => void }) {
   const [content, setContent] = useState('');
   const [sourceType, setSourceType] = useState<PostIdea['source_type']>('manual');
@@ -347,23 +466,19 @@ function CaptureForm({ onCreated }: { onCreated: () => void }) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder={
-            sourceType === 'book_quote' ? '"La cita del libro tal…" — Nombre Autor' :
+            sourceType === 'book_quote' ? '"La cita del libro…" — Nombre Autor' :
             sourceType === 'demo_moment' ? 'El prospect dijo que nunca había visto…' :
             sourceType === 'meeting' ? 'En la reunión con X descubrí que…' :
             'Escribe tu idea o pulsa el micrófono para dictar…'
           }
           className="w-full bg-bg-secondary border border-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent resize-none pr-12"
           rows={4}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSave();
-          }}
+          onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSave(); }}
         />
         <button
           onClick={listening ? stop : start}
           className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
-            listening
-              ? 'bg-danger text-white animate-pulse'
-              : 'bg-bg-hover text-text-muted hover:text-text-primary border border-border'
+            listening ? 'bg-danger text-white animate-pulse' : 'bg-bg-hover text-text-muted hover:text-text-primary border border-border'
           }`}
           title={listening ? 'Parar dictado' : 'Dictar por voz'}
         >
@@ -371,14 +486,12 @@ function CaptureForm({ onCreated }: { onCreated: () => void }) {
         </button>
       </div>
 
-      {listening && (
-        <p className="text-xs text-danger animate-pulse">● Escuchando… Habla ahora</p>
-      )}
+      {listening && <p className="text-xs text-danger animate-pulse">● Escuchando… Habla ahora</p>}
 
       {/* Tags */}
       <input
         type="text"
-        placeholder="Tags opcionales: cold email, storytelling, producto… (separados por coma)"
+        placeholder="Tags opcionales: cold email, storytelling… (separados por coma)"
         value={tags}
         onChange={(e) => setTags(e.target.value)}
         className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent"
@@ -430,41 +543,26 @@ export default function Ideas() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold mb-2">Ideas</h1>
-        <p className="text-text-secondary">Captura ideas en el momento. La IA las convierte en posts virales.</p>
+        <p className="text-text-secondary">Captura ideas en el momento. La IA genera 3 variantes virales para elegir.</p>
       </div>
 
-      {/* Capture form */}
       <CaptureForm onCreated={() => { refetch(); setLocalIdeas(null); }} />
 
-      {/* Filters */}
       {displayIdeas && displayIdeas.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-text-muted text-xs">Filtrar:</span>
-          <button
-            onClick={() => setFilterSource('')}
-            className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${!filterSource ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}
-          >
-            Todas
-          </button>
-          {Object.entries(SOURCE_CONFIG).map(([key, cfg]) => (
-            <button
-              key={key}
-              onClick={() => setFilterSource(filterSource === key ? '' : key)}
-              className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${filterSource === key ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}
-            >
-              {cfg.icon} {cfg.label}
+          {[{ v: '', label: 'Todas' }, ...Object.entries(SOURCE_CONFIG).map(([k, c]) => ({ v: k, label: `${c.icon} ${c.label}` }))].map(({ v, label }) => (
+            <button key={v} onClick={() => setFilterSource(v)}
+              className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${filterSource === v ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}>
+              {label}
             </button>
           ))}
           <div className="ml-2 flex gap-1.5">
-            {[{ v: '', label: 'Estado: todos' }, { v: 'draft', label: 'Sin generar' }, { v: 'ready', label: 'Con post' }].map(({ v, label }) => (
-              <button
-                key={v}
-                onClick={() => setFilterStatus(v)}
-                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${filterStatus === v ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}
-              >
+            {[{ v: '', label: 'Todos' }, { v: 'draft', label: 'Sin generar' }, { v: 'ready', label: 'Con post' }].map(({ v, label }) => (
+              <button key={v} onClick={() => setFilterStatus(v)}
+                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${filterStatus === v ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}>
                 {label}
               </button>
             ))}
@@ -472,7 +570,6 @@ export default function Ideas() {
         </div>
       )}
 
-      {/* Loading */}
       {loading && (
         <div className="space-y-3">
           {[1, 2].map((i) => (
@@ -485,7 +582,6 @@ export default function Ideas() {
         </div>
       )}
 
-      {/* Empty state */}
       {!loading && displayIdeas && displayIdeas.length === 0 && (
         <div className="text-center py-16 text-text-muted">
           <p className="text-4xl mb-4">💡</p>
@@ -494,17 +590,11 @@ export default function Ideas() {
         </div>
       )}
 
-      {/* Ideas list */}
       {filtered.length > 0 && (
         <div className="space-y-4">
           <p className="text-xs text-text-muted">{filtered.length} idea{filtered.length !== 1 ? 's' : ''}</p>
           {filtered.map((idea) => (
-            <IdeaCard
-              key={idea.id}
-              idea={idea}
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
-            />
+            <IdeaCard key={idea.id} idea={idea} onUpdate={handleUpdate} onDelete={handleDelete} />
           ))}
         </div>
       )}

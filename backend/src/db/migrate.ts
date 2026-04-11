@@ -184,6 +184,9 @@ const migration = `
   );
   CREATE INDEX IF NOT EXISTS idx_post_ideas_status ON post_ideas(status);
   CREATE INDEX IF NOT EXISTS idx_post_ideas_created ON post_ideas(created_at DESC);
+
+  -- v10: Store 3 archetype variants before user selects one
+  ALTER TABLE post_ideas ADD COLUMN IF NOT EXISTS generated_variants JSONB;
 `;
 
 export async function runMigrations() {

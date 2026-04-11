@@ -1,5 +1,15 @@
 import pool from '../db';
 
+export interface ArchetypeVariant {
+  archetype_key: string;
+  archetype_label: string;
+  archetype_desc: string;
+  hook_type: string;
+  post_structure: string;
+  avg_ratio: number;
+  text: string;
+}
+
 export interface PostIdea {
   id: string;
   raw_content: string;
@@ -7,6 +17,7 @@ export interface PostIdea {
   tags: string[];
   generated_post: string | null;
   generation_score: number | null;
+  generated_variants: ArchetypeVariant[] | null;
   status: 'draft' | 'generating' | 'ready';
   created_at: string;
   updated_at: string;
@@ -40,7 +51,7 @@ export const PostIdeaModel = {
     return rows[0];
   },
 
-  async update(id: string, data: Partial<Pick<PostIdea, 'raw_content' | 'source_type' | 'tags' | 'generated_post' | 'generation_score' | 'status'>>): Promise<PostIdea> {
+  async update(id: string, data: Partial<Pick<PostIdea, 'raw_content' | 'source_type' | 'tags' | 'generated_post' | 'generation_score' | 'generated_variants' | 'status'>>): Promise<PostIdea> {
     const fields: string[] = [];
     const values: any[] = [];
     let idx = 1;
