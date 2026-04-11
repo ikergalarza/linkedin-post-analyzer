@@ -355,11 +355,18 @@ export function scorePost(text: string) {
   return { byCategory, overall, ctx, failing };
 }
 
+interface IterLog {
+  iteration: number;
+  score: number;
+  critique: string;
+}
+
 export default function PostChecklist({ text, onImproved }: Props) {
   const [improving, setImproving] = useState(false);
   const [iteration, setIteration] = useState(0);
   const [improveError, setImproveError] = useState<string | null>(null);
   const [bestScore, setBestScore] = useState<number | null>(null);
+  const [iterLog, setIterLog] = useState<IterLog[]>([]);
 
   const result = useMemo(() => {
     if (!text || text.trim().length < 20) return null;
@@ -372,13 +379,14 @@ export default function PostChecklist({ text, onImproved }: Props) {
     setImproveError(null);
     setIteration(0);
     setBestScore(null);
+    setIterLog([]);
 
     let current = text;
     let best = scorePost(current).overall;
     setBestScore(best);
 
-    // Multi-turn conversation so the AI learns from its own critique each iteration
-    const improveMessages: { role: 'user' | 'assistant'; content: string }[] = [];
+    // Full conversation history — AI sees its own critiques from previous iterations
+    const conversation: { role: 'user' | 'assistant'; content: string }[] = [];
 
     try {
       for (let i = 1; i <= 5; i++) {
@@ -388,22 +396,32 @@ export default function PostChecklist({ text, onImproved }: Props) {
 
         const failingList = score.failing
           .slice(0, 12)
-          .map((f: any) => `- ${f.label}${f.hint ? ' → ' + f.hint : ''}`)
+          .map((f: { label: string; hint: string }) => `- ${f.label}${f.hint ? ' → ' + f.hint : ''}`)
           .join('\n');
 
+        // Build the user turn
         let userContent: string;
         if (i === 1) {
-          userContent = `CURRENT POST:\n${current}\n\nCURRENT SCORE: ${score.overall}/100\n\nISSUES TO FIX (from outlier checklist):\n${failingList}\n\nRewrite the post fixing as many of these issues as possible. Return ONLY the rewritten post text — no preamble, no explanation.`;
+          userContent =
+            `POST ACTUAL:\n${current}\n\n` +
+            `PUNTUACIÓN ACTUAL: ${score.overall}/100\n\n` +
+            `CHECKS QUE FALLAN (por orden de impacto):\n${failingList}\n\n` +
+            `Reescribe el post corrigiendo el mayor número posible de estos checks. ` +
+            `Devuelve tu crítica en CRITIQUE: y el post reescrito tras ---.`;
         } else {
-          userContent = `Score after last rewrite: ${score.overall}/100 (best so far: ${best}/100)\n\nThe following checks STILL FAIL — try DIFFERENT techniques than what you used before:\n${failingList}\n\nRewrite the post again addressing these remaining issues with fresh approaches. Return ONLY the rewritten post text.`;
+          userContent =
+            `PUNTUACIÓN TRAS ÚLTIMA REESCRITURA: ${score.overall}/100 (mejor: ${best}/100)\n\n` +
+            `CHECKS QUE SIGUEN FALLANDO — usa técnicas DIFERENTES a las anteriores:\n${failingList}\n\n` +
+            `Lee tu crítica anterior (arriba en el historial) y aplícala. ` +
+            `Devuelve tu nueva crítica en CRITIQUE: y el post reescrito tras ---.`;
         }
 
-        improveMessages.push({ role: 'user', content: userContent });
+        conversation.push({ role: 'user', content: userContent });
 
         const res = await fetch(`${BASE}/api/chat/improve`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: improveMessages }),
+          body: JSON.stringify({ messages: conversation }),
         });
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
@@ -411,19 +429,26 @@ export default function PostChecklist({ text, onImproved }: Props) {
         }
         const data = await res.json();
         const improved = (data.text || '').trim();
+        const critique = (data.critique || '').trim();
+        const raw = (data.raw || '').trim();
         if (!improved) throw new Error('Empty response from AI');
 
-        // Add AI response to conversation history so next iteration has full context
-        improveMessages.push({ role: 'assistant', content: improved });
+        // Store the FULL raw response (CRITIQUE + --- + post) so the AI sees its
+        // own reasoning in the next turn and can build on it
+        conversation.push({ role: 'assistant', content: raw || improved });
 
         const newScore = scorePost(improved).overall;
-        // Always update current post (even on plateau) so AI sees its own output
-        current = improved;
+        current = improved; // always advance so AI sees its own output
+
         if (newScore >= best) {
           best = newScore;
           setBestScore(best);
-          onImproved(improved);
         }
+        // Always surface the latest version to the user
+        onImproved(improved);
+
+        setIterLog((prev) => [...prev, { iteration: i, score: newScore, critique }]);
+
         if (best >= 80) break;
       }
     } catch (err: any) {
@@ -497,12 +522,39 @@ export default function PostChecklist({ text, onImproved }: Props) {
       </div>
 
       {improving && (
-        <div className="text-[10px] text-text-muted">
-          Iteration {iteration}/5 · best score so far: {bestScore ?? overall}
+        <div className="text-[10px] text-text-muted animate-pulse">
+          Iteración {iteration}/5 · mejor puntuación: {bestScore ?? overall}…
         </div>
       )}
+
+      {iterLog.length > 0 && (
+        <div className="border-t border-border pt-3 space-y-2">
+          <p className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
+            Historial de mejoras
+          </p>
+          {iterLog.map((log) => (
+            <div key={log.iteration} className="text-[10px] space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-text-primary">Iter {log.iteration}</span>
+                <span
+                  className="font-bold"
+                  style={{ color: log.score >= 75 ? '#10b981' : log.score >= 50 ? '#f59e0b' : '#ef4444' }}
+                >
+                  {log.score}/100
+                </span>
+              </div>
+              {log.critique && (
+                <p className="text-text-muted leading-tight italic pl-3 border-l border-border">
+                  {log.critique}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {improveError && (
-        <div className="text-[10px] text-danger">Auto-improve failed: {improveError}</div>
+        <div className="text-[10px] text-danger">Error: {improveError}</div>
       )}
 
       {/* Category bars */}

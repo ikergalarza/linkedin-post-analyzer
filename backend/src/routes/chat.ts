@@ -266,7 +266,9 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/chat/improve — iterative rewrite with full conversation history
+// POST /api/chat/improve — single iteration: rewrites post + generates self-critique
+// Body: { messages: [{role, content}][] }
+// Response: { text: string, critique: string, raw: string }
 router.post('/improve', async (req: Request, res: Response) => {
   try {
     const { messages } = req.body;
@@ -281,16 +283,21 @@ router.post('/improve', async (req: Request, res: Response) => {
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
 
-    // System prompt: editor that learns from its own critique across iterations
-    const system = `You are a LinkedIn viral content editor working in an iterative improvement loop. Each turn you receive the current post and a list of checklist items that still fail. Your goal is to rewrite the post to fix as many failing items as possible.
+    const system = `You are a LinkedIn viral content editor working in an iterative improvement loop.
+Each turn you receive: the current post, checklist items that still fail, and (optionally) your own critique from the previous iteration.
+Your job: produce a meaningfully improved version AND diagnose what still needs work.
 
-Rules:
-- PRESERVE the author's voice, core message, and authentic style
-- Return ONLY the rewritten post text — no preamble, no explanation, no markdown fences, no quotes
+RESPONSE FORMAT — always use exactly this structure:
+CRITIQUE: [2-4 sentences on what you tried this iteration and what still needs improvement for next time]
+---
+[The rewritten post — nothing else below the separator]
+
+Rules for the rewrite:
+- Preserve the author's voice, core message, and authentic style
 - Keep the same language as the input (Spanish or English)
-- NEVER translate proper nouns, brand names, product names, company names, city names, or industry terms (e.g. "Silicon Valley", "Claude", "HubSpot", "SDR", "pipeline" stay exactly as written)
-- If an issue persisted from a previous iteration, try a DIFFERENT technique to address it — do not repeat the same approach
-- Each iteration should produce a meaningfully different (and better) version${profileContext}`;
+- NEVER translate proper nouns, brand names, company names, city names, or industry terms ("Silicon Valley", "Claude", "HubSpot", "SDR", "pipeline" stay as-is)
+- If a checklist issue persisted from a previous iteration, try a DIFFERENT technique — do not repeat the same approach
+- Build on your previous critique: if you noted something needed fixing last time, fix it this time${profileContext}`;
 
     const result = await client.messages.create({
       model: 'claude-sonnet-4-6',
@@ -300,14 +307,28 @@ Rules:
     });
 
     const block = result.content[0];
-    let improved = block && block.type === 'text' ? block.text.trim() : '';
-    // Strip possible markdown fences or surrounding quotes
-    improved = improved.replace(/^```[\w]*\n?/, '').replace(/\n?```$/, '').trim();
-    if ((improved.startsWith('"') && improved.endsWith('"')) || (improved.startsWith('\u201C') && improved.endsWith('\u201D'))) {
-      improved = improved.slice(1, -1).trim();
+    const raw = block && block.type === 'text' ? block.text.trim() : '';
+
+    // Parse CRITIQUE / --- / POST split
+    const sepIdx = raw.indexOf('\n---\n');
+    let critique = '';
+    let postText = raw;
+
+    if (sepIdx !== -1) {
+      const beforeSep = raw.slice(0, sepIdx).trim();
+      postText = raw.slice(sepIdx + 5).trim();
+      // Extract critique value (after "CRITIQUE:" prefix if present)
+      critique = beforeSep.replace(/^CRITIQUE:\s*/i, '').trim();
     }
 
-    res.json({ text: improved });
+    // Strip markdown fences or surrounding quotes from post text
+    postText = postText.replace(/^```[\w]*\n?/, '').replace(/\n?```$/, '').trim();
+    if ((postText.startsWith('"') && postText.endsWith('"')) ||
+        (postText.startsWith('\u201C') && postText.endsWith('\u201D'))) {
+      postText = postText.slice(1, -1).trim();
+    }
+
+    res.json({ text: postText, critique, raw });
   } catch (err: any) {
     console.error('[IMPROVE ERROR]', err.message);
     res.status(500).json({ error: err.message });
