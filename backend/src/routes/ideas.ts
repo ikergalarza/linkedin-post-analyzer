@@ -217,6 +217,9 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
       archetypes.slice(0, 3).map((arch) => generateVariant(idea.raw_content, idea.source_type, arch, outlierContext))
     );
 
+    const sanitizeText = (t: string) =>
+      t.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim();
+
     const variants = archetypes.slice(0, 3).map((arch, i) => ({
       archetype_key: `${arch.hook_type}__${arch.post_structure}`,
       archetype_label: `${HOOK_LABELS[arch.hook_type] || arch.hook_type}`,
@@ -224,7 +227,7 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
       hook_type: arch.hook_type,
       post_structure: arch.post_structure,
       avg_ratio: arch.avg_ratio,
-      text: results[i].status === 'fulfilled' ? (results[i] as PromiseFulfilledResult<string>).value : '',
+      text: results[i].status === 'fulfilled' ? sanitizeText((results[i] as PromiseFulfilledResult<string>).value) : '',
     })).filter((v) => v.text.length > 0);
 
     if (variants.length === 0) {
@@ -232,8 +235,11 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'AI returned empty responses for all variants' });
     }
 
-    // Save variants (no selected post yet — user must choose)
-    await PostIdeaModel.update(id, { generated_variants: variants as any, status: 'ready' });
+    // Save variants using explicit ::jsonb cast to avoid pg serialization issues
+    await pool.query(
+      `UPDATE post_ideas SET generated_variants = $1::jsonb, status = 'ready', updated_at = NOW() WHERE id = $2`,
+      [JSON.stringify(variants), id]
+    );
 
     res.json({ variants });
   } catch (err: any) {
