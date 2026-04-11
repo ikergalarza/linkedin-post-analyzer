@@ -283,52 +283,149 @@ router.post('/improve', async (req: Request, res: Response) => {
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
 
+    // Each check: what the scorer regex looks for, EXACTLY what text to write to pass it
     const CHECKLIST_REFERENCE = `
-=== OUTLIER CHECKLIST — full criteria reference ===
-These are the checks the post is scored against. Each entry shows the ID, what it measures, and exactly how to pass it.
+=== OUTLIER CHECKLIST — exact scoring rules ===
+The scorer uses regex patterns. A check only passes if the post contains the EXACT words/characters listed.
+Writing similar-but-different text (e.g. "incorrecto" instead of "wrong") will NOT pass the check.
 
-HOOK (25% of score)
-hook-numeric      | Concrete number in the hook line | Add a specific number: "$20K", "3x", "47%", "10 hours", "5 clients"
-hook-contrarian   | Bold or contrarian statement | Use words like: nobody, stop, forget, wrong, truth, actually, dead, killed, obsolete, nadie, deja de
-hook-curiosity-gap| Curiosity gap / open loop | Use: "secret", "nobody knows", "the real reason", "here's why", "aquí está"
-hook-not-x-but-y  | "Not X, but Y" reversal pattern | Write "It's not about X, it's about Y" or "No es X, sino Y"
-hook-short        | Hook ≤ 18 words | Count the words in the first line — cut until ≤ 18
-hook-speed-claim  | Speed / time-saving claim | Add "in 60 seconds", "saves 10 hours/week", "en 30 minutos", "en 3 días"
-hook-tension      | Hook ends with an open promise | End the first line with ":", "—", "...", "👇", "aquí está cómo"
+── HOOK (25%) ─────────────────────────────────────────────────────────
+hook-numeric [weight 18%]
+  Scorer looks for: a number (\d+) followed by %, k, m, x, €, $, h, hr, min, days, años, meses, or a standalone integer — IN THE FIRST LINE
+  To pass: write in the first line one of → "3x", "47%", "$20K", "10 horas", "en 5 días", "200 clientes"
+  Common fail: "muchos", "varios", "gran" → NO number → fails
 
-STRUCTURE (20%)
-struct-numbered   | At least 3 numbered steps | Add "1.", "2.", "3." — minimum 3 items
-struct-data       | At least 2 concrete metrics in the body | Add numbers with units: "$X", "Xk", "X%", "X€" — minimum 2
-struct-length     | 80–400 words total | Count words; trim if > 400, expand if < 80
-struct-open-loop  | Opens a loop before the payoff | Add "here's what happened", "el resultado fue", "then everything changed", "pero luego"
-struct-no-dense   | No paragraph longer than 3 lines | Break paragraphs so each has ≤ 3 lines
-struct-framework  | Uses a named framework | Add "step X", "phase X", "before/after", "framework", "playbook", "paso X"
+hook-contrarian [weight 18%]
+  Scorer looks for IN THE FIRST LINE: nobody | no one | nadie | stop | deja de | forget | olvida | wrong | mal | lie | mentira | truth | verdad | actually | en realidad | dead | muerto | killed | mató | obsolet
+  To pass: use ONE of those exact words in the hook line, e.g. "nadie te habla de esto", "stop making this mistake", "wrong approach"
+  Common fail: "incorrecto", "equivocado", "anticuado" → not in the list → fails
 
-EMOTION (18%)
-emo-fomo          | FOMO / urgency | Add: "before", "everyone", "only", "last chance", "antes de que", "todos ya"
-emo-greed         | Money / gain trigger | Mention revenue, deals, clients, MRR, ARR, or a $ / € amount
-emo-controversy   | Hot take / controversy | Add: "unpopular opinion", "hot take", "overrated", "polémica", "disagree"
-emo-insider       | Behind-the-scenes / insider knowledge | Add: "behind the scenes", "what they don't tell you", "lo que no te cuentan"
-emo-personal-proof| Personal proof with action verb | Use: "I built", "I tested", "I spent", "I ran", "yo construí", "yo probé"
+hook-curiosity-gap [weight 15%]
+  Scorer looks for IN THE FIRST LINE: secret | secreto | nobody knows | nadie sabe | the real | la verdadera | what they don | lo que no | here's why | aquí está | the reason | la razón
+  To pass: write "aquí está la razón", "here's why", "lo que no te dicen", "the real problem"
+  Common fail: "te cuento algo" → not in the list → fails
 
-FORMAT (15%)
-fmt-no-links      | No external URLs in the post body | Remove any "http://" or "https://" links (put them in first comment instead)
-fmt-spacing       | Blank lines between paragraphs | Add an empty line between every paragraph
-fmt-emoji-markers | Visual markers (emoji / arrows / bullets) | Add →, ↳, ✅, ❌, 🔥, 💡, •, or similar — at least 1
-fmt-first-line-hook| First line 20–140 characters | The hook line must be between 20 and 140 chars
-fmt-coherent      | No ALL-CAPS words (≤ 2) and ≤ 8 emojis total | Remove excessive caps and emojis
+hook-not-x-but-y [weight 12%]
+  Scorer looks for: "not <word(s)> ... but" (English) OR "no es <word(s)> ... sino" (Spanish) — in the hook
+  To pass (ES): "No es sobre velocidad, sino sobre claridad" / "No es un problema de tools, sino de sistema"
+  To pass (EN): "Not about speed, but about clarity" / "Not the tool, but the process"
+  Common fail: "no es X. Es Y" → no "sino" → fails
 
-CTA (12%)
-cta-comment-gate  | Comment-gated CTA | Add: "Comment 'X' below and I'll send you…", "Comenta 'X' y te mando…"
-cta-at-end        | CTA in the last 200 characters | Move the ask to the final 1–2 lines
-cta-question      | Post ends with a question | Add a question mark at the very end: "¿Tú qué opinas?", "Agree?"
-cta-no-link-cta   | No "click the link" style CTA | Remove: "click", "check out", "link in bio", "haz clic"
+hook-short [weight 15%]
+  Scorer looks for: first line has ≤ 18 words
+  To pass: count every word in the first line; cut until ≤ 18 words
 
-TOPIC FIT (10%)
-topic-sector      | On-niche keywords | Include: AI, LLM, SDR, outbound, lead gen, revenue, SaaS, B2B, growth, startup
-topic-tools       | Specific tool names | Name at least one: Claude, GPT, Clay, Apollo, HubSpot, Salesforce, Notion, n8n
-topic-fresh       | Recency signal | Add: "just", "this week", "yesterday", "acabo de", "esta semana", "2025", "2026"
-topic-hashtags    | 0–3 hashtags | Count "#word" patterns — remove extras if > 3
+hook-speed-claim [weight 12%]
+  Scorer looks for: in \d+ | en \d+ | 60 seconds | segundos | minutes | minutos | hours | horas | saves | ahorra | quick | rápido | instant | instantáneo
+  To pass: write "en 30 minutos", "saves 10 hours/week", "en 60 segundos", "ahorra 3 horas al día"
+
+hook-tension [weight 10%]
+  Scorer looks for: hook line ENDS WITH ":" or "—" or "..." or 👇 or 👉 — OR contains "this is why | por eso | here is how | aquí está"
+  To pass: simplest fix → end the first line with a colon ":" or "👇"
+  Example: "Nadie te habla de esto en outbound:"
+
+── STRUCTURE (20%) ────────────────────────────────────────────────────
+struct-numbered [weight 20%]
+  Scorer looks for: ≥ 3 lines that start with a digit + "." or ")"
+  To pass: add "1. …\n2. …\n3. …" anywhere in the body (at minimum 3 items)
+
+struct-data [weight 20%]
+  Scorer looks for: ≥ 2 occurrences of number+% | number+k | number+m | number+x | number+€ | $+number — in the body
+  To pass: include at least two of: "47%", "$12K", "3x", "200€" — in the body (not only the hook)
+
+struct-length [weight 20%]
+  Scorer looks for: 80 ≤ word count ≤ 400
+  To pass: count all words; expand if < 80, trim if > 400
+
+struct-open-loop [weight 15%]
+  Scorer looks for: here's what | esto es lo que | the result | el resultado | what happened | lo que pasó | then | entonces | but then | pero luego
+  To pass: write "El resultado fue…" or "Pero luego…" or "Then I realized…" — before you deliver the payoff
+
+struct-no-dense [weight 15%]
+  Scorer looks for: every paragraph (text between \n\n) has ≤ 3 lines inside
+  To pass: insert a blank line after every 2–3 lines of continuous text
+
+struct-framework [weight 10%]
+  Scorer looks for: step \d | paso \d | before | después | antes | after | phase | fase | stage | framework | playbook
+  To pass: write "Paso 1", "Step 1", "before → after", "el framework", "playbook"
+
+── EMOTION (18%) ──────────────────────────────────────────────────────
+emo-fomo [weight 22%]
+  Scorer looks for: before | antes | missed | perdido | too late | tarde | only | solo | last chance | última | everyone | todos
+  To pass: write "before everyone else", "antes de que sea tarde", "todos lo están usando ya", "solo este mes"
+
+emo-greed [weight 20%]
+  Scorer looks for: $\d | \d+k | \d+€ | revenue | ingresos | profit | beneficio | mrr | arr | deals | clients | clientes | sales | ventas
+  To pass: mention "$5K", "12k€", "revenue", "clientes", "ventas" — any of these
+
+emo-controversy [weight 18%]
+  Scorer looks for: unpopular | controvers | hot take | hot-take | polémic | disagree | en desacuerdo | wrong | mal | overrated | sobrevalorado
+  To pass: write "Unpopular opinion:" or "hot take:" or "overrated" or "en desacuerdo con"
+  Note: "wrong" and "mal" also pass hook-contrarian — use them in the hook to pass both
+
+emo-insider [weight 20%]
+  Scorer looks for: behind the scenes | detrás | insider | what they don | lo que no te cuentan | the truth about | la verdad sobre
+  To pass: write "lo que no te cuentan", "behind the scenes", "la verdad sobre esto"
+
+emo-personal-proof [weight 20%]
+  Scorer looks for: I built | I tested | I ran | I tried | I made | I shipped | I spent | I lost | I earned | yo he | construí | probé | hice | gané | perdí
+  To pass: use one of these exact verbs — "I tested this for 30 days", "lo probé durante 3 semanas", "yo lo construí"
+  Common fail: "lo he visto funcionar" → "visto" not in list → fails
+
+── FORMAT (15%) ───────────────────────────────────────────────────────
+fmt-no-links [weight 30%]
+  Scorer looks for: absence of "http://" or "https://"
+  To pass: remove all URLs from the post body
+
+fmt-spacing [weight 25%]
+  Scorer looks for: at least one \n\n (blank line) in the post
+  To pass: add an empty line between at least two paragraphs
+
+fmt-emoji-markers [weight 20%]
+  Scorer looks for: → or ↳ or ▶ or 👉 or 👇 or ✅ or ❌ or 🔥 or 💡 or • or · or ▪ or a line starting with "- " or "* "
+  To pass: add at least one "→" before a list item, or "👇" at the end of the hook
+
+fmt-first-line-hook [weight 15%]
+  Scorer looks for: first line between 20 and 140 characters
+  To pass: count chars in line 1; if < 20 expand, if > 140 cut at a natural break
+
+fmt-coherent [weight 10%]
+  Scorer looks for: ≤ 2 words of 5+ consecutive capitals AND ≤ 8 emojis total
+  To pass: remove extra ALL-CAPS words and trim emojis to 8 max
+
+── CTA (12%) ──────────────────────────────────────────────────────────
+cta-comment-gate [weight 30%]
+  Scorer looks for: ("comment" OR "comenta" OR "reply" OR "responde" OR "drop" OR "deja") + within 40 chars + ("below" OR "abajo" OR "get" OR "receive" OR "recibe" OR "send" OR "envío" OR "dm")
+  To pass: write "Comenta 'GUÍA' abajo y te la mando" or "Comment 'YES' below and I'll send it"
+
+cta-at-end [weight 25%]
+  Scorer looks for in the LAST 200 chars: comment | follow | share | save | what do you | qué opinas | your thoughts | tu opinión | let me know | dime
+  To pass: put "¿Qué opinas tú?" or "Let me know in the comments" as the last line
+
+cta-question [weight 25%]
+  Scorer looks for: post ends with "?" (up to 2 trailing newlines allowed)
+  To pass: make the very last non-empty line a question ending in "?"
+
+cta-no-link-cta [weight 20%]
+  Scorer looks for ABSENCE of: click | haz clic | link in bio | enlace en bio | check out | visit
+  To pass: remove any of those phrases
+
+── TOPIC FIT (10%) ────────────────────────────────────────────────────
+topic-sector [weight 35%]
+  Scorer looks for: ai | ia | llm | agent | sdr | outbound | lead gen | prospecting | revenue | sales | ventas | marketing | growth | startup | b2b | saas
+  To pass: include at least one of those words (case-insensitive)
+
+topic-tools [weight 25%]
+  Scorer looks for: claude | gpt | openai | anthropic | clay | apollo | hubspot | salesforce | linkedin | notion | zapier | n8n | make
+  To pass: name at least one specific tool verbatim
+
+topic-fresh [weight 25%]
+  Scorer looks for: just | acabo | yesterday | ayer | this week | esta semana | new | nuevo | launched | lanzó | released | 2025 | 2026
+  To pass: write "acabo de", "esta semana", "just tested", "2025"
+
+topic-hashtags [weight 15%]
+  Scorer looks for: count of #word ≤ 3
+  To pass: if > 3 hashtags, remove the extras
 === END CHECKLIST ===`;
 
     const system = `You are a LinkedIn post optimizer. Your role is STRUCTURAL improvement only — you are NOT a ghostwriter.
