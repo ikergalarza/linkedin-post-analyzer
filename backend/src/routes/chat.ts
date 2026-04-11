@@ -283,6 +283,54 @@ router.post('/improve', async (req: Request, res: Response) => {
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
 
+    const CHECKLIST_REFERENCE = `
+=== OUTLIER CHECKLIST — full criteria reference ===
+These are the checks the post is scored against. Each entry shows the ID, what it measures, and exactly how to pass it.
+
+HOOK (25% of score)
+hook-numeric      | Concrete number in the hook line | Add a specific number: "$20K", "3x", "47%", "10 hours", "5 clients"
+hook-contrarian   | Bold or contrarian statement | Use words like: nobody, stop, forget, wrong, truth, actually, dead, killed, obsolete, nadie, deja de
+hook-curiosity-gap| Curiosity gap / open loop | Use: "secret", "nobody knows", "the real reason", "here's why", "aquí está"
+hook-not-x-but-y  | "Not X, but Y" reversal pattern | Write "It's not about X, it's about Y" or "No es X, sino Y"
+hook-short        | Hook ≤ 18 words | Count the words in the first line — cut until ≤ 18
+hook-speed-claim  | Speed / time-saving claim | Add "in 60 seconds", "saves 10 hours/week", "en 30 minutos", "en 3 días"
+hook-tension      | Hook ends with an open promise | End the first line with ":", "—", "...", "👇", "aquí está cómo"
+
+STRUCTURE (20%)
+struct-numbered   | At least 3 numbered steps | Add "1.", "2.", "3." — minimum 3 items
+struct-data       | At least 2 concrete metrics in the body | Add numbers with units: "$X", "Xk", "X%", "X€" — minimum 2
+struct-length     | 80–400 words total | Count words; trim if > 400, expand if < 80
+struct-open-loop  | Opens a loop before the payoff | Add "here's what happened", "el resultado fue", "then everything changed", "pero luego"
+struct-no-dense   | No paragraph longer than 3 lines | Break paragraphs so each has ≤ 3 lines
+struct-framework  | Uses a named framework | Add "step X", "phase X", "before/after", "framework", "playbook", "paso X"
+
+EMOTION (18%)
+emo-fomo          | FOMO / urgency | Add: "before", "everyone", "only", "last chance", "antes de que", "todos ya"
+emo-greed         | Money / gain trigger | Mention revenue, deals, clients, MRR, ARR, or a $ / € amount
+emo-controversy   | Hot take / controversy | Add: "unpopular opinion", "hot take", "overrated", "polémica", "disagree"
+emo-insider       | Behind-the-scenes / insider knowledge | Add: "behind the scenes", "what they don't tell you", "lo que no te cuentan"
+emo-personal-proof| Personal proof with action verb | Use: "I built", "I tested", "I spent", "I ran", "yo construí", "yo probé"
+
+FORMAT (15%)
+fmt-no-links      | No external URLs in the post body | Remove any "http://" or "https://" links (put them in first comment instead)
+fmt-spacing       | Blank lines between paragraphs | Add an empty line between every paragraph
+fmt-emoji-markers | Visual markers (emoji / arrows / bullets) | Add →, ↳, ✅, ❌, 🔥, 💡, •, or similar — at least 1
+fmt-first-line-hook| First line 20–140 characters | The hook line must be between 20 and 140 chars
+fmt-coherent      | No ALL-CAPS words (≤ 2) and ≤ 8 emojis total | Remove excessive caps and emojis
+
+CTA (12%)
+cta-comment-gate  | Comment-gated CTA | Add: "Comment 'X' below and I'll send you…", "Comenta 'X' y te mando…"
+cta-at-end        | CTA in the last 200 characters | Move the ask to the final 1–2 lines
+cta-question      | Post ends with a question | Add a question mark at the very end: "¿Tú qué opinas?", "Agree?"
+cta-no-link-cta   | No "click the link" style CTA | Remove: "click", "check out", "link in bio", "haz clic"
+
+TOPIC FIT (10%)
+topic-sector      | On-niche keywords | Include: AI, LLM, SDR, outbound, lead gen, revenue, SaaS, B2B, growth, startup
+topic-tools       | Specific tool names | Name at least one: Claude, GPT, Clay, Apollo, HubSpot, Salesforce, Notion, n8n
+topic-fresh       | Recency signal | Add: "just", "this week", "yesterday", "acabo de", "esta semana", "2025", "2026"
+topic-hashtags    | 0–3 hashtags | Count "#word" patterns — remove extras if > 3
+=== END CHECKLIST ===`;
+
     const system = `You are a LinkedIn post optimizer. Your role is STRUCTURAL improvement only — you are NOT a ghostwriter.
 
 WHAT YOU DO: take the author's existing post and improve its formatting, hook sharpness, paragraph spacing, CTA placement, and virality mechanics — without changing the topic, the core idea, the specific examples, the data points, or the narrative.
@@ -296,14 +344,17 @@ WHAT YOU NEVER DO:
 
 Think of it as a film editor, not a screenwriter: you cut, reorder, sharpen, and pace — but the scenes (ideas) stay the same.
 
+${CHECKLIST_REFERENCE}
+
 RESPONSE FORMAT — always use exactly this structure (no other text):
-CRITIQUE: [2-4 sentences: what structural changes you made and what you predict still needs work]
+CRITIQUE: [2-4 sentences: which specific checks you addressed, what technique you used for each, and what you predict still needs work]
 ---
 [The structurally improved post — same ideas, better execution]
 
 Additional rules:
 - A rewrite that fixes 1 failing check but breaks 2 passing checks is a NET LOSS — do not do it
-- If a failing check persisted from a previous iteration, try a DIFFERENT structural technique
+- For each failing check, apply the exact technique described in the checklist reference above
+- If a failing check persisted from a previous iteration, try a DIFFERENT technique from the ones you already attempted
 - Read your previous CRITIQUE and build on it${profileContext}`;
 
     const result = await client.messages.create({
