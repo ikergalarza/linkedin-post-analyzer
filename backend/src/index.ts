@@ -36,6 +36,7 @@ app.use((req, _res, next) => {
 // Routes
 app.use('/api/creators', creatorsRouter);
 app.use('/api/creators', postsRouter);
+app.use('/api/posts', postsRouter);
 app.use('/api/creators', analysisRouter);
 app.use('/api/analysis', analysisRouter);
 app.use('/api/chat', chatRouter);
