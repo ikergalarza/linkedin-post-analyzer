@@ -231,11 +231,13 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
       creatorHeadline: post.creator_headline || null,
       profile: {
         headline: profile.headline,
-        niche: profile.niche,
-        expertise: profile.expertise,
+        voice_style: profile.voice_style,
+        worldview: profile.worldview,
+        signature_moves: profile.signature_moves,
+        avoid: profile.avoid,
+        // legacy fallbacks
         tone: profile.tone,
-        objectives: profile.objectives,
-        topics: profile.topics || [],
+        expertise: profile.expertise,
       },
     });
     console.log('[COMMENT GEN] Step 4: AI response received, saving...');
@@ -243,11 +245,11 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
     // Delete existing comments for regeneration
     await NetworkCommentModel.deleteByPost(post.id);
 
-    // Insert 3 new comments
+    // Insert 3 new comments (angles renamed to match new comment types)
     const comments = await NetworkCommentModel.bulkInsert([
-      { network_post_id: post.id, angle: 'personal_experience' as const, comment_text: generated.personal_experience },
-      { network_post_id: post.id, angle: 'provocative_question' as const, comment_text: generated.provocative_question },
-      { network_post_id: post.id, angle: 'plot_twist' as const, comment_text: generated.plot_twist },
+      { network_post_id: post.id, angle: 'personal_experience' as const, comment_text: generated.contrarian },
+      { network_post_id: post.id, angle: 'provocative_question' as const, comment_text: generated.experience_proof },
+      { network_post_id: post.id, angle: 'plot_twist' as const, comment_text: generated.reframe },
     ]);
     console.log('[COMMENT GEN] Step 5: Done, returning comments');
 

@@ -38,9 +38,9 @@ const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
 };
 
 const ANGLE_LABELS: Record<string, string> = {
-  personal_experience: 'Personal Experience',
-  provocative_question: 'Provocative Question',
-  plot_twist: 'Plot Twist',
+  personal_experience: '⚡ Contrarian',
+  provocative_question: '🔍 Experience proof',
+  plot_twist: '🔄 Reframe',
 };
 
 interface Props {

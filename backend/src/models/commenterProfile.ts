@@ -3,11 +3,17 @@ import pool from '../db';
 export interface CommenterProfile {
   id: string;
   headline: string | null;
+  // legacy fields kept for DB compat
   niche: string | null;
   expertise: string | null;
-  tone: 'direct' | 'provocative' | 'empathetic' | 'technical';
+  tone: string;
   objectives: string | null;
   topics: string[];
+  // v7: voice-focused fields
+  voice_style: string | null;
+  worldview: string | null;
+  signature_moves: string | null;
+  avoid: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -24,16 +30,19 @@ export const CommenterProfileModel = {
     if (existing) {
       const { rows } = await pool.query(
         `UPDATE commenter_profile SET
-          headline = $1, niche = $2, expertise = $3, tone = $4,
-          objectives = $5, topics = $6, updated_at = NOW()
-         WHERE id = $7 RETURNING *`,
+          headline = $1,
+          voice_style = $2,
+          worldview = $3,
+          signature_moves = $4,
+          avoid = $5,
+          updated_at = NOW()
+         WHERE id = $6 RETURNING *`,
         [
           data.headline ?? existing.headline,
-          data.niche ?? existing.niche,
-          data.expertise ?? existing.expertise,
-          data.tone ?? existing.tone,
-          data.objectives ?? existing.objectives,
-          data.topics ?? existing.topics,
+          data.voice_style ?? existing.voice_style,
+          data.worldview ?? existing.worldview,
+          data.signature_moves ?? existing.signature_moves,
+          data.avoid ?? existing.avoid,
           existing.id,
         ]
       );
@@ -41,15 +50,14 @@ export const CommenterProfileModel = {
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO commenter_profile (headline, niche, expertise, tone, objectives, topics)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      `INSERT INTO commenter_profile (headline, voice_style, worldview, signature_moves, avoid)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [
         data.headline || null,
-        data.niche || null,
-        data.expertise || null,
-        data.tone || 'direct',
-        data.objectives || null,
-        data.topics || [],
+        data.voice_style || null,
+        data.worldview || null,
+        data.signature_moves || null,
+        data.avoid || null,
       ]
     );
     return rows[0];

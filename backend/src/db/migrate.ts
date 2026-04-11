@@ -137,6 +137,12 @@ const migration = `
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
   );
+
+  -- v7: Commenter profile voice redesign
+  ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS voice_style TEXT;
+  ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS worldview TEXT;
+  ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS signature_moves TEXT;
+  ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS avoid TEXT;
 `;
 
 export async function runMigrations() {
