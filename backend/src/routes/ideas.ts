@@ -236,14 +236,21 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
     }
 
     // Save variants using explicit ::jsonb cast to avoid pg serialization issues
-    await pool.query(
-      `UPDATE post_ideas SET generated_variants = $1::jsonb, status = 'ready', updated_at = NOW() WHERE id = $2`,
-      [JSON.stringify(variants), id]
-    );
+    const variantsJson = JSON.stringify(variants);
+    try {
+      await pool.query(
+        `UPDATE post_ideas SET generated_variants = $1::jsonb, status = 'ready', updated_at = NOW() WHERE id = $2`,
+        [variantsJson, id]
+      );
+    } catch (dbErr: any) {
+      console.error('[Ideas generate] DB save failed:', dbErr.message);
+      console.error('[Ideas generate] JSON payload (first 1000 chars):', variantsJson.substring(0, 1000));
+      throw dbErr;
+    }
 
     res.json({ variants });
   } catch (err: any) {
-    console.error('[Ideas generate] Error:', err.message);
+    console.error('[Ideas generate] Error:', err.message, err.stack);
     await PostIdeaModel.update(id, { status: 'draft' }).catch(() => {});
     res.status(500).json({ error: err.message });
   }
