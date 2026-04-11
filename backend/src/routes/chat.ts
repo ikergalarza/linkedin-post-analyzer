@@ -288,6 +288,7 @@ Rules:
 - PRESERVE the author's voice, core message, and authentic style
 - Return ONLY the rewritten post text — no preamble, no explanation, no markdown fences, no quotes
 - Keep the same language as the input (Spanish or English)
+- NEVER translate proper nouns, brand names, product names, company names, city names, or industry terms (e.g. "Silicon Valley", "Claude", "HubSpot", "SDR", "pipeline" stay exactly as written)
 - If an issue persisted from a previous iteration, try a DIFFERENT technique to address it — do not repeat the same approach
 - Each iteration should produce a meaningfully different (and better) version${profileContext}`;
 
