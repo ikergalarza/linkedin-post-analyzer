@@ -284,20 +284,21 @@ router.post('/improve', async (req: Request, res: Response) => {
     const profileContext = await buildProfileContext();
 
     const system = `You are a LinkedIn viral content editor working in an iterative improvement loop.
-Each turn you receive: the current post, checklist items that still fail, and (optionally) your own critique from the previous iteration.
-Your job: produce a meaningfully improved version AND diagnose what still needs work.
+Each turn you receive: the BEST version of the post so far, the checks that are PASSING (protect them), the checks that are FAILING (fix them), and your previous critique.
+Your job: produce a version that fixes failing checks WITHOUT breaking passing ones.
 
-RESPONSE FORMAT — always use exactly this structure:
-CRITIQUE: [2-4 sentences on what you tried this iteration and what still needs improvement for next time]
+RESPONSE FORMAT — always use exactly this structure (no other text):
+CRITIQUE: [2-4 sentences: what specific changes you made, what techniques you used for each failing check, and what you predict might still be hard to fix]
 ---
-[The rewritten post — nothing else below the separator]
+[The rewritten post — nothing else]
 
-Rules for the rewrite:
+Rules:
+- A rewrite that fixes 1 failing check but breaks 2 passing checks is a NET LOSS — do not do it
 - Preserve the author's voice, core message, and authentic style
 - Keep the same language as the input (Spanish or English)
-- NEVER translate proper nouns, brand names, company names, city names, or industry terms ("Silicon Valley", "Claude", "HubSpot", "SDR", "pipeline" stay as-is)
-- If a checklist issue persisted from a previous iteration, try a DIFFERENT technique — do not repeat the same approach
-- Build on your previous critique: if you noted something needed fixing last time, fix it this time${profileContext}`;
+- NEVER translate proper nouns, brand names, company names, city names, or industry terms ("Silicon Valley", "Claude", "HubSpot", "SDR", "pipeline", "outbound" stay as-is)
+- If a failing check persisted from a previous iteration, use a DIFFERENT technique — never repeat the same approach
+- Read your previous CRITIQUE carefully and build on it${profileContext}`;
 
     const result = await client.messages.create({
       model: 'claude-sonnet-4-6',

@@ -358,6 +358,8 @@ export function scorePost(text: string) {
 interface IterLog {
   iteration: number;
   score: number;
+  delta: number;
+  accepted: boolean;
   critique: string;
 }
 
@@ -381,39 +383,50 @@ export default function PostChecklist({ text, onImproved }: Props) {
     setBestScore(null);
     setIterLog([]);
 
-    let current = text;
-    let best = scorePost(current).overall;
-    setBestScore(best);
+    // bestText always holds the highest-scoring version seen so far
+    let bestText = text;
+    let bestScoreVal = scorePost(text).overall;
+    setBestScore(bestScoreVal);
 
-    // Full conversation history — AI sees its own critiques from previous iterations
+    // Full conversation history — includes both accepted and rejected iterations
+    // so the AI learns what worked and what didn't
     const conversation: { role: 'user' | 'assistant'; content: string }[] = [];
 
     try {
       for (let i = 1; i <= 5; i++) {
         setIteration(i);
-        const score = scorePost(current);
-        if (score.overall >= 80) break;
+        if (bestScoreVal >= 80) break;
 
-        const failingList = score.failing
+        const score = scorePost(bestText);
+        const { failing } = score;
+
+        // Also compute passing checks to tell the AI what NOT to break
+        const passingLabels = CHECKLIST
+          .filter((item) => score.byCategory[item.category].items.find((e) => e.item.id === item.id)?.passed)
+          .map((item) => `- ${item.label}`)
+          .join('\n');
+
+        const failingList = failing
           .slice(0, 12)
           .map((f: { label: string; hint: string }) => `- ${f.label}${f.hint ? ' → ' + f.hint : ''}`)
           .join('\n');
 
-        // Build the user turn
+        // Compose the user turn
         let userContent: string;
         if (i === 1) {
           userContent =
-            `POST ACTUAL:\n${current}\n\n` +
-            `PUNTUACIÓN ACTUAL: ${score.overall}/100\n\n` +
-            `CHECKS QUE FALLAN (por orden de impacto):\n${failingList}\n\n` +
-            `Reescribe el post corrigiendo el mayor número posible de estos checks. ` +
-            `Devuelve tu crítica en CRITIQUE: y el post reescrito tras ---.`;
+            `MEJOR VERSIÓN DEL POST (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
+            `CHECKS QUE PASAN ✓ — NO los rompas:\n${passingLabels}\n\n` +
+            `CHECKS QUE FALLAN ✗ — corrígelos:\n${failingList}\n\n` +
+            `Reescribe el post mejorando los checks que fallan sin romper los que pasan. ` +
+            `Devuelve CRITIQUE: + --- + post reescrito.`;
         } else {
           userContent =
-            `PUNTUACIÓN TRAS ÚLTIMA REESCRITURA: ${score.overall}/100 (mejor: ${best}/100)\n\n` +
-            `CHECKS QUE SIGUEN FALLANDO — usa técnicas DIFERENTES a las anteriores:\n${failingList}\n\n` +
-            `Lee tu crítica anterior (arriba en el historial) y aplícala. ` +
-            `Devuelve tu nueva crítica en CRITIQUE: y el post reescrito tras ---.`;
+            `MEJOR VERSIÓN HASTA AHORA (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
+            `CHECKS QUE PASAN ✓ — NO los rompas:\n${passingLabels}\n\n` +
+            `CHECKS QUE SIGUEN FALLANDO ✗ — usa técnicas DIFERENTES a las que ya probaste:\n${failingList}\n\n` +
+            `Lee tu CRITIQUE anterior y aplica lo que aprendiste. ` +
+            `Devuelve CRITIQUE: + --- + post reescrito.`;
         }
 
         conversation.push({ role: 'user', content: userContent });
@@ -431,25 +444,32 @@ export default function PostChecklist({ text, onImproved }: Props) {
         const improved = (data.text || '').trim();
         const critique = (data.critique || '').trim();
         const raw = (data.raw || '').trim();
-        if (!improved) throw new Error('Empty response from AI');
-
-        // Store the FULL raw response (CRITIQUE + --- + post) so the AI sees its
-        // own reasoning in the next turn and can build on it
-        conversation.push({ role: 'assistant', content: raw || improved });
+        if (!improved) throw new Error('Respuesta vacía del AI');
 
         const newScore = scorePost(improved).overall;
-        current = improved; // always advance so AI sees its own output
+        const delta = newScore - bestScoreVal;
+        const accepted = newScore > bestScoreVal;
 
-        if (newScore >= best) {
-          best = newScore;
-          setBestScore(best);
+        // Store FULL raw (critique + post) in conversation so next iteration
+        // reads the AI's own reasoning and knows what techniques were tried
+        // Also annotate rejected iterations so the AI knows not to repeat them
+        const assistantEntry = raw || improved;
+        const rejectionNote = accepted
+          ? assistantEntry
+          : `${assistantEntry}\n\n[SYSTEM NOTE: This rewrite scored ${newScore}/100 — lower than the current best of ${bestScoreVal}/100. It was rejected. Do NOT repeat the same changes.]`;
+
+        conversation.push({ role: 'assistant', content: rejectionNote });
+
+        if (accepted) {
+          bestText = improved;
+          bestScoreVal = newScore;
+          setBestScore(bestScoreVal);
+          onImproved(improved); // only update preview when we actually improve
         }
-        // Always surface the latest version to the user
-        onImproved(improved);
 
-        setIterLog((prev) => [...prev, { iteration: i, score: newScore, critique }]);
+        setIterLog((prev) => [...prev, { iteration: i, score: newScore, delta, accepted, critique }]);
 
-        if (best >= 80) break;
+        if (bestScoreVal >= 80) break;
       }
     } catch (err: any) {
       setImproveError(err.message);
@@ -530,17 +550,23 @@ export default function PostChecklist({ text, onImproved }: Props) {
       {iterLog.length > 0 && (
         <div className="border-t border-border pt-3 space-y-2">
           <p className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
-            Historial de mejoras
+            Historial de iteraciones
           </p>
           {iterLog.map((log) => (
             <div key={log.iteration} className="text-[10px] space-y-0.5">
               <div className="flex items-center gap-2">
+                <span className={`font-bold text-[9px] px-1.5 py-0.5 rounded ${log.accepted ? 'bg-green-900/40 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                  {log.accepted ? '✓ aceptada' : '✗ revertida'}
+                </span>
                 <span className="font-semibold text-text-primary">Iter {log.iteration}</span>
                 <span
                   className="font-bold"
                   style={{ color: log.score >= 75 ? '#10b981' : log.score >= 50 ? '#f59e0b' : '#ef4444' }}
                 >
                   {log.score}/100
+                </span>
+                <span className={`text-[9px] ${log.delta > 0 ? 'text-green-400' : log.delta < 0 ? 'text-red-400' : 'text-text-muted'}`}>
+                  {log.delta > 0 ? `+${log.delta}` : log.delta}
                 </span>
               </div>
               {log.critique && (
