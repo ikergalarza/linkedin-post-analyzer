@@ -297,18 +297,9 @@ function detectContentTypeFromRaw(raw: any): string {
     }
   }
 
-  // Single image fallback fields
-  if (raw.image_url || raw.image || raw.thumbnail_url || raw.thumbnail) return 'image';
-
-  // Check any key that ends in _url or _image and has a non-empty string value
-  for (const key of Object.keys(raw)) {
-    if ((key.endsWith('_url') || key.includes('image') || key.includes('photo')) && typeof raw[key] === 'string' && raw[key].startsWith('http')) {
-      // Only count it if the key isn't profile-related
-      if (!key.includes('profile') && !key.includes('author') && !key.includes('avatar')) {
-        return 'image';
-      }
-    }
-  }
+  // Only specific top-level image fields that Unipile uses for post media
+  if (raw.image_url) return 'image';
+  if (raw.image && typeof raw.image === 'string' && raw.image.startsWith('http')) return 'image';
 
   return 'text_only';
 }
