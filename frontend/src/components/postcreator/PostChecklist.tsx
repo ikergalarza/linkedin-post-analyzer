@@ -387,6 +387,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
     let bestText = text;
     let bestScoreVal = scorePost(text).overall;
     setBestScore(bestScoreVal);
+    const originalText = text; // locked reference — AI must never change the core ideas
 
     // Full conversation history — includes both accepted and rejected iterations
     // so the AI learns what worked and what didn't
@@ -415,18 +416,19 @@ export default function PostChecklist({ text, onImproved }: Props) {
         let userContent: string;
         if (i === 1) {
           userContent =
-            `MEJOR VERSIÓN DEL POST (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
+            `POST ORIGINAL (la idea, el tema y los datos NO pueden cambiar):\n${originalText}\n\n` +
+            `VERSIÓN A MEJORAR (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
             `CHECKS QUE PASAN ✓ — NO los rompas:\n${passingLabels}\n\n` +
-            `CHECKS QUE FALLAN ✗ — corrígelos:\n${failingList}\n\n` +
-            `Reescribe el post mejorando los checks que fallan sin romper los que pasan. ` +
-            `Devuelve CRITIQUE: + --- + post reescrito.`;
+            `CHECKS QUE FALLAN ✗ — mejora SOLO estructura, formato y mecánicas virales:\n${failingList}\n\n` +
+            `Mejora únicamente la estructura y el formato. La idea, el tema y los datos del post original deben permanecer intactos. ` +
+            `Devuelve CRITIQUE: + --- + post mejorado.`;
         } else {
           userContent =
             `MEJOR VERSIÓN HASTA AHORA (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
             `CHECKS QUE PASAN ✓ — NO los rompas:\n${passingLabels}\n\n` +
-            `CHECKS QUE SIGUEN FALLANDO ✗ — usa técnicas DIFERENTES a las que ya probaste:\n${failingList}\n\n` +
-            `Lee tu CRITIQUE anterior y aplica lo que aprendiste. ` +
-            `Devuelve CRITIQUE: + --- + post reescrito.`;
+            `CHECKS QUE SIGUEN FALLANDO ✗ — usa técnicas ESTRUCTURALES diferentes a las anteriores:\n${failingList}\n\n` +
+            `Recuerda: misma idea, mismos datos del post original, solo mejora la forma. Lee tu CRITIQUE anterior y aplícalo. ` +
+            `Devuelve CRITIQUE: + --- + post mejorado.`;
         }
 
         conversation.push({ role: 'user', content: userContent });

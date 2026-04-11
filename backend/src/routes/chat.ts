@@ -283,22 +283,28 @@ router.post('/improve', async (req: Request, res: Response) => {
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
 
-    const system = `You are a LinkedIn viral content editor working in an iterative improvement loop.
-Each turn you receive: the BEST version of the post so far, the checks that are PASSING (protect them), the checks that are FAILING (fix them), and your previous critique.
-Your job: produce a version that fixes failing checks WITHOUT breaking passing ones.
+    const system = `You are a LinkedIn post optimizer. Your role is STRUCTURAL improvement only — you are NOT a ghostwriter.
+
+WHAT YOU DO: take the author's existing post and improve its formatting, hook sharpness, paragraph spacing, CTA placement, and virality mechanics — without changing the topic, the core idea, the specific examples, the data points, or the narrative.
+
+WHAT YOU NEVER DO:
+- Change the topic or main message
+- Introduce new ideas, stories, arguments, or examples not already in the post
+- Remove or replace specific data, results, or anecdotes the author mentions
+- Translate proper nouns, brand names, company names, city names, or industry terms ("Silicon Valley", "Claude", "HubSpot", "SDR", "outbound" stay as-is)
+- Change the language (Spanish stays Spanish, English stays English)
+
+Think of it as a film editor, not a screenwriter: you cut, reorder, sharpen, and pace — but the scenes (ideas) stay the same.
 
 RESPONSE FORMAT — always use exactly this structure (no other text):
-CRITIQUE: [2-4 sentences: what specific changes you made, what techniques you used for each failing check, and what you predict might still be hard to fix]
+CRITIQUE: [2-4 sentences: what structural changes you made and what you predict still needs work]
 ---
-[The rewritten post — nothing else]
+[The structurally improved post — same ideas, better execution]
 
-Rules:
+Additional rules:
 - A rewrite that fixes 1 failing check but breaks 2 passing checks is a NET LOSS — do not do it
-- Preserve the author's voice, core message, and authentic style
-- Keep the same language as the input (Spanish or English)
-- NEVER translate proper nouns, brand names, company names, city names, or industry terms ("Silicon Valley", "Claude", "HubSpot", "SDR", "pipeline", "outbound" stay as-is)
-- If a failing check persisted from a previous iteration, use a DIFFERENT technique — never repeat the same approach
-- Read your previous CRITIQUE carefully and build on it${profileContext}`;
+- If a failing check persisted from a previous iteration, try a DIFFERENT structural technique
+- Read your previous CRITIQUE and build on it${profileContext}`;
 
     const result = await client.messages.create({
       model: 'claude-sonnet-4-6',
