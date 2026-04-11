@@ -169,6 +169,21 @@ const migration = `
   );
   CREATE INDEX IF NOT EXISTS idx_disc_query ON discovered_creators(search_query);
   CREATE INDEX IF NOT EXISTS idx_disc_virality ON discovered_creators(virality_score DESC);
+
+  -- v9: Post Ideas directory
+  CREATE TABLE IF NOT EXISTS post_ideas (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    raw_content TEXT NOT NULL,
+    source_type TEXT DEFAULT 'manual' CHECK (source_type IN ('manual','book_quote','demo_moment','observation','meeting')),
+    tags TEXT[] DEFAULT '{}',
+    generated_post TEXT,
+    generation_score INTEGER,
+    status TEXT DEFAULT 'draft' CHECK (status IN ('draft','generating','ready')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_post_ideas_status ON post_ideas(status);
+  CREATE INDEX IF NOT EXISTS idx_post_ideas_created ON post_ideas(created_at DESC);
 `;
 
 export async function runMigrations() {

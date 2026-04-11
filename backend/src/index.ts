@@ -21,6 +21,7 @@ import chatRouter from './routes/chat';
 import networkRouter from './routes/network';
 import postCreatorProfileRouter from './routes/postCreatorProfile';
 import discoverRouter from './routes/discover';
+import ideasRouter from './routes/ideas';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -44,6 +45,7 @@ app.use('/api/chat', chatRouter);
 app.use('/api/network', networkRouter);
 app.use('/api/post-creator/profile', postCreatorProfileRouter);
 app.use('/api/discover', discoverRouter);
+app.use('/api/ideas', ideasRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {
