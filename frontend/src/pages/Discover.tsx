@@ -66,10 +66,12 @@ function CreatorCard({
   const [promoting, setPromoting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [promoted, setPromoted] = useState(false);
+  const [promoteError, setPromoteError] = useState<string | null>(null);
 
   const handlePromote = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setPromoting(true);
+    setPromoteError(null);
     try {
       await apiPost(`/api/discover/creators/${creator.id}/promote`, {});
       setPromoted(true);
@@ -78,7 +80,8 @@ function CreatorCard({
       if (err.message?.includes('already in Dashboard')) {
         setPromoted(true);
       } else {
-        alert(err.message);
+        setPromoteError(err.message || 'Error adding to Dashboard');
+        setTimeout(() => setPromoteError(null), 5000);
       }
     } finally {
       setPromoting(false);
@@ -198,6 +201,9 @@ function CreatorCard({
           {refreshing ? '…' : '↻'}
         </button>
       </div>
+      {promoteError && (
+        <p className="text-[11px] text-danger mt-2">{promoteError}</p>
+      )}
     </div>
   );
 }
@@ -260,9 +266,16 @@ export default function Discover() {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`${BASE}/api/discover/creators/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${BASE}/api/discover/creators/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        showStatus(data.error || `Error ${res.status}`, 'error');
+        return;
+      }
       refetch();
-    } catch {}
+    } catch (err: any) {
+      showStatus(err.message || 'Delete failed', 'error');
+    }
   };
 
   // Collect all tags from current creators

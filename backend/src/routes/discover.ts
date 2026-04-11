@@ -231,23 +231,31 @@ router.post('/creators/:id/refresh', async (req: Request, res: Response) => {
 
 // POST /api/discover/creators/:id/promote — Copy to main creators table
 router.post('/creators/:id/promote', async (req: Request, res: Response) => {
+  const id = paramId(req);
   try {
-    const discovered = await DiscoveredCreatorModel.findById(paramId(req));
-    if (!discovered) return res.status(404).json({ error: 'Creator not found' });
+    console.log(`[Promote] Looking up discovered creator ${id}`);
+    const discovered = await DiscoveredCreatorModel.findById(id);
+    if (!discovered) {
+      console.log(`[Promote] Not found: ${id}`);
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+    console.log(`[Promote] Found: ${discovered.name} (${discovered.linkedin_url})`);
 
     // Check if already in dashboard
     const existing = await CreatorModel.findByUrl(discovered.linkedin_url);
     if (existing) {
-      return res.status(409).json({ error: 'Creator already in Dashboard', creator: existing });
+      console.log(`[Promote] Already in dashboard: ${discovered.linkedin_url}`);
+      return res.status(409).json({ error: 'Creator already in Dashboard' });
     }
 
     // Create in main creators table
-    const creator = await CreatorModel.create({
+    console.log(`[Promote] Creating creator in dashboard...`);
+    await CreatorModel.create({
       linkedin_url: discovered.linkedin_url,
       linkedin_id: discovered.linkedin_id,
       name: discovered.name,
       headline: discovered.headline,
-      followers_count: discovered.followers_count,
+      followers_count: Number(discovered.followers_count) || 0,
       connections_count: 0,
       profile_image_url: discovered.profile_image_url,
       location: discovered.location,
@@ -255,8 +263,10 @@ router.post('/creators/:id/promote', async (req: Request, res: Response) => {
       utc_offset: null,
     });
 
-    res.status(201).json(creator);
+    console.log(`[Promote] Done: ${discovered.name}`);
+    res.status(201).json({ message: 'Added to Dashboard', linkedin_url: discovered.linkedin_url });
   } catch (err: any) {
+    console.error(`[Promote] Error for ${id}:`, err.message, err.stack);
     res.status(500).json({ error: err.message });
   }
 });
