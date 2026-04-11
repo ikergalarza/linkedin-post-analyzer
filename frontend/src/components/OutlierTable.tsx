@@ -1,5 +1,79 @@
 import { useState } from 'react';
 
+const BASE = import.meta.env.VITE_API_URL || '';
+
+interface MediaItem {
+  type: 'image' | 'video' | 'document';
+  url: string;
+  thumbnail?: string;
+}
+interface MediaResult {
+  content_type: string;
+  items: MediaItem[];
+  linkedin_url: string | null;
+}
+
+function MediaViewer({ postId, contentType }: { postId: string; contentType: string }) {
+  const [state, setState] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle');
+  const [media, setMedia] = useState<MediaResult | null>(null);
+  const [active, setActive] = useState(0);
+  const [imgErr, setImgErr] = useState<Record<number, boolean>>({});
+
+  const load = async () => {
+    setState('loading');
+    try {
+      const res = await fetch(`${BASE}/api/posts/post/${postId}/media`);
+      if (!res.ok) throw new Error();
+      const data: MediaResult = await res.json();
+      setMedia(data);
+      setState(data.items.length > 0 ? 'loaded' : 'error');
+    } catch {
+      setState('error');
+    }
+  };
+
+  const typeIcon: Record<string, string> = { image: '🖼️', carousel: '📎', video: '🎥', document: '📄' };
+
+  if (state === 'idle') return (
+    <button onClick={load} className="text-[11px] text-accent hover:text-accent-light border border-accent/30 px-2.5 py-1 rounded-lg transition-colors">
+      {typeIcon[contentType] || '🖼️'} Ver creatividad
+    </button>
+  );
+  if (state === 'loading') return <span className="text-[11px] text-text-muted animate-pulse">Cargando…</span>;
+  if (state === 'error' || !media || media.items.length === 0) return (
+    <div className="flex items-center gap-2">
+      <span className="text-[11px] text-text-muted">URL expirada</span>
+      {media?.linkedin_url && (
+        <a href={media.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-accent">ver en LinkedIn ↗</a>
+      )}
+    </div>
+  );
+
+  const item = media.items[active];
+  return (
+    <div className="space-y-2 mt-2">
+      {item.type === 'video' ? (
+        <video src={item.url} controls poster={item.thumbnail} className="max-h-64 rounded-lg object-contain bg-black" onError={() => setImgErr(e => ({ ...e, [active]: true }))} />
+      ) : item.type === 'image' && !imgErr[active] ? (
+        <img src={item.url} alt="" className="max-h-64 rounded-lg object-contain bg-bg-primary" onError={() => setImgErr(e => ({ ...e, [active]: true }))} />
+      ) : item.type === 'document' ? (
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-accent border border-border px-3 py-2 rounded-lg block w-fit">📄 Abrir documento ↗</a>
+      ) : (
+        <span className="text-[11px] text-text-muted">URL expirada</span>
+      )}
+      {media.items.length > 1 && (
+        <div className="flex gap-1 items-center">
+          {media.items.map((_, i) => (
+            <button key={i} onClick={() => setActive(i)} className={`w-2 h-2 rounded-full ${i === active ? 'bg-accent' : 'bg-border'}`} />
+          ))}
+          <span className="text-[10px] text-text-muted ml-1">{active + 1}/{media.items.length}</span>
+        </div>
+      )}
+      <button onClick={() => setState('idle')} className="text-[10px] text-text-muted hover:text-text-secondary">Ocultar</button>
+    </div>
+  );
+}
+
 interface Post {
   id: string;
   linkedin_post_id?: string | null;
@@ -83,10 +157,37 @@ interface Props {
   title?: string;
 }
 
-const typeIcons: Record<string, string> = {
-  text_only: '📝', image: '🖼️', carousel: '🎠', video: '🎬',
-  poll: '📊', article: '📰', document: '📄',
+const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string; hasMedia: boolean }> = {
+  text_only: { icon: '📝', label: 'Texto',    color: 'text-text-muted bg-bg-hover',      hasMedia: false },
+  image:     { icon: '🖼️', label: 'Imagen',   color: 'text-blue-400 bg-blue-400/10',     hasMedia: true  },
+  carousel:  { icon: '📎', label: 'Carrusel', color: 'text-purple-400 bg-purple-400/10', hasMedia: true  },
+  video:     { icon: '🎥', label: 'Vídeo',    color: 'text-red-400 bg-red-400/10',       hasMedia: true  },
+  document:  { icon: '📄', label: 'Doc',      color: 'text-amber-400 bg-amber-400/10',   hasMedia: true  },
+  poll:      { icon: '📊', label: 'Encuesta', color: 'text-green-400 bg-green-400/10',   hasMedia: false },
+  article:   { icon: '📰', label: 'Artículo', color: 'text-cyan-400 bg-cyan-400/10',     hasMedia: false },
 };
+
+const PREVIEW_CHARS = 300;
+
+function ExpandableText({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const needsTrunc = text.length > PREVIEW_CHARS;
+  return (
+    <div>
+      <p className="text-text-primary text-sm whitespace-pre-wrap leading-relaxed">
+        {expanded || !needsTrunc ? text : text.slice(0, PREVIEW_CHARS) + '…'}
+      </p>
+      {needsTrunc && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-[11px] text-accent hover:text-accent-light mt-1"
+        >
+          {expanded ? 'Ver menos ↑' : 'Ver más ↓'}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -139,7 +240,15 @@ export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) 
                       </span>
                     </td>
                     <td className="py-3">
-                      <span title={post.content_type}>{typeIcons[post.content_type] || '?'}</span>
+                      {(() => {
+                        const cfg = TYPE_CONFIG[post.content_type] || { icon: '?', label: post.content_type, color: 'text-text-muted bg-bg-hover', hasMedia: false };
+                        return (
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${cfg.color}`}>
+                            <span>{cfg.icon}</span>
+                            <span className="hidden sm:inline">{cfg.label}</span>
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="py-3 text-right tabular-nums">{post.likes_count.toLocaleString()}</td>
                     <td className="py-3 text-right tabular-nums">{post.comments_count.toLocaleString()}</td>
@@ -165,7 +274,7 @@ export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) 
                   {expandedId === post.id && (
                     <tr key={`${post.id}-expanded`}>
                       <td colSpan={11} className="bg-bg-secondary p-4">
-                        <div className="flex gap-4 mb-2 text-xs text-text-muted">
+                        <div className="flex gap-4 mb-3 text-xs text-text-muted">
                           {post.comment_like_ratio != null && post.comment_like_ratio > 0 && (
                             <span>Comment/Like: {Math.round(post.comment_like_ratio * 100)}%</span>
                           )}
@@ -173,9 +282,12 @@ export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) 
                             <span>Share/Like: {Math.round(post.share_like_ratio * 100)}%</span>
                           )}
                         </div>
-                        <p className="text-text-primary text-sm whitespace-pre-wrap leading-relaxed">
-                          {post.content_text || 'No content available'}
-                        </p>
+                        <ExpandableText text={post.content_text || 'No content available'} />
+                        {TYPE_CONFIG[post.content_type]?.hasMedia && (
+                          <div className="mt-3">
+                            <MediaViewer postId={post.id} contentType={post.content_type} />
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )}
