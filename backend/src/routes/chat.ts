@@ -213,6 +213,14 @@ When helping the user:
 IMPORTANT: Keep posts authentic and natural. Don't over-optimize — the best outliers feel genuine, not formulaic.`;
 
 // POST /api/chat
+// POST /api/chat/clear-cache — force recompute of analysis context on next chat call
+router.post('/clear-cache', (_req: Request, res: Response) => {
+  cachedContext = null;
+  cachedAt = 0;
+  console.log('[Chat] Analysis cache cleared');
+  res.json({ message: 'Cache cleared' });
+});
+
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { messages } = req.body;

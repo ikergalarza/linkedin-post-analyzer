@@ -183,13 +183,25 @@ const toneColors: Record<string, string> = {
 const BASE = import.meta.env.VITE_API_URL || '';
 
 export default function OutlierExplorer() {
-  const { data, loading, error } = useApi<CrossCreatorData>('/api/analysis/cross-creators');
+  const { data, loading, error, refetch } = useApi<CrossCreatorData>('/api/analysis/cross-creators');
   const { data: creators } = useApi<Creator[]>('/api/creators');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [compareData, setCompareData] = useState<CompareData[] | null>(null);
   const [comparing, setComparing] = useState(false);
   const [contentTypeFilter, setContentTypeFilter] = useState<string>('all');
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefreshAnalysis = async () => {
+    setRefreshing(true);
+    try {
+      // Clear chat AI cache so next chat call uses fresh outlier data
+      await fetch(`${BASE}/api/chat/clear-cache`, { method: 'POST' });
+      // Recompute patterns (already live, just re-fetches)
+      refetch();
+    } catch {}
+    setRefreshing(false);
+  };
 
   const contentTypes = useMemo(() => {
     if (!data) return [];
@@ -222,9 +234,19 @@ export default function OutlierExplorer() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Outlier Explorer</h1>
-        <p className="text-text-secondary">Top performing content across all analyzed creators.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Outlier Explorer</h1>
+          <p className="text-text-secondary">Top performing content across all analyzed creators.</p>
+        </div>
+        <button
+          onClick={handleRefreshAnalysis}
+          disabled={refreshing || loading}
+          className="flex-shrink-0 px-4 py-2 bg-bg-card border border-border text-text-secondary text-sm rounded-lg hover:border-accent/40 hover:text-text-primary disabled:opacity-50 transition-colors mt-1"
+          title="Recalcular patrones y actualizar el contexto del chat de IA"
+        >
+          {refreshing ? 'Actualizando…' : '↻ Actualizar análisis'}
+        </button>
       </div>
 
       {error && (
