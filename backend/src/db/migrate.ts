@@ -143,6 +143,32 @@ const migration = `
   ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS worldview TEXT;
   ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS signature_moves TEXT;
   ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS avoid TEXT;
+
+  -- v8: Creator Discovery module
+  CREATE TABLE IF NOT EXISTS discovered_creators (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    linkedin_url TEXT UNIQUE NOT NULL,
+    linkedin_id TEXT,
+    name TEXT,
+    headline TEXT,
+    followers_count INTEGER DEFAULT 0,
+    profile_image_url TEXT,
+    location TEXT,
+    search_query TEXT,
+    niche_tags TEXT[] DEFAULT '{}',
+    avg_engagement FLOAT DEFAULT 0,
+    max_engagement FLOAT DEFAULT 0,
+    outlier_count INTEGER DEFAULT 0,
+    outlier_ratio_avg FLOAT DEFAULT 0,
+    total_posts_sampled INTEGER DEFAULT 0,
+    virality_score FLOAT DEFAULT 0,
+    followers_prev INTEGER,
+    followers_prev_at TIMESTAMPTZ,
+    enriched_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_disc_query ON discovered_creators(search_query);
+  CREATE INDEX IF NOT EXISTS idx_disc_virality ON discovered_creators(virality_score DESC);
 `;
 
 export async function runMigrations() {
