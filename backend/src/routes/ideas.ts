@@ -271,102 +271,29 @@ router.post('/:id/save-post', async (req: Request, res: Response) => {
   }
 });
 
-// ─── Inspiration from outliers ────────────────────────────────────────────────
+// ─── Inspiration: browse & steal outlier posts ──────────────────────────────
 
-// POST /api/ideas/inspiration — Extract post ideas from outlier clusters
-router.post('/inspiration', async (req: Request, res: Response) => {
+// GET /api/ideas/inspiration — Return all outlier posts with creator info
+router.get('/inspiration', async (_req: Request, res: Response) => {
   try {
-    const { rows: outliers } = await pool.query(`
-      SELECT p.content_text, p.hook_text, p.hook_type, p.post_structure, p.text_tone,
-             p.outlier_ratio, p.likes_count, p.comments_count
+    const { rows } = await pool.query(`
+      SELECT p.id, p.content_text, p.hook_text, p.hook_type, p.post_structure,
+             p.text_tone, p.content_type, p.outlier_ratio, p.engagement_score,
+             p.likes_count, p.comments_count, p.reposts_count,
+             p.published_at, p.post_url,
+             c.name AS creator_name, c.headline AS creator_headline,
+             c.profile_image_url AS creator_image, c.followers_count AS creator_followers
       FROM posts p
-      WHERE p.is_outlier = TRUE AND p.content_text IS NOT NULL AND LENGTH(p.content_text) > 80
+      JOIN creators c ON c.id = p.creator_id
+      WHERE p.is_outlier = TRUE
+        AND p.content_text IS NOT NULL
+        AND LENGTH(p.content_text) > 80
       ORDER BY p.outlier_ratio DESC
-      LIMIT 30
     `);
 
-    if (outliers.length < 3) {
-      return res.status(422).json({ error: 'Not enough outlier posts yet. Add and analyze more creators first.' });
-    }
-
-    // Clean post text: strip control chars and quotes that break JSON generation
-    const cleanText = (t: string) =>
-      (t || '')
-        .replace(/[\x00-\x1F\x7F]/g, ' ')  // control chars → space
-        .replace(/"/g, "'")                  // double quotes → single (avoids JSON breakage)
-        .replace(/\s+/g, ' ')
-        .trim()
-        .substring(0, 300);
-
-    // Send fewer, cleaner posts — 15 is enough for clustering
-    const sample = outliers.slice(0, 15);
-    const postsSummary = sample.map((p: any, i: number) =>
-      `POST ${i + 1} [${p.outlier_ratio}x ratio | ${p.hook_type} | ${p.post_structure}]\n${cleanText(p.content_text)}`
-    ).join('\n\n---\n\n');
-
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      messages: [
-        {
-          role: 'user',
-          content: `Analyze these ${sample.length} top-performing LinkedIn posts and extract content ideas.
-
-${postsSummary}
-
-Your task:
-1. Group these posts into 4-6 thematic clusters (e.g. "Mistakes & Lessons", "Cold Outreach Tactics", "Mindset Shifts")
-2. For each cluster, generate 4-5 concrete post ideas the creator could write from their OWN experience
-3. Each idea should be a clear, punchy hook — not a generic topic
-
-Respond with a JSON array. Each string value must NOT contain double quotes — use single quotes or rephrase.
-
-[
-  {
-    "cluster": "2-4 word cluster name",
-    "theme": "One sentence on why these posts go viral",
-    "ideas": [
-      {
-        "angle": "The specific hook for the post (1 punchy sentence, no double quotes inside)",
-        "prompt": "What the creator could write about (2-3 sentences, no double quotes inside)"
-      }
-    ]
-  }
-]
-
-Return ONLY the JSON array. No markdown, no explanation, no code block.`,
-        },
-      ],
-    });
-
-    const rawText = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
-    if (!rawText) {
-      return res.status(500).json({ error: 'AI returned empty response' });
-    }
-
-    // Strip optional markdown code fences
-    const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-
-    // Extract the JSON array
-    const startIdx = cleaned.indexOf('[');
-    const endIdx = cleaned.lastIndexOf(']');
-    if (startIdx === -1 || endIdx === -1) {
-      console.error('[Inspiration] No JSON array found in response:', rawText.substring(0, 200));
-      return res.status(500).json({ error: 'AI returned invalid JSON structure' });
-    }
-
-    let clusters: any[];
-    try {
-      clusters = JSON.parse(cleaned.slice(startIdx, endIdx + 1));
-    } catch (parseErr: any) {
-      console.error('[Inspiration] JSON parse error:', parseErr.message);
-      console.error('[Inspiration] Raw AI response (first 500):', rawText.substring(0, 500));
-      return res.status(500).json({ error: `JSON parse error: ${parseErr.message}` });
-    }
-
-    res.json({ clusters, outliers_analyzed: sample.length });
+    res.json({ outliers: rows, total: rows.length });
   } catch (err: any) {
-    console.error('[Ideas inspiration] Error:', err.message);
+    console.error('[Inspiration] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

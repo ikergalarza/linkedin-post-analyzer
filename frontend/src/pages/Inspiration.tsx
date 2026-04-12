@@ -1,115 +1,225 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useApi } from '../hooks/useApi';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
-interface IdeaItem {
-  angle: string;
-  prompt: string;
+interface OutlierPost {
+  id: string;
+  content_text: string;
+  hook_text: string | null;
+  hook_type: string;
+  post_structure: string;
+  text_tone: string;
+  content_type: string;
+  outlier_ratio: number;
+  engagement_score: number;
+  likes_count: number;
+  comments_count: number;
+  reposts_count: number;
+  published_at: string | null;
+  post_url: string | null;
+  creator_name: string;
+  creator_headline: string | null;
+  creator_image: string | null;
+  creator_followers: number;
 }
 
-interface Cluster {
-  cluster: string;
-  theme: string;
-  ideas: IdeaItem[];
+interface InspirationData {
+  outliers: OutlierPost[];
+  total: number;
 }
 
-interface InspiractionResult {
-  clusters: Cluster[];
-  outliers_analyzed: number;
+const HOOK_LABELS: Record<string, string> = {
+  pattern_interrupt: 'Pattern Interrupt', belief_breaker: 'Belief Breaker',
+  curiosity_gap: 'Curiosity Gap', data_shock: 'Data Shock', hot_take: 'Hot Take',
+  personal_confession: 'Personal Confession', story_opener: 'Story Opener',
+  hypothetical_question: 'Hypothetical Q', why_question: 'Why Q',
+  how_question: 'How Q', direct_question: 'Direct Q',
+  bold_claim: 'Bold Claim', common_mistake: 'Common Mistake',
+  direct_callout: 'Direct Callout', list_promise: 'List Promise',
+  contrarian_take: 'Contrarian', relatable_moment: 'Relatable Moment',
+  motivational: 'Motivational', observation: 'Observation', other: 'Other',
+};
+
+const STRUCT_LABELS: Record<string, string> = {
+  hook_list_cta: 'Hook → List → CTA', hook_story_lesson_cta: 'Story → Lesson → CTA',
+  problem_agitate_solve: 'Problem → Agitate → Solve',
+  contrarian_proof_reframe: 'Contrarian → Proof → Reframe',
+  confession_insight_takeaway: 'Confession → Insight → Takeaway',
+  list_framework: 'List Framework', problem_solution: 'Problem → Solution',
+  story_lesson: 'Story → Lesson', before_after: 'Before / After',
+  step_by_step: 'Step by Step', myth_busting: 'Myth Busting',
+  short_punchy: 'Short & Punchy', long_form_essay: 'Long Form Essay',
+  data_driven: 'Data Driven', other: 'Other',
+};
+
+function formatNum(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
 }
 
-const CLUSTER_COLORS = [
-  'border-accent/30 bg-accent/5',
-  'border-purple-400/30 bg-purple-400/5',
-  'border-blue-400/30 bg-blue-400/5',
-  'border-amber-400/30 bg-amber-400/5',
-  'border-green-400/30 bg-green-400/5',
-  'border-red-400/30 bg-red-400/5',
-];
-
-const CLUSTER_BADGE_COLORS = [
-  'text-accent bg-accent/10',
-  'text-purple-400 bg-purple-400/10',
-  'text-blue-400 bg-blue-400/10',
-  'text-amber-400 bg-amber-400/10',
-  'text-green-400 bg-green-400/10',
-  'text-red-400 bg-red-400/10',
-];
-
-function IdeaItemCard({ idea, clusterColor, onSave }: {
-  idea: IdeaItem;
-  clusterColor: string;
-  onSave: (angle: string, prompt: string) => Promise<void>;
-}) {
+function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: OutlierPost) => void }) {
+  const [expanded, setExpanded] = useState(false);
+  const [stolen, setStolen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
 
-  const handleSave = async () => {
+  const text = post.content_text || '';
+  const needsTrunc = text.length > 300;
+
+  const handleSteal = async () => {
     setSaving(true);
     try {
-      await onSave(idea.angle, idea.prompt);
-      setSaved(true);
+      await onSteal(post);
+      setStolen(true);
     } catch {}
     setSaving(false);
   };
 
   return (
-    <div className={`border rounded-lg p-4 transition-all ${saved ? 'border-green-400/30 bg-green-400/5 opacity-70' : 'border-border bg-bg-primary hover:border-accent/30'}`}>
-      <p className="text-text-primary text-sm font-medium leading-snug mb-2">
-        {idea.angle}
-      </p>
-      <p className="text-text-muted text-xs leading-relaxed mb-3">
-        {idea.prompt}
-      </p>
+    <div className={`bg-bg-card border rounded-xl p-5 transition-all ${stolen ? 'border-green-400/30 opacity-60' : 'border-border hover:border-accent/30'}`}>
+      {/* Creator + ratio header */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          {post.creator_image ? (
+            <img src={post.creator_image} alt="" className="w-8 h-8 rounded-full flex-shrink-0 object-cover" />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-xs text-text-muted flex-shrink-0">
+              {(post.creator_name || '?')[0]}
+            </div>
+          )}
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-text-primary truncate">{post.creator_name}</p>
+            <p className="text-[10px] text-text-muted truncate">{formatNum(post.creator_followers)} followers</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className="text-lg font-bold text-accent tabular-nums">{post.outlier_ratio.toFixed(1)}x</span>
+        </div>
+      </div>
+
+      {/* Hook highlight */}
+      {post.hook_text && (
+        <p className="text-text-primary font-medium text-sm leading-snug mb-2 border-l-2 border-accent/40 pl-3">
+          {post.hook_text}
+        </p>
+      )}
+
+      {/* Post text preview */}
+      <div className="mb-3">
+        <p className="text-text-secondary text-xs leading-relaxed whitespace-pre-wrap">
+          {expanded || !needsTrunc ? text : text.slice(0, 300) + '…'}
+        </p>
+        {needsTrunc && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-[11px] text-accent hover:text-accent-light mt-1"
+          >
+            {expanded ? 'Show less ↑' : 'Show more ↓'}
+          </button>
+        )}
+      </div>
+
+      {/* Tags: hook type + structure */}
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent font-medium">
+          {HOOK_LABELS[post.hook_type] || post.hook_type}
+        </span>
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-400/10 text-purple-400 font-medium">
+          {STRUCT_LABELS[post.post_structure] || post.post_structure}
+        </span>
+        {post.text_tone && post.text_tone !== 'other' && (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-bg-secondary text-text-muted">
+            {post.text_tone}
+          </span>
+        )}
+      </div>
+
+      {/* Engagement stats */}
+      <div className="flex items-center gap-4 text-[11px] text-text-muted mb-3">
+        <span>👍 {formatNum(post.likes_count)}</span>
+        <span>💬 {formatNum(post.comments_count)}</span>
+        <span>🔁 {formatNum(post.reposts_count)}</span>
+        {post.post_url && (
+          <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light ml-auto">
+            View on LinkedIn ↗
+          </a>
+        )}
+      </div>
+
+      {/* Steal button */}
       <button
-        onClick={handleSave}
-        disabled={saving || saved}
-        className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
-          saved
+        onClick={handleSteal}
+        disabled={saving || stolen}
+        className={`w-full py-2 rounded-lg text-xs font-medium transition-colors ${
+          stolen
             ? 'bg-green-500/15 text-green-400 cursor-default'
-            : `${clusterColor} hover:opacity-80 disabled:opacity-50`
+            : 'bg-accent text-bg-primary hover:bg-accent-light disabled:opacity-50'
         }`}
       >
-        {saved ? '✓ Saved to Ideas' : saving ? 'Saving…' : '+ Save as idea'}
+        {stolen ? '✓ Saved to Ideas' : saving ? 'Saving…' : '🔥 Steal this post'}
       </button>
     </div>
   );
 }
 
 export default function Inspiration() {
-  const [result, setResult] = useState<InspiractionResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error } = useApi<InspirationData>('/api/ideas/inspiration');
+  const [sortBy, setSortBy] = useState<'ratio' | 'likes' | 'comments' | 'recent'>('ratio');
+  const [filterHook, setFilterHook] = useState('');
+  const [filterStructure, setFilterStructure] = useState('');
+  const [filterCreator, setFilterCreator] = useState('');
+  const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
 
-  const handleGenerate = async () => {
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    try {
-      const res = await fetch(`${BASE}/api/ideas/inspiration`, { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || `Error ${res.status}`);
-        return;
-      }
-      setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'Error generating inspiration');
-    } finally {
-      setLoading(false);
+  const outliers = data?.outliers || [];
+
+  const hookTypes = useMemo(() => {
+    const counts = new Map<string, number>();
+    outliers.forEach((p) => counts.set(p.hook_type, (counts.get(p.hook_type) || 0) + 1));
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [outliers]);
+
+  const structureTypes = useMemo(() => {
+    const counts = new Map<string, number>();
+    outliers.forEach((p) => counts.set(p.post_structure, (counts.get(p.post_structure) || 0) + 1));
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [outliers]);
+
+  const creators = useMemo(() => {
+    const set = new Set<string>();
+    outliers.forEach((p) => set.add(p.creator_name));
+    return [...set].sort();
+  }, [outliers]);
+
+  const filtered = useMemo(() => {
+    let list = [...outliers];
+    if (filterHook) list = list.filter((p) => p.hook_type === filterHook);
+    if (filterStructure) list = list.filter((p) => p.post_structure === filterStructure);
+    if (filterCreator) list = list.filter((p) => p.creator_name === filterCreator);
+
+    switch (sortBy) {
+      case 'likes': list.sort((a, b) => b.likes_count - a.likes_count); break;
+      case 'comments': list.sort((a, b) => b.comments_count - a.comments_count); break;
+      case 'recent': list.sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime()); break;
+      default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
-  };
+    return list;
+  }, [outliers, filterHook, filterStructure, filterCreator, sortBy]);
 
-  const handleSaveIdea = async (angle: string, prompt: string) => {
+  const handleSteal = async (post: OutlierPost) => {
+    const hookLabel = HOOK_LABELS[post.hook_type] || post.hook_type;
+    const structLabel = STRUCT_LABELS[post.post_structure] || post.post_structure;
+
     await fetch(`${BASE}/api/ideas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        raw_content: `${angle}\n\n${prompt}`,
+        raw_content: post.content_text,
         source_type: 'observation',
-        tags: ['inspiration', 'outlier'],
+        tags: ['stolen', hookLabel, structLabel],
       }),
     });
+    setStolenIds((prev) => new Set(prev).add(post.id));
   };
 
   return (
@@ -118,96 +228,157 @@ export default function Inspiration() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Inspiration</h1>
         <p className="text-text-secondary">
-          AI analyzes your most viral posts, groups them by theme, and generates post ideas you can write from your own experience.
+          Browse all outlier posts across your tracked creators. Steal what works — save it as an idea, then make it yours.
         </p>
       </div>
 
-      {/* Generate button */}
-      <div className="bg-bg-card border border-border rounded-xl p-6 text-center">
-        <p className="text-4xl mb-3">🧠</p>
-        <p className="text-text-secondary text-sm mb-5">
-          Analyzes your outliers, detects thematic patterns, and generates actionable ideas for your next post.
-        </p>
-        <button
-          onClick={handleGenerate}
-          disabled={loading}
-          className="px-8 py-3 bg-accent text-bg-primary rounded-xl text-sm font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
-        >
-          {loading ? '🔍 Analyzing outliers…' : result ? '🔄 Regenerate ideas' : '✨ Generate inspiration'}
-        </button>
-        {result && (
-          <p className="text-xs text-text-muted mt-3">
-            Based on {result.outliers_analyzed} outlier posts · {result.clusters.length} clusters detected
-          </p>
-        )}
-      </div>
-
-      {/* Loading state */}
       {loading && (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-bg-card border border-border rounded-xl p-6 animate-pulse">
-              <div className="h-4 bg-bg-secondary rounded w-1/3 mb-2" />
-              <div className="h-3 bg-bg-secondary rounded w-2/3 mb-4" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[1, 2, 3, 4].map((j) => (
-                  <div key={j} className="h-20 bg-bg-secondary rounded-lg" />
-                ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-bg-card border border-border rounded-xl p-5 animate-pulse">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-full bg-bg-secondary" />
+                <div className="h-3 bg-bg-secondary rounded w-24" />
               </div>
+              <div className="h-3 bg-bg-secondary rounded w-full mb-2" />
+              <div className="h-3 bg-bg-secondary rounded w-3/4 mb-2" />
+              <div className="h-3 bg-bg-secondary rounded w-1/2" />
             </div>
           ))}
         </div>
       )}
 
-      {/* Error */}
       {error && (
-        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 text-danger text-sm">
-          {error}
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 text-danger text-sm">{error}</div>
+      )}
+
+      {!loading && outliers.length === 0 && !error && (
+        <div className="text-center py-16 text-text-muted">
+          <p className="text-4xl mb-4">🔍</p>
+          <p className="mb-1">No outlier posts found.</p>
+          <p className="text-sm">Go to Dashboard → add creators → refresh their posts.</p>
         </div>
       )}
 
-      {/* Results */}
-      {result && !loading && (
-        <div className="space-y-6">
-          {result.clusters.map((cluster, clusterIdx) => {
-            const borderColor = CLUSTER_COLORS[clusterIdx % CLUSTER_COLORS.length];
-            const badgeColor = CLUSTER_BADGE_COLORS[clusterIdx % CLUSTER_BADGE_COLORS.length];
+      {!loading && outliers.length > 0 && (
+        <>
+          {/* Filters & sort */}
+          <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-text-muted font-medium">Sort:</span>
+              {([
+                ['ratio', '🔥 Outlier ratio'],
+                ['likes', '👍 Likes'],
+                ['comments', '💬 Comments'],
+                ['recent', '🕐 Recent'],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setSortBy(key)}
+                  className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                    sortBy === key
+                      ? 'border-accent/50 bg-accent/10 text-accent'
+                      : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
 
-            return (
-              <div key={clusterIdx} className={`bg-bg-card border rounded-xl p-6 ${borderColor}`}>
-                {/* Cluster header */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${badgeColor}`}>
-                      {cluster.cluster}
-                    </span>
-                  </div>
-                  <p className="text-text-muted text-xs leading-relaxed">{cluster.theme}</p>
-                </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-text-muted font-medium">Hook:</span>
+              <button
+                onClick={() => setFilterHook('')}
+                className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterHook ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
+              >
+                All
+              </button>
+              {hookTypes.slice(0, 8).map(([hook, count]) => (
+                <button
+                  key={hook}
+                  onClick={() => setFilterHook(filterHook === hook ? '' : hook)}
+                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                    filterHook === hook
+                      ? 'border-accent/50 bg-accent/10 text-accent'
+                      : 'border-border text-text-muted hover:border-accent/30'
+                  }`}
+                >
+                  {HOOK_LABELS[hook] || hook} ({count})
+                </button>
+              ))}
+            </div>
 
-                {/* Ideas grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {cluster.ideas.map((idea, ideaIdx) => (
-                    <IdeaItemCard
-                      key={ideaIdx}
-                      idea={idea}
-                      clusterColor={badgeColor}
-                      onSave={handleSaveIdea}
-                    />
-                  ))}
-                </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-text-muted font-medium">Structure:</span>
+              <button
+                onClick={() => setFilterStructure('')}
+                className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterStructure ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
+              >
+                All
+              </button>
+              {structureTypes.slice(0, 6).map(([struct, count]) => (
+                <button
+                  key={struct}
+                  onClick={() => setFilterStructure(filterStructure === struct ? '' : struct)}
+                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                    filterStructure === struct
+                      ? 'border-accent/50 bg-accent/10 text-accent'
+                      : 'border-border text-text-muted hover:border-accent/30'
+                  }`}
+                >
+                  {STRUCT_LABELS[struct] || struct} ({count})
+                </button>
+              ))}
+            </div>
+
+            {creators.length > 1 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-text-muted font-medium">Creator:</span>
+                <button
+                  onClick={() => setFilterCreator('')}
+                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterCreator ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
+                >
+                  All
+                </button>
+                {creators.map((name) => (
+                  <button
+                    key={name}
+                    onClick={() => setFilterCreator(filterCreator === name ? '' : name)}
+                    className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                      filterCreator === name
+                        ? 'border-accent/50 bg-accent/10 text-accent'
+                        : 'border-border text-text-muted hover:border-accent/30'
+                    }`}
+                  >
+                    {name}
+                  </button>
+                ))}
               </div>
-            );
-          })}
-        </div>
-      )}
+            )}
+          </div>
 
-      {/* Empty state (no outliers) */}
-      {!loading && !result && !error && (
-        <div className="text-center py-8 text-text-muted text-sm">
-          <p>You need analyzed outliers to generate inspiration.</p>
-          <p className="mt-1">Go to Dashboard → add creators → refresh their posts.</p>
-        </div>
+          {/* Results count */}
+          <p className="text-xs text-text-muted">
+            {filtered.length} outlier{filtered.length !== 1 ? 's' : ''}{' '}
+            {filterHook || filterStructure || filterCreator ? `(filtered from ${outliers.length} total)` : 'total'}
+          </p>
+
+          {/* Cards grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filtered.map((post) => (
+              <OutlierCard
+                key={post.id}
+                post={post}
+                onSteal={handleSteal}
+              />
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <p className="text-center text-text-muted py-8">No outliers match these filters.</p>
+          )}
+        </>
       )}
     </div>
   );
