@@ -55,13 +55,13 @@ function ratioBadge(ratio: number) {
 }
 
 const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string; hasMedia: boolean }> = {
-  text_only:  { icon: '📝', label: 'Texto',    color: 'text-text-muted bg-bg-hover',          hasMedia: false },
-  image:      { icon: '🖼️', label: 'Imagen',   color: 'text-blue-400 bg-blue-400/10',          hasMedia: true  },
-  carousel:   { icon: '📎', label: 'Carrusel', color: 'text-purple-400 bg-purple-400/10',      hasMedia: true  },
-  video:      { icon: '🎥', label: 'Vídeo',    color: 'text-red-400 bg-red-400/10',            hasMedia: true  },
+  text_only:  { icon: '📝', label: 'Text',      color: 'text-text-muted bg-bg-hover',          hasMedia: false },
+  image:      { icon: '🖼️', label: 'Image',    color: 'text-blue-400 bg-blue-400/10',          hasMedia: true  },
+  carousel:   { icon: '📎', label: 'Carousel', color: 'text-purple-400 bg-purple-400/10',      hasMedia: true  },
+  video:      { icon: '🎥', label: 'Video',    color: 'text-red-400 bg-red-400/10',            hasMedia: true  },
   document:   { icon: '📄', label: 'Doc',      color: 'text-amber-400 bg-amber-400/10',        hasMedia: true  },
-  poll:       { icon: '📊', label: 'Encuesta', color: 'text-green-400 bg-green-400/10',        hasMedia: false },
-  article:    { icon: '📰', label: 'Artículo', color: 'text-cyan-400 bg-cyan-400/10',          hasMedia: false },
+  poll:       { icon: '📊', label: 'Poll',     color: 'text-green-400 bg-green-400/10',        hasMedia: false },
+  article:    { icon: '📰', label: 'Article',  color: 'text-cyan-400 bg-cyan-400/10',          hasMedia: false },
 };
 
 function TypeBadge({ type }: { type: string }) {
@@ -100,22 +100,22 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
         onClick={load}
         className="text-[11px] text-text-muted hover:text-accent border border-border hover:border-accent/40 px-2.5 py-1 rounded-lg transition-colors"
       >
-        {icon} Ver creatividad
+        {icon} View media
       </button>
     );
   }
 
   if (state === 'loading') {
-    return <span className="text-[11px] text-text-muted animate-pulse">Cargando…</span>;
+    return <span className="text-[11px] text-text-muted animate-pulse">Loading…</span>;
   }
 
   if (state === 'error' || !media || media.items.length === 0) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-[11px] text-text-muted">Sin media guardada</span>
+        <span className="text-[11px] text-text-muted">No saved media</span>
         {linkedinUrl && (
           <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-accent hover:text-accent-light">
-            — ver en LinkedIn ↗
+            — view on LinkedIn ↗
           </a>
         )}
         <button onClick={() => setState('idle')} className="text-[10px] text-text-muted hover:text-text-secondary ml-1">✕</button>
@@ -136,7 +136,7 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
           className="w-full max-h-72 rounded-lg object-contain bg-black"
           onError={() => setImgError((e) => ({ ...e, [active]: true }))}
         >
-          Tu navegador no soporta vídeo.
+          Your browser does not support video.
         </video>
       ) : item.type === 'image' && !imgError[active] ? (
         <img
@@ -152,14 +152,14 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
           rel="noopener noreferrer"
           className="flex items-center gap-2 px-3 py-2 bg-bg-primary rounded-lg text-xs text-accent hover:text-accent-light border border-border"
         >
-          📄 Abrir documento ↗
+          📄 Open document ↗
         </a>
       ) : (
         <div className="text-[11px] text-text-muted">
-          URL de media expirada.{' '}
+          Media URL expired.{' '}
           {linkedinUrl && (
             <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
-              Ver en LinkedIn ↗
+              View on LinkedIn ↗
             </a>
           )}
         </div>
@@ -180,7 +180,7 @@ function MediaViewer({ postId, contentType, linkedinUrl }: { postId: string; con
       )}
 
       <button onClick={() => setState('idle')} className="text-[10px] text-text-muted hover:text-text-secondary">
-        Ocultar
+        Hide
       </button>
     </div>
   );
@@ -201,7 +201,7 @@ function ExpandableText({ text }: { text: string }) {
           onClick={() => setExpanded(!expanded)}
           className="text-[11px] text-accent hover:text-accent-light mt-1"
         >
-          {expanded ? 'Ver menos ↑' : 'Ver más ↓'}
+          {expanded ? 'Show less ↑' : 'Show more ↓'}
         </button>
       )}
     </div>

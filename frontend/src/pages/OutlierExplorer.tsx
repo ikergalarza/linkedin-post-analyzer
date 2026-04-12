@@ -243,9 +243,9 @@ export default function OutlierExplorer() {
           onClick={handleRefreshAnalysis}
           disabled={refreshing || loading}
           className="flex-shrink-0 px-4 py-2 bg-bg-card border border-border text-text-secondary text-sm rounded-lg hover:border-accent/40 hover:text-text-primary disabled:opacity-50 transition-colors mt-1"
-          title="Recalcular patrones y actualizar el contexto del chat de IA"
+          title="Recalculate patterns and update AI chat context"
         >
-          {refreshing ? 'Actualizando…' : '↻ Actualizar análisis'}
+          {refreshing ? 'Updating…' : '↻ Refresh analysis'}
         </button>
       </div>
 

@@ -70,7 +70,7 @@ function IdeaItemCard({ idea, clusterColor, onSave }: {
             : `${clusterColor} hover:opacity-80 disabled:opacity-50`
         }`}
       >
-        {saved ? '✓ Guardada en Ideas' : saving ? 'Guardando…' : '+ Guardar como idea'}
+        {saved ? '✓ Saved to Ideas' : saving ? 'Saving…' : '+ Save as idea'}
       </button>
     </div>
   );
@@ -94,7 +94,7 @@ export default function Inspiration() {
       }
       setResult(data);
     } catch (err: any) {
-      setError(err.message || 'Error al generar inspiración');
+      setError(err.message || 'Error generating inspiration');
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export default function Inspiration() {
       body: JSON.stringify({
         raw_content: `${angle}\n\n${prompt}`,
         source_type: 'observation',
-        tags: ['inspiración', 'outlier'],
+        tags: ['inspiration', 'outlier'],
       }),
     });
   };
@@ -116,9 +116,9 @@ export default function Inspiration() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">Inspiración</h1>
+        <h1 className="text-3xl font-bold mb-2">Inspiration</h1>
         <p className="text-text-secondary">
-          La IA analiza tus posts más virales, los agrupa por tema y genera ideas de posts que puedes escribir desde tu propia experiencia.
+          AI analyzes your most viral posts, groups them by theme, and generates post ideas you can write from your own experience.
         </p>
       </div>
 
@@ -126,18 +126,18 @@ export default function Inspiration() {
       <div className="bg-bg-card border border-border rounded-xl p-6 text-center">
         <p className="text-4xl mb-3">🧠</p>
         <p className="text-text-secondary text-sm mb-5">
-          Analiza tus outliers, detecta patrones temáticos y genera ideas accionables para tu próximo post.
+          Analyzes your outliers, detects thematic patterns, and generates actionable ideas for your next post.
         </p>
         <button
           onClick={handleGenerate}
           disabled={loading}
           className="px-8 py-3 bg-accent text-bg-primary rounded-xl text-sm font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
         >
-          {loading ? '🔍 Analizando outliers…' : result ? '🔄 Regenerar ideas' : '✨ Generar inspiración'}
+          {loading ? '🔍 Analyzing outliers…' : result ? '🔄 Regenerate ideas' : '✨ Generate inspiration'}
         </button>
         {result && (
           <p className="text-xs text-text-muted mt-3">
-            Basado en {result.outliers_analyzed} posts outliers · {result.clusters.length} clusters detectados
+            Based on {result.outliers_analyzed} outlier posts · {result.clusters.length} clusters detected
           </p>
         )}
       </div>
@@ -205,8 +205,8 @@ export default function Inspiration() {
       {/* Empty state (no outliers) */}
       {!loading && !result && !error && (
         <div className="text-center py-8 text-text-muted text-sm">
-          <p>Necesitas tener outliers analizados para generar inspiración.</p>
-          <p className="mt-1">Ve al Dashboard → añade creadores → refresca sus posts.</p>
+          <p>You need analyzed outliers to generate inspiration.</p>
+          <p className="mt-1">Go to Dashboard → add creators → refresh their posts.</p>
         </div>
       )}
     </div>

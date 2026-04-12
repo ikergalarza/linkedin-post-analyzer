@@ -28,10 +28,10 @@ interface PostIdea {
 
 const SOURCE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
   manual:      { icon: '💡', label: 'Idea',        color: 'text-accent bg-accent/10' },
-  book_quote:  { icon: '📚', label: 'Libro',       color: 'text-purple-400 bg-purple-400/10' },
+  book_quote:  { icon: '📚', label: 'Book',        color: 'text-purple-400 bg-purple-400/10' },
   demo_moment: { icon: '🎯', label: 'Demo',        color: 'text-blue-400 bg-blue-400/10' },
-  observation: { icon: '👁️', label: 'Observación', color: 'text-amber-400 bg-amber-400/10' },
-  meeting:     { icon: '🤝', label: 'Reunión',     color: 'text-green-400 bg-green-400/10' },
+  observation: { icon: '👁️', label: 'Observation', color: 'text-amber-400 bg-amber-400/10' },
+  meeting:     { icon: '🤝', label: 'Meeting',     color: 'text-green-400 bg-green-400/10' },
 };
 
 const ARCHETYPE_COLORS = [
@@ -53,7 +53,7 @@ function useVoiceCapture(onResult: (text: string) => void) {
 
   const start = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { alert('Tu navegador no soporta dictado por voz. Usa Chrome en móvil.'); return; }
+    if (!SR) { alert('Your browser does not support voice dictation. Use Chrome on mobile.'); return; }
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = false;
@@ -111,25 +111,22 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
 
         conversation.push({ role: 'user', content: userMsg });
 
-        let raw = '';
+        let newText = '';
+        let rawForConversation = '';
         try {
           const resp = await fetch(`${BASE}/api/chat/improve`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ messages: conversation }),
           });
-          if (!resp.ok) { setErrMsg(`Error del servidor: ${resp.status}`); break; }
+          if (!resp.ok) { setErrMsg(`Server error: ${resp.status}`); break; }
           const data = await resp.json();
-          raw = data.raw || data.text || '';
+          newText = data.text || '';
+          rawForConversation = data.raw || '';
         } catch (e: any) {
           setErrMsg(e.message); break;
         }
 
-        if (!raw) break;
-
-        // Extract post text after --- separator
-        const parts = raw.split('---');
-        const newText = parts.length >= 2 ? parts.slice(1).join('---').trim() : raw.trim();
         if (!newText) break;
 
         const newScore = scorePost(newText).overall;
@@ -137,12 +134,12 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
         if (newScore > bestScore) {
           bestText = newText;
           bestScore = newScore;
-          conversation.push({ role: 'assistant', content: raw });
+          conversation.push({ role: 'assistant', content: rawForConversation });
           setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: true }]);
         } else {
           conversation.push({
             role: 'assistant',
-            content: `${raw}\n\n[SYSTEM NOTE: scored ${newScore}/100 — lower than best ${bestScore}/100. Rejected.]`,
+            content: `${rawForConversation}\n\n[SYSTEM NOTE: scored ${newScore}/100 — lower than best ${bestScore}/100. Rejected.]`,
           });
           setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: false }]);
         }
@@ -195,7 +192,7 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
             }}
           />
         </div>
-        {score >= 80 && <span className="text-green-400 text-xs font-medium">✓ Listo</span>}
+        {score >= 80 && <span className="text-green-400 text-xs font-medium">✓ Ready</span>}
       </div>
 
       {/* Iteration log */}
@@ -205,7 +202,7 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
             <div key={log.iter} className="flex items-center gap-2">
               <span className={log.accepted ? 'text-green-400' : 'text-danger'}>{log.accepted ? '✓' : '✗'}</span>
               <span className="text-text-muted">
-                Iter {log.iter}: {log.score}/100 {log.accepted ? '(aceptado)' : '(rechazado)'}
+                Iter {log.iter}: {log.score}/100 {log.accepted ? '(accepted)' : '(rejected)'}
               </span>
             </div>
           ))}
@@ -222,14 +219,14 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
           className="flex-1 py-2 bg-accent text-bg-primary rounded-lg text-xs font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
         >
           {improving
-            ? `Mejorando… (${iterLog.length}/5)`
-            : score >= 80 ? '✓ Score ≥ 80' : '⚡ Auto-improve hasta 80 (5 iter.)'}
+            ? `Improving… (${iterLog.length}/5)`
+            : score >= 80 ? '✓ Score ≥ 80' : '⚡ Auto-improve to 80 (5 iter.)'}
         </button>
         <button
           onClick={handleCopy}
           className="px-4 py-2 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs hover:border-accent/40 hover:text-text-primary transition-colors"
         >
-          {copied ? '✓' : 'Copiar'}
+          {copied ? '✓' : 'Copy'}
         </button>
       </div>
     </div>
@@ -245,7 +242,7 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
   const [generating, setGenerating] = useState(false);
   const [variants, setVariants] = useState<ArchetypeVariant[]>(idea.generated_variants || []);
   const [selectedVariant, setSelectedVariant] = useState<ArchetypeVariant | null>(
-    idea.generated_post ? { archetype_key: 'saved', archetype_label: 'Guardado', archetype_desc: '', hook_type: '', post_structure: '', avg_ratio: 0, text: idea.generated_post } : null
+    idea.generated_post ? { archetype_key: 'saved', archetype_label: 'Saved', archetype_desc: '', hook_type: '', post_structure: '', avg_ratio: 0, text: idea.generated_post } : null
   );
   const [genError, setGenError] = useState<string | null>(null);
   const [showVariants, setShowVariants] = useState(variants.length > 0 && !idea.generated_post);
@@ -317,12 +314,12 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
           className="w-full py-2 bg-accent/15 text-accent rounded-lg text-xs font-medium hover:bg-accent/25 disabled:opacity-50 transition-colors mb-4"
         >
           {generating
-            ? '✨ Generando 3 variantes…'
+            ? '✨ Generating 3 variants…'
             : hasVariants && !showVariants
-              ? '✨ Ver 3 variantes'
+              ? '✨ View 3 variants'
               : hasVariants
-                ? '🔄 Regenerar 3 variantes'
-                : '✨ Generar 3 variantes con IA'}
+                ? '🔄 Regenerate 3 variants'
+                : '✨ Generate 3 AI variants'}
         </button>
       )}
 
@@ -345,7 +342,7 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
       {/* 3 variant cards */}
       {!generating && showVariants && variants.length > 0 && (
         <div className="space-y-3 mb-4">
-          <p className="text-xs text-text-muted">Elige el arquetipo que mejor encaja:</p>
+          <p className="text-xs text-text-muted">Choose the archetype that fits best:</p>
           {variants.map((v, i) => {
             const colors = ARCHETYPE_COLORS[i % ARCHETYPE_COLORS.length];
             const previewScore = scorePost(v.text).overall;
@@ -372,7 +369,7 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
                   onClick={() => handleSelectVariant(v)}
                   className={`w-full py-2 rounded-lg text-xs font-medium transition-colors ${colors.btn}`}
                 >
-                  Elegir este arquetipo →
+                  Choose this archetype →
                 </button>
               </div>
             );
@@ -385,14 +382,14 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-text-muted">
-              Arquetipo: <span className="text-text-secondary font-medium">{selectedVariant.archetype_label}</span>
+              Archetype: <span className="text-text-secondary font-medium">{selectedVariant.archetype_label}</span>
             </span>
             {hasVariants && (
               <button
                 onClick={() => { setShowVariants(true); setSelectedVariant(null); }}
                 className="text-[11px] text-accent hover:text-accent-light transition-colors"
               >
-                ← Cambiar variante
+                ← Change variant
               </button>
             )}
           </div>
@@ -441,7 +438,7 @@ function CaptureForm({ onCreated }: { onCreated: () => void }) {
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-5 space-y-4">
-      <h2 className="text-sm font-semibold text-text-primary">Captura una idea</h2>
+      <h2 className="text-sm font-semibold text-text-primary">Capture an idea</h2>
 
       {/* Source type */}
       <div className="flex flex-wrap gap-2">
@@ -466,10 +463,10 @@ function CaptureForm({ onCreated }: { onCreated: () => void }) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder={
-            sourceType === 'book_quote' ? '"La cita del libro…" — Nombre Autor' :
-            sourceType === 'demo_moment' ? 'El prospect dijo que nunca había visto…' :
-            sourceType === 'meeting' ? 'En la reunión con X descubrí que…' :
-            'Escribe tu idea o pulsa el micrófono para dictar…'
+            sourceType === 'book_quote' ? '"The book quote…" — Author Name' :
+            sourceType === 'demo_moment' ? 'The prospect said they had never seen…' :
+            sourceType === 'meeting' ? 'In the meeting with X I discovered that…' :
+            'Type your idea or press the mic to dictate…'
           }
           className="w-full bg-bg-secondary border border-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent resize-none pr-12"
           rows={4}
@@ -480,31 +477,31 @@ function CaptureForm({ onCreated }: { onCreated: () => void }) {
           className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
             listening ? 'bg-danger text-white animate-pulse' : 'bg-bg-hover text-text-muted hover:text-text-primary border border-border'
           }`}
-          title={listening ? 'Parar dictado' : 'Dictar por voz'}
+          title={listening ? 'Stop dictation' : 'Voice dictation'}
         >
           🎤
         </button>
       </div>
 
-      {listening && <p className="text-xs text-danger animate-pulse">● Escuchando… Habla ahora</p>}
+      {listening && <p className="text-xs text-danger animate-pulse">● Listening… Speak now</p>}
 
       {/* Tags */}
       <input
         type="text"
-        placeholder="Tags opcionales: cold email, storytelling… (separados por coma)"
+        placeholder="Optional tags: cold email, storytelling… (comma separated)"
         value={tags}
         onChange={(e) => setTags(e.target.value)}
         className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent"
       />
 
       <div className="flex items-center justify-between">
-        <span className="text-xs text-text-muted">⌘+Enter para guardar</span>
+        <span className="text-xs text-text-muted">⌘+Enter to save</span>
         <button
           onClick={handleSave}
           disabled={saving || !content.trim()}
           className="px-5 py-2 bg-accent text-bg-primary rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
         >
-          {saving ? 'Guardando…' : 'Guardar idea'}
+          {saving ? 'Saving…' : 'Save idea'}
         </button>
       </div>
     </div>
@@ -528,7 +525,7 @@ export default function Ideas() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Eliminar esta idea?')) return;
+    if (!confirm('Delete this idea?')) return;
     await fetch(`${BASE}/api/ideas/${id}`, { method: 'DELETE' });
     refetch();
     setLocalIdeas(null);
@@ -545,22 +542,22 @@ export default function Ideas() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Ideas</h1>
-        <p className="text-text-secondary">Captura ideas en el momento. La IA genera 3 variantes virales para elegir.</p>
+        <p className="text-text-secondary">Capture ideas on the spot. AI generates 3 viral variants to choose from.</p>
       </div>
 
       <CaptureForm onCreated={() => { refetch(); setLocalIdeas(null); }} />
 
       {displayIdeas && displayIdeas.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-text-muted text-xs">Filtrar:</span>
-          {[{ v: '', label: 'Todas' }, ...Object.entries(SOURCE_CONFIG).map(([k, c]) => ({ v: k, label: `${c.icon} ${c.label}` }))].map(({ v, label }) => (
+          <span className="text-text-muted text-xs">Filter:</span>
+          {[{ v: '', label: 'All' }, ...Object.entries(SOURCE_CONFIG).map(([k, c]) => ({ v: k, label: `${c.icon} ${c.label}` }))].map(({ v, label }) => (
             <button key={v} onClick={() => setFilterSource(v)}
               className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${filterSource === v ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}>
               {label}
             </button>
           ))}
           <div className="ml-2 flex gap-1.5">
-            {[{ v: '', label: 'Todos' }, { v: 'draft', label: 'Sin generar' }, { v: 'ready', label: 'Con post' }].map(({ v, label }) => (
+            {[{ v: '', label: 'All' }, { v: 'draft', label: 'No post' }, { v: 'ready', label: 'With post' }].map(({ v, label }) => (
               <button key={v} onClick={() => setFilterStatus(v)}
                 className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${filterStatus === v ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'}`}>
                 {label}
@@ -585,8 +582,8 @@ export default function Ideas() {
       {!loading && displayIdeas && displayIdeas.length === 0 && (
         <div className="text-center py-16 text-text-muted">
           <p className="text-4xl mb-4">💡</p>
-          <p className="mb-1">Todavía no hay ideas guardadas.</p>
-          <p className="text-sm">Usa el formulario para capturar la primera.</p>
+          <p className="mb-1">No saved ideas yet.</p>
+          <p className="text-sm">Use the form above to capture your first one.</p>
         </div>
       )}
 
@@ -600,7 +597,7 @@ export default function Ideas() {
       )}
 
       {!loading && displayIdeas && displayIdeas.length > 0 && filtered.length === 0 && (
-        <p className="text-center text-text-muted py-8">No hay ideas con ese filtro.</p>
+        <p className="text-center text-text-muted py-8">No ideas match this filter.</p>
       )}
     </div>
   );

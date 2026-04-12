@@ -68,14 +68,14 @@ export default function CommenterProfileForm() {
   return (
     <form onSubmit={handleSave} className="max-w-2xl space-y-6">
       <p className="text-text-secondary text-sm">
-        Define <strong className="text-text-primary">cómo comentas</strong>, no sobre qué. El AI usará tu voz y tu
-        forma de ver el mundo para generar comentarios que abran debate.
+        Define <strong className="text-text-primary">how you comment</strong>, not what about. AI will use your voice and
+        worldview to generate comments that spark debate.
       </p>
 
       {/* Headline */}
       <div>
         <label className="block text-sm font-medium text-text-primary mb-1">
-          Quién eres <span className="text-text-muted font-normal">(se muestra en los comentarios)</span>
+          Who you are <span className="text-text-muted font-normal">(shown in comments)</span>
         </label>
         <input
           type="text"
@@ -89,64 +89,64 @@ export default function CommenterProfileForm() {
       {/* Voice style */}
       <div>
         <label className="block text-sm font-medium text-text-primary mb-1">
-          Tu estilo de escritura
+          Your writing style
         </label>
         <textarea
           value={form.voice_style}
           onChange={set('voice_style')}
           rows={3}
-          placeholder={`Describe cómo escribes, no sobre qué.\n\nEj: "Directo y sin rodeos. Frases cortas. Me gusta ir al dato concreto antes que a la opinión. Uso la primera persona siempre. Nunca soy condescendiente."`}
+          placeholder={`Describe how you write, not what about.\n\ne.g. "Direct and to the point. Short sentences. I prefer data over opinions. Always first person. Never condescending."`}
           className="w-full px-4 py-2.5 bg-bg-card border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-sm resize-none"
         />
         <p className="text-[11px] text-text-muted mt-1">
-          Ritmo, tono, estructura de frases, uso de datos vs. opinión, primera/tercera persona…
+          Rhythm, tone, sentence structure, data vs. opinion, first/third person…
         </p>
       </div>
 
       {/* Worldview */}
       <div>
         <label className="block text-sm font-medium text-text-primary mb-1">
-          Tu visión del mundo <span className="text-text-muted font-normal">(el lente con el que ves las cosas)</span>
+          Your worldview <span className="text-text-muted font-normal">(the lens through which you see things)</span>
         </label>
         <textarea
           value={form.worldview}
           onChange={set('worldview')}
           rows={3}
-          placeholder={`Ej: "Creo que la mayoría del advice de ventas B2B está mal porque ignora el posicionamiento. Pienso que los SDRs no están muriendo — están evolucionando. Tengo una visión escéptica del hype de IA pero optimista de sus aplicaciones reales."`}
+          placeholder={`e.g. "I think most B2B sales advice is wrong because it ignores positioning. I believe SDRs aren't dying — they're evolving. I'm skeptical of AI hype but optimistic about real applications."`}
           className="w-full px-4 py-2.5 bg-bg-card border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-sm resize-none"
         />
         <p className="text-[11px] text-text-muted mt-1">
-          Este es el ángulo desde el que analizas cualquier tema — independientemente del tema concreto del post.
+          The angle from which you analyze any topic — regardless of the specific post subject.
         </p>
       </div>
 
       {/* Signature moves */}
       <div>
         <label className="block text-sm font-medium text-text-primary mb-1">
-          Tus movimientos habituales al comentar
+          Your signature commenting moves
         </label>
         <textarea
           value={form.signature_moves}
           onChange={set('signature_moves')}
           rows={3}
-          placeholder={`Ej: "Suelo citar un número concreto de mi experiencia. Me gusta dar la vuelta al argumento principal. Termino con una pregunta abierta que incomoda. A veces comparto lo que le falta al post."`}
+          placeholder={`e.g. "I usually cite a specific number from my experience. I like to flip the main argument. I end with a provocative open question. Sometimes I share what the post is missing."`}
           className="w-full px-4 py-2.5 bg-bg-card border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-sm resize-none"
         />
         <p className="text-[11px] text-text-muted mt-1">
-          Patrones que repites: cómo abres, cómo cierras, qué tipo de valor añades.
+          Patterns you repeat: how you open, how you close, what kind of value you add.
         </p>
       </div>
 
       {/* Avoid */}
       <div>
         <label className="block text-sm font-medium text-text-primary mb-1">
-          Lo que nunca haces
+          What you never do
         </label>
         <textarea
           value={form.avoid}
           onChange={set('avoid')}
           rows={2}
-          placeholder={`Ej: "Nunca digo 'gran post'. Nunca me autopromociono directamente. Nunca hago preguntas básicas. Evito ser condescendiente o usar jerga corporativa."`}
+          placeholder={`e.g. "I never say 'great post'. I never self-promote directly. I never ask basic questions. I avoid being condescending or using corporate jargon."`}
           className="w-full px-4 py-2.5 bg-bg-card border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-sm resize-none"
         />
       </div>
@@ -159,9 +159,9 @@ export default function CommenterProfileForm() {
           disabled={saving}
           className="px-6 py-2.5 bg-accent text-bg-primary rounded-lg text-sm font-medium hover:bg-accent-light transition-colors disabled:opacity-50"
         >
-          {saving ? 'Guardando...' : 'Guardar perfil'}
+          {saving ? 'Saving...' : 'Save profile'}
         </button>
-        {saved && <span className="text-green-400 text-sm">✓ Guardado</span>}
+        {saved && <span className="text-green-400 text-sm">✓ Saved</span>}
       </div>
     </form>
   );

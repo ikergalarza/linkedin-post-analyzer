@@ -27,7 +27,7 @@ const CHARS_PER_LINE: Record<ViewMode, number> = {
   mobile: Math.floor(315 / 7.1),  // ≈ 44
 };
 
-// Max visible lines before "ver más"
+// Max visible lines before "see more"
 // Desktop text-only: 5, desktop with media: 3, mobile (any): 2
 const MAX_LINES = {
   desktop: { text: 5, withMedia: 3 },
@@ -132,7 +132,7 @@ function PostText({
               onClick={() => setExpanded(true)}
               style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
             >
-              …ver más
+              …see more
             </span>
           </>
         )}
@@ -143,7 +143,7 @@ function PostText({
               onClick={() => setExpanded(false)}
               style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
             >
-              ver menos
+              see less
             </span>
           </>
         )}
@@ -152,8 +152,8 @@ function PostText({
       {!expanded && (
         <div style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>
           {truncated
-            ? `${linesUsed} líneas visibles de ${totalLines} totales · ${maxLines} max ${hasMedia ? '(con imagen)' : '(solo texto)'}`
-            : `${totalLines} líneas · sin truncar`}
+            ? `${linesUsed} visible lines of ${totalLines} total · ${maxLines} max ${hasMedia ? '(with image)' : '(text only)'}`
+            : `${totalLines} lines · not truncated`}
         </div>
       )}
     </div>
@@ -254,7 +254,7 @@ export default function LinkedInPostPreview({
                 transition: 'all 0.15s',
               }}
             >
-              {v === 'desktop' ? '🖥 Desktop' : '📱 Móvil'}
+              {v === 'desktop' ? '🖥 Desktop' : '📱 Mobile'}
             </button>
           ))}
         </div>
@@ -360,7 +360,7 @@ export default function LinkedInPostPreview({
               <div style={{ fontSize: 12, color: '#666', display: 'flex', alignItems: 'center', gap: 3, marginTop: 1 }}>
                 <span>{displayFollowers}</span>
                 <span>·</span>
-                <span title="Público">
+                <span title="Public">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="#666">
                     <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm0 2c.28 0 .54.04.79.1C8.5 4 8.5 4.5 8.5 5c0 .83-.67 1.5-1.5 1.5A1.5 1.5 0 0 1 5.5 5c0-.28.08-.55.2-.79A5 5 0 0 1 8 3.5zm-3.5 5.5h7a.5.5 0 0 1 .5.5v.5a4 4 0 0 1-8 0V9.5a.5.5 0 0 1 .5-.5z" />
                   </svg>
@@ -390,7 +390,7 @@ export default function LinkedInPostPreview({
               <PostText text={text} view={view} hasMedia={!!imageUrl} />
             ) : (
               <span style={{ color: '#aaa', fontSize: 13, fontStyle: 'italic' }}>
-                El contenido del post aparecerá aquí…
+                Post content will appear here…
               </span>
             )}
           </div>
@@ -484,7 +484,7 @@ export default function LinkedInPostPreview({
                 transition: 'all 0.15s',
               }}
             >
-              📷 Arrastra una imagen o haz clic para añadir
+              📷 Drag an image or click to add
               <input
                 ref={fileInputRef}
                 type="file"
@@ -518,7 +518,7 @@ export default function LinkedInPostPreview({
               </span>
               <span style={{ marginLeft: 6 }}>42</span>
             </div>
-            <span>3 comentarios · 1 repost</span>
+            <span>3 comments · 1 repost</span>
           </div>
 
           {/* Action bar */}
@@ -530,10 +530,10 @@ export default function LinkedInPostPreview({
             }}
           >
             {[
-              { icon: '👍', label: 'Me gusta' },
-              { icon: '💬', label: 'Comentar' },
-              { icon: '🔁', label: 'Compartir' },
-              { icon: '✉️', label: 'Enviar' },
+              { icon: '👍', label: 'Like' },
+              { icon: '💬', label: 'Comment' },
+              { icon: '🔁', label: 'Repost' },
+              { icon: '✉️', label: 'Send' },
             ].map(({ icon, label }) => (
               <button
                 key={label}
@@ -565,7 +565,7 @@ export default function LinkedInPostPreview({
       {/* Blank-line warning */}
       {text && /\n\s*\n/.test(text) && (
         <div style={{ fontSize: 10, color: '#f59e0b', textAlign: 'center' }}>
-          ⚠ Tienes líneas en blanco — cada una consume 1 línea de las visibles antes del "ver más"
+          ⚠ Blank lines detected — each one uses 1 of the visible lines before "see more"
         </div>
       )}
     </div>

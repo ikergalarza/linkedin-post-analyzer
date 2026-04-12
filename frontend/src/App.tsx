@@ -15,7 +15,7 @@ export default function App() {
     return (
       <Link
         to={to}
-        className={`transition-colors ${active ? 'text-accent font-medium' : 'text-text-secondary hover:text-text-primary'}`}
+        className={`px-2 py-1 rounded-md transition-colors text-xs whitespace-nowrap ${active ? 'text-accent font-medium bg-accent/10' : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'}`}
       >
         {label}
       </Link>
@@ -29,14 +29,25 @@ export default function App() {
           <Link to="/" className="text-xl font-bold text-accent">
             LinkedIn Outlier Analyzer
           </Link>
-          <div className="flex gap-6 text-sm">
-            {navLink('/', 'Dashboard')}
-            {navLink('/explore', 'Explorer')}
-            {navLink('/ideas', 'Ideas')}
-            {navLink('/inspiration', 'Inspiración')}
-            {navLink('/discover', 'Discover')}
-            {navLink('/network', 'Network')}
-            {navLink('/create', 'Post Creator')}
+          <div className="flex items-center gap-1 text-sm">
+            {/* Analyze */}
+            <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
+              {navLink('/', '📊 Dashboard')}
+              {navLink('/explore', '🔍 Explorer')}
+              {navLink('/discover', '🧭 Discover')}
+            </div>
+            <span className="text-border mx-1">|</span>
+            {/* Create */}
+            <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
+              {navLink('/ideas', '💡 Ideas')}
+              {navLink('/inspiration', '✨ Inspiration')}
+              {navLink('/create', '✍️ Post Creator')}
+            </div>
+            <span className="text-border mx-1">|</span>
+            {/* Engage */}
+            <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
+              {navLink('/network', '🤝 Network')}
+            </div>
           </div>
         </div>
       </nav>

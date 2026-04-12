@@ -158,13 +158,13 @@ interface Props {
 }
 
 const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string; hasMedia: boolean }> = {
-  text_only: { icon: '📝', label: 'Texto',    color: 'text-text-muted bg-bg-hover',      hasMedia: false },
-  image:     { icon: '🖼️', label: 'Imagen',   color: 'text-blue-400 bg-blue-400/10',     hasMedia: true  },
-  carousel:  { icon: '📎', label: 'Carrusel', color: 'text-purple-400 bg-purple-400/10', hasMedia: true  },
-  video:     { icon: '🎥', label: 'Vídeo',    color: 'text-red-400 bg-red-400/10',       hasMedia: true  },
+  text_only: { icon: '📝', label: 'Text',      color: 'text-text-muted bg-bg-hover',      hasMedia: false },
+  image:     { icon: '🖼️', label: 'Image',    color: 'text-blue-400 bg-blue-400/10',     hasMedia: true  },
+  carousel:  { icon: '📎', label: 'Carousel', color: 'text-purple-400 bg-purple-400/10', hasMedia: true  },
+  video:     { icon: '🎥', label: 'Video',    color: 'text-red-400 bg-red-400/10',       hasMedia: true  },
   document:  { icon: '📄', label: 'Doc',      color: 'text-amber-400 bg-amber-400/10',   hasMedia: true  },
-  poll:      { icon: '📊', label: 'Encuesta', color: 'text-green-400 bg-green-400/10',   hasMedia: false },
-  article:   { icon: '📰', label: 'Artículo', color: 'text-cyan-400 bg-cyan-400/10',     hasMedia: false },
+  poll:      { icon: '📊', label: 'Poll',     color: 'text-green-400 bg-green-400/10',   hasMedia: false },
+  article:   { icon: '📰', label: 'Article',  color: 'text-cyan-400 bg-cyan-400/10',     hasMedia: false },
 };
 
 const PREVIEW_CHARS = 300;
@@ -182,7 +182,7 @@ function ExpandableText({ text }: { text: string }) {
           onClick={() => setExpanded(!expanded)}
           className="text-[11px] text-accent hover:text-accent-light mt-1"
         >
-          {expanded ? 'Ver menos ↑' : 'Ver más ↓'}
+          {expanded ? 'Show less ↑' : 'Show more ↓'}
         </button>
       )}
     </div>

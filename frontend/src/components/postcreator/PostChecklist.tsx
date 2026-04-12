@@ -416,19 +416,19 @@ export default function PostChecklist({ text, onImproved }: Props) {
         let userContent: string;
         if (i === 1) {
           userContent =
-            `POST ORIGINAL (la idea, el tema y los datos NO pueden cambiar):\n${originalText}\n\n` +
-            `VERSIÓN A MEJORAR (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
-            `CHECKS QUE PASAN ✓ — NO los rompas:\n${passingLabels}\n\n` +
-            `CHECKS QUE FALLAN ✗ — mejora SOLO estructura, formato y mecánicas virales:\n${failingList}\n\n` +
-            `Mejora únicamente la estructura y el formato. La idea, el tema y los datos del post original deben permanecer intactos. ` +
-            `Devuelve CRITIQUE: + --- + post mejorado.`;
+            `ORIGINAL POST (the idea, topic, and data CANNOT change):\n${originalText}\n\n` +
+            `VERSION TO IMPROVE (score: ${score.overall}/100):\n${bestText}\n\n` +
+            `PASSING CHECKS ✓ — DO NOT break these:\n${passingLabels}\n\n` +
+            `FAILING CHECKS ✗ — improve ONLY structure, formatting, and viral mechanics:\n${failingList}\n\n` +
+            `Improve only structure and formatting. The idea, topic, and data from the original post must remain intact. ` +
+            `Return CRITIQUE: + --- + improved post.`;
         } else {
           userContent =
-            `MEJOR VERSIÓN HASTA AHORA (puntuación: ${score.overall}/100):\n${bestText}\n\n` +
-            `CHECKS QUE PASAN ✓ — NO los rompas:\n${passingLabels}\n\n` +
-            `CHECKS QUE SIGUEN FALLANDO ✗ — usa técnicas ESTRUCTURALES diferentes a las anteriores:\n${failingList}\n\n` +
-            `Recuerda: misma idea, mismos datos del post original, solo mejora la forma. Lee tu CRITIQUE anterior y aplícalo. ` +
-            `Devuelve CRITIQUE: + --- + post mejorado.`;
+            `BEST VERSION SO FAR (score: ${score.overall}/100):\n${bestText}\n\n` +
+            `PASSING CHECKS ✓ — DO NOT break these:\n${passingLabels}\n\n` +
+            `STILL FAILING CHECKS ✗ — use DIFFERENT structural techniques than before:\n${failingList}\n\n` +
+            `Remember: same idea, same data from the original post, only improve the form. Read your previous CRITIQUE and apply it. ` +
+            `Return CRITIQUE: + --- + improved post.`;
         }
 
         conversation.push({ role: 'user', content: userContent });
@@ -446,7 +446,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
         const improved = (data.text || '').trim();
         const critique = (data.critique || '').trim();
         const raw = (data.raw || '').trim();
-        if (!improved) throw new Error('Respuesta vacía del AI');
+        if (!improved) throw new Error('Empty AI response');
 
         const newScore = scorePost(improved).overall;
         const delta = newScore - bestScoreVal;
@@ -545,14 +545,14 @@ export default function PostChecklist({ text, onImproved }: Props) {
 
       {improving && (
         <div className="text-[10px] text-text-muted animate-pulse">
-          Iteración {iteration}/5 · mejor puntuación: {bestScore ?? overall}…
+          Iteration {iteration}/5 · best score: {bestScore ?? overall}…
         </div>
       )}
 
       {iterLog.length > 0 && (
         <div className="border-t border-border pt-3 space-y-2">
           <p className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
-            Historial de iteraciones
+            Iteration history
           </p>
           {iterLog.map((log) => (
             <div key={log.iteration} className="text-[10px] space-y-0.5">

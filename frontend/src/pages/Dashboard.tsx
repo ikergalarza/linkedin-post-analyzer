@@ -52,10 +52,10 @@ function ReclassifyButton() {
     <button
       onClick={run}
       disabled={state === 'loading'}
-      title="Releer raw_data de todos los posts y corregir su tipo (imagen/vídeo/texto)"
+      title="Re-read raw_data from all posts and fix their type (image/video/text)"
       className="px-3 py-2 bg-bg-card border border-border text-text-muted text-xs rounded-lg hover:border-accent/40 hover:text-text-secondary disabled:opacity-50 transition-colors"
     >
-      {state === 'loading' ? 'Reclasificando…' : '🔄 Fix tipos'}
+      {state === 'loading' ? 'Reclassifying…' : '🔄 Fix types'}
     </button>
   );
 }
