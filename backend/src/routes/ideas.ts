@@ -280,7 +280,7 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
       SELECT p.id, p.content_text, p.hook_text, p.hook_type, p.post_structure,
              p.text_tone, p.content_type, p.outlier_ratio, p.engagement_score,
              p.likes_count, p.comments_count, p.reposts_count,
-             p.published_at, p.post_url,
+             p.published_at, p.post_url, p.topic,
              c.name AS creator_name, c.headline AS creator_headline,
              c.profile_image_url AS creator_image, c.followers_count AS creator_followers
       FROM posts p
@@ -294,6 +294,88 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
     res.json({ outliers: rows, total: rows.length });
   } catch (err: any) {
     console.error('[Inspiration] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/ideas/inspiration/classify — AI-classify outlier posts by topic (one-time)
+router.post('/inspiration/classify', async (_req: Request, res: Response) => {
+  try {
+    const { rows: unclassified } = await pool.query(`
+      SELECT p.id, p.content_text, p.hook_text
+      FROM posts p
+      WHERE p.is_outlier = TRUE
+        AND p.content_text IS NOT NULL
+        AND LENGTH(p.content_text) > 80
+        AND (p.topic IS NULL OR p.topic = '')
+      ORDER BY p.outlier_ratio DESC
+    `);
+
+    if (unclassified.length === 0) {
+      return res.json({ classified: 0, message: 'All outliers already classified' });
+    }
+
+    const cleanText = (t: string) =>
+      (t || '').replace(/[\x00-\x1F\x7F]/g, ' ').replace(/"/g, "'").replace(/\s+/g, ' ').trim().substring(0, 250);
+
+    const BATCH_SIZE = 30;
+    let totalClassified = 0;
+
+    for (let start = 0; start < unclassified.length; start += BATCH_SIZE) {
+      const batch = unclassified.slice(start, start + BATCH_SIZE);
+
+      const postsList = batch.map((p: any, i: number) =>
+        `${i + 1}. [ID:${p.id}] ${cleanText(p.content_text)}`
+      ).join('\n\n');
+
+      const response = await client.messages.create({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2048,
+        messages: [{
+          role: 'user',
+          content: `Classify each LinkedIn post below into a short topic label (2-4 words max).
+
+Use CONSISTENT labels across posts — group similar themes under the SAME label.
+Good labels: "Sales Tactics", "Cold Outreach", "Hiring & Culture", "Founder Lessons", "AI & Automation", "Personal Growth", "Productivity", "Leadership", "Storytelling", "Marketing Strategy"
+
+Posts:
+${postsList}
+
+Return a JSON object mapping post number to topic label. Example:
+{"1": "Sales Tactics", "2": "Founder Lessons", "3": "Cold Outreach"}
+
+Return ONLY the JSON object. No markdown, no explanation.`,
+        }],
+      });
+
+      const rawText = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
+      if (!rawText) continue;
+
+      const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      const startIdx = cleaned.indexOf('{');
+      const endIdx = cleaned.lastIndexOf('}');
+      if (startIdx === -1 || endIdx === -1) continue;
+
+      let mapping: Record<string, string>;
+      try {
+        mapping = JSON.parse(cleaned.slice(startIdx, endIdx + 1));
+      } catch {
+        console.error('[Classify] JSON parse error for batch starting at', start);
+        continue;
+      }
+
+      for (const [numStr, topic] of Object.entries(mapping)) {
+        const idx = parseInt(numStr, 10) - 1;
+        if (idx < 0 || idx >= batch.length || !topic) continue;
+        const postId = batch[idx].id;
+        await pool.query('UPDATE posts SET topic = $1 WHERE id = $2', [topic.trim(), postId]);
+        totalClassified++;
+      }
+    }
+
+    res.json({ classified: totalClassified, total: unclassified.length });
+  } catch (err: any) {
+    console.error('[Classify] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

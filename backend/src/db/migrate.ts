@@ -187,6 +187,10 @@ const migration = `
 
   -- v10: Store 3 archetype variants before user selects one
   ALTER TABLE post_ideas ADD COLUMN IF NOT EXISTS generated_variants JSONB;
+
+  -- v11: Topic classification for outlier inspiration browsing
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS topic TEXT;
+  CREATE INDEX IF NOT EXISTS idx_posts_topic ON posts(topic);
 `;
 
 export async function runMigrations() {

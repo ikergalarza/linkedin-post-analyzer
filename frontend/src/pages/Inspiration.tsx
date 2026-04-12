@@ -18,6 +18,7 @@ interface OutlierPost {
   reposts_count: number;
   published_at: string | null;
   post_url: string | null;
+  topic: string | null;
   creator_name: string;
   creator_headline: string | null;
   creator_image: string | null;
@@ -120,8 +121,13 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
         )}
       </div>
 
-      {/* Tags: hook type + structure */}
+      {/* Tags: topic + hook type + structure */}
       <div className="flex flex-wrap gap-1.5 mb-3">
+        {post.topic && (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-400 font-semibold">
+            📂 {post.topic}
+          </span>
+        )}
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent font-medium">
           {HOOK_LABELS[post.hook_type] || post.hook_type}
         </span>
@@ -164,14 +170,18 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
 }
 
 export default function Inspiration() {
-  const { data, loading, error } = useApi<InspirationData>('/api/ideas/inspiration');
+  const { data, loading, error, refetch } = useApi<InspirationData>('/api/ideas/inspiration');
   const [sortBy, setSortBy] = useState<'ratio' | 'likes' | 'comments' | 'recent'>('ratio');
   const [filterHook, setFilterHook] = useState('');
   const [filterStructure, setFilterStructure] = useState('');
   const [filterCreator, setFilterCreator] = useState('');
+  const [filterTopic, setFilterTopic] = useState('');
   const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
+  const [classifying, setClassifying] = useState(false);
+  const [classifyResult, setClassifyResult] = useState<string | null>(null);
 
   const outliers = data?.outliers || [];
+  const unclassifiedCount = outliers.filter((p) => !p.topic).length;
 
   const hookTypes = useMemo(() => {
     const counts = new Map<string, number>();
@@ -191,8 +201,15 @@ export default function Inspiration() {
     return [...set].sort();
   }, [outliers]);
 
+  const topics = useMemo(() => {
+    const counts = new Map<string, number>();
+    outliers.forEach((p) => { if (p.topic) counts.set(p.topic, (counts.get(p.topic) || 0) + 1); });
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [outliers]);
+
   const filtered = useMemo(() => {
     let list = [...outliers];
+    if (filterTopic) list = list.filter((p) => p.topic === filterTopic);
     if (filterHook) list = list.filter((p) => p.hook_type === filterHook);
     if (filterStructure) list = list.filter((p) => p.post_structure === filterStructure);
     if (filterCreator) list = list.filter((p) => p.creator_name === filterCreator);
@@ -204,7 +221,23 @@ export default function Inspiration() {
       default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
     return list;
-  }, [outliers, filterHook, filterStructure, filterCreator, sortBy]);
+  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, sortBy]);
+
+  const handleClassify = async () => {
+    setClassifying(true);
+    setClassifyResult(null);
+    try {
+      const res = await fetch(`${BASE}/api/ideas/inspiration/classify`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) { setClassifyResult(`Error: ${data.error}`); return; }
+      setClassifyResult(`Classified ${data.classified} of ${data.total} posts`);
+      refetch();
+    } catch (e: any) {
+      setClassifyResult(`Error: ${e.message}`);
+    } finally {
+      setClassifying(false);
+    }
+  };
 
   const handleSteal = async (post: OutlierPost) => {
     const hookLabel = HOOK_LABELS[post.hook_type] || post.hook_type;
@@ -262,6 +295,48 @@ export default function Inspiration() {
 
       {!loading && outliers.length > 0 && (
         <>
+          {/* Classify + topic filter */}
+          {topics.length > 0 && (
+            <div className="bg-bg-card border border-amber-400/20 rounded-xl p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-amber-400 font-semibold">📂 Topic:</span>
+                <button
+                  onClick={() => setFilterTopic('')}
+                  className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${!filterTopic ? 'border-amber-400/50 bg-amber-400/10 text-amber-400' : 'border-border text-text-muted hover:border-amber-400/30'}`}
+                >
+                  All ({outliers.length})
+                </button>
+                {topics.map(([topic, count]) => (
+                  <button
+                    key={topic}
+                    onClick={() => setFilterTopic(filterTopic === topic ? '' : topic)}
+                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                      filterTopic === topic
+                        ? 'border-amber-400/50 bg-amber-400/10 text-amber-400'
+                        : 'border-border text-text-muted hover:border-amber-400/30'
+                    }`}
+                  >
+                    {topic} ({count})
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Classify button */}
+          {unclassifiedCount > 0 && (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleClassify}
+                disabled={classifying}
+                className="px-4 py-2 bg-amber-400/15 text-amber-400 rounded-lg text-xs font-medium hover:bg-amber-400/25 disabled:opacity-50 transition-colors"
+              >
+                {classifying ? '🧠 Classifying topics…' : `🏷️ Classify ${unclassifiedCount} untagged outlier${unclassifiedCount !== 1 ? 's' : ''} by topic`}
+              </button>
+              {classifyResult && <span className="text-xs text-text-muted">{classifyResult}</span>}
+            </div>
+          )}
+
           {/* Filters & sort */}
           <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
@@ -361,7 +436,7 @@ export default function Inspiration() {
           {/* Results count */}
           <p className="text-xs text-text-muted">
             {filtered.length} outlier{filtered.length !== 1 ? 's' : ''}{' '}
-            {filterHook || filterStructure || filterCreator ? `(filtered from ${outliers.length} total)` : 'total'}
+            {filterHook || filterStructure || filterCreator || filterTopic ? `(filtered from ${outliers.length} total)` : 'total'}
           </p>
 
           {/* Cards grid */}

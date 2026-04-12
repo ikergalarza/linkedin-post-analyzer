@@ -92,24 +92,44 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
     setIterLog([]);
     setErrMsg(null);
 
+    const originalText = postText;
     let bestText = postText;
     let bestScore = scorePost(postText).overall;
     const conversation: { role: 'user' | 'assistant'; content: string }[] = [];
 
     try {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 1; i <= 5; i++) {
         if (bestScore >= 80) break;
 
-        const { byCategory, failing } = scorePost(bestText);
-        const passingLabels = Object.entries(byCategory)
-          .flatMap(([, checks]) => (checks as any[]).filter((c) => c.passed).map((c) => c.label));
-        const failingList = (failing as any[]).map((c) => `- ${c.label}: ${c.description}`).join('\n');
+        const score = scorePost(bestText);
+        const { failing } = score;
+        const passingLabels = Object.values(score.byCategory)
+          .flatMap((cat: any) => cat.items.filter((c: any) => c.passed).map((c: any) => `- ${c.item.label}`))
+          .join('\n');
+        const failingList = (failing as any[])
+          .slice(0, 12)
+          .map((f: any) => `- ${f.label}${f.hint ? ' → ' + f.hint : ''}`)
+          .join('\n');
 
-        const userMsg = i === 0
-          ? `ORIGINAL POST — LOCKED (keep core idea):\n\`\`\`\n${bestText}\n\`\`\`\n\nPassing (protect): ${passingLabels.join(', ') || 'none'}\n\nFix:\n${failingList}`
-          : `Passing: ${passingLabels.join(', ') || 'none'}\n\nStill fix:\n${failingList}`;
+        let userContent: string;
+        if (i === 1) {
+          userContent =
+            `ORIGINAL POST (the idea, topic, and data CANNOT change):\n${originalText}\n\n` +
+            `VERSION TO IMPROVE (score: ${score.overall}/100):\n${bestText}\n\n` +
+            `PASSING CHECKS ✓ — DO NOT break these:\n${passingLabels || 'none'}\n\n` +
+            `FAILING CHECKS ✗ — improve ONLY structure, formatting, and viral mechanics:\n${failingList}\n\n` +
+            `Improve only structure and formatting. The idea, topic, and data from the original post must remain intact. ` +
+            `Return CRITIQUE: + --- + improved post.`;
+        } else {
+          userContent =
+            `BEST VERSION SO FAR (score: ${score.overall}/100):\n${bestText}\n\n` +
+            `PASSING CHECKS ✓ — DO NOT break these:\n${passingLabels || 'none'}\n\n` +
+            `STILL FAILING CHECKS ✗ — use DIFFERENT structural techniques than before:\n${failingList}\n\n` +
+            `Remember: same idea, same data from the original post, only improve the form. Read your previous CRITIQUE and apply it. ` +
+            `Return CRITIQUE: + --- + improved post.`;
+        }
 
-        conversation.push({ role: 'user', content: userMsg });
+        conversation.push({ role: 'user', content: userContent });
 
         let newText = '';
         let rawForConversation = '';
@@ -119,15 +139,19 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ messages: conversation }),
           });
-          if (!resp.ok) { setErrMsg(`Server error: ${resp.status}`); break; }
+          if (!resp.ok) {
+            const errData = await resp.json().catch(() => ({}));
+            setErrMsg(errData.error || `Server error: ${resp.status}`);
+            break;
+          }
           const data = await resp.json();
-          newText = data.text || '';
-          rawForConversation = data.raw || '';
+          newText = (data.text || '').trim();
+          rawForConversation = (data.raw || '').trim();
         } catch (e: any) {
           setErrMsg(e.message); break;
         }
 
-        if (!newText) break;
+        if (!newText) { setErrMsg('AI returned empty response'); break; }
 
         const newScore = scorePost(newText).overall;
 
@@ -135,13 +159,13 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
           bestText = newText;
           bestScore = newScore;
           conversation.push({ role: 'assistant', content: rawForConversation });
-          setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: true }]);
+          setIterLog((prev) => [...prev, { iter: i, score: newScore, accepted: true }]);
         } else {
           conversation.push({
             role: 'assistant',
             content: `${rawForConversation}\n\n[SYSTEM NOTE: scored ${newScore}/100 — lower than best ${bestScore}/100. Rejected.]`,
           });
-          setIterLog((prev) => [...prev, { iter: i + 1, score: newScore, accepted: false }]);
+          setIterLog((prev) => [...prev, { iter: i, score: newScore, accepted: false }]);
         }
 
         setPostText(bestText);
