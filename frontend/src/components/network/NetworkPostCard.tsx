@@ -37,16 +37,20 @@ const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
   skipped: { bg: 'bg-gray-500/10 border-gray-500/30', text: 'text-gray-400' },
 };
 
-const ANGLE_LABELS: Record<string, string> = {
-  contrarian_reflective: '🪞 Contrarian · reflective & personal',
-  contrarian_direct: '⚡ Contrarian · direct',
-  contrarian_data: '📊 Contrarian · data',
-  reframe: '🔄 Reframe',
-  // legacy
-  personal_experience: '🪞 Contrarian · reflective & personal',
-  provocative_question: '⚡ Contrarian · direct',
-  plot_twist: '🔄 Reframe',
+const ANGLE_META: Record<string, { emoji: string; label: string }> = {
+  contrarian_reflective: { emoji: '🪞', label: 'Contrarian · reflective & personal' },
+  contrarian_direct: { emoji: '⚡', label: 'Contrarian · direct' },
+  contrarian_data: { emoji: '📊', label: 'Contrarian · data' },
+  reframe: { emoji: '🔄', label: 'Reframe' },
+  // legacy angle values kept working
+  personal_experience: { emoji: '🪞', label: 'Contrarian · reflective & personal' },
+  provocative_question: { emoji: '⚡', label: 'Contrarian · direct' },
+  plot_twist: { emoji: '🔄', label: 'Reframe' },
 };
+
+function angleMeta(angle: string): { emoji: string; label: string } {
+  return ANGLE_META[angle] || { emoji: '💬', label: angle.replace(/_/g, ' ') };
+}
 
 interface Props {
   post: NetworkPostData;
@@ -210,9 +214,12 @@ export default function NetworkPostCard({ post, onUpdate }: Props) {
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-medium text-accent uppercase tracking-wide">
-                  {ANGLE_LABELS[comment.angle] || comment.angle}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm leading-none">{angleMeta(comment.angle).emoji}</span>
+                  <span className="text-[10px] font-medium text-accent uppercase tracking-wide">
+                    {angleMeta(comment.angle).label}
+                  </span>
+                </div>
                 <button
                   onClick={() => handleCopy(comment.comment_text, comment.id)}
                   className="text-[10px] text-text-muted hover:text-accent transition-colors"
