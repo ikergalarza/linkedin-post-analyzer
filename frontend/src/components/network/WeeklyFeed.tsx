@@ -47,7 +47,7 @@ export default function WeeklyFeed() {
   const [feed, setFeed] = useState<FeedData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'commented' | 'skipped'>('all');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'commented' | 'skipped'>('pending');
 
   const fetchFeed = useCallback(async () => {
     setLoading(true);
@@ -121,7 +121,7 @@ export default function WeeklyFeed() {
 
       {/* Filter tabs */}
       <div className="flex gap-1 border-b border-border">
-        {(['all', 'pending', 'commented', 'skipped'] as const).map((f) => (
+        {(['pending', 'all', 'commented', 'skipped'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
