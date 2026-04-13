@@ -17,8 +17,9 @@ export interface CommentGenerationInput {
 }
 
 export interface GeneratedComments {
-  contrarian: string;
-  experience_proof: string;
+  contrarian_reflective: string;
+  contrarian_direct: string;
+  contrarian_data: string;
   reframe: string;
 }
 
@@ -42,32 +43,40 @@ The commenter voice profile below is not a suggestion. It is HARD CONSTRAINTS.
 - If the worldview is "growth comes from friction, not frameworks" → your comments must reflect that lens.
 - Before writing each comment, silently check: would this specific person actually write this sentence? If not, rewrite.
 
-═══ THE 3 COMMENT TYPES ═══
+═══ THE 4 COMMENT TYPES (3 flavors of disagreement + 1 reframe) ═══
 
-"contrarian" — Challenge or complicate the post's main claim
-  - Partial or full disagreement, backed by a specific reason
-  - Intellectually bold, not rude
-  - End with a question that forces the creator to defend or reconsider
+"contrarian_reflective" — Soft, personal, vulnerable pushback
+  - Open with a moment of doubt or a past belief you changed: "Yo también pensaba esto hasta que…" / "I used to believe this, then…"
+  - Disagree through lived experience, not assertion — share the internal journey
+  - Tone: thoughtful, honest, slightly self-critical, never defensive
+  - End with an introspective question that invites the creator to reflect, not defend
 
-"experience_proof" — Share a personal result that enriches or complicates the post
-  - Concrete, specific experience (number, timeframe, outcome)
-  - Validates with a twist OR challenges the premise
-  - Feels like insider knowledge, not a general anecdote
-  - Ends with something that invites others to share theirs
+"contrarian_direct" — Blunt, sharp, no-filler pushback
+  - Say "no" or "I disagree" in the first line. No softeners, no "great post but…"
+  - Make ONE clean counter-claim and back it with a single hard reason
+  - Tone: confident, zero filler, almost uncomfortable to read
+  - End with a short challenge — 1 line, no hedging
 
-"reframe" — Flip the premise entirely
-  - Argue that the framing itself is wrong
-  - Offer an alternative lens
-  - Ends with an open question that invites debate
+"contrarian_data" — Evidence-based pushback with a specific number or concrete case
+  - Cite a real-feeling figure, benchmark, or concrete counter-example (e.g. "In 120+ outbound campaigns I've run, this tactic converted under 2%")
+  - The number IS the argument — don't over-explain
+  - Tone: analytical, skeptical, numbers-first
+  - End by asking the creator for THEIR data, not their opinion
+
+"reframe" — Flip the entire premise
+  - Argue the framing itself is wrong, not the conclusion
+  - Offer an alternative lens that makes people think "wait, that's a better way to see this"
+  - Tone: intellectually playful, slightly provocative
+  - End with an open question that invites debate
 
 ═══ GENERAL RULES ═══
 - 3–5 lines maximum per comment. No essays.
 - NEVER hollow openers: "Great post!", "Love this", "So true!", "Thanks for sharing", "Totalmente de acuerdo", "Muy buen punto"
 - NEVER self-promote ("follow me", "check my profile")
 - Reference something SPECIFIC from the post — a number, a phrase, a claim — to prove you read it
-- Each comment must feel like a DIFFERENT angle, not three rephrasings of the same idea
+- Each comment must feel like a DIFFERENT angle — the three contrarians MUST sound noticeably different in tone (reflective vs direct vs data-driven). If they sound similar, you failed.
 
-Return ONLY a JSON object with keys: "contrarian", "experience_proof", "reframe". No markdown fences, no explanation.`;
+Return ONLY a JSON object with keys: "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe". No markdown fences, no explanation.`;
 
 function detectLanguageHint(text: string): string {
   if (!text || text.trim().length < 10) return 'the same language as the post (detect from content)';
@@ -144,7 +153,7 @@ CRITICAL REMINDERS:
 2. Every sentence must sound like it came from the person in the voice profile — not a generic commentator.
 3. If you can't tell the voice profile apart from a generic "smart LinkedIn commenter", you're doing it wrong. Re-read the profile and try again.
 
-Return ONLY the JSON object with keys "contrarian", "experience_proof", "reframe". No markdown fences.`;
+Return ONLY the JSON object with keys "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe". No markdown fences.`;
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
@@ -161,7 +170,7 @@ Return ONLY the JSON object with keys "contrarian", "experience_proof", "reframe
   const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   const parsed = JSON.parse(cleaned) as GeneratedComments;
 
-  if (!parsed.contrarian || !parsed.experience_proof || !parsed.reframe) {
+  if (!parsed.contrarian_reflective || !parsed.contrarian_direct || !parsed.contrarian_data || !parsed.reframe) {
     throw new Error('Invalid response format from AI');
   }
 

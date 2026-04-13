@@ -191,6 +191,14 @@ const migration = `
   -- v11: Topic classification for outlier inspiration browsing
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS topic TEXT;
   CREATE INDEX IF NOT EXISTS idx_posts_topic ON posts(topic);
+
+  -- v12: Network comment angles redesigned (3 contrarians + reframe)
+  ALTER TABLE network_comments DROP CONSTRAINT IF EXISTS network_comments_angle_check;
+  ALTER TABLE network_comments ADD CONSTRAINT network_comments_angle_check
+    CHECK (angle IN (
+      'contrarian_reflective','contrarian_direct','contrarian_data','reframe',
+      'personal_experience','provocative_question','plot_twist'
+    ));
 `;
 
 export async function runMigrations() {

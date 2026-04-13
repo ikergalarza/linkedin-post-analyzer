@@ -38,8 +38,13 @@ const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
 };
 
 const ANGLE_LABELS: Record<string, string> = {
-  personal_experience: '⚡ Contrarian',
-  provocative_question: '🔍 Experience proof',
+  contrarian_reflective: '🪞 Contrarian · reflective & personal',
+  contrarian_direct: '⚡ Contrarian · direct',
+  contrarian_data: '📊 Contrarian · data',
+  reframe: '🔄 Reframe',
+  // legacy
+  personal_experience: '🪞 Contrarian · reflective & personal',
+  provocative_question: '⚡ Contrarian · direct',
   plot_twist: '🔄 Reframe',
 };
 

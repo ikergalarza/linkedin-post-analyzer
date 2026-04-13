@@ -245,11 +245,12 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
     // Delete existing comments for regeneration
     await NetworkCommentModel.deleteByPost(post.id);
 
-    // Insert 3 new comments (angles renamed to match new comment types)
+    // Insert 4 new comments (3 contrarian flavors + reframe)
     const comments = await NetworkCommentModel.bulkInsert([
-      { network_post_id: post.id, angle: 'personal_experience' as const, comment_text: generated.contrarian },
-      { network_post_id: post.id, angle: 'provocative_question' as const, comment_text: generated.experience_proof },
-      { network_post_id: post.id, angle: 'plot_twist' as const, comment_text: generated.reframe },
+      { network_post_id: post.id, angle: 'contrarian_reflective' as const, comment_text: generated.contrarian_reflective },
+      { network_post_id: post.id, angle: 'contrarian_direct' as const, comment_text: generated.contrarian_direct },
+      { network_post_id: post.id, angle: 'contrarian_data' as const, comment_text: generated.contrarian_data },
+      { network_post_id: post.id, angle: 'reframe' as const, comment_text: generated.reframe },
     ]);
     console.log('[COMMENT GEN] Step 5: Done, returning comments');
 
