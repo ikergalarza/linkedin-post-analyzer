@@ -169,14 +169,38 @@ router.get('/feed', async (req: Request, res: Response) => {
   }
 });
 
+// In-memory progress tracker for the weekly refresh. Personal-tool scale, single instance.
+const refreshProgress = {
+  running: false,
+  current: 0,
+  total: 0,
+  currentName: '' as string | null,
+  startedAt: null as number | null,
+  lastFinishedAt: null as number | null,
+};
+
+router.get('/feed/refresh-progress', (_req: Request, res: Response) => {
+  res.json(refreshProgress);
+});
+
 router.post('/feed/refresh', async (_req: Request, res: Response) => {
   try {
     const creators = await NetworkCreatorModel.findAll();
     let totalNew = 0;
     let refreshed = 0;
 
+    refreshProgress.running = true;
+    refreshProgress.current = 0;
+    refreshProgress.total = creators.length;
+    refreshProgress.currentName = null;
+    refreshProgress.startedAt = Date.now();
+
     for (const creator of creators) {
-      if (!creator.linkedin_id) continue;
+      if (!creator.linkedin_id) {
+        refreshProgress.current++;
+        continue;
+      }
+      refreshProgress.currentName = creator.name || 'Unknown';
       try {
         const count = await fetchNetworkCreatorPosts(creator.id, creator.linkedin_id);
         totalNew += count;
@@ -187,11 +211,19 @@ router.post('/feed/refresh', async (_req: Request, res: Response) => {
         }
       } catch (err: any) {
         console.error(`Failed to refresh network creator ${creator.id}:`, err.message);
+      } finally {
+        refreshProgress.current++;
       }
     }
 
+    refreshProgress.running = false;
+    refreshProgress.lastFinishedAt = Date.now();
+    refreshProgress.currentName = null;
+
     res.json({ refreshed, total_new_posts: totalNew });
   } catch (err: any) {
+    refreshProgress.running = false;
+    refreshProgress.currentName = null;
     res.status(500).json({ error: err.message });
   }
 });

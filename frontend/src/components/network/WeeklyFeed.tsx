@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiPost } from '../../hooks/useApi';
 import NetworkPostCard from './NetworkPostCard';
 
@@ -47,6 +47,8 @@ export default function WeeklyFeed() {
   const [feed, setFeed] = useState<FeedData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshProgress, setRefreshProgress] = useState<{ current: number; total: number; currentName: string | null } | null>(null);
+  const progressPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'commented' | 'skipped'>('pending');
 
   const fetchFeed = useCallback(async () => {
@@ -66,17 +68,43 @@ export default function WeeklyFeed() {
     fetchFeed();
   }, [fetchFeed]);
 
+  const pollProgress = useCallback(async () => {
+    try {
+      const res = await fetch(`${BASE}/api/network/feed/refresh-progress`);
+      const p = await res.json();
+      if (p && typeof p.current === 'number' && typeof p.total === 'number') {
+        setRefreshProgress({ current: p.current, total: p.total, currentName: p.currentName || null });
+      }
+    } catch {}
+  }, []);
+
   const handleRefresh = async () => {
     setRefreshing(true);
+    setRefreshProgress({ current: 0, total: 0, currentName: null });
+    // Start polling progress every 800ms
+    if (progressPollRef.current) clearInterval(progressPollRef.current);
+    progressPollRef.current = setInterval(pollProgress, 800);
+    pollProgress();
     try {
       await apiPost('/api/network/feed/refresh', {});
       await fetchFeed();
     } catch (err: any) {
       console.error('Refresh failed:', err);
     } finally {
+      if (progressPollRef.current) {
+        clearInterval(progressPollRef.current);
+        progressPollRef.current = null;
+      }
       setRefreshing(false);
+      setRefreshProgress(null);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (progressPollRef.current) clearInterval(progressPollRef.current);
+    };
+  }, []);
 
   const filteredPosts = feed?.posts.filter((p) => filter === 'all' || p.status === filter) || [];
 
@@ -118,6 +146,37 @@ export default function WeeklyFeed() {
           {refreshing ? 'Refreshing...' : 'Refresh Posts'}
         </button>
       </div>
+
+      {/* Refresh progress bar */}
+      {refreshing && refreshProgress && (
+        <div className="bg-bg-card border border-border rounded-xl p-4 space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-text-secondary">
+              {refreshProgress.total > 0
+                ? `Fetching creator ${Math.min(refreshProgress.current + (refreshProgress.current < refreshProgress.total ? 1 : 0), refreshProgress.total)} of ${refreshProgress.total}`
+                : 'Starting…'}
+              {refreshProgress.currentName && (
+                <span className="text-accent ml-2">· {refreshProgress.currentName}</span>
+              )}
+            </span>
+            <span className="text-text-muted font-mono">
+              {refreshProgress.total > 0
+                ? `${Math.round((refreshProgress.current / refreshProgress.total) * 100)}%`
+                : '0%'}
+            </span>
+          </div>
+          <div className="h-2 bg-bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-accent transition-all duration-500 ease-out"
+              style={{
+                width: refreshProgress.total > 0
+                  ? `${(refreshProgress.current / refreshProgress.total) * 100}%`
+                  : '4%',
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Filter tabs */}
       <div className="flex gap-1 border-b border-border">
