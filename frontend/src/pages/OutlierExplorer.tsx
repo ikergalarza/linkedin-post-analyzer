@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useApi } from '../hooks/useApi';
 import PostCard from '../components/PostCard';
 import { SkeletonCard } from '../components/Skeleton';
+import OutlierContentTypeChart from '../components/OutlierContentTypeChart';
 
 interface PostExplanation {
   summary: string;
@@ -784,6 +785,9 @@ export default function OutlierExplorer() {
             </div>
           ) : (
             <>
+              {/* Visual distribution chart */}
+              <OutlierContentTypeChart outliers={data.top_outliers} />
+
               {/* Header + filter */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <h2 className="text-xl font-bold">
