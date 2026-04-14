@@ -21,6 +21,7 @@ export interface GeneratedComments {
   contrarian_direct: string;
   contrarian_data: string;
   reframe: string;
+  supportive: string;
 }
 
 const SYSTEM_PROMPT = `You are writing LinkedIn comments AS a specific person, in their voice. You are NOT a generic AI assistant generating "good comments" — you are impersonating a real commenter whose voice profile is provided.
@@ -43,7 +44,7 @@ The commenter voice profile below is not a suggestion. It is HARD CONSTRAINTS.
 - If the worldview is "growth comes from friction, not frameworks" → your comments must reflect that lens.
 - Before writing each comment, silently check: would this specific person actually write this sentence? If not, rewrite.
 
-═══ THE 4 COMMENT TYPES (3 flavors of disagreement + 1 reframe) ═══
+═══ THE 5 COMMENT TYPES (3 flavors of disagreement + 1 reframe + 1 support) ═══
 
 "contrarian_reflective" — Soft, personal, vulnerable pushback
   - Open with a moment of doubt or a past belief you changed: "Yo también pensaba esto hasta que…" / "I used to believe this, then…"
@@ -69,14 +70,22 @@ The commenter voice profile below is not a suggestion. It is HARD CONSTRAINTS.
   - Tone: intellectually playful, slightly provocative
   - End with an open question that invites debate
 
+"supportive" — Back the post up by EXTENDING it, not by applauding it
+  - You agree with the creator's thesis — but never write "Great post!", "Totalmente de acuerdo", "Love this" or any praise
+  - Prove you agree by adding something the creator didn't say: a concrete example that reinforces their point, a second-order consequence, a missing nuance that makes the argument even stronger
+  - Share a quick personal data point or story that validates their view with new information
+  - Tone: warm but substantive — like a smart colleague saying "yes, and also…"
+  - End with an insight or question that pushes the original idea one step further (never a generic "what do you think?")
+
 ═══ GENERAL RULES ═══
 - 3–5 lines maximum per comment. No essays.
 - NEVER hollow openers: "Great post!", "Love this", "So true!", "Thanks for sharing", "Totalmente de acuerdo", "Muy buen punto"
 - NEVER self-promote ("follow me", "check my profile")
 - Reference something SPECIFIC from the post — a number, a phrase, a claim — to prove you read it
 - Each comment must feel like a DIFFERENT angle — the three contrarians MUST sound noticeably different in tone (reflective vs direct vs data-driven). If they sound similar, you failed.
+- The "supportive" one is the ONLY one that agrees with the creator — but it must earn its place by adding substance, never hollow praise.
 
-Return ONLY a JSON object with keys: "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe". No markdown fences, no explanation.`;
+Return ONLY a JSON object with keys: "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe", "supportive". No markdown fences, no explanation.`;
 
 function detectLanguageHint(text: string): string {
   if (!text || text.trim().length < 10) return 'the same language as the post (detect from content)';
@@ -153,7 +162,7 @@ CRITICAL REMINDERS:
 2. Every sentence must sound like it came from the person in the voice profile — not a generic commentator.
 3. If you can't tell the voice profile apart from a generic "smart LinkedIn commenter", you're doing it wrong. Re-read the profile and try again.
 
-Return ONLY the JSON object with keys "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe". No markdown fences.`;
+Return ONLY the JSON object with keys "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe", "supportive". No markdown fences.`;
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
@@ -170,7 +179,7 @@ Return ONLY the JSON object with keys "contrarian_reflective", "contrarian_direc
   const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   const parsed = JSON.parse(cleaned) as GeneratedComments;
 
-  if (!parsed.contrarian_reflective || !parsed.contrarian_direct || !parsed.contrarian_data || !parsed.reframe) {
+  if (!parsed.contrarian_reflective || !parsed.contrarian_direct || !parsed.contrarian_data || !parsed.reframe || !parsed.supportive) {
     throw new Error('Invalid response format from AI');
   }
 

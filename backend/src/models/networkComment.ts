@@ -3,7 +3,7 @@ import pool from '../db';
 export interface NetworkComment {
   id: string;
   network_post_id: string;
-  angle: 'contrarian_reflective' | 'contrarian_direct' | 'contrarian_data' | 'reframe' | 'personal_experience' | 'provocative_question' | 'plot_twist';
+  angle: 'contrarian_reflective' | 'contrarian_direct' | 'contrarian_data' | 'reframe' | 'supportive' | 'personal_experience' | 'provocative_question' | 'plot_twist';
   comment_text: string;
   is_selected: boolean;
   created_at: Date;

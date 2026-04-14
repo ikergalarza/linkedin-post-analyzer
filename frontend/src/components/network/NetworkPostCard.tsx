@@ -42,6 +42,7 @@ const ANGLE_META: Record<string, { emoji: string; label: string }> = {
   contrarian_direct: { emoji: '⚡', label: 'Contrarian · direct' },
   contrarian_data: { emoji: '📊', label: 'Contrarian · data' },
   reframe: { emoji: '🔄', label: 'Reframe' },
+  supportive: { emoji: '🤝', label: 'Supportive · extend the idea' },
   // legacy angle values kept working
   personal_experience: { emoji: '🪞', label: 'Contrarian · reflective & personal' },
   provocative_question: { emoji: '⚡', label: 'Contrarian · direct' },

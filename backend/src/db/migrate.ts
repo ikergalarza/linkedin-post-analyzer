@@ -196,7 +196,7 @@ const migration = `
   ALTER TABLE network_comments DROP CONSTRAINT IF EXISTS network_comments_angle_check;
   ALTER TABLE network_comments ADD CONSTRAINT network_comments_angle_check
     CHECK (angle IN (
-      'contrarian_reflective','contrarian_direct','contrarian_data','reframe',
+      'contrarian_reflective','contrarian_direct','contrarian_data','reframe','supportive',
       'personal_experience','provocative_question','plot_twist'
     ));
 `;
