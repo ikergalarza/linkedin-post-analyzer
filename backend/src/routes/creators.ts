@@ -234,6 +234,28 @@ router.delete('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/creators/debug-post/:id — dump a single post's raw_data for inspection
+router.get('/debug-post/:id', async (req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT id, content_type, raw_data FROM posts WHERE id = $1',
+      [paramId(req)]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = rows[0];
+    const detected = detectContentTypeFromRaw(post.raw_data || {});
+    res.json({
+      id: post.id,
+      stored_content_type: post.content_type,
+      detected_content_type: detected,
+      raw_data_keys: post.raw_data ? Object.keys(post.raw_data) : [],
+      raw_data_sample: post.raw_data,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/creators/reclassify — scan raw_data of text_only posts and fix content_type
 router.post('/reclassify', async (_req: Request, res: Response) => {
   try {
@@ -264,44 +286,93 @@ router.post('/reclassify', async (_req: Request, res: Response) => {
   }
 });
 
-// Standalone content type detector that works on raw_data objects
+// Standalone content type detector that works on raw_data objects.
+// Deep scan — Unipile can nest media under different keys depending on post kind.
 function detectContentTypeFromRaw(raw: any): string {
+  if (!raw || typeof raw !== 'object') return 'text_only';
+
+  // Structural fast paths
   if (raw.poll) return 'poll';
   if (raw.article) return 'article';
 
-  if (Array.isArray(raw.attachments) && raw.attachments.length > 0) {
-    const types = raw.attachments.map((a: any) => (a.type || '').toLowerCase());
-    if (types.some((t: string) => t.includes('video'))) return 'video';
-    if (types.some((t: string) => t.includes('document') || t.includes('pdf'))) return 'document';
-    const imageCount = types.filter((t: string) => t.includes('image') || t.includes('photo') || t.includes('picture')).length;
-    if (raw.attachments.length > 1) return imageCount > 1 ? 'carousel' : 'carousel';
-    if (imageCount >= 1) return 'image';
-    // attachment exists but type unknown — check for url
-    if (raw.attachments.some((a: any) => a.url || a.download_url)) return 'image';
-  }
-
-  if (raw.video) return 'video';
-  if (Array.isArray(raw.documents) && raw.documents.length > 0) return 'document';
-  if (Array.isArray(raw.images)) {
-    if (raw.images.length > 1) return 'carousel';
-    if (raw.images.length === 1) return 'image';
-  }
-  if (Array.isArray(raw.media)) {
-    if (raw.media.length > 1) return 'carousel';
-    if (raw.media.length === 1) {
-      const m = raw.media[0];
-      const t = (m.type || m.media_type || '').toLowerCase();
-      if (t.includes('video')) return 'video';
-      if (t.includes('document')) return 'document';
-      return 'image';
-    }
-  }
-
-  // Only specific top-level image fields that Unipile uses for post media
-  if (raw.image_url) return 'image';
-  if (raw.image && typeof raw.image === 'string' && raw.image.startsWith('http')) return 'image';
+  // Explicit video / document signals win over image
+  const signals = scanMediaSignals(raw);
+  if (signals.video) return 'video';
+  if (signals.document) return 'document';
+  if (signals.carousel) return 'carousel';
+  if (signals.image) return 'image';
 
   return 'text_only';
+}
+
+// Recursively walks raw_data looking for media signals.
+// Ignores pure text fields (text/content/body/description) so URLs inside post
+// text never cause a false positive.
+function scanMediaSignals(raw: any): { image: boolean; carousel: boolean; video: boolean; document: boolean } {
+  const out = { image: false, carousel: false, video: false, document: false };
+  if (!raw || typeof raw !== 'object') return out;
+
+  const TEXT_KEYS = new Set(['text', 'content', 'body', 'description', 'caption', 'hook_text', 'content_text']);
+  const MEDIA_KEYS = new Set([
+    'attachments', 'attachment', 'media', 'medias', 'images', 'image',
+    'image_url', 'image_urls', 'img', 'img_url', 'imgs',
+    'photo', 'photos', 'picture', 'pictures',
+    'thumbnail', 'thumbnail_url', 'thumbnails',
+    'video', 'videos', 'video_url',
+    'document', 'documents', 'doc', 'docs', 'file', 'files',
+  ]);
+  const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif|heic|avif|bmp)(\?|#|$)/i;
+  const VIDEO_EXT_RE = /\.(mp4|webm|mov|m4v|mkv|avi)(\?|#|$)/i;
+  const DOC_EXT_RE = /\.(pdf|pptx?|docx?|xlsx?|csv)(\?|#|$)/i;
+
+  const normType = (t: any) => (typeof t === 'string' ? t.toLowerCase() : '');
+
+  const walk = (node: any, underMedia: boolean) => {
+    if (!node) return;
+    if (typeof node === 'string') {
+      if (underMedia) {
+        if (IMAGE_EXT_RE.test(node)) out.image = true;
+        if (VIDEO_EXT_RE.test(node)) out.video = true;
+        if (DOC_EXT_RE.test(node)) out.document = true;
+      }
+      return;
+    }
+    if (Array.isArray(node)) {
+      // If an array lives under a media key, more than one element → likely carousel
+      if (underMedia && node.length > 1) out.carousel = true;
+      for (const el of node) walk(el, underMedia);
+      return;
+    }
+    if (typeof node !== 'object') return;
+
+    // Explicit type field on an element
+    const t = normType(node.type ?? node.media_type ?? node.attachment_type ?? node.kind);
+    if (t) {
+      if (t.includes('video')) out.video = true;
+      else if (t.includes('document') || t.includes('pdf')) out.document = true;
+      else if (t.includes('image') || t.includes('photo') || t.includes('picture') || t.includes('img')) out.image = true;
+    }
+
+    // If any of these URL-ish fields are present inside a media-ish node, classify
+    for (const urlKey of ['url', 'download_url', 'image_url', 'thumbnail_url', 'video_url', 'source_url', 'src']) {
+      const v = node[urlKey];
+      if (typeof v === 'string') {
+        if (IMAGE_EXT_RE.test(v)) out.image = true;
+        else if (VIDEO_EXT_RE.test(v)) out.video = true;
+        else if (DOC_EXT_RE.test(v)) out.document = true;
+        else if (underMedia) out.image = true; // generic url under a media key → assume image
+      }
+    }
+
+    for (const [k, v] of Object.entries(node)) {
+      if (TEXT_KEYS.has(k)) continue; // never scan post text
+      const childUnderMedia = underMedia || MEDIA_KEYS.has(k);
+      walk(v, childUnderMedia);
+    }
+  };
+
+  walk(raw, false);
+  return out;
 }
 
 // Background scraping function

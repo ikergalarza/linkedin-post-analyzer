@@ -284,44 +284,82 @@ export class UnipileService {
   }
 
   private detectContentType(raw: UnipilePost): string {
-    // Log media-related fields for debugging (first few posts)
-    const mediaKeys = ['attachments', 'media', 'images', 'documents', 'video', 'poll', 'article',
-      'image', 'image_url', 'thumbnail', 'thumbnail_url', 'type', 'content_type', 'media_type'].filter(k => raw[k] != null);
-    if (mediaKeys.length > 0) {
-      console.log(`[Unipile] detectContentType: mediaKeys=[${mediaKeys.join(',')}], attachments=${JSON.stringify(raw.attachments?.map(a => ({ type: a.type, size: a.size })))}, type=${raw.type}`);
-    }
-
     if (raw.poll) return 'poll';
     if (raw.article) return 'article';
 
-    // Check attachments (Unipile's standard field)
-    if (raw.attachments && raw.attachments.length > 0) {
-      const types = raw.attachments.map(a => (a.type || '').toLowerCase());
-      if (types.some(t => t.includes('video'))) return 'video';
-      if (types.some(t => t.includes('document') || t.includes('pdf'))) return 'document';
-      // Multiple images = carousel
-      const imageCount = types.filter(t => t.includes('image') || t.includes('photo')).length;
-      if (raw.attachments.length > 1 && imageCount > 1) return 'carousel';
-      if (raw.attachments.length > 1) return 'carousel';
-      if (imageCount >= 1) return 'image';
-    }
-
-    if (raw.video) return 'video';
-    if (raw.documents && raw.documents.length > 0) return 'document';
-    if (raw.images && raw.images.length > 1) return 'carousel';
-    if (raw.media && raw.media.length > 1) return 'carousel';
-    if (raw.images && raw.images.length === 1) return 'image';
-    if (raw.media && raw.media.length === 1) {
-      const m = raw.media[0];
-      if (m.type === 'video' || m.media_type === 'video') return 'video';
-      if (m.type === 'document' || m.media_type === 'document') return 'document';
-      return 'image';
-    }
-
-    // Fallback: check for single image fields
-    if (raw.image || raw.image_url || raw.thumbnail || raw.thumbnail_url) return 'image';
+    const signals = this.scanMediaSignals(raw);
+    if (signals.video) return 'video';
+    if (signals.document) return 'document';
+    if (signals.carousel) return 'carousel';
+    if (signals.image) return 'image';
 
     return 'text_only';
+  }
+
+  // Same deep-scan logic as reclassify endpoint — kept here so live scraping and
+  // reclassification stay in sync. Ignores post text fields to avoid false positives.
+  private scanMediaSignals(raw: any): { image: boolean; carousel: boolean; video: boolean; document: boolean } {
+    const out = { image: false, carousel: false, video: false, document: false };
+    if (!raw || typeof raw !== 'object') return out;
+
+    const TEXT_KEYS = new Set(['text', 'content', 'body', 'description', 'caption', 'hook_text', 'content_text']);
+    const MEDIA_KEYS = new Set([
+      'attachments', 'attachment', 'media', 'medias', 'images', 'image',
+      'image_url', 'image_urls', 'img', 'img_url', 'imgs',
+      'photo', 'photos', 'picture', 'pictures',
+      'thumbnail', 'thumbnail_url', 'thumbnails',
+      'video', 'videos', 'video_url',
+      'document', 'documents', 'doc', 'docs', 'file', 'files',
+    ]);
+    const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif|heic|avif|bmp)(\?|#|$)/i;
+    const VIDEO_EXT_RE = /\.(mp4|webm|mov|m4v|mkv|avi)(\?|#|$)/i;
+    const DOC_EXT_RE = /\.(pdf|pptx?|docx?|xlsx?|csv)(\?|#|$)/i;
+
+    const normType = (t: any) => (typeof t === 'string' ? t.toLowerCase() : '');
+
+    const walk = (node: any, underMedia: boolean) => {
+      if (!node) return;
+      if (typeof node === 'string') {
+        if (underMedia) {
+          if (IMAGE_EXT_RE.test(node)) out.image = true;
+          if (VIDEO_EXT_RE.test(node)) out.video = true;
+          if (DOC_EXT_RE.test(node)) out.document = true;
+        }
+        return;
+      }
+      if (Array.isArray(node)) {
+        if (underMedia && node.length > 1) out.carousel = true;
+        for (const el of node) walk(el, underMedia);
+        return;
+      }
+      if (typeof node !== 'object') return;
+
+      const t = normType(node.type ?? node.media_type ?? node.attachment_type ?? node.kind);
+      if (t) {
+        if (t.includes('video')) out.video = true;
+        else if (t.includes('document') || t.includes('pdf')) out.document = true;
+        else if (t.includes('image') || t.includes('photo') || t.includes('picture') || t.includes('img')) out.image = true;
+      }
+
+      for (const urlKey of ['url', 'download_url', 'image_url', 'thumbnail_url', 'video_url', 'source_url', 'src']) {
+        const v = node[urlKey];
+        if (typeof v === 'string') {
+          if (IMAGE_EXT_RE.test(v)) out.image = true;
+          else if (VIDEO_EXT_RE.test(v)) out.video = true;
+          else if (DOC_EXT_RE.test(v)) out.document = true;
+          else if (underMedia) out.image = true;
+        }
+      }
+
+      for (const [k, v] of Object.entries(node)) {
+        if (TEXT_KEYS.has(k)) continue;
+        const childUnderMedia = underMedia || MEDIA_KEYS.has(k);
+        walk(v, childUnderMedia);
+      }
+    };
+
+    walk(raw, false);
+    return out;
   }
 }
 
