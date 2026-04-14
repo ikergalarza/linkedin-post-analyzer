@@ -44,7 +44,7 @@ interface ArchetypeRaw {
   example_text: string | null;
 }
 
-async function getTopArchetypes(): Promise<ArchetypeRaw[]> {
+async function getArchetypePool(): Promise<ArchetypeRaw[]> {
   const { rows } = await pool.query(`
     SELECT
       p.hook_type,
@@ -59,9 +59,88 @@ async function getTopArchetypes(): Promise<ArchetypeRaw[]> {
     GROUP BY p.hook_type, p.post_structure
     HAVING COUNT(*) >= 2
     ORDER BY avg_ratio DESC
-    LIMIT 3
+    LIMIT 18
   `);
   return rows;
+}
+
+// Ask Claude to pick 3 archetypes from the pool that best fit THIS raw idea.
+// Accepts a list of archetype_keys already tried so reloads return different picks.
+async function selectArchetypesForIdea(
+  rawIdea: string,
+  archetypePool: ArchetypeRaw[],
+  exclude: string[]
+): Promise<ArchetypeRaw[]> {
+  const excludeSet = new Set(exclude);
+  const candidates = archetypePool.filter(
+    (a) => !excludeSet.has(`${a.hook_type}__${a.post_structure}`)
+  );
+  if (candidates.length === 0) return archetypePool.slice(0, 3); // pool exhausted → reset
+
+  const list = candidates
+    .map((a, i) => {
+      const hook = HOOK_LABELS[a.hook_type] || a.hook_type;
+      const struct = STRUCT_LABELS[a.post_structure] || a.post_structure;
+      return `${i + 1}. ${hook} + ${struct} (${a.avg_ratio.toFixed(1)}x avg ratio)`;
+    })
+    .join('\n');
+
+  const response = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 400,
+    messages: [{
+      role: 'user',
+      content: `You're picking viral LinkedIn archetypes for a specific raw idea.
+
+RAW IDEA:
+"""
+${rawIdea}
+"""
+
+AVAILABLE ARCHETYPES (hook + structure pairings, sorted by past virality):
+${list}
+
+Pick exactly 3 archetypes from the list that fit THIS specific idea best — based on the topic, tone, and what would naturally surface its punchline.
+
+CRITICAL:
+- The 3 must be MEANINGFULLY DIFFERENT from each other (different angles, not three flavors of the same shape).
+- Favor archetypes that match the *content* of the idea, not just the highest ratio. A data-shock idea wants a data-shock hook; a personal anecdote wants a confession or story opener.
+- Return ONLY a JSON array of 3 numbers (1-indexed positions from the list). Example: [3, 7, 12]
+- No markdown, no explanation, just the JSON array.`,
+    }],
+  });
+
+  const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
+  const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  const startIdx = cleaned.indexOf('[');
+  const endIdx = cleaned.lastIndexOf(']');
+  if (startIdx === -1 || endIdx === -1) return candidates.slice(0, 3);
+
+  let picks: number[];
+  try {
+    picks = JSON.parse(cleaned.slice(startIdx, endIdx + 1));
+    if (!Array.isArray(picks)) throw new Error('not array');
+  } catch {
+    return candidates.slice(0, 3);
+  }
+
+  const selected: ArchetypeRaw[] = [];
+  const seen = new Set<number>();
+  for (const p of picks) {
+    const idx = Number(p) - 1;
+    if (Number.isInteger(idx) && idx >= 0 && idx < candidates.length && !seen.has(idx)) {
+      selected.push(candidates[idx]);
+      seen.add(idx);
+    }
+    if (selected.length >= 3) break;
+  }
+  // Pad with remaining candidates if Claude returned fewer than 3
+  for (const c of candidates) {
+    if (selected.length >= 3) break;
+    const key = `${c.hook_type}__${c.post_structure}`;
+    if (!selected.some((s) => `${s.hook_type}__${s.post_structure}` === key)) selected.push(c);
+  }
+  return selected.slice(0, 3);
 }
 
 async function getOutlierContext(): Promise<string> {
@@ -193,21 +272,32 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
 
     await PostIdeaModel.update(id, { status: 'generating' });
 
-    // Get top 3 archetypes from real outlier data
-    let archetypes = await getTopArchetypes();
+    // Optional list of archetype_keys already tried — for the "reload archetypes" UX
+    const exclude: string[] = Array.isArray(req.body?.exclude) ? req.body.exclude : [];
 
-    // Fallback archetypes if not enough outlier data yet
-    if (archetypes.length < 3) {
-      const fallbacks: ArchetypeRaw[] = [
+    // Pull a wide pool of high-performing archetypes
+    const archetypePool = await getArchetypePool();
+
+    // Fallback if not enough outlier data
+    if (archetypePool.length === 0) {
+      archetypePool.push(
         { hook_type: 'personal_confession', post_structure: 'confession_insight_takeaway', avg_ratio: 3, example_hook: null, example_text: null },
         { hook_type: 'data_shock', post_structure: 'problem_agitate_solve', avg_ratio: 3, example_hook: null, example_text: null },
         { hook_type: 'contrarian_take', post_structure: 'contrarian_proof_reframe', avg_ratio: 3, example_hook: null, example_text: null },
-      ];
-      const existingKeys = new Set(archetypes.map((a) => `${a.hook_type}|${a.post_structure}`));
-      for (const fb of fallbacks) {
-        if (archetypes.length >= 3) break;
-        if (!existingKeys.has(`${fb.hook_type}|${fb.post_structure}`)) archetypes.push(fb);
-      }
+      );
+    }
+
+    // Let Claude pick the 3 archetypes that fit THIS idea best, skipping ones already shown
+    let archetypes: ArchetypeRaw[];
+    try {
+      archetypes = await selectArchetypesForIdea(idea.raw_content, archetypePool, exclude);
+    } catch (selErr: any) {
+      console.error('[Ideas generate] Selector failed, falling back to top-3:', selErr.message);
+      archetypes = archetypePool.slice(0, 3);
+    }
+
+    if (archetypes.length === 0) {
+      archetypes = archetypePool.slice(0, 3);
     }
 
     const outlierContext = await getOutlierContext();

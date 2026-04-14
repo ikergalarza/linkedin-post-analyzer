@@ -275,12 +275,17 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
   const hasVariants = variants.length > 0;
   const hasSelectedPost = selectedVariant !== null;
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (reloadArchetypes = false) => {
     setGenerating(true);
     setGenError(null);
     setSelectedVariant(null);
     try {
-      const res = await fetch(`${BASE}/api/ideas/${idea.id}/generate`, { method: 'POST' });
+      const exclude = reloadArchetypes ? variants.map((v) => v.archetype_key) : [];
+      const res = await fetch(`${BASE}/api/ideas/${idea.id}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exclude }),
+      });
       const data = await res.json();
       if (!res.ok) { setGenError(data.error || `Error ${res.status}`); return; }
       const v: ArchetypeVariant[] = data.variants || [];
@@ -330,21 +335,33 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
       {/* Raw content */}
       <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap mb-4">{idea.raw_content}</p>
 
-      {/* Generate button */}
+      {/* Generate / Reload buttons */}
       {!hasSelectedPost && (
-        <button
-          onClick={hasVariants && !showVariants ? () => setShowVariants(true) : handleGenerate}
-          disabled={generating}
-          className="w-full py-2 bg-accent/15 text-accent rounded-lg text-xs font-medium hover:bg-accent/25 disabled:opacity-50 transition-colors mb-4"
-        >
-          {generating
-            ? '✨ Generating 3 variants…'
-            : hasVariants && !showVariants
-              ? '✨ View 3 variants'
-              : hasVariants
-                ? '🔄 Regenerate 3 variants'
-                : '✨ Generate 3 AI variants'}
-        </button>
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={hasVariants && !showVariants ? () => setShowVariants(true) : () => handleGenerate(false)}
+            disabled={generating}
+            className="flex-1 py-2 bg-accent/15 text-accent rounded-lg text-xs font-medium hover:bg-accent/25 disabled:opacity-50 transition-colors"
+          >
+            {generating
+              ? '✨ Generating 3 variants…'
+              : hasVariants && !showVariants
+                ? '✨ View 3 variants'
+                : hasVariants
+                  ? '🔄 Regenerate (same archetypes)'
+                  : '✨ Generate 3 AI variants'}
+          </button>
+          {hasVariants && (
+            <button
+              onClick={() => handleGenerate(true)}
+              disabled={generating}
+              title="Ask the AI to pick 3 different archetypes that fit this idea"
+              className="px-3 py-2 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs font-medium hover:border-accent/40 hover:text-accent disabled:opacity-50 transition-colors whitespace-nowrap"
+            >
+              🎲 Try other archetypes
+            </button>
+          )}
+        </div>
       )}
 
       {genError && <p className="text-danger text-xs mb-3">{genError}</p>}
