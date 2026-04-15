@@ -7,6 +7,7 @@ import StrategicNetwork from './pages/StrategicNetwork'
 import Discover from './pages/Discover'
 import Ideas from './pages/Ideas'
 import Inspiration from './pages/Inspiration'
+import Accounts from './pages/Accounts'
 
 export default function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ export default function App() {
             {/* Analyze */}
             <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
               {navLink('/', '📊 Dashboard')}
+              {navLink('/accounts', '📈 Accounts')}
               {navLink('/explore', '🔍 Explorer')}
               {navLink('/discover', '🧭 Discover')}
             </div>
@@ -54,6 +56,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/accounts" element={<Accounts />} />
           <Route path="/creator/:id" element={<CreatorDetail />} />
           <Route path="/explore" element={<OutlierExplorer />} />
           <Route path="/ideas" element={<Ideas />} />

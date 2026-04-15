@@ -199,6 +199,10 @@ const migration = `
       'contrarian_reflective','contrarian_direct','contrarian_data','reframe','supportive',
       'personal_experience','provocative_question','plot_twist'
     ));
+
+  -- v13: Managed accounts flag for the BI dashboard
+  ALTER TABLE creators ADD COLUMN IF NOT EXISTS is_managed BOOLEAN DEFAULT FALSE;
+  CREATE INDEX IF NOT EXISTS idx_creators_is_managed ON creators(is_managed);
 `;
 
 export async function runMigrations() {
