@@ -66,47 +66,98 @@ router.get('/analytics', async (req: Request, res: Response) => {
     const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
 
-    const sinceIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const currentStartIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const previousStartIso = new Date(Date.now() - 2 * days * 24 * 60 * 60 * 1000).toISOString();
 
-    // Resolve target creator scope
-    let scopeCondition = 'p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE)';
-    const params: any[] = [sinceIso];
-    if (creatorId) {
-      scopeCondition = 'p.creator_id = $2';
-      params.push(creatorId);
-    }
+    // Build scope: either a specific creator or all managed accounts.
+    // Queries use <SCOPE> as a placeholder so each query can append its own params.
+    const scope = (nextIdx: number) => {
+      if (creatorId) return { sql: `p.creator_id = $${nextIdx}`, params: [creatorId] };
+      return { sql: `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE)`, params: [] };
+    };
 
-    // Totals
-    const totalsQ = await pool.query(
-      `SELECT
-        COUNT(*)::int AS total_posts,
-        COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS total_outliers,
-        COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
-        COALESCE(ROUND(MAX(p.engagement_score))::int, 0) AS max_engagement,
-        COALESCE(SUM(p.likes_count)::int, 0) AS total_likes,
-        COALESCE(SUM(p.comments_count)::int, 0) AS total_comments,
-        COALESCE(SUM(p.reposts_count)::int, 0) AS total_reposts
-       FROM posts p
-       WHERE p.published_at >= $1 AND ${scopeCondition}`,
-      params
-    );
+    const totalsSql = (dateCondition: string, baseParams: any[]) => {
+      const s = scope(baseParams.length + 1);
+      return {
+        sql: `SELECT
+          COUNT(*)::int AS total_posts,
+          COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS total_outliers,
+          COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
+          COALESCE(ROUND(MAX(p.engagement_score))::int, 0) AS max_engagement,
+          COALESCE(SUM(p.likes_count)::int, 0) AS total_likes,
+          COALESCE(SUM(p.comments_count)::int, 0) AS total_comments,
+          COALESCE(SUM(p.reposts_count)::int, 0) AS total_reposts
+         FROM posts p
+         WHERE ${dateCondition} AND ${s.sql}`,
+        params: [...baseParams, ...s.params],
+      };
+    };
 
-    // Weekly timeseries: avg engagement, post count, outlier count
-    const weeklyQ = await pool.query(
-      `SELECT
-        DATE_TRUNC('week', p.published_at) AS week,
-        COUNT(*)::int AS posts,
-        COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers,
-        COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
-        COALESCE(MAX(p.engagement_score)::int, 0) AS max_engagement
-       FROM posts p
-       WHERE p.published_at >= $1 AND ${scopeCondition}
-       GROUP BY week
-       ORDER BY week ASC`,
-      params
+    // Current-period totals
+    const currentTotals = totalsSql('p.published_at >= $1', [currentStartIso]);
+    const totalsQ = await pool.query(currentTotals.sql, currentTotals.params);
+
+    // Previous-period totals (same length immediately before current)
+    const prevTotals = totalsSql('p.published_at >= $1 AND p.published_at < $2', [previousStartIso, currentStartIso]);
+    const prevTotalsQ = await pool.query(prevTotals.sql, prevTotals.params);
+
+    const deltaPct = (curr: number, prev: number): number | null => {
+      if (!prev || prev === 0) return null;
+      return +(((curr - prev) / prev) * 100).toFixed(1);
+    };
+
+    const buildComparison = (curr: any, prev: any) => ({
+      avg_engagement: { current: curr.avg_engagement, previous: prev.avg_engagement, delta_pct: deltaPct(curr.avg_engagement, prev.avg_engagement) },
+      total_posts: { current: curr.total_posts, previous: prev.total_posts, delta_pct: deltaPct(curr.total_posts, prev.total_posts) },
+      total_outliers: { current: curr.total_outliers, previous: prev.total_outliers, delta_pct: deltaPct(curr.total_outliers, prev.total_outliers) },
+      total_likes: { current: curr.total_likes, previous: prev.total_likes, delta_pct: deltaPct(curr.total_likes, prev.total_likes) },
+      total_comments: { current: curr.total_comments, previous: prev.total_comments, delta_pct: deltaPct(curr.total_comments, prev.total_comments) },
+      total_reposts: { current: curr.total_reposts, previous: prev.total_reposts, delta_pct: deltaPct(curr.total_reposts, prev.total_reposts) },
+    });
+
+    // Gap-filled daily series with 7-day rolling sum of total engagement.
+    // generate_series builds every day in range, LEFT JOIN fills zeros,
+    // window function smooths the line so it's not all spikes.
+    const dailyScope = scope(2);
+    const dailyQ = await pool.query(
+      `WITH day_series AS (
+        SELECT generate_series($1::date, CURRENT_DATE, '1 day'::interval)::date AS day
+      ),
+      daily_raw AS (
+        SELECT
+          (p.published_at)::date AS day,
+          COUNT(*)::int AS posts,
+          COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers,
+          COALESCE(ROUND(SUM(p.engagement_score))::int, 0) AS total_engagement,
+          COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement
+        FROM posts p
+        WHERE p.published_at >= $1 AND ${dailyScope.sql}
+        GROUP BY (p.published_at)::date
+      ),
+      filled AS (
+        SELECT
+          ds.day,
+          COALESCE(dr.posts, 0) AS posts,
+          COALESCE(dr.outliers, 0) AS outliers,
+          COALESCE(dr.total_engagement, 0) AS total_engagement,
+          COALESCE(dr.avg_engagement, 0) AS avg_engagement
+        FROM day_series ds
+        LEFT JOIN daily_raw dr ON dr.day = ds.day
+      )
+      SELECT
+        day::text AS day,
+        posts,
+        outliers,
+        total_engagement,
+        avg_engagement,
+        SUM(total_engagement) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS rolling_sum_7d
+      FROM filled
+      ORDER BY day ASC`,
+      [currentStartIso, ...dailyScope.params]
     );
 
     // Content type mix with avg engagement per type
+    const formatScope = scope(2);
     const formatQ = await pool.query(
       `SELECT
         p.content_type,
@@ -114,13 +165,14 @@ router.get('/analytics', async (req: Request, res: Response) => {
         COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
         COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers
        FROM posts p
-       WHERE p.published_at >= $1 AND ${scopeCondition}
+       WHERE p.published_at >= $1 AND ${formatScope.sql}
        GROUP BY p.content_type
        ORDER BY count DESC`,
-      params
+      [currentStartIso, ...formatScope.params]
     );
 
     // Top posts
+    const topScope = scope(2);
     const topPostsQ = await pool.query(
       `SELECT
         p.id, p.content_text, p.content_type, p.published_at,
@@ -130,23 +182,24 @@ router.get('/analytics', async (req: Request, res: Response) => {
         c.name AS creator_name, c.profile_image_url AS creator_image
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
-       WHERE p.published_at >= $1 AND ${scopeCondition}
+       WHERE p.published_at >= $1 AND ${topScope.sql}
        ORDER BY p.engagement_score DESC
        LIMIT 10`,
-      params
+      [currentStartIso, ...topScope.params]
     );
 
-    // Hook type distribution (best-performing)
+    // Hook type distribution
+    const hookScope = scope(2);
     const hookQ = await pool.query(
       `SELECT
         p.hook_type,
         COUNT(*)::int AS count,
         COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement
        FROM posts p
-       WHERE p.published_at >= $1 AND ${scopeCondition} AND p.hook_type IS NOT NULL
+       WHERE p.published_at >= $1 AND ${hookScope.sql} AND p.hook_type IS NOT NULL
        GROUP BY p.hook_type
        ORDER BY avg_engagement DESC`,
-      params
+      [currentStartIso, ...hookScope.params]
     );
 
     // Per-account breakdown (only when aggregating across all managed)
@@ -163,7 +216,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
          WHERE c.is_managed = TRUE
          GROUP BY c.id
          ORDER BY avg_engagement DESC`,
-        [sinceIso]
+        [currentStartIso]
       );
       perAccount = perAccountQ.rows;
     }
@@ -172,7 +225,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
       days,
       creator_id: creatorId,
       totals: totalsQ.rows[0],
-      weekly: weeklyQ.rows,
+      comparison: buildComparison(totalsQ.rows[0], prevTotalsQ.rows[0]),
+      daily: dailyQ.rows,
       format_mix: formatQ.rows,
       top_posts: topPostsQ.rows,
       hook_types: hookQ.rows,

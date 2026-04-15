@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useApi, apiPatch } from '../hooks/useApi';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, Cell,
+  ResponsiveContainer, Legend, Cell, ComposedChart, Area,
 } from 'recharts';
 
 interface ManagedAccount {
@@ -30,12 +30,28 @@ interface Candidate {
   is_managed: boolean;
 }
 
-interface WeeklyRow {
-  week: string;
+interface DailyRow {
+  day: string;
   posts: number;
   outliers: number;
+  total_engagement: number;
   avg_engagement: number;
-  max_engagement: number;
+  rolling_sum_7d: number;
+}
+
+interface CompareMetric {
+  current: number;
+  previous: number;
+  delta_pct: number | null;
+}
+
+interface Comparison {
+  avg_engagement: CompareMetric;
+  total_posts: CompareMetric;
+  total_outliers: CompareMetric;
+  total_likes: CompareMetric;
+  total_comments: CompareMetric;
+  total_reposts: CompareMetric;
 }
 
 interface FormatRow {
@@ -89,7 +105,8 @@ interface Analytics {
     total_comments: number;
     total_reposts: number;
   };
-  weekly: WeeklyRow[];
+  comparison: Comparison;
+  daily: DailyRow[];
   format_mix: FormatRow[];
   top_posts: TopPost[];
   hook_types: HookRow[];
@@ -129,15 +146,52 @@ function fmtNum(n: number): string {
   return n.toString();
 }
 
-function fmtWeek(iso: string): string {
+function fmtDay(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function fmtFullDay(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function truncate(s: string | null, n: number): string {
   if (!s) return '—';
   return s.length > n ? s.slice(0, n) + '…' : s;
 }
+
+function Delta({ pct }: { pct: number | null }) {
+  if (pct === null || !isFinite(pct)) return null;
+  const rounded = Math.round(pct);
+  if (rounded === 0) {
+    return <span className="text-[10px] font-medium text-text-muted">0%</span>;
+  }
+  const up = rounded > 0;
+  return (
+    <span className={`text-[10px] font-medium ${up ? 'text-green-400' : 'text-red-400'}`}>
+      {up ? '▲' : '▼'} {Math.abs(rounded)}%
+    </span>
+  );
+}
+
+// Custom dot for the daily line: only renders on days where posts were published.
+// Circle marker, with optional count badge when multiple posts land on the same day.
+const PublicationDot = (props: any) => {
+  const { cx, cy, payload } = props;
+  if (!payload || payload.posts <= 0 || cx === undefined || cy === undefined) return null;
+  const hasOutlier = payload.outliers > 0;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={6} fill={hasOutlier ? '#34d399' : '#e8935a'} stroke="#1a1d2e" strokeWidth={2} />
+      {payload.posts > 1 && (
+        <text x={cx} y={cy + 3} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold">
+          {payload.posts}
+        </text>
+      )}
+    </g>
+  );
+};
 
 export default function Accounts() {
   const [selectedCreator, setSelectedCreator] = useState<string>('all');
@@ -162,16 +216,20 @@ export default function Accounts() {
 
   const hasAccounts = (accounts?.length || 0) > 0;
 
-  const weeklyChartData = useMemo(() => {
+  const dailyChartData = useMemo(() => {
     if (!analytics) return [];
-    return analytics.weekly.map((w) => ({
-      week: fmtWeek(w.week),
-      avg: w.avg_engagement,
-      max: w.max_engagement,
-      posts: w.posts,
-      outliers: w.outliers,
+    return analytics.daily.map((d) => ({
+      day: d.day,
+      label: fmtDay(d.day),
+      rolling: d.rolling_sum_7d,
+      raw: d.total_engagement,
+      posts: d.posts,
+      outliers: d.outliers,
     }));
   }, [analytics]);
+
+  // Show ~8 ticks on the x-axis regardless of range length.
+  const xTickInterval = Math.max(0, Math.floor(dailyChartData.length / 8) - 1);
 
   const formatChartData = useMemo(() => {
     if (!analytics) return [];
@@ -295,23 +353,32 @@ export default function Accounts() {
       {/* Analytics */}
       {hasAccounts && analytics && (
         <>
-          {/* KPI cards */}
+          {/* KPI cards with period-over-period delta */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="bg-bg-card border border-border rounded-xl p-4">
               <div className="text-[10px] uppercase tracking-wide text-text-muted">Total posts</div>
-              <div className="text-2xl font-bold text-text-primary mt-1">{analytics.totals.total_posts}</div>
-              <div className="text-[10px] text-text-muted mt-0.5">in last {days}d</div>
+              <div className="flex items-baseline gap-2 mt-1">
+                <div className="text-2xl font-bold text-text-primary">{analytics.totals.total_posts}</div>
+                <Delta pct={analytics.comparison.total_posts.delta_pct} />
+              </div>
+              <div className="text-[10px] text-text-muted mt-0.5">vs previous {days}d</div>
             </div>
             <div className="bg-bg-card border border-border rounded-xl p-4">
               <div className="text-[10px] uppercase tracking-wide text-text-muted">Avg engagement</div>
-              <div className="text-2xl font-bold text-accent mt-1">{fmtNum(analytics.totals.avg_engagement)}</div>
+              <div className="flex items-baseline gap-2 mt-1">
+                <div className="text-2xl font-bold text-accent">{fmtNum(analytics.totals.avg_engagement)}</div>
+                <Delta pct={analytics.comparison.avg_engagement.delta_pct} />
+              </div>
               <div className="text-[10px] text-text-muted mt-0.5">per post</div>
             </div>
             <div className="bg-bg-card border border-border rounded-xl p-4">
               <div className="text-[10px] uppercase tracking-wide text-text-muted">Outliers</div>
-              <div className="text-2xl font-bold text-green-400 mt-1">
-                {analytics.totals.total_outliers}
-                <span className="text-sm text-text-muted ml-1 font-normal">({outlierRate}%)</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <div className="text-2xl font-bold text-green-400">
+                  {analytics.totals.total_outliers}
+                  <span className="text-sm text-text-muted ml-1 font-normal">({outlierRate}%)</span>
+                </div>
+                <Delta pct={analytics.comparison.total_outliers.delta_pct} />
               </div>
               <div className="text-[10px] text-text-muted mt-0.5">hit rate</div>
             </div>
@@ -322,63 +389,150 @@ export default function Accounts() {
             </div>
           </div>
 
-          {/* Engagement totals breakdown */}
+          {/* Engagement totals breakdown with deltas */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-bg-card border border-border rounded-xl p-3 text-center">
-              <div className="text-[10px] uppercase tracking-wide text-text-muted">Likes</div>
-              <div className="text-lg font-semibold text-text-primary">{fmtNum(analytics.totals.total_likes)}</div>
+            <div className="bg-bg-card border border-border rounded-xl p-3">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted text-center">Likes</div>
+              <div className="flex items-baseline justify-center gap-2 mt-0.5">
+                <div className="text-lg font-semibold text-text-primary">{fmtNum(analytics.totals.total_likes)}</div>
+                <Delta pct={analytics.comparison.total_likes.delta_pct} />
+              </div>
             </div>
-            <div className="bg-bg-card border border-border rounded-xl p-3 text-center">
-              <div className="text-[10px] uppercase tracking-wide text-text-muted">Comments</div>
-              <div className="text-lg font-semibold text-text-primary">{fmtNum(analytics.totals.total_comments)}</div>
+            <div className="bg-bg-card border border-border rounded-xl p-3">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted text-center">Comments</div>
+              <div className="flex items-baseline justify-center gap-2 mt-0.5">
+                <div className="text-lg font-semibold text-text-primary">{fmtNum(analytics.totals.total_comments)}</div>
+                <Delta pct={analytics.comparison.total_comments.delta_pct} />
+              </div>
             </div>
-            <div className="bg-bg-card border border-border rounded-xl p-3 text-center">
-              <div className="text-[10px] uppercase tracking-wide text-text-muted">Reposts</div>
-              <div className="text-lg font-semibold text-text-primary">{fmtNum(analytics.totals.total_reposts)}</div>
+            <div className="bg-bg-card border border-border rounded-xl p-3">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted text-center">Reposts</div>
+              <div className="flex items-baseline justify-center gap-2 mt-0.5">
+                <div className="text-lg font-semibold text-text-primary">{fmtNum(analytics.totals.total_reposts)}</div>
+                <Delta pct={analytics.comparison.total_reposts.delta_pct} />
+              </div>
             </div>
           </div>
 
-          {/* Engagement trend */}
+          {/* Daily engagement trend — smoothed line with publication markers */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold">Engagement trend</h3>
-              <p className="text-xs text-text-muted">Weekly average engagement score</p>
+            <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-lg font-semibold">Engagement over time</h3>
+                <p className="text-xs text-text-muted">
+                  7-day rolling sum · filled circles = days with publications
+                  <span className="ml-2 inline-flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent border border-bg-primary" />
+                    <span>post</span>
+                  </span>
+                  <span className="ml-2 inline-flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-400 border border-bg-primary" />
+                    <span>outlier</span>
+                  </span>
+                </p>
+              </div>
             </div>
-            {weeklyChartData.length === 0 ? (
+            {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <LineChart data={weeklyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <ComposedChart data={dailyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+                  <defs>
+                    <linearGradient id="rollingFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#e8935a" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="#e8935a" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-                  <XAxis dataKey="week" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fill: '#9ca3af', fontSize: 11 }}
+                    axisLine={{ stroke: '#2e3348' }}
+                    interval={xTickInterval}
+                  />
                   <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
-                  <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                  <Legend wrapperStyle={{ fontSize: '11px' }} />
-                  <Line type="monotone" dataKey="avg" name="Avg engagement" stroke="#e8935a" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="max" name="Max engagement" stroke="#34d399" strokeWidth={2} dot={{ r: 3 }} strokeDasharray="4 4" />
-                </LineChart>
+                  <Tooltip
+                    contentStyle={CHART_TOOLTIP_STYLE}
+                    content={({ active, payload }: any) => {
+                      if (!active || !payload || payload.length === 0) return null;
+                      const p = payload[0].payload;
+                      return (
+                        <div style={CHART_TOOLTIP_STYLE} className="p-2 min-w-[180px]">
+                          <div className="text-text-secondary text-[11px] mb-1">{fmtFullDay(p.day)}</div>
+                          <div className="text-accent text-xs font-medium">
+                            {fmtNum(p.rolling)} <span className="text-text-muted font-normal">7-day eng.</span>
+                          </div>
+                          {p.posts > 0 && (
+                            <div className="text-green-400 text-xs mt-0.5">
+                              ✨ {p.posts} post{p.posts > 1 ? 's' : ''} published
+                              {p.outliers > 0 && ` · ${p.outliers} outlier${p.outliers > 1 ? 's' : ''}`}
+                            </div>
+                          )}
+                          {p.raw > 0 && (
+                            <div className="text-text-muted text-[11px] mt-0.5">
+                              Raw day total: {fmtNum(p.raw)}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="rolling"
+                    stroke="none"
+                    fill="url(#rollingFill)"
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="rolling"
+                    name="Engagement (7d rolling)"
+                    stroke="#e8935a"
+                    strokeWidth={2.5}
+                    dot={<PublicationDot />}
+                    activeDot={{ r: 7, fill: '#e8935a', stroke: '#1a1d2e', strokeWidth: 2 }}
+                    isAnimationActive={false}
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
             )}
           </div>
 
-          {/* Post volume + outliers */}
+          {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold">Post volume & outliers</h3>
-              <p className="text-xs text-text-muted">How many posts per week and how many crossed the outlier bar</p>
+              <h3 className="text-lg font-semibold">Publication cadence</h3>
+              <p className="text-xs text-text-muted">Posts published each day · green bars crossed the outlier bar</p>
             </div>
-            {weeklyChartData.length === 0 ? (
+            {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={weeklyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={dailyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-                  <XAxis dataKey="week" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
-                  <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
-                  <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: 'rgba(232,147,90,0.05)' }} />
-                  <Legend wrapperStyle={{ fontSize: '11px' }} />
-                  <Bar dataKey="posts" name="Posts" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="outliers" name="Outliers" fill="#34d399" radius={[4, 4, 0, 0]} />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fill: '#9ca3af', fontSize: 11 }}
+                    axisLine={{ stroke: '#2e3348' }}
+                    interval={xTickInterval}
+                  />
+                  <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={CHART_TOOLTIP_STYLE}
+                    cursor={{ fill: 'rgba(232,147,90,0.05)' }}
+                    formatter={(_v: any, _n: any, entry: any) => {
+                      const p = entry?.payload;
+                      if (!p) return ['', ''];
+                      return [`${p.posts} post(s), ${p.outliers} outlier(s)`, fmtFullDay(p.day)];
+                    }}
+                    labelFormatter={() => ''}
+                  />
+                  <Bar dataKey="posts" radius={[3, 3, 0, 0]}>
+                    {dailyChartData.map((d, i) => (
+                      <Cell key={i} fill={d.outliers > 0 ? '#34d399' : '#6366f1'} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             )}
