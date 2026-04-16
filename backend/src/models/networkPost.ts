@@ -11,6 +11,8 @@ export interface NetworkPost {
   comments_count: number;
   reposts_count: number;
   post_url: string | null;
+  content_type: string;
+  media_urls: string[];
   status: 'pending' | 'commented' | 'skipped';
   created_at: Date;
 }
@@ -62,12 +64,15 @@ export const NetworkPostModel = {
         await client.query(
           `INSERT INTO network_posts (
             network_creator_id, linkedin_post_id, content_text, hook_text,
-            published_at, likes_count, comments_count, reposts_count, post_url
-          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+            published_at, likes_count, comments_count, reposts_count, post_url,
+            content_type, media_urls
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
           ON CONFLICT (linkedin_post_id) DO UPDATE SET
             likes_count = EXCLUDED.likes_count,
             comments_count = EXCLUDED.comments_count,
-            reposts_count = EXCLUDED.reposts_count`,
+            reposts_count = EXCLUDED.reposts_count,
+            content_type = EXCLUDED.content_type,
+            media_urls = EXCLUDED.media_urls`,
           [
             post.network_creator_id,
             post.linkedin_post_id,
@@ -78,6 +83,8 @@ export const NetworkPostModel = {
             post.comments_count || 0,
             post.reposts_count || 0,
             post.post_url,
+            (post as any).content_type || 'text_only',
+            (post as any).media_urls || [],
           ]
         );
       }

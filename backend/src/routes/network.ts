@@ -336,6 +336,8 @@ async function fetchNetworkCreatorPosts(creatorId: string, linkedinId: string): 
       comments_count: normalized.comments_count,
       reposts_count: normalized.reposts_count,
       post_url: normalized.post_url,
+      content_type: normalized.content_type,
+      media_urls: unipileService.extractMediaUrls(raw),
     };
   });
 

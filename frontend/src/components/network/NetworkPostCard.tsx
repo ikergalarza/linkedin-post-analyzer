@@ -17,6 +17,8 @@ interface NetworkPostData {
   comments_count: number;
   reposts_count: number;
   post_url: string | null;
+  content_type: string;
+  media_urls: string[];
   status: 'pending' | 'commented' | 'skipped';
   creator_name: string | null;
   creator_tier: number;
@@ -70,6 +72,10 @@ export default function NetworkPostCard({ post, onUpdate }: Props) {
   const [showComments, setShowComments] = useState(post.comments.length > 0);
   const [copied, setCopied] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [expanded, setExpanded] = useState(false);
+
+  const TEXT_LIMIT = 300;
+  const isLong = (post.content_text?.length ?? 0) > TEXT_LIMIT;
 
   const handleStatusChange = async (status: string) => {
     try {
@@ -147,10 +153,40 @@ export default function NetworkPostCard({ post, onUpdate }: Props) {
 
       {/* Post content */}
       <div className="text-sm text-text-secondary leading-relaxed whitespace-pre-line">
-        {post.content_text && post.content_text.length > 400
-          ? post.content_text.substring(0, 400) + '...'
-          : post.content_text || '(No text content)'}
+        {post.content_text
+          ? expanded || !isLong
+            ? post.content_text
+            : post.content_text.substring(0, TEXT_LIMIT) + '...'
+          : '(No text content)'}
+        {isLong && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="ml-1 text-accent hover:text-accent-light text-xs font-medium"
+          >
+            {expanded ? 'Show less' : 'See more'}
+          </button>
+        )}
       </div>
+
+      {/* Media */}
+      {post.media_urls && post.media_urls.length > 0 && (
+        <div className={`flex gap-2 overflow-x-auto ${post.media_urls.length === 1 ? '' : 'pb-1'}`}>
+          {post.media_urls.map((url, i) => (
+            url.match(/\.(mp4|webm|mov)/i) ? (
+              <video key={i} src={url} controls className="max-h-56 rounded-lg border border-border" />
+            ) : (
+              <img key={i} src={url} alt="" className="max-h-56 rounded-lg border border-border object-cover" />
+            )
+          ))}
+        </div>
+      )}
+
+      {/* Content type badge */}
+      {post.content_type && post.content_type !== 'text_only' && (
+        <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-bg-primary text-text-muted border border-border capitalize">
+          {post.content_type.replace('_', ' ')}
+        </span>
+      )}
 
       {/* Metrics */}
       <div className="flex items-center gap-4 text-xs text-text-muted">

@@ -204,6 +204,10 @@ const migration = `
       'personal_experience','provocative_question','plot_twist'
     ));
 
+  -- v15: Media URLs + content type for network posts (view creative without leaving app)
+  ALTER TABLE network_posts ADD COLUMN IF NOT EXISTS content_type TEXT DEFAULT 'text_only';
+  ALTER TABLE network_posts ADD COLUMN IF NOT EXISTS media_urls TEXT[] DEFAULT '{}';
+
   -- v13: Managed accounts flag for the BI dashboard
   ALTER TABLE creators ADD COLUMN IF NOT EXISTS is_managed BOOLEAN DEFAULT FALSE;
   CREATE INDEX IF NOT EXISTS idx_creators_is_managed ON creators(is_managed);

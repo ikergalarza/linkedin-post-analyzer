@@ -283,6 +283,46 @@ export class UnipileService {
     return `https://www.linkedin.com/feed/update/${postId}/`;
   }
 
+  extractMediaUrls(raw: any): string[] {
+    const urls = new Set<string>();
+    if (!raw || typeof raw !== 'object') return [];
+
+    const TEXT_KEYS = new Set(['text', 'content', 'body', 'description', 'caption', 'hook_text', 'content_text']);
+    const MEDIA_KEYS = new Set([
+      'attachments', 'attachment', 'media', 'medias', 'images', 'image',
+      'image_url', 'image_urls', 'img', 'img_url', 'imgs',
+      'photo', 'photos', 'picture', 'pictures',
+      'thumbnail', 'thumbnail_url', 'thumbnails',
+      'video', 'videos', 'video_url',
+    ]);
+    const MEDIA_EXT_RE = /\.(jpe?g|png|webp|gif|mp4|webm|mov)(\?|#|$)/i;
+
+    const walk = (node: any, underMedia: boolean) => {
+      if (!node) return;
+      if (typeof node === 'string') {
+        if (underMedia && MEDIA_EXT_RE.test(node)) urls.add(node);
+        return;
+      }
+      if (Array.isArray(node)) { for (const el of node) walk(el, underMedia); return; }
+      if (typeof node !== 'object') return;
+      for (const urlKey of ['url', 'download_url', 'image_url', 'thumbnail_url', 'video_url', 'source_url', 'src']) {
+        const v = node[urlKey];
+        if (typeof v === 'string' && underMedia && MEDIA_EXT_RE.test(v)) urls.add(v);
+      }
+      for (const [k, v] of Object.entries(node)) {
+        if (TEXT_KEYS.has(k)) continue;
+        walk(v, underMedia || MEDIA_KEYS.has(k));
+      }
+    };
+
+    walk(raw, false);
+    return [...urls];
+  }
+
+  detectPostContentType(raw: UnipilePost): string {
+    return this.detectContentType(raw);
+  }
+
   private detectContentType(raw: UnipilePost): string {
     if (raw.poll) return 'poll';
     if (raw.article) return 'article';
