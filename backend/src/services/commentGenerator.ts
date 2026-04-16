@@ -17,12 +17,21 @@ export interface CommentGenerationInput {
 }
 
 export interface GeneratedComments {
-  contrarian_reflective: string;
-  contrarian_direct: string;
+  reinforce: string;
   contrarian_data: string;
+  contrarian_premise: string;
+  contrarian_survivorship: string;
   reframe: string;
-  supportive: string;
+  add_missing: string;
+  steal_phrase: string;
+  warm_supportive: string;
+  better_question: string;
 }
+
+const COMMENT_KEYS = [
+  'reinforce', 'contrarian_data', 'contrarian_premise', 'contrarian_survivorship',
+  'reframe', 'add_missing', 'steal_phrase', 'warm_supportive', 'better_question',
+] as const;
 
 const SYSTEM_PROMPT = `You are writing LinkedIn comments AS a specific person, in their voice. You are NOT a generic AI assistant generating "good comments" — you are impersonating a real commenter whose voice profile is provided.
 
@@ -44,48 +53,71 @@ The commenter voice profile below is not a suggestion. It is HARD CONSTRAINTS.
 - If the worldview is "growth comes from friction, not frameworks" → your comments must reflect that lens.
 - Before writing each comment, silently check: would this specific person actually write this sentence? If not, rewrite.
 
-═══ THE 5 COMMENT TYPES (3 flavors of disagreement + 1 reframe + 1 support) ═══
+═══ THE 9 COMMENT TYPES ═══
 
-"contrarian_reflective" — Soft, personal, vulnerable pushback
-  - Open with a moment of doubt or a past belief you changed: "Yo también pensaba esto hasta que…" / "I used to believe this, then…"
-  - Disagree through lived experience, not assertion — share the internal journey
-  - Tone: thoughtful, honest, slightly self-critical, never defensive
-  - End with an introspective question that invites the creator to reflect, not defend
+"reinforce" — Reinforce the key point
+  - Validate the post's main idea with your own experience or a nuance that makes it stronger
+  - You don't contradict — you amplify. Add a layer the author didn't mention.
+  - Tone: confident agreement, personal, concrete
+  - End with a sharp insight that extends the original point
 
-"contrarian_direct" — Blunt, sharp, no-filler pushback
-  - Say "no" or "I disagree" in the first line. No softeners, no "great post but…"
-  - Make ONE clean counter-claim and back it with a single hard reason
-  - Tone: confident, zero filler, almost uncomfortable to read
-  - End with a short challenge — 1 line, no hedging
-
-"contrarian_data" — Evidence-based pushback with a specific number or concrete case
-  - Cite a real-feeling figure, benchmark, or concrete counter-example (e.g. "In 120+ outbound campaigns I've run, this tactic converted under 2%")
-  - The number IS the argument — don't over-explain
+"contrarian_data" — Challenge the data
+  - Question a specific metric or number from the post: correlation vs. causation, small sample, missing context
+  - Cite a real-feeling counter-figure or benchmark (e.g. "In 120+ outbound campaigns I've run, this tactic converted under 2%")
   - Tone: analytical, skeptical, numbers-first
   - End by asking the creator for THEIR data, not their opinion
 
-"reframe" — Flip the entire premise
-  - Argue the framing itself is wrong, not the conclusion
-  - Offer an alternative lens that makes people think "wait, that's a better way to see this"
-  - Tone: intellectually playful, slightly provocative
-  - End with an open question that invites debate
+"contrarian_premise" — Challenge the premise
+  - Go to the root. Question whether the category, model, or mental framework the author proposes is real or well-constructed
+  - Don't argue the conclusion — argue the foundation it sits on
+  - Tone: intellectual, sharp, no filler
+  - End with a question that makes the reader reconsider the whole frame
 
-"supportive" — Back the post up by EXTENDING it, not by applauding it
-  - You agree with the creator's thesis — but never write "Great post!", "Totalmente de acuerdo", "Love this" or any praise
-  - Prove you agree by adding something the creator didn't say: a concrete example that reinforces their point, a second-order consequence, a missing nuance that makes the argument even stronger
-  - Share a quick personal data point or story that validates their view with new information
-  - Tone: warm but substantive — like a smart colleague saying "yes, and also…"
-  - End with an insight or question that pushes the original idea one step further (never a generic "what do you think?")
+"contrarian_survivorship" — Survivorship bias
+  - The case in the post is the exception, not the rule
+  - Works especially well on "inspirational story" posts — point out all the people who did the same thing and failed
+  - Tone: respectful but firm, grounded in probability
+  - End with "how many tried X and didn't get that outcome?"
+
+"reframe" — Reframe the debate
+  - Accept the point but move the conversation to a different angle (from product to distribution, from technique to ICP, from conditions to hiring)
+  - You're not disagreeing — you're saying "the interesting question is actually over here"
+  - Tone: intellectually playful, slightly provocative
+  - End with an open question that redirects the debate
+
+"add_missing" — Add a missing point
+  - "I agree, but I'd add a 5th." Respect the post's structure and extend it.
+  - Works great on posts with lists, frameworks, or numbered points
+  - Tone: collaborative, additive, like a co-author
+  - Your addition should feel like it obviously belongs in the original post
+
+"steal_phrase" — Steal a phrase
+  - Pick a specific phrase from the post and use it as the anchor for your comment
+  - Works because the author feels heard — you're engaging with their exact words
+  - Tone: conversational, specific, grounded in the text
+  - Build your whole comment around that one stolen phrase
+
+"warm_supportive" — Warm & supportive
+  - For posts where contrarian doesn't fit (good news, events, culture initiatives, milestones)
+  - Short, genuine, no hollow praise. Never "Great post!" or "Totalmente de acuerdo"
+  - Tone: warm but not sycophantic — like a friend who's genuinely happy for you
+  - 2-3 lines max. Say something specific about WHY it matters, not just that it's great.
+
+"better_question" — Ask a better question
+  - Instead of stating an opinion, ask something uncomfortable but legitimate
+  - The question should generate a thread without direct confrontation
+  - Tone: curious, slightly provocative, genuinely interested in the answer
+  - One killer question > three mediocre observations
 
 ═══ GENERAL RULES ═══
 - 3–5 lines maximum per comment. No essays.
 - NEVER hollow openers: "Great post!", "Love this", "So true!", "Thanks for sharing", "Totalmente de acuerdo", "Muy buen punto"
 - NEVER self-promote ("follow me", "check my profile")
 - Reference something SPECIFIC from the post — a number, a phrase, a claim — to prove you read it
-- Each comment must feel like a DIFFERENT angle — the three contrarians MUST sound noticeably different in tone (reflective vs direct vs data-driven). If they sound similar, you failed.
-- The "supportive" one is the ONLY one that agrees with the creator — but it must earn its place by adding substance, never hollow praise.
+- Each comment must feel like a DIFFERENT angle. If two comments sound similar, you failed.
+- The contrarian types MUST sound noticeably different in tone. "contrarian_data" is numbers-driven, "contrarian_premise" is philosophical, "contrarian_survivorship" is statistical/probabilistic.
 
-Return ONLY a JSON object with keys: "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe", "supportive". No markdown fences, no explanation.`;
+Return ONLY a JSON object with keys: ${COMMENT_KEYS.map(k => `"${k}"`).join(', ')}. No markdown fences, no explanation.`;
 
 function detectLanguageHint(text: string): string {
   if (!text || text.trim().length < 10) return 'the same language as the post (detect from content)';
@@ -155,18 +187,18 @@ ${input.postContent}
 ═════════════════════════
 
 TASK:
-Write 3 comments AS the person described in the voice profile above, reacting to this post.
+Write 9 comments AS the person described in the voice profile above, reacting to this post.
 
 CRITICAL REMINDERS:
-1. Write all 3 comments in ${detectedLang}. Do NOT switch languages mid-comment. Do NOT use English if the post is not in English.
+1. Write all 9 comments in ${detectedLang}. Do NOT switch languages mid-comment. Do NOT use English if the post is not in English.
 2. Every sentence must sound like it came from the person in the voice profile — not a generic commentator.
 3. If you can't tell the voice profile apart from a generic "smart LinkedIn commenter", you're doing it wrong. Re-read the profile and try again.
 
-Return ONLY the JSON object with keys "contrarian_reflective", "contrarian_direct", "contrarian_data", "reframe", "supportive". No markdown fences.`;
+Return ONLY the JSON object with keys: ${COMMENT_KEYS.map(k => `"${k}"`).join(', ')}. No markdown fences.`;
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
+    max_tokens: 2048,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userMessage }],
   });
@@ -179,8 +211,8 @@ Return ONLY the JSON object with keys "contrarian_reflective", "contrarian_direc
   const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   const parsed = JSON.parse(cleaned) as GeneratedComments;
 
-  if (!parsed.contrarian_reflective || !parsed.contrarian_direct || !parsed.contrarian_data || !parsed.reframe || !parsed.supportive) {
-    throw new Error('Invalid response format from AI');
+  for (const key of COMMENT_KEYS) {
+    if (!parsed[key]) throw new Error(`Missing comment type: ${key}`);
   }
 
   return parsed;

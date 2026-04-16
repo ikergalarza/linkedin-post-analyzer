@@ -38,15 +38,22 @@ const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
 };
 
 const ANGLE_META: Record<string, { emoji: string; label: string }> = {
-  contrarian_reflective: { emoji: '🪞', label: 'Contrarian · reflective & personal' },
+  reinforce: { emoji: '💪', label: 'Reinforce key point' },
+  contrarian_data: { emoji: '📊', label: 'Challenge the data' },
+  contrarian_premise: { emoji: '🧱', label: 'Challenge the premise' },
+  contrarian_survivorship: { emoji: '🎲', label: 'Survivorship bias' },
+  reframe: { emoji: '🔄', label: 'Reframe the debate' },
+  add_missing: { emoji: '➕', label: 'Add a missing point' },
+  steal_phrase: { emoji: '🎯', label: 'Steal a phrase' },
+  warm_supportive: { emoji: '🤝', label: 'Warm & supportive' },
+  better_question: { emoji: '❓', label: 'Ask a better question' },
+  // legacy
+  contrarian_reflective: { emoji: '🪞', label: 'Contrarian · reflective' },
   contrarian_direct: { emoji: '⚡', label: 'Contrarian · direct' },
-  contrarian_data: { emoji: '📊', label: 'Contrarian · data' },
-  reframe: { emoji: '🔄', label: 'Reframe' },
-  supportive: { emoji: '🤝', label: 'Supportive · extend the idea' },
-  // legacy angle values kept working
-  personal_experience: { emoji: '🪞', label: 'Contrarian · reflective & personal' },
-  provocative_question: { emoji: '⚡', label: 'Contrarian · direct' },
-  plot_twist: { emoji: '🔄', label: 'Reframe' },
+  supportive: { emoji: '🤝', label: 'Supportive' },
+  personal_experience: { emoji: '🪞', label: 'Personal experience' },
+  provocative_question: { emoji: '❓', label: 'Provocative question' },
+  plot_twist: { emoji: '🔄', label: 'Plot twist' },
 };
 
 function angleMeta(angle: string): { emoji: string; label: string } {

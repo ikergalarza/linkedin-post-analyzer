@@ -194,9 +194,13 @@ const migration = `
 
   -- v12: Network comment angles redesigned (3 contrarians + reframe)
   ALTER TABLE network_comments DROP CONSTRAINT IF EXISTS network_comments_angle_check;
+
+  -- v14: 9 comment types (reinforce, 3 contrarian, reframe, add_missing, steal_phrase, warm_supportive, better_question)
   ALTER TABLE network_comments ADD CONSTRAINT network_comments_angle_check
     CHECK (angle IN (
-      'contrarian_reflective','contrarian_direct','contrarian_data','reframe','supportive',
+      'reinforce','contrarian_data','contrarian_premise','contrarian_survivorship',
+      'reframe','add_missing','steal_phrase','warm_supportive','better_question',
+      'contrarian_reflective','contrarian_direct','supportive',
       'personal_experience','provocative_question','plot_twist'
     ));
 
