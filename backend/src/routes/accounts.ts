@@ -330,4 +330,59 @@ router.get('/analytics', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/accounts/live-posts — posts from managed accounts published < 24h ago,
+// ordered by published_at DESC. The 6h window is what the monitor actually tracks,
+// but we show 24h so the user can keep an eye on fresh content past the live window.
+router.get('/live-posts', async (_req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT
+         p.id, p.content_text, p.hook_text, p.content_type, p.published_at,
+         p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+         p.engagement_score, p.post_url,
+         c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
+         (SELECT COUNT(*)::int FROM post_snapshots s WHERE s.post_id = p.id) AS snapshot_count,
+         (NOW() - p.published_at < INTERVAL '6 hours') AS is_live
+       FROM posts p
+       JOIN creators c ON c.id = p.creator_id
+       WHERE c.is_managed = TRUE
+         AND c.unipile_account_id IS NOT NULL
+         AND p.published_at IS NOT NULL
+         AND p.published_at > NOW() - INTERVAL '24 hours'
+       ORDER BY p.published_at DESC`
+    );
+    res.json(rows);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/posts/:id/snapshots — time-series for a single post's
+// impressions/engagement growth during its first 6h.
+router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
+  try {
+    const postQ = await pool.query(
+      `SELECT p.id, p.content_text, p.hook_text, p.published_at,
+              p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+              p.post_url, c.name AS creator_name, c.profile_image_url AS creator_image
+       FROM posts p JOIN creators c ON c.id = p.creator_id
+       WHERE p.id = $1`,
+      [req.params.id]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+
+    const snapsQ = await pool.query(
+      `SELECT captured_at, impressions_count, likes_count, comments_count, reposts_count
+       FROM post_snapshots
+       WHERE post_id = $1
+       ORDER BY captured_at ASC`,
+      [req.params.id]
+    );
+
+    res.json({ post: postQ.rows[0], snapshots: snapsQ.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

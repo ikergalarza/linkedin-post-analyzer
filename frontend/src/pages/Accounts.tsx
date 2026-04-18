@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useApi, apiPatch, apiPost } from '../hooks/useApi';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -89,6 +89,38 @@ interface TopPost {
   hook_text: string | null;
   creator_name: string | null;
   creator_image: string | null;
+}
+
+interface LivePost {
+  id: string;
+  content_text: string | null;
+  hook_text: string | null;
+  content_type: string;
+  published_at: string;
+  likes_count: number;
+  comments_count: number;
+  reposts_count: number;
+  impressions_count: number | null;
+  engagement_score: number;
+  post_url: string | null;
+  creator_id: string;
+  creator_name: string | null;
+  creator_image: string | null;
+  snapshot_count: number;
+  is_live: boolean;
+}
+
+interface Snapshot {
+  captured_at: string;
+  impressions_count: number | null;
+  likes_count: number;
+  comments_count: number;
+  reposts_count: number;
+}
+
+interface SnapshotsResponse {
+  post: LivePost;
+  snapshots: Snapshot[];
 }
 
 interface PerAccountRow {
@@ -215,6 +247,13 @@ export default function Accounts() {
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
+  const { data: livePosts, refetch: refetchLive } = useApi<LivePost[]>('/api/accounts/live-posts');
+
+  // Auto-refresh live posts every 2 minutes so new snapshots appear without a page reload
+  useEffect(() => {
+    const timer = setInterval(() => refetchLive(), 2 * 60 * 1000);
+    return () => clearInterval(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const analyticsPath = `/api/accounts/analytics?days=${days}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
   const { data: analytics, loading: loadingAnalytics } = useApi<Analytics>(analyticsPath);
@@ -453,6 +492,37 @@ export default function Accounts() {
           <p className="text-4xl mb-4">📈</p>
           <p className="mb-1">No accounts selected yet.</p>
           <p className="text-xs">Use "Manage accounts" above to pick the creators you're managing.</p>
+        </div>
+      )}
+
+      {/* Live posts — monitored growth curve for posts published in the last 24h */}
+      {hasAccounts && livePosts && livePosts.length > 0 && (
+        <div className="bg-bg-card border border-border rounded-xl p-5">
+          <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <span className="relative flex items-center">
+                  <span className="absolute inline-flex h-2.5 w-2.5 rounded-full bg-red-400 opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                </span>
+                Live posts
+              </h3>
+              <p className="text-xs text-text-muted">
+                Posts from the last 24h · monitor captures impressions/engagement every 15 min during the first 6h
+              </p>
+            </div>
+            <button
+              onClick={() => refetchLive()}
+              className="text-xs text-text-muted hover:text-accent transition-colors"
+            >
+              ↻ Refresh
+            </button>
+          </div>
+          <div className="space-y-3">
+            {livePosts.map((p) => (
+              <LivePostRow key={p.id} post={p} />
+            ))}
+          </div>
         </div>
       )}
 
@@ -905,6 +975,167 @@ export default function Accounts() {
 
       {loadingAnalytics && hasAccounts && (
         <p className="text-center text-text-muted text-sm py-4">Loading analytics…</p>
+      )}
+    </div>
+  );
+}
+
+function minutesSince(iso: string): number {
+  return Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+}
+
+function fmtAge(iso: string): string {
+  const m = minutesSince(iso);
+  if (m < 60) return `${m}m ago`;
+  const h = m / 60;
+  if (h < 24) return `${h.toFixed(1)}h ago`;
+  return `${Math.round(h / 24)}d ago`;
+}
+
+function LivePostRow({ post }: { post: LivePost }) {
+  const [open, setOpen] = useState(false);
+  const { data, loading, refetch } = useApi<SnapshotsResponse>(open ? `/api/accounts/posts/${post.id}/snapshots` : null);
+
+  // Refresh the snapshot chart every 2 min while expanded and still in live window
+  useEffect(() => {
+    if (!open || !post.is_live) return;
+    const timer = setInterval(() => refetch(), 2 * 60 * 1000);
+    return () => clearInterval(timer);
+  }, [open, post.is_live]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const curveData = useMemo(() => {
+    if (!data?.snapshots.length) return [];
+    const publishedMs = new Date(post.published_at).getTime();
+    return data.snapshots.map((s) => {
+      const ageMin = Math.max(0, Math.round((new Date(s.captured_at).getTime() - publishedMs) / 60000));
+      return {
+        ageMin,
+        label: ageMin < 60 ? `${ageMin}m` : `${(ageMin / 60).toFixed(1)}h`,
+        impressions: s.impressions_count ?? 0,
+        likes: s.likes_count,
+        comments: s.comments_count,
+        reposts: s.reposts_count,
+      };
+    });
+  }, [data, post.published_at]);
+
+  return (
+    <div className={`rounded-lg border ${post.is_live ? 'border-red-500/20 bg-red-500/5' : 'border-border bg-bg-primary'}`}>
+      <div className="flex items-start gap-3 p-3">
+        {post.creator_image ? (
+          <img src={post.creator_image} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-muted text-xs flex-shrink-0">
+            {(post.creator_name || '?')[0]}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-xs text-text-muted mb-1 flex-wrap">
+            <span className="text-text-secondary font-medium">{post.creator_name}</span>
+            <span>·</span>
+            <span>{fmtAge(post.published_at)}</span>
+            {post.is_live && (
+              <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 text-[10px] font-medium">
+                LIVE
+              </span>
+            )}
+            <span className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]">
+              {post.snapshot_count} snap{post.snapshot_count === 1 ? '' : 's'}
+            </span>
+          </div>
+          <p className="text-sm text-text-primary line-clamp-2">{truncate(post.hook_text || post.content_text, 180)}</p>
+          <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
+            <span>{fmtNum(post.likes_count)} likes</span>
+            <span>{fmtNum(post.comments_count)} comments</span>
+            <span>{fmtNum(post.reposts_count)} reposts</span>
+            {post.impressions_count != null && (
+              <span className="text-accent">👁️ {fmtNum(post.impressions_count)}</span>
+            )}
+            <span className="text-accent font-medium">{fmtNum(post.engagement_score)} eng</span>
+            <button
+              onClick={() => setOpen((v) => !v)}
+              className="ml-auto text-accent hover:text-accent-light"
+            >
+              {open ? 'Hide curve' : 'Show curve'}
+            </button>
+            {post.post_url && (
+              <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
+                View →
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+      {open && (
+        <div className="px-3 pb-3">
+          {loading && !data ? (
+            <p className="text-xs text-text-muted py-6 text-center">Loading snapshots…</p>
+          ) : curveData.length === 0 ? (
+            <p className="text-xs text-text-muted py-6 text-center">
+              No snapshots yet. The monitor captures every 15 min during the first 6h.
+            </p>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+                <defs>
+                  <linearGradient id={`liveImp-${post.id}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
+                <XAxis dataKey="label" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
+                <YAxis
+                  yAxisId="left"
+                  tick={{ fill: '#7dd3fc', fontSize: 11 }}
+                  axisLine={{ stroke: '#2e3348' }}
+                  tickFormatter={(v) => fmtNum(Number(v))}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tick={{ fill: '#e8935a', fontSize: 11 }}
+                  axisLine={{ stroke: '#2e3348' }}
+                  tickFormatter={(v) => fmtNum(Number(v))}
+                />
+                <Tooltip
+                  contentStyle={CHART_TOOLTIP_STYLE}
+                  content={({ active, payload }: any) => {
+                    if (!active || !payload || payload.length === 0) return null;
+                    const p = payload[0].payload;
+                    return (
+                      <div style={CHART_TOOLTIP_STYLE} className="p-2">
+                        <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
+                        <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
+                        <div className="text-accent text-xs mt-0.5">
+                          {p.likes} likes · {p.comments} comments · {p.reposts} reposts
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
+                <Area
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="impressions"
+                  stroke="#38bdf8"
+                  strokeWidth={2}
+                  fill={`url(#liveImp-${post.id})`}
+                  isAnimationActive={false}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="likes"
+                  stroke="#e8935a"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#e8935a' }}
+                  isAnimationActive={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          )}
+        </div>
       )}
     </div>
   );

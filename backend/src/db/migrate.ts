@@ -215,6 +215,19 @@ const migration = `
   -- v16: Per-creator Unipile account ID override — lets each managed account
   -- be scraped with its own authenticated Unipile account so impressions come through.
   ALTER TABLE creators ADD COLUMN IF NOT EXISTS unipile_account_id TEXT;
+
+  -- v17: Post snapshots — time-series rows captured every 15 min during the
+  -- first 6 hours after publication, so we can plot the impressions/engagement curve.
+  CREATE TABLE IF NOT EXISTS post_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    captured_at TIMESTAMPTZ DEFAULT NOW(),
+    impressions_count INTEGER,
+    likes_count INTEGER,
+    comments_count INTEGER,
+    reposts_count INTEGER
+  );
+  CREATE INDEX IF NOT EXISTS idx_snapshots_post ON post_snapshots(post_id, captured_at);
 `;
 
 export async function runMigrations() {

@@ -23,6 +23,7 @@ import postCreatorProfileRouter from './routes/postCreatorProfile';
 import discoverRouter from './routes/discover';
 import ideasRouter from './routes/ideas';
 import accountsRouter from './routes/accounts';
+import { startPostMonitor } from './services/postMonitor';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -77,6 +78,7 @@ runMigrations()
     app.listen(PORT, () => {
       console.log(`Backend running on port ${PORT}`);
     });
+    startPostMonitor();
   })
   .catch((err) => {
     console.error('Failed to run migrations:', err);
