@@ -565,6 +565,12 @@ export default function Accounts() {
                     <span className="w-2.5 h-2.5 rounded-full bg-green-400 border border-bg-primary" />
                     <span>outlier</span>
                   </span>
+                  {analytics.totals.total_impressions > 0 && (
+                    <span className="ml-2 inline-flex items-center gap-1">
+                      <span className="w-4 h-[2px] bg-sky-400" />
+                      <span>impressions (right axis)</span>
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -578,6 +584,10 @@ export default function Accounts() {
                       <stop offset="0%" stopColor="#e8935a" stopOpacity={0.35} />
                       <stop offset="100%" stopColor="#e8935a" stopOpacity={0} />
                     </linearGradient>
+                    <linearGradient id="impressionsFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.18} />
+                      <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+                    </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
                   <XAxis
@@ -586,18 +596,32 @@ export default function Accounts() {
                     axisLine={{ stroke: '#2e3348' }}
                     interval={xTickInterval}
                   />
-                  <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
+                  <YAxis yAxisId="left" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
+                  {analytics.totals.total_impressions > 0 && (
+                    <YAxis
+                      yAxisId="right"
+                      orientation="right"
+                      tick={{ fill: '#7dd3fc', fontSize: 11 }}
+                      axisLine={{ stroke: '#2e3348' }}
+                      tickFormatter={(v) => fmtNum(Number(v))}
+                    />
+                  )}
                   <Tooltip
                     contentStyle={CHART_TOOLTIP_STYLE}
                     content={({ active, payload }: any) => {
                       if (!active || !payload || payload.length === 0) return null;
                       const p = payload[0].payload;
                       return (
-                        <div style={CHART_TOOLTIP_STYLE} className="p-2 min-w-[180px]">
+                        <div style={CHART_TOOLTIP_STYLE} className="p-2 min-w-[200px]">
                           <div className="text-text-secondary text-[11px] mb-1">{fmtFullDay(p.day)}</div>
                           <div className="text-accent text-xs font-medium">
                             {fmtNum(p.rolling)} <span className="text-text-muted font-normal">7-day eng.</span>
                           </div>
+                          {p.rollingImpressions > 0 && (
+                            <div className="text-sky-400 text-xs mt-0.5">
+                              👁️ {fmtNum(p.rollingImpressions)} <span className="text-text-muted font-normal">7-day impressions</span>
+                            </div>
+                          )}
                           {p.posts > 0 && (
                             <div className="text-green-400 text-xs mt-0.5">
                               ✨ {p.posts} post{p.posts > 1 ? 's' : ''} published
@@ -606,7 +630,7 @@ export default function Accounts() {
                           )}
                           {p.raw > 0 && (
                             <div className="text-text-muted text-[11px] mt-0.5">
-                              Raw day total: {fmtNum(p.raw)}
+                              Raw day total: {fmtNum(p.raw)} eng · {fmtNum(p.rawImpressions)} impressions
                             </div>
                           )}
                         </div>
@@ -614,13 +638,25 @@ export default function Accounts() {
                     }}
                   />
                   <Area
+                    yAxisId="left"
                     type="monotone"
                     dataKey="rolling"
                     stroke="none"
                     fill="url(#rollingFill)"
                     isAnimationActive={false}
                   />
+                  {analytics.totals.total_impressions > 0 && (
+                    <Area
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="rollingImpressions"
+                      stroke="none"
+                      fill="url(#impressionsFill)"
+                      isAnimationActive={false}
+                    />
+                  )}
                   <Line
+                    yAxisId="left"
                     type="monotone"
                     dataKey="rolling"
                     name="Engagement (7d rolling)"
@@ -630,6 +666,20 @@ export default function Accounts() {
                     activeDot={{ r: 7, fill: '#e8935a', stroke: '#1a1d2e', strokeWidth: 2 }}
                     isAnimationActive={false}
                   />
+                  {analytics.totals.total_impressions > 0 && (
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="rollingImpressions"
+                      name="Impressions (7d rolling)"
+                      stroke="#38bdf8"
+                      strokeWidth={2}
+                      strokeDasharray="4 3"
+                      dot={false}
+                      activeDot={{ r: 6, fill: '#38bdf8', stroke: '#1a1d2e', strokeWidth: 2 }}
+                      isAnimationActive={false}
+                    />
+                  )}
                 </ComposedChart>
               </ResponsiveContainer>
             )}
