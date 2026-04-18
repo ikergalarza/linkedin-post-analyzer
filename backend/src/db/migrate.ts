@@ -211,6 +211,10 @@ const migration = `
   -- v13: Managed accounts flag for the BI dashboard
   ALTER TABLE creators ADD COLUMN IF NOT EXISTS is_managed BOOLEAN DEFAULT FALSE;
   CREATE INDEX IF NOT EXISTS idx_creators_is_managed ON creators(is_managed);
+
+  -- v16: Per-creator Unipile account ID override — lets each managed account
+  -- be scraped with its own authenticated Unipile account so impressions come through.
+  ALTER TABLE creators ADD COLUMN IF NOT EXISTS unipile_account_id TEXT;
 `;
 
 export async function runMigrations() {

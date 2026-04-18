@@ -1,5 +1,9 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db';
+import { unipileService } from '../services/unipile';
+import { enrichPost, recalculateOutliers } from '../services/engagement';
+import { PostModel } from '../models/post';
+import { CreatorModel } from '../models/creator';
 
 const router = Router();
 
@@ -9,7 +13,7 @@ router.get('/', async (_req: Request, res: Response) => {
     const { rows } = await pool.query(
       `SELECT
         c.id, c.name, c.headline, c.profile_image_url, c.followers_count,
-        c.location, c.last_scraped_at, c.is_managed,
+        c.location, c.last_scraped_at, c.is_managed, c.unipile_account_id, c.linkedin_id,
         COUNT(p.id)::int AS total_posts,
         COUNT(p.id) FILTER (WHERE p.is_outlier = TRUE)::int AS total_outliers,
         COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
@@ -41,20 +45,97 @@ router.get('/candidates', async (_req: Request, res: Response) => {
   }
 });
 
-// PATCH /api/accounts/:id — toggle is_managed
+// PATCH /api/accounts/:id — toggle is_managed and/or set unipile_account_id
 router.patch('/:id', async (req: Request, res: Response) => {
   try {
-    const { is_managed } = req.body;
-    if (typeof is_managed !== 'boolean') {
-      return res.status(400).json({ error: 'is_managed (boolean) required' });
+    const { is_managed, unipile_account_id } = req.body;
+    const sets: string[] = [];
+    const values: any[] = [];
+    let idx = 1;
+
+    if (typeof is_managed === 'boolean') {
+      sets.push(`is_managed = $${idx++}`);
+      values.push(is_managed);
     }
+    if (unipile_account_id !== undefined) {
+      const trimmed = typeof unipile_account_id === 'string' ? unipile_account_id.trim() : null;
+      sets.push(`unipile_account_id = $${idx++}`);
+      values.push(trimmed || null);
+    }
+    if (sets.length === 0) {
+      return res.status(400).json({ error: 'Provide is_managed or unipile_account_id' });
+    }
+
+    values.push(req.params.id);
     const { rows } = await pool.query(
-      `UPDATE creators SET is_managed = $1 WHERE id = $2 RETURNING id, is_managed`,
-      [is_managed, req.params.id]
+      `UPDATE creators SET ${sets.join(', ')} WHERE id = $${idx} RETURNING id, is_managed, unipile_account_id`,
+      values
     );
     if (rows.length === 0) return res.status(404).json({ error: 'Creator not found' });
     res.json(rows[0]);
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/:id/scrape — re-scrape posts using this account's unipile_account_id
+// so impressions come through (LinkedIn only returns impressions for the authenticated account).
+router.post('/:id/scrape', async (req: Request, res: Response) => {
+  try {
+    const creator = await CreatorModel.findById(req.params.id as string);
+    if (!creator) return res.status(404).json({ error: 'Creator not found' });
+
+    const accountIdOverride = (creator as any).unipile_account_id as string | null;
+    if (!accountIdOverride) {
+      return res.status(400).json({ error: 'Set a Unipile account ID for this creator first' });
+    }
+
+    // Re-fetch profile with this account so we can refresh linkedin_id if needed
+    let providerId = creator.linkedin_id;
+    if (!providerId) {
+      const rawProfile = await unipileService.getProfile(creator.linkedin_url, accountIdOverride);
+      const normalized = unipileService.normalizeProfile(rawProfile, creator.linkedin_url);
+      providerId = normalized.linkedin_id;
+      if (providerId) {
+        await CreatorModel.update(creator.id, { linkedin_id: providerId } as any);
+      }
+    }
+    if (!providerId) return res.status(422).json({ error: 'Could not resolve LinkedIn provider ID' });
+
+    const rawPosts = await unipileService.getPosts(providerId, undefined, accountIdOverride);
+
+    const originalPosts = rawPosts.filter((raw: any) => {
+      if (raw.type === 'repost' || raw.type === 'RESHARE' || raw.type === 'reshare') return false;
+      if (raw.is_repost || raw.is_reshare) return false;
+      if (raw.reshared_post || raw.original_post) return false;
+      return true;
+    });
+
+    if (originalPosts.length === 0) {
+      await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
+      return res.json({ scraped: 0, with_impressions: 0 });
+    }
+
+    let posts = originalPosts.map((raw) => {
+      const normalized = unipileService.normalizePost(raw, creator.id);
+      const enriched = enrichPost(normalized);
+      return { ...normalized, ...enriched };
+    });
+
+    const withOutliers = recalculateOutliers(posts);
+    posts = withOutliers.map((o, i) => ({
+      ...posts[i],
+      outlier_ratio: o.outlier_ratio,
+      is_outlier: o.is_outlier,
+    }));
+
+    await PostModel.bulkUpsert(posts);
+    await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
+
+    const withImpressions = posts.filter((p: any) => p.impressions_count != null).length;
+    res.json({ scraped: posts.length, with_impressions: withImpressions });
+  } catch (err: any) {
+    console.error('[accounts/scrape]', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -86,7 +167,10 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(ROUND(MAX(p.engagement_score))::int, 0) AS max_engagement,
           COALESCE(SUM(p.likes_count)::int, 0) AS total_likes,
           COALESCE(SUM(p.comments_count)::int, 0) AS total_comments,
-          COALESCE(SUM(p.reposts_count)::int, 0) AS total_reposts
+          COALESCE(SUM(p.reposts_count)::int, 0) AS total_reposts,
+          COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions,
+          COUNT(*) FILTER (WHERE p.impressions_count IS NOT NULL)::int AS posts_with_impressions,
+          COALESCE(ROUND(AVG(p.impressions_count) FILTER (WHERE p.impressions_count IS NOT NULL))::int, 0) AS avg_impressions
          FROM posts p
          WHERE ${dateCondition} AND ${s.sql}`,
         params: [...baseParams, ...s.params],
@@ -113,6 +197,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
       total_likes: { current: curr.total_likes, previous: prev.total_likes, delta_pct: deltaPct(curr.total_likes, prev.total_likes) },
       total_comments: { current: curr.total_comments, previous: prev.total_comments, delta_pct: deltaPct(curr.total_comments, prev.total_comments) },
       total_reposts: { current: curr.total_reposts, previous: prev.total_reposts, delta_pct: deltaPct(curr.total_reposts, prev.total_reposts) },
+      total_impressions: { current: Number(curr.total_impressions), previous: Number(prev.total_impressions), delta_pct: deltaPct(Number(curr.total_impressions), Number(prev.total_impressions)) },
+      avg_impressions: { current: curr.avg_impressions, previous: prev.avg_impressions, delta_pct: deltaPct(curr.avg_impressions, prev.avg_impressions) },
     });
 
     // Gap-filled daily series with 7-day rolling sum of total engagement.
@@ -129,7 +215,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COUNT(*)::int AS posts,
           COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers,
           COALESCE(ROUND(SUM(p.engagement_score))::int, 0) AS total_engagement,
-          COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement
+          COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
+          COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions
         FROM posts p
         WHERE p.published_at >= $1 AND ${dailyScope.sql}
         GROUP BY (p.published_at)::date
@@ -140,7 +227,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(dr.posts, 0) AS posts,
           COALESCE(dr.outliers, 0) AS outliers,
           COALESCE(dr.total_engagement, 0) AS total_engagement,
-          COALESCE(dr.avg_engagement, 0) AS avg_engagement
+          COALESCE(dr.avg_engagement, 0) AS avg_engagement,
+          COALESCE(dr.total_impressions, 0) AS total_impressions
         FROM day_series ds
         LEFT JOIN daily_raw dr ON dr.day = ds.day
       )
@@ -150,7 +238,9 @@ router.get('/analytics', async (req: Request, res: Response) => {
         outliers,
         total_engagement,
         avg_engagement,
-        SUM(total_engagement) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS rolling_sum_7d
+        total_impressions::bigint AS total_impressions,
+        SUM(total_engagement) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS rolling_sum_7d,
+        SUM(total_impressions) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::bigint AS rolling_impressions_7d
       FROM filled
       ORDER BY day ASC`,
       [currentStartIso, ...dailyScope.params]
@@ -176,7 +266,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
     const topPostsQ = await pool.query(
       `SELECT
         p.id, p.content_text, p.content_type, p.published_at,
-        p.likes_count, p.comments_count, p.reposts_count,
+        p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
         p.engagement_score, p.outlier_ratio, p.is_outlier,
         p.post_url, p.hook_text,
         c.name AS creator_name, c.profile_image_url AS creator_image
@@ -210,7 +300,9 @@ router.get('/analytics', async (req: Request, res: Response) => {
           c.id, c.name, c.profile_image_url,
           COUNT(p.id)::int AS posts,
           COUNT(p.id) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers,
-          COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement
+          COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
+          COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions,
+          COALESCE(ROUND(AVG(p.impressions_count) FILTER (WHERE p.impressions_count IS NOT NULL))::int, 0) AS avg_impressions
          FROM creators c
          LEFT JOIN posts p ON p.creator_id = c.id AND p.published_at >= $1
          WHERE c.is_managed = TRUE

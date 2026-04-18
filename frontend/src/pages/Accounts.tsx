@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useApi, apiPatch } from '../hooks/useApi';
+import { useApi, apiPatch, apiPost } from '../hooks/useApi';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell, ComposedChart, Area,
@@ -14,6 +14,8 @@ interface ManagedAccount {
   location: string | null;
   last_scraped_at: string | null;
   is_managed: boolean;
+  unipile_account_id: string | null;
+  linkedin_id: string | null;
   total_posts: number;
   total_outliers: number;
   avg_engagement: number;
@@ -36,7 +38,9 @@ interface DailyRow {
   outliers: number;
   total_engagement: number;
   avg_engagement: number;
+  total_impressions: number;
   rolling_sum_7d: number;
+  rolling_impressions_7d: number;
 }
 
 interface CompareMetric {
@@ -52,6 +56,8 @@ interface Comparison {
   total_likes: CompareMetric;
   total_comments: CompareMetric;
   total_reposts: CompareMetric;
+  total_impressions: CompareMetric;
+  avg_impressions: CompareMetric;
 }
 
 interface FormatRow {
@@ -75,6 +81,7 @@ interface TopPost {
   likes_count: number;
   comments_count: number;
   reposts_count: number;
+  impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number;
   is_outlier: boolean;
@@ -91,6 +98,8 @@ interface PerAccountRow {
   posts: number;
   outliers: number;
   avg_engagement: number;
+  total_impressions: number;
+  avg_impressions: number;
 }
 
 interface Analytics {
@@ -104,6 +113,9 @@ interface Analytics {
     total_likes: number;
     total_comments: number;
     total_reposts: number;
+    total_impressions: number;
+    posts_with_impressions: number;
+    avg_impressions: number;
   };
   comparison: Comparison;
   daily: DailyRow[];
@@ -197,6 +209,9 @@ export default function Accounts() {
   const [selectedCreator, setSelectedCreator] = useState<string>('all');
   const [days, setDays] = useState(90);
   const [managerOpen, setManagerOpen] = useState(false);
+  const [unipileEdits, setUnipileEdits] = useState<Record<string, string>>({});
+  const [scrapingId, setScrapingId] = useState<string | null>(null);
+  const [scrapeResult, setScrapeResult] = useState<Record<string, string>>({});
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -214,6 +229,38 @@ export default function Accounts() {
     }
   };
 
+  const saveUnipileId = async (id: string) => {
+    const value = unipileEdits[id] ?? '';
+    try {
+      await apiPatch(`/api/accounts/${id}`, { unipile_account_id: value });
+      setScrapeResult((r) => ({ ...r, [id]: '✓ Saved' }));
+      setTimeout(() => setScrapeResult((r) => ({ ...r, [id]: '' })), 2000);
+      refetchAccounts();
+    } catch (err: any) {
+      setScrapeResult((r) => ({ ...r, [id]: `✗ ${err.message}` }));
+    }
+  };
+
+  const scrapeAccount = async (id: string) => {
+    setScrapingId(id);
+    setScrapeResult((r) => ({ ...r, [id]: 'Scraping...' }));
+    try {
+      const res = await apiPost<{ scraped: number; with_impressions: number }>(
+        `/api/accounts/${id}/scrape`,
+        {}
+      );
+      setScrapeResult((r) => ({
+        ...r,
+        [id]: `✓ ${res.scraped} posts · ${res.with_impressions} with impressions`,
+      }));
+      refetchAccounts();
+    } catch (err: any) {
+      setScrapeResult((r) => ({ ...r, [id]: `✗ ${err.message}` }));
+    } finally {
+      setScrapingId(null);
+    }
+  };
+
   const hasAccounts = (accounts?.length || 0) > 0;
 
   const dailyChartData = useMemo(() => {
@@ -225,6 +272,8 @@ export default function Accounts() {
       raw: d.total_engagement,
       posts: d.posts,
       outliers: d.outliers,
+      rollingImpressions: Number(d.rolling_impressions_7d || 0),
+      rawImpressions: Number(d.total_impressions || 0),
     }));
   }, [analytics]);
 
@@ -301,6 +350,63 @@ export default function Accounts() {
                   </div>
                 </label>
               ))}
+            </div>
+          )}
+
+          {/* Unipile account ID per managed account — needed to scrape impressions */}
+          {hasAccounts && (
+            <div className="pt-4 mt-4 border-t border-border space-y-3">
+              <div>
+                <h4 className="text-sm font-semibold text-text-primary">Unipile account IDs</h4>
+                <p className="text-xs text-text-muted">
+                  LinkedIn only returns impressions for posts fetched through the account's own Unipile session.
+                  Paste each managed account's Unipile <code className="text-accent">account_id</code> below and hit Scrape.
+                </p>
+              </div>
+              <div className="space-y-2">
+                {accounts?.map((a) => {
+                  const current = unipileEdits[a.id] ?? a.unipile_account_id ?? '';
+                  const dirty = current !== (a.unipile_account_id ?? '');
+                  const msg = scrapeResult[a.id];
+                  return (
+                    <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg border border-border bg-bg-primary">
+                      {a.profile_image_url ? (
+                        <img src={a.profile_image_url} alt="" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-bg-secondary flex items-center justify-center text-text-muted text-xs flex-shrink-0">
+                          {(a.name || '?')[0]}
+                        </div>
+                      )}
+                      <div className="text-sm text-text-primary w-40 truncate">{a.name || 'Unknown'}</div>
+                      <input
+                        type="text"
+                        value={current}
+                        placeholder="Unipile account_id"
+                        onChange={(e) => setUnipileEdits((prev) => ({ ...prev, [a.id]: e.target.value }))}
+                        className="flex-1 bg-bg-card border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent font-mono"
+                      />
+                      <button
+                        disabled={!dirty}
+                        onClick={() => saveUnipileId(a.id)}
+                        className="px-2 py-1 text-xs border border-border rounded text-text-secondary hover:border-accent hover:text-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Save
+                      </button>
+                      <button
+                        disabled={!a.unipile_account_id || scrapingId === a.id}
+                        onClick={() => scrapeAccount(a.id)}
+                        className="px-2 py-1 text-xs border border-accent/30 bg-accent/10 rounded text-accent hover:bg-accent/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {scrapingId === a.id ? '…' : 'Scrape'}
+                      </button>
+                      {msg && <span className="text-[11px] text-text-muted whitespace-nowrap">{msg}</span>}
+                    </div>
+                  );
+                })}
+                {!accounts?.length && (
+                  <p className="text-xs text-text-muted">Tick some accounts above to configure their Unipile IDs.</p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -388,6 +494,36 @@ export default function Accounts() {
               <div className="text-[10px] text-text-muted mt-0.5">peak engagement</div>
             </div>
           </div>
+
+          {/* Impressions — only shown when we have any, since LinkedIn only reports it on the authenticated account's own posts */}
+          {analytics.totals.total_impressions > 0 && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-bg-card border border-accent/30 rounded-xl p-4">
+                <div className="text-[10px] uppercase tracking-wide text-text-muted flex items-center gap-1.5">
+                  <span>👁️</span>
+                  <span>Total impressions</span>
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <div className="text-2xl font-bold text-accent">{fmtNum(analytics.totals.total_impressions)}</div>
+                  <Delta pct={analytics.comparison.total_impressions.delta_pct} />
+                </div>
+                <div className="text-[10px] text-text-muted mt-0.5">
+                  across {analytics.totals.posts_with_impressions} post{analytics.totals.posts_with_impressions === 1 ? '' : 's'} with data
+                </div>
+              </div>
+              <div className="bg-bg-card border border-accent/30 rounded-xl p-4">
+                <div className="text-[10px] uppercase tracking-wide text-text-muted flex items-center gap-1.5">
+                  <span>📏</span>
+                  <span>Avg impressions</span>
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <div className="text-2xl font-bold text-accent">{fmtNum(analytics.totals.avg_impressions)}</div>
+                  <Delta pct={analytics.comparison.avg_impressions.delta_pct} />
+                </div>
+                <div className="text-[10px] text-text-muted mt-0.5">per post with data</div>
+              </div>
+            </div>
+          )}
 
           {/* Engagement totals breakdown with deltas */}
           <div className="grid grid-cols-3 gap-3">
@@ -625,7 +761,9 @@ export default function Accounts() {
                         <th className="py-2 px-3 text-right">Posts</th>
                         <th className="py-2 px-3 text-right">Outliers</th>
                         <th className="py-2 px-3 text-right">Hit rate</th>
-                        <th className="py-2 pl-3 text-right">Avg engagement</th>
+                        <th className="py-2 px-3 text-right">Avg engagement</th>
+                        <th className="py-2 px-3 text-right">Impressions</th>
+                        <th className="py-2 pl-3 text-right">Avg impressions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -648,7 +786,9 @@ export default function Accounts() {
                             <td className="py-2 px-3 text-right text-text-primary">{a.posts}</td>
                             <td className="py-2 px-3 text-right text-green-400">{a.outliers}</td>
                             <td className="py-2 px-3 text-right text-text-secondary">{rate}%</td>
-                            <td className="py-2 pl-3 text-right text-accent font-semibold">{fmtNum(a.avg_engagement)}</td>
+                            <td className="py-2 px-3 text-right text-accent font-semibold">{fmtNum(a.avg_engagement)}</td>
+                            <td className="py-2 px-3 text-right text-text-secondary">{a.total_impressions ? fmtNum(Number(a.total_impressions)) : '—'}</td>
+                            <td className="py-2 pl-3 text-right text-text-secondary">{a.avg_impressions ? fmtNum(a.avg_impressions) : '—'}</td>
                           </tr>
                         );
                       })}
@@ -694,6 +834,9 @@ export default function Accounts() {
                         <span>{fmtNum(p.likes_count)} likes</span>
                         <span>{fmtNum(p.comments_count)} comments</span>
                         <span>{fmtNum(p.reposts_count)} reposts</span>
+                        {p.impressions_count != null && (
+                          <span className="text-accent/80">👁️ {fmtNum(p.impressions_count)}</span>
+                        )}
                         <span className="text-accent font-medium ml-auto">{fmtNum(p.engagement_score)} eng</span>
                         {p.post_url && (
                           <a href={p.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">

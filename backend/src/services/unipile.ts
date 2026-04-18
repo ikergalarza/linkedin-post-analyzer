@@ -122,12 +122,13 @@ export class UnipileService {
    * This returns the provider_id (internal ID starting with ACo/ADo)
    * which is needed to fetch posts.
    */
-  async getProfile(linkedinUrl: string): Promise<UnipileProfile> {
+  async getProfile(linkedinUrl: string, accountIdOverride?: string): Promise<UnipileProfile> {
     const publicIdentifier = this.extractLinkedInIdentifier(linkedinUrl);
-    console.log(`[Unipile] Fetching profile for: ${publicIdentifier}`);
+    const accountId = accountIdOverride || this.accountId;
+    console.log(`[Unipile] Fetching profile for: ${publicIdentifier} (account_id: ${accountId})`);
 
     const profile = await this.request<UnipileProfile>(
-      `/api/v1/users/${encodeURIComponent(publicIdentifier)}?account_id=${this.accountId}`
+      `/api/v1/users/${encodeURIComponent(publicIdentifier)}?account_id=${accountId}`
     );
 
     console.log(`[Unipile] Profile fetched. provider_id: ${profile.provider_id}, id: ${profile.id}, name: ${profile.name || profile.first_name}`);
@@ -138,19 +139,20 @@ export class UnipileService {
    * Step 2: Get posts using the provider_id (internal ID) from getProfile.
    * The identifier for posts MUST be the provider internal ID, not the public username.
    */
-  async getPosts(providerInternalId: string, since?: Date): Promise<UnipilePost[]> {
+  async getPosts(providerInternalId: string, since?: Date, accountIdOverride?: string): Promise<UnipilePost[]> {
     const allPosts: UnipilePost[] = [];
     let cursor: string | undefined;
     const sixMonthsAgo = since || new Date(Date.now() - 180 * 24 * 60 * 60 * 1000);
+    const accountId = accountIdOverride || this.accountId;
 
     let page = 0;
     const maxPages = 20;
 
-    console.log(`[Unipile] Fetching posts for identifier: ${providerInternalId}`);
+    console.log(`[Unipile] Fetching posts for identifier: ${providerInternalId} (account_id: ${accountId})`);
 
     do {
       const params = new URLSearchParams({
-        account_id: this.accountId,
+        account_id: accountId,
         limit: '50',
       });
       if (cursor) params.set('cursor', cursor);
