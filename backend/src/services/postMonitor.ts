@@ -147,8 +147,38 @@ async function tick() {
   }
 }
 
+// One-shot: recompute outlier_ratio/is_outlier for every managed creator's posts.
+// Heals historical rows that got zeroed out before the tick logic was fixed.
+async function backfillOutliers() {
+  try {
+    const { rows: creators } = await pool.query(
+      `SELECT id FROM creators WHERE is_managed = TRUE`
+    );
+    for (const { id: creatorId } of creators) {
+      const { rows: allPosts } = await pool.query(
+        `SELECT id, engagement_score FROM posts WHERE creator_id = $1`,
+        [creatorId]
+      );
+      if (allPosts.length === 0) continue;
+      const avg = calculateAverageEngagement(allPosts.map((p) => ({ engagement_score: Number(p.engagement_score) || 0 })));
+      for (const p of allPosts) {
+        const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
+        await pool.query(
+          `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
+          [Math.round(ratio * 100) / 100, isOutlier(ratio), p.id]
+        );
+      }
+    }
+    console.log(`[postMonitor] outlier backfill complete for ${creators.length} managed creator(s)`);
+  } catch (err: any) {
+    console.error('[postMonitor] backfill failed:', err?.message);
+  }
+}
+
 export function startPostMonitor() {
   console.log(`[postMonitor] starting — tick every ${TICK_MS / 60000} min, window ${MONITOR_WINDOW_MS / 3600000}h, phase-based cadence`);
+  // One-shot heal for any posts whose outlier_ratio got zeroed by the pre-fix monitor
+  setTimeout(backfillOutliers, 10 * 1000);
   // First run after 1 minute so the server has time to settle post-deploy
   setTimeout(tick, 60 * 1000);
   setInterval(tick, TICK_MS);

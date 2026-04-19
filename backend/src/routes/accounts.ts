@@ -332,11 +332,18 @@ router.get('/analytics', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/accounts/live-posts — posts from managed accounts published < 24h ago,
-// ordered by published_at DESC. The 6h window is what the monitor actually tracks,
-// but we show 24h so the user can keep an eye on fresh content past the live window.
-router.get('/live-posts', async (_req: Request, res: Response) => {
+// GET /api/accounts/live-posts?creator_id=... — monitored posts from managed accounts.
+// Includes posts from the last 7 days plus any older post that still has snapshots.
+// Pass creator_id to scope to a single account; omit for all managed accounts.
+router.get('/live-posts', async (req: Request, res: Response) => {
   try {
+    const creatorId = (req.query.creator_id as string) || null;
+    const params: any[] = [];
+    let creatorFilter = '';
+    if (creatorId) {
+      params.push(creatorId);
+      creatorFilter = `AND c.id = $${params.length}`;
+    }
     const { rows } = await pool.query(
       `WITH candidate_posts AS (
          SELECT p.*,
@@ -347,6 +354,7 @@ router.get('/live-posts', async (_req: Request, res: Response) => {
          WHERE c.is_managed = TRUE
            AND c.unipile_account_id IS NOT NULL
            AND p.published_at IS NOT NULL
+           ${creatorFilter}
        )
        SELECT
          p.id, p.content_text, p.hook_text, p.content_type, p.published_at,
@@ -369,7 +377,8 @@ router.get('/live-posts', async (_req: Request, res: Response) => {
        WHERE p.published_at > NOW() - INTERVAL '7 days'
           OR p.snapshot_count > 0
        ORDER BY p.published_at DESC
-       LIMIT 50`
+       LIMIT 50`,
+      params
     );
     res.json(rows);
   } catch (err: any) {

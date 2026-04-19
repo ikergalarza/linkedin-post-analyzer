@@ -262,7 +262,8 @@ export default function Accounts() {
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
-  const { data: livePosts, refetch: refetchLive } = useApi<LivePost[]>('/api/accounts/live-posts');
+  const livePostsPath = `/api/accounts/live-posts${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`;
+  const { data: livePosts, refetch: refetchLive } = useApi<LivePost[]>(livePostsPath);
 
   // Auto-refresh live posts every 2 minutes so new snapshots appear without a page reload
   useEffect(() => {
