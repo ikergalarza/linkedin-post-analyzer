@@ -102,6 +102,8 @@ interface LivePost {
   reposts_count: number;
   impressions_count: number | null;
   engagement_score: number;
+  outlier_ratio: number | null;
+  is_outlier: boolean;
   post_url: string | null;
   creator_id: string;
   creator_name: string | null;
@@ -130,6 +132,8 @@ interface PerAccountRow {
   posts: number;
   outliers: number;
   avg_engagement: number;
+  max_virality: number;
+  avg_virality: number;
   total_impressions: number;
   avg_impressions: number;
 }
@@ -881,7 +885,9 @@ export default function Accounts() {
                         <th className="py-2 px-3 text-right">Posts</th>
                         <th className="py-2 px-3 text-right">Outliers</th>
                         <th className="py-2 px-3 text-right">Hit rate</th>
-                        <th className="py-2 px-3 text-right">Avg engagement</th>
+                        <th className="py-2 px-3 text-right">Avg eng</th>
+                        <th className="py-2 px-3 text-right" title="Average engagement / creator average">Avg ×</th>
+                        <th className="py-2 px-3 text-right" title="Best single post's multiplier">Peak ×</th>
                         <th className="py-2 px-3 text-right">Impressions</th>
                         <th className="py-2 pl-3 text-right">Avg impressions</th>
                       </tr>
@@ -907,6 +913,8 @@ export default function Accounts() {
                             <td className="py-2 px-3 text-right text-green-400">{a.outliers}</td>
                             <td className="py-2 px-3 text-right text-text-secondary">{rate}%</td>
                             <td className="py-2 px-3 text-right text-accent font-semibold">{fmtNum(a.avg_engagement)}</td>
+                            <td className="py-2 px-3 text-right text-text-secondary">{a.avg_virality ? `${a.avg_virality.toFixed(2)}x` : '—'}</td>
+                            <td className="py-2 px-3 text-right text-green-400 font-medium">{a.max_virality ? `${a.max_virality.toFixed(1)}x` : '—'}</td>
                             <td className="py-2 px-3 text-right text-text-secondary">{a.total_impressions ? fmtNum(Number(a.total_impressions)) : '—'}</td>
                             <td className="py-2 pl-3 text-right text-text-secondary">{a.avg_impressions ? fmtNum(a.avg_impressions) : '—'}</td>
                           </tr>
@@ -943,9 +951,16 @@ export default function Accounts() {
                         <span>{p.published_at ? new Date(p.published_at).toLocaleDateString() : '—'}</span>
                         <span>·</span>
                         <span>{FORMAT_LABELS[p.content_type] || p.content_type}</span>
-                        {p.is_outlier && (
-                          <span className="px-1.5 py-0.5 rounded bg-green-500/15 text-green-400 text-[10px] font-medium">
-                            {p.outlier_ratio?.toFixed(1)}x
+                        {p.outlier_ratio != null && (
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                              p.is_outlier
+                                ? 'bg-green-500/15 text-green-400'
+                                : 'bg-bg-secondary text-text-muted border border-border'
+                            }`}
+                            title="Engagement relative to this creator's average"
+                          >
+                            {p.outlier_ratio.toFixed(1)}x
                           </span>
                         )}
                       </div>
@@ -1037,6 +1052,18 @@ function LivePostRow({ post }: { post: LivePost }) {
             {post.is_live && (
               <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 text-[10px] font-medium">
                 LIVE
+              </span>
+            )}
+            {post.outlier_ratio != null && (
+              <span
+                className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                  post.is_outlier
+                    ? 'bg-green-500/15 text-green-400'
+                    : 'bg-bg-secondary border border-border text-text-muted'
+                }`}
+                title="Engagement relative to this creator's average"
+              >
+                {post.outlier_ratio.toFixed(1)}x
               </span>
             )}
             <span className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]">

@@ -301,6 +301,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COUNT(p.id)::int AS posts,
           COUNT(p.id) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers,
           COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
+          COALESCE(ROUND(MAX(p.outlier_ratio)::numeric, 1)::float, 0) AS max_virality,
+          COALESCE(ROUND(AVG(p.outlier_ratio)::numeric, 2)::float, 0) AS avg_virality,
           COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions,
           COALESCE(ROUND(AVG(p.impressions_count) FILTER (WHERE p.impressions_count IS NOT NULL))::int, 0) AS avg_impressions
          FROM creators c
@@ -339,7 +341,7 @@ router.get('/live-posts', async (_req: Request, res: Response) => {
       `SELECT
          p.id, p.content_text, p.hook_text, p.content_type, p.published_at,
          p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
-         p.engagement_score, p.post_url,
+         p.engagement_score, p.outlier_ratio, p.is_outlier, p.post_url,
          c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
          (SELECT COUNT(*)::int FROM post_snapshots s WHERE s.post_id = p.id) AS snapshot_count,
          (NOW() - p.published_at < INTERVAL '6 hours') AS is_live
