@@ -582,7 +582,22 @@ export default function Accounts() {
           ) : (
             <div className="space-y-3">
               {livePosts.map((p) => (
-                <LivePostRow key={p.id} post={p} />
+                <LivePostRow
+                  key={p.id}
+                  post={p}
+                  onRemoveDemo={
+                    p.content_text?.startsWith('DEMO ·')
+                      ? async () => {
+                          try {
+                            await apiDelete('/api/accounts/demo-seed');
+                            refetchLive();
+                          } catch (err: any) {
+                            alert(err.message);
+                          }
+                        }
+                      : undefined
+                  }
+                />
               ))}
             </div>
           )}
@@ -1066,7 +1081,7 @@ function fmtAge(iso: string): string {
   return `${Math.round(h / 24)}d ago`;
 }
 
-function LivePostRow({ post }: { post: LivePost }) {
+function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: () => void }) {
   const [open, setOpen] = useState(false);
   const { data, loading, refetch } = useApi<SnapshotsResponse>(open ? `/api/accounts/posts/${post.id}/snapshots` : null);
 
@@ -1157,6 +1172,17 @@ function LivePostRow({ post }: { post: LivePost }) {
               <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
                 View →
               </a>
+            )}
+            {onRemoveDemo && (
+              <button
+                onClick={() => {
+                  if (confirm('Remove the demo post from live tracking?')) onRemoveDemo();
+                }}
+                className="text-red-400/70 hover:text-red-400 transition-colors"
+                title="Remove demo post"
+              >
+                ✕ Remove
+              </button>
             )}
           </div>
         </div>
