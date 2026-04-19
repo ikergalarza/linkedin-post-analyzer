@@ -20,7 +20,7 @@ router.get('/', async (_req: Request, res: Response) => {
         COALESCE(MAX(p.engagement_score)::int, 0) AS max_engagement,
         MAX(p.published_at) AS last_post_at
        FROM creators c
-       LEFT JOIN posts p ON p.creator_id = c.id
+       LEFT JOIN posts p ON p.creator_id = c.id AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
        WHERE c.is_managed = TRUE
        GROUP BY c.id
        ORDER BY avg_engagement DESC`
@@ -152,9 +152,11 @@ router.get('/analytics', async (req: Request, res: Response) => {
 
     // Build scope: either a specific creator or all managed accounts.
     // Queries use <SCOPE> as a placeholder so each query can append its own params.
+    // Demo posts are always excluded so analytics reflect real activity only.
     const scope = (nextIdx: number) => {
-      if (creatorId) return { sql: `p.creator_id = $${nextIdx}`, params: [creatorId] };
-      return { sql: `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE)`, params: [] };
+      const demoFilter = `p.linkedin_post_id <> 'DEMO_LIVE_POST'`;
+      if (creatorId) return { sql: `p.creator_id = $${nextIdx} AND ${demoFilter}`, params: [creatorId] };
+      return { sql: `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE) AND ${demoFilter}`, params: [] };
     };
 
     const totalsSql = (dateCondition: string, baseParams: any[]) => {
@@ -306,7 +308,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions,
           COALESCE(ROUND(AVG(p.impressions_count) FILTER (WHERE p.impressions_count IS NOT NULL))::int, 0) AS avg_impressions
          FROM creators c
-         LEFT JOIN posts p ON p.creator_id = c.id AND p.published_at >= $1
+         LEFT JOIN posts p ON p.creator_id = c.id AND p.published_at >= $1 AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
          WHERE c.is_managed = TRUE
          GROUP BY c.id
          ORDER BY avg_engagement DESC`,

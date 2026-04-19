@@ -114,7 +114,7 @@ router.get('/:id', async (req: Request, res: Response) => {
               COALESCE(AVG(engagement_score), 0)::float as avg_engagement,
               COALESCE(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY engagement_score), 0)::float as median_engagement,
               COALESCE(STDDEV(engagement_score), 0)::float as stddev_engagement
-       FROM posts WHERE creator_id = $1`,
+       FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
       [reqId]
     );
     const stats = statsResult.rows[0];

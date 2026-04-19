@@ -54,6 +54,7 @@ async function getArchetypePool(): Promise<ArchetypeRaw[]> {
       (ARRAY_AGG(p.content_text ORDER BY p.outlier_ratio DESC))[1] AS example_text
     FROM posts p
     WHERE p.is_outlier = TRUE
+      AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
       AND p.hook_type IS NOT NULL AND p.hook_type != 'other'
       AND p.post_structure IS NOT NULL AND p.post_structure != 'other'
     GROUP BY p.hook_type, p.post_structure
@@ -148,7 +149,8 @@ async function getOutlierContext(): Promise<string> {
     SELECT p.content_text, p.hook_text, p.hook_type, p.post_structure, p.text_tone,
            p.outlier_ratio, p.likes_count, p.comments_count, p.reposts_count
     FROM posts p
-    WHERE p.is_outlier = TRUE AND p.content_text IS NOT NULL AND LENGTH(p.content_text) > 50
+    WHERE p.is_outlier = TRUE AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+      AND p.content_text IS NOT NULL AND LENGTH(p.content_text) > 50
     ORDER BY p.outlier_ratio DESC
     LIMIT 8
   `);
@@ -376,6 +378,7 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
       FROM posts p
       JOIN creators c ON c.id = p.creator_id
       WHERE p.is_outlier = TRUE
+        AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
         AND p.content_text IS NOT NULL
         AND LENGTH(p.content_text) > 80
       ORDER BY p.outlier_ratio DESC
@@ -395,6 +398,7 @@ router.post('/inspiration/classify', async (_req: Request, res: Response) => {
       SELECT p.id, p.content_text, p.hook_text
       FROM posts p
       WHERE p.is_outlier = TRUE
+        AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
         AND p.content_text IS NOT NULL
         AND LENGTH(p.content_text) > 80
         AND (p.topic IS NULL OR p.topic = '')

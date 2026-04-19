@@ -44,7 +44,7 @@ export interface PostFilters {
 
 export const PostModel = {
   async findByCreator(creatorId: string, filters: PostFilters = {}): Promise<Post[]> {
-    const conditions = ['creator_id = $1'];
+    const conditions = ['creator_id = $1', `linkedin_post_id <> 'DEMO_LIVE_POST'`];
     const values: any[] = [creatorId];
     let idx = 2;
 
@@ -84,7 +84,7 @@ export const PostModel = {
 
   async countByCreator(creatorId: string): Promise<number> {
     const { rows } = await pool.query(
-      'SELECT COUNT(*) as count FROM posts WHERE creator_id = $1',
+      `SELECT COUNT(*) as count FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
       [creatorId]
     );
     return parseInt(rows[0].count, 10);
@@ -159,7 +159,7 @@ export const PostModel = {
         STDDEV(engagement_score) as stddev_engagement,
         MIN(published_at) as first_post_date,
         MAX(published_at) as last_post_date
-      FROM posts WHERE creator_id = $1`,
+      FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
       [creatorId]
     );
     return rows[0];
@@ -169,7 +169,7 @@ export const PostModel = {
     const condition = outliersOnly ? 'AND is_outlier = TRUE' : '';
     const { rows } = await pool.query(
       `SELECT content_type, COUNT(*) as count
-       FROM posts WHERE creator_id = $1 ${condition}
+       FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST' ${condition}
        GROUP BY content_type ORDER BY count DESC`,
       [creatorId]
     );
@@ -180,7 +180,7 @@ export const PostModel = {
     const { rows } = await pool.query(
       `SELECT published_at, engagement_score, is_outlier, content_type, hook_text,
               hook_type, outlier_ratio
-       FROM posts WHERE creator_id = $1 AND published_at IS NOT NULL
+       FROM posts WHERE creator_id = $1 AND published_at IS NOT NULL AND linkedin_post_id <> 'DEMO_LIVE_POST'
        ORDER BY published_at ASC`,
       [creatorId]
     );
@@ -197,7 +197,7 @@ export const PostModel = {
               p.comment_like_ratio, p.share_like_ratio, p.post_url,
               c.name as creator_name, c.profile_image_url as creator_image
        FROM posts p JOIN creators c ON p.creator_id = c.id
-       WHERE p.is_outlier = TRUE
+       WHERE p.is_outlier = TRUE AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
        ORDER BY p.outlier_ratio DESC
        LIMIT $1`,
       [limit]

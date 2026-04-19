@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.unipile.com)",
+      "WebFetch(domain:www.unipile.com)",
+      "WebSearch",
+      "WebFetch(domain:developer.unipile.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:gist.github.com)",
+      "Bash(npm create:*)",
+      "Bash(npx create-vite@latest frontend --template react-ts)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

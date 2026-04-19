@@ -45,7 +45,8 @@ async function tick() {
        WHERE c.is_managed = TRUE
          AND c.unipile_account_id IS NOT NULL
          AND p.published_at IS NOT NULL
-         AND p.published_at > NOW() - INTERVAL '7 days'`
+         AND p.published_at > NOW() - INTERVAL '7 days'
+         AND p.linkedin_post_id <> 'DEMO_LIVE_POST'`
     );
 
     const now = Date.now();
@@ -126,7 +127,7 @@ async function tick() {
     for (const creatorId of touchedCreators) {
       try {
         const { rows: allPosts } = await pool.query(
-          `SELECT id, engagement_score FROM posts WHERE creator_id = $1`,
+          `SELECT id, engagement_score FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
           [creatorId]
         );
         if (allPosts.length === 0) continue;
