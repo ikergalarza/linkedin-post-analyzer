@@ -377,6 +377,98 @@ router.get('/live-posts', async (_req: Request, res: Response) => {
   }
 });
 
+// POST /api/accounts/demo-seed — insert a demo post + realistic snapshots so the user
+// can see what the Live Posts panel looks like without waiting for fresh content.
+// Idempotent: re-running replaces the previous demo. Demo post is tagged
+// linkedin_post_id = 'DEMO_LIVE_POST'.
+router.post('/demo-seed', async (_req: Request, res: Response) => {
+  try {
+    const creatorQ = await pool.query(
+      `SELECT id, name FROM creators WHERE is_managed = TRUE ORDER BY created_at LIMIT 1`
+    );
+    if (creatorQ.rows.length === 0) {
+      return res.status(400).json({ error: 'Need at least one managed creator first' });
+    }
+    const creator = creatorQ.rows[0];
+
+    // Clean up any previous demo (CASCADE drops snapshots)
+    await pool.query(`DELETE FROM posts WHERE linkedin_post_id = 'DEMO_LIVE_POST'`);
+
+    // Publish 4 days ago so the panel shows the full lifecycle across phases
+    const publishedAt = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
+    const finalImpressions = 42000;
+    const finalLikes = 980;
+    const finalComments = 72;
+    const finalReposts = 45;
+    const engagement = finalLikes + finalComments * 2 + finalReposts * 3;
+
+    const postInsert = await pool.query(
+      `INSERT INTO posts (
+         creator_id, linkedin_post_id, content_text, content_type, published_at,
+         likes_count, comments_count, reposts_count, impressions_count,
+         engagement_score, outlier_ratio, is_outlier, hook_text, language
+       ) VALUES ($1, 'DEMO_LIVE_POST', $2, 'text_only', $3, $4, $5, $6, $7, $8, $9, TRUE, $10, 'es')
+       RETURNING id`,
+      [
+        creator.id,
+        'DEMO · Nadie habla del pueblo de 7.000 habitantes que exporta más que países enteros. En 60 segundos te explico por qué 👇',
+        publishedAt,
+        finalLikes, finalComments, finalReposts, finalImpressions,
+        engagement,
+        2.3,
+        'DEMO · Nadie habla del pueblo de 7.000 habitantes que exporta más que países enteros.',
+      ]
+    );
+    const postId = postInsert.rows[0].id;
+
+    // S-curve: dense in golden hour, steep in first wave, flattening through long tail
+    // Fractions chosen to match the LinkedIn distribution curve (~10% at 1h, ~40% at 6h,
+    // ~70% at 24h, ~85–90% at 72h, ~98% at 7d).
+    const curve: [number, number][] = [
+      [10, 0.015], [25, 0.035], [40, 0.060], [55, 0.090],  // golden hour (4 snaps)
+      [85, 0.14], [115, 0.19], [145, 0.24], [180, 0.29],
+      [215, 0.33], [250, 0.37], [290, 0.40], [330, 0.43],
+      [360, 0.45],                                          // 1–6h (9 snaps)
+      [480, 0.52], [600, 0.57], [720, 0.61], [900, 0.66],
+      [1080, 0.70], [1260, 0.73], [1440, 0.76],             // 6–24h (7 snaps)
+      [1800, 0.80], [2160, 0.83], [2880, 0.87], [3600, 0.90],
+      [4320, 0.92],                                          // 24–72h (5 snaps)
+      [5760, 0.96],                                          // 4d
+    ];
+
+    for (const [mins, frac] of curve) {
+      const capturedAt = new Date(publishedAt.getTime() + mins * 60 * 1000);
+      await pool.query(
+        `INSERT INTO post_snapshots (post_id, captured_at, impressions_count, likes_count, comments_count, reposts_count)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          postId,
+          capturedAt,
+          Math.round(finalImpressions * frac),
+          Math.round(finalLikes * frac),
+          Math.round(finalComments * frac),
+          Math.round(finalReposts * frac),
+        ]
+      );
+    }
+
+    res.json({ post_id: postId, snapshots: curve.length });
+  } catch (err: any) {
+    console.error('[accounts/demo-seed]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/accounts/demo-seed — remove the demo post
+router.delete('/demo-seed', async (_req: Request, res: Response) => {
+  try {
+    const r = await pool.query(`DELETE FROM posts WHERE linkedin_post_id = 'DEMO_LIVE_POST'`);
+    res.json({ deleted: r.rowCount || 0 });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/accounts/posts/:id/snapshots — time-series for a single post's
 // impressions/engagement growth during its first 6h.
 router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {

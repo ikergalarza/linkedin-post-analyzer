@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useApi, apiPatch, apiPost } from '../hooks/useApi';
+import { useApi, apiPatch, apiPost, apiDelete } from '../hooks/useApi';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell, ComposedChart, Area, ReferenceLine,
@@ -528,12 +528,43 @@ export default function Accounts() {
                 Only managed accounts with a Unipile account_id configured are tracked.
               </p>
             </div>
-            <button
-              onClick={() => refetchLive()}
-              className="text-xs text-text-muted hover:text-accent transition-colors"
-            >
-              ↻ Refresh
-            </button>
+            <div className="flex items-center gap-3">
+              {livePosts?.some((p) => p.content_text?.startsWith('DEMO ·')) ? (
+                <button
+                  onClick={async () => {
+                    try {
+                      await apiDelete('/api/accounts/demo-seed');
+                      refetchLive();
+                    } catch (err: any) {
+                      alert(err.message);
+                    }
+                  }}
+                  className="text-xs text-text-muted hover:text-red-400 transition-colors"
+                >
+                  ✕ Remove demo
+                </button>
+              ) : (
+                <button
+                  onClick={async () => {
+                    try {
+                      await apiPost('/api/accounts/demo-seed', {});
+                      refetchLive();
+                    } catch (err: any) {
+                      alert(err.message);
+                    }
+                  }}
+                  className="text-xs text-accent hover:text-accent-light transition-colors"
+                >
+                  + Load demo data
+                </button>
+              )}
+              <button
+                onClick={() => refetchLive()}
+                className="text-xs text-text-muted hover:text-accent transition-colors"
+              >
+                ↻ Refresh
+              </button>
+            </div>
           </div>
           {!livePosts ? (
             <p className="text-xs text-text-muted py-6 text-center">Loading…</p>
