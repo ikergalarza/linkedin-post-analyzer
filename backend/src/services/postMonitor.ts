@@ -1,7 +1,6 @@
 import pool from '../db';
 import { unipileService } from './unipile';
-import { enrichPost } from './engagement';
-import { PostModel } from '../models/post';
+import { calculateEngagement, calculateAverageEngagement, calculateOutlierRatio, isOutlier } from './engagement';
 
 // Phase-based snapshot cadence for LinkedIn posts.
 // The algorithm distributes posts in waves, so we sample densely in the golden hour
@@ -71,6 +70,8 @@ async function tick() {
       byCreator.set(t.creator_id, list);
     }
 
+    const touchedCreators = new Set<string>();
+
     for (const [creatorId, posts] of byCreator.entries()) {
       const first = posts[0];
       if (!first.linkedin_id || !first.unipile_account_id) continue;
@@ -91,7 +92,7 @@ async function tick() {
           if (!raw) continue;
 
           const normalized = unipileService.normalizePost(raw, creatorId);
-          const enriched = enrichPost(normalized);
+          const engagement = calculateEngagement(normalized);
 
           // Persist the snapshot
           await pool.query(
@@ -100,11 +101,45 @@ async function tick() {
             [target.id, normalized.impressions_count, normalized.likes_count, normalized.comments_count, normalized.reposts_count]
           );
 
-          // Also update the live post row so the UI sees the latest numbers
-          await PostModel.bulkUpsert([{ ...normalized, ...enriched }]);
+          // Only touch the live counters. outlier_ratio/is_outlier are recomputed
+          // per-creator below once all posts are in so the multipliers don't drift to 0.
+          await pool.query(
+            `UPDATE posts SET
+               likes_count = $2,
+               comments_count = $3,
+               reposts_count = $4,
+               impressions_count = $5,
+               engagement_score = $6
+             WHERE id = $1`,
+            [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, normalized.impressions_count, engagement]
+          );
+
+          touchedCreators.add(creatorId);
         }
       } catch (err: any) {
         console.error(`[postMonitor] creator ${creatorId} failed:`, err?.message);
+      }
+    }
+
+    // Recalculate outlier ratios for every creator whose posts got new numbers.
+    // The average has shifted, so all their posts' multipliers need a refresh.
+    for (const creatorId of touchedCreators) {
+      try {
+        const { rows: allPosts } = await pool.query(
+          `SELECT id, engagement_score FROM posts WHERE creator_id = $1`,
+          [creatorId]
+        );
+        if (allPosts.length === 0) continue;
+        const avg = calculateAverageEngagement(allPosts.map((p) => ({ engagement_score: Number(p.engagement_score) || 0 })));
+        for (const p of allPosts) {
+          const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
+          await pool.query(
+            `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
+            [Math.round(ratio * 100) / 100, isOutlier(ratio), p.id]
+          );
+        }
+      } catch (err: any) {
+        console.error(`[postMonitor] recalc outliers for ${creatorId} failed:`, err?.message);
       }
     }
   } catch (err: any) {
