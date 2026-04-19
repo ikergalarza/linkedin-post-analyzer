@@ -17,9 +17,9 @@ async function getAnalysisContext(): Promise<string> {
 
   const creators = await CreatorModel.findAll();
   let allPosts: any[] = [];
-  const creatorTimezones: Record<string, number> = {};
+  const creatorTimezones: Record<string, string> = {};
   for (const c of creators) {
-    creatorTimezones[c.id] = c.utc_offset ?? 0;
+    creatorTimezones[c.id] = c.timezone || 'UTC';
     const posts = await PostModel.findByCreator(c.id, { limit: 10000 });
     allPosts = allPosts.concat(posts);
   }

@@ -207,7 +207,7 @@ export function detectPatterns(allPosts: Post[]): PatternInsight[] {
   return insights;
 }
 
-export function getCrossCreatorPatterns(allPosts: Post[], creatorTimezones: Record<string, number> = {}) {
+export function getCrossCreatorPatterns(allPosts: Post[], creatorTimezones: Record<string, string> = {}) {
   const outliers = allPosts.filter((p) => p.is_outlier);
   const nonOutliers = allPosts.filter((p) => !p.is_outlier);
 
@@ -287,19 +287,42 @@ export function getCrossCreatorPatterns(allPosts: Post[], creatorTimezones: Reco
     }
   }
 
-  // Best days and hours for outliers (cross-creator, converted to each creator's local time)
+  // Best days and hours for outliers (cross-creator, converted to each creator's local time).
+  // Uses IANA timezone (e.g. "Europe/Madrid") so DST is handled correctly — otherwise every
+  // summer/spring post gets shifted an hour early.
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const dayStats: Record<number, { total: number; outliers: number; totalRatio: number }> = {};
   const hourStats: Record<number, { total: number; outliers: number; totalRatio: number }> = {};
+  const weekdayToNum: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  const formatters = new Map<string, Intl.DateTimeFormat>();
+  const getFormatter = (tz: string) => {
+    let f = formatters.get(tz);
+    if (!f) {
+      try {
+        f = new Intl.DateTimeFormat('en-US', {
+          timeZone: tz,
+          weekday: 'short',
+          hour: '2-digit',
+          hourCycle: 'h23',
+        });
+      } catch {
+        f = new Intl.DateTimeFormat('en-US', { weekday: 'short', hour: '2-digit', hourCycle: 'h23' });
+      }
+      formatters.set(tz, f);
+    }
+    return f;
+  };
   for (const p of allPosts) {
     if (!p.published_at) continue;
     const d = new Date(p.published_at);
-    // Convert to creator's local time using their UTC offset
-    const utcOffset = creatorTimezones[p.creator_id] ?? 0;
-    const localMs = d.getTime() + utcOffset * 60 * 60 * 1000;
-    const localDate = new Date(localMs);
-    const day = localDate.getUTCDay();
-    const hour = localDate.getUTCHours();
+    const tz = creatorTimezones[p.creator_id] || 'UTC';
+    const parts = getFormatter(tz).formatToParts(d);
+    const weekdayPart = parts.find((x) => x.type === 'weekday')?.value;
+    const hourPart = parts.find((x) => x.type === 'hour')?.value;
+    if (!weekdayPart || !hourPart) continue;
+    const day = weekdayToNum[weekdayPart];
+    const hour = parseInt(hourPart, 10) % 24;
+    if (day === undefined || isNaN(hour)) continue;
     if (!dayStats[day]) dayStats[day] = { total: 0, outliers: 0, totalRatio: 0 };
     dayStats[day].total++;
     if (p.is_outlier) { dayStats[day].outliers++; dayStats[day].totalRatio += p.outlier_ratio; }

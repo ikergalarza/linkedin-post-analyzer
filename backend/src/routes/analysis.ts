@@ -254,10 +254,10 @@ router.get('/cross-creators', async (_req: Request, res: Response) => {
       allPosts = allPosts.concat(posts);
     }
 
-    // Build creator timezone map for local time conversion
-    const creatorTimezones: Record<string, number> = {};
+    // Build creator timezone map for local time conversion (IANA names so DST is handled)
+    const creatorTimezones: Record<string, string> = {};
     for (const c of creators) {
-      creatorTimezones[c.id] = c.utc_offset ?? 0;
+      creatorTimezones[c.id] = c.timezone || 'UTC';
     }
 
     const patterns = getCrossCreatorPatterns(allPosts, creatorTimezones);
