@@ -114,14 +114,24 @@ interface LivePost {
   phase: 'golden' | 'first_wave' | 'consolidation' | 'long_tail' | 'tail' | 'closed';
 }
 
-const PHASE_META: Record<LivePost['phase'], { label: string; bg: string; text: string }> = {
-  golden:        { label: '🔥 Golden hour',  bg: 'bg-red-500/15',    text: 'text-red-400' },
-  first_wave:    { label: '🌊 1st wave',     bg: 'bg-orange-500/15', text: 'text-orange-400' },
-  consolidation: { label: '📈 Consolidation', bg: 'bg-yellow-500/15', text: 'text-yellow-400' },
-  long_tail:     { label: '📉 Long tail',    bg: 'bg-sky-500/15',    text: 'text-sky-400' },
-  tail:          { label: '🐢 Tail',         bg: 'bg-purple-500/15', text: 'text-purple-400' },
-  closed:        { label: '✅ Closed',       bg: 'bg-bg-secondary',  text: 'text-text-muted' },
+const PHASE_META: Record<LivePost['phase'], { label: string; bg: string; text: string; window: string; cadence: string; blurb: string }> = {
+  golden:        { label: '🔥 Golden hour',   bg: 'bg-red-500/15',    text: 'text-red-400',    window: '0 – 1h',   cadence: 'every 15 min', blurb: 'Primera muestra: si engancha, LinkedIn amplía distribución. Ventana que decide si el post prende.' },
+  first_wave:    { label: '🌊 1st wave',      bg: 'bg-orange-500/15', text: 'text-orange-400', window: '1 – 6h',   cadence: 'every 30 min', blurb: 'Segunda oleada. Aquí se ve con claridad si va a ser normal, bueno o viral.' },
+  consolidation: { label: '📈 Consolidation', bg: 'bg-yellow-500/15', text: 'text-yellow-400', window: '6 – 24h',  cadence: 'every 2h',     blurb: 'Se acumula el grueso del alcance. A las 24h suele haber el 60–70% de las impresiones totales.' },
+  long_tail:     { label: '📉 Long tail',     bg: 'bg-sky-500/15',    text: 'text-sky-400',    window: '24 – 72h', cadence: 'every 6h',     blurb: 'Long tail fuerte. A 72h ya tienes el 85–90% de las impresiones finales.' },
+  tail:          { label: '🐢 Tail',          bg: 'bg-purple-500/15', text: 'text-purple-400', window: '3 – 7d',   cadence: 'every 24h',    blurb: 'Cola residual, sobre todo comentarios y algún reshare.' },
+  closed:        { label: '✅ Closed',        bg: 'bg-bg-secondary',  text: 'text-text-muted', window: '> 7d',     cadence: 'stopped',      blurb: 'Prácticamente muerto salvo virales/evergreen que siguen trayendo impresiones semanas (raro).' },
 };
+
+const PHASE_ORDER: LivePost['phase'][] = ['golden', 'first_wave', 'consolidation', 'long_tail', 'tail', 'closed'];
+
+const ZOOM_PRESETS: { label: string; maxMin: number | null }[] = [
+  { label: '1h',  maxMin: 60 },
+  { label: '6h',  maxMin: 360 },
+  { label: '24h', maxMin: 1440 },
+  { label: '72h', maxMin: 4320 },
+  { label: 'All', maxMin: null },
+];
 
 interface Snapshot {
   captured_at: string;
@@ -259,6 +269,7 @@ export default function Accounts() {
   const [unipileEdits, setUnipileEdits] = useState<Record<string, string>>({});
   const [scrapingId, setScrapingId] = useState<string | null>(null);
   const [scrapeResult, setScrapeResult] = useState<Record<string, string>>({});
+  const [legendOpen, setLegendOpen] = useState(false);
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -525,11 +536,17 @@ export default function Accounts() {
                 Live posts
               </h3>
               <p className="text-xs text-text-muted">
-                Phase-based tracking for 7 days: 15 min (0–1h) · 30 min (1–6h) · 2h (6–24h) · 6h (24–72h) · 24h (72h–7d).
-                Only managed accounts with a Unipile account_id configured are tracked.
+                Phase-based tracking for 7 days. Only managed accounts with a Unipile account_id configured are tracked.
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setLegendOpen((v) => !v)}
+                className="text-xs text-text-muted hover:text-accent transition-colors"
+                title="Cómo LinkedIn distribuye un post en el tiempo"
+              >
+                {legendOpen ? '▾' : '▸'} How phases work
+              </button>
               {livePosts?.some((p) => p.content_text?.startsWith('DEMO ·')) ? (
                 <button
                   onClick={async () => {
@@ -567,6 +584,32 @@ export default function Accounts() {
               </button>
             </div>
           </div>
+          {legendOpen && (
+            <div className="mb-4 p-4 rounded-lg border border-border bg-bg-primary">
+              <p className="text-xs text-text-muted mb-3">
+                El algoritmo de LinkedIn distribuye por <span className="text-text-secondary font-medium">oleadas</span>, no linealmente.
+                Cada fase tiene su cadencia de captura para samplear denso al principio y tapering al final.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {PHASE_ORDER.map((phase) => {
+                  const meta = PHASE_META[phase];
+                  return (
+                    <div key={phase} className="flex items-start gap-2 p-2 rounded border border-border/50 bg-bg-card">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap ${meta.bg} ${meta.text}`}>
+                        {meta.label}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[11px] text-text-secondary font-medium">
+                          {meta.window} <span className="text-text-muted font-normal">· {meta.cadence}</span>
+                        </div>
+                        <p className="text-[11px] text-text-muted leading-snug mt-0.5">{meta.blurb}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           {!livePosts ? (
             <p className="text-xs text-text-muted py-6 text-center">Loading…</p>
           ) : livePosts.length === 0 ? (
@@ -1083,6 +1126,7 @@ function fmtAge(iso: string): string {
 
 function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: () => void }) {
   const [open, setOpen] = useState(false);
+  const [zoomMax, setZoomMax] = useState<number | null>(null); // max ageMin to display; null = All
   const { data, loading, refetch } = useApi<SnapshotsResponse>(open ? `/api/accounts/posts/${post.id}/snapshots` : null);
 
   // Refresh the snapshot chart every 2 min while expanded and still in live window
@@ -1092,7 +1136,7 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
     return () => clearInterval(timer);
   }, [open, post.is_live]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const curveData = useMemo(() => {
+  const curveDataAll = useMemo(() => {
     if (!data?.snapshots.length) return [];
     const publishedMs = new Date(post.published_at).getTime();
     return data.snapshots.map((s) => {
@@ -1107,6 +1151,13 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
       };
     });
   }, [data, post.published_at]);
+
+  // Filter to the selected zoom window. Only show presets whose window contains data.
+  const curveData = useMemo(
+    () => (zoomMax === null ? curveDataAll : curveDataAll.filter((d) => d.ageMin <= zoomMax)),
+    [curveDataAll, zoomMax]
+  );
+  const maxAgeMin = curveDataAll.length ? curveDataAll[curveDataAll.length - 1].ageMin : 0;
 
   return (
     <div className={`rounded-lg border ${post.is_live ? 'border-red-500/20 bg-red-500/5' : 'border-border bg-bg-primary'}`}>
@@ -1191,11 +1242,39 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
         <div className="px-3 pb-3">
           {loading && !data ? (
             <p className="text-xs text-text-muted py-6 text-center">Loading snapshots…</p>
-          ) : curveData.length === 0 ? (
+          ) : curveDataAll.length === 0 ? (
             <p className="text-xs text-text-muted py-6 text-center">
               No snapshots yet. The monitor captures every 15 min during the first 6h.
             </p>
           ) : (
+            <>
+            <div className="flex items-center gap-1 mb-2">
+              <span className="text-[10px] text-text-muted mr-1">Zoom:</span>
+              {ZOOM_PRESETS.map((z) => {
+                // Dim presets that extend past where data actually ends — they'd render the same view as "All"
+                const dimmed = z.maxMin !== null && z.maxMin > maxAgeMin;
+                const active = zoomMax === z.maxMin;
+                return (
+                  <button
+                    key={z.label}
+                    onClick={() => setZoomMax(z.maxMin)}
+                    className={`px-2 py-0.5 rounded text-[10px] transition-colors ${
+                      active
+                        ? 'bg-accent/20 text-accent border border-accent/30'
+                        : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                    } ${dimmed ? 'opacity-40' : ''}`}
+                  >
+                    {z.label}
+                  </button>
+                );
+              })}
+              <span className="text-[10px] text-text-muted ml-2">
+                {curveData.length} of {curveDataAll.length} snapshot{curveDataAll.length === 1 ? '' : 's'}
+              </span>
+            </div>
+            {curveData.length === 0 ? (
+              <p className="text-xs text-text-muted py-6 text-center">No snapshots in this window yet.</p>
+            ) : (
             <ResponsiveContainer width="100%" height={220}>
               <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                 <defs>
@@ -1240,16 +1319,18 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
                   { x: 6 * 60, label: '6h' },
                   { x: 24 * 60, label: '24h' },
                   { x: 72 * 60, label: '72h' },
-                ].map((ref) => (
-                  <ReferenceLine
-                    key={ref.x}
-                    yAxisId="left"
-                    x={ref.x}
-                    stroke="#4b5563"
-                    strokeDasharray="2 2"
-                    label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
-                  />
-                ))}
+                ]
+                  .filter((ref) => (zoomMax === null ? true : ref.x <= zoomMax))
+                  .map((ref) => (
+                    <ReferenceLine
+                      key={ref.x}
+                      yAxisId="left"
+                      x={ref.x}
+                      stroke="#4b5563"
+                      strokeDasharray="2 2"
+                      label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
+                    />
+                  ))}
                 <Area
                   yAxisId="left"
                   type="monotone"
@@ -1270,6 +1351,8 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
                 />
               </ComposedChart>
             </ResponsiveContainer>
+            )}
+            </>
           )}
         </div>
       )}
