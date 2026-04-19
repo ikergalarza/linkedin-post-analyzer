@@ -109,6 +109,7 @@ interface LivePost {
   creator_name: string | null;
   creator_image: string | null;
   snapshot_count: number;
+  last_snapshot_at: string | null;
   is_live: boolean;
 }
 
@@ -499,20 +500,22 @@ export default function Accounts() {
         </div>
       )}
 
-      {/* Live posts — monitored growth curve for posts published in the last 24h */}
-      {hasAccounts && livePosts && livePosts.length > 0 && (
+      {/* Live posts — monitored growth curve. The backend snapshot worker runs every 15 min
+          and captures posts published < 6h ago from managed accounts that have a unipile_account_id. */}
+      {hasAccounts && (
         <div className="bg-bg-card border border-border rounded-xl p-5">
           <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <span className="relative flex items-center">
-                  <span className="absolute inline-flex h-2.5 w-2.5 rounded-full bg-red-400 opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                  <span className={`absolute inline-flex h-2.5 w-2.5 rounded-full opacity-75 ${livePosts?.some((p) => p.is_live) ? 'bg-red-400 animate-ping' : 'bg-text-muted'}`} />
+                  <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${livePosts?.some((p) => p.is_live) ? 'bg-red-500' : 'bg-text-muted'}`} />
                 </span>
                 Live posts
               </h3>
               <p className="text-xs text-text-muted">
-                Posts from the last 24h · monitor captures impressions/engagement every 15 min during the first 6h
+                The monitor captures impressions/engagement every 15 min during the first 6h after publication.
+                Only managed accounts with a Unipile account_id configured are tracked.
               </p>
             </div>
             <button
@@ -522,11 +525,25 @@ export default function Accounts() {
               ↻ Refresh
             </button>
           </div>
-          <div className="space-y-3">
-            {livePosts.map((p) => (
-              <LivePostRow key={p.id} post={p} />
-            ))}
-          </div>
+          {!livePosts ? (
+            <p className="text-xs text-text-muted py-6 text-center">Loading…</p>
+          ) : livePosts.length === 0 ? (
+            <div className="text-center py-8 text-text-muted border border-dashed border-border rounded-lg">
+              <p className="text-sm mb-1">No monitored posts yet.</p>
+              <p className="text-xs">
+                Publish a post from a managed account with its Unipile account_id set, and it'll appear here within 15 min.
+                {accounts?.some((a) => !a.unipile_account_id) && (
+                  <> You still have managed accounts without a Unipile ID configured — open "Manage accounts" to set them.</>
+                )}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {livePosts.map((p) => (
+                <LivePostRow key={p.id} post={p} />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -1066,8 +1083,14 @@ function LivePostRow({ post }: { post: LivePost }) {
                 {post.outlier_ratio.toFixed(1)}x
               </span>
             )}
-            <span className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]">
+            <span
+              className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]"
+              title={post.last_snapshot_at ? `Last capture ${fmtAge(post.last_snapshot_at)}` : 'No captures yet'}
+            >
               {post.snapshot_count} snap{post.snapshot_count === 1 ? '' : 's'}
+              {post.last_snapshot_at && post.snapshot_count > 0 && (
+                <span className="ml-1 opacity-60">· {fmtAge(post.last_snapshot_at)}</span>
+              )}
             </span>
           </div>
           <p className="text-sm text-text-primary line-clamp-2">{truncate(post.hook_text || post.content_text, 180)}</p>

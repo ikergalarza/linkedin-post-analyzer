@@ -338,20 +338,30 @@ router.get('/analytics', async (req: Request, res: Response) => {
 router.get('/live-posts', async (_req: Request, res: Response) => {
   try {
     const { rows } = await pool.query(
-      `SELECT
+      `WITH candidate_posts AS (
+         SELECT p.*,
+                (SELECT COUNT(*)::int FROM post_snapshots s WHERE s.post_id = p.id) AS snapshot_count,
+                (SELECT MAX(s.captured_at) FROM post_snapshots s WHERE s.post_id = p.id) AS last_snapshot_at
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+         WHERE c.is_managed = TRUE
+           AND c.unipile_account_id IS NOT NULL
+           AND p.published_at IS NOT NULL
+       )
+       SELECT
          p.id, p.content_text, p.hook_text, p.content_type, p.published_at,
          p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
          p.engagement_score, p.outlier_ratio, p.is_outlier, p.post_url,
          c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
-         (SELECT COUNT(*)::int FROM post_snapshots s WHERE s.post_id = p.id) AS snapshot_count,
+         p.snapshot_count,
+         p.last_snapshot_at,
          (NOW() - p.published_at < INTERVAL '6 hours') AS is_live
-       FROM posts p
+       FROM candidate_posts p
        JOIN creators c ON c.id = p.creator_id
-       WHERE c.is_managed = TRUE
-         AND c.unipile_account_id IS NOT NULL
-         AND p.published_at IS NOT NULL
-         AND p.published_at > NOW() - INTERVAL '24 hours'
-       ORDER BY p.published_at DESC`
+       WHERE p.published_at > NOW() - INTERVAL '24 hours'
+          OR p.snapshot_count > 0
+       ORDER BY p.published_at DESC
+       LIMIT 50`
     );
     res.json(rows);
   } catch (err: any) {
