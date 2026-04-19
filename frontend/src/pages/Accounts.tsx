@@ -529,10 +529,25 @@ export default function Accounts() {
           <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <span className="relative flex items-center">
-                  <span className={`absolute inline-flex h-2.5 w-2.5 rounded-full opacity-75 ${livePosts?.some((p) => p.is_live) ? 'bg-red-400 animate-ping' : 'bg-text-muted'}`} />
-                  <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${livePosts?.some((p) => p.is_live) ? 'bg-red-500' : 'bg-text-muted'}`} />
-                </span>
+                {(() => {
+                  // "Monitoring" = any tracked post still within the 7d window (any non-closed phase).
+                  // Shows a red breathing dot + outward ripple so it feels like a live heartbeat.
+                  const monitoring = livePosts?.some((p) => p.phase !== 'closed');
+                  return (
+                    <span className="relative flex items-center justify-center h-3 w-3">
+                      {monitoring && (
+                        <span className="absolute inline-flex h-3 w-3 rounded-full bg-red-500 opacity-60 animate-ping" />
+                      )}
+                      <span
+                        className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
+                          monitoring
+                            ? 'bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.9)]'
+                            : 'bg-text-muted'
+                        }`}
+                      />
+                    </span>
+                  );
+                })()}
                 Live posts
               </h3>
               <p className="text-xs text-text-muted">
