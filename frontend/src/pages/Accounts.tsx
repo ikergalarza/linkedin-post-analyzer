@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useApi, apiPatch, apiPost } from '../hooks/useApi';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, Cell, ComposedChart, Area,
+  ResponsiveContainer, Legend, Cell, ComposedChart, Area, ReferenceLine,
 } from 'recharts';
 
 interface ManagedAccount {
@@ -111,7 +111,17 @@ interface LivePost {
   snapshot_count: number;
   last_snapshot_at: string | null;
   is_live: boolean;
+  phase: 'golden' | 'first_wave' | 'consolidation' | 'long_tail' | 'tail' | 'closed';
 }
+
+const PHASE_META: Record<LivePost['phase'], { label: string; bg: string; text: string }> = {
+  golden:        { label: '🔥 Golden hour',  bg: 'bg-red-500/15',    text: 'text-red-400' },
+  first_wave:    { label: '🌊 1st wave',     bg: 'bg-orange-500/15', text: 'text-orange-400' },
+  consolidation: { label: '📈 Consolidation', bg: 'bg-yellow-500/15', text: 'text-yellow-400' },
+  long_tail:     { label: '📉 Long tail',    bg: 'bg-sky-500/15',    text: 'text-sky-400' },
+  tail:          { label: '🐢 Tail',         bg: 'bg-purple-500/15', text: 'text-purple-400' },
+  closed:        { label: '✅ Closed',       bg: 'bg-bg-secondary',  text: 'text-text-muted' },
+};
 
 interface Snapshot {
   captured_at: string;
@@ -514,7 +524,7 @@ export default function Accounts() {
                 Live posts
               </h3>
               <p className="text-xs text-text-muted">
-                The monitor captures impressions/engagement every 15 min during the first 6h after publication.
+                Phase-based tracking for 7 days: 15 min (0–1h) · 30 min (1–6h) · 2h (6–24h) · 6h (24–72h) · 24h (72h–7d).
                 Only managed accounts with a Unipile account_id configured are tracked.
               </p>
             </div>
@@ -1066,11 +1076,14 @@ function LivePostRow({ post }: { post: LivePost }) {
             <span className="text-text-secondary font-medium">{post.creator_name}</span>
             <span>·</span>
             <span>{fmtAge(post.published_at)}</span>
-            {post.is_live && (
-              <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 text-[10px] font-medium">
-                LIVE
-              </span>
-            )}
+            {(() => {
+              const meta = PHASE_META[post.phase] || PHASE_META.closed;
+              return (
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${meta.bg} ${meta.text}`}>
+                  {meta.label}
+                </span>
+              );
+            })()}
             {post.outlier_ratio != null && (
               <span
                 className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
@@ -1134,7 +1147,7 @@ function LivePostRow({ post }: { post: LivePost }) {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-                <XAxis dataKey="label" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
+                <XAxis dataKey="ageMin" type="number" domain={[0, 'dataMax']} tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => v < 60 ? `${v}m` : `${(v / 60).toFixed(0)}h`} />
                 <YAxis
                   yAxisId="left"
                   tick={{ fill: '#7dd3fc', fontSize: 11 }}
@@ -1164,6 +1177,21 @@ function LivePostRow({ post }: { post: LivePost }) {
                     );
                   }}
                 />
+                {[
+                  { x: 60, label: '1h' },
+                  { x: 6 * 60, label: '6h' },
+                  { x: 24 * 60, label: '24h' },
+                  { x: 72 * 60, label: '72h' },
+                ].map((ref) => (
+                  <ReferenceLine
+                    key={ref.x}
+                    yAxisId="left"
+                    x={ref.x}
+                    stroke="#4b5563"
+                    strokeDasharray="2 2"
+                    label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
+                  />
+                ))}
                 <Area
                   yAxisId="left"
                   type="monotone"

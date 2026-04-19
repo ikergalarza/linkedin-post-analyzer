@@ -355,10 +355,18 @@ router.get('/live-posts', async (_req: Request, res: Response) => {
          c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
          p.snapshot_count,
          p.last_snapshot_at,
-         (NOW() - p.published_at < INTERVAL '6 hours') AS is_live
+         (NOW() - p.published_at < INTERVAL '6 hours') AS is_live,
+         CASE
+           WHEN NOW() - p.published_at < INTERVAL '1 hour'  THEN 'golden'
+           WHEN NOW() - p.published_at < INTERVAL '6 hours' THEN 'first_wave'
+           WHEN NOW() - p.published_at < INTERVAL '24 hours' THEN 'consolidation'
+           WHEN NOW() - p.published_at < INTERVAL '72 hours' THEN 'long_tail'
+           WHEN NOW() - p.published_at < INTERVAL '7 days'  THEN 'tail'
+           ELSE 'closed'
+         END AS phase
        FROM candidate_posts p
        JOIN creators c ON c.id = p.creator_id
-       WHERE p.published_at > NOW() - INTERVAL '24 hours'
+       WHERE p.published_at > NOW() - INTERVAL '7 days'
           OR p.snapshot_count > 0
        ORDER BY p.published_at DESC
        LIMIT 50`
