@@ -32,7 +32,8 @@ function requiredIntervalMs(ageMs: number): number | null {
   return null;
 }
 
-async function tick() {
+// force=true ignores per-phase cadence (used by the manual Refresh button in the UI).
+async function tick(force = false): Promise<{ captured: number; candidates: number }> {
   try {
     // All managed-account posts within the 7-day window; we'll filter per-post by
     // phase cadence in JS so each post only gets hit at its own required interval.
@@ -54,14 +55,15 @@ async function tick() {
       const age = now - new Date(c.published_at).getTime();
       const interval = requiredIntervalMs(age);
       if (interval === null) return false;
+      if (force) return true;
       if (!c.last_snapshot_at) return true;
       const sinceLast = now - new Date(c.last_snapshot_at).getTime();
       return sinceLast >= interval - DUE_TOLERANCE_MS;
     });
 
-    if (targets.length === 0) return;
+    if (targets.length === 0) return { captured: 0, candidates: candidates.length };
 
-    console.log(`[postMonitor] ticking — ${targets.length}/${candidates.length} post(s) due for snapshot`);
+    console.log(`[postMonitor] ${force ? 'forced ' : ''}ticking — ${targets.length}/${candidates.length} post(s) due for snapshot`);
 
     // Group by creator so we only hit Unipile once per account
     const byCreator = new Map<string, typeof targets>();
@@ -143,9 +145,16 @@ async function tick() {
         console.error(`[postMonitor] recalc outliers for ${creatorId} failed:`, err?.message);
       }
     }
+    return { captured: targets.length, candidates: candidates.length };
   } catch (err: any) {
     console.error('[postMonitor] tick failed:', err?.message);
+    return { captured: 0, candidates: 0 };
   }
+}
+
+// Public hook for the Refresh button — forces a capture for every tracked post right now.
+export async function forceLiveCapture(): Promise<{ captured: number; candidates: number }> {
+  return tick(true);
 }
 
 // One-shot: recompute outlier_ratio/is_outlier for every managed creator's posts.

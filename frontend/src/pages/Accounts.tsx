@@ -270,6 +270,8 @@ export default function Accounts() {
   const [scrapingId, setScrapingId] = useState<string | null>(null);
   const [scrapeResult, setScrapeResult] = useState<Record<string, string>>({});
   const [legendOpen, setLegendOpen] = useState(false);
+  const [liveRefreshing, setLiveRefreshing] = useState(false);
+  const [liveRefreshMsg, setLiveRefreshMsg] = useState<string | null>(null);
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -592,11 +594,36 @@ export default function Accounts() {
                 </button>
               )}
               <button
-                onClick={() => refetchLive()}
-                className="text-xs text-text-muted hover:text-accent transition-colors"
+                onClick={async () => {
+                  setLiveRefreshing(true);
+                  setLiveRefreshMsg(null);
+                  try {
+                    const res = await apiPost<{ captured: number; candidates: number }>(
+                      '/api/accounts/live-refresh',
+                      {}
+                    );
+                    setLiveRefreshMsg(
+                      res.candidates === 0
+                        ? 'No tracked posts'
+                        : `✓ ${res.captured}/${res.candidates} captured`
+                    );
+                    refetchLive();
+                    setTimeout(() => setLiveRefreshMsg(null), 4000);
+                  } catch (err: any) {
+                    setLiveRefreshMsg(`✗ ${err.message}`);
+                  } finally {
+                    setLiveRefreshing(false);
+                  }
+                }}
+                disabled={liveRefreshing}
+                className="text-xs text-text-muted hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Force a fresh capture for every tracked post (ignores phase cadence)"
               >
-                ↻ Refresh
+                {liveRefreshing ? '↻ Capturing…' : '↻ Refresh'}
               </button>
+              {liveRefreshMsg && (
+                <span className="text-[11px] text-text-muted whitespace-nowrap">{liveRefreshMsg}</span>
+              )}
             </div>
           </div>
           {legendOpen && (

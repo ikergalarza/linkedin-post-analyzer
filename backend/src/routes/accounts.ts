@@ -4,6 +4,7 @@ import { unipileService } from '../services/unipile';
 import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
+import { forceLiveCapture } from '../services/postMonitor';
 
 const router = Router();
 
@@ -384,6 +385,18 @@ router.get('/live-posts', async (req: Request, res: Response) => {
     );
     res.json(rows);
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/live-refresh — manually trigger a snapshot capture for all tracked posts,
+// ignoring the per-phase cadence. Used by the Refresh button in the Live Posts panel.
+router.post('/live-refresh', async (_req: Request, res: Response) => {
+  try {
+    const result = await forceLiveCapture();
+    res.json(result);
+  } catch (err: any) {
+    console.error('[accounts/live-refresh]', err);
     res.status(500).json({ error: err.message });
   }
 });
