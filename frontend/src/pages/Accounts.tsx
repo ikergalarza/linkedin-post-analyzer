@@ -1068,51 +1068,7 @@ export default function Accounts() {
               </div>
               <div className="space-y-2">
                 {analytics.top_posts.map((p) => (
-                  <div key={p.id} className="flex items-start gap-3 p-3 bg-bg-primary rounded-lg border border-border/50">
-                    {p.creator_image ? (
-                      <img src={p.creator_image} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-muted text-xs flex-shrink-0">
-                        {(p.creator_name || '?')[0]}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-                        <span className="text-text-secondary font-medium">{p.creator_name}</span>
-                        <span>·</span>
-                        <span>{p.published_at ? new Date(p.published_at).toLocaleDateString() : '—'}</span>
-                        <span>·</span>
-                        <span>{FORMAT_LABELS[p.content_type] || p.content_type}</span>
-                        {p.outlier_ratio != null && (
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                              p.is_outlier
-                                ? 'bg-green-500/15 text-green-400'
-                                : 'bg-bg-secondary text-text-muted border border-border'
-                            }`}
-                            title="Engagement relative to this creator's average"
-                          >
-                            {p.outlier_ratio.toFixed(1)}x
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-text-primary line-clamp-2">{truncate(p.hook_text || p.content_text, 180)}</p>
-                      <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5">
-                        <span>{fmtNum(p.likes_count)} likes</span>
-                        <span>{fmtNum(p.comments_count)} comments</span>
-                        <span>{fmtNum(p.reposts_count)} reposts</span>
-                        {p.impressions_count != null && (
-                          <span className="text-accent/80">👁️ {fmtNum(p.impressions_count)}</span>
-                        )}
-                        <span className="text-accent font-medium ml-auto">{fmtNum(p.engagement_score)} eng</span>
-                        {p.post_url && (
-                          <a href={p.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
-                            View →
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <TopPostRow key={p.id} post={p} />
                 ))}
               </div>
             </div>
@@ -1139,21 +1095,21 @@ function fmtAge(iso: string): string {
   return `${Math.round(h / 24)}d ago`;
 }
 
-function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: () => void }) {
-  const [open, setOpen] = useState(false);
-  const [zoomMax, setZoomMax] = useState<number | null>(null); // max ageMin to display; null = All
-  const { data, loading, refetch } = useApi<SnapshotsResponse>(open ? `/api/accounts/posts/${post.id}/snapshots` : null);
+// Shared snapshot chart — works for any post with captured data (live or historical).
+// Fetches `/api/accounts/posts/:id/snapshots` lazily; auto-refreshes every 2 min while live.
+function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; publishedAt: string; autoRefresh?: boolean }) {
+  const [zoomMax, setZoomMax] = useState<number | null>(null);
+  const { data, loading, refetch } = useApi<SnapshotsResponse>(`/api/accounts/posts/${postId}/snapshots`);
 
-  // Refresh the snapshot chart every 2 min while expanded and still in live window
   useEffect(() => {
-    if (!open || !post.is_live) return;
+    if (!autoRefresh) return;
     const timer = setInterval(() => refetch(), 2 * 60 * 1000);
     return () => clearInterval(timer);
-  }, [open, post.is_live]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [autoRefresh]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const curveDataAll = useMemo(() => {
     if (!data?.snapshots.length) return [];
-    const publishedMs = new Date(post.published_at).getTime();
+    const publishedMs = new Date(publishedAt).getTime();
     return data.snapshots.map((s) => {
       const ageMin = Math.max(0, Math.round((new Date(s.captured_at).getTime() - publishedMs) / 60000));
       return {
@@ -1165,14 +1121,116 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
         reposts: s.reposts_count,
       };
     });
-  }, [data, post.published_at]);
+  }, [data, publishedAt]);
 
-  // Filter to the selected zoom window. Only show presets whose window contains data.
   const curveData = useMemo(
     () => (zoomMax === null ? curveDataAll : curveDataAll.filter((d) => d.ageMin <= zoomMax)),
     [curveDataAll, zoomMax]
   );
   const maxAgeMin = curveDataAll.length ? curveDataAll[curveDataAll.length - 1].ageMin : 0;
+
+  if (loading && !data) {
+    return <p className="text-xs text-text-muted py-6 text-center">Loading snapshots…</p>;
+  }
+  if (curveDataAll.length === 0) {
+    return (
+      <p className="text-xs text-text-muted py-6 text-center">
+        No snapshot data for this post. Only posts monitored during their first 7 days have captures.
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex items-center gap-1 mb-2">
+        <span className="text-[10px] text-text-muted mr-1">Zoom:</span>
+        {ZOOM_PRESETS.map((z) => {
+          const dimmed = z.maxMin !== null && z.maxMin > maxAgeMin;
+          const active = zoomMax === z.maxMin;
+          return (
+            <button
+              key={z.label}
+              onClick={() => setZoomMax(z.maxMin)}
+              className={`px-2 py-0.5 rounded text-[10px] transition-colors ${
+                active
+                  ? 'bg-accent/20 text-accent border border-accent/30'
+                  : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+              } ${dimmed ? 'opacity-40' : ''}`}
+            >
+              {z.label}
+            </button>
+          );
+        })}
+        <span className="text-[10px] text-text-muted ml-2">
+          {curveData.length} of {curveDataAll.length} snapshot{curveDataAll.length === 1 ? '' : 's'}
+        </span>
+      </div>
+      {curveData.length === 0 ? (
+        <p className="text-xs text-text-muted py-6 text-center">No snapshots in this window.</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={220}>
+          <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+            <defs>
+              <linearGradient id={`liveImp-${postId}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.3} />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
+            <XAxis
+              dataKey="ageMin"
+              type="number"
+              domain={[0, 'dataMax']}
+              tick={{ fill: '#9ca3af', fontSize: 11 }}
+              axisLine={{ stroke: '#2e3348' }}
+              tickFormatter={(v) => (v < 60 ? `${v}m` : `${(v / 60).toFixed(0)}h`)}
+            />
+            <YAxis yAxisId="left" tick={{ fill: '#7dd3fc', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
+            <YAxis yAxisId="right" orientation="right" tick={{ fill: '#e8935a', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
+            <Tooltip
+              contentStyle={CHART_TOOLTIP_STYLE}
+              content={({ active, payload }: any) => {
+                if (!active || !payload || payload.length === 0) return null;
+                const p = payload[0].payload;
+                return (
+                  <div style={CHART_TOOLTIP_STYLE} className="p-2">
+                    <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
+                    <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
+                    <div className="text-accent text-xs mt-0.5">
+                      {p.likes} likes · {p.comments} comments · {p.reposts} reposts
+                    </div>
+                  </div>
+                );
+              }}
+            />
+            {[
+              { x: 60, label: '1h' },
+              { x: 6 * 60, label: '6h' },
+              { x: 24 * 60, label: '24h' },
+              { x: 72 * 60, label: '72h' },
+            ]
+              .filter((ref) => (zoomMax === null ? true : ref.x <= zoomMax))
+              .map((ref) => (
+                <ReferenceLine
+                  key={ref.x}
+                  yAxisId="left"
+                  x={ref.x}
+                  stroke="#4b5563"
+                  strokeDasharray="2 2"
+                  label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
+                />
+              ))}
+            <Area yAxisId="left" type="monotone" dataKey="impressions" stroke="#38bdf8" strokeWidth={2} fill={`url(#liveImp-${postId})`} isAnimationActive={false} />
+            <Line yAxisId="right" type="monotone" dataKey="likes" stroke="#e8935a" strokeWidth={2} dot={{ r: 3, fill: '#e8935a' }} isAnimationActive={false} />
+          </ComposedChart>
+        </ResponsiveContainer>
+      )}
+    </>
+  );
+}
+
+function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: () => void }) {
+  const [open, setOpen] = useState(false);
 
   return (
     <div className={`rounded-lg border ${post.is_live ? 'border-red-500/20 bg-red-500/5' : 'border-border bg-bg-primary'}`}>
@@ -1255,120 +1313,77 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
       </div>
       {open && (
         <div className="px-3 pb-3">
-          {loading && !data ? (
-            <p className="text-xs text-text-muted py-6 text-center">Loading snapshots…</p>
-          ) : curveDataAll.length === 0 ? (
-            <p className="text-xs text-text-muted py-6 text-center">
-              No snapshots yet. The monitor captures every 15 min during the first 6h.
-            </p>
-          ) : (
-            <>
-            <div className="flex items-center gap-1 mb-2">
-              <span className="text-[10px] text-text-muted mr-1">Zoom:</span>
-              {ZOOM_PRESETS.map((z) => {
-                // Dim presets that extend past where data actually ends — they'd render the same view as "All"
-                const dimmed = z.maxMin !== null && z.maxMin > maxAgeMin;
-                const active = zoomMax === z.maxMin;
-                return (
-                  <button
-                    key={z.label}
-                    onClick={() => setZoomMax(z.maxMin)}
-                    className={`px-2 py-0.5 rounded text-[10px] transition-colors ${
-                      active
-                        ? 'bg-accent/20 text-accent border border-accent/30'
-                        : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
-                    } ${dimmed ? 'opacity-40' : ''}`}
-                  >
-                    {z.label}
-                  </button>
-                );
-              })}
-              <span className="text-[10px] text-text-muted ml-2">
-                {curveData.length} of {curveDataAll.length} snapshot{curveDataAll.length === 1 ? '' : 's'}
+          <SnapshotCurve postId={post.id} publishedAt={post.published_at} autoRefresh={post.is_live} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Top Posts row — mirrors the LivePostRow layout but for historical posts in the
+// analytics list. The "Show curve" button pulls archived snapshots for any post
+// that was previously tracked by the monitor, so the data stays consultable after
+// the 7-day live window closes.
+function TopPostRow({ post }: { post: TopPost }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-lg border border-border/50 bg-bg-primary">
+      <div className="flex items-start gap-3 p-3">
+        {post.creator_image ? (
+          <img src={post.creator_image} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-muted text-xs flex-shrink-0">
+            {(post.creator_name || '?')[0]}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-xs text-text-muted mb-1 flex-wrap">
+            <span className="text-text-secondary font-medium">{post.creator_name}</span>
+            <span>·</span>
+            <span>{post.published_at ? new Date(post.published_at).toLocaleDateString() : '—'}</span>
+            <span>·</span>
+            <span>{FORMAT_LABELS[post.content_type] || post.content_type}</span>
+            {post.outlier_ratio != null && (
+              <span
+                className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                  post.is_outlier
+                    ? 'bg-green-500/15 text-green-400'
+                    : 'bg-bg-secondary text-text-muted border border-border'
+                }`}
+                title="Engagement relative to this creator's average"
+              >
+                {post.outlier_ratio.toFixed(1)}x
               </span>
-            </div>
-            {curveData.length === 0 ? (
-              <p className="text-xs text-text-muted py-6 text-center">No snapshots in this window yet.</p>
-            ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-                <defs>
-                  <linearGradient id={`liveImp-${post.id}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-                <XAxis dataKey="ageMin" type="number" domain={[0, 'dataMax']} tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => v < 60 ? `${v}m` : `${(v / 60).toFixed(0)}h`} />
-                <YAxis
-                  yAxisId="left"
-                  tick={{ fill: '#7dd3fc', fontSize: 11 }}
-                  axisLine={{ stroke: '#2e3348' }}
-                  tickFormatter={(v) => fmtNum(Number(v))}
-                />
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  tick={{ fill: '#e8935a', fontSize: 11 }}
-                  axisLine={{ stroke: '#2e3348' }}
-                  tickFormatter={(v) => fmtNum(Number(v))}
-                />
-                <Tooltip
-                  contentStyle={CHART_TOOLTIP_STYLE}
-                  content={({ active, payload }: any) => {
-                    if (!active || !payload || payload.length === 0) return null;
-                    const p = payload[0].payload;
-                    return (
-                      <div style={CHART_TOOLTIP_STYLE} className="p-2">
-                        <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
-                        <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
-                        <div className="text-accent text-xs mt-0.5">
-                          {p.likes} likes · {p.comments} comments · {p.reposts} reposts
-                        </div>
-                      </div>
-                    );
-                  }}
-                />
-                {[
-                  { x: 60, label: '1h' },
-                  { x: 6 * 60, label: '6h' },
-                  { x: 24 * 60, label: '24h' },
-                  { x: 72 * 60, label: '72h' },
-                ]
-                  .filter((ref) => (zoomMax === null ? true : ref.x <= zoomMax))
-                  .map((ref) => (
-                    <ReferenceLine
-                      key={ref.x}
-                      yAxisId="left"
-                      x={ref.x}
-                      stroke="#4b5563"
-                      strokeDasharray="2 2"
-                      label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
-                    />
-                  ))}
-                <Area
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="impressions"
-                  stroke="#38bdf8"
-                  strokeWidth={2}
-                  fill={`url(#liveImp-${post.id})`}
-                  isAnimationActive={false}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="likes"
-                  stroke="#e8935a"
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#e8935a' }}
-                  isAnimationActive={false}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
             )}
-            </>
-          )}
+          </div>
+          <p className="text-sm text-text-primary line-clamp-2">{truncate(post.hook_text || post.content_text, 180)}</p>
+          <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
+            <span>{fmtNum(post.likes_count)} likes</span>
+            <span>{fmtNum(post.comments_count)} comments</span>
+            <span>{fmtNum(post.reposts_count)} reposts</span>
+            {post.impressions_count != null && (
+              <span className="text-accent/80">👁️ {fmtNum(post.impressions_count)}</span>
+            )}
+            <span className="text-accent font-medium ml-auto">{fmtNum(post.engagement_score)} eng</span>
+            {post.published_at && (
+              <button
+                onClick={() => setOpen((v) => !v)}
+                className="text-accent hover:text-accent-light"
+              >
+                {open ? 'Hide curve' : 'Show curve'}
+              </button>
+            )}
+            {post.post_url && (
+              <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
+                View →
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+      {open && post.published_at && (
+        <div className="px-3 pb-3">
+          <SnapshotCurve postId={post.id} publishedAt={post.published_at} />
         </div>
       )}
     </div>
