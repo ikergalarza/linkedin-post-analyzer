@@ -4,7 +4,7 @@ import { unipileService } from '../services/unipile';
 import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
-import { forceLiveCapture } from '../services/postMonitor';
+import { forceLiveCapture, maybeTick } from '../services/postMonitor';
 
 const router = Router();
 
@@ -345,6 +345,9 @@ router.get('/analytics', async (req: Request, res: Response) => {
 // Pass creator_id to scope to a single account; omit for all managed accounts.
 router.get('/live-posts', async (req: Request, res: Response) => {
   try {
+    // Opportunistic tick: the UI polls this every 2 min while the Accounts page is open,
+    // which keeps snapshot cadence alive even if Railway recycles the background setInterval.
+    maybeTick();
     const creatorId = (req.query.creator_id as string) || null;
     const params: any[] = [];
     let creatorFilter = '';

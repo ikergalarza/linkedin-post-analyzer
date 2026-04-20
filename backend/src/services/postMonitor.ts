@@ -23,6 +23,11 @@ const HOUR_MS = 60 * 60 * 1000;
 // Tolerance so scheduling jitter doesn't push a snapshot one full tick forward
 const DUE_TOLERANCE_MS = 30 * 1000;
 
+// In-flight guard + last-run timestamp so opportunistic ticks from HTTP requests
+// don't pile up or double-fire alongside the background setInterval.
+let tickInFlight = false;
+let lastTickAt = 0;
+
 function requiredIntervalMs(ageMs: number): number | null {
   if (ageMs < 1 * HOUR_MS) return 15 * 60 * 1000;
   if (ageMs < 6 * HOUR_MS) return 30 * 60 * 1000;
@@ -34,6 +39,8 @@ function requiredIntervalMs(ageMs: number): number | null {
 
 // force=true ignores per-phase cadence (used by the manual Refresh button in the UI).
 async function tick(force = false): Promise<{ captured: number; candidates: number }> {
+  if (tickInFlight) return { captured: 0, candidates: 0 };
+  tickInFlight = true;
   try {
     // All managed-account posts within the 7-day window; we'll filter per-post by
     // phase cadence in JS so each post only gets hit at its own required interval.
@@ -149,12 +156,25 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
   } catch (err: any) {
     console.error('[postMonitor] tick failed:', err?.message);
     return { captured: 0, candidates: 0 };
+  } finally {
+    tickInFlight = false;
+    lastTickAt = Date.now();
   }
 }
 
 // Public hook for the Refresh button — forces a capture for every tracked post right now.
 export async function forceLiveCapture(): Promise<{ captured: number; candidates: number }> {
   return tick(true);
+}
+
+// Opportunistic tick triggered by HTTP requests (GET /live-posts polls every 2 min from the UI).
+// Makes snapshot capture resilient to Railway recycling the Node process or setInterval drift:
+// any time a user has the Accounts page open, ticks stay on cadence even if the background
+// interval misses a firing. Fire-and-forget; never blocks the response.
+export function maybeTick(): void {
+  if (tickInFlight) return;
+  if (Date.now() - lastTickAt < TICK_MS) return;
+  tick().catch((err) => console.error('[postMonitor] opportunistic tick failed:', err?.message));
 }
 
 // One-shot: recompute outlier_ratio/is_outlier for every managed creator's posts.
