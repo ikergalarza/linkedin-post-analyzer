@@ -19,6 +19,10 @@ const RATIO_VALUES: Record<ImageRatio, number> = {
 
 const MAX_CHARS = 3000;
 
+// Hook cutoff — LinkedIn mobile caps around 140 chars before "…see more".
+// Front-load the hook here so it stays fully visible on both platforms.
+const HOOK_CUTOFF = 140;
+
 // Card content widths (card width minus 32px horizontal padding)
 // Desktop card: 555px → content: 523px. Mobile card: 347px → content: 315px.
 // At 14px system font, average char ≈ 7.1px → chars per line:
@@ -27,10 +31,18 @@ const CHARS_PER_LINE: Record<ViewMode, number> = {
   mobile: Math.floor(315 / 7.1),  // ≈ 44
 };
 
-// Max visible lines before "see more"
-// Desktop text-only: 5, desktop with media: 3, mobile (any): 2
+// Hard character cutoff before "…see more" (measured on real LinkedIn posts).
+// Line breaks burn the budget — 2 sentences separated by a blank line usually
+// push the second sentence past the cutoff on mobile.
+const MAX_CHARS_CUT: Record<ViewMode, { text: number; withMedia: number }> = {
+  desktop: { text: 220, withMedia: 140 },
+  mobile:  { text: 140, withMedia: 120 },
+};
+
+// Max visible lines before "see more" (works alongside the char cap —
+// whichever hits first is the cutoff).
 const MAX_LINES = {
-  desktop: { text: 5, withMedia: 3 },
+  desktop: { text: 3, withMedia: 2 },
   mobile:  { text: 2, withMedia: 2 },
 };
 
@@ -53,47 +65,59 @@ function countVisualLines(text: string, charsPerLine: number): number {
 }
 
 /**
- * Returns the visible portion of text that fits within maxLines, respecting
- * LinkedIn's line-counting rules (blank lines = 1 line, wrap counts too).
+ * Returns the visible portion of text before LinkedIn's "…see more" cut,
+ * respecting BOTH a hard char cap and a hard line cap (whichever hits first).
+ * Blank lines burn 1 line of budget each — matches real LinkedIn behavior.
  */
-function truncateByLines(
+function truncate(
   text: string,
   maxLines: number,
+  maxChars: number,
   charsPerLine: number,
-): { visible: string; truncated: boolean; linesUsed: number; totalLines: number } {
+): { visible: string; truncated: boolean; linesUsed: number; totalLines: number; charsUsed: number; totalChars: number } {
   const totalLines = countVisualLines(text, charsPerLine);
-  if (totalLines <= maxLines) {
-    return { visible: text, truncated: false, linesUsed: totalLines, totalLines };
+  const totalChars = charCount(text);
+
+  if (totalLines <= maxLines && totalChars <= maxChars) {
+    return { visible: text, truncated: false, linesUsed: totalLines, totalLines, charsUsed: totalChars, totalChars };
   }
 
   const segments = text.split('\n');
   let linesConsumed = 0;
+  let charsConsumed = 0;
   const visibleParts: string[] = [];
 
-  for (const seg of segments) {
+  for (let idx = 0; idx < segments.length; idx++) {
+    const seg = segments[idx];
     const segLines = seg.trim() === '' ? 1 : Math.max(1, Math.ceil(seg.length / charsPerLine));
+    const newlineCost = visibleParts.length > 0 ? 1 : 0; // "\n" char between segments
+    const projectedChars = charsConsumed + newlineCost + seg.length;
+    const projectedLines = linesConsumed + segLines;
 
-    if (linesConsumed + segLines > maxLines) {
-      // Fit as many chars from this segment as the remaining lines allow
+    if (projectedLines > maxLines || projectedChars > maxChars) {
       const remainingLines = maxLines - linesConsumed;
-      if (remainingLines > 0 && seg.trim() !== '') {
-        const maxChars = remainingLines * charsPerLine;
-        visibleParts.push(seg.slice(0, maxChars).trimEnd());
+      const remainingChars = maxChars - charsConsumed - newlineCost;
+      const maxAllowed = Math.min(remainingLines * charsPerLine, remainingChars);
+      if (maxAllowed > 0 && seg.trim() !== '') {
+        visibleParts.push(seg.slice(0, maxAllowed).trimEnd());
+        charsConsumed += newlineCost + Math.min(seg.length, maxAllowed);
+        linesConsumed += Math.max(1, Math.ceil(Math.min(seg.length, maxAllowed) / charsPerLine));
       }
       break;
     }
 
-    linesConsumed += segLines;
+    linesConsumed = projectedLines;
+    charsConsumed = projectedChars;
     visibleParts.push(seg);
-
-    if (linesConsumed >= maxLines) break;
   }
 
   return {
     visible: visibleParts.join('\n').trimEnd(),
     truncated: true,
-    linesUsed: maxLines,
+    linesUsed: Math.min(linesConsumed, maxLines),
     totalLines,
+    charsUsed: Math.min(charsConsumed, maxChars),
+    totalChars,
   };
 }
 
@@ -109,8 +133,24 @@ function PostText({
   const [expanded, setExpanded] = useState(false);
 
   const maxLines = hasMedia ? MAX_LINES[view].withMedia : MAX_LINES[view].text;
+  const maxChars = hasMedia ? MAX_CHARS_CUT[view].withMedia : MAX_CHARS_CUT[view].text;
   const charsPerLine = CHARS_PER_LINE[view];
-  const { visible, truncated, linesUsed, totalLines } = truncateByLines(text, maxLines, charsPerLine);
+  const { visible, truncated, linesUsed, totalLines, charsUsed, totalChars } = truncate(
+    text,
+    maxLines,
+    maxChars,
+    charsPerLine,
+  );
+
+  // Is the hook (first 140 chars) fully visible before the cut?
+  const hookVisible = charCount(visible) >= Math.min(HOOK_CUTOFF, totalChars);
+
+  // Which cap triggered the cut?
+  const cutReason = truncated
+    ? linesUsed >= maxLines && charsUsed < maxChars
+      ? 'lines'
+      : 'chars'
+    : null;
 
   return (
     <div>
@@ -148,12 +188,27 @@ function PostText({
           </>
         )}
       </div>
-      {/* Line count hint below text */}
+      {/* Cutoff hint below text */}
       {!expanded && (
-        <div style={{ fontSize: 10, color: '#aaa', marginTop: 4 }}>
-          {truncated
-            ? `${linesUsed} visible lines of ${totalLines} total · ${maxLines} max ${hasMedia ? '(with image)' : '(text only)'}`
-            : `${totalLines} lines · not truncated`}
+        <div style={{ fontSize: 10, color: '#aaa', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div>
+            {truncated ? (
+              <>
+                {charsUsed}/{maxChars} chars · {linesUsed}/{maxLines} lines visible
+                {cutReason === 'chars' ? ' · cut by char cap' : ' · cut by line cap'}
+                {' · '}{totalChars} chars / {totalLines} lines total
+              </>
+            ) : (
+              <>
+                {totalChars}/{maxChars} chars · {totalLines}/{maxLines} lines · not truncated
+              </>
+            )}
+          </div>
+          {truncated && !hookVisible && (
+            <div style={{ color: '#ef4444', fontWeight: 600 }}>
+              ⚠ Hook cut short — front-load the point in the first {HOOK_CUTOFF} chars
+            </div>
+          )}
         </div>
       )}
     </div>
