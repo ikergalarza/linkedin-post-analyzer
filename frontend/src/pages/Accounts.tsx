@@ -598,17 +598,13 @@ export default function Accounts() {
                   setLiveRefreshing(true);
                   setLiveRefreshMsg(null);
                   try {
-                    const res = await apiPost<{ captured: number; candidates: number }>(
+                    const res = await apiPost<{ captured: number; candidates: number; scraped: number; accounts: number }>(
                       '/api/accounts/live-refresh',
                       {}
                     );
-                    setLiveRefreshMsg(
-                      res.candidates === 0
-                        ? 'No tracked posts'
-                        : `✓ ${res.captured}/${res.candidates} captured`
-                    );
+                    setLiveRefreshMsg(`✓ ${res.scraped} posts scraped · ${res.captured} snapshots`);
                     refetchLive();
-                    setTimeout(() => setLiveRefreshMsg(null), 4000);
+                    setTimeout(() => setLiveRefreshMsg(null), 5000);
                   } catch (err: any) {
                     setLiveRefreshMsg(`✗ ${err.message}`);
                   } finally {
@@ -617,9 +613,9 @@ export default function Accounts() {
                 }}
                 disabled={liveRefreshing}
                 className="text-xs text-text-muted hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Force a fresh capture for every tracked post (ignores phase cadence)"
+                title="Scrape new posts from every managed account and force-capture snapshots for tracked ones"
               >
-                {liveRefreshing ? '↻ Capturing…' : '↻ Refresh'}
+                {liveRefreshing ? '↻ Scraping…' : '↻ Refresh'}
               </button>
               {liveRefreshMsg && (
                 <span className="text-[11px] text-text-muted whitespace-nowrap">{liveRefreshMsg}</span>

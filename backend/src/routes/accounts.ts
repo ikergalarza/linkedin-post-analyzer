@@ -8,6 +8,56 @@ import { forceLiveCapture } from '../services/postMonitor';
 
 const router = Router();
 
+// Re-fetch posts for a single managed creator using their Unipile account_id, upsert into DB,
+// and refresh outlier ratios. Returns counts so callers can report progress.
+async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number; with_impressions: number }> {
+  const creator = await CreatorModel.findById(creatorId);
+  if (!creator) return { scraped: 0, with_impressions: 0 };
+  const accountIdOverride = (creator as any).unipile_account_id as string | null;
+  if (!accountIdOverride) return { scraped: 0, with_impressions: 0 };
+
+  let providerId = creator.linkedin_id;
+  if (!providerId) {
+    const rawProfile = await unipileService.getProfile(creator.linkedin_url, accountIdOverride);
+    const normalized = unipileService.normalizeProfile(rawProfile, creator.linkedin_url);
+    providerId = normalized.linkedin_id;
+    if (providerId) {
+      await CreatorModel.update(creator.id, { linkedin_id: providerId } as any);
+    }
+  }
+  if (!providerId) return { scraped: 0, with_impressions: 0 };
+
+  const rawPosts = await unipileService.getPosts(providerId, undefined, accountIdOverride);
+  const originalPosts = rawPosts.filter((raw: any) => {
+    if (raw.type === 'repost' || raw.type === 'RESHARE' || raw.type === 'reshare') return false;
+    if (raw.is_repost || raw.is_reshare) return false;
+    if (raw.reshared_post || raw.original_post) return false;
+    return true;
+  });
+  if (originalPosts.length === 0) {
+    await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
+    return { scraped: 0, with_impressions: 0 };
+  }
+
+  let posts = originalPosts.map((raw) => {
+    const normalized = unipileService.normalizePost(raw, creator.id);
+    const enriched = enrichPost(normalized);
+    return { ...normalized, ...enriched };
+  });
+  const withOutliers = recalculateOutliers(posts);
+  posts = withOutliers.map((o, i) => ({
+    ...posts[i],
+    outlier_ratio: o.outlier_ratio,
+    is_outlier: o.is_outlier,
+  }));
+
+  await PostModel.bulkUpsert(posts);
+  await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
+
+  const withImpressions = posts.filter((p: any) => p.impressions_count != null).length;
+  return { scraped: posts.length, with_impressions: withImpressions };
+}
+
 // GET /api/accounts — list all creators flagged as managed accounts, with summary stats
 router.get('/', async (_req: Request, res: Response) => {
   try {
@@ -85,56 +135,11 @@ router.post('/:id/scrape', async (req: Request, res: Response) => {
   try {
     const creator = await CreatorModel.findById(req.params.id as string);
     if (!creator) return res.status(404).json({ error: 'Creator not found' });
-
-    const accountIdOverride = (creator as any).unipile_account_id as string | null;
-    if (!accountIdOverride) {
+    if (!(creator as any).unipile_account_id) {
       return res.status(400).json({ error: 'Set a Unipile account ID for this creator first' });
     }
-
-    // Re-fetch profile with this account so we can refresh linkedin_id if needed
-    let providerId = creator.linkedin_id;
-    if (!providerId) {
-      const rawProfile = await unipileService.getProfile(creator.linkedin_url, accountIdOverride);
-      const normalized = unipileService.normalizeProfile(rawProfile, creator.linkedin_url);
-      providerId = normalized.linkedin_id;
-      if (providerId) {
-        await CreatorModel.update(creator.id, { linkedin_id: providerId } as any);
-      }
-    }
-    if (!providerId) return res.status(422).json({ error: 'Could not resolve LinkedIn provider ID' });
-
-    const rawPosts = await unipileService.getPosts(providerId, undefined, accountIdOverride);
-
-    const originalPosts = rawPosts.filter((raw: any) => {
-      if (raw.type === 'repost' || raw.type === 'RESHARE' || raw.type === 'reshare') return false;
-      if (raw.is_repost || raw.is_reshare) return false;
-      if (raw.reshared_post || raw.original_post) return false;
-      return true;
-    });
-
-    if (originalPosts.length === 0) {
-      await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
-      return res.json({ scraped: 0, with_impressions: 0 });
-    }
-
-    let posts = originalPosts.map((raw) => {
-      const normalized = unipileService.normalizePost(raw, creator.id);
-      const enriched = enrichPost(normalized);
-      return { ...normalized, ...enriched };
-    });
-
-    const withOutliers = recalculateOutliers(posts);
-    posts = withOutliers.map((o, i) => ({
-      ...posts[i],
-      outlier_ratio: o.outlier_ratio,
-      is_outlier: o.is_outlier,
-    }));
-
-    await PostModel.bulkUpsert(posts);
-    await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
-
-    const withImpressions = posts.filter((p: any) => p.impressions_count != null).length;
-    res.json({ scraped: posts.length, with_impressions: withImpressions });
+    const result = await scrapeCreatorPosts(creator.id);
+    res.json(result);
   } catch (err: any) {
     console.error('[accounts/scrape]', err);
     res.status(500).json({ error: err.message });
@@ -389,12 +394,27 @@ router.get('/live-posts', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/accounts/live-refresh — manually trigger a snapshot capture for all tracked posts,
-// ignoring the per-phase cadence. Used by the Refresh button in the Live Posts panel.
+// POST /api/accounts/live-refresh — manually refresh every managed account: first re-scrape
+// their post feed (so freshly published posts get ingested), then force a snapshot capture
+// for every tracked post ignoring the per-phase cadence. Used by the Refresh button.
 router.post('/live-refresh', async (_req: Request, res: Response) => {
   try {
-    const result = await forceLiveCapture();
-    res.json(result);
+    // Scrape each managed account with a Unipile ID so any new posts land in the DB before
+    // we capture snapshots. Done sequentially to respect Unipile rate limits.
+    const { rows: managed } = await pool.query(
+      `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
+    );
+    let newPosts = 0;
+    for (const { id } of managed) {
+      try {
+        const { scraped } = await scrapeCreatorPosts(id);
+        newPosts += scraped;
+      } catch (err: any) {
+        console.error(`[accounts/live-refresh] scrape failed for ${id}:`, err?.message);
+      }
+    }
+    const capture = await forceLiveCapture();
+    res.json({ ...capture, scraped: newPosts, accounts: managed.length });
   } catch (err: any) {
     console.error('[accounts/live-refresh]', err);
     res.status(500).json({ error: err.message });
