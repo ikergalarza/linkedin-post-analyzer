@@ -188,12 +188,14 @@ function PostText({
         {expanded ? text : visible}
         {truncated && !expanded && (
           <>
-            {'… '}
+            {/* For blank-line cuts real LinkedIn preserves the paragraph break and
+                puts "… more" on its own line. For char/line caps it's inline. */}
+            {cutReason === 'blank-line' ? '\n\n' : ' '}
             <span
               onClick={() => setExpanded(true)}
               style={{ color: '#666', cursor: 'pointer', fontWeight: 600 }}
             >
-              …see more
+              …more
             </span>
           </>
         )}
