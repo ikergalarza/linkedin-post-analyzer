@@ -203,7 +203,7 @@ ${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}` : ''}
 Respond with ONLY the post text — no preamble, no explanation.`;
 
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-opus-4-7',
     max_tokens: 1024,
     messages: [{
       role: 'user',

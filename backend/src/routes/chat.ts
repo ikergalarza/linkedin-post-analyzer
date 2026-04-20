@@ -245,7 +245,7 @@ router.post('/', async (req: Request, res: Response) => {
     res.setHeader('Connection', 'keep-alive');
 
     const stream = await client.messages.stream({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-opus-4-7',
       max_tokens: 4096,
       system: systemPrompt,
       messages: messages.map((m: any) => ({
@@ -274,12 +274,84 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// ---- Pillar-based outlier sampling ----
+// Classifies an outlier text into its dominant pillar so the /improve prompt
+// can show real examples grouped by pillar (curiosity / fear / desire) instead
+// of defaulting to repetitive formulas like "Comenta 'GUÍA' abajo".
+function classifyPillar(text: string): 'curiosity' | 'fear' | 'desire' | null {
+  if (!text) return null;
+  const lower = text.toLowerCase();
+  const curiosity =
+    (/\b(secret|secreto|nobody knows|nadie sabe|the real|la verdadera|what they don'?t|lo que no|here'?s why|aquí está|the reason|la razón|plot twist|behind the scenes|detrás de|insider|la verdad sobre|the truth about|unpopular|hot take|overrated|sobrevalorado)\b/i.test(lower) ? 1 : 0) +
+    (/\bnot\s+\w+[^.\n]{0,60}\bbut\s+|\bno es\s+\w+[^.\n]{0,60}\bsino\s+/i.test(text) ? 1 : 0) +
+    (/\b(nadie|nobody|no one|stop|deja de|forget|olvida|wrong|lie|mentira|actually|en realidad)\b/i.test(lower) ? 1 : 0);
+  const fear =
+    (/\b(before|antes|missed|perdido|too late|tarde|only|solo|last chance|última)\b/i.test(lower) ? 1 : 0) +
+    (/\b(dead|muerto|killed|mató|obsolet|dying|replaced|reemplazado)\b/i.test(lower) ? 1 : 0) +
+    (/\b(everyone|todos|everybody)\b[^.\n]{0,60}\b(uses?|usan|doing|haciendo|adopted|adoptar|tienen|migrating)\b/i.test(lower) ? 1 : 0) +
+    (/\b(left behind|quedarse (fuera|atrás)|fall behind|get replaced|perderás|big mistake|grave error)\b/i.test(lower) ? 1 : 0);
+  const desire =
+    (/(\$\s?\d|\b\d+\s?k\b|\d+\s?€|revenue|ingresos|profit|beneficio|\bmrr\b|\barr\b|ventas|\bsales\b)/i.test(lower) ? 1 : 0) +
+    (/\b(i\s+(built|tested|ran|tried|made|shipped|spent|earned|created|launched|scaled|grew)|yo\s+(he|construí|probé|hice|gané|creé|lancé|escalé))\b/i.test(lower) ? 1 : 0) +
+    (/\b(in\s+\d+|en\s+\d+|saves?\b|ahorra|saved|ahorré|quick|rápido|instant|60\s?(seconds?|segundos?))\b/i.test(lower) ? 1 : 0) +
+    (/\b(framework|playbook|blueprint|system|sistema|stack|método|method|formula|fórmula)\b/i.test(lower) ? 1 : 0);
+  const scores: [string, number][] = [['curiosity', curiosity], ['fear', fear], ['desire', desire]];
+  scores.sort((a, b) => b[1] - a[1]);
+  if (scores[0][1] === 0 || scores[0][1] === scores[1][1]) return null;
+  return scores[0][0] as 'curiosity' | 'fear' | 'desire';
+}
+
+async function buildPillarExamples(targetPillar: 'curiosity' | 'fear' | 'desire' | null): Promise<string> {
+  try {
+    const creators = await CreatorModel.findAll();
+    let allPosts: any[] = [];
+    for (const c of creators) {
+      const posts = await PostModel.findByCreator(c.id, { limit: 2000 });
+      allPosts = allPosts.concat(posts);
+    }
+    const outliers = allPosts
+      .filter((p) => p.is_outlier && p.content_text && p.content_text.length > 60)
+      .sort((a, b) => (b.outlier_ratio || 0) - (a.outlier_ratio || 0));
+
+    const byPillar: Record<string, any[]> = { curiosity: [], fear: [], desire: [] };
+    for (const p of outliers) {
+      const pillar = classifyPillar(p.content_text || '');
+      if (pillar) byPillar[pillar].push(p);
+    }
+
+    const lines: string[] = [];
+    lines.push('\n\n=== REAL OUTLIER EXAMPLES FROM THE DATABASE (grouped by pillar) ===');
+    lines.push('Use these as inspiration for HOOKS, CTAs, and language variety. Do NOT copy verbatim — extract the mechanism.\n');
+
+    const order: ('curiosity' | 'fear' | 'desire')[] = targetPillar
+      ? [targetPillar, ...(['curiosity', 'fear', 'desire'] as const).filter((p) => p !== targetPillar)]
+      : ['curiosity', 'fear', 'desire'];
+
+    for (const pillar of order) {
+      const samples = byPillar[pillar].slice(0, pillar === targetPillar ? 8 : 3);
+      if (samples.length === 0) continue;
+      lines.push(`--- ${pillar.toUpperCase()} outliers ---`);
+      for (const p of samples) {
+        const hook = (p.hook_text || p.content_text || '').substring(0, 140).replace(/\n/g, ' ');
+        const closing = (p.content_text || '').trim().split('\n').filter(Boolean).slice(-2).join(' | ').substring(0, 140);
+        lines.push(`  [${(p.outlier_ratio || 0).toFixed(1)}x] Hook: "${hook}"`);
+        if (closing && closing !== hook) lines.push(`         Closing: "${closing}"`);
+      }
+      lines.push('');
+    }
+    return lines.join('\n');
+  } catch (err) {
+    console.error('[buildPillarExamples] error:', err);
+    return '';
+  }
+}
+
 // POST /api/chat/improve — single iteration: rewrites post + generates self-critique
-// Body: { messages: [{role, content}][] }
+// Body: { messages: [{role, content}][], pillar?: 'curiosity'|'fear'|'desire', pillarIntensity?: number }
 // Response: { text: string, critique: string, raw: string }
 router.post('/improve', async (req: Request, res: Response) => {
   try {
-    const { messages } = req.body;
+    const { messages, pillar, pillarIntensity } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'messages array required' });
     }
@@ -288,182 +360,142 @@ router.post('/improve', async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured.' });
     }
 
+    const targetPillar: 'curiosity' | 'fear' | 'desire' | null =
+      pillar === 'curiosity' || pillar === 'fear' || pillar === 'desire' ? pillar : null;
+
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
+    const pillarExamples = await buildPillarExamples(targetPillar);
 
-    // Each check: what the scorer regex looks for, EXACTLY what text to write to pass it
+    const PILLAR_DIRECTIVE = targetPillar
+      ? `
+=== PILLAR FOCUS — NON-NEGOTIABLE ===
+This post targets ONE psychological pillar: **${targetPillar.toUpperCase()}** (current intensity: ${typeof pillarIntensity === 'number' ? Math.round(pillarIntensity * 100) : '?'}%).
+
+A viral post maxes out ONE pillar — it does NOT tick boxes across all three. Your job is to INTENSIFY ${targetPillar}, not add fear/desire/curiosity triggers unrelated to it.
+
+${targetPillar === 'curiosity' ? `CURIOSITY levers you can deploy (pick 2–3, not all):
+- Curiosity gap: "la razón real es…", "lo que nadie te cuenta sobre X", "the real reason"
+- Reversal: "No es sobre X, sino Y" / "Not about X, but Y"
+- Contrarian: "Nadie te habla de…", "Stop doing X", "La verdad sobre Y"
+- Insider: "Behind the scenes de cómo…", "lo que no te cuentan"
+- Open loop: hook ends with ":" "..." "👇" that promises resolution later` : ''}
+${targetPillar === 'fear' ? `FEAR / FOMO levers (pick 2–3):
+- Obsolescence: "X ha muerto", "Y is dead", "es obsoleto"
+- Bandwagon: "Todos están migrando a…", "Everyone is already using…"
+- Left-behind: "No te quedes fuera", "don't get replaced"
+- Stakes: "Te va a costar X", "the mistake that costs founders $Y"
+- Urgency: "antes de que sea tarde", "right now", "esta semana"` : ''}
+${targetPillar === 'desire' ? `DESIRE levers (pick 2–3):
+- Money proof: "$20K MRR", "12k€ en ventas", concrete numbers
+- Personal proof: "Lo construí en un weekend", "I tested this for 30 days"
+- Speed: "en 30 minutos", "ahorra 10 horas/semana"
+- Named system: "mi playbook", "the 3-step framework"
+- Numbered method: "5 formas de…", "the 3 steps to…"` : ''}
+
+Do NOT add triggers from the other two pillars — they dilute the message.
+`
+      : `
+=== NO DOMINANT PILLAR YET ===
+The post doesn't fire any pillar clearly. Pick the ONE most aligned with the post's message (curiosity / fear / desire) and commit to it. Do NOT spread across all three.
+`;
+
+    const ANTI_FORMULA_RULES = `
+=== FORBIDDEN REPETITIVE FORMULAS ===
+Variety matters. Do NOT default to these overused templates (they're burned out):
+- "Comenta 'GUÍA' abajo y te la mando" / "Comment 'YES' below and I'll send it"
+- "Nadie te dice esto, pero…" as an opener (unless it's genuinely central to the post)
+- "Aquí está la razón:" / "Here's why:" as the only hook ending
+- "Me ha costado X años aprender esto"
+- "Este es el error más grande que…"
+
+Instead, draw CTAs and hooks from the real outlier examples below. Rotate techniques across iterations — if you used a curiosity gap last time, try a reversal or insider frame this time.
+
+CTA variety options (pick ONE that fits the post's tone, not a formula):
+- A real opinion-forcing question tied to the topic
+- An invitation to share a specific experience ("¿Cuál ha sido tu caso?")
+- A short provocation that takes a side
+- A direct "Disagree?" / "Change my mind"
+- A conditional — "If you're doing X, try Y this week and tell me how it went"
+- No explicit CTA at all (some outliers close with a strong claim, not a question)
+`;
+
+    // Reference for the structural (craft) checks only — emotional triggers live in the pillar layer
     const CHECKLIST_REFERENCE = `
-=== OUTLIER CHECKLIST — exact scoring rules ===
-The scorer uses regex patterns. A check only passes if the post contains the EXACT words/characters listed.
-Writing similar-but-different text (e.g. "incorrecto" instead of "wrong") will NOT pass the check.
+=== STRUCTURAL (CRAFT) CHECKLIST — regex-based scoring ===
+Only the HOOK, STRUCTURE, FORMAT, CTA and TOPIC categories are scored as craft.
+The EMOTIONAL side (curiosity / fear / desire triggers) is measured by the PILLAR layer above — do NOT treat pillar triggers as generic checkboxes.
 
-── HOOK (25%) ─────────────────────────────────────────────────────────
-hook-numeric [weight 18%]
-  Scorer looks for: a number (\d+) followed by %, k, m, x, €, $, h, hr, min, days, años, meses, or a standalone integer — IN THE FIRST LINE
-  To pass: write in the first line one of → "3x", "47%", "$20K", "10 horas", "en 5 días", "200 clientes"
-  Common fail: "muchos", "varios", "gran" → NO number → fails
+── HOOK (30%) ─────────────────────────────────────────────────────────
+hook-numeric: a concrete number in the first line (3x, 47%, $20K, 10 horas, 5 días).
+hook-short: first line ≤ 18 words.
+hook-tension: first line ends with ":", "—", "...", "👇" or "👉" — an open loop.
+hook-first-line-length: first line between 20 and 140 characters.
+hook-specificity: hook names a specific tool / industry / proper noun (Claude, HubSpot, SDR, SaaS…).
 
-hook-contrarian [weight 18%]
-  Scorer looks for IN THE FIRST LINE: nobody | no one | nadie | stop | deja de | forget | olvida | wrong | mal | lie | mentira | truth | verdad | actually | en realidad | dead | muerto | killed | mató | obsolet
-  To pass: use ONE of those exact words in the hook line, e.g. "nadie te habla de esto", "stop making this mistake", "wrong approach"
-  Common fail: "incorrecto", "equivocado", "anticuado" → not in the list → fails
+── STRUCTURE (25%) ────────────────────────────────────────────────────
+struct-numbered: at least 3 lines starting with "1.", "2.", "3." (or similar).
+struct-data: at least 2 metrics in the body (47%, $12K, 3x, 200€).
+struct-length: 80–400 words total.
+struct-open-loop: body contains "el resultado", "pero luego", "then", "what happened" before the payoff.
+struct-no-dense: every paragraph ≤ 3 lines (add blank lines).
 
-hook-curiosity-gap [weight 15%]
-  Scorer looks for IN THE FIRST LINE: secret | secreto | nobody knows | nadie sabe | the real | la verdadera | what they don | lo que no | here's why | aquí está | the reason | la razón
-  To pass: write "aquí está la razón", "here's why", "lo que no te dicen", "the real problem"
-  Common fail: "te cuento algo" → not in the list → fails
+── FORMAT (18%) ───────────────────────────────────────────────────────
+fmt-no-links: NO "http://" or "https://" in the post body.
+fmt-spacing: at least one blank line between paragraphs.
+fmt-emoji-markers: at least one visual anchor (→ ↳ ▶ 👉 👇 ✅ ❌ 🔥 💡 • or "- " bullet).
+fmt-coherent: ≤ 2 ALL-CAPS words of 5+ chars AND ≤ 8 emojis total.
+fmt-scannable: 2+ short lines (≤ 40 chars) to break rhythm.
 
-hook-not-x-but-y [weight 12%]
-  Scorer looks for: "not <word(s)> ... but" (English) OR "no es <word(s)> ... sino" (Spanish) — in the hook
-  To pass (ES): "No es sobre velocidad, sino sobre claridad" / "No es un problema de tools, sino de sistema"
-  To pass (EN): "Not about speed, but about clarity" / "Not the tool, but the process"
-  Common fail: "no es X. Es Y" → no "sino" → fails
+── CTA (15%) ──────────────────────────────────────────────────────────
+cta-at-end: last 200 chars contain one of: comment, follow, share, save, qué opinas, tu opinión, let me know, dime, agree, disagree.
+cta-question: the post ends with "?".
+cta-no-link-cta: NO "click", "haz clic", "link in bio", "check out", "visit".
+cta-natural: does NOT use the templated formula "Comenta 'X' abajo y te la mando" / "Comment 'X' below and I'll send it" — penalized, NOT rewarded.
 
-hook-short [weight 15%]
-  Scorer looks for: first line has ≤ 18 words
-  To pass: count every word in the first line; cut until ≤ 18 words
-
-hook-speed-claim [weight 12%]
-  Scorer looks for: in \d+ | en \d+ | 60 seconds | segundos | minutes | minutos | hours | horas | saves | ahorra | quick | rápido | instant | instantáneo
-  To pass: write "en 30 minutos", "saves 10 hours/week", "en 60 segundos", "ahorra 3 horas al día"
-
-hook-tension [weight 10%]
-  Scorer looks for: hook line ENDS WITH ":" or "—" or "..." or 👇 or 👉 — OR contains "this is why | por eso | here is how | aquí está"
-  To pass: simplest fix → end the first line with a colon ":" or "👇"
-  Example: "Nadie te habla de esto en outbound:"
-
-── STRUCTURE (20%) ────────────────────────────────────────────────────
-struct-numbered [weight 20%]
-  Scorer looks for: ≥ 3 lines that start with a digit + "." or ")"
-  To pass: add "1. …\n2. …\n3. …" anywhere in the body (at minimum 3 items)
-
-struct-data [weight 20%]
-  Scorer looks for: ≥ 2 occurrences of number+% | number+k | number+m | number+x | number+€ | $+number — in the body
-  To pass: include at least two of: "47%", "$12K", "3x", "200€" — in the body (not only the hook)
-
-struct-length [weight 20%]
-  Scorer looks for: 80 ≤ word count ≤ 400
-  To pass: count all words; expand if < 80, trim if > 400
-
-struct-open-loop [weight 15%]
-  Scorer looks for: here's what | esto es lo que | the result | el resultado | what happened | lo que pasó | then | entonces | but then | pero luego
-  To pass: write "El resultado fue…" or "Pero luego…" or "Then I realized…" — before you deliver the payoff
-
-struct-no-dense [weight 15%]
-  Scorer looks for: every paragraph (text between \n\n) has ≤ 3 lines inside
-  To pass: insert a blank line after every 2–3 lines of continuous text
-
-struct-framework [weight 10%]
-  Scorer looks for: step \d | paso \d | before | después | antes | after | phase | fase | stage | framework | playbook
-  To pass: write "Paso 1", "Step 1", "before → after", "el framework", "playbook"
-
-── EMOTION (18%) ──────────────────────────────────────────────────────
-emo-fomo [weight 22%]
-  Scorer looks for: before | antes | missed | perdido | too late | tarde | only | solo | last chance | última | everyone | todos
-  To pass: write "before everyone else", "antes de que sea tarde", "todos lo están usando ya", "solo este mes"
-
-emo-greed [weight 20%]
-  Scorer looks for: $\d | \d+k | \d+€ | revenue | ingresos | profit | beneficio | mrr | arr | deals | clients | clientes | sales | ventas
-  To pass: mention "$5K", "12k€", "revenue", "clientes", "ventas" — any of these
-
-emo-controversy [weight 18%]
-  Scorer looks for: unpopular | controvers | hot take | hot-take | polémic | disagree | en desacuerdo | wrong | mal | overrated | sobrevalorado
-  To pass: write "Unpopular opinion:" or "hot take:" or "overrated" or "en desacuerdo con"
-  Note: "wrong" and "mal" also pass hook-contrarian — use them in the hook to pass both
-
-emo-insider [weight 20%]
-  Scorer looks for: behind the scenes | detrás | insider | what they don | lo que no te cuentan | the truth about | la verdad sobre
-  To pass: write "lo que no te cuentan", "behind the scenes", "la verdad sobre esto"
-
-emo-personal-proof [weight 20%]
-  Scorer looks for: I built | I tested | I ran | I tried | I made | I shipped | I spent | I lost | I earned | yo he | construí | probé | hice | gané | perdí
-  To pass: use one of these exact verbs — "I tested this for 30 days", "lo probé durante 3 semanas", "yo lo construí"
-  Common fail: "lo he visto funcionar" → "visto" not in list → fails
-
-── FORMAT (15%) ───────────────────────────────────────────────────────
-fmt-no-links [weight 30%]
-  Scorer looks for: absence of "http://" or "https://"
-  To pass: remove all URLs from the post body
-
-fmt-spacing [weight 25%]
-  Scorer looks for: at least one \n\n (blank line) in the post
-  To pass: add an empty line between at least two paragraphs
-
-fmt-emoji-markers [weight 20%]
-  Scorer looks for: → or ↳ or ▶ or 👉 or 👇 or ✅ or ❌ or 🔥 or 💡 or • or · or ▪ or a line starting with "- " or "* "
-  To pass: add at least one "→" before a list item, or "👇" at the end of the hook
-
-fmt-first-line-hook [weight 15%]
-  Scorer looks for: first line between 20 and 140 characters
-  To pass: count chars in line 1; if < 20 expand, if > 140 cut at a natural break
-
-fmt-coherent [weight 10%]
-  Scorer looks for: ≤ 2 words of 5+ consecutive capitals AND ≤ 8 emojis total
-  To pass: remove extra ALL-CAPS words and trim emojis to 8 max
-
-── CTA (12%) ──────────────────────────────────────────────────────────
-cta-comment-gate [weight 30%]
-  Scorer looks for: ("comment" OR "comenta" OR "reply" OR "responde" OR "drop" OR "deja") + within 40 chars + ("below" OR "abajo" OR "get" OR "receive" OR "recibe" OR "send" OR "envío" OR "dm")
-  To pass: write "Comenta 'GUÍA' abajo y te la mando" or "Comment 'YES' below and I'll send it"
-
-cta-at-end [weight 25%]
-  Scorer looks for in the LAST 200 chars: comment | follow | share | save | what do you | qué opinas | your thoughts | tu opinión | let me know | dime
-  To pass: put "¿Qué opinas tú?" or "Let me know in the comments" as the last line
-
-cta-question [weight 25%]
-  Scorer looks for: post ends with "?" (up to 2 trailing newlines allowed)
-  To pass: make the very last non-empty line a question ending in "?"
-
-cta-no-link-cta [weight 20%]
-  Scorer looks for ABSENCE of: click | haz clic | link in bio | enlace en bio | check out | visit
-  To pass: remove any of those phrases
-
-── TOPIC FIT (10%) ────────────────────────────────────────────────────
-topic-sector [weight 35%]
-  Scorer looks for: ai | ia | llm | agent | sdr | outbound | lead gen | prospecting | revenue | sales | ventas | marketing | growth | startup | b2b | saas
-  To pass: include at least one of those words (case-insensitive)
-
-topic-tools [weight 25%]
-  Scorer looks for: claude | gpt | openai | anthropic | clay | apollo | hubspot | salesforce | linkedin | notion | zapier | n8n | make
-  To pass: name at least one specific tool verbatim
-
-topic-fresh [weight 25%]
-  Scorer looks for: just | acabo | yesterday | ayer | this week | esta semana | new | nuevo | launched | lanzó | released | 2025 | 2026
-  To pass: write "acabo de", "esta semana", "just tested", "2025"
-
-topic-hashtags [weight 15%]
-  Scorer looks for: count of #word ≤ 3
-  To pass: if > 3 hashtags, remove the extras
+── TOPIC FIT (12%) ────────────────────────────────────────────────────
+topic-sector: on-niche keywords (ai, llm, agent, sdr, outbound, sales, ventas, b2b, saas, growth…).
+topic-tools: names a specific tool (Claude, GPT, Clay, Apollo, HubSpot, n8n, Make…).
+topic-fresh: reference to something recent (just, this week, esta semana, 2025, 2026).
+topic-hashtags: 0–3 hashtags max.
 === END CHECKLIST ===`;
 
-    const system = `You are a LinkedIn post optimizer. Your role is STRUCTURAL improvement only — you are NOT a ghostwriter.
+    const system = `You are a LinkedIn post optimizer. Your role is STRUCTURAL + PILLAR improvement — you are NOT a ghostwriter.
 
-WHAT YOU DO: take the author's existing post and improve its formatting, hook sharpness, paragraph spacing, CTA placement, and virality mechanics — without changing the topic, the core idea, the specific examples, the data points, or the narrative.
+WHAT YOU DO: take the author's existing post and sharpen the hook, tighten the spacing, intensify the ONE psychological pillar that the post is already firing, and swap weak CTAs for natural ones — without changing the topic, core idea, specific examples, or data points.
 
 WHAT YOU NEVER DO:
 - Change the topic or main message
 - Introduce new ideas, stories, arguments, or examples not already in the post
 - Remove or replace specific data, results, or anecdotes the author mentions
-- Translate proper nouns, brand names, company names, city names, or industry terms ("Silicon Valley", "Claude", "HubSpot", "SDR", "outbound" stay as-is)
+- Translate proper nouns, brand names, company names, city names, or industry terms (Silicon Valley, Claude, HubSpot, SDR, outbound stay as-is)
 - Change the language (Spanish stays Spanish, English stays English)
+- Try to hit EVERY checklist item — a post that fires ONE pillar at 80%+ beats a post that softly hits all three
 
 Think of it as a film editor, not a screenwriter: you cut, reorder, sharpen, and pace — but the scenes (ideas) stay the same.
 
+${PILLAR_DIRECTIVE}
+
+${ANTI_FORMULA_RULES}
+
 ${CHECKLIST_REFERENCE}
 
+${pillarExamples}
+
 RESPONSE FORMAT — always use exactly this structure (no other text):
-CRITIQUE: [2-4 sentences: which specific checks you addressed, what technique you used for each, and what you predict still needs work]
+CRITIQUE: [2-4 sentences: (1) which pillar you intensified and how, (2) which structural checks you fixed, (3) what technique you chose from the outlier examples and WHY it fits this post, (4) what still needs work]
 ---
-[The structurally improved post — same ideas, better execution]
+[The improved post — same ideas, sharper execution, ONE pillar maxed]
 
 Additional rules:
-- A rewrite that fixes 1 failing check but breaks 2 passing checks is a NET LOSS — do not do it
-- For each failing check, apply the exact technique described in the checklist reference above
-- If a failing check persisted from a previous iteration, try a DIFFERENT technique from the ones you already attempted
-- Read your previous CRITIQUE and build on it${profileContext}`;
+- A rewrite that fixes 1 failing craft check but breaks 2 passing ones is a NET LOSS — do not do it
+- NEVER add pillar triggers for a pillar other than the dominant one — that dilutes the post
+- NEVER recycle the same CTA formula across iterations — rotate: question, provocation, conditional, no-CTA
+- If you used a specific technique last iteration, try a DIFFERENT one from the outlier examples
+- Read your previous CRITIQUE and build on it, don't repeat${profileContext}`;
 
     const result = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-opus-4-7',
       max_tokens: 2048,
       system,
       messages: messages.map((m: any) => ({ role: m.role, content: m.content })),
