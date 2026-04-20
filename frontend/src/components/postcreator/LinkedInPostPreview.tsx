@@ -65,32 +65,48 @@ function countVisualLines(text: string, charsPerLine: number): number {
 }
 
 /**
- * Returns the visible portion of text before LinkedIn's "…see more" cut,
- * respecting BOTH a hard char cap and a hard line cap (whichever hits first).
- * Blank lines burn 1 line of budget each — matches real LinkedIn behavior.
+ * Returns the visible portion of text before LinkedIn's "…see more" cut.
+ * Cut triggers — whichever fires first:
+ *   1. Char cap
+ *   2. Line cap
+ *   3. First blank line (paragraph break) after any content — observed in
+ *      real LinkedIn: once a blank line appears, everything after is hidden.
  */
 function truncate(
   text: string,
   maxLines: number,
   maxChars: number,
   charsPerLine: number,
-): { visible: string; truncated: boolean; linesUsed: number; totalLines: number; charsUsed: number; totalChars: number } {
+): {
+  visible: string;
+  truncated: boolean;
+  linesUsed: number;
+  totalLines: number;
+  charsUsed: number;
+  totalChars: number;
+  cutReason: 'chars' | 'lines' | 'blank-line' | null;
+} {
   const totalLines = countVisualLines(text, charsPerLine);
   const totalChars = charCount(text);
-
-  if (totalLines <= maxLines && totalChars <= maxChars) {
-    return { visible: text, truncated: false, linesUsed: totalLines, totalLines, charsUsed: totalChars, totalChars };
-  }
 
   const segments = text.split('\n');
   let linesConsumed = 0;
   let charsConsumed = 0;
   const visibleParts: string[] = [];
+  let cutReason: 'chars' | 'lines' | 'blank-line' | null = null;
 
   for (let idx = 0; idx < segments.length; idx++) {
     const seg = segments[idx];
-    const segLines = seg.trim() === '' ? 1 : Math.max(1, Math.ceil(seg.length / charsPerLine));
-    const newlineCost = visibleParts.length > 0 ? 1 : 0; // "\n" char between segments
+    const isBlank = seg.trim() === '';
+
+    // Blank line after content = hard cut. LinkedIn hides everything after.
+    if (isBlank && visibleParts.length > 0) {
+      cutReason = 'blank-line';
+      break;
+    }
+
+    const segLines = isBlank ? 1 : Math.max(1, Math.ceil(seg.length / charsPerLine));
+    const newlineCost = visibleParts.length > 0 ? 1 : 0;
     const projectedChars = charsConsumed + newlineCost + seg.length;
     const projectedLines = linesConsumed + segLines;
 
@@ -98,11 +114,12 @@ function truncate(
       const remainingLines = maxLines - linesConsumed;
       const remainingChars = maxChars - charsConsumed - newlineCost;
       const maxAllowed = Math.min(remainingLines * charsPerLine, remainingChars);
-      if (maxAllowed > 0 && seg.trim() !== '') {
+      if (maxAllowed > 0 && !isBlank) {
         visibleParts.push(seg.slice(0, maxAllowed).trimEnd());
         charsConsumed += newlineCost + Math.min(seg.length, maxAllowed);
         linesConsumed += Math.max(1, Math.ceil(Math.min(seg.length, maxAllowed) / charsPerLine));
       }
+      cutReason = projectedLines > maxLines && projectedChars <= maxChars ? 'lines' : 'chars';
       break;
     }
 
@@ -111,13 +128,15 @@ function truncate(
     visibleParts.push(seg);
   }
 
+  const truncated = cutReason !== null;
   return {
     visible: visibleParts.join('\n').trimEnd(),
-    truncated: true,
+    truncated,
     linesUsed: Math.min(linesConsumed, maxLines),
     totalLines,
     charsUsed: Math.min(charsConsumed, maxChars),
     totalChars,
+    cutReason,
   };
 }
 
@@ -135,7 +154,7 @@ function PostText({
   const maxLines = hasMedia ? MAX_LINES[view].withMedia : MAX_LINES[view].text;
   const maxChars = hasMedia ? MAX_CHARS_CUT[view].withMedia : MAX_CHARS_CUT[view].text;
   const charsPerLine = CHARS_PER_LINE[view];
-  const { visible, truncated, linesUsed, totalLines, charsUsed, totalChars } = truncate(
+  const { visible, truncated, linesUsed, totalLines, charsUsed, totalChars, cutReason } = truncate(
     text,
     maxLines,
     maxChars,
@@ -145,12 +164,14 @@ function PostText({
   // Is the hook (first 140 chars) fully visible before the cut?
   const hookVisible = charCount(visible) >= Math.min(HOOK_CUTOFF, totalChars);
 
-  // Which cap triggered the cut?
-  const cutReason = truncated
-    ? linesUsed >= maxLines && charsUsed < maxChars
-      ? 'lines'
-      : 'chars'
-    : null;
+  const cutLabel =
+    cutReason === 'blank-line'
+      ? 'cut by blank line'
+      : cutReason === 'lines'
+        ? 'cut by line cap'
+        : cutReason === 'chars'
+          ? 'cut by char cap'
+          : '';
 
   return (
     <div>
@@ -194,8 +215,7 @@ function PostText({
           <div>
             {truncated ? (
               <>
-                {charsUsed}/{maxChars} chars · {linesUsed}/{maxLines} lines visible
-                {cutReason === 'chars' ? ' · cut by char cap' : ' · cut by line cap'}
+                {charsUsed}/{maxChars} chars · {linesUsed}/{maxLines} lines visible · {cutLabel}
                 {' · '}{totalChars} chars / {totalLines} lines total
               </>
             ) : (
@@ -617,10 +637,10 @@ export default function LinkedInPostPreview({
         </div>
       </div>
 
-      {/* Blank-line warning */}
+      {/* Blank-line warning — in real LinkedIn the first blank line hides everything after it */}
       {text && /\n\s*\n/.test(text) && (
         <div style={{ fontSize: 10, color: '#f59e0b', textAlign: 'center' }}>
-          ⚠ Blank lines detected — each one uses 1 of the visible lines before "see more"
+          ⚠ Blank line detected — LinkedIn hides everything after the first blank line behind "see more"
         </div>
       )}
     </div>
