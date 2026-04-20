@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useApi } from '../hooks/useApi';
-import { scorePost } from '../components/postcreator/PostChecklist';
+import PostChecklist, { scorePost } from '../components/postcreator/PostChecklist';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -74,116 +74,29 @@ function useVoiceCapture(onResult: (text: string) => void) {
 }
 
 // ─── Post editor with auto-improve ───────────────────────────────────────────
-function PostEditor({ ideaId, initialText, initialScore, onSave }: {
+// Thin wrapper around <PostChecklist/>, which already renders the score ring,
+// pillar bars (curiosity/fear/desire), craft category bars, and suggestions.
+function PostEditor({ ideaId, initialText, onSave }: {
   ideaId: string;
   initialText: string;
-  initialScore: number;
   onSave: (text: string, score: number) => void;
 }) {
   const [postText, setPostText] = useState(initialText);
-  const [score, setScore] = useState(initialScore);
-  const [improving, setImproving] = useState(false);
-  const [iterLog, setIterLog] = useState<{ iter: number; score: number; accepted: boolean }[]>([]);
   const [copied, setCopied] = useState(false);
-  const [errMsg, setErrMsg] = useState<string | null>(null);
 
-  const handleAutoImprove = async () => {
-    setImproving(true);
-    setIterLog([]);
-    setErrMsg(null);
+  const persist = (text: string) => {
+    const score = scorePost(text).overall;
+    fetch(`${BASE}/api/ideas/${ideaId}/save-post`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ generated_post: text, generation_score: score }),
+    }).catch(() => {});
+    onSave(text, score);
+  };
 
-    const originalText = postText;
-    let bestText = postText;
-    let bestScore = scorePost(postText).overall;
-    const conversation: { role: 'user' | 'assistant'; content: string }[] = [];
-
-    try {
-      for (let i = 1; i <= 5; i++) {
-        if (bestScore >= 80) break;
-
-        const score = scorePost(bestText);
-        const { failing } = score;
-        const passingLabels = Object.values(score.byCategory)
-          .flatMap((cat: any) => cat.items.filter((c: any) => c.passed).map((c: any) => `- ${c.item.label}`))
-          .join('\n');
-        const failingList = (failing as any[])
-          .slice(0, 12)
-          .map((f: any) => `- ${f.label}${f.hint ? ' → ' + f.hint : ''}`)
-          .join('\n');
-
-        let userContent: string;
-        if (i === 1) {
-          userContent =
-            `ORIGINAL POST (the idea, topic, and data CANNOT change):\n${originalText}\n\n` +
-            `VERSION TO IMPROVE (score: ${score.overall}/100):\n${bestText}\n\n` +
-            `PASSING CHECKS ✓ — DO NOT break these:\n${passingLabels || 'none'}\n\n` +
-            `FAILING CHECKS ✗ — improve ONLY structure, formatting, and viral mechanics:\n${failingList}\n\n` +
-            `Improve only structure and formatting. The idea, topic, and data from the original post must remain intact. ` +
-            `Return CRITIQUE: + --- + improved post.`;
-        } else {
-          userContent =
-            `BEST VERSION SO FAR (score: ${score.overall}/100):\n${bestText}\n\n` +
-            `PASSING CHECKS ✓ — DO NOT break these:\n${passingLabels || 'none'}\n\n` +
-            `STILL FAILING CHECKS ✗ — use DIFFERENT structural techniques than before:\n${failingList}\n\n` +
-            `Remember: same idea, same data from the original post, only improve the form. Read your previous CRITIQUE and apply it. ` +
-            `Return CRITIQUE: + --- + improved post.`;
-        }
-
-        conversation.push({ role: 'user', content: userContent });
-
-        let newText = '';
-        let rawForConversation = '';
-        try {
-          const resp = await fetch(`${BASE}/api/chat/improve`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: conversation }),
-          });
-          if (!resp.ok) {
-            const errData = await resp.json().catch(() => ({}));
-            setErrMsg(errData.error || `Server error: ${resp.status}`);
-            break;
-          }
-          const data = await resp.json();
-          newText = (data.text || '').trim();
-          rawForConversation = (data.raw || '').trim();
-        } catch (e: any) {
-          setErrMsg(e.message); break;
-        }
-
-        if (!newText) { setErrMsg('AI returned empty response'); break; }
-
-        const newScore = scorePost(newText).overall;
-
-        if (newScore > bestScore) {
-          bestText = newText;
-          bestScore = newScore;
-          conversation.push({ role: 'assistant', content: rawForConversation });
-          setIterLog((prev) => [...prev, { iter: i, score: newScore, accepted: true }]);
-        } else {
-          conversation.push({
-            role: 'assistant',
-            content: `${rawForConversation}\n\n[SYSTEM NOTE: scored ${newScore}/100 — lower than best ${bestScore}/100. Rejected.]`,
-          });
-          setIterLog((prev) => [...prev, { iter: i, score: newScore, accepted: false }]);
-        }
-
-        setPostText(bestText);
-        setScore(bestScore);
-      }
-    } finally {
-      setImproving(false);
-    }
-
-    // Save final result
-    try {
-      await fetch(`${BASE}/api/ideas/${ideaId}/save-post`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ generated_post: bestText, generation_score: bestScore }),
-      });
-      onSave(bestText, bestScore);
-    } catch {}
+  const handleImproved = (newText: string) => {
+    setPostText(newText);
+    persist(newText);
   };
 
   const handleCopy = () => {
@@ -196,63 +109,20 @@ function PostEditor({ ideaId, initialText, initialScore, onSave }: {
     <div className="space-y-3 mt-4">
       <textarea
         value={postText}
-        onChange={(e) => {
-          setPostText(e.target.value);
-          setScore(scorePost(e.target.value).overall);
-        }}
+        onChange={(e) => setPostText(e.target.value)}
+        onBlur={() => persist(postText)}
         className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-sm text-text-primary resize-none focus:outline-none focus:border-accent"
         rows={12}
       />
 
-      {/* Score bar */}
-      <div className="flex items-center gap-3">
-        <span className={`text-lg font-bold tabular-nums ${scoreColor(score)}`}>{score}/100</span>
-        <div className="flex-1 bg-bg-secondary rounded-full h-2 overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-500"
-            style={{
-              width: `${score}%`,
-              backgroundColor: score >= 80 ? '#34d399' : score >= 60 ? '#fbbf24' : '#f87171',
-            }}
-          />
-        </div>
-        {score >= 80 && <span className="text-green-400 text-xs font-medium">✓ Ready</span>}
-      </div>
+      <PostChecklist text={postText} onImproved={handleImproved} />
 
-      {/* Iteration log */}
-      {iterLog.length > 0 && (
-        <div className="space-y-0.5 text-[11px]">
-          {iterLog.map((log) => (
-            <div key={log.iter} className="flex items-center gap-2">
-              <span className={log.accepted ? 'text-green-400' : 'text-danger'}>{log.accepted ? '✓' : '✗'}</span>
-              <span className="text-text-muted">
-                Iter {log.iter}: {log.score}/100 {log.accepted ? '(accepted)' : '(rejected)'}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {errMsg && <p className="text-danger text-xs">{errMsg}</p>}
-
-      {/* Buttons */}
-      <div className="flex gap-2">
-        <button
-          onClick={handleAutoImprove}
-          disabled={improving || score >= 80}
-          className="flex-1 py-2 bg-accent text-bg-primary rounded-lg text-xs font-medium disabled:opacity-50 hover:bg-accent-light transition-colors"
-        >
-          {improving
-            ? `Improving… (${iterLog.length}/5)`
-            : score >= 80 ? '✓ Score ≥ 80' : '⚡ Auto-improve to 80 (5 iter.)'}
-        </button>
-        <button
-          onClick={handleCopy}
-          className="px-4 py-2 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs hover:border-accent/40 hover:text-text-primary transition-colors"
-        >
-          {copied ? '✓' : 'Copy'}
-        </button>
-      </div>
+      <button
+        onClick={handleCopy}
+        className="w-full px-4 py-2 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs hover:border-accent/40 hover:text-text-primary transition-colors"
+      >
+        {copied ? '✓ Copied' : 'Copy post'}
+      </button>
     </div>
   );
 }
@@ -437,7 +307,6 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
           <PostEditor
             ideaId={idea.id}
             initialText={selectedVariant.text}
-            initialScore={scorePost(selectedVariant.text).overall}
             onSave={(text, score) => onUpdate(idea.id, { generated_post: text, generation_score: score })}
           />
         </div>
