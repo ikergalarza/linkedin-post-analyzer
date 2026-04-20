@@ -342,8 +342,15 @@ export function getCrossCreatorPatterns(allPosts: Post[], creatorTimezones: Reco
     }))
     .sort((a, b) => b.outlier_rate - a.outlier_rate);
 
+  // Avoid small-bucket variance noise: hours with only a handful of posts can hit a
+  // spurious "10% outlier rate" from 1 lucky post. Require a meaningful sample —
+  // at least 30 posts AND at least 20% of the busiest hour. Rare-hour posts
+  // (e.g. 02:00) are legitimately rare, so they shouldn't dominate the ranking.
+  const hourTotals = Object.values(hourStats).map((s) => s.total);
+  const maxHourTotal = hourTotals.length > 0 ? Math.max(...hourTotals) : 0;
+  const minHourSample = Math.max(30, Math.round(maxHourTotal * 0.2));
   const bestHours = Object.entries(hourStats)
-    .filter(([, s]) => s.total >= 2)
+    .filter(([, s]) => s.total >= minHourSample)
     .map(([hour, s]) => ({
       hour: parseInt(hour),
       hour_label: `${parseInt(hour).toString().padStart(2, '0')}:00`,
