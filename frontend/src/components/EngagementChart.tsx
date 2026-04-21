@@ -35,6 +35,14 @@ const RANGE_DAYS: Record<Range, number | null> = {
   all: null,
 };
 
+// LinkedIn distribution window: a post keeps gathering meaningful engagement
+// for ~7 days after publishing. For public/competitor creators we only see
+// each post's total engagement (a single public number), so we estimate the
+// day-by-day "active engagement" by summing the engagement_score of every
+// post published in the previous 7 days.
+const ROLLING_WINDOW_DAYS = 7;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 function dayKey(ts: string): string {
   return new Date(ts).toISOString().slice(0, 10);
 }
@@ -139,20 +147,50 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
       const posts = byDay.get(day) || [];
       const hasPost = posts.length > 0;
       const snap = dailyFromSnapshots.get(day);
-      // Prefer measured daily engagement from snapshots; fall back to that
-      // day's posts' lifetime totals when the post predates the snapshot
-      // window so the chart has something to render on older post days.
+
+      // Rolling 7-day engagement: on day D, sum the engagement of every post
+      // published in [D-6, D]. This approximates how much of the creator's
+      // content is still "active" in LinkedIn's distribution window, so days
+      // without a new publish don't collapse to zero.
+      const dayMs = new Date(`${day}T00:00:00Z`).getTime();
+      let rollingEngagement = 0;
+      let activePostCount = 0;
+      const activePosts: TimelinePoint[] = [];
+      for (let back = 0; back < ROLLING_WINDOW_DAYS; back++) {
+        const priorKey = new Date(dayMs - back * DAY_MS).toISOString().slice(0, 10);
+        const priorPosts = byDay.get(priorKey);
+        if (!priorPosts) continue;
+        for (const p of priorPosts) {
+          rollingEngagement += p.engagement_score || 0;
+          activePostCount += 1;
+          activePosts.push(p);
+        }
+      }
+
+      // Prefer measured daily engagement from hourly snapshots when available
+      // (managed accounts). For public creators we fall back to the rolling
+      // 7-day sum above instead of collapsing non-publish days to zero.
       const engagement =
-        snap != null && snap > 0
-          ? snap
-          : hasPost
-            ? posts.reduce((s, p) => s + (p.engagement_score || 0), 0)
-            : 0;
+        snap != null && snap > 0 ? snap : rollingEngagement;
+
       const isOutlier = posts.some((p) => p.is_outlier);
       const maxRatio = posts.reduce((m, p) => Math.max(m, p.outlier_ratio || 0), 0);
+      // Preview post: the day's top post if a publish happened, else the most
+      // recent post still inside the 7-day active window so the tooltip has
+      // something to show on "quiet" days.
       const topPost = hasPost
-        ? posts.reduce((best, p) => ((p.engagement_score || 0) > (best.engagement_score || 0) ? p : best), posts[0])
-        : null;
+        ? posts.reduce(
+            (best, p) => ((p.engagement_score || 0) > (best.engagement_score || 0) ? p : best),
+            posts[0]
+          )
+        : activePosts.length > 0
+          ? activePosts.reduce(
+              (most, p) =>
+                new Date(p.published_at).getTime() > new Date(most.published_at).getTime() ? p : most,
+              activePosts[0]
+            )
+          : null;
+
       return {
         day,
         date: formatDayLabel(day),
@@ -161,13 +199,28 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
         outlier_ratio: maxRatio,
         hasPost,
         postCount: posts.length,
+        activePostCount,
         topPost,
       };
     });
 
     const postDays = rows.filter((r) => r.hasPost).length;
-    const total = rows.reduce((s, r) => s + r.engagement_score, 0);
-    const avg = rows.length > 0 ? total / rows.length : 0;
+
+    // "avg engagement / day" should report the true daily average, not the
+    // sum of rolling-window values (which would count each post up to 7
+    // times). Compute it directly from posts published within the range.
+    const firstMs = days.length > 0 ? new Date(`${days[0]}T00:00:00Z`).getTime() : 0;
+    const lastMs =
+      days.length > 0 ? new Date(`${days[days.length - 1]}T00:00:00Z`).getTime() + DAY_MS : 0;
+    let engagementInRange = 0;
+    for (const p of data) {
+      if (!p.published_at) continue;
+      const t = new Date(p.published_at).getTime();
+      if (t >= firstMs && t < lastMs) {
+        engagementInRange += p.engagement_score || 0;
+      }
+    }
+    const avg = rows.length > 0 ? engagementInRange / rows.length : 0;
 
     return { chartData: rows, displayedAvg: avg, postDaysInRange: postDays };
   }, [data, dailyEngagement, range]);
@@ -246,15 +299,16 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
       </div>
       <div className="text-[11px] text-text-muted mb-3 space-y-0.5">
         <p>
-          <span className="text-text-secondary font-medium">Engagement</span>: likes + comentarios×2 + reposts×3
-          recibidos cada día en todas las publicaciones activas. La curva refleja cómo reacciona la audiencia
-          del creador con el tiempo, no solo los días en los que publica — un post antiguo que sigue acumulando
-          likes cuenta en el día en que esos likes llegaron.
+          <span className="text-text-secondary font-medium">Engagement</span>: likes + comentarios×2 + reposts×3.
+          Para cada día D, el valor es la suma del engagement de todas las publicaciones de los{' '}
+          <span className="text-text-secondary font-medium">7 días anteriores</span> (la ventana de
+          distribución de LinkedIn). Así un post de hace 3 días sigue contribuyendo al valor de hoy, y los
+          días sin publicar ya no caen a cero mientras el creador tenga contenido reciente activo.
         </p>
         <p className="text-text-muted/80 italic">
-          Se mide a partir de snapshots horarios durante los 7 días posteriores a cada publicación. Los días
-          sin ninguna publicación activa dentro de esa ventana aparecen a cero — es una limitación de captura,
-          no una métrica plana.
+          Si la cuenta está conectada vía Unipile, en lugar del sumatorio se usa el engagement real medido
+          con snapshots horarios. "Avg engagement / day" es el promedio real diario en la ventana
+          seleccionada (no el promedio de la curva, que estaría inflado por la ventana móvil).
         </p>
       </div>
       <div className="flex items-center gap-4 mb-3 text-xs text-text-muted">
