@@ -62,7 +62,7 @@ interface Stats {
 interface AllData {
   creator: Creator;
   stats: Stats;
-  timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null; hook_type?: string; outlier_ratio?: number }[];
+  timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null; hook_type?: string; outlier_ratio?: number; post_url?: string | null; content_text?: string | null }[];
   dailyEngagement: { day: string; engagement: number }[];
   patterns: { type: string; title: string; value: string; detail: string }[];
   outlierPosts: any[];

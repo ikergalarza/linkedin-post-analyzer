@@ -179,7 +179,7 @@ export const PostModel = {
   async getTimeline(creatorId: string) {
     const { rows } = await pool.query(
       `SELECT published_at, engagement_score, is_outlier, content_type, hook_text,
-              hook_type, outlier_ratio
+              hook_type, outlier_ratio, post_url, content_text
        FROM posts WHERE creator_id = $1 AND published_at IS NOT NULL AND linkedin_post_id <> 'DEMO_LIVE_POST'
        ORDER BY published_at ASC`,
       [creatorId]

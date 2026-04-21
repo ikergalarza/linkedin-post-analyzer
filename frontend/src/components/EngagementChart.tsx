@@ -11,6 +11,8 @@ interface TimelinePoint {
   hook_text: string | null;
   hook_type?: string;
   outlier_ratio?: number;
+  post_url?: string | null;
+  content_text?: string | null;
 }
 
 interface DailyEngagement {
@@ -89,7 +91,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
       }
     }
 
-    const rows: ChartDatum[] = days.map((day) => {
+    const rows = days.map((day) => {
       const posts = byDay.get(day) || [];
       const hasPost = posts.length > 0;
       const snap = dailyFromSnapshots.get(day);
@@ -104,6 +106,9 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
             : 0;
       const isOutlier = posts.some((p) => p.is_outlier);
       const maxRatio = posts.reduce((m, p) => Math.max(m, p.outlier_ratio || 0), 0);
+      const topPost = hasPost
+        ? posts.reduce((best, p) => ((p.engagement_score || 0) > (best.engagement_score || 0) ? p : best), posts[0])
+        : null;
       return {
         day,
         date: formatDayLabel(day),
@@ -112,6 +117,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
         outlier_ratio: maxRatio,
         hasPost,
         postCount: posts.length,
+        topPost,
       };
     });
 
@@ -252,22 +258,91 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
               axisLine={{ stroke: '#2e3348' }}
             />
             <Tooltip
-              contentStyle={{
-                backgroundColor: '#222639',
-                border: '1px solid #2e3348',
-                borderRadius: '8px',
-                color: '#e8eaf0',
-                fontSize: '13px',
-              }}
-              formatter={(value: number) => [value.toLocaleString(), 'Engagement']}
-              labelFormatter={(label) => {
-                const d = chartData.find((x) => x.day === label);
-                const dateStr = d ? d.date : String(label);
-                if (!d) return dateStr;
-                if (d.hasPost) return `${dateStr} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`;
-                return `${dateStr} · no post`;
-              }}
+              wrapperStyle={{ pointerEvents: 'auto', zIndex: 50 }}
               cursor={{ stroke: '#67e8f9', strokeOpacity: 0.3, strokeWidth: 1 }}
+              content={({ active, label }) => {
+                if (!active) return null;
+                const d = chartData.find((x) => x.day === label);
+                if (!d) return null;
+                const heading = d.hasPost
+                  ? `${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`
+                  : `${d.date} · no post`;
+                const preview =
+                  d.topPost?.content_text || d.topPost?.hook_text || '';
+                return (
+                  <div
+                    style={{
+                      background: '#222639',
+                      border: '1px solid #2e3348',
+                      borderRadius: 8,
+                      color: '#e8eaf0',
+                      fontSize: 13,
+                      padding: 10,
+                      maxWidth: 300,
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
+                    <div style={{ color: '#cbd5e1' }}>
+                      Engagement: <span style={{ color: '#e8eaf0', fontWeight: 600 }}>
+                        {d.engagement_score.toLocaleString()}
+                      </span>
+                    </div>
+                    {d.hasPost && (
+                      <div
+                        style={{
+                          marginTop: 8,
+                          padding: 8,
+                          background: '#1a1d2b',
+                          border: '1px solid #2e3348',
+                          borderRadius: 6,
+                          fontSize: 12,
+                        }}
+                      >
+                        {preview ? (
+                          <div
+                            style={{
+                              color: '#cbd5e1',
+                              whiteSpace: 'pre-wrap',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 4,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              marginBottom: 8,
+                              lineHeight: 1.35,
+                            }}
+                          >
+                            {preview}
+                          </div>
+                        ) : (
+                          <div style={{ color: '#64748b', fontStyle: 'italic', marginBottom: 8 }}>
+                            (no preview available)
+                          </div>
+                        )}
+                        {d.topPost?.post_url && (
+                          <a
+                            href={d.topPost.post_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-block',
+                              padding: '4px 10px',
+                              background: '#3b82f6',
+                              color: '#fff',
+                              borderRadius: 4,
+                              textDecoration: 'none',
+                              fontSize: 11,
+                              fontWeight: 600,
+                            }}
+                          >
+                            View on LinkedIn →
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              }}
             />
             {displayedAvg > 0 && (
               <ReferenceLine
@@ -288,55 +363,49 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
             />
           </AreaChart>
         </ResponsiveContainer>
-        {/* Pencil strip — plain HTML aligned with the plot area via known margins.
-            One flex cell per day; the cell renders a pencil badge only if the
-            creator posted on that day. */}
+        {/* Pencil strip — absolutely positioned so each badge lands directly
+            under the curve's data point. Recharts AreaChart with category
+            XAxis anchors the first point at the left edge of the plot area
+            and the last at the right edge, so the i-th point sits at
+            i / (n-1) of the plot width. */}
         <div
           style={{
-            display: 'flex',
+            position: 'relative',
             marginLeft: Y_AXIS_WIDTH + CHART_MARGIN.left,
             marginRight: CHART_MARGIN.right,
             marginTop: 6,
             minHeight: 22,
-            pointerEvents: 'none',
           }}
           aria-label="Days with publications"
         >
           {chartData.map((d, i) => {
+            if (!d.hasPost) return null;
             const isHyper = (d.outlier_ratio || 0) >= 10;
-            const bg = isHyper ? '#67e8f9' : d.is_outlier ? '#e8935a' : '#2a2f42';
-            const fg = isHyper || d.is_outlier ? '#0b0d18' : '#ffffff';
+            const bg = isHyper ? '#67e8f9' : d.is_outlier ? '#e8935a' : '#ffffff';
+            const n = chartData.length;
+            const left = n > 1 ? (i / (n - 1)) * 100 : 50;
             return (
               <div
                 key={i}
+                title={`${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`}
                 style={{
-                  flex: 1,
+                  position: 'absolute',
+                  left: `${left}%`,
+                  top: 0,
+                  transform: 'translateX(-50%)',
+                  width: 18,
+                  height: 18,
+                  borderRadius: 4,
+                  background: bg,
+                  border: '1px solid #3b3f54',
                   display: 'flex',
-                  justifyContent: 'center',
                   alignItems: 'center',
-                  minWidth: 0,
+                  justifyContent: 'center',
+                  fontSize: 11,
+                  lineHeight: 1,
                 }}
               >
-                {d.hasPost && (
-                  <div
-                    title={`${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`}
-                    style={{
-                      width: 18,
-                      height: 18,
-                      borderRadius: 4,
-                      background: bg,
-                      border: '1px solid #3b3f54',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 11,
-                      lineHeight: 1,
-                      color: fg,
-                    }}
-                  >
-                    ✏️
-                  </div>
-                )}
+                ✏️
               </div>
             );
           })}
