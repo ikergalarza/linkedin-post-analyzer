@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Customized,
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
 
 interface TimelinePoint {
@@ -41,70 +41,12 @@ function formatDayLabel(day: string): string {
   return new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-type ChartDatum = {
-  day: string;
-  date: string;
-  engagement_score: number;
-  is_outlier: boolean;
-  outlier_ratio: number;
-  hasPost: boolean;
-  postCount: number;
-};
-
-// Draws a small boxed pencil glyph under the x-axis for every day the creator
-// published, using Recharts' internal x scale so alignment stays pixel-perfect
-// with the bars/area above.
-function PencilLayer(props: any) {
-  const { chartData, xAxisMap, offset } = props as {
-    chartData: ChartDatum[];
-    xAxisMap: Record<string, { scale: (v: string) => number }>;
-    offset: { top: number; height: number };
-  };
-  if (!xAxisMap || !offset) return null;
-  const xAxis = Object.values(xAxisMap)[0];
-  const scale: any = xAxis?.scale;
-  if (!scale) return null;
-
-  const bandwidth = typeof scale.bandwidth === 'function' ? scale.bandwidth() : 0;
-  // Between the axis line and the date labels.
-  const pencilY = offset.top + offset.height + 18;
-  const BOX = 18;
-
-  return (
-    <g pointerEvents="none">
-      {chartData.map((d, i) => {
-        if (!d.hasPost) return null;
-        const cx = scale(d.day);
-        if (!Number.isFinite(cx)) return null;
-        const x = cx + bandwidth / 2;
-        const isHyper = (d.outlier_ratio || 0) >= 10;
-        const boxFill = isHyper ? '#67e8f9' : d.is_outlier ? '#e8935a' : '#2a2f42';
-        const iconColor = isHyper || d.is_outlier ? '#0b0d18' : '#ffffff';
-        return (
-          <g key={i} transform={`translate(${x - BOX / 2}, ${pencilY - BOX / 2})`}>
-            <rect
-              width={BOX}
-              height={BOX}
-              rx={4}
-              ry={4}
-              fill={boxFill}
-              stroke="#3b3f54"
-              strokeWidth={1}
-            />
-            <g transform={`translate(${BOX / 2}, ${BOX / 2})`}>
-              <path
-                d="M-4.5,4 L-5.5,5 L-5,5.5 L-4,4.5 Z
-                   M-4,3 L3,-4 L4.5,-2.5 L-2.5,4.5 Z
-                   M3.5,-4.5 L4,-5 L5.5,-3.5 L5,-3 Z"
-                fill={iconColor}
-              />
-            </g>
-          </g>
-        );
-      })}
-    </g>
-  );
-}
+// Fixed chart margins so the pencil strip below can align with the plot area
+// using plain HTML (no fiddling with Recharts internals).
+const CHART_MARGIN = { top: 10, right: 10, bottom: 8, left: 5 };
+const Y_AXIS_WIDTH = 50;
+const X_AXIS_HEIGHT = 28;
+const CHART_HEIGHT = 300;
 
 export default function EngagementChart({ data, dailyEngagement }: Props) {
   const [range, setRange] = useState<Range>('30d');
@@ -284,67 +226,122 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
           <span className="text-text-secondary font-medium">{Math.round(displayedAvg).toLocaleString()}</span>
         </span>
       </div>
-      <ResponsiveContainer width="100%" height={320}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 10, bottom: 48, left: 5 }}>
-          <defs>
-            <linearGradient id="engagementFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#67e8f9" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="#67e8f9" stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
-          <XAxis
-            dataKey="day"
-            tickFormatter={formatDayLabel}
-            tick={{ fill: '#9ca3af', fontSize: 11 }}
-            tickLine={false}
-            axisLine={{ stroke: '#2e3348' }}
-            interval="preserveStartEnd"
-            minTickGap={32}
-            tickMargin={22}
-          />
-          <YAxis
-            tick={{ fill: '#9ca3af', fontSize: 11 }}
-            tickLine={false}
-            axisLine={{ stroke: '#2e3348' }}
-          />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: '#222639',
-              border: '1px solid #2e3348',
-              borderRadius: '8px',
-              color: '#e8eaf0',
-              fontSize: '13px',
-            }}
-            formatter={(value: number) => [value.toLocaleString(), 'Engagement']}
-            labelFormatter={(label) => {
-              const d = chartData.find((x) => x.day === label);
-              const dateStr = d ? d.date : String(label);
-              if (!d) return dateStr;
-              if (d.hasPost) return `${dateStr} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`;
-              return `${dateStr} · no post`;
-            }}
-            cursor={{ stroke: '#67e8f9', strokeOpacity: 0.3, strokeWidth: 1 }}
-          />
-          {displayedAvg > 0 && (
-            <ReferenceLine
-              y={displayedAvg}
-              stroke="#e8935a"
-              strokeDasharray="4 4"
-              strokeWidth={1}
-              strokeOpacity={0.7}
-              label={{ value: 'Daily avg', fill: '#e8935a', fontSize: 10, position: 'right' }}
+      <div>
+        <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+          <AreaChart data={chartData} margin={CHART_MARGIN}>
+            <defs>
+              <linearGradient id="engagementFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#67e8f9" stopOpacity={0.35} />
+                <stop offset="100%" stopColor="#67e8f9" stopOpacity={0.02} />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="day"
+              tickFormatter={formatDayLabel}
+              tick={{ fill: '#9ca3af', fontSize: 11 }}
+              tickLine={false}
+              axisLine={{ stroke: '#2e3348' }}
+              interval="preserveStartEnd"
+              minTickGap={32}
+              height={X_AXIS_HEIGHT}
             />
-          )}
-          <Area
-            type="monotone"
-            dataKey="engagement_score"
-            stroke="#67e8f9"
-            strokeWidth={2}
-            fill="url(#engagementFill)"
-          />
-          <Customized component={<PencilLayer chartData={chartData} />} />
-        </AreaChart>
-      </ResponsiveContainer>
+            <YAxis
+              width={Y_AXIS_WIDTH}
+              tick={{ fill: '#9ca3af', fontSize: 11 }}
+              tickLine={false}
+              axisLine={{ stroke: '#2e3348' }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#222639',
+                border: '1px solid #2e3348',
+                borderRadius: '8px',
+                color: '#e8eaf0',
+                fontSize: '13px',
+              }}
+              formatter={(value: number) => [value.toLocaleString(), 'Engagement']}
+              labelFormatter={(label) => {
+                const d = chartData.find((x) => x.day === label);
+                const dateStr = d ? d.date : String(label);
+                if (!d) return dateStr;
+                if (d.hasPost) return `${dateStr} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`;
+                return `${dateStr} · no post`;
+              }}
+              cursor={{ stroke: '#67e8f9', strokeOpacity: 0.3, strokeWidth: 1 }}
+            />
+            {displayedAvg > 0 && (
+              <ReferenceLine
+                y={displayedAvg}
+                stroke="#e8935a"
+                strokeDasharray="4 4"
+                strokeWidth={1}
+                strokeOpacity={0.7}
+                label={{ value: 'Daily avg', fill: '#e8935a', fontSize: 10, position: 'right' }}
+              />
+            )}
+            <Area
+              type="monotone"
+              dataKey="engagement_score"
+              stroke="#67e8f9"
+              strokeWidth={2}
+              fill="url(#engagementFill)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+        {/* Pencil strip — plain HTML aligned with the plot area via known margins.
+            One flex cell per day; the cell renders a pencil badge only if the
+            creator posted on that day. */}
+        <div
+          style={{
+            display: 'flex',
+            marginLeft: Y_AXIS_WIDTH + CHART_MARGIN.left,
+            marginRight: CHART_MARGIN.right,
+            marginTop: 6,
+            minHeight: 22,
+            pointerEvents: 'none',
+          }}
+          aria-label="Days with publications"
+        >
+          {chartData.map((d, i) => {
+            const isHyper = (d.outlier_ratio || 0) >= 10;
+            const bg = isHyper ? '#67e8f9' : d.is_outlier ? '#e8935a' : '#2a2f42';
+            const fg = isHyper || d.is_outlier ? '#0b0d18' : '#ffffff';
+            return (
+              <div
+                key={i}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minWidth: 0,
+                }}
+              >
+                {d.hasPost && (
+                  <div
+                    title={`${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: 4,
+                      background: bg,
+                      border: '1px solid #3b3f54',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 11,
+                      lineHeight: 1,
+                      color: fg,
+                    }}
+                  >
+                    ✏️
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
