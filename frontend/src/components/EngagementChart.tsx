@@ -246,18 +246,15 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
       </div>
       <div className="text-[11px] text-text-muted mb-3 space-y-0.5">
         <p>
-          <span className="text-text-secondary font-medium">Engagement</span>: likes + comments×2 + reposts×3
-          received each day across every active post. The curve tracks how the creator's audience is reacting
-          over time, not just on publish days — an old post still gathering likes counts toward the day those
-          likes arrived.
-        </p>
-        <p>
-          <span className="text-text-secondary font-medium">Pencil</span>: day the creator published on their
-          own profile. Cyan square means the post was an outlier (3×+ their average engagement).
+          <span className="text-text-secondary font-medium">Engagement</span>: likes + comentarios×2 + reposts×3
+          recibidos cada día en todas las publicaciones activas. La curva refleja cómo reacciona la audiencia
+          del creador con el tiempo, no solo los días en los que publica — un post antiguo que sigue acumulando
+          likes cuenta en el día en que esos likes llegaron.
         </p>
         <p className="text-text-muted/80 italic">
-          Measured from hourly snapshots for 7 days after each post publishes. Days with no active post in
-          that window show zero — a capture limit, not a flat metric.
+          Se mide a partir de snapshots horarios durante los 7 días posteriores a cada publicación. Los días
+          sin ninguna publicación activa dentro de esa ventana aparecen a cero — es una limitación de captura,
+          no una métrica plana.
         </p>
       </div>
       <div className="flex items-center gap-4 mb-3 text-xs text-text-muted">
