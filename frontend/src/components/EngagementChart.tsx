@@ -421,6 +421,24 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   {d.engagement_score.toLocaleString()}
                 </span>
               </div>
+              {d.activePostCount > 0 && (
+                <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
+                  {d.activePostCount} post{d.activePostCount > 1 ? 's' : ''} active in 7-day window
+                </div>
+              )}
+              {d.hasPost && d.outlier_ratio > 0 && (
+                <div style={{ marginTop: 4, fontSize: 11 }}>
+                  <span style={{ color: '#94a3b8' }}>Top post: </span>
+                  <span
+                    style={{
+                      color: d.is_outlier ? '#67e8f9' : '#cbd5e1',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {d.outlier_ratio.toFixed(1)}× creator avg
+                  </span>
+                </div>
+              )}
               {d.hasPost && (
                 <div
                   style={{
