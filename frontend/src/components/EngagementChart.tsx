@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from 'react';
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine,
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 
 interface TimelinePoint {
@@ -299,16 +299,17 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
       </div>
       <div className="text-[11px] text-text-muted mb-3 space-y-0.5">
         <p>
-          <span className="text-text-secondary font-medium">Engagement</span>: likes + comentarios×2 + reposts×3.
-          Para cada día D, el valor es la suma del engagement de todas las publicaciones de los{' '}
-          <span className="text-text-secondary font-medium">7 días anteriores</span> (la ventana de
-          distribución de LinkedIn). Así un post de hace 3 días sigue contribuyendo al valor de hoy, y los
-          días sin publicar ya no caen a cero mientras el creador tenga contenido reciente activo.
+          <span className="text-text-secondary font-medium">Engagement</span>: likes + comments×2 + reposts×3.
+          For each day D, we sum the engagement of every post published in the{' '}
+          <span className="text-text-secondary font-medium">previous 7 days</span> — LinkedIn's
+          distribution window. A post from three days ago still contributes to today's value, so quiet
+          days don't collapse to zero while the creator has recent active content.
         </p>
         <p className="text-text-muted/80 italic">
-          Si la cuenta está conectada vía Unipile, en lugar del sumatorio se usa el engagement real medido
-          con snapshots horarios. "Avg engagement / day" es el promedio real diario en la ventana
-          seleccionada (no el promedio de la curva, que estaría inflado por la ventana móvil).
+          When the account is connected via Unipile we replace the rolling sum with the real daily
+          engagement measured from hourly snapshots. "Avg engagement / day" shows the true daily
+          average over the selected range — not the average of the curve, which would be inflated by
+          the rolling window.
         </p>
       </div>
       <div className="flex items-center gap-4 mb-3 text-xs text-text-muted">
@@ -365,16 +366,6 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
               cursor={{ stroke: '#67e8f9', strokeOpacity: 0.3, strokeWidth: 1 }}
               content={() => null}
             />
-            {displayedAvg > 0 && (
-              <ReferenceLine
-                y={displayedAvg}
-                stroke="#e8935a"
-                strokeDasharray="4 4"
-                strokeWidth={1}
-                strokeOpacity={0.7}
-                label={{ value: 'Daily avg', fill: '#e8935a', fontSize: 10, position: 'right' }}
-              />
-            )}
             <Area
               type="monotone"
               dataKey="engagement_score"
@@ -395,11 +386,14 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
             : `${d.date} · no post`;
           const preview = d.topPost?.content_text || d.topPost?.hook_text || '';
           const containerW = wrapperRef.current?.offsetWidth ?? 600;
-          const tooltipW = 280;
+          const tooltipW = 220;
+          const gap = 28;
           // Flip to the left of the cursor when we'd overflow the right edge.
-          const showLeft = hover.x + tooltipW + 16 > containerW;
-          const leftPx = showLeft ? hover.x - tooltipW - 12 : hover.x + 12;
-          const topPx = Math.max(0, Math.min(hover.y - 10, CHART_HEIGHT - 140));
+          const showLeft = hover.x + tooltipW + gap + 4 > containerW;
+          const leftPx = showLeft ? hover.x - tooltipW - gap : hover.x + gap;
+          // Sit clearly upper-right of the cursor (not at cursor height), so
+          // the tooltip doesn't cover the data point it's describing.
+          const topPx = Math.max(0, hover.y - 130);
           return (
             <div
               onMouseEnter={cancelClear}
