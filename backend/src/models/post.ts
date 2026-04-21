@@ -228,47 +228,6 @@ export const PostModel = {
     return rows as { day: string; engagement: number }[];
   },
 
-  // Per-post cumulative engagement curves, expressed as hours since publish.
-  // Used by the "Post Engagement Curves" chart: overlay the last N posts'
-  // decay curves so the user can eyeball pacing vs their typical post.
-  async getPostCurves(creatorId: string, limit = 10) {
-    const { rows } = await pool.query(
-      `SELECT
-         p.id::text,
-         p.hook_text,
-         p.content_text,
-         p.post_url,
-         p.published_at,
-         p.is_outlier,
-         p.outlier_ratio,
-         p.engagement_score,
-         COALESCE(
-           (
-             SELECT json_agg(
-               json_build_object(
-                 't', ROUND((EXTRACT(EPOCH FROM (s.captured_at - p.published_at)) / 3600.0)::numeric, 2),
-                 'e', COALESCE(s.likes_count, 0) + 2 * COALESCE(s.comments_count, 0) + 3 * COALESCE(s.reposts_count, 0)
-               ) ORDER BY s.captured_at ASC
-             )
-             FROM post_snapshots s
-             WHERE s.post_id = p.id
-               AND s.captured_at >= p.published_at
-               AND s.captured_at <= p.published_at + INTERVAL '7 days'
-           ),
-           '[]'::json
-         ) AS points
-       FROM posts p
-       WHERE p.creator_id = $1
-         AND p.published_at IS NOT NULL
-         AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-         AND EXISTS (SELECT 1 FROM post_snapshots WHERE post_id = p.id)
-       ORDER BY p.published_at DESC
-       LIMIT $2`,
-      [creatorId, limit]
-    );
-    return rows;
-  },
-
   async getTopOutliersGlobal(limit = 500) {
     const { rows } = await pool.query(
       `SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,

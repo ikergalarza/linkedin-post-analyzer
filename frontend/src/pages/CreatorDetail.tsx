@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { SkeletonChart } from '../components/Skeleton';
 import EngagementChart from '../components/EngagementChart';
-import PostCurvesChart, { PostCurve } from '../components/PostCurvesChart';
 import ContentTypeBreakdown from '../components/ContentTypeBreakdown';
 import ConsistencyHeatmap from '../components/ConsistencyHeatmap';
 import PatternInsights from '../components/PatternInsights';
@@ -65,7 +64,6 @@ interface AllData {
   stats: Stats;
   timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null; hook_type?: string; outlier_ratio?: number; post_url?: string | null; content_text?: string | null }[];
   dailyEngagement: { day: string; engagement: number }[];
-  postCurves: PostCurve[];
   patterns: { type: string; title: string; value: string; detail: string }[];
   outlierPosts: any[];
   allPosts: any[];
@@ -92,18 +90,17 @@ export default function CreatorDetail() {
         const creator = await fetchJson<Creator>(`/api/creators/${id}`);
         if (cancelled) return;
 
-        const [stats, timeline, dailyEngagement, postCurves, patterns, outlierRes, allRes] = await Promise.all([
+        const [stats, timeline, dailyEngagement, patterns, outlierRes, allRes] = await Promise.all([
           fetchJson<Stats>(`/api/creators/${id}/stats`),
           fetchJson<any[]>(`/api/creators/${id}/timeline`),
           fetchJson<{ day: string; engagement: number }[]>(`/api/creators/${id}/daily-engagement`),
-          fetchJson<PostCurve[]>(`/api/creators/${id}/post-curves?limit=10`),
           fetchJson<any[]>(`/api/creators/${id}/patterns`),
           fetchJson<{ posts: any[] }>(`/api/creators/${id}/posts?outliers_only=true&limit=100`),
           fetchJson<{ posts: any[] }>(`/api/creators/${id}/posts?limit=100&sort=engagement_desc`),
         ]);
 
         if (cancelled) return;
-        setData({ creator, stats, timeline, dailyEngagement, postCurves, patterns, outlierPosts: outlierRes.posts, allPosts: allRes.posts });
+        setData({ creator, stats, timeline, dailyEngagement, patterns, outlierPosts: outlierRes.posts, allPosts: allRes.posts });
       } catch (err: any) {
         if (!cancelled) setError(err.message);
       } finally {
@@ -155,7 +152,7 @@ export default function CreatorDetail() {
     );
   }
 
-  const { creator, stats, timeline, dailyEngagement, postCurves, patterns, outlierPosts, allPosts } = data;
+  const { creator, stats, timeline, dailyEngagement, patterns, outlierPosts, allPosts } = data;
 
   return (
     <div className="space-y-6">
@@ -234,10 +231,6 @@ export default function CreatorDetail() {
       {timeline.length > 0 && (
         <EngagementChart data={timeline} dailyEngagement={dailyEngagement} avgEngagement={stats.avg_engagement} />
       )}
-
-      {/* Per-post engagement curves — always renders; shows an empty state
-          with a dismiss button when the creator has no snapshot data yet. */}
-      <PostCurvesChart posts={postCurves} />
 
       {/* Hook Type + Structure Breakdown */}
       {stats.hook_type_breakdown && stats.hook_type_breakdown.length > 0 && (

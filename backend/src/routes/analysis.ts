@@ -184,18 +184,6 @@ router.get('/:id/daily-engagement', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/creators/:id/post-curves — per-post engagement curves over the
-// 7-day post-publish window, used by the comparison chart.
-router.get('/:id/post-curves', async (req: Request, res: Response) => {
-  try {
-    const limit = Math.min(parseInt((req.query.limit as string) || '10', 10) || 10, 30);
-    const curves = await PostModel.getPostCurves(paramId(req), limit);
-    res.json(curves);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // GET /api/creators/:id/patterns
 router.get('/:id/patterns', async (req: Request, res: Response) => {
   try {
