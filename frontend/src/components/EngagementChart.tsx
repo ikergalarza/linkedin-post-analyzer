@@ -50,6 +50,25 @@ const Y_AXIS_WIDTH = 50;
 const X_AXIS_HEIGHT = 28;
 const CHART_HEIGHT = 300;
 
+function PencilIcon({ size = 12, color = '#ffffff' }: { size?: number; color?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </svg>
+  );
+}
+
 interface HoverState {
   day: string;
   x: number;
@@ -191,26 +210,31 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
             <span className="flex items-center gap-1">
               <span
                 style={{
-                  display: 'inline-block',
-                  width: 14,
-                  height: 14,
-                  borderRadius: 3,
-                  background: '#ffffff',
-                  border: '1px solid #3b3f54',
+                  display: 'inline-flex',
+                  width: 16,
+                  height: 16,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-              />
+              >
+                <PencilIcon size={12} color="#ffffff" />
+              </span>
               Post
             </span>
             <span className="flex items-center gap-1">
               <span
                 style={{
-                  display: 'inline-block',
-                  width: 14,
-                  height: 14,
+                  display: 'inline-flex',
+                  width: 16,
+                  height: 16,
                   borderRadius: 3,
                   background: '#67e8f9',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-              />
+              >
+                <PencilIcon size={12} color="#ffffff" />
+              </span>
               Outlier
             </span>
           </div>
@@ -422,7 +446,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
         >
           {chartData.map((d, i) => {
             if (!d.hasPost) return null;
-            const bg = d.is_outlier ? '#67e8f9' : '#ffffff';
+            const isOut = d.is_outlier;
             const n = chartData.length;
             const left = n > 1 ? (i / (n - 1)) * 100 : 50;
             return (
@@ -437,16 +461,14 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   width: 18,
                   height: 18,
                   borderRadius: 4,
-                  background: bg,
-                  border: '1px solid #3b3f54',
+                  background: isOut ? '#67e8f9' : 'transparent',
+                  border: isOut ? '1px solid #3b3f54' : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 11,
-                  lineHeight: 1,
                 }}
               >
-                ✏️
+                <PencilIcon size={12} color="#ffffff" />
               </div>
             );
           })}
