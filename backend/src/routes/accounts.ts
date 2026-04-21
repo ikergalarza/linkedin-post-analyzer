@@ -211,7 +211,9 @@ router.get('/analytics', async (req: Request, res: Response) => {
 
     // Gap-filled daily series with 7-day rolling sum of total engagement.
     // generate_series builds every day in range, LEFT JOIN fills zeros,
-    // window function smooths the line so it's not all spikes.
+    // window function smooths the line so it's not all spikes. The top
+    // post per day is carried through so the chart tooltip can show a
+    // preview + link for days with publications.
     const dailyScope = scope(2);
     const dailyQ = await pool.query(
       `WITH day_series AS (
@@ -229,6 +231,18 @@ router.get('/analytics', async (req: Request, res: Response) => {
         WHERE p.published_at >= $1 AND ${dailyScope.sql}
         GROUP BY (p.published_at)::date
       ),
+      top_per_day AS (
+        SELECT DISTINCT ON ((p.published_at)::date)
+          (p.published_at)::date AS day,
+          p.id AS top_post_id,
+          COALESCE(p.content_text, p.hook_text) AS top_post_preview,
+          p.post_url AS top_post_url,
+          p.outlier_ratio AS top_post_outlier_ratio,
+          p.is_outlier AS top_post_is_outlier
+        FROM posts p
+        WHERE p.published_at >= $1 AND ${dailyScope.sql}
+        ORDER BY (p.published_at)::date, p.engagement_score DESC
+      ),
       filled AS (
         SELECT
           ds.day,
@@ -236,9 +250,15 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(dr.outliers, 0) AS outliers,
           COALESCE(dr.total_engagement, 0) AS total_engagement,
           COALESCE(dr.avg_engagement, 0) AS avg_engagement,
-          COALESCE(dr.total_impressions, 0) AS total_impressions
+          COALESCE(dr.total_impressions, 0) AS total_impressions,
+          tpd.top_post_id,
+          tpd.top_post_preview,
+          tpd.top_post_url,
+          tpd.top_post_outlier_ratio,
+          tpd.top_post_is_outlier
         FROM day_series ds
         LEFT JOIN daily_raw dr ON dr.day = ds.day
+        LEFT JOIN top_per_day tpd ON tpd.day = ds.day
       )
       SELECT
         day::text AS day,
@@ -248,7 +268,13 @@ router.get('/analytics', async (req: Request, res: Response) => {
         avg_engagement,
         total_impressions::bigint AS total_impressions,
         SUM(total_engagement) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS rolling_sum_7d,
-        SUM(total_impressions) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::bigint AS rolling_impressions_7d
+        SUM(total_impressions) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::bigint AS rolling_impressions_7d,
+        SUM(posts) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS active_posts_7d,
+        top_post_id,
+        top_post_preview,
+        top_post_url,
+        top_post_outlier_ratio,
+        top_post_is_outlier
       FROM filled
       ORDER BY day ASC`,
       [currentStartIso, ...dailyScope.params]
@@ -517,11 +543,16 @@ router.delete('/demo-seed', async (_req: Request, res: Response) => {
 });
 
 // GET /api/accounts/posts/:id/snapshots — time-series for a single post's
-// impressions/engagement growth during its first 6h.
+// impressions/engagement growth during its first 7 days, plus the creator's
+// "typical" band (p25–p75 across their other posts at the same age).
+//
+// The typical curve lets the UI overlay a YouTube-Studio-style gray band so
+// the user can tell at a glance whether a specific post is over- or under-
+// performing relative to the account's baseline at any given age.
 router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
   try {
     const postQ = await pool.query(
-      `SELECT p.id, p.content_text, p.hook_text, p.published_at,
+      `SELECT p.id, p.creator_id, p.content_text, p.hook_text, p.published_at,
               p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
               p.post_url, c.name AS creator_name, c.profile_image_url AS creator_image
        FROM posts p JOIN creators c ON c.id = p.creator_id
@@ -538,7 +569,68 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
       [req.params.id]
     );
 
-    res.json({ post: postQ.rows[0], snapshots: snapsQ.rows });
+    // Typical curve: for each age bucket, compute p25/p50/p75 of impressions
+    // and engagement across the creator's *other* posts at the same age.
+    // Buckets mirror the monitor cadence (15m in golden hour, then 30m, 2h,
+    // 6h, 24h) so we don't over-resolve the band where captures are sparse.
+    // HAVING sample_count >= 3 drops noisy buckets with too few data points.
+    const typicalQ = await pool.query(
+      `WITH target AS (
+         SELECT creator_id FROM posts WHERE id = $1
+       ),
+       other_posts AS (
+         SELECT p.id, p.published_at
+         FROM posts p, target t
+         WHERE p.creator_id = t.creator_id
+           AND p.id <> $1
+           AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+           AND p.published_at IS NOT NULL
+       ),
+       other_snapshots AS (
+         SELECT
+           op.id AS post_id,
+           EXTRACT(EPOCH FROM (s.captured_at - op.published_at)) / 60.0 AS age_min,
+           COALESCE(s.impressions_count, 0)::int AS impressions,
+           (s.likes_count + 2 * s.comments_count + 3 * s.reposts_count)::int AS engagement
+         FROM other_posts op
+         JOIN post_snapshots s ON s.post_id = op.id
+         WHERE s.captured_at >= op.published_at
+           AND s.captured_at <= op.published_at + INTERVAL '7 days'
+       ),
+       bucketed AS (
+         SELECT
+           CASE
+             WHEN age_min < 60   THEN (FLOOR(age_min / 15) * 15 + 15)::int
+             WHEN age_min < 360  THEN (FLOOR(age_min / 30) * 30 + 30)::int
+             WHEN age_min < 1440 THEN (FLOOR(age_min / 120) * 120 + 120)::int
+             WHEN age_min < 4320 THEN (FLOOR(age_min / 360) * 360 + 360)::int
+             ELSE (FLOOR(age_min / 1440) * 1440 + 1440)::int
+           END AS bucket_min,
+           impressions,
+           engagement
+         FROM other_snapshots
+       )
+       SELECT
+         bucket_min AS "ageMin",
+         COUNT(*)::int AS "sampleCount",
+         ROUND(PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY impressions))::int AS "p25Imp",
+         ROUND(PERCENTILE_CONT(0.5)  WITHIN GROUP (ORDER BY impressions))::int AS "p50Imp",
+         ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY impressions))::int AS "p75Imp",
+         ROUND(PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY engagement))::int AS "p25Eng",
+         ROUND(PERCENTILE_CONT(0.5)  WITHIN GROUP (ORDER BY engagement))::int AS "p50Eng",
+         ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY engagement))::int AS "p75Eng"
+       FROM bucketed
+       GROUP BY bucket_min
+       HAVING COUNT(*) >= 3
+       ORDER BY bucket_min ASC`,
+      [req.params.id]
+    );
+
+    res.json({
+      post: postQ.rows[0],
+      snapshots: snapsQ.rows,
+      typical: typicalQ.rows,
+    });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useApi, apiPatch, apiPost, apiDelete } from '../hooks/useApi';
 import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, Cell, ComposedChart, Area, ReferenceLine,
+  Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Cell, ComposedChart, Area, ReferenceLine,
 } from 'recharts';
+import AccountsEngagementChart from '../components/AccountsEngagementChart';
 
 interface ManagedAccount {
   id: string;
@@ -41,6 +42,12 @@ interface DailyRow {
   total_impressions: number;
   rolling_sum_7d: number;
   rolling_impressions_7d: number;
+  active_posts_7d: number;
+  top_post_id: string | null;
+  top_post_preview: string | null;
+  top_post_url: string | null;
+  top_post_outlier_ratio: number | null;
+  top_post_is_outlier: boolean | null;
 }
 
 interface CompareMetric {
@@ -141,9 +148,21 @@ interface Snapshot {
   reposts_count: number;
 }
 
+interface TypicalBucket {
+  ageMin: number;
+  sampleCount: number;
+  p25Imp: number;
+  p50Imp: number;
+  p75Imp: number;
+  p25Eng: number;
+  p50Eng: number;
+  p75Eng: number;
+}
+
 interface SnapshotsResponse {
   post: LivePost;
   snapshots: Snapshot[];
+  typical: TypicalBucket[];
 }
 
 interface PerAccountRow {
@@ -244,24 +263,6 @@ function Delta({ pct }: { pct: number | null }) {
   );
 }
 
-// Custom dot for the daily line: only renders on days where posts were published.
-// Circle marker, with optional count badge when multiple posts land on the same day.
-const PublicationDot = (props: any) => {
-  const { cx, cy, payload } = props;
-  if (!payload || payload.posts <= 0 || cx === undefined || cy === undefined) return null;
-  const hasOutlier = payload.outliers > 0;
-  return (
-    <g>
-      <circle cx={cx} cy={cy} r={6} fill={hasOutlier ? '#34d399' : '#e8935a'} stroke="#1a1d2e" strokeWidth={2} />
-      {payload.posts > 1 && (
-        <text x={cx} y={cy + 3} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold">
-          {payload.posts}
-        </text>
-      )}
-    </g>
-  );
-};
-
 export default function Accounts() {
   const [selectedCreator, setSelectedCreator] = useState<string>('all');
   const [days, setDays] = useState(90);
@@ -342,6 +343,12 @@ export default function Accounts() {
       outliers: d.outliers,
       rollingImpressions: Number(d.rolling_impressions_7d || 0),
       rawImpressions: Number(d.total_impressions || 0),
+      activePosts: d.active_posts_7d || 0,
+      topPostId: d.top_post_id,
+      topPostPreview: d.top_post_preview,
+      topPostUrl: d.top_post_url,
+      topPostOutlierRatio: d.top_post_outlier_ratio,
+      topPostIsOutlier: d.top_post_is_outlier,
     }));
   }, [analytics]);
 
@@ -781,12 +788,11 @@ export default function Accounts() {
 
           {/* Daily engagement trend — smoothed line with publication markers */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
-            <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
+            <div className="mb-2 flex items-start justify-between gap-3 flex-wrap">
               <div>
                 <h3 className="text-lg font-semibold">Engagement over time</h3>
-                <p className="text-xs text-text-muted">
-                  7-day rolling sum · filled circles = days with publications
-                  <span className="ml-2 inline-flex items-center gap-1">
+                <p className="text-xs text-text-muted mt-0.5">
+                  <span className="inline-flex items-center gap-1">
                     <span className="w-2.5 h-2.5 rounded-full bg-accent border border-bg-primary" />
                     <span>post</span>
                   </span>
@@ -803,114 +809,27 @@ export default function Accounts() {
                 </p>
               </div>
             </div>
+            <div className="text-[11px] text-text-muted mb-3 space-y-0.5">
+              <p>
+                <span className="text-text-secondary font-medium">Engagement</span>: likes + comments×2 + reposts×3.
+                For each day D, we show the 7-day rolling sum — every post published in the previous 7 days
+                contributes, so the curve reflects how much of the account's content is still actively gathering
+                reach in LinkedIn's distribution window.
+              </p>
+              <p className="text-text-muted/80 italic">
+                Because this account is connected via Unipile, the numbers come from real snapshots (hourly captures
+                for each post's first 7 days), not scrape-time totals. Hover any day to see the top post and whether
+                it beat the creator's average.
+              </p>
+            </div>
             {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={dailyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-                  <defs>
-                    <linearGradient id="rollingFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#e8935a" stopOpacity={0.35} />
-                      <stop offset="100%" stopColor="#e8935a" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="impressionsFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.18} />
-                      <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-                  <XAxis
-                    dataKey="label"
-                    tick={{ fill: '#9ca3af', fontSize: 11 }}
-                    axisLine={{ stroke: '#2e3348' }}
-                    interval={xTickInterval}
-                  />
-                  <YAxis yAxisId="left" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
-                  {analytics.totals.total_impressions > 0 && (
-                    <YAxis
-                      yAxisId="right"
-                      orientation="right"
-                      tick={{ fill: '#7dd3fc', fontSize: 11 }}
-                      axisLine={{ stroke: '#2e3348' }}
-                      tickFormatter={(v) => fmtNum(Number(v))}
-                    />
-                  )}
-                  <Tooltip
-                    contentStyle={CHART_TOOLTIP_STYLE}
-                    content={({ active, payload }: any) => {
-                      if (!active || !payload || payload.length === 0) return null;
-                      const p = payload[0].payload;
-                      return (
-                        <div style={CHART_TOOLTIP_STYLE} className="p-2 min-w-[200px]">
-                          <div className="text-text-secondary text-[11px] mb-1">{fmtFullDay(p.day)}</div>
-                          <div className="text-accent text-xs font-medium">
-                            {fmtNum(p.rolling)} <span className="text-text-muted font-normal">7-day eng.</span>
-                          </div>
-                          {p.rollingImpressions > 0 && (
-                            <div className="text-sky-400 text-xs mt-0.5">
-                              👁️ {fmtNum(p.rollingImpressions)} <span className="text-text-muted font-normal">7-day impressions</span>
-                            </div>
-                          )}
-                          {p.posts > 0 && (
-                            <div className="text-green-400 text-xs mt-0.5">
-                              ✨ {p.posts} post{p.posts > 1 ? 's' : ''} published
-                              {p.outliers > 0 && ` · ${p.outliers} outlier${p.outliers > 1 ? 's' : ''}`}
-                            </div>
-                          )}
-                          {p.raw > 0 && (
-                            <div className="text-text-muted text-[11px] mt-0.5">
-                              Raw day total: {fmtNum(p.raw)} eng · {fmtNum(p.rawImpressions)} impressions
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }}
-                  />
-                  <Area
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="rolling"
-                    stroke="none"
-                    fill="url(#rollingFill)"
-                    isAnimationActive={false}
-                  />
-                  {analytics.totals.total_impressions > 0 && (
-                    <Area
-                      yAxisId="right"
-                      type="monotone"
-                      dataKey="rollingImpressions"
-                      stroke="none"
-                      fill="url(#impressionsFill)"
-                      isAnimationActive={false}
-                    />
-                  )}
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="rolling"
-                    name="Engagement (7d rolling)"
-                    stroke="#e8935a"
-                    strokeWidth={2.5}
-                    dot={<PublicationDot />}
-                    activeDot={{ r: 7, fill: '#e8935a', stroke: '#1a1d2e', strokeWidth: 2 }}
-                    isAnimationActive={false}
-                  />
-                  {analytics.totals.total_impressions > 0 && (
-                    <Line
-                      yAxisId="right"
-                      type="monotone"
-                      dataKey="rollingImpressions"
-                      name="Impressions (7d rolling)"
-                      stroke="#38bdf8"
-                      strokeWidth={2}
-                      strokeDasharray="4 3"
-                      dot={false}
-                      activeDot={{ r: 6, fill: '#38bdf8', stroke: '#1a1d2e', strokeWidth: 2 }}
-                      isAnimationActive={false}
-                    />
-                  )}
-                </ComposedChart>
-              </ResponsiveContainer>
+              <AccountsEngagementChart
+                data={dailyChartData}
+                hasImpressions={analytics.totals.total_impressions > 0}
+                xTickInterval={xTickInterval}
+              />
             )}
           </div>
 
@@ -1130,10 +1049,14 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
     return () => clearInterval(timer);
   }, [autoRefresh]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Merge this post's snapshots with the creator's typical percentile curve
+  // into a single array sorted by age. Each point holds only the fields that
+  // make sense for it (this-post metrics on snapshot rows, typical percentiles
+  // on bucket rows); Recharts handles gaps via `connectNulls` per series.
   const curveDataAll = useMemo(() => {
-    if (!data?.snapshots.length) return [];
+    if (!data) return [];
     const publishedMs = new Date(publishedAt).getTime();
-    return data.snapshots.map((s) => {
+    const mine = data.snapshots.map((s) => {
       const ageMin = Math.max(0, Math.round((new Date(s.captured_at).getTime() - publishedMs) / 60000));
       return {
         ageMin,
@@ -1142,20 +1065,39 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
         likes: s.likes_count,
         comments: s.comments_count,
         reposts: s.reposts_count,
+        typicalImpRange: null as [number, number] | null,
+        typicalImpMedian: null as number | null,
+        typicalSampleCount: null as number | null,
       };
     });
+    const typical = (data.typical || []).map((t) => ({
+      ageMin: t.ageMin,
+      label: t.ageMin < 60 ? `${t.ageMin}m` : `${(t.ageMin / 60).toFixed(1)}h`,
+      impressions: null as number | null,
+      likes: null as number | null,
+      comments: null as number | null,
+      reposts: null as number | null,
+      typicalImpRange: [t.p25Imp, t.p75Imp] as [number, number],
+      typicalImpMedian: t.p50Imp,
+      typicalSampleCount: t.sampleCount,
+    }));
+    return [...mine, ...typical].sort((a, b) => a.ageMin - b.ageMin);
   }, [data, publishedAt]);
 
   const curveData = useMemo(
     () => (zoomMax === null ? curveDataAll : curveDataAll.filter((d) => d.ageMin <= zoomMax)),
     [curveDataAll, zoomMax]
   );
-  const maxAgeMin = curveDataAll.length ? curveDataAll[curveDataAll.length - 1].ageMin : 0;
+  const hasSnapshots = (data?.snapshots?.length || 0) > 0;
+  const hasTypical = (data?.typical?.length || 0) > 0;
+  const maxAgeMin = hasSnapshots
+    ? Math.max(0, ...data!.snapshots.map((s) => Math.round((new Date(s.captured_at).getTime() - new Date(publishedAt).getTime()) / 60000)))
+    : 0;
 
   if (loading && !data) {
     return <p className="text-xs text-text-muted py-6 text-center">Loading snapshots…</p>;
   }
-  if (curveDataAll.length === 0) {
+  if (!hasSnapshots) {
     return (
       <p className="text-xs text-text-muted py-6 text-center">
         No snapshot data for this post. Only posts monitored during their first 7 days have captures.
@@ -1163,9 +1105,12 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
     );
   }
 
+  const snapshotCount = data?.snapshots.length || 0;
+  const snapshotsInView = curveData.filter((d) => d.impressions != null).length;
+
   return (
     <>
-      <div className="flex items-center gap-1 mb-2">
+      <div className="flex items-center gap-1 mb-2 flex-wrap">
         <span className="text-[10px] text-text-muted mr-1">Zoom:</span>
         {ZOOM_PRESETS.map((z) => {
           const dimmed = z.maxMin !== null && z.maxMin > maxAgeMin;
@@ -1185,10 +1130,16 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
           );
         })}
         <span className="text-[10px] text-text-muted ml-2">
-          {curveData.length} of {curveDataAll.length} snapshot{curveDataAll.length === 1 ? '' : 's'}
+          {snapshotsInView} of {snapshotCount} snapshot{snapshotCount === 1 ? '' : 's'}
         </span>
+        {hasTypical && (
+          <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-text-muted">
+            <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
+            <span>typical impressions p25–p75 for this account</span>
+          </span>
+        )}
       </div>
-      {curveData.length === 0 ? (
+      {snapshotsInView === 0 ? (
         <p className="text-xs text-text-muted py-6 text-center">No snapshots in this window.</p>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
@@ -1215,13 +1166,27 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
               content={({ active, payload }: any) => {
                 if (!active || !payload || payload.length === 0) return null;
                 const p = payload[0].payload;
+                const isSnapshot = p.impressions != null;
+                const isTypical = p.typicalImpMedian != null;
                 return (
                   <div style={CHART_TOOLTIP_STYLE} className="p-2">
                     <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
-                    <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
-                    <div className="text-accent text-xs mt-0.5">
-                      {p.likes} likes · {p.comments} comments · {p.reposts} reposts
-                    </div>
+                    {isSnapshot && (
+                      <>
+                        <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
+                        <div className="text-accent text-xs mt-0.5">
+                          {p.likes} likes · {p.comments} comments · {p.reposts} reposts
+                        </div>
+                      </>
+                    )}
+                    {isTypical && (
+                      <div className="text-slate-400 text-[11px] mt-1 pt-1 border-t border-slate-500/30">
+                        Typical at this age (n={p.typicalSampleCount}):
+                        <br />
+                        👁️ {fmtNum(p.typicalImpRange[0])}–{fmtNum(p.typicalImpRange[1])}
+                        <span className="text-slate-500"> (median {fmtNum(p.typicalImpMedian)})</span>
+                      </div>
+                    )}
                   </div>
                 );
               }}
@@ -1243,8 +1208,56 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
                   label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
                 />
               ))}
-            <Area yAxisId="left" type="monotone" dataKey="impressions" stroke="#38bdf8" strokeWidth={2} fill={`url(#liveImp-${postId})`} isAnimationActive={false} />
-            <Line yAxisId="right" type="monotone" dataKey="likes" stroke="#e8935a" strokeWidth={2} dot={{ r: 3, fill: '#e8935a' }} isAnimationActive={false} />
+            {/* Typical impressions band (p25–p75) rendered first so it sits
+                behind this post's blue area. `connectNulls` lets the band
+                span the sparser bucket points. */}
+            {hasTypical && (
+              <Area
+                yAxisId="left"
+                type="monotone"
+                dataKey="typicalImpRange"
+                stroke="none"
+                fill="#64748b"
+                fillOpacity={0.22}
+                connectNulls
+                activeDot={false}
+                isAnimationActive={false}
+              />
+            )}
+            {hasTypical && (
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="typicalImpMedian"
+                stroke="#94a3b8"
+                strokeWidth={1.5}
+                strokeDasharray="4 3"
+                dot={false}
+                connectNulls
+                activeDot={false}
+                isAnimationActive={false}
+              />
+            )}
+            <Area
+              yAxisId="left"
+              type="monotone"
+              dataKey="impressions"
+              stroke="#38bdf8"
+              strokeWidth={2}
+              fill={`url(#liveImp-${postId})`}
+              connectNulls
+              isAnimationActive={false}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="likes"
+              stroke="#e8935a"
+              strokeWidth={2}
+              dot={{ r: 3, fill: '#e8935a' }}
+              connectNulls
+              isAnimationActive={false}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       )}
