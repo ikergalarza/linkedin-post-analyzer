@@ -12,8 +12,14 @@ interface TimelinePoint {
   outlier_ratio?: number;
 }
 
+interface DailyEngagement {
+  day: string;
+  engagement: number;
+}
+
 interface Props {
   data: TimelinePoint[];
+  dailyEngagement?: DailyEngagement[];
   avgEngagement: number;
 }
 
@@ -26,20 +32,16 @@ function formatDayLabel(day: string): string {
   return new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// MA over the last `window` POST-days only — zero-fill days would otherwise
-// drag the average down on creators who post once a week.
-function computeMovingAverage(entries: { engagement_score: number; hasPost: boolean }[], window: number) {
+// Trailing MA over the last `window` calendar days. Each day now carries
+// real engagement (measured from snapshots), so averaging raw days is the
+// meaningful recent-trend signal.
+function computeMovingAverage(entries: { engagement_score: number }[], window: number) {
   return entries.map((_, i) => {
-    let collected = 0;
-    let sum = 0;
-    for (let j = i; j >= 0 && collected < window; j--) {
-      if (entries[j].hasPost) {
-        sum += entries[j].engagement_score;
-        collected++;
-      }
-    }
-    if (collected === 0) return null;
-    return Math.round(sum / collected);
+    const start = Math.max(0, i - window + 1);
+    const slice = entries.slice(start, i + 1);
+    if (slice.length === 0) return null;
+    const sum = slice.reduce((s, e) => s + (e.engagement_score || 0), 0);
+    return Math.round(sum / slice.length);
   });
 }
 
@@ -80,7 +82,7 @@ function PencilLayer(props: any) {
   );
 }
 
-export default function EngagementChart({ data, avgEngagement }: Props) {
+export default function EngagementChart({ data, dailyEngagement, avgEngagement }: Props) {
   // Group posts by UTC day.
   const byDay = new Map<string, TimelinePoint[]>();
   for (const p of data) {
@@ -89,6 +91,13 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
     const arr = byDay.get(k) || [];
     arr.push(p);
     byDay.set(k, arr);
+  }
+
+  // Snapshot-derived engagement per day (from post_snapshots deltas).
+  // Only populated for posts within the 7-day monitoring window on managed accounts.
+  const dailyFromSnapshots = new Map<string, number>();
+  for (const d of dailyEngagement || []) {
+    dailyFromSnapshots.set(d.day, d.engagement || 0);
   }
 
   // Build the full day range: first post day → today (UTC).
@@ -106,7 +115,17 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
 
   const baseData = days.map((day) => {
     const posts = byDay.get(day) || [];
-    const engagement = posts.reduce((s, p) => s + (p.engagement_score || 0), 0);
+    const hasPost = posts.length > 0;
+    const snapshotEngagement = dailyFromSnapshots.get(day);
+    // Prefer measured daily engagement from snapshots. Fall back to the sum
+    // of that day's posts' lifetime engagement so pre-snapshot days still
+    // render something instead of a flat zero.
+    const engagement =
+      snapshotEngagement != null && snapshotEngagement > 0
+        ? snapshotEngagement
+        : hasPost
+          ? posts.reduce((s, p) => s + (p.engagement_score || 0), 0)
+          : 0;
     const isOutlier = posts.some((p) => p.is_outlier);
     const maxRatio = posts.reduce((m, p) => Math.max(m, p.outlier_ratio || 0), 0);
     return {
@@ -115,8 +134,10 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
       engagement_score: engagement,
       is_outlier: isOutlier,
       outlier_ratio: maxRatio,
-      hasPost: posts.length > 0,
+      hasPost,
       postCount: posts.length,
+      // Flag so we can style residual-engagement bars differently.
+      residualOnly: !hasPost && (snapshotEngagement || 0) > 0,
     };
   });
 
@@ -146,9 +167,9 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
         </div>
       </div>
       <div className="text-[11px] text-text-muted mb-4 space-y-0.5">
-        <p><span className="text-text-secondary font-medium">Engagement</span>: weighted score per day (likes + comments×2 + reposts×3, summed across that day's posts).</p>
-        <p><span className="text-text-secondary font-medium">Avg</span>: creator's overall average engagement across all posts.</p>
-        <p><span className="text-text-secondary font-medium">MA(10)</span>: moving average of the last 10 days with a post — shows recent trend without single-post noise.</p>
+        <p><span className="text-text-secondary font-medium">Engagement</span>: likes + comments×2 + reposts×3 received each calendar day across every active post (measured from hourly snapshots, so old posts still receiving likes show up on non-posting days).</p>
+        <p><span className="text-text-secondary font-medium">Avg</span>: creator's overall average engagement per post.</p>
+        <p><span className="text-text-secondary font-medium">MA(10)</span>: moving average of the last 10 days — shows recent trend without daily noise.</p>
         <p><span className="text-text-secondary font-medium">Pencil</span>: day the creator published on their own profile. Days without a pencil are non-posting days (comments on other people's posts don't count).</p>
       </div>
       <ResponsiveContainer width="100%" height={360}>
@@ -184,8 +205,9 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
               const d = chartData.find((x) => x.day === label);
               const dateStr = d ? d.date : String(label);
               if (!d) return dateStr;
-              if (!d.hasPost) return `${dateStr} · no post`;
-              return `${dateStr} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`;
+              if (d.hasPost) return `${dateStr} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`;
+              if (d.residualOnly) return `${dateStr} · no post (older posts still active)`;
+              return `${dateStr} · quiet day`;
             }}
             cursor={{ fill: 'rgba(232, 147, 90, 0.1)' }}
           />
@@ -201,13 +223,15 @@ export default function EngagementChart({ data, avgEngagement }: Props) {
               <Cell
                 key={i}
                 fill={
-                  !entry.hasPost
-                    ? '#1e2233'
-                    : (entry.outlier_ratio || 0) >= 10
+                  entry.hasPost
+                    ? (entry.outlier_ratio || 0) >= 10
                       ? '#67e8f9'
                       : entry.is_outlier
                         ? '#e8935a'
                         : '#3b3f54'
+                    // Residual engagement days (no post published, but older posts
+                    // still receiving likes/comments) get a subtler tone.
+                    : (entry.residualOnly ? '#2a2f42' : '#1e2233')
                 }
               />
             ))}

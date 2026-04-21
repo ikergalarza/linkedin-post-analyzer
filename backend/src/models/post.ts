@@ -187,6 +187,47 @@ export const PostModel = {
     return rows;
   },
 
+  // Per-calendar-day engagement delta derived from post_snapshots. For each post
+  // we take the latest snapshot per day, diff consecutive days, and sum across
+  // posts. This captures engagement *received* on days when no post was published
+  // (as long as the posts are within the 7-day snapshot window).
+  async getDailyEngagement(creatorId: string) {
+    const { rows } = await pool.query(
+      `WITH post_scope AS (
+         SELECT id FROM posts
+         WHERE creator_id = $1 AND published_at IS NOT NULL AND linkedin_post_id <> 'DEMO_LIVE_POST'
+       ),
+       snap AS (
+         SELECT s.post_id,
+                s.captured_at,
+                (s.captured_at AT TIME ZONE 'UTC')::date AS day,
+                COALESCE(s.likes_count, 0)
+                  + 2 * COALESCE(s.comments_count, 0)
+                  + 3 * COALESCE(s.reposts_count, 0) AS engagement
+         FROM post_snapshots s
+         JOIN post_scope p ON p.id = s.post_id
+       ),
+       last_per_day AS (
+         SELECT DISTINCT ON (post_id, day)
+                post_id, day, engagement
+         FROM snap
+         ORDER BY post_id, day, captured_at DESC
+       ),
+       daily_delta AS (
+         SELECT post_id, day,
+                engagement - COALESCE(LAG(engagement) OVER (PARTITION BY post_id ORDER BY day), 0) AS delta
+         FROM last_per_day
+       )
+       SELECT TO_CHAR(day, 'YYYY-MM-DD') AS day,
+              SUM(GREATEST(delta, 0))::INTEGER AS engagement
+       FROM daily_delta
+       GROUP BY day
+       ORDER BY day ASC`,
+      [creatorId]
+    );
+    return rows as { day: string; engagement: number }[];
+  },
+
   async getTopOutliersGlobal(limit = 500) {
     const { rows } = await pool.query(
       `SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,

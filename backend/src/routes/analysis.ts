@@ -172,6 +172,18 @@ router.get('/:id/timeline', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/creators/:id/daily-engagement
+// Returns [{ day, engagement }] — engagement received per calendar day
+// across all the creator's posts, computed from post_snapshots deltas.
+router.get('/:id/daily-engagement', async (req: Request, res: Response) => {
+  try {
+    const daily = await PostModel.getDailyEngagement(paramId(req));
+    res.json(daily);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/creators/:id/patterns
 router.get('/:id/patterns', async (req: Request, res: Response) => {
   try {

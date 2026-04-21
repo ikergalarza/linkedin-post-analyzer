@@ -63,6 +63,7 @@ interface AllData {
   creator: Creator;
   stats: Stats;
   timeline: { published_at: string; engagement_score: number; is_outlier: boolean; content_type: string; hook_text: string | null; hook_type?: string; outlier_ratio?: number }[];
+  dailyEngagement: { day: string; engagement: number }[];
   patterns: { type: string; title: string; value: string; detail: string }[];
   outlierPosts: any[];
   allPosts: any[];
@@ -89,16 +90,17 @@ export default function CreatorDetail() {
         const creator = await fetchJson<Creator>(`/api/creators/${id}`);
         if (cancelled) return;
 
-        const [stats, timeline, patterns, outlierRes, allRes] = await Promise.all([
+        const [stats, timeline, dailyEngagement, patterns, outlierRes, allRes] = await Promise.all([
           fetchJson<Stats>(`/api/creators/${id}/stats`),
           fetchJson<any[]>(`/api/creators/${id}/timeline`),
+          fetchJson<{ day: string; engagement: number }[]>(`/api/creators/${id}/daily-engagement`),
           fetchJson<any[]>(`/api/creators/${id}/patterns`),
           fetchJson<{ posts: any[] }>(`/api/creators/${id}/posts?outliers_only=true&limit=100`),
           fetchJson<{ posts: any[] }>(`/api/creators/${id}/posts?limit=100&sort=engagement_desc`),
         ]);
 
         if (cancelled) return;
-        setData({ creator, stats, timeline, patterns, outlierPosts: outlierRes.posts, allPosts: allRes.posts });
+        setData({ creator, stats, timeline, dailyEngagement, patterns, outlierPosts: outlierRes.posts, allPosts: allRes.posts });
       } catch (err: any) {
         if (!cancelled) setError(err.message);
       } finally {
@@ -150,7 +152,7 @@ export default function CreatorDetail() {
     );
   }
 
-  const { creator, stats, timeline, patterns, outlierPosts, allPosts } = data;
+  const { creator, stats, timeline, dailyEngagement, patterns, outlierPosts, allPosts } = data;
 
   return (
     <div className="space-y-6">
@@ -227,7 +229,7 @@ export default function CreatorDetail() {
 
       {/* Timeline */}
       {timeline.length > 0 && (
-        <EngagementChart data={timeline} avgEngagement={stats.avg_engagement} />
+        <EngagementChart data={timeline} dailyEngagement={dailyEngagement} avgEngagement={stats.avg_engagement} />
       )}
 
       {/* Hook Type + Structure Breakdown */}
