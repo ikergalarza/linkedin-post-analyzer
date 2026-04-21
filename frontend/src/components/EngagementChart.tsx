@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
@@ -50,8 +50,31 @@ const Y_AXIS_WIDTH = 50;
 const X_AXIS_HEIGHT = 28;
 const CHART_HEIGHT = 300;
 
+interface HoverState {
+  day: string;
+  x: number;
+  y: number;
+}
+
 export default function EngagementChart({ data, dailyEngagement }: Props) {
   const [range, setRange] = useState<Range>('30d');
+  const [hover, setHover] = useState<HoverState | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const clearTimerRef = useRef<number | null>(null);
+
+  const cancelClear = () => {
+    if (clearTimerRef.current != null) {
+      window.clearTimeout(clearTimerRef.current);
+      clearTimerRef.current = null;
+    }
+  };
+  const scheduleClear = () => {
+    cancelClear();
+    // Short delay so the cursor has time to transit from the chart onto the
+    // tooltip itself. Once the cursor enters the tooltip div, onMouseEnter
+    // cancels this timer and the tooltip stays open.
+    clearTimerRef.current = window.setTimeout(() => setHover(null), 150);
+  };
 
   const { chartData, displayedAvg, postDaysInRange } = useMemo(() => {
     // Group posts by UTC day.
@@ -172,7 +195,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   width: 14,
                   height: 14,
                   borderRadius: 3,
-                  background: '#2a2f42',
+                  background: '#ffffff',
                   border: '1px solid #3b3f54',
                 }}
               />
@@ -185,22 +208,10 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   width: 14,
                   height: 14,
                   borderRadius: 3,
-                  background: '#e8935a',
-                }}
-              />
-              Outlier
-            </span>
-            <span className="flex items-center gap-1">
-              <span
-                style={{
-                  display: 'inline-block',
-                  width: 14,
-                  height: 14,
-                  borderRadius: 3,
                   background: '#67e8f9',
                 }}
               />
-              10x+
+              Outlier
             </span>
           </div>
         </div>
@@ -214,7 +225,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
         </p>
         <p>
           <span className="text-text-secondary font-medium">Pencil</span>: day the creator published on their
-          own profile. Color matches the post's outlier status (orange = 3×+ their average, cyan = 10×+).
+          own profile. Cyan square means the post was an outlier (3×+ their average engagement).
         </p>
         <p className="text-text-muted/80 italic">
           Measured from hourly snapshots for 7 days after each post publishes. Days with no active post in
@@ -232,9 +243,23 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
           <span className="text-text-secondary font-medium">{Math.round(displayedAvg).toLocaleString()}</span>
         </span>
       </div>
-      <div>
+      <div ref={wrapperRef} style={{ position: 'relative' }}>
         <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-          <AreaChart data={chartData} margin={CHART_MARGIN}>
+          <AreaChart
+            data={chartData}
+            margin={CHART_MARGIN}
+            onMouseMove={(state: any) => {
+              if (state?.isTooltipActive && state.activeLabel && state.activeCoordinate) {
+                cancelClear();
+                setHover({
+                  day: state.activeLabel,
+                  x: state.activeCoordinate.x,
+                  y: state.activeCoordinate.y,
+                });
+              }
+            }}
+            onMouseLeave={scheduleClear}
+          >
             <defs>
               <linearGradient id="engagementFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#67e8f9" stopOpacity={0.35} />
@@ -258,91 +283,8 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
               axisLine={{ stroke: '#2e3348' }}
             />
             <Tooltip
-              wrapperStyle={{ pointerEvents: 'auto', zIndex: 50 }}
               cursor={{ stroke: '#67e8f9', strokeOpacity: 0.3, strokeWidth: 1 }}
-              content={({ active, label }) => {
-                if (!active) return null;
-                const d = chartData.find((x) => x.day === label);
-                if (!d) return null;
-                const heading = d.hasPost
-                  ? `${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`
-                  : `${d.date} · no post`;
-                const preview =
-                  d.topPost?.content_text || d.topPost?.hook_text || '';
-                return (
-                  <div
-                    style={{
-                      background: '#222639',
-                      border: '1px solid #2e3348',
-                      borderRadius: 8,
-                      color: '#e8eaf0',
-                      fontSize: 13,
-                      padding: 10,
-                      maxWidth: 300,
-                      boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
-                    }}
-                  >
-                    <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
-                    <div style={{ color: '#cbd5e1' }}>
-                      Engagement: <span style={{ color: '#e8eaf0', fontWeight: 600 }}>
-                        {d.engagement_score.toLocaleString()}
-                      </span>
-                    </div>
-                    {d.hasPost && (
-                      <div
-                        style={{
-                          marginTop: 8,
-                          padding: 8,
-                          background: '#1a1d2b',
-                          border: '1px solid #2e3348',
-                          borderRadius: 6,
-                          fontSize: 12,
-                        }}
-                      >
-                        {preview ? (
-                          <div
-                            style={{
-                              color: '#cbd5e1',
-                              whiteSpace: 'pre-wrap',
-                              display: '-webkit-box',
-                              WebkitLineClamp: 4,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden',
-                              marginBottom: 8,
-                              lineHeight: 1.35,
-                            }}
-                          >
-                            {preview}
-                          </div>
-                        ) : (
-                          <div style={{ color: '#64748b', fontStyle: 'italic', marginBottom: 8 }}>
-                            (no preview available)
-                          </div>
-                        )}
-                        {d.topPost?.post_url && (
-                          <a
-                            href={d.topPost.post_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              display: 'inline-block',
-                              padding: '4px 10px',
-                              background: '#3b82f6',
-                              color: '#fff',
-                              borderRadius: 4,
-                              textDecoration: 'none',
-                              fontSize: 11,
-                              fontWeight: 600,
-                            }}
-                          >
-                            View on LinkedIn →
-                          </a>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              }}
+              content={() => null}
             />
             {displayedAvg > 0 && (
               <ReferenceLine
@@ -363,6 +305,106 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
             />
           </AreaChart>
         </ResponsiveContainer>
+        {/* Sticky custom tooltip — managed outside Recharts so it stays open
+            while the cursor is hovering its own card (and the "View on
+            LinkedIn" button remains clickable). */}
+        {hover && (() => {
+          const d = chartData.find((x) => x.day === hover.day);
+          if (!d) return null;
+          const heading = d.hasPost
+            ? `${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`
+            : `${d.date} · no post`;
+          const preview = d.topPost?.content_text || d.topPost?.hook_text || '';
+          const containerW = wrapperRef.current?.offsetWidth ?? 600;
+          const tooltipW = 280;
+          // Flip to the left of the cursor when we'd overflow the right edge.
+          const showLeft = hover.x + tooltipW + 16 > containerW;
+          const leftPx = showLeft ? hover.x - tooltipW - 12 : hover.x + 12;
+          const topPx = Math.max(0, Math.min(hover.y - 10, CHART_HEIGHT - 140));
+          return (
+            <div
+              onMouseEnter={cancelClear}
+              onMouseLeave={() => setHover(null)}
+              style={{
+                position: 'absolute',
+                left: Math.max(0, leftPx),
+                top: topPx,
+                width: tooltipW,
+                background: '#222639',
+                border: '1px solid #2e3348',
+                borderRadius: 8,
+                color: '#e8eaf0',
+                fontSize: 13,
+                padding: 10,
+                boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
+                zIndex: 50,
+                pointerEvents: 'auto',
+              }}
+            >
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
+              <div style={{ color: '#cbd5e1' }}>
+                Engagement:{' '}
+                <span style={{ color: '#e8eaf0', fontWeight: 600 }}>
+                  {d.engagement_score.toLocaleString()}
+                </span>
+              </div>
+              {d.hasPost && (
+                <div
+                  style={{
+                    marginTop: 8,
+                    padding: 8,
+                    background: '#1a1d2b',
+                    border: '1px solid #2e3348',
+                    borderRadius: 6,
+                    fontSize: 12,
+                  }}
+                >
+                  {preview ? (
+                    <div
+                      style={{
+                        color: '#cbd5e1',
+                        whiteSpace: 'pre-wrap',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 4,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        marginBottom: 8,
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {preview}
+                    </div>
+                  ) : (
+                    <div
+                      style={{ color: '#64748b', fontStyle: 'italic', marginBottom: 8 }}
+                    >
+                      (no preview available)
+                    </div>
+                  )}
+                  {d.topPost?.post_url && (
+                    <a
+                      href={d.topPost.post_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-block',
+                        padding: '4px 10px',
+                        background: '#3b82f6',
+                        color: '#fff',
+                        borderRadius: 4,
+                        textDecoration: 'none',
+                        fontSize: 11,
+                        fontWeight: 600,
+                      }}
+                    >
+                      View on LinkedIn →
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })()}
         {/* Pencil strip — absolutely positioned so each badge lands directly
             under the curve's data point. Recharts AreaChart with category
             XAxis anchors the first point at the left edge of the plot area
@@ -380,8 +422,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
         >
           {chartData.map((d, i) => {
             if (!d.hasPost) return null;
-            const isHyper = (d.outlier_ratio || 0) >= 10;
-            const bg = isHyper ? '#67e8f9' : d.is_outlier ? '#e8935a' : '#ffffff';
+            const bg = d.is_outlier ? '#67e8f9' : '#ffffff';
             const n = chartData.length;
             const left = n > 1 ? (i / (n - 1)) * 100 : 50;
             return (
