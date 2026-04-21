@@ -421,22 +421,52 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   {d.engagement_score.toLocaleString()}
                 </span>
               </div>
-              {d.activePostCount > 0 && (
-                <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
-                  {d.activePostCount} post{d.activePostCount > 1 ? 's' : ''} active in 7-day window
-                </div>
-              )}
-              {d.hasPost && d.outlier_ratio > 0 && (
-                <div style={{ marginTop: 4, fontSize: 11 }}>
-                  <span style={{ color: '#94a3b8' }}>Top post: </span>
-                  <span
-                    style={{
-                      color: d.is_outlier ? '#67e8f9' : '#cbd5e1',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {d.outlier_ratio.toFixed(1)}× creator avg
-                  </span>
+              {/* Extra context lines — always shown when applicable, between
+                  the engagement metric and the post preview/CTA below. */}
+              {(d.hasPost || d.activePostCount > 0) && (
+                <div
+                  style={{
+                    marginTop: 6,
+                    paddingTop: 6,
+                    borderTop: '1px solid #2e3348',
+                    fontSize: 12,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {d.hasPost && (
+                    <div>
+                      <span style={{ color: '#94a3b8' }}>Top post: </span>
+                      <span
+                        style={{
+                          color: d.is_outlier ? '#67e8f9' : '#cbd5e1',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {d.outlier_ratio.toFixed(1)}× creator avg
+                      </span>
+                      {d.is_outlier && (
+                        <span
+                          style={{
+                            marginLeft: 6,
+                            padding: '1px 5px',
+                            borderRadius: 3,
+                            background: 'rgba(103,232,249,0.15)',
+                            color: '#67e8f9',
+                            fontSize: 10,
+                            fontWeight: 600,
+                            letterSpacing: 0.3,
+                          }}
+                        >
+                          OUTLIER
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {d.activePostCount > 0 && (
+                    <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
+                      {d.activePostCount} post{d.activePostCount > 1 ? 's' : ''} active in 7-day window
+                    </div>
+                  )}
                 </div>
               )}
               {d.hasPost && (
