@@ -50,24 +50,26 @@ const Y_AXIS_WIDTH = 50;
 const X_AXIS_HEIGHT = 28;
 const CHART_HEIGHT = 300;
 
-function PencilIcon({ size = 12, color = '#ffffff' }: { size?: number; color?: string }) {
+// Solid white pencil silhouette drawn as two paths so the square's background
+// color shows through the small gap between shaft and eraser — that's the
+// "band" the user designed.
+function PencilIcon({ size = 14, color = '#ffffff' }: { size?: number; color?: string }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill={color}
       aria-hidden="true"
     >
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+      <path d="M20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
     </svg>
   );
 }
+
+const PENCIL_BG_NORMAL = '#6b7280';
+const PENCIL_BG_OUTLIER = '#67e8f9';
 
 interface HoverState {
   day: string;
@@ -213,6 +215,8 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   display: 'inline-flex',
                   width: 16,
                   height: 16,
+                  borderRadius: 3,
+                  background: PENCIL_BG_NORMAL,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -228,7 +232,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   width: 16,
                   height: 16,
                   borderRadius: 3,
-                  background: '#67e8f9',
+                  background: PENCIL_BG_OUTLIER,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -461,14 +465,13 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   width: 18,
                   height: 18,
                   borderRadius: 4,
-                  background: isOut ? '#67e8f9' : 'transparent',
-                  border: isOut ? '1px solid #3b3f54' : 'none',
+                  background: isOut ? PENCIL_BG_OUTLIER : PENCIL_BG_NORMAL,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <PencilIcon size={12} color="#ffffff" />
+                <PencilIcon size={14} color="#ffffff" />
               </div>
             );
           })}
