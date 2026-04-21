@@ -71,6 +71,7 @@ export default function PostCurvesChart({ posts }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(
     posts.length > 0 ? posts[0].id : null
   );
+  const [dismissed, setDismissed] = useState(false);
 
   const { chartData, medianFinal, selectedPost, yMax } = useMemo(() => {
     const buckets = new Map<string, (number | null)[]>();
@@ -116,7 +117,50 @@ export default function PostCurvesChart({ posts }: Props) {
     };
   }, [posts, selectedId]);
 
-  if (posts.length === 0) return null;
+  if (dismissed) return null;
+
+  if (posts.length === 0) {
+    return (
+      <div className="bg-bg-card rounded-xl p-6 min-w-0 overflow-hidden">
+        <div className="flex items-start justify-between mb-2 gap-4">
+          <h3 className="text-lg font-semibold">Post Engagement Curves</h3>
+          <button
+            onClick={() => setDismissed(true)}
+            aria-label="Cerrar"
+            title="Cerrar"
+            style={{
+              width: 24,
+              height: 24,
+              borderRadius: 6,
+              border: '1px solid #2e3348',
+              background: 'transparent',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 14,
+              lineHeight: 1,
+              padding: 0,
+            }}
+          >
+            ×
+          </button>
+        </div>
+        <div className="text-sm text-text-muted" style={{ lineHeight: 1.5 }}>
+          <p>
+            Aún no hay datos suficientes para dibujar las curvas. Este gráfico se rellena a partir de
+            snapshots horarios durante los 7 días posteriores a cada publicación, así que solo funciona
+            para cuentas conectadas (gestionadas vía Unipile) con posts recientes.
+          </p>
+          <p className="mt-2 text-text-muted/80 italic">
+            Vuelve a abrirlo cuando el creador tenga al menos una publicación dentro de la ventana de
+            captura de 7 días.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-bg-card rounded-xl p-6 min-w-0 overflow-hidden">

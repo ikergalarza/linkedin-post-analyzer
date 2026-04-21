@@ -235,8 +235,9 @@ export default function CreatorDetail() {
         <EngagementChart data={timeline} dailyEngagement={dailyEngagement} avgEngagement={stats.avg_engagement} />
       )}
 
-      {/* Per-post engagement curves — only renders for creators with snapshot data. */}
-      {postCurves.length > 0 && <PostCurvesChart posts={postCurves} />}
+      {/* Per-post engagement curves — always renders; shows an empty state
+          with a dismiss button when the creator has no snapshot data yet. */}
+      <PostCurvesChart posts={postCurves} />
 
       {/* Hook Type + Structure Breakdown */}
       {stats.hook_type_breakdown && stats.hook_type_breakdown.length > 0 && (
