@@ -1050,50 +1050,38 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   }, [autoRefresh]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Merge this post's snapshots with the creator's typical percentile curve.
-  // To avoid the visual problem where the gray band sits at the bucket edge
-  // while the blue/orange snapshot points sit at their own exact ages (so
-  // the two series appear offset along the x-axis), we LINEARLY INTERPOLATE
-  // the typical percentiles at every snapshot's ageMin. Each snapshot row
-  // therefore carries both its own metrics AND the typical values beneath
-  // it, guaranteeing the band sits directly under the curve.
+  // The X axis covers only THIS post's lifespan (0 → latest snapshot). For
+  // each snapshot we linearly interpolate the typical percentiles from the
+  // creator's other-post buckets — so wherever we actually have comparable
+  // data, the gray band sits directly under the blue/orange curve.
   //
-  // We also keep any typical buckets past the latest snapshot so the band
-  // can extend into the future when another post has been monitored longer
-  // than this one, and we anchor the band at (0, 0, 0) so it starts at
-  // publish time rather than at the first bucket midpoint.
+  // We deliberately do NOT synthesise a (0, 0, 0) anchor nor extend the
+  // axis past the latest snapshot: if the creator's other posts were
+  // already a few days old when monitoring began, their buckets only cover
+  // late ages (e.g. 125–156h) — interpolating across that gap to 0 would
+  // fabricate a typical curve we don't really have. Better to show no band
+  // than a misleading one; the legend chip reflects that state.
   const curveDataAll = useMemo(() => {
     if (!data) return [];
     const publishedMs = new Date(publishedAt).getTime();
     const typicalSorted = (data.typical || []).slice().sort((a, b) => a.ageMin - b.ageMin);
 
-    // Origin anchor: at publish time, a post has 0 impressions — so the
-    // typical percentiles are all 0 there. Prepend only if the first bucket
-    // starts past origin (it always does with midpoint labeling).
-    const typicalAnchored = typicalSorted.length > 0 && typicalSorted[0].ageMin > 0
-      ? [
-          {
-            ageMin: 0,
-            sampleCount: typicalSorted[0].sampleCount,
-            p25Imp: 0, p50Imp: 0, p75Imp: 0,
-            p25Eng: 0, p50Eng: 0, p75Eng: 0,
-          },
-          ...typicalSorted,
-        ]
-      : typicalSorted;
-
     const typicalAt = (age: number) => {
-      if (typicalAnchored.length === 0) {
+      if (typicalSorted.length === 0) {
         return { range: null as [number, number] | null, median: null as number | null, sampleCount: null as number | null };
       }
-      if (age < typicalAnchored[0].ageMin || age > typicalAnchored[typicalAnchored.length - 1].ageMin) {
+      // Only interpolate WITHIN the real bucket range; outside → null (no
+      // band drawn). This is what keeps the band honest when there's no
+      // overlap between other posts' buckets and this post's age range.
+      if (age < typicalSorted[0].ageMin || age > typicalSorted[typicalSorted.length - 1].ageMin) {
         return { range: null, median: null, sampleCount: null };
       }
-      let lo = typicalAnchored[0];
-      let hi = typicalAnchored[typicalAnchored.length - 1];
-      for (let i = 0; i < typicalAnchored.length - 1; i++) {
-        if (typicalAnchored[i].ageMin <= age && age <= typicalAnchored[i + 1].ageMin) {
-          lo = typicalAnchored[i];
-          hi = typicalAnchored[i + 1];
+      let lo = typicalSorted[0];
+      let hi = typicalSorted[typicalSorted.length - 1];
+      for (let i = 0; i < typicalSorted.length - 1; i++) {
+        if (typicalSorted[i].ageMin <= age && age <= typicalSorted[i + 1].ageMin) {
+          lo = typicalSorted[i];
+          hi = typicalSorted[i + 1];
           break;
         }
       }
@@ -1131,24 +1119,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
       };
     });
 
-    // Typical-only rows for ages past the latest snapshot, so the band can
-    // continue into the future where another post has been observed longer.
-    const maxSnapshotAge = mine.length > 0 ? Math.max(...mine.map((m) => m.ageMin)) : 0;
-    const typicalBeyond = typicalAnchored
-      .filter((t) => t.ageMin > maxSnapshotAge)
-      .map((t) => ({
-        ageMin: t.ageMin,
-        label: t.ageMin < 60 ? `${t.ageMin}m` : `${(t.ageMin / 60).toFixed(1)}h`,
-        impressions: null as number | null,
-        likes: null as number | null,
-        comments: null as number | null,
-        reposts: null as number | null,
-        typicalImpRange: [t.p25Imp, t.p75Imp] as [number, number],
-        typicalImpMedian: t.p50Imp,
-        typicalSampleCount: t.sampleCount,
-      }));
-
-    return [...mine, ...typicalBeyond].sort((a, b) => a.ageMin - b.ageMin);
+    return mine.sort((a, b) => a.ageMin - b.ageMin);
   }, [data, publishedAt]);
 
   const curveData = useMemo(
@@ -1157,6 +1128,11 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   );
   const hasSnapshots = (data?.snapshots?.length || 0) > 0;
   const hasTypical = (data?.typical?.length || 0) > 0;
+  // Does the typical band actually overlap with this post's age range?
+  // If yes, we render the gray shadow under the curves; if no (e.g. the
+  // post is 20h old but the creator's other posts only have buckets at
+  // 125h+), we hide the band and tell the user why in the chip.
+  const hasTypicalOverlap = curveDataAll.some((d) => d.typicalImpMedian != null);
   const maxAgeMin = hasSnapshots
     ? Math.max(0, ...data!.snapshots.map((s) => Math.round((new Date(s.captured_at).getTime() - new Date(publishedAt).getTime()) / 60000)))
     : 0;
@@ -1199,10 +1175,19 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
         <span className="text-[10px] text-text-muted ml-2">
           {snapshotsInView} of {snapshotCount} snapshot{snapshotCount === 1 ? '' : 's'}
         </span>
-        {hasTypical && (
+        {hasTypical && hasTypicalOverlap && (
           <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-text-muted">
             <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
             <span>typical impressions p25–p75 for this account</span>
+          </span>
+        )}
+        {hasTypical && !hasTypicalOverlap && (
+          <span
+            className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-text-muted/70"
+            title="The creator's other monitored posts only have snapshots at later ages than this post — so there's no comparable typical value yet for this post's current age range."
+          >
+            <span className="inline-block w-3 h-2 rounded-sm border border-slate-500/40" />
+            <span>typical band not yet available for this post's age</span>
           </span>
         )}
       </div>
@@ -1276,9 +1261,9 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
                 />
               ))}
             {/* Typical impressions band (p25–p75) rendered first so it sits
-                behind this post's blue area. `connectNulls` lets the band
-                span the sparser bucket points. */}
-            {hasTypical && (
+                behind this post's blue area. Only drawn when the creator's
+                other-post buckets actually overlap this post's age range. */}
+            {hasTypicalOverlap && (
               <Area
                 yAxisId="left"
                 type="monotone"
@@ -1291,7 +1276,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
                 isAnimationActive={false}
               />
             )}
-            {hasTypical && (
+            {hasTypicalOverlap && (
               <Line
                 yAxisId="left"
                 type="monotone"
