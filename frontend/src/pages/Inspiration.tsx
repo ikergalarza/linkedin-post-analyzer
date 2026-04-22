@@ -42,6 +42,20 @@ const HOOK_LABELS: Record<string, string> = {
   motivational: 'Motivational', observation: 'Observation', other: 'Other',
 };
 
+const CONTENT_TYPE_LABELS: Record<string, string> = {
+  text: 'Text',
+  text_image: 'Text + Photo',
+  text_carousel: 'Text + Carousel',
+  text_video: 'Text + Video',
+  text_document: 'Text + Doc',
+  image: 'Photo only',
+  carousel: 'Carousel only',
+  video: 'Video only',
+  document: 'Doc only',
+  poll: 'Poll',
+  article: 'Article',
+};
+
 const STRUCT_LABELS: Record<string, string> = {
   hook_list_cta: 'Hook → List → CTA', hook_story_lesson_cta: 'Story → Lesson → CTA',
   problem_agitate_solve: 'Problem → Agitate → Solve',
@@ -176,6 +190,7 @@ export default function Inspiration() {
   const [filterStructure, setFilterStructure] = useState('');
   const [filterCreator, setFilterCreator] = useState('');
   const [filterTopic, setFilterTopic] = useState('');
+  const [filterContentType, setFilterContentType] = useState('');
   const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
   const [classifying, setClassifying] = useState(false);
   const [classifyResult, setClassifyResult] = useState<string | null>(null);
@@ -207,12 +222,19 @@ export default function Inspiration() {
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   }, [outliers]);
 
+  const contentTypes = useMemo(() => {
+    const counts = new Map<string, number>();
+    outliers.forEach((p) => counts.set(p.content_type || 'text', (counts.get(p.content_type || 'text') || 0) + 1));
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [outliers]);
+
   const filtered = useMemo(() => {
     let list = [...outliers];
     if (filterTopic) list = list.filter((p) => p.topic === filterTopic);
     if (filterHook) list = list.filter((p) => p.hook_type === filterHook);
     if (filterStructure) list = list.filter((p) => p.post_structure === filterStructure);
     if (filterCreator) list = list.filter((p) => p.creator_name === filterCreator);
+    if (filterContentType) list = list.filter((p) => (p.content_type || 'text') === filterContentType);
 
     switch (sortBy) {
       case 'likes': list.sort((a, b) => b.likes_count - a.likes_count); break;
@@ -221,7 +243,7 @@ export default function Inspiration() {
       default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
     return list;
-  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, sortBy]);
+  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, sortBy]);
 
   const handleClassify = async () => {
     setClassifying(true);
@@ -384,6 +406,31 @@ export default function Inspiration() {
               ))}
             </div>
 
+            {contentTypes.length > 1 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-text-muted font-medium">Type:</span>
+                <button
+                  onClick={() => setFilterContentType('')}
+                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterContentType ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
+                >
+                  All
+                </button>
+                {contentTypes.map(([type, count]) => (
+                  <button
+                    key={type}
+                    onClick={() => setFilterContentType(filterContentType === type ? '' : type)}
+                    className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                      filterContentType === type
+                        ? 'border-accent/50 bg-accent/10 text-accent'
+                        : 'border-border text-text-muted hover:border-accent/30'
+                    }`}
+                  >
+                    {CONTENT_TYPE_LABELS[type] || type} ({count})
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-text-muted font-medium">Structure:</span>
               <button
@@ -436,7 +483,7 @@ export default function Inspiration() {
           {/* Results count */}
           <p className="text-xs text-text-muted">
             {filtered.length} outlier{filtered.length !== 1 ? 's' : ''}{' '}
-            {filterHook || filterStructure || filterCreator || filterTopic ? `(filtered from ${outliers.length} total)` : 'total'}
+            {filterHook || filterStructure || filterCreator || filterTopic || filterContentType ? `(filtered from ${outliers.length} total)` : 'total'}
           </p>
 
           {/* Cards grid */}
