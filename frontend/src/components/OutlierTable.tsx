@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -195,11 +195,63 @@ function ExpandableText({ text }: { text: string }) {
 
 export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+
+  const typeCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of posts) {
+      const t = p.content_type || 'text';
+      map.set(t, (map.get(t) || 0) + 1);
+    }
+    return map;
+  }, [posts]);
+
+  const filterOptions = useMemo(
+    () => ['all', ...Array.from(typeCounts.keys()).sort()],
+    [typeCounts]
+  );
+
+  const filteredPosts = useMemo(
+    () => (typeFilter === 'all' ? posts : posts.filter((p) => (p.content_type || 'text') === typeFilter)),
+    [posts, typeFilter]
+  );
 
   return (
     <div className="bg-bg-card rounded-xl p-6">
-      <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      {posts.length === 0 ? (
+      <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+        <h3 className="text-lg font-semibold">
+          {title}
+          <span className="text-text-muted text-sm font-normal ml-2">
+            ({filteredPosts.length}{typeFilter !== 'all' ? ` of ${posts.length}` : ''})
+          </span>
+        </h3>
+        {filterOptions.length > 2 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-text-muted text-xs">Type:</span>
+            {filterOptions.map((type) => {
+              const cfg = type === 'all'
+                ? { icon: '', label: 'All' }
+                : TYPE_CONFIG[type] || { icon: '?', label: type };
+              const count = type === 'all' ? posts.length : (typeCounts.get(type) || 0);
+              return (
+                <button
+                  key={type}
+                  onClick={() => setTypeFilter(type)}
+                  className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                    typeFilter === type
+                      ? 'bg-accent/20 text-accent border border-accent/30'
+                      : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                  }`}
+                >
+                  {cfg.icon && <span className="mr-1">{cfg.icon}</span>}
+                  {cfg.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      {filteredPosts.length === 0 ? (
         <p className="text-text-muted">No posts to display.</p>
       ) : (
         <div className="overflow-x-auto">
@@ -220,7 +272,7 @@ export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) 
               </tr>
             </thead>
             <tbody>
-              {posts.map((post) => (
+              {filteredPosts.map((post) => (
                 <>
                   <tr
                     key={post.id}
