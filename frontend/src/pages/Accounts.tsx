@@ -1049,15 +1049,75 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
     return () => clearInterval(timer);
   }, [autoRefresh]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Merge this post's snapshots with the creator's typical percentile curve
-  // into a single array sorted by age. Each point holds only the fields that
-  // make sense for it (this-post metrics on snapshot rows, typical percentiles
-  // on bucket rows); Recharts handles gaps via `connectNulls` per series.
+  // Merge this post's snapshots with the creator's typical percentile curve.
+  // To avoid the visual problem where the gray band sits at the bucket edge
+  // while the blue/orange snapshot points sit at their own exact ages (so
+  // the two series appear offset along the x-axis), we LINEARLY INTERPOLATE
+  // the typical percentiles at every snapshot's ageMin. Each snapshot row
+  // therefore carries both its own metrics AND the typical values beneath
+  // it, guaranteeing the band sits directly under the curve.
+  //
+  // We also keep any typical buckets past the latest snapshot so the band
+  // can extend into the future when another post has been monitored longer
+  // than this one, and we anchor the band at (0, 0, 0) so it starts at
+  // publish time rather than at the first bucket midpoint.
   const curveDataAll = useMemo(() => {
     if (!data) return [];
     const publishedMs = new Date(publishedAt).getTime();
+    const typicalSorted = (data.typical || []).slice().sort((a, b) => a.ageMin - b.ageMin);
+
+    // Origin anchor: at publish time, a post has 0 impressions — so the
+    // typical percentiles are all 0 there. Prepend only if the first bucket
+    // starts past origin (it always does with midpoint labeling).
+    const typicalAnchored = typicalSorted.length > 0 && typicalSorted[0].ageMin > 0
+      ? [
+          {
+            ageMin: 0,
+            sampleCount: typicalSorted[0].sampleCount,
+            p25Imp: 0, p50Imp: 0, p75Imp: 0,
+            p25Eng: 0, p50Eng: 0, p75Eng: 0,
+          },
+          ...typicalSorted,
+        ]
+      : typicalSorted;
+
+    const typicalAt = (age: number) => {
+      if (typicalAnchored.length === 0) {
+        return { range: null as [number, number] | null, median: null as number | null, sampleCount: null as number | null };
+      }
+      if (age < typicalAnchored[0].ageMin || age > typicalAnchored[typicalAnchored.length - 1].ageMin) {
+        return { range: null, median: null, sampleCount: null };
+      }
+      let lo = typicalAnchored[0];
+      let hi = typicalAnchored[typicalAnchored.length - 1];
+      for (let i = 0; i < typicalAnchored.length - 1; i++) {
+        if (typicalAnchored[i].ageMin <= age && age <= typicalAnchored[i + 1].ageMin) {
+          lo = typicalAnchored[i];
+          hi = typicalAnchored[i + 1];
+          break;
+        }
+      }
+      if (lo.ageMin === hi.ageMin) {
+        return {
+          range: [lo.p25Imp, lo.p75Imp] as [number, number],
+          median: lo.p50Imp,
+          sampleCount: lo.sampleCount,
+        };
+      }
+      const t = (age - lo.ageMin) / (hi.ageMin - lo.ageMin);
+      return {
+        range: [
+          Math.round(lo.p25Imp + (hi.p25Imp - lo.p25Imp) * t),
+          Math.round(lo.p75Imp + (hi.p75Imp - lo.p75Imp) * t),
+        ] as [number, number],
+        median: Math.round(lo.p50Imp + (hi.p50Imp - lo.p50Imp) * t),
+        sampleCount: Math.max(lo.sampleCount, hi.sampleCount),
+      };
+    };
+
     const mine = data.snapshots.map((s) => {
       const ageMin = Math.max(0, Math.round((new Date(s.captured_at).getTime() - publishedMs) / 60000));
+      const t = typicalAt(ageMin);
       return {
         ageMin,
         label: ageMin < 60 ? `${ageMin}m` : `${(ageMin / 60).toFixed(1)}h`,
@@ -1065,23 +1125,30 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
         likes: s.likes_count,
         comments: s.comments_count,
         reposts: s.reposts_count,
-        typicalImpRange: null as [number, number] | null,
-        typicalImpMedian: null as number | null,
-        typicalSampleCount: null as number | null,
+        typicalImpRange: t.range,
+        typicalImpMedian: t.median,
+        typicalSampleCount: t.sampleCount,
       };
     });
-    const typical = (data.typical || []).map((t) => ({
-      ageMin: t.ageMin,
-      label: t.ageMin < 60 ? `${t.ageMin}m` : `${(t.ageMin / 60).toFixed(1)}h`,
-      impressions: null as number | null,
-      likes: null as number | null,
-      comments: null as number | null,
-      reposts: null as number | null,
-      typicalImpRange: [t.p25Imp, t.p75Imp] as [number, number],
-      typicalImpMedian: t.p50Imp,
-      typicalSampleCount: t.sampleCount,
-    }));
-    return [...mine, ...typical].sort((a, b) => a.ageMin - b.ageMin);
+
+    // Typical-only rows for ages past the latest snapshot, so the band can
+    // continue into the future where another post has been observed longer.
+    const maxSnapshotAge = mine.length > 0 ? Math.max(...mine.map((m) => m.ageMin)) : 0;
+    const typicalBeyond = typicalAnchored
+      .filter((t) => t.ageMin > maxSnapshotAge)
+      .map((t) => ({
+        ageMin: t.ageMin,
+        label: t.ageMin < 60 ? `${t.ageMin}m` : `${(t.ageMin / 60).toFixed(1)}h`,
+        impressions: null as number | null,
+        likes: null as number | null,
+        comments: null as number | null,
+        reposts: null as number | null,
+        typicalImpRange: [t.p25Imp, t.p75Imp] as [number, number],
+        typicalImpMedian: t.p50Imp,
+        typicalSampleCount: t.sampleCount,
+      }));
+
+    return [...mine, ...typicalBeyond].sort((a, b) => a.ageMin - b.ageMin);
   }, [data, publishedAt]);
 
   const curveData = useMemo(

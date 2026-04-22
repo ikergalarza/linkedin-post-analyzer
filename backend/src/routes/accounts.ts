@@ -599,12 +599,17 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
        ),
        bucketed AS (
          SELECT
+           -- Label each bucket by its MIDPOINT (not upper bound) so the
+           -- typical band plots where the bucket's data "actually sits"
+           -- rather than at the end of its age range. A snapshot at age 5m
+           -- falls in bucket [0,15) → midpoint 7, so the gray band visually
+           -- aligns with the blue snapshot point at x=5 instead of x=15.
            CASE
-             WHEN age_min < 60   THEN (FLOOR(age_min / 15) * 15 + 15)::int
-             WHEN age_min < 360  THEN (FLOOR(age_min / 30) * 30 + 30)::int
-             WHEN age_min < 1440 THEN (FLOOR(age_min / 120) * 120 + 120)::int
-             WHEN age_min < 4320 THEN (FLOOR(age_min / 360) * 360 + 360)::int
-             ELSE (FLOOR(age_min / 1440) * 1440 + 1440)::int
+             WHEN age_min < 60   THEN (FLOOR(age_min / 15) * 15 + 7)::int     -- [0,60)   buckets width 15
+             WHEN age_min < 360  THEN (FLOOR(age_min / 30) * 30 + 15)::int    -- [60,360) buckets width 30
+             WHEN age_min < 1440 THEN (FLOOR(age_min / 120) * 120 + 60)::int  -- [6h,24h) width 120
+             WHEN age_min < 4320 THEN (FLOOR(age_min / 360) * 360 + 180)::int -- [24h,72h) width 360
+             ELSE (FLOOR(age_min / 1440) * 1440 + 720)::int                   -- [72h,…)  width 1440
            END AS bucket_min,
            impressions,
            engagement
