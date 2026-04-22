@@ -800,9 +800,18 @@ export default function OutlierExplorer() {
                   <span className="text-text-muted text-xs">Filter:</span>
                   {contentTypes.map((type) => {
                     const typeLabel: Record<string, string> = {
-                      all: 'All', text_only: 'Text', image: 'Image',
-                      carousel: 'Carousel', video: 'Video', poll: 'Poll',
-                      article: 'Article', document: 'Document',
+                      all: 'All',
+                      text: 'Text',
+                      text_image: 'Text + Photo',
+                      text_carousel: 'Text + Carousel',
+                      text_video: 'Text + Video',
+                      text_document: 'Text + Doc',
+                      image: 'Photo only',
+                      carousel: 'Carousel only',
+                      video: 'Video only',
+                      document: 'Doc only',
+                      poll: 'Poll',
+                      article: 'Article',
                     };
                     const count = type === 'all'
                       ? data.top_outliers.length

@@ -21,8 +21,11 @@ const migration = `
     creator_id UUID NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
     linkedin_post_id TEXT UNIQUE,
     content_text TEXT,
-    content_type TEXT DEFAULT 'text_only'
-      CHECK (content_type IN ('text_only','image','carousel','video','poll','article','document')),
+    content_type TEXT DEFAULT 'text'
+      CHECK (content_type IN (
+        'text','text_image','text_carousel','text_video','text_document',
+        'image','carousel','video','document','poll','article'
+      )),
     published_at TIMESTAMP WITH TIME ZONE,
     likes_count INTEGER DEFAULT 0,
     comments_count INTEGER DEFAULT 0,
@@ -205,7 +208,7 @@ const migration = `
     ));
 
   -- v15: Media URLs + content type for network posts (view creative without leaving app)
-  ALTER TABLE network_posts ADD COLUMN IF NOT EXISTS content_type TEXT DEFAULT 'text_only';
+  ALTER TABLE network_posts ADD COLUMN IF NOT EXISTS content_type TEXT DEFAULT 'text';
   ALTER TABLE network_posts ADD COLUMN IF NOT EXISTS media_urls TEXT[] DEFAULT '{}';
 
   -- v13: Managed accounts flag for the BI dashboard
@@ -228,6 +231,63 @@ const migration = `
     reposts_count INTEGER
   );
   CREATE INDEX IF NOT EXISTS idx_snapshots_post ON post_snapshots(post_id, captured_at);
+
+  -- v18: Content-type taxonomy split — posts that mix text with media now get
+  -- dedicated combined categories (text_image, text_carousel, text_video,
+  -- text_document) so the plain 'text' bucket contains text-only posts. Also
+  -- renames text_only → text for clarity. Migration is idempotent: existing
+  -- rows are remapped based on presence of content_text.
+  DO $mig18$
+  BEGIN
+    -- posts: drop old CHECK if present
+    IF EXISTS (
+      SELECT 1 FROM information_schema.table_constraints
+      WHERE table_name = 'posts' AND constraint_name = 'posts_content_type_check'
+    ) THEN
+      ALTER TABLE posts DROP CONSTRAINT posts_content_type_check;
+    END IF;
+
+    -- Remap existing posts rows
+    UPDATE posts SET content_type =
+      CASE
+        WHEN content_type = 'text_only' THEN 'text'
+        WHEN content_type = 'image' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_image'
+        WHEN content_type = 'carousel' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_carousel'
+        WHEN content_type = 'video' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_video'
+        WHEN content_type = 'document' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_document'
+        ELSE content_type
+      END
+    WHERE content_type IN ('text_only','image','carousel','video','document');
+
+    -- Add new CHECK on posts
+    ALTER TABLE posts ADD CONSTRAINT posts_content_type_check
+      CHECK (content_type IN (
+        'text','text_image','text_carousel','text_video','text_document',
+        'image','carousel','video','document','poll','article'
+      ));
+    ALTER TABLE posts ALTER COLUMN content_type SET DEFAULT 'text';
+
+    -- network_posts: same treatment
+    IF EXISTS (
+      SELECT 1 FROM information_schema.table_constraints
+      WHERE table_name = 'network_posts' AND constraint_name = 'network_posts_content_type_check'
+    ) THEN
+      ALTER TABLE network_posts DROP CONSTRAINT network_posts_content_type_check;
+    END IF;
+
+    UPDATE network_posts SET content_type =
+      CASE
+        WHEN content_type = 'text_only' THEN 'text'
+        WHEN content_type = 'image' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_image'
+        WHEN content_type = 'carousel' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_carousel'
+        WHEN content_type = 'video' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_video'
+        WHEN content_type = 'document' AND content_text IS NOT NULL AND LENGTH(TRIM(content_text)) > 0 THEN 'text_document'
+        ELSE content_type
+      END
+    WHERE content_type IN ('text_only','image','carousel','video','document');
+
+    ALTER TABLE network_posts ALTER COLUMN content_type SET DEFAULT 'text';
+  END $mig18$;
 `;
 
 export async function runMigrations() {

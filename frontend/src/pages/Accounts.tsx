@@ -202,23 +202,31 @@ interface Analytics {
 }
 
 const FORMAT_LABELS: Record<string, string> = {
-  text_only: 'Text',
-  image: 'Image',
-  carousel: 'Carousel',
-  video: 'Video',
+  text: 'Text',
+  text_image: 'Text + Photo',
+  text_carousel: 'Text + Carousel',
+  text_video: 'Text + Video',
+  text_document: 'Text + Doc',
+  image: 'Photo only',
+  carousel: 'Carousel only',
+  video: 'Video only',
+  document: 'Doc only',
   poll: 'Poll',
   article: 'Article',
-  document: 'Document',
 };
 
 const FORMAT_COLORS: Record<string, string> = {
-  text_only: '#e8935a',
-  image: '#6366f1',
-  carousel: '#34d399',
-  video: '#f87171',
-  poll: '#a78bfa',
-  article: '#fbbf24',
-  document: '#38bdf8',
+  text: '#e8935a',
+  text_image: '#6366f1',
+  text_carousel: '#a78bfa',
+  text_video: '#f87171',
+  text_document: '#fbbf24',
+  image: '#93c5fd',
+  carousel: '#c4b5fd',
+  video: '#fca5a5',
+  document: '#fcd34d',
+  poll: '#34d399',
+  article: '#38bdf8',
 };
 
 const CHART_TOOLTIP_STYLE = {

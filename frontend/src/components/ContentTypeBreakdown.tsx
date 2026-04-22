@@ -10,16 +10,20 @@ interface Props {
   outliers: TypeCount[];
 }
 
-const COLORS = ['#e8935a', '#6366f1', '#34d399', '#f87171', '#a78bfa', '#fbbf24', '#38bdf8'];
+const COLORS = ['#e8935a', '#6366f1', '#a78bfa', '#f87171', '#fbbf24', '#93c5fd', '#c4b5fd', '#fca5a5', '#fcd34d', '#34d399', '#38bdf8'];
 
 const typeLabels: Record<string, string> = {
-  text_only: 'Text',
-  image: 'Image',
-  carousel: 'Carousel',
-  video: 'Video',
+  text: 'Text',
+  text_image: 'Text + Photo',
+  text_carousel: 'Text + Carousel',
+  text_video: 'Text + Video',
+  text_document: 'Text + Doc',
+  image: 'Photo only',
+  carousel: 'Carousel only',
+  video: 'Video only',
+  document: 'Doc only',
   poll: 'Poll',
   article: 'Article',
-  document: 'Document',
 };
 
 export default function ContentTypeBreakdown({ all, outliers }: Props) {

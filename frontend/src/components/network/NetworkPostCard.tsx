@@ -182,9 +182,9 @@ export default function NetworkPostCard({ post, onUpdate }: Props) {
       )}
 
       {/* Content type badge */}
-      {post.content_type && post.content_type !== 'text_only' && (
+      {post.content_type && post.content_type !== 'text' && (
         <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-bg-primary text-text-muted border border-border capitalize">
-          {post.content_type.replace('_', ' ')}
+          {post.content_type.replace(/_/g, ' ')}
         </span>
       )}
 

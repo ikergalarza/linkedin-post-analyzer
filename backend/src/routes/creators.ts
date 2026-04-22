@@ -261,7 +261,7 @@ router.post('/reclassify', async (_req: Request, res: Response) => {
   try {
     // Fetch all posts (not just text_only — re-check everything)
     const { rows: posts } = await pool.query(
-      `SELECT id, content_type, raw_data FROM posts WHERE raw_data IS NOT NULL`
+      `SELECT id, content_text, content_type, raw_data FROM posts WHERE raw_data IS NOT NULL`
     );
 
     let updated = 0;
@@ -270,7 +270,11 @@ router.post('/reclassify', async (_req: Request, res: Response) => {
     for (const post of posts) {
       try {
         const raw = post.raw_data || {};
-        const detected = detectContentTypeFromRaw(raw);
+        // Ensure hasText check works even when raw.text is empty but stored content_text exists
+        const rawWithText = post.content_text && !(raw.text || raw.content || raw.body)
+          ? { ...raw, text: post.content_text }
+          : raw;
+        const detected = detectContentTypeFromRaw(rawWithText);
         if (detected !== post.content_type) {
           await pool.query('UPDATE posts SET content_type = $1 WHERE id = $2', [detected, post.id]);
           updated++;
@@ -289,20 +293,22 @@ router.post('/reclassify', async (_req: Request, res: Response) => {
 // Standalone content type detector that works on raw_data objects.
 // Deep scan — Unipile can nest media under different keys depending on post kind.
 function detectContentTypeFromRaw(raw: any): string {
-  if (!raw || typeof raw !== 'object') return 'text_only';
+  if (!raw || typeof raw !== 'object') return 'text';
 
   // Structural fast paths
   if (raw.poll) return 'poll';
   if (raw.article) return 'article';
 
+  const hasText = ((raw.text || raw.content || raw.body || '') as string).trim().length > 0;
+
   // Explicit video / document signals win over image
   const signals = scanMediaSignals(raw);
-  if (signals.video) return 'video';
-  if (signals.document) return 'document';
-  if (signals.carousel) return 'carousel';
-  if (signals.image) return 'image';
+  if (signals.video) return hasText ? 'text_video' : 'video';
+  if (signals.document) return hasText ? 'text_document' : 'document';
+  if (signals.carousel) return hasText ? 'text_carousel' : 'carousel';
+  if (signals.image) return hasText ? 'text_image' : 'image';
 
-  return 'text_only';
+  return 'text';
 }
 
 // Recursively walks raw_data looking for media signals.

@@ -158,13 +158,17 @@ interface Props {
 }
 
 const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string; hasMedia: boolean }> = {
-  text_only: { icon: '📝', label: 'Text',      color: 'text-text-muted bg-bg-hover',      hasMedia: false },
-  image:     { icon: '🖼️', label: 'Image',    color: 'text-blue-400 bg-blue-400/10',     hasMedia: true  },
-  carousel:  { icon: '📎', label: 'Carousel', color: 'text-purple-400 bg-purple-400/10', hasMedia: true  },
-  video:     { icon: '🎥', label: 'Video',    color: 'text-red-400 bg-red-400/10',       hasMedia: true  },
-  document:  { icon: '📄', label: 'Doc',      color: 'text-amber-400 bg-amber-400/10',   hasMedia: true  },
-  poll:      { icon: '📊', label: 'Poll',     color: 'text-green-400 bg-green-400/10',   hasMedia: false },
-  article:   { icon: '📰', label: 'Article',  color: 'text-cyan-400 bg-cyan-400/10',     hasMedia: false },
+  text:            { icon: '📝', label: 'Text',            color: 'text-text-muted bg-bg-hover',      hasMedia: false },
+  text_image:      { icon: '📝🖼️', label: 'Text + Photo',    color: 'text-blue-400 bg-blue-400/10',     hasMedia: true  },
+  text_carousel:   { icon: '📝📎', label: 'Text + Carousel', color: 'text-purple-400 bg-purple-400/10', hasMedia: true  },
+  text_video:      { icon: '📝🎥', label: 'Text + Video',    color: 'text-red-400 bg-red-400/10',       hasMedia: true  },
+  text_document:   { icon: '📝📄', label: 'Text + Doc',      color: 'text-amber-400 bg-amber-400/10',   hasMedia: true  },
+  image:           { icon: '🖼️', label: 'Photo only',       color: 'text-blue-300 bg-blue-300/10',     hasMedia: true  },
+  carousel:        { icon: '📎', label: 'Carousel only',    color: 'text-purple-300 bg-purple-300/10', hasMedia: true  },
+  video:           { icon: '🎥', label: 'Video only',       color: 'text-red-300 bg-red-300/10',       hasMedia: true  },
+  document:        { icon: '📄', label: 'Doc only',         color: 'text-amber-300 bg-amber-300/10',   hasMedia: true  },
+  poll:            { icon: '📊', label: 'Poll',             color: 'text-green-400 bg-green-400/10',   hasMedia: false },
+  article:         { icon: '📰', label: 'Article',          color: 'text-cyan-400 bg-cyan-400/10',     hasMedia: false },
 };
 
 const PREVIEW_CHARS = 300;

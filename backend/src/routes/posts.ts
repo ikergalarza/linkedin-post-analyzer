@@ -43,7 +43,7 @@ router.get('/post/:id/media', async (req: Request, res: Response) => {
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
     const raw = post.raw_data || {};
-    const contentType: string = post.content_type || 'text_only';
+    const contentType: string = post.content_type || 'text';
 
     interface MediaItem {
       type: 'image' | 'video' | 'document';

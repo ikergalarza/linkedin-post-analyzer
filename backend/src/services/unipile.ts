@@ -329,13 +329,14 @@ export class UnipileService {
     if (raw.poll) return 'poll';
     if (raw.article) return 'article';
 
+    const hasText = ((raw.text || raw.content || raw.body || '') as string).trim().length > 0;
     const signals = this.scanMediaSignals(raw);
-    if (signals.video) return 'video';
-    if (signals.document) return 'document';
-    if (signals.carousel) return 'carousel';
-    if (signals.image) return 'image';
+    if (signals.video) return hasText ? 'text_video' : 'video';
+    if (signals.document) return hasText ? 'text_document' : 'document';
+    if (signals.carousel) return hasText ? 'text_carousel' : 'carousel';
+    if (signals.image) return hasText ? 'text_image' : 'image';
 
-    return 'text_only';
+    return 'text';
   }
 
   // Same deep-scan logic as reclassify endpoint — kept here so live scraping and

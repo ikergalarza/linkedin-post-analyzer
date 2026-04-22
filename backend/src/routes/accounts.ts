@@ -480,7 +480,7 @@ router.post('/demo-seed', async (_req: Request, res: Response) => {
          creator_id, linkedin_post_id, content_text, content_type, published_at,
          likes_count, comments_count, reposts_count, impressions_count,
          engagement_score, outlier_ratio, is_outlier, hook_text, language
-       ) VALUES ($1, 'DEMO_LIVE_POST', $2, 'text_only', $3, $4, $5, $6, $7, $8, $9, TRUE, $10, 'es')
+       ) VALUES ($1, 'DEMO_LIVE_POST', $2, 'text', $3, $4, $5, $6, $7, $8, $9, TRUE, $10, 'es')
        RETURNING id`,
       [
         creator.id,

@@ -83,7 +83,7 @@ export const NetworkPostModel = {
             post.comments_count || 0,
             post.reposts_count || 0,
             post.post_url,
-            (post as any).content_type || 'text_only',
+            (post as any).content_type || 'text',
             (post as any).media_urls || [],
           ]
         );
