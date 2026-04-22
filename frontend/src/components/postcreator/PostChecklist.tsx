@@ -585,7 +585,6 @@ export default function PostChecklist({ text, onImproved }: Props) {
     try {
       for (let i = 1; i <= 5; i++) {
         setIteration(i);
-        if (bestScoreVal >= 80) break;
 
         const score = scorePost(bestText);
         const { failing, pillars } = score;
@@ -674,8 +673,6 @@ export default function PostChecklist({ text, onImproved }: Props) {
         }
 
         setIterLog((prev) => [...prev, { iteration: i, score: newScore, delta, accepted, critique }]);
-
-        if (bestScoreVal >= 80) break;
       }
     } catch (err: any) {
       setImproveError(err.message);
@@ -738,8 +735,8 @@ export default function PostChecklist({ text, onImproved }: Props) {
         {onImproved && (
           <button
             onClick={runAutoImprove}
-            disabled={improving || overall >= 80}
-            title={overall >= 80 ? 'Already above 80 — you\'re good' : 'Iteratively rewrite with AI until score ≥ 80 (max 5 passes)'}
+            disabled={improving}
+            title="Run 5 AI rewrite passes — keeps going even if the post already scores 80+, in case there's still room to improve"
             className="px-3 py-2 bg-accent/10 text-accent border border-accent/30 rounded-lg text-[11px] font-medium hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
           >
             {improving ? `Improving ${iteration}/5…` : '✨ Auto-improve'}
