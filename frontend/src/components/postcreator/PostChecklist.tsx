@@ -558,6 +558,10 @@ export default function PostChecklist({ text, onImproved }: Props) {
   const [improveError, setImproveError] = useState<string | null>(null);
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [iterLog, setIterLog] = useState<IterLog[]>([]);
+  // User-picked pillar takes precedence over the auto-detected dominant one:
+  // the heuristic misfires often, and the right pillar is a creative decision
+  // the human is best placed to make.
+  const [selectedPillar, setSelectedPillar] = useState<Pillar | 'auto'>('auto');
 
   const result = useMemo(() => {
     if (!text || text.trim().length < 20) return null;
@@ -577,7 +581,11 @@ export default function PostChecklist({ text, onImproved }: Props) {
     let bestScoreVal = best.overall;
     setBestScore(bestScoreVal);
     const originalText = text;
-    const originalPillar = best.pillars.dominant;
+    // If the user manually picked a pillar, that wins. Otherwise fall back to
+    // whatever the heuristic detected (may be null → prompt tells the model to
+    // pick one based on the post's message).
+    const originalPillar: Pillar | null =
+      selectedPillar !== 'auto' ? selectedPillar : best.pillars.dominant;
     const originalIntensity = best.pillars.intensity;
 
     const conversation: { role: 'user' | 'assistant'; content: string }[] = [];
@@ -743,6 +751,39 @@ export default function PostChecklist({ text, onImproved }: Props) {
           </button>
         )}
       </div>
+
+      {onImproved && (
+        <div className="flex items-center gap-2 flex-wrap text-[11px]">
+          <span className="text-text-muted">Pilar:</span>
+          {(['auto', 'curiosity', 'fear', 'desire'] as const).map((p) => {
+            const active = selectedPillar === p;
+            const label = p === 'auto' ? 'Auto' : `${PILLAR_META[p].icon} ${PILLAR_META[p].label}`;
+            const activeColor = p === 'auto' ? '#94a3b8' : PILLAR_META[p].color;
+            return (
+              <button
+                key={p}
+                type="button"
+                disabled={improving}
+                onClick={() => setSelectedPillar(p)}
+                className="px-2 py-1 rounded-md border transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  borderColor: active ? activeColor : '#2e3348',
+                  background: active ? `${activeColor}22` : 'transparent',
+                  color: active ? activeColor : '#94a3b8',
+                  fontWeight: active ? 600 : 400,
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
+          <span className="text-[10px] text-text-muted ml-1">
+            {selectedPillar === 'auto'
+              ? 'Uses the detected pillar (or lets the model pick if none).'
+              : `Forces every rewrite to intensify ${PILLAR_META[selectedPillar].label.toLowerCase()}.`}
+          </span>
+        </div>
+      )}
 
       {improving && (
         <div className="text-[10px] text-text-muted animate-pulse">
