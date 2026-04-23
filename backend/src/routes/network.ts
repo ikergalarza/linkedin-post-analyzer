@@ -16,6 +16,7 @@ function paramId(req: Request): string {
 
 // ─── Commenter Profile ───
 
+// Legacy singleton accessor — returns the default profile (Iker).
 router.get('/profile', async (_req: Request, res: Response) => {
   try {
     const profile = await CommenterProfileModel.get();
@@ -28,6 +29,27 @@ router.get('/profile', async (_req: Request, res: Response) => {
 router.put('/profile', async (req: Request, res: Response) => {
   try {
     const profile = await CommenterProfileModel.upsert(req.body);
+    res.json(profile);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Multi-profile endpoints — Iker, Unai, and any future commenter voices.
+router.get('/profiles', async (_req: Request, res: Response) => {
+  try {
+    const profiles = await CommenterProfileModel.listAll();
+    res.json(profiles);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/profiles/:name', async (req: Request, res: Response) => {
+  try {
+    const name = String(req.params.name || '').trim();
+    if (!name) return res.status(400).json({ error: 'Profile name is required' });
+    const profile = await CommenterProfileModel.upsertByName(name, req.body);
     res.json(profile);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -246,12 +268,53 @@ router.patch('/posts/:id/status', async (req: Request, res: Response) => {
 
 router.post('/posts/:id/generate-comments', async (req: Request, res: Response) => {
   try {
-    console.log('[COMMENT GEN] Step 1: Getting profile...');
-    const profile = await CommenterProfileModel.get();
-    if (!profile) {
-      return res.status(400).json({ error: 'Please configure your commenter profile first' });
+    // Pick the commenter profile: explicit override wins, then profile_name,
+    // then the legacy default (Iker). Override is a lightweight inline form
+    // with just headline/voice/worldview — everything else left blank.
+    const override = req.body?.override as
+      | { headline?: string; voice_style?: string; worldview?: string }
+      | undefined;
+    const profileName = typeof req.body?.profile_name === 'string' ? req.body.profile_name : null;
+
+    let profilePayload: {
+      headline: string | null;
+      voice_style: string | null;
+      worldview: string | null;
+      signature_moves: string | null;
+      avoid: string | null;
+      tone?: string;
+      expertise?: string | null;
+    };
+
+    if (override && (override.headline || override.voice_style || override.worldview)) {
+      console.log('[COMMENT GEN] Using inline override');
+      profilePayload = {
+        headline: override.headline || null,
+        voice_style: override.voice_style || null,
+        worldview: override.worldview || null,
+        signature_moves: null,
+        avoid: null,
+      };
+    } else {
+      console.log('[COMMENT GEN] Step 1: Getting profile...', { profileName });
+      const profile = profileName
+        ? await CommenterProfileModel.getByName(profileName)
+        : await CommenterProfileModel.get();
+      if (!profile) {
+        return res.status(400).json({ error: 'Please configure your commenter profile first' });
+      }
+      profilePayload = {
+        headline: profile.headline,
+        voice_style: profile.voice_style,
+        worldview: profile.worldview,
+        signature_moves: profile.signature_moves,
+        avoid: profile.avoid,
+        tone: profile.tone,
+        expertise: profile.expertise,
+      };
     }
-    console.log('[COMMENT GEN] Step 2: Profile found, getting post...');
+
+    console.log('[COMMENT GEN] Step 2: Profile resolved, getting post...');
 
     const post = await NetworkPostModel.findByIdWithCreator(paramId(req));
     if (!post) return res.status(404).json({ error: 'Post not found' });
@@ -261,16 +324,7 @@ router.post('/posts/:id/generate-comments', async (req: Request, res: Response) 
       postContent: post.content_text || '',
       creatorName: post.creator_name,
       creatorHeadline: post.creator_headline || null,
-      profile: {
-        headline: profile.headline,
-        voice_style: profile.voice_style,
-        worldview: profile.worldview,
-        signature_moves: profile.signature_moves,
-        avoid: profile.avoid,
-        // legacy fallbacks
-        tone: profile.tone,
-        expertise: profile.expertise,
-      },
+      profile: profilePayload,
     });
     console.log('[COMMENT GEN] Step 4: AI response received, saving...');
 

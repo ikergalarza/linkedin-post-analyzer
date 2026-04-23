@@ -2,6 +2,7 @@ import pool from '../db';
 
 export interface CommenterProfile {
   id: string;
+  name: string;
   headline: string | null;
   // legacy fields kept for DB compat
   niche: string | null;
@@ -18,14 +19,31 @@ export interface CommenterProfile {
   updated_at: Date;
 }
 
+const DEFAULT_NAME = 'Iker';
+
 export const CommenterProfileModel = {
-  async get(): Promise<CommenterProfile | null> {
-    const { rows } = await pool.query('SELECT * FROM commenter_profile LIMIT 1');
+  async listAll(): Promise<CommenterProfile[]> {
+    const { rows } = await pool.query(
+      'SELECT * FROM commenter_profile ORDER BY LOWER(name) ASC'
+    );
+    return rows;
+  },
+
+  async getByName(name: string): Promise<CommenterProfile | null> {
+    const { rows } = await pool.query(
+      'SELECT * FROM commenter_profile WHERE LOWER(name) = LOWER($1) LIMIT 1',
+      [name]
+    );
     return rows[0] || null;
   },
 
-  async upsert(data: Partial<CommenterProfile>): Promise<CommenterProfile> {
-    const existing = await this.get();
+  // Legacy singleton accessor — returns the default profile (Iker).
+  async get(): Promise<CommenterProfile | null> {
+    return this.getByName(DEFAULT_NAME);
+  },
+
+  async upsertByName(name: string, data: Partial<CommenterProfile>): Promise<CommenterProfile> {
+    const existing = await this.getByName(name);
 
     if (existing) {
       const { rows } = await pool.query(
@@ -50,9 +68,10 @@ export const CommenterProfileModel = {
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO commenter_profile (headline, voice_style, worldview, signature_moves, avoid)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      `INSERT INTO commenter_profile (name, headline, voice_style, worldview, signature_moves, avoid)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
       [
+        name,
         data.headline || null,
         data.voice_style || null,
         data.worldview || null,
@@ -61,5 +80,10 @@ export const CommenterProfileModel = {
       ]
     );
     return rows[0];
+  },
+
+  // Legacy singleton upsert — writes to the default profile (Iker).
+  async upsert(data: Partial<CommenterProfile>): Promise<CommenterProfile> {
+    return this.upsertByName(DEFAULT_NAME, data);
   },
 };

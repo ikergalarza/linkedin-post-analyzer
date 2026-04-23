@@ -62,12 +62,36 @@ function angleMeta(angle: string): { emoji: string; label: string } {
   return ANGLE_META[angle] || { emoji: '💬', label: angle.replace(/_/g, ' ') };
 }
 
+export interface CustomCommenter {
+  headline: string;
+  voice_style: string;
+  worldview: string;
+}
+
+export type CommenterChoice =
+  | { mode: 'Iker' | 'Unai' }
+  | { mode: 'Custom'; custom: CustomCommenter };
+
 interface Props {
   post: NetworkPostData;
   onUpdate: () => void;
+  commenter?: CommenterChoice;
 }
 
-export default function NetworkPostCard({ post, onUpdate }: Props) {
+function buildGenerateBody(choice?: CommenterChoice): Record<string, any> {
+  if (!choice || choice.mode === 'Iker' || choice.mode === 'Unai') {
+    return { profile_name: choice?.mode ?? 'Iker' };
+  }
+  const { headline, voice_style, worldview } = choice.custom;
+  // If all 3 are empty, fall back to the default profile instead of sending a
+  // blank override (the backend would reject it otherwise).
+  if (!headline.trim() && !voice_style.trim() && !worldview.trim()) {
+    return { profile_name: 'Iker' };
+  }
+  return { override: { headline, voice_style, worldview } };
+}
+
+export default function NetworkPostCard({ post, onUpdate, commenter }: Props) {
   const [generating, setGenerating] = useState(false);
   const [showComments, setShowComments] = useState(post.comments.length > 0);
   const [copied, setCopied] = useState<string | null>(null);
@@ -90,7 +114,7 @@ export default function NetworkPostCard({ post, onUpdate }: Props) {
     setGenerating(true);
     setError('');
     try {
-      await apiPost(`/api/network/posts/${post.id}/generate-comments`, {});
+      await apiPost(`/api/network/posts/${post.id}/generate-comments`, buildGenerateBody(commenter));
       setShowComments(true);
       onUpdate();
     } catch (err: any) {

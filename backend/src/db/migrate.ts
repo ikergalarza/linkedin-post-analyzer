@@ -232,6 +232,20 @@ const migration = `
   );
   CREATE INDEX IF NOT EXISTS idx_snapshots_post ON post_snapshots(post_id, captured_at);
 
+  -- v19: Multiple named commenter profiles — Iker + Unai by default, plus room
+  -- for more. The old singleton becomes 'Iker'; 'Unai' is seeded blank so it can
+  -- be edited from the Profile tab. A profile selector above the Network feed
+  -- lets the user pick which voice generates the comments.
+  ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS name TEXT;
+  UPDATE commenter_profile SET name = 'Iker' WHERE name IS NULL;
+  INSERT INTO commenter_profile (name)
+    SELECT 'Iker'
+    WHERE NOT EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'iker');
+  INSERT INTO commenter_profile (name)
+    SELECT 'Unai'
+    WHERE NOT EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'unai');
+  CREATE UNIQUE INDEX IF NOT EXISTS uniq_commenter_profile_name ON commenter_profile (LOWER(name));
+
   -- v18: Content-type taxonomy split — posts that mix text with media now get
   -- dedicated combined categories (text_image, text_carousel, text_video,
   -- text_document) so the plain 'text' bucket contains text-only posts. Also
