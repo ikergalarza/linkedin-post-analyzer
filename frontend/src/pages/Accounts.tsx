@@ -281,6 +281,7 @@ export default function Accounts() {
   const [legendOpen, setLegendOpen] = useState(false);
   const [liveRefreshing, setLiveRefreshing] = useState(false);
   const [liveRefreshMsg, setLiveRefreshMsg] = useState<string | null>(null);
+  const [topPostsTypeFilter, setTopPostsTypeFilter] = useState<string>('all');
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -375,6 +376,22 @@ export default function Accounts() {
   const outlierRate = analytics && analytics.totals.total_posts > 0
     ? Math.round((analytics.totals.total_outliers / analytics.totals.total_posts) * 100)
     : 0;
+
+  const topPostsTypeCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!analytics) return map;
+    for (const p of analytics.top_posts) {
+      const t = p.content_type || 'text';
+      map.set(t, (map.get(t) || 0) + 1);
+    }
+    return map;
+  }, [analytics]);
+
+  const filteredTopPosts = useMemo(() => {
+    if (!analytics) return [];
+    if (topPostsTypeFilter === 'all') return analytics.top_posts;
+    return analytics.top_posts.filter((p) => (p.content_type || 'text') === topPostsTypeFilter);
+  }, [analytics, topPostsTypeFilter]);
 
   return (
     <div className="space-y-6">
@@ -1012,15 +1029,48 @@ export default function Accounts() {
           {/* Top posts */}
           {analytics.top_posts.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold">Top posts</h3>
-                <p className="text-xs text-text-muted">Highest-engagement posts in this range</p>
+              <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    Top posts
+                    <span className="text-text-muted text-sm font-normal ml-2">
+                      ({filteredTopPosts.length}{topPostsTypeFilter !== 'all' ? ` of ${analytics.top_posts.length}` : ''})
+                    </span>
+                  </h3>
+                  <p className="text-xs text-text-muted">Highest-engagement posts in this range</p>
+                </div>
+                {topPostsTypeCounts.size > 1 && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs text-text-muted">Type:</span>
+                    {['all', ...Array.from(topPostsTypeCounts.keys()).sort()].map((type) => {
+                      const label = type === 'all' ? 'All' : FORMAT_LABELS[type] || type;
+                      const count = type === 'all' ? analytics.top_posts.length : (topPostsTypeCounts.get(type) || 0);
+                      return (
+                        <button
+                          key={type}
+                          onClick={() => setTopPostsTypeFilter(type)}
+                          className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                            topPostsTypeFilter === type
+                              ? 'bg-accent/20 text-accent border border-accent/30'
+                              : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                          }`}
+                        >
+                          {label} ({count})
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              <div className="space-y-2">
-                {analytics.top_posts.map((p) => (
-                  <TopPostRow key={p.id} post={p} />
-                ))}
-              </div>
+              {filteredTopPosts.length === 0 ? (
+                <p className="text-text-muted text-sm">No posts match this filter.</p>
+              ) : (
+                <div className="space-y-2">
+                  {filteredTopPosts.map((p) => (
+                    <TopPostRow key={p.id} post={p} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>
