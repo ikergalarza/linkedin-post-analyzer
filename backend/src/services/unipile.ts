@@ -359,8 +359,12 @@ export function scanMediaSignalsImpl(raw: any): { image: boolean; carousel: bool
     'author', 'creator', 'owner', 'user', 'by', 'posted_by', 'post_author',
     'actor', 'poster', 'sender', 'profile', 'author_profile',
   ]);
-  // Key name heuristic — if the key hints at media, treat descendants as media.
-  const MEDIA_KEY_RE = /(?:^|_)(attach|media|medias|image|images|img|imgs|photo|photos|picture|pictures|thumb|thumbnail|thumbnails|video|videos|document|documents|doc|docs|file|files|asset|assets|gallery|carousel|visual|preview|cover)(?:$|_)/i;
+  // Key name heuristic — match keys that START with a media-ish stem (at word
+  // start or after underscore). We deliberately don't anchor the end so that
+  // plurals and longer forms like 'attachments', 'thumbnails', 'image_urls' all
+  // qualify — the previous version anchored `(?:$|_)` and missed `attachments`,
+  // which caused 3-photo carousels to be detected as single-image posts.
+  const MEDIA_KEY_RE = /(?:^|_)(attach|media|image|img|photo|picture|thumb|video|document|doc|file|asset|gallery|carousel|visual|preview|cover)/i;
   const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif|heic|avif|bmp)(\?|#|$)/i;
   const VIDEO_EXT_RE = /\.(mp4|webm|mov|m4v|mkv|avi)(\?|#|$)/i;
   const DOC_EXT_RE = /\.(pdf|pptx?|docx?|xlsx?|csv)(\?|#|$)/i;
@@ -389,12 +393,21 @@ export function scanMediaSignalsImpl(raw: any): { image: boolean; carousel: bool
 
   const normType = (t: any) => (typeof t === 'string' ? t.toLowerCase() : '');
 
+  // Track every distinct image URL we see so we can promote image → carousel
+  // even when the enclosing array doesn't live under a media-ish key.
+  const imageUrls = new Set<string>();
+
   const walk = (node: any, underMedia: boolean) => {
     if (node == null) return;
     if (typeof node === 'string') {
       const kind = classifyString(node);
-      if (kind) out[kind] = true;
-      else if (underMedia && /^https?:\/\//i.test(node)) out.image = true;
+      if (kind) {
+        out[kind] = true;
+        if (kind === 'image') imageUrls.add(node);
+      } else if (underMedia && /^https?:\/\//i.test(node)) {
+        out.image = true;
+        imageUrls.add(node);
+      }
       return;
     }
     if (Array.isArray(node)) {
@@ -415,8 +428,13 @@ export function scanMediaSignalsImpl(raw: any): { image: boolean; carousel: bool
       const v = node[urlKey];
       if (typeof v === 'string') {
         const kind = classifyString(v);
-        if (kind) out[kind] = true;
-        else if (underMedia) out.image = true;
+        if (kind) {
+          out[kind] = true;
+          if (kind === 'image') imageUrls.add(v);
+        } else if (underMedia) {
+          out.image = true;
+          imageUrls.add(v);
+        }
       }
     }
 
@@ -429,6 +447,13 @@ export function scanMediaSignalsImpl(raw: any): { image: boolean; carousel: bool
   };
 
   walk(raw, false);
+
+  // Final safety net: if we found 2+ distinct image URLs anywhere (deduped),
+  // treat it as a carousel. Catches cases where the array lives under a key
+  // the name heuristic doesn't recognize but the contents are clearly multiple
+  // separate images.
+  if (imageUrls.size >= 2) out.carousel = true;
+
   return out;
 }
 
