@@ -1194,13 +1194,18 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
     const mine = data.snapshots.map((s) => {
       const ageMin = Math.max(0, Math.round((new Date(s.captured_at).getTime() - publishedMs) / 60000));
       const t = typicalAt(ageMin);
+      const likes = s.likes_count;
+      const comments = s.comments_count;
+      const reposts = s.reposts_count;
       return {
         ageMin,
         label: ageMin < 60 ? `${ageMin}m` : `${(ageMin / 60).toFixed(1)}h`,
         impressions: s.impressions_count ?? 0,
-        likes: s.likes_count,
-        comments: s.comments_count,
-        reposts: s.reposts_count,
+        likes,
+        comments,
+        reposts,
+        // Same engagement formula as the rest of the app (likes + 2·comments + 3·reposts)
+        engagement: likes + comments * 2 + reposts * 3,
         typicalImpRange: t.range,
         typicalImpMedian: t.median,
         typicalSampleCount: t.sampleCount,
@@ -1268,7 +1273,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
             <span className="w-3 h-[2px] bg-sky-400" /> impressions
           </span>
           <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
-            <span className="w-3 h-[2px] bg-accent" /> likes
+            <span className="w-3 h-[2px] bg-accent" /> engagement
           </span>
           {hasTypical && hasTypicalOverlap && (
             <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
@@ -1322,7 +1327,10 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
                     {isSnapshot && (
                       <>
                         <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
-                        <div className="text-accent text-xs mt-0.5">
+                        <div className="text-accent text-xs mt-0.5 font-medium">
+                          {fmtNum(p.engagement)} engagement
+                        </div>
+                        <div className="text-text-muted text-[11px]">
                           {p.likes} likes · {p.comments} comments · {p.reposts} reposts
                         </div>
                       </>
@@ -1399,7 +1407,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
             <Line
               yAxisId="right"
               type="monotone"
-              dataKey="likes"
+              dataKey="engagement"
               stroke="#e8935a"
               strokeWidth={2}
               dot={{ r: 3, fill: '#e8935a' }}
