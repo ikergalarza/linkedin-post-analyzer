@@ -80,27 +80,32 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div>
           <h3 className="text-lg font-semibold">Follower growth</h3>
-          <p className="text-xs text-text-muted mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-1">
-              <span className="w-4 h-[2px] bg-green-400" />
-              {creatorId ? 'daily followers' : 'sum across managed accounts'}
-            </span>
-            <span>captured once per day on each scrape</span>
+          <p className="text-xs text-text-muted mt-0.5">
+            {creatorId ? 'Daily followers for this account' : 'Sum of followers across all managed accounts'}
           </p>
         </div>
-        {delta && (
-          <div className="text-right">
-            <div className="text-[10px] uppercase tracking-wide text-text-muted">Change in range</div>
-            <div className={`text-sm font-semibold tabular-nums ${delta.abs > 0 ? 'text-green-400' : delta.abs < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
-              {delta.abs > 0 ? '+' : ''}{fmtNum(delta.abs)}
-              {delta.first > 0 && (
-                <span className="text-text-muted font-normal ml-1">
-                  ({delta.abs > 0 ? '+' : ''}{delta.pct.toFixed(1)}%)
-                </span>
-              )}
+        <div className="flex items-start gap-4 flex-wrap">
+          <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="inline-flex items-center gap-1">
+              <span className="w-4 h-[2px] bg-green-400" />
+              followers
+            </span>
+            <span>one snapshot per day</span>
+          </p>
+          {delta && (
+            <div className="text-right">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted">Change in range</div>
+              <div className={`text-sm font-semibold tabular-nums ${delta.abs > 0 ? 'text-green-400' : delta.abs < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
+                {delta.abs > 0 ? '+' : ''}{fmtNum(delta.abs)}
+                {delta.first > 0 && (
+                  <span className="text-text-muted font-normal ml-1">
+                    ({delta.abs > 0 ? '+' : ''}{delta.pct.toFixed(1)}%)
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {loading ? (

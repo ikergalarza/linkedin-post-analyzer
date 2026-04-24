@@ -815,25 +815,23 @@ export default function Accounts() {
           {/* Daily engagement trend — smoothed line with publication markers */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
             <div className="mb-2 flex items-start justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="text-lg font-semibold">Engagement over time</h3>
-                <p className="text-xs text-text-muted mt-0.5">
+              <h3 className="text-lg font-semibold">Engagement over time</h3>
+              <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent border border-bg-primary" />
+                  post
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-400 border border-bg-primary" />
+                  outlier
+                </span>
+                {analytics.totals.total_impressions > 0 && (
                   <span className="inline-flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded-full bg-accent border border-bg-primary" />
-                    <span>post</span>
+                    <span className="w-4 h-[2px] bg-sky-400" />
+                    impressions (right axis)
                   </span>
-                  <span className="ml-2 inline-flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-400 border border-bg-primary" />
-                    <span>outlier</span>
-                  </span>
-                  {analytics.totals.total_impressions > 0 && (
-                    <span className="ml-2 inline-flex items-center gap-1">
-                      <span className="w-4 h-[2px] bg-sky-400" />
-                      <span>impressions (right axis)</span>
-                    </span>
-                  )}
-                </p>
-              </div>
+                )}
+              </p>
             </div>
             <div className="text-[11px] text-text-muted mb-3 space-y-0.5">
               <p>
@@ -867,10 +865,12 @@ export default function Accounts() {
 
           {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold">Publication cadence</h3>
-              <p className="text-xs text-text-muted mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span>Posts published each day</span>
+            <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-lg font-semibold">Publication cadence</h3>
+                <p className="text-xs text-text-muted mt-0.5">Posts published each day</p>
+              </div>
+              <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="inline-flex items-center gap-1">
                   <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500" /> regular day
                 </span>
@@ -915,10 +915,14 @@ export default function Accounts() {
           {/* Format mix */}
           {formatChartData.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold">Content format mix</h3>
-                <p className="text-xs text-text-muted mt-0.5">
-                  Number of posts per content type · bar length = post count · hover for avg engagement &amp; outliers
+              <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-lg font-semibold">Content format mix</h3>
+                  <p className="text-xs text-text-muted mt-0.5">Posts per content type</p>
+                </div>
+                <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3">
+                  <span>bar length = post count</span>
+                  <span>· hover for avg engagement &amp; outliers</span>
                 </p>
               </div>
               <ResponsiveContainer width="100%" height={Math.max(180, formatChartData.length * 48)}>
@@ -956,12 +960,15 @@ export default function Accounts() {
           {/* Hook types */}
           {analytics.hook_types.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold">Best-performing hooks</h3>
-                <p className="text-xs text-text-muted mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-lg font-semibold">Best-performing hooks</h3>
+                  <p className="text-xs text-text-muted mt-0.5">Avg engagement by hook type</p>
+                </div>
+                <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="inline-flex items-center gap-1">
                     <span className="w-2.5 h-2.5 rounded-sm bg-accent" />
-                    avg engagement per hook type
+                    avg engagement
                   </span>
                   <span>longer bar = better</span>
                 </p>
@@ -1256,27 +1263,29 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
         <span className="text-[10px] text-text-muted ml-2">
           {snapshotsInView} of {snapshotCount} snapshot{snapshotCount === 1 ? '' : 's'}
         </span>
-        <span className="inline-flex items-center gap-1 text-[10px] text-text-muted ml-2">
-          <span className="w-3 h-[2px] bg-sky-400" /> impressions
-        </span>
-        <span className="inline-flex items-center gap-1 text-[10px] text-text-muted ml-1">
-          <span className="w-3 h-[2px] bg-accent" /> likes
-        </span>
-        {hasTypical && hasTypicalOverlap && (
-          <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-text-muted">
-            <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
-            <span>typical impressions p25–p75 for this account</span>
+        <div className="ml-auto flex items-center gap-3 flex-wrap">
+          <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
+            <span className="w-3 h-[2px] bg-sky-400" /> impressions
           </span>
-        )}
-        {hasTypical && !hasTypicalOverlap && (
-          <span
-            className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-text-muted/70"
-            title="The creator's other monitored posts only have snapshots at later ages than this post — so there's no comparable typical value yet for this post's current age range."
-          >
-            <span className="inline-block w-3 h-2 rounded-sm border border-slate-500/40" />
-            <span>typical band not yet available for this post's age</span>
+          <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
+            <span className="w-3 h-[2px] bg-accent" /> likes
           </span>
-        )}
+          {hasTypical && hasTypicalOverlap && (
+            <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
+              <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
+              typical p25–p75
+            </span>
+          )}
+          {hasTypical && !hasTypicalOverlap && (
+            <span
+              className="inline-flex items-center gap-1 text-[10px] text-text-muted/70"
+              title="The creator's other monitored posts only have snapshots at later ages than this post — so there's no comparable typical value yet for this post's current age range."
+            >
+              <span className="inline-block w-3 h-2 rounded-sm border border-slate-500/40" />
+              typical not yet available
+            </span>
+          )}
+        </div>
       </div>
       {snapshotsInView === 0 ? (
         <p className="text-xs text-text-muted py-6 text-center">No snapshots in this window.</p>
