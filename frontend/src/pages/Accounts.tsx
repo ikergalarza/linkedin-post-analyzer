@@ -742,7 +742,7 @@ export default function Accounts() {
             <div className="bg-bg-card border border-border rounded-xl p-4">
               <div className="text-[10px] uppercase tracking-wide text-text-muted">Outliers</div>
               <div className="flex items-baseline gap-2 mt-1">
-                <div className="text-2xl font-bold text-green-400">
+                <div className="text-2xl font-bold text-diamond">
                   {analytics.totals.total_outliers}
                   <span className="text-sm text-text-muted ml-1 font-normal">({outlierRate}%)</span>
                 </div>
@@ -818,12 +818,20 @@ export default function Accounts() {
               <h3 className="text-lg font-semibold">Engagement over time</h3>
               <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-accent border border-bg-primary" />
-                  post
+                  <span className="w-4 h-[2px] bg-accent" />
+                  engagement (7d rolling)
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-400 border border-bg-primary" />
-                  outlier
+                  <span className="inline-flex w-4 h-4 rounded-sm bg-text-muted items-center justify-center">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#ffffff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" /><path d="M20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                  </span>
+                  publish day
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="inline-flex w-4 h-4 rounded-sm bg-diamond items-center justify-center">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#ffffff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" /><path d="M20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                  </span>
+                  outlier day
                 </span>
                 {analytics.totals.total_impressions > 0 && (
                   <span className="inline-flex items-center gap-1">
@@ -875,7 +883,7 @@ export default function Accounts() {
                   <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500" /> regular day
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-green-400" /> had an outlier
+                  <span className="w-2.5 h-2.5 rounded-sm bg-diamond" /> had an outlier
                 </span>
               </p>
             </div>
@@ -904,7 +912,7 @@ export default function Accounts() {
                   />
                   <Bar dataKey="posts" radius={[3, 3, 0, 0]}>
                     {dailyChartData.map((d, i) => (
-                      <Cell key={i} fill={d.outliers > 0 ? '#34d399' : '#6366f1'} />
+                      <Cell key={i} fill={d.outliers > 0 ? '#67e8f9' : '#6366f1'} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -1039,11 +1047,11 @@ export default function Accounts() {
                               </div>
                             </td>
                             <td className="py-2 px-3 text-right text-text-primary">{a.posts}</td>
-                            <td className="py-2 px-3 text-right text-green-400">{a.outliers}</td>
+                            <td className="py-2 px-3 text-right text-diamond">{a.outliers}</td>
                             <td className="py-2 px-3 text-right text-text-secondary">{rate}%</td>
                             <td className="py-2 px-3 text-right text-accent font-semibold">{fmtNum(a.avg_engagement)}</td>
                             <td className="py-2 px-3 text-right text-text-secondary">{a.avg_virality ? `${a.avg_virality.toFixed(2)}x` : '—'}</td>
-                            <td className="py-2 px-3 text-right text-green-400 font-medium">{a.max_virality ? `${a.max_virality.toFixed(1)}x` : '—'}</td>
+                            <td className="py-2 px-3 text-right text-diamond font-medium">{a.max_virality ? `${a.max_virality.toFixed(1)}x` : '—'}</td>
                             <td className="py-2 px-3 text-right text-text-secondary">{a.total_impressions ? fmtNum(Number(a.total_impressions)) : '—'}</td>
                             <td className="py-2 pl-3 text-right text-text-secondary">{a.avg_impressions ? fmtNum(a.avg_impressions) : '—'}</td>
                           </tr>
@@ -1451,7 +1459,7 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
               <span
                 className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
                   post.is_outlier
-                    ? 'bg-green-500/15 text-green-400'
+                    ? 'bg-diamond/15 text-diamond'
                     : 'bg-bg-secondary border border-border text-text-muted'
                 }`}
                 title="Engagement relative to this creator's average"
@@ -1539,7 +1547,7 @@ function TopPostRow({ post }: { post: TopPost }) {
               <span
                 className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
                   post.is_outlier
-                    ? 'bg-green-500/15 text-green-400'
+                    ? 'bg-diamond/15 text-diamond'
                     : 'bg-bg-secondary text-text-muted border border-border'
                 }`}
                 title="Engagement relative to this creator's average"

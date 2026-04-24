@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -32,6 +32,28 @@ interface HoverState {
   y: number;
 }
 
+type Range = '7d' | '30d' | '90d' | 'all';
+const RANGE_DAYS: Record<Range, number | null> = { '7d': 7, '30d': 30, '90d': 90, all: null };
+
+// Same colour the Dashboard uses for outliers — keeps the whole app coherent.
+const OUTLIER_COLOR = '#67e8f9';
+const PENCIL_BG_NORMAL = '#6b7280';
+const PENCIL_BG_OUTLIER = OUTLIER_COLOR;
+
+// Fixed margins so the pencil strip below can align 1:1 with the plot area.
+const CHART_MARGIN = { top: 10, right: 10, bottom: 8, left: 5 };
+const Y_AXIS_WIDTH = 50;
+const CHART_HEIGHT = 300;
+
+function PencilIcon({ size = 14, color = '#ffffff' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+      <path d="M20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+    </svg>
+  );
+}
+
 function fmtNum(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return n.toString();
@@ -44,33 +66,9 @@ function fmtFullDay(iso: string): string {
   });
 }
 
-// Custom dot for the daily line — only renders on days with publications.
-// Orange = at least one post; green = at least one outlier.
-const PublicationDot = (props: any) => {
-  const { cx, cy, payload } = props;
-  if (!payload || payload.posts <= 0 || cx === undefined || cy === undefined) return null;
-  const hasOutlier = payload.outliers > 0;
-  return (
-    <g>
-      <circle
-        cx={cx}
-        cy={cy}
-        r={6}
-        fill={hasOutlier ? '#34d399' : '#e8935a'}
-        stroke="#1a1d2e"
-        strokeWidth={2}
-      />
-      {payload.posts > 1 && (
-        <text x={cx} y={cy + 3} textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold">
-          {payload.posts}
-        </text>
-      )}
-    </g>
-  );
-};
-
 export default function AccountsEngagementChart({ data, hasImpressions, xTickInterval }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null);
+  const [range, setRange] = useState<Range>('all');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const clearTimerRef = useRef<number | null>(null);
 
@@ -82,16 +80,48 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
   };
   const scheduleClear = () => {
     cancelClear();
-    // Short delay so the cursor has time to reach the tooltip itself.
     clearTimerRef.current = window.setTimeout(() => setHover(null), 150);
   };
 
+  // Chart-level range filter slices the already-loaded data client-side so
+  // changing range is instant (no new API call). The page-level range still
+  // controls how much data is fetched in total.
+  const filteredData = useMemo(() => {
+    const rangeDays = RANGE_DAYS[range];
+    if (rangeDays == null) return data;
+    return data.slice(-rangeDays);
+  }, [data, range]);
+
+  // Recompute tick interval when the range changes so the X axis stays readable.
+  const effectiveTickInterval = useMemo(() => {
+    if (range === 'all') return xTickInterval;
+    return Math.max(0, Math.floor(filteredData.length / 8) - 1);
+  }, [filteredData.length, range, xTickInterval]);
+
   return (
     <div ref={wrapperRef} style={{ position: 'relative' }}>
-      <ResponsiveContainer width="100%" height={300}>
+      {/* Chart-level range filter — mirrors the Dashboard's engagement chart. */}
+      <div className="flex items-center gap-1 mb-3 flex-wrap">
+        <span className="text-xs text-text-muted mr-1">View:</span>
+        {(['7d', '30d', '90d', 'all'] as Range[]).map((r) => (
+          <button
+            key={r}
+            onClick={() => setRange(r)}
+            className={`px-2.5 py-1 rounded text-xs transition-colors ${
+              range === r
+                ? 'bg-diamond/15 text-diamond border border-diamond/30'
+                : 'bg-bg-secondary text-text-muted border border-border hover:border-diamond/30'
+            }`}
+          >
+            {r === 'all' ? 'All' : r}
+          </button>
+        ))}
+      </div>
+
+      <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
         <ComposedChart
-          data={data}
-          margin={{ top: 8, right: 16, left: 0, bottom: 8 }}
+          data={filteredData}
+          margin={CHART_MARGIN}
           onMouseMove={(state: any) => {
             if (state?.isTooltipActive && state.activeLabel && state.activeCoordinate) {
               cancelClear();
@@ -119,21 +149,24 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
             dataKey="label"
             tick={{ fill: '#9ca3af', fontSize: 11 }}
             axisLine={{ stroke: '#2e3348' }}
-            interval={xTickInterval}
+            interval={effectiveTickInterval}
           />
-          <YAxis yAxisId="left" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} />
+          <YAxis
+            yAxisId="left"
+            width={Y_AXIS_WIDTH}
+            tick={{ fill: '#9ca3af', fontSize: 11 }}
+            axisLine={{ stroke: '#2e3348' }}
+          />
           {hasImpressions && (
             <YAxis
               yAxisId="right"
               orientation="right"
+              width={Y_AXIS_WIDTH}
               tick={{ fill: '#7dd3fc', fontSize: 11 }}
               axisLine={{ stroke: '#2e3348' }}
               tickFormatter={(v) => fmtNum(Number(v))}
             />
           )}
-          {/* Crosshair cursor only — tooltip itself is rendered outside so it
-              can stay open while the mouse hovers the card and clicks the
-              "View on LinkedIn" button. */}
           <Tooltip
             cursor={{ stroke: '#e8935a', strokeOpacity: 0.3, strokeWidth: 1 }}
             content={() => null}
@@ -163,8 +196,8 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
             name="Engagement (7d rolling)"
             stroke="#e8935a"
             strokeWidth={2.5}
-            dot={<PublicationDot />}
-            activeDot={{ r: 7, fill: '#e8935a', stroke: '#1a1d2e', strokeWidth: 2 }}
+            dot={false}
+            activeDot={{ r: 6, fill: '#e8935a', stroke: '#1a1d2e', strokeWidth: 2 }}
             isAnimationActive={false}
           />
           {hasImpressions && (
@@ -177,17 +210,61 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
               strokeWidth={2}
               strokeDasharray="4 3"
               dot={false}
-              activeDot={{ r: 6, fill: '#38bdf8', stroke: '#1a1d2e', strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: '#38bdf8', stroke: '#1a1d2e', strokeWidth: 2 }}
               isAnimationActive={false}
             />
           )}
         </ComposedChart>
       </ResponsiveContainer>
-      {/* Sticky custom tooltip — rendered as sibling of the chart so it stays
-          open while the cursor hovers the card and the "View on LinkedIn"
-          button remains clickable. */}
+
+      {/* Pencil strip — matches the Dashboard's Engagement Timeline pattern.
+          Each publication day gets a pencil badge aligned exactly under the
+          data point. Days with an outlier light up in diamond/cyan, matching
+          the outlier colour used throughout the rest of the app. */}
+      <div
+        style={{
+          position: 'relative',
+          marginLeft: Y_AXIS_WIDTH + CHART_MARGIN.left,
+          marginRight: (hasImpressions ? Y_AXIS_WIDTH : 0) + CHART_MARGIN.right,
+          marginTop: 6,
+          minHeight: 22,
+        }}
+        aria-label="Days with publications"
+      >
+        {filteredData.map((d, i) => {
+          if (d.posts <= 0) return null;
+          const isOut = (d.outliers || 0) > 0;
+          const n = filteredData.length;
+          const left = n > 1 ? (i / (n - 1)) * 100 : 50;
+          return (
+            <div
+              key={`${d.day}-${i}`}
+              title={`${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}${isOut ? ' (outlier)' : ''}`}
+              style={{
+                position: 'absolute',
+                left: `${left}%`,
+                top: 0,
+                transform: 'translateX(-50%)',
+                width: 18,
+                height: 18,
+                borderRadius: 4,
+                background: isOut ? PENCIL_BG_OUTLIER : PENCIL_BG_NORMAL,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <PencilIcon size={14} color="#ffffff" />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Sticky custom tooltip — rendered outside Recharts so it stays open
+          while the cursor hovers the card and the "View on LinkedIn" button
+          remains clickable. */}
       {hover && (() => {
-        const d = data.find((x) => x.day === hover.day);
+        const d = filteredData.find((x) => x.day === hover.day);
         if (!d) return null;
         const heading = d.posts > 0
           ? `${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}`
@@ -237,16 +314,32 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
               </div>
             )}
             {d.posts > 0 && d.topPostOutlierRatio != null && d.topPostOutlierRatio > 0 && (
-              <div style={{ marginTop: 4, fontSize: 11 }}>
+              <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #2e3348', fontSize: 12 }}>
                 <span style={{ color: '#94a3b8' }}>Top post: </span>
                 <span
                   style={{
-                    color: d.topPostIsOutlier ? '#34d399' : '#cbd5e1',
+                    color: d.topPostIsOutlier ? OUTLIER_COLOR : '#cbd5e1',
                     fontWeight: 600,
                   }}
                 >
                   {d.topPostOutlierRatio.toFixed(1)}× creator avg
                 </span>
+                {d.topPostIsOutlier && (
+                  <span
+                    style={{
+                      marginLeft: 6,
+                      padding: '1px 5px',
+                      borderRadius: 3,
+                      background: 'rgba(103,232,249,0.15)',
+                      color: OUTLIER_COLOR,
+                      fontSize: 10,
+                      fontWeight: 600,
+                      letterSpacing: 0.3,
+                    }}
+                  >
+                    OUTLIER
+                  </span>
+                )}
               </div>
             )}
             {d.posts > 0 && (d.topPostPreview || d.topPostUrl) && (
@@ -276,9 +369,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                     {d.topPostPreview}
                   </div>
                 ) : (
-                  <div
-                    style={{ color: '#64748b', fontStyle: 'italic', marginBottom: 8 }}
-                  >
+                  <div style={{ color: '#64748b', fontStyle: 'italic', marginBottom: 8 }}>
                     (no preview available)
                   </div>
                 )}
