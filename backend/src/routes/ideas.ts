@@ -178,7 +178,13 @@ async function generateVariant(
     ? `\nEXAMPLE of this archetype performing well (${archetype.avg_ratio.toFixed(1)}x avg ratio):\nHook: "${archetype.example_hook || ''}"\n---\n${archetype.example_text.substring(0, 500)}\n---`
     : '';
 
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10);
+  const currentYear = today.getUTCFullYear();
+
   const system = `You are a LinkedIn post writer. Write a complete LinkedIn post based on a raw idea, using a SPECIFIC viral archetype.
+
+TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you need to reference the year, use ${currentYear} — never write "${currentYear - 1}" or an earlier year as if it were the present.
 
 ARCHETYPE TO USE:
 - Hook type: ${hookLabel} (${archetype.hook_type})
@@ -196,6 +202,7 @@ RULES:
 - 150-400 words
 - End with a question or CTA
 - NEVER use: "I'm excited to share", "In today's world", "Game changer", "Leverage", "Synergy"
+- NEVER use markdown formatting inside the post: no **bold**, no *italic*, no \`code\`, no # headers. LinkedIn renders none of this — **word** shows up literally in the feed. Express emphasis with line breaks, caps on 1–2 words max, or punctuation instead.
 - 2-3 relevant hashtags at the end
 
 ${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}` : ''}
@@ -310,7 +317,16 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
     );
 
     const sanitizeText = (t: string) =>
-      t.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim();
+      t
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+        // LinkedIn doesn't render markdown — strip **bold** / *italic* / `code`
+        // wrappers so they don't appear as literal asterisks in the feed. We
+        // tell the model not to use them in the prompt too, but defend at the
+        // boundary.
+        .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
+        .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
+        .replace(/`([^`\n]+?)`/g, '$1')
+        .trim();
 
     const variants = archetypes.slice(0, 3).map((arch, i) => ({
       archetype_key: `${arch.hook_type}__${arch.post_structure}`,

@@ -456,11 +456,17 @@ cta-natural: does NOT use the templated formula "Comenta 'X' abajo y te la mando
 ── TOPIC FIT (12%) ────────────────────────────────────────────────────
 topic-sector: on-niche keywords (ai, llm, agent, sdr, outbound, sales, ventas, b2b, saas, growth…).
 topic-tools: names a specific tool (Claude, GPT, Clay, Apollo, HubSpot, n8n, Make…).
-topic-fresh: reference to something recent (just, this week, esta semana, 2025, 2026).
+topic-fresh: reference to something recent (just, this week, esta semana, current year).
 topic-hashtags: 0–3 hashtags max.
 === END CHECKLIST ===`;
 
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10);
+    const currentYear = today.getUTCFullYear();
+
     const system = `You are a LinkedIn post optimizer. Your role is STRUCTURAL + PILLAR improvement — you are NOT a ghostwriter.
+
+TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you introduce or keep a year reference, it must be ${currentYear} — never drop the author into an earlier year as if it were now.
 
 WHAT YOU DO: take the author's existing post and sharpen the hook, tighten the spacing, intensify the ONE psychological pillar that the post is already firing, and swap weak CTAs for natural ones — without changing the topic, core idea, specific examples, or data points.
 
@@ -471,6 +477,7 @@ WHAT YOU NEVER DO:
 - Translate proper nouns, brand names, company names, city names, or industry terms (Silicon Valley, Claude, HubSpot, SDR, outbound stay as-is)
 - Change the language (Spanish stays Spanish, English stays English)
 - Try to hit EVERY checklist item — a post that fires ONE pillar at 80%+ beats a post that softly hits all three
+- Use markdown formatting inside the post: no **bold**, no *italic*, no \`code\`, no # headers. LinkedIn renders none of that — asterisks show up literally. Express emphasis with line breaks, 1–2 ALL-CAPS words, or punctuation.
 
 Think of it as a film editor, not a screenwriter: you cut, reorder, sharpen, and pace — but the scenes (ideas) stay the same.
 
@@ -522,6 +529,12 @@ Additional rules:
         (postText.startsWith('\u201C') && postText.endsWith('\u201D'))) {
       postText = postText.slice(1, -1).trim();
     }
+    // LinkedIn doesn't render markdown — defend at the boundary in case the
+    // model slips **bold** / *italic* / `code` past the prompt rules.
+    postText = postText
+      .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
+      .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
+      .replace(/`([^`\n]+?)`/g, '$1');
 
     res.json({ text: postText, critique, raw });
   } catch (err: any) {
