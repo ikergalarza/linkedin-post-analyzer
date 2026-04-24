@@ -274,7 +274,7 @@ function Delta({ pct }: { pct: number | null }) {
 
 export default function Accounts() {
   const [selectedCreator, setSelectedCreator] = useState<string>('all');
-  const [days, setDays] = useState(90);
+  const [days, setDays] = useState(30);
   const [managerOpen, setManagerOpen] = useState(false);
   const [unipileEdits, setUnipileEdits] = useState<Record<string, string>>({});
   const [scrapingId, setScrapingId] = useState<string | null>(null);

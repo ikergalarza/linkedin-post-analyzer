@@ -324,22 +324,11 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
         </span>
       </div>
       <div ref={wrapperRef} style={{ position: 'relative' }}>
+        {/* The rich tooltip is triggered from the pencil strip below — hovering
+            the curve area no longer opens it (felt noisier than useful when
+            most days don't have a post). */}
         <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-          <AreaChart
-            data={chartData}
-            margin={CHART_MARGIN}
-            onMouseMove={(state: any) => {
-              if (state?.isTooltipActive && state.activeLabel && state.activeCoordinate) {
-                cancelClear();
-                setHover({
-                  day: state.activeLabel,
-                  x: state.activeCoordinate.x,
-                  y: state.activeCoordinate.y,
-                });
-              }
-            }}
-            onMouseLeave={scheduleClear}
-          >
+          <AreaChart data={chartData} margin={CHART_MARGIN}>
             <defs>
               <linearGradient id="engagementFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#67e8f9" stopOpacity={0.35} />
@@ -362,10 +351,8 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
               tickLine={false}
               axisLine={{ stroke: '#2e3348' }}
             />
-            <Tooltip
-              cursor={{ stroke: '#67e8f9', strokeOpacity: 0.3, strokeWidth: 1 }}
-              content={() => null}
-            />
+            {/* Tooltip component omitted — hover on pencils drives the rich
+                tooltip rendered below (outside Recharts). */}
             <Area
               type="monotone"
               dataKey="engagement_score"
@@ -549,7 +536,20 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
             return (
               <div
                 key={i}
-                title={`${d.date} · ${d.postCount} post${d.postCount > 1 ? 's' : ''}`}
+                onMouseEnter={(e) => {
+                  cancelClear();
+                  const pencilRect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                  const wrapperRect = wrapperRef.current?.getBoundingClientRect();
+                  if (!wrapperRect) return;
+                  setHover({
+                    day: d.day,
+                    x: pencilRect.left + pencilRect.width / 2 - wrapperRect.left,
+                    // Anchor near the bottom of the chart so the tooltip floats
+                    // over the curve instead of overlapping the pencil strip.
+                    y: CHART_HEIGHT - 20,
+                  });
+                }}
+                onMouseLeave={scheduleClear}
                 style={{
                   position: 'absolute',
                   left: `${left}%`,
@@ -562,6 +562,7 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  cursor: 'pointer',
                 }}
               >
                 <PencilIcon size={14} color="#ffffff" />
