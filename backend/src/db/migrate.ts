@@ -302,6 +302,31 @@ const migration = `
 
     ALTER TABLE network_posts ALTER COLUMN content_type SET DEFAULT 'text';
   END $mig18$;
+
+  -- v20: Follower growth snapshots — one row per creator per day, upserted on
+  -- every scrape. Lets us plot how an account's followers evolve alongside
+  -- their engagement curve. Keeping one row per day keeps storage trivial
+  -- (a few hundred rows/creator/year) and gives plenty of resolution for
+  -- growth curves — LinkedIn follower deltas aren't interesting sub-daily.
+  CREATE TABLE IF NOT EXISTS creator_follower_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    creator_id UUID NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
+    captured_on DATE NOT NULL DEFAULT CURRENT_DATE,
+    captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    followers_count INTEGER NOT NULL
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS uniq_follower_snapshot_day
+    ON creator_follower_snapshots (creator_id, captured_on);
+  CREATE INDEX IF NOT EXISTS idx_follower_snapshots_creator
+    ON creator_follower_snapshots (creator_id, captured_on);
+
+  -- Seed one snapshot per managed creator with today's count, so the chart
+  -- has a starting point. Safe to re-run: the unique index kicks in.
+  INSERT INTO creator_follower_snapshots (creator_id, captured_on, followers_count)
+    SELECT id, CURRENT_DATE, COALESCE(followers_count, 0)
+      FROM creators
+     WHERE is_managed = TRUE
+  ON CONFLICT (creator_id, captured_on) DO NOTHING;
 `;
 
 export async function runMigrations() {

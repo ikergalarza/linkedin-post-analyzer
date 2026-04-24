@@ -16,15 +16,43 @@ async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number;
   const accountIdOverride = (creator as any).unipile_account_id as string | null;
   if (!accountIdOverride) return { scraped: 0, with_impressions: 0 };
 
+  // Always fetch the profile so we get a fresh followers_count for the growth
+  // snapshot. The extra call is cheap compared to the per-post fetches below.
   let providerId = creator.linkedin_id;
-  if (!providerId) {
+  let latestFollowers: number | null = null;
+  try {
     const rawProfile = await unipileService.getProfile(creator.linkedin_url, accountIdOverride);
     const normalized = unipileService.normalizeProfile(rawProfile, creator.linkedin_url);
-    providerId = normalized.linkedin_id;
-    if (providerId) {
-      await CreatorModel.update(creator.id, { linkedin_id: providerId } as any);
+    if (!providerId && normalized.linkedin_id) providerId = normalized.linkedin_id;
+    if (typeof normalized.followers_count === 'number' && normalized.followers_count >= 0) {
+      latestFollowers = normalized.followers_count;
     }
+    const updates: Record<string, any> = {};
+    if (!creator.linkedin_id && normalized.linkedin_id) updates.linkedin_id = normalized.linkedin_id;
+    if (latestFollowers != null) updates.followers_count = latestFollowers;
+    if (Object.keys(updates).length > 0) {
+      await CreatorModel.update(creator.id, updates as any);
+    }
+  } catch (err) {
+    console.warn('[accounts/scrape] profile fetch failed, continuing with cached data:', (err as Error).message);
   }
+  if (latestFollowers == null && typeof creator.followers_count === 'number') {
+    latestFollowers = creator.followers_count;
+  }
+
+  // Upsert today's follower snapshot (one row per creator per day — later
+  // writes overwrite the earlier value for the same day).
+  if (latestFollowers != null) {
+    await pool.query(
+      `INSERT INTO creator_follower_snapshots (creator_id, captured_on, captured_at, followers_count)
+         VALUES ($1, CURRENT_DATE, NOW(), $2)
+       ON CONFLICT (creator_id, captured_on) DO UPDATE
+         SET followers_count = EXCLUDED.followers_count,
+             captured_at = NOW()`,
+      [creator.id, latestFollowers]
+    );
+  }
+
   if (!providerId) return { scraped: 0, with_impressions: 0 };
 
   const rawPosts = await unipileService.getPosts(providerId, undefined, accountIdOverride);
@@ -125,6 +153,39 @@ router.patch('/:id', async (req: Request, res: Response) => {
     if (rows.length === 0) return res.status(404).json({ error: 'Creator not found' });
     res.json(rows[0]);
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/follower-history?creator_id=xxx&days=90
+// If creator_id is omitted, sums followers across all managed accounts per day.
+router.get('/follower-history', async (req: Request, res: Response) => {
+  try {
+    const days = Math.min(parseInt(req.query.days as string) || 90, 365);
+    const creatorId = (req.query.creator_id as string) || null;
+
+    const { rows } = creatorId
+      ? await pool.query(
+          `SELECT captured_on::text AS day, followers_count::int AS followers
+             FROM creator_follower_snapshots
+            WHERE creator_id = $1
+              AND captured_on >= CURRENT_DATE - ($2 || ' days')::interval
+            ORDER BY captured_on ASC`,
+          [creatorId, days]
+        )
+      : await pool.query(
+          `SELECT s.captured_on::text AS day, SUM(s.followers_count)::int AS followers
+             FROM creator_follower_snapshots s
+             JOIN creators c ON c.id = s.creator_id
+            WHERE c.is_managed = TRUE
+              AND s.captured_on >= CURRENT_DATE - ($1 || ' days')::interval
+            GROUP BY s.captured_on
+            ORDER BY s.captured_on ASC`,
+          [days]
+        );
+    res.json({ points: rows });
+  } catch (err: any) {
+    console.error('[accounts/follower-history]', err);
     res.status(500).json({ error: err.message });
   }
 });

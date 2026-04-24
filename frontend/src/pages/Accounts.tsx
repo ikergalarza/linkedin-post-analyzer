@@ -5,6 +5,7 @@ import {
   ResponsiveContainer, Cell, ComposedChart, Area, ReferenceLine,
 } from 'recharts';
 import AccountsEngagementChart from '../components/AccountsEngagementChart';
+import FollowerGrowthChart from '../components/FollowerGrowthChart';
 
 interface ManagedAccount {
   id: string;
@@ -857,6 +858,12 @@ export default function Accounts() {
               />
             )}
           </div>
+
+          {/* Follower growth — daily snapshots, complements the engagement curve */}
+          <FollowerGrowthChart
+            creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            days={days}
+          />
 
           {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
