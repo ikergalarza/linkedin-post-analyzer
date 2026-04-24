@@ -1284,18 +1284,21 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
             <span className="w-3 h-[2px] bg-accent" /> engagement
           </span>
           {hasTypical && hasTypicalOverlap && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
+            <span
+              className="inline-flex items-center gap-1 text-[10px] text-text-muted"
+              title="Typical impressions for this creator's other posts at the same age (p25–p75)"
+            >
               <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
-              typical p25–p75
+              typical impressions p25–p75
             </span>
           )}
           {hasTypical && !hasTypicalOverlap && (
             <span
               className="inline-flex items-center gap-1 text-[10px] text-text-muted/70"
-              title="The creator's other monitored posts only have snapshots at later ages than this post — so there's no comparable typical value yet for this post's current age range."
+              title="The creator's other monitored posts only have snapshots at later ages than this post — so there's no comparable typical impressions value yet for this post's current age range."
             >
               <span className="inline-block w-3 h-2 rounded-sm border border-slate-500/40" />
-              typical not yet available
+              typical impressions not yet available
             </span>
           )}
         </div>

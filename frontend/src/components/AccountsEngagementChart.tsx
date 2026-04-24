@@ -239,7 +239,20 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           return (
             <div
               key={`${d.day}-${i}`}
-              title={`${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}${isOut ? ' (outlier)' : ''}`}
+              onMouseEnter={(e) => {
+                cancelClear();
+                const pencilRect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                const wrapperRect = wrapperRef.current?.getBoundingClientRect();
+                if (!wrapperRect) return;
+                setHover({
+                  day: d.day,
+                  x: pencilRect.left + pencilRect.width / 2 - wrapperRect.left,
+                  // Anchor above the pencil row so the tooltip floats over the
+                  // chart area instead of overlapping the pencil strip.
+                  y: CHART_HEIGHT - 20,
+                });
+              }}
+              onMouseLeave={scheduleClear}
               style={{
                 position: 'absolute',
                 left: `${left}%`,
@@ -252,6 +265,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                cursor: 'pointer',
               }}
             >
               <PencilIcon size={14} color="#ffffff" />
