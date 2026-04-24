@@ -1163,14 +1163,17 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
     const typicalSorted = (data.typical || []).slice().sort((a, b) => a.ageMin - b.ageMin);
 
     const typicalAt = (age: number) => {
-      if (typicalSorted.length === 0) {
-        return { range: null as [number, number] | null, median: null as number | null, sampleCount: null as number | null };
-      }
+      const empty = {
+        impRange: null as [number, number] | null,
+        engRange: null as [number, number] | null,
+        sampleCount: null as number | null,
+      };
+      if (typicalSorted.length === 0) return empty;
       // Only interpolate WITHIN the real bucket range; outside → null (no
       // band drawn). This is what keeps the band honest when there's no
       // overlap between other posts' buckets and this post's age range.
       if (age < typicalSorted[0].ageMin || age > typicalSorted[typicalSorted.length - 1].ageMin) {
-        return { range: null, median: null, sampleCount: null };
+        return empty;
       }
       let lo = typicalSorted[0];
       let hi = typicalSorted[typicalSorted.length - 1];
@@ -1183,18 +1186,21 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
       }
       if (lo.ageMin === hi.ageMin) {
         return {
-          range: [lo.p25Imp, lo.p75Imp] as [number, number],
-          median: lo.p50Imp,
+          impRange: [lo.p25Imp, lo.p75Imp] as [number, number],
+          engRange: [lo.p25Eng, lo.p75Eng] as [number, number],
           sampleCount: lo.sampleCount,
         };
       }
       const t = (age - lo.ageMin) / (hi.ageMin - lo.ageMin);
       return {
-        range: [
+        impRange: [
           Math.round(lo.p25Imp + (hi.p25Imp - lo.p25Imp) * t),
           Math.round(lo.p75Imp + (hi.p75Imp - lo.p75Imp) * t),
         ] as [number, number],
-        median: Math.round(lo.p50Imp + (hi.p50Imp - lo.p50Imp) * t),
+        engRange: [
+          Math.round(lo.p25Eng + (hi.p25Eng - lo.p25Eng) * t),
+          Math.round(lo.p75Eng + (hi.p75Eng - lo.p75Eng) * t),
+        ] as [number, number],
         sampleCount: Math.max(lo.sampleCount, hi.sampleCount),
       };
     };
@@ -1214,8 +1220,8 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
         reposts,
         // Same engagement formula as the rest of the app (likes + 2·comments + 3·reposts)
         engagement: likes + comments * 2 + reposts * 3,
-        typicalImpRange: t.range,
-        typicalImpMedian: t.median,
+        typicalImpRange: t.impRange,
+        typicalEngRange: t.engRange,
         typicalSampleCount: t.sampleCount,
       };
     });
@@ -1233,7 +1239,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   // If yes, we render the gray shadow under the curves; if no (e.g. the
   // post is 20h old but the creator's other posts only have buckets at
   // 125h+), we hide the band and tell the user why in the chip.
-  const hasTypicalOverlap = curveDataAll.some((d) => d.typicalImpMedian != null);
+  const hasTypicalOverlap = curveDataAll.some((d) => d.typicalImpRange != null);
   const maxAgeMin = hasSnapshots
     ? Math.max(0, ...data!.snapshots.map((s) => Math.round((new Date(s.captured_at).getTime() - new Date(publishedAt).getTime()) / 60000)))
     : 0;
@@ -1252,8 +1258,44 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   const snapshotCount = data?.snapshots.length || 0;
   const snapshotsInView = curveData.filter((d) => d.impressions != null).length;
 
+  const xAxisProps = {
+    dataKey: 'ageMin' as const,
+    type: 'number' as const,
+    domain: [0, 'dataMax'] as [number, string],
+    tick: { fill: '#9ca3af', fontSize: 11 },
+    axisLine: { stroke: '#2e3348' },
+    tickFormatter: (v: number) => (v < 60 ? `${v}m` : `${(v / 60).toFixed(0)}h`),
+  };
+
+  const referenceLines = [
+    { x: 60, label: '1h' },
+    { x: 6 * 60, label: '6h' },
+    { x: 24 * 60, label: '24h' },
+    { x: 72 * 60, label: '72h' },
+  ].filter((ref) => (zoomMax === null ? true : ref.x <= zoomMax));
+
+  const typicalBandChip = (metricLabel: string) =>
+    hasTypical && hasTypicalOverlap ? (
+      <span
+        className="inline-flex items-center gap-1 text-[10px] text-text-muted"
+        title={`Typical ${metricLabel} for this creator's other posts at the same age (p25–p75)`}
+      >
+        <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
+        typical {metricLabel} p25–p75
+      </span>
+    ) : hasTypical ? (
+      <span
+        className="inline-flex items-center gap-1 text-[10px] text-text-muted/70"
+        title={`The creator's other monitored posts only have snapshots at later ages than this post — no comparable typical ${metricLabel} value yet for this post's current age range.`}
+      >
+        <span className="inline-block w-3 h-2 rounded-sm border border-slate-500/40" />
+        typical {metricLabel} not yet available
+      </span>
+    ) : null;
+
   return (
     <>
+      {/* Shared controls + zoom for both charts below */}
       <div className="flex items-center gap-1 mb-2 flex-wrap">
         <span className="text-[10px] text-text-muted mr-1">Zoom:</span>
         {ZOOM_PRESETS.map((z) => {
@@ -1276,157 +1318,173 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
         <span className="text-[10px] text-text-muted ml-2">
           {snapshotsInView} of {snapshotCount} snapshot{snapshotCount === 1 ? '' : 's'}
         </span>
-        <div className="ml-auto flex items-center gap-3 flex-wrap">
-          <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
-            <span className="w-3 h-[2px] bg-sky-400" /> impressions
-          </span>
-          <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
-            <span className="w-3 h-[2px] bg-accent" /> engagement
-          </span>
-          {hasTypical && hasTypicalOverlap && (
-            <span
-              className="inline-flex items-center gap-1 text-[10px] text-text-muted"
-              title="Typical impressions for this creator's other posts at the same age (p25–p75)"
-            >
-              <span className="inline-block w-3 h-2 rounded-sm bg-slate-500/30 border border-slate-500/50" />
-              typical impressions p25–p75
-            </span>
-          )}
-          {hasTypical && !hasTypicalOverlap && (
-            <span
-              className="inline-flex items-center gap-1 text-[10px] text-text-muted/70"
-              title="The creator's other monitored posts only have snapshots at later ages than this post — so there's no comparable typical impressions value yet for this post's current age range."
-            >
-              <span className="inline-block w-3 h-2 rounded-sm border border-slate-500/40" />
-              typical impressions not yet available
-            </span>
-          )}
-        </div>
       </div>
+
       {snapshotsInView === 0 ? (
         <p className="text-xs text-text-muted py-6 text-center">No snapshots in this window.</p>
       ) : (
-        <ResponsiveContainer width="100%" height={220}>
-          <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-            <defs>
-              <linearGradient id={`liveImp-${postId}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-            <XAxis
-              dataKey="ageMin"
-              type="number"
-              domain={[0, 'dataMax']}
-              tick={{ fill: '#9ca3af', fontSize: 11 }}
-              axisLine={{ stroke: '#2e3348' }}
-              tickFormatter={(v) => (v < 60 ? `${v}m` : `${(v / 60).toFixed(0)}h`)}
-            />
-            <YAxis yAxisId="left" tick={{ fill: '#7dd3fc', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
-            <YAxis yAxisId="right" orientation="right" tick={{ fill: '#e8935a', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
-            <Tooltip
-              contentStyle={CHART_TOOLTIP_STYLE}
-              content={({ active, payload }: any) => {
-                if (!active || !payload || payload.length === 0) return null;
-                const p = payload[0].payload;
-                const isSnapshot = p.impressions != null;
-                const isTypical = p.typicalImpMedian != null;
-                return (
-                  <div style={CHART_TOOLTIP_STYLE} className="p-2">
-                    <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
-                    {isSnapshot && (
-                      <>
-                        <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
-                        <div className="text-accent text-xs mt-0.5 font-medium">
+        <div className="space-y-5">
+          {/* Impressions: this post vs typical impressions for the creator */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+              <p className="text-[11px] text-text-muted">
+                <span className="text-sky-400 font-semibold">Impressions</span> · this post vs typical impressions at the same age
+              </p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
+                  <span className="w-3 h-[2px] bg-sky-400" /> this post
+                </span>
+                {typicalBandChip('impressions')}
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={180}>
+              <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+                <defs>
+                  <linearGradient id={`liveImp-${postId}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
+                <XAxis {...xAxisProps} />
+                <YAxis tick={{ fill: '#7dd3fc', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
+                <Tooltip
+                  contentStyle={CHART_TOOLTIP_STYLE}
+                  content={({ active, payload }: any) => {
+                    if (!active || !payload || payload.length === 0) return null;
+                    const p = payload[0].payload;
+                    return (
+                      <div style={CHART_TOOLTIP_STYLE} className="p-2">
+                        <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
+                        {p.impressions != null && (
+                          <div className="text-sky-400 text-xs">👁️ {fmtNum(p.impressions)} impressions</div>
+                        )}
+                        {p.typicalImpRange && (
+                          <div className="text-slate-400 text-[11px] mt-1 pt-1 border-t border-slate-500/30">
+                            Typical at this age (n={p.typicalSampleCount}):<br />
+                            👁️ {fmtNum(p.typicalImpRange[0])}–{fmtNum(p.typicalImpRange[1])}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }}
+                />
+                {referenceLines.map((ref) => (
+                  <ReferenceLine
+                    key={ref.x}
+                    x={ref.x}
+                    stroke="#4b5563"
+                    strokeDasharray="2 2"
+                    label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
+                  />
+                ))}
+                {hasTypicalOverlap && (
+                  <Area
+                    type="monotone"
+                    dataKey="typicalImpRange"
+                    stroke="none"
+                    fill="#64748b"
+                    fillOpacity={0.22}
+                    connectNulls
+                    activeDot={false}
+                    isAnimationActive={false}
+                  />
+                )}
+                <Area
+                  type="monotone"
+                  dataKey="impressions"
+                  stroke="#38bdf8"
+                  strokeWidth={2}
+                  fill={`url(#liveImp-${postId})`}
+                  connectNulls
+                  isAnimationActive={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Engagement: this post vs typical engagement for the creator */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+              <p className="text-[11px] text-text-muted">
+                <span className="text-accent font-semibold">Engagement</span> · likes + comments×2 + reposts×3, vs typical engagement at the same age
+              </p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-[10px] text-text-muted">
+                  <span className="w-3 h-[2px] bg-accent" /> this post
+                </span>
+                {typicalBandChip('engagement')}
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={180}>
+              <ComposedChart data={curveData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+                <defs>
+                  <linearGradient id={`liveEng-${postId}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#e8935a" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#e8935a" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
+                <XAxis {...xAxisProps} />
+                <YAxis tick={{ fill: '#e8935a', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
+                <Tooltip
+                  contentStyle={CHART_TOOLTIP_STYLE}
+                  content={({ active, payload }: any) => {
+                    if (!active || !payload || payload.length === 0) return null;
+                    const p = payload[0].payload;
+                    return (
+                      <div style={CHART_TOOLTIP_STYLE} className="p-2">
+                        <div className="text-text-secondary text-[11px] mb-1">+{p.label} since publish</div>
+                        <div className="text-accent text-xs font-medium">
                           {fmtNum(p.engagement)} engagement
                         </div>
                         <div className="text-text-muted text-[11px]">
                           {p.likes} likes · {p.comments} comments · {p.reposts} reposts
                         </div>
-                      </>
-                    )}
-                    {isTypical && (
-                      <div className="text-slate-400 text-[11px] mt-1 pt-1 border-t border-slate-500/30">
-                        Typical at this age (n={p.typicalSampleCount}):
-                        <br />
-                        👁️ {fmtNum(p.typicalImpRange[0])}–{fmtNum(p.typicalImpRange[1])}
-                        <span className="text-slate-500"> (median {fmtNum(p.typicalImpMedian)})</span>
+                        {p.typicalEngRange && (
+                          <div className="text-slate-400 text-[11px] mt-1 pt-1 border-t border-slate-500/30">
+                            Typical at this age (n={p.typicalSampleCount}):<br />
+                            {fmtNum(p.typicalEngRange[0])}–{fmtNum(p.typicalEngRange[1])}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                );
-              }}
-            />
-            {[
-              { x: 60, label: '1h' },
-              { x: 6 * 60, label: '6h' },
-              { x: 24 * 60, label: '24h' },
-              { x: 72 * 60, label: '72h' },
-            ]
-              .filter((ref) => (zoomMax === null ? true : ref.x <= zoomMax))
-              .map((ref) => (
-                <ReferenceLine
-                  key={ref.x}
-                  yAxisId="left"
-                  x={ref.x}
-                  stroke="#4b5563"
-                  strokeDasharray="2 2"
-                  label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
+                    );
+                  }}
                 />
-              ))}
-            {/* Typical impressions band (p25–p75) rendered first so it sits
-                behind this post's blue area. Only drawn when the creator's
-                other-post buckets actually overlap this post's age range. */}
-            {hasTypicalOverlap && (
-              <Area
-                yAxisId="left"
-                type="monotone"
-                dataKey="typicalImpRange"
-                stroke="none"
-                fill="#64748b"
-                fillOpacity={0.22}
-                connectNulls
-                activeDot={false}
-                isAnimationActive={false}
-              />
-            )}
-            {hasTypicalOverlap && (
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="typicalImpMedian"
-                stroke="#94a3b8"
-                strokeWidth={1.5}
-                strokeDasharray="4 3"
-                dot={false}
-                connectNulls
-                activeDot={false}
-                isAnimationActive={false}
-              />
-            )}
-            <Area
-              yAxisId="left"
-              type="monotone"
-              dataKey="impressions"
-              stroke="#38bdf8"
-              strokeWidth={2}
-              fill={`url(#liveImp-${postId})`}
-              connectNulls
-              isAnimationActive={false}
-            />
-            <Line
-              yAxisId="right"
-              type="monotone"
-              dataKey="engagement"
-              stroke="#e8935a"
-              strokeWidth={2}
-              dot={{ r: 3, fill: '#e8935a' }}
-              connectNulls
-              isAnimationActive={false}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+                {referenceLines.map((ref) => (
+                  <ReferenceLine
+                    key={ref.x}
+                    x={ref.x}
+                    stroke="#4b5563"
+                    strokeDasharray="2 2"
+                    label={{ value: ref.label, fill: '#6b7280', fontSize: 10, position: 'top' }}
+                  />
+                ))}
+                {hasTypicalOverlap && (
+                  <Area
+                    type="monotone"
+                    dataKey="typicalEngRange"
+                    stroke="none"
+                    fill="#64748b"
+                    fillOpacity={0.22}
+                    connectNulls
+                    activeDot={false}
+                    isAnimationActive={false}
+                  />
+                )}
+                <Area
+                  type="monotone"
+                  dataKey="engagement"
+                  stroke="#e8935a"
+                  strokeWidth={2}
+                  fill={`url(#liveEng-${postId})`}
+                  connectNulls
+                  isAnimationActive={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       )}
     </>
   );

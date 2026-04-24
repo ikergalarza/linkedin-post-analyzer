@@ -68,7 +68,7 @@ function fmtFullDay(iso: string): string {
 
 export default function AccountsEngagementChart({ data, hasImpressions, xTickInterval }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null);
-  const [range, setRange] = useState<Range>('all');
+  const [range, setRange] = useState<Range>('30d');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const clearTimerRef = useRef<number | null>(null);
 
