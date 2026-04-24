@@ -80,9 +80,12 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div>
           <h3 className="text-lg font-semibold">Follower growth</h3>
-          <p className="text-xs text-text-muted">
-            {creatorId ? 'Daily followers count for this account' : 'Sum of followers across all managed accounts'}
-            {' '}· captured once per day on each scrape
+          <p className="text-xs text-text-muted mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="inline-flex items-center gap-1">
+              <span className="w-4 h-[2px] bg-green-400" />
+              {creatorId ? 'daily followers' : 'sum across managed accounts'}
+            </span>
+            <span>captured once per day on each scrape</span>
           </p>
         </div>
         {delta && (
