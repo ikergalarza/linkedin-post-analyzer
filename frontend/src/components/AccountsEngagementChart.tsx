@@ -247,9 +247,10 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 setHover({
                   day: d.day,
                   x: pencilRect.left + pencilRect.width / 2 - wrapperRect.left,
-                  // Anchor above the pencil row so the tooltip floats over the
-                  // chart area instead of overlapping the pencil strip.
-                  y: CHART_HEIGHT - 20,
+                  // Use the pencil's real top — paired with translateY(-100%)
+                  // on the tooltip, it sits right above the pencil and grows
+                  // up into the chart area without spilling below.
+                  y: pencilRect.top - wrapperRect.top,
                 });
               }}
               onMouseLeave={scheduleClear}
@@ -285,10 +286,9 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           : `${fmtFullDay(d.day)} · no post`;
         const containerW = wrapperRef.current?.offsetWidth ?? 600;
         const tooltipW = 240;
-        const gap = 28;
+        const gap = 12;
         const showLeft = hover.x + tooltipW + gap + 4 > containerW;
         const leftPx = showLeft ? hover.x - tooltipW - gap : hover.x + gap;
-        const topPx = Math.max(0, hover.y - 140);
         return (
           <div
             onMouseEnter={cancelClear}
@@ -296,7 +296,11 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
             style={{
               position: 'absolute',
               left: Math.max(0, leftPx),
-              top: topPx,
+              // Anchor the BOTTOM of the tooltip just above the hovered point
+              // using translateY(-100%). The outer card has overflow-hidden;
+              // growing the tooltip upward keeps it inside that clip region.
+              top: Math.max(0, hover.y) - 8,
+              transform: 'translateY(-100%)',
               width: tooltipW,
               background: '#222639',
               border: '1px solid #2e3348',

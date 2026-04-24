@@ -374,13 +374,10 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
           const preview = d.topPost?.content_text || d.topPost?.hook_text || '';
           const containerW = wrapperRef.current?.offsetWidth ?? 600;
           const tooltipW = 220;
-          const gap = 28;
+          const gap = 12;
           // Flip to the left of the cursor when we'd overflow the right edge.
           const showLeft = hover.x + tooltipW + gap + 4 > containerW;
           const leftPx = showLeft ? hover.x - tooltipW - gap : hover.x + gap;
-          // Sit clearly upper-right of the cursor (not at cursor height), so
-          // the tooltip doesn't cover the data point it's describing.
-          const topPx = Math.max(0, hover.y - 130);
           return (
             <div
               onMouseEnter={cancelClear}
@@ -388,7 +385,13 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
               style={{
                 position: 'absolute',
                 left: Math.max(0, leftPx),
-                top: topPx,
+                // Anchor the BOTTOM of the tooltip just above the hovered
+                // point using translateY(-100%) — this way the tooltip always
+                // grows upward into the chart area and never spills below the
+                // pencil strip (which would then be clipped by the outer
+                // card's overflow-hidden).
+                top: Math.max(0, hover.y) - 8,
+                transform: 'translateY(-100%)',
                 width: tooltipW,
                 background: '#222639',
                 border: '1px solid #2e3348',
@@ -544,9 +547,10 @@ export default function EngagementChart({ data, dailyEngagement }: Props) {
                   setHover({
                     day: d.day,
                     x: pencilRect.left + pencilRect.width / 2 - wrapperRect.left,
-                    // Anchor near the bottom of the chart so the tooltip floats
-                    // over the curve instead of overlapping the pencil strip.
-                    y: CHART_HEIGHT - 20,
+                    // Use the pencil's actual top so the tooltip (anchored
+                    // bottom-up via translateY(-100%)) sits right above it and
+                    // never extends below the chart area.
+                    y: pencilRect.top - wrapperRect.top,
                   });
                 }}
                 onMouseLeave={scheduleClear}
