@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useApi } from '../hooks/useApi';
+import GenerateTab from '../components/inspiration/GenerateTab';
+
+type InspirationTab = 'steal' | 'generate';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -191,6 +194,7 @@ export default function Inspiration() {
   const [filterCreator, setFilterCreator] = useState('');
   const [filterTopic, setFilterTopic] = useState('');
   const [filterContentType, setFilterContentType] = useState('');
+  const [tab, setTab] = useState<InspirationTab>('steal');
   const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
   const [classifying, setClassifying] = useState(false);
   const [classifyResult, setClassifyResult] = useState<string | null>(null);
@@ -283,11 +287,38 @@ export default function Inspiration() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Inspiration</h1>
         <p className="text-text-secondary">
-          Browse all outlier posts across your tracked creators. Steal what works — save it as an idea, then make it yours.
+          {tab === 'steal'
+            ? 'Browse all outlier posts across your tracked creators. Steal what works — save it as an idea, then make it yours.'
+            : 'Brainstormea ideas de post a partir de un tema, tus propios outliers, temas de conversación o una noticia del sector.'}
         </p>
       </div>
 
-      {loading && (
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-border">
+        {([
+          ['steal', '🔥 Steal', 'Outliers de tus creadores'],
+          ['generate', '✨ Generate', 'Ideación con IA'],
+        ] as const).map(([key, label, subtitle]) => (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              tab === key
+                ? key === 'generate'
+                  ? 'border-fuchsia-400 text-fuchsia-400'
+                  : 'border-accent text-accent'
+                : 'border-transparent text-text-muted hover:text-text-primary'
+            }`}
+            title={subtitle}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'generate' && <GenerateTab />}
+
+      {tab === 'steal' && loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-bg-card border border-border rounded-xl p-5 animate-pulse">
@@ -303,11 +334,11 @@ export default function Inspiration() {
         </div>
       )}
 
-      {error && (
+      {tab === 'steal' && error && (
         <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 text-danger text-sm">{error}</div>
       )}
 
-      {!loading && outliers.length === 0 && !error && (
+      {tab === 'steal' && !loading && outliers.length === 0 && !error && (
         <div className="text-center py-16 text-text-muted">
           <p className="text-4xl mb-4">🔍</p>
           <p className="mb-1">No outlier posts found.</p>
@@ -315,7 +346,7 @@ export default function Inspiration() {
         </div>
       )}
 
-      {!loading && outliers.length > 0 && (
+      {tab === 'steal' && !loading && outliers.length > 0 && (
         <>
           {/* Classify + topic filter */}
           {topics.length > 0 && (

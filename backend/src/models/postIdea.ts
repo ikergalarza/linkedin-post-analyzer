@@ -13,7 +13,7 @@ export interface ArchetypeVariant {
 export interface PostIdea {
   id: string;
   raw_content: string;
-  source_type: 'manual' | 'book_quote' | 'demo_moment' | 'observation' | 'meeting';
+  source_type: 'manual' | 'book_quote' | 'demo_moment' | 'observation' | 'meeting' | 'generated';
   tags: string[];
   generated_post: string | null;
   generation_score: number | null;

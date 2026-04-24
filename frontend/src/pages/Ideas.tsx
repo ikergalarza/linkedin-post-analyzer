@@ -17,7 +17,7 @@ interface ArchetypeVariant {
 interface PostIdea {
   id: string;
   raw_content: string;
-  source_type: 'manual' | 'book_quote' | 'demo_moment' | 'observation' | 'meeting';
+  source_type: 'manual' | 'book_quote' | 'demo_moment' | 'observation' | 'meeting' | 'generated';
   tags: string[];
   generated_post: string | null;
   generation_score: number | null;
@@ -32,6 +32,7 @@ const SOURCE_CONFIG: Record<string, { icon: string; label: string; color: string
   demo_moment: { icon: '🎯', label: 'Demo',        color: 'text-blue-400 bg-blue-400/10' },
   observation: { icon: '👁️', label: 'Observation', color: 'text-amber-400 bg-amber-400/10' },
   meeting:     { icon: '🤝', label: 'Meeting',     color: 'text-green-400 bg-green-400/10' },
+  generated:   { icon: '✨', label: 'Generated',   color: 'text-fuchsia-400 bg-fuchsia-400/10' },
 };
 
 const ARCHETYPE_COLORS = [
@@ -352,7 +353,7 @@ function CaptureForm({ onCreated }: { onCreated: () => void }) {
 
       {/* Source type */}
       <div className="flex flex-wrap gap-2">
-        {Object.entries(SOURCE_CONFIG).map(([key, cfg]) => (
+        {Object.entries(SOURCE_CONFIG).filter(([key]) => key !== 'generated').map(([key, cfg]) => (
           <button
             key={key}
             onClick={() => setSourceType(key as PostIdea['source_type'])}

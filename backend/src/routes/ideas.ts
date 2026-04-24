@@ -474,4 +474,189 @@ Return ONLY the JSON object. No markdown, no explanation.`,
   }
 });
 
+// ─── Inspiration: generate ideas (brainstorming) ────────────────────────────
+
+interface GeneratedIdea {
+  title: string;
+  body: string;
+  angle?: string;
+  tone?: string;
+}
+
+const sanitizeTextShort = (t: string) =>
+  (t || '').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim();
+
+function parseIdeasJson(raw: string): GeneratedIdea[] {
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+  const startIdx = cleaned.indexOf('[');
+  const endIdx = cleaned.lastIndexOf(']');
+  if (startIdx === -1 || endIdx === -1) return [];
+  try {
+    const parsed = JSON.parse(cleaned.slice(startIdx, endIdx + 1));
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((x) => x && typeof x === 'object' && x.title && x.body)
+      .map((x) => ({
+        title: sanitizeTextShort(String(x.title)).substring(0, 180),
+        body: sanitizeTextShort(String(x.body)).substring(0, 1200),
+        angle: x.angle ? sanitizeTextShort(String(x.angle)).substring(0, 60) : undefined,
+        tone: x.tone ? sanitizeTextShort(String(x.tone)).substring(0, 40) : undefined,
+      }))
+      .filter((x) => x.title.length > 0 && x.body.length > 0);
+  } catch {
+    return [];
+  }
+}
+
+async function callClaudeForIdeas(system: string, user: string, maxTokens = 2048): Promise<GeneratedIdea[]> {
+  const response = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: maxTokens,
+    system,
+    messages: [{ role: 'user', content: user }],
+  });
+  const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
+  return parseIdeasJson(raw);
+}
+
+// POST /api/ideas/inspiration/generate/topic
+router.post('/inspiration/generate/topic', async (req: Request, res: Response) => {
+  try {
+    const { topic, audience, count } = req.body as { topic?: string; audience?: string; count?: number };
+    if (!topic || !topic.trim()) return res.status(400).json({ error: 'topic is required' });
+    const n = Math.max(3, Math.min(8, Number(count) || 5));
+
+    const system = `Eres un estratega de contenido para LinkedIn. Generas ángulos de post distintos y accionables.
+
+REGLAS:
+- Genera exactamente ${n} ideas DIFERENTES entre sí (distintos enfoques: dato duro, historia personal, contrarian/hot take, how-to/framework, mito desmontado, caso real).
+- Cada idea debe ser específica y accionable — no vaguedades.
+- Escribe en el idioma del tema (si el tema está en español, responde en español).
+- Cada idea tiene: "title" (hook de 1 línea, <140 chars), "body" (2-4 líneas explicando el ángulo y qué desarrollar), "angle" (tag corto como "data", "story", "contrarian", "how-to", "mito").
+
+Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown, sin texto extra.`;
+
+    const user = `Tema: "${topic.trim()}"${audience?.trim() ? `\nAudiencia: ${audience.trim()}` : ''}\n\nGenera ${n} ángulos de post.`;
+
+    const ideas = await callClaudeForIdeas(system, user);
+    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
+    res.json({ ideas });
+  } catch (err: any) {
+    console.error('[Generate topic] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/ideas/inspiration/generate/from-outliers
+router.post('/inspiration/generate/from-outliers', async (req: Request, res: Response) => {
+  try {
+    const { topic, count } = req.body as { topic?: string; count?: number };
+    const n = Math.max(3, Math.min(8, Number(count) || 5));
+
+    const params: any[] = [];
+    let topicFilter = '';
+    if (topic && topic.trim()) {
+      params.push(topic.trim());
+      topicFilter = `AND p.topic = $${params.length}`;
+    }
+
+    const { rows: outliers } = await pool.query(`
+      SELECT p.content_text, p.hook_text, p.topic, p.outlier_ratio,
+             p.likes_count, p.comments_count
+      FROM posts p
+      WHERE p.is_outlier = TRUE
+        AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+        AND p.content_text IS NOT NULL AND LENGTH(p.content_text) > 80
+        ${topicFilter}
+      ORDER BY p.outlier_ratio DESC
+      LIMIT 12
+    `, params);
+
+    if (outliers.length < 3) {
+      return res.status(400).json({ error: 'No hay suficientes outliers trackeados para derivar ideas. Añade creadores y refresca sus posts primero.' });
+    }
+
+    const context = outliers.map((p: any, i: number) => {
+      const text = (p.content_text || '').replace(/\s+/g, ' ').substring(0, 400);
+      return `[${i + 1}] (${p.outlier_ratio}x${p.topic ? ` | ${p.topic}` : ''}) "${text}"`;
+    }).join('\n\n');
+
+    const system = `Eres un estratega de contenido. Te dan posts virales reales del feed del usuario y debes proponer ${n} ÁNGULOS NUEVOS Y ADYACENTES — no copies textos, extrae los temas recurrentes y propón variaciones frescas que exploren el mismo espacio desde otro ángulo.
+
+REGLAS:
+- Identifica 3-5 temas/patrones recurrentes en los posts (no los listes, úsalos).
+- Genera ${n} ideas que sean DERIVADAS (misma familia temática) pero con un ángulo distinto al de los ejemplos.
+- Escribe en el idioma predominante de los posts.
+- Cada idea tiene: "title" (hook 1 línea, <140 chars), "body" (2-4 líneas), "angle" (tag corto).
+
+Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown.`;
+
+    const user = `POSTS VIRALES REALES DEL USUARIO:\n${context}\n\nGenera ${n} ángulos nuevos y adyacentes${topic ? ` sobre "${topic}"` : ''}.`;
+
+    const ideas = await callClaudeForIdeas(system, user);
+    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
+    res.json({ ideas });
+  } catch (err: any) {
+    console.error('[Generate from-outliers] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/ideas/inspiration/generate/conversation
+router.post('/inspiration/generate/conversation', async (req: Request, res: Response) => {
+  try {
+    const { context, count } = req.body as { context?: string; count?: number };
+    if (!context || !context.trim()) return res.status(400).json({ error: 'context is required' });
+    const n = Math.max(3, Math.min(8, Number(count) || 5));
+
+    const system = `Eres un experto en generar conversación en LinkedIn. Produces preguntas provocadoras y hot takes cortos que invitan a comentar.
+
+REGLAS:
+- ${n} propuestas DIFERENTES: mezcla pregunta directa, hipotético, hot take, contrarian, observación.
+- Cada propuesta es BREVE: 1-2 frases tipo post corto, listas para publicar o usar como apertura.
+- Deben invitar al debate — opiniones encontradas, escenarios dudosos, asunciones que muchos dan por hecho.
+- Escribe en el idioma del contexto.
+- Cada idea tiene: "title" (la pregunta o hot take, 1-2 frases), "body" (1-2 líneas sugiriendo cómo enmarcarla o por qué funciona), "angle" (tag: "pregunta", "hot-take", "contrarian", "hipotético", "observación").
+
+Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown.`;
+
+    const user = `Contexto / tema: "${context.trim()}"\n\nGenera ${n} disparadores de conversación.`;
+
+    const ideas = await callClaudeForIdeas(system, user);
+    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
+    res.json({ ideas });
+  } catch (err: any) {
+    console.error('[Generate conversation] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/ideas/inspiration/generate/news
+router.post('/inspiration/generate/news', async (req: Request, res: Response) => {
+  try {
+    const { news, count } = req.body as { news?: string; count?: number };
+    if (!news || !news.trim()) return res.status(400).json({ error: 'news is required' });
+    const n = Math.max(2, Math.min(5, Number(count) || 3));
+
+    const system = `Eres un estratega de contenido. El usuario pega una noticia del sector y tú propones ${n} ángulos de post con opinión/reacción personal.
+
+REGLAS:
+- Propón ángulos DISTINTOS: al menos uno optimista/entusiasta, uno crítico/escéptico, y uno práctico/accionable ("qué hacer ahora").
+- Referencia la noticia pero aporta valor propio — no resumas, reacciona.
+- Escribe en el idioma de la noticia.
+- Cada idea tiene: "title" (hook 1 línea, <140 chars), "body" (2-4 líneas explicando el ángulo y el punto de vista), "angle" (tag: "optimista", "crítico", "práctico", u otro que describa).
+
+Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown.`;
+
+    const user = `NOTICIA:\n"""\n${news.trim().substring(0, 2500)}\n"""\n\nGenera ${n} ángulos de post reaccionando a esta noticia.`;
+
+    const ideas = await callClaudeForIdeas(system, user);
+    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
+    res.json({ ideas });
+  } catch (err: any) {
+    console.error('[Generate news] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
