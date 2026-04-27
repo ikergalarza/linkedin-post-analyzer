@@ -237,6 +237,7 @@ RULES:
 - Apply the hook type strictly: the first line must follow the "${hookLabel}" pattern
 - Apply the post structure strictly: the post must follow the "${structLabel}" framework
 - Short paragraphs (max 2-3 lines), blank line between them
+- LIST FORMATTING: when you write a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), put each item on its own line and KEEP THEM AS A SINGLE TIGHT BLOCK — no blank line between items. The blank line goes BEFORE and AFTER the whole list, never inside it. Outliers consistently use this dense list format; spacing every list item like a paragraph reads as low-effort and breaks the rhythm.
 - Personal, concrete, conversational — not corporate
 - 150-400 words
 - End with a question or CTA
