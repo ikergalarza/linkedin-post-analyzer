@@ -5,6 +5,9 @@ import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { forceLiveCapture, maybeTick } from '../services/postMonitor';
+import { generateComments } from '../services/commentGenerator';
+import { CommenterProfileModel } from '../models/commenterProfile';
+import { sendToGoogleChat, detectOwner } from '../services/googleChat';
 
 const router = Router();
 
@@ -700,6 +703,110 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// ─── Google Chat: notify group about a just-published post ─────────────────
+
+const ANGLE_LABELS: Record<string, string> = {
+  reinforce: 'Reinforce',
+  contrarian_data: 'Contrarian · data',
+  contrarian_premise: 'Contrarian · premise',
+  contrarian_survivorship: 'Contrarian · survivorship',
+  reframe: 'Reframe',
+  add_missing: 'Add missing',
+  steal_phrase: 'Steal phrase',
+  warm_supportive: 'Warm & supportive',
+  better_question: 'Better question',
+};
+
+// GET /api/accounts/posts/:postId/google-chat-preview
+// Returns owner detection, post info, and generated comments using the
+// opposite-owner voice (or the requested profile_name override).
+router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId;
+    const profileOverride = typeof req.query.profile_name === 'string' ? req.query.profile_name : null;
+
+    const { rows } = await pool.query(
+      `SELECT p.id, p.content_text, p.post_url, p.hook_text,
+              c.name AS creator_name, c.headline AS creator_headline
+       FROM posts p
+       JOIN creators c ON c.id = p.creator_id
+       WHERE p.id = $1`,
+      [postId]
+    );
+    const post = rows[0];
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const ownerInfo = detectOwner(post.creator_name);
+    const voiceName = profileOverride || ownerInfo.suggestedVoice;
+
+    const profile = await CommenterProfileModel.getByName(voiceName);
+    if (!profile) {
+      return res.status(400).json({
+        error: `No se encontró el perfil de voz "${voiceName}". Configúralo en Network → Profiles.`,
+      });
+    }
+
+    const comments = await generateComments({
+      postContent: post.content_text || '',
+      creatorName: post.creator_name,
+      creatorHeadline: post.creator_headline || null,
+      profile: {
+        headline: profile.headline,
+        voice_style: profile.voice_style,
+        worldview: profile.worldview,
+        signature_moves: profile.signature_moves,
+        avoid: profile.avoid,
+        tone: profile.tone,
+        expertise: profile.expertise,
+      },
+    });
+
+    res.json({
+      post: {
+        id: post.id,
+        url: post.post_url,
+        hook: post.hook_text,
+        content: post.content_text,
+        creator_name: post.creator_name,
+      },
+      owner: ownerInfo.owner,
+      voice_used: voiceName,
+      comments,
+      webhook_configured: !!process.env.GOOGLE_CHAT_WEBHOOK_URL,
+    });
+  } catch (err: any) {
+    console.error('[google-chat-preview] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/posts/:postId/send-to-google-chat
+// Body: { message: string } — already-composed text (header + comments).
+router.post('/posts/:postId/send-to-google-chat', async (req: Request, res: Response) => {
+  try {
+    const webhook = process.env.GOOGLE_CHAT_WEBHOOK_URL;
+    if (!webhook) {
+      return res.status(400).json({ error: 'GOOGLE_CHAT_WEBHOOK_URL no está configurado en el backend.' });
+    }
+    const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
+    if (!message) return res.status(400).json({ error: 'message is required' });
+    if (message.length > 3800) {
+      return res.status(400).json({ error: 'message demasiado largo para Google Chat (>3800 chars)' });
+    }
+
+    await sendToGoogleChat(webhook, message);
+    res.json({ ok: true });
+  } catch (err: any) {
+    console.error('[send-to-google-chat] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Expose angle labels so the frontend can render nice headings without duplicating the dict.
+router.get('/google-chat/angle-labels', (_req: Request, res: Response) => {
+  res.json(ANGLE_LABELS);
 });
 
 export default router;

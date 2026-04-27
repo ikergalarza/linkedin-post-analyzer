@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import AccountsEngagementChart from '../components/AccountsEngagementChart';
 import FollowerGrowthChart from '../components/FollowerGrowthChart';
+import GoogleChatModal from '../components/accounts/GoogleChatModal';
 
 interface ManagedAccount {
   id: string;
@@ -283,6 +284,7 @@ export default function Accounts() {
   const [liveRefreshing, setLiveRefreshing] = useState(false);
   const [liveRefreshMsg, setLiveRefreshMsg] = useState<string | null>(null);
   const [topPostsTypeFilter, setTopPostsTypeFilter] = useState<string>('all');
+  const [chatPostId, setChatPostId] = useState<string | null>(null);
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -699,6 +701,7 @@ export default function Accounts() {
                 <LivePostRow
                   key={p.id}
                   post={p}
+                  onOpenChat={() => setChatPostId(p.id)}
                   onRemoveDemo={
                     p.content_text?.startsWith('DEMO ·')
                       ? async () => {
@@ -1105,7 +1108,7 @@ export default function Accounts() {
               ) : (
                 <div className="space-y-2">
                   {filteredTopPosts.map((p) => (
-                    <TopPostRow key={p.id} post={p} />
+                    <TopPostRow key={p.id} post={p} onOpenChat={() => setChatPostId(p.id)} />
                   ))}
                 </div>
               )}
@@ -1116,6 +1119,10 @@ export default function Accounts() {
 
       {loadingAnalytics && hasAccounts && (
         <p className="text-center text-text-muted text-sm py-4">Loading analytics…</p>
+      )}
+
+      {chatPostId && (
+        <GoogleChatModal postId={chatPostId} onClose={() => setChatPostId(null)} />
       )}
     </div>
   );
@@ -1490,7 +1497,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   );
 }
 
-function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: () => void }) {
+function LivePostRow({ post, onRemoveDemo, onOpenChat }: { post: LivePost; onRemoveDemo?: () => void; onOpenChat?: () => void }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -1558,6 +1565,15 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
                 View →
               </a>
             )}
+            {onOpenChat && (
+              <button
+                onClick={onOpenChat}
+                className="text-accent hover:text-accent-light"
+                title="Enviar a Google Chat con comentarios sugeridos"
+              >
+                🐝 Chat
+              </button>
+            )}
             {onRemoveDemo && (
               <button
                 onClick={() => {
@@ -1585,7 +1601,7 @@ function LivePostRow({ post, onRemoveDemo }: { post: LivePost; onRemoveDemo?: ()
 // analytics list. The "Show curve" button pulls archived snapshots for any post
 // that was previously tracked by the monitor, so the data stays consultable after
 // the 7-day live window closes.
-function TopPostRow({ post }: { post: TopPost }) {
+function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => void }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="rounded-lg border border-border/50 bg-bg-primary">
@@ -1638,6 +1654,15 @@ function TopPostRow({ post }: { post: TopPost }) {
               <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
                 View →
               </a>
+            )}
+            {onOpenChat && (
+              <button
+                onClick={onOpenChat}
+                className="text-accent hover:text-accent-light"
+                title="Enviar a Google Chat con comentarios sugeridos"
+              >
+                🐝 Chat
+              </button>
             )}
           </div>
         </div>
