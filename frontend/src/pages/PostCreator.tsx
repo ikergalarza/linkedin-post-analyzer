@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import LinkedInPostPreview from '../components/postcreator/LinkedInPostPreview';
 import CreatorProfileForm from '../components/postcreator/CreatorProfileForm';
 import PostChecklist from '../components/postcreator/PostChecklist';
+import MarkdownMessage from '../components/postcreator/MarkdownMessage';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -160,38 +161,41 @@ export default function PostCreator() {
   const activePreviewText = manualPreview || previewText;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)]">
-      {/* Header */}
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold mb-1">Post Creator</h1>
-        <p className="text-text-secondary text-sm">
-          AI-powered post writer trained on your outlier data. It knows which hooks, structures, and tones
-          produce the highest outlier ratios across all your analyzed creators.
-        </p>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-border mb-4">
-        <button
-          onClick={() => setTab('chat')}
-          className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-            tab === 'chat'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-text-muted hover:text-text-secondary'
-          }`}
-        >
-          Chat
-        </button>
-        <button
-          onClick={() => setTab('profile')}
-          className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-            tab === 'profile'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-text-muted hover:text-text-secondary'
-          }`}
-        >
-          My Profile {profile?.name ? `· ${profile.name}` : ''}
-        </button>
+    <div className="flex flex-col h-[calc(100vh-80px)]">
+      {/* Compact header — title + tabs share a single 48px row.
+          The long descriptive subtitle from the original layout was
+          eating ~110px of vertical space and only restated what the
+          page already implies, so it's been removed. The inline
+          subtitle keeps a hint of context for first-time visitors. */}
+      <div className="flex items-center gap-6 border-b border-border mb-3 pr-1">
+        <div className="flex items-baseline gap-3 py-2 flex-shrink-0">
+          <h1 className="text-lg font-semibold text-text-primary leading-none">Post Creator</h1>
+          <span className="hidden md:inline text-[11px] text-text-muted leading-none">
+            AI writer trained on your outlier data
+          </span>
+        </div>
+        <div className="flex gap-1 ml-auto">
+          <button
+            onClick={() => setTab('chat')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              tab === 'chat'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-text-muted hover:text-text-secondary'
+            }`}
+          >
+            Chat
+          </button>
+          <button
+            onClick={() => setTab('profile')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              tab === 'profile'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-text-muted hover:text-text-secondary'
+            }`}
+          >
+            My Profile {profile?.name ? `· ${profile.name}` : ''}
+          </button>
+        </div>
       </div>
 
       {tab === 'profile' ? (
@@ -243,40 +247,8 @@ export default function PostCreator() {
                     }`}
                   >
                     {msg.role === 'assistant' ? (
-                      <div className="space-y-2">
-                        {msg.content.split('\n').map((line, j) => {
-                          if (line.startsWith('# ')) {
-                            return <h3 key={j} className="text-base font-bold text-accent mt-2">{line.slice(2)}</h3>;
-                          }
-                          if (line.startsWith('## ')) {
-                            return <h4 key={j} className="text-sm font-bold text-text-primary mt-2">{line.slice(3)}</h4>;
-                          }
-                          if (line.startsWith('### ')) {
-                            return <h4 key={j} className="text-sm font-semibold text-text-secondary mt-1">{line.slice(4)}</h4>;
-                          }
-                          if (line.startsWith('**') && line.endsWith('**')) {
-                            return <p key={j} className="text-sm font-bold text-text-primary">{line.slice(2, -2)}</p>;
-                          }
-                          if (line.startsWith('---')) {
-                            return <hr key={j} className="border-border my-2" />;
-                          }
-                          if (line.startsWith('- ') || line.startsWith('* ')) {
-                            return <p key={j} className="text-sm text-text-secondary pl-3 before:content-['•'] before:mr-2 before:text-accent">{line.slice(2)}</p>;
-                          }
-                          if (line.trim() === '') {
-                            return <div key={j} className="h-2" />;
-                          }
-                          const parts = line.split(/(\*\*[^*]+\*\*)/g);
-                          return (
-                            <p key={j} className="text-sm text-text-secondary leading-relaxed">
-                              {parts.map((part, k) =>
-                                part.startsWith('**') && part.endsWith('**')
-                                  ? <strong key={k} className="text-text-primary font-semibold">{part.slice(2, -2)}</strong>
-                                  : part
-                              )}
-                            </p>
-                          );
-                        })}
+                      <div>
+                        <MarkdownMessage content={msg.content} />
 
                         {msg.content && !streaming && (
                           <div className="flex gap-2 mt-3 pt-2 border-t border-border/50 flex-wrap">

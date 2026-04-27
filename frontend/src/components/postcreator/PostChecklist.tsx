@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -552,6 +552,8 @@ interface IterLog {
   critique: string;
 }
 
+type Section = 'pillars' | 'craft' | 'history';
+
 export default function PostChecklist({ text, onImproved }: Props) {
   const [improving, setImproving] = useState(false);
   const [iteration, setIteration] = useState(0);
@@ -562,6 +564,17 @@ export default function PostChecklist({ text, onImproved }: Props) {
   // the heuristic misfires often, and the right pillar is a creative decision
   // the human is best placed to make.
   const [selectedPillar, setSelectedPillar] = useState<Pillar | 'auto'>('auto');
+
+  // Collapsible detail sections — collapsed by default so the resting state
+  // is just score + dominant pillar + suggestions + Auto-improve. Detail
+  // expands on demand to avoid the "wall of bars" feeling.
+  const [openSections, setOpenSections] = useState<Record<Section, boolean>>({
+    pillars: false,
+    craft: false,
+    history: false,
+  });
+  const toggleSection = (s: Section) =>
+    setOpenSections((prev) => ({ ...prev, [s]: !prev[s] }));
 
   const result = useMemo(() => {
     if (!text || text.trim().length < 20) return null;
@@ -699,9 +712,13 @@ export default function PostChecklist({ text, onImproved }: Props) {
 
   const { byCategory, overall, pillars } = result;
   const scoreColor = overall >= 75 ? '#10b981' : overall >= 50 ? '#f59e0b' : '#ef4444';
-  const verdict = overall >= 75 ? 'Viral-ready' : overall >= 50 ? 'Decent — tighten below' : 'Needs work';
+  const verdict = overall >= 75 ? 'Viral-ready' : overall >= 50 ? 'Decent — tighten' : 'Needs work';
 
-  const circumference = 2 * Math.PI * 28;
+  // Score ring is now 80×80 (was 64×64). The number is the most important
+  // signal in the panel and was previously dwarfed by surrounding chrome.
+  const RING_SIZE = 80;
+  const RING_RADIUS = 35;
+  const circumference = 2 * Math.PI * RING_RADIUS;
   const dashOffset = circumference * (1 - overall / 100);
 
   // Suggestions: prefer failing triggers of dominant pillar (to intensify it) + failing structural checks
@@ -713,75 +730,103 @@ export default function PostChecklist({ text, onImproved }: Props) {
     .filter((item) => !byCategory[item.category].items.find((i) => i.item.id === item.id)?.passed)
     .slice(0, 5);
 
+  const totalCraftPassed = CHECKLIST.filter((item) =>
+    byCategory[item.category].items.find((i) => i.item.id === item.id)?.passed
+  ).length;
+  const totalPillarPassed = PILLAR_TRIGGERS.filter((t) => {
+    const entry = pillars.triggersByPillar[t.pillar].find((e) => e.trigger.id === t.id);
+    return entry?.passed;
+  }).length;
+
   return (
     <div className="bg-bg-card border border-border rounded-xl p-4 space-y-4">
-      <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 flex-shrink-0">
-          <svg width="64" height="64" className="-rotate-90">
-            <circle cx="32" cy="32" r="28" fill="none" stroke="#1f2937" strokeWidth="5" />
+      {/* HEADER ROW — the resting-state summary.
+          Bigger score ring (80×80, number 28px) so the metric reads first;
+          dominant pillar lives in the subtitle row as a coloured chip. */}
+      <div className="flex items-start gap-4">
+        <div className="relative flex-shrink-0" style={{ width: RING_SIZE, height: RING_SIZE }}>
+          <svg width={RING_SIZE} height={RING_SIZE} className="-rotate-90">
+            <circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RING_RADIUS} fill="none" stroke="#1f2937" strokeWidth="6" />
             <circle
-              cx="32" cy="32" r="28" fill="none"
-              stroke={scoreColor} strokeWidth="5" strokeLinecap="round"
+              cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RING_RADIUS} fill="none"
+              stroke={scoreColor} strokeWidth="6" strokeLinecap="round"
               strokeDasharray={circumference} strokeDashoffset={dashOffset}
               style={{ transition: 'stroke-dashoffset 0.4s ease' }}
             />
           </svg>
-          <div className="absolute inset-0 flex items-center justify-center text-sm font-bold" style={{ color: scoreColor }}>
+          <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold tabular-nums" style={{ color: scoreColor }}>
             {overall}
           </div>
         </div>
+
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-text-primary">Outlier Checklist</p>
-          <p className="text-xs" style={{ color: scoreColor }}>{verdict}</p>
-          <p className="text-[10px] text-text-muted mt-0.5">
-            {result.ctx.words} words · hook {result.ctx.wordsHook}w
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold text-text-primary">Outlier Checklist</p>
             {domPillar && (
-              <> · {PILLAR_META[domPillar].icon} {PILLAR_META[domPillar].label} {Math.round(pillars.intensity * 100)}%</>
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                style={{
+                  color: PILLAR_META[domPillar].color,
+                  backgroundColor: `${PILLAR_META[domPillar].color}1A`,
+                }}
+              >
+                {PILLAR_META[domPillar].icon} {PILLAR_META[domPillar].label} · {Math.round(pillars.intensity * 100)}%
+              </span>
             )}
+          </div>
+          <p className="text-xs mt-0.5" style={{ color: scoreColor }}>{verdict}</p>
+          <p className="text-[10px] text-text-muted mt-0.5">
+            {result.ctx.words} words · hook {result.ctx.wordsHook}w · {totalCraftPassed}/{CHECKLIST.length} craft · {totalPillarPassed}/{PILLAR_TRIGGERS.length} triggers
           </p>
         </div>
+
         {onImproved && (
           <button
             onClick={runAutoImprove}
             disabled={improving}
             title="Run 5 AI rewrite passes — keeps going even if the post already scores 80+, in case there's still room to improve"
-            className="px-3 py-2 bg-accent/10 text-accent border border-accent/30 rounded-lg text-[11px] font-medium hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+            className="px-3 py-2 bg-accent/10 text-accent border border-accent/30 rounded-lg text-[11px] font-medium hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap self-center"
           >
             {improving ? `Improving ${iteration}/5…` : '✨ Auto-improve'}
           </button>
         )}
       </div>
 
+      {/* PILLAR PICKER — pills + helper text on its OWN line below.
+          Previously the helper sat inline at the right and wrapped awkwardly
+          when the column was narrow (which it always is). */}
       {onImproved && (
-        <div className="flex items-center gap-2 flex-wrap text-[11px]">
-          <span className="text-text-muted">Pilar:</span>
-          {(['auto', 'curiosity', 'fear', 'desire'] as const).map((p) => {
-            const active = selectedPillar === p;
-            const label = p === 'auto' ? 'Auto' : `${PILLAR_META[p].icon} ${PILLAR_META[p].label}`;
-            const activeColor = p === 'auto' ? '#94a3b8' : PILLAR_META[p].color;
-            return (
-              <button
-                key={p}
-                type="button"
-                disabled={improving}
-                onClick={() => setSelectedPillar(p)}
-                className="px-2 py-1 rounded-md border transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  borderColor: active ? activeColor : '#2e3348',
-                  background: active ? `${activeColor}22` : 'transparent',
-                  color: active ? activeColor : '#94a3b8',
-                  fontWeight: active ? 600 : 400,
-                }}
-              >
-                {label}
-              </button>
-            );
-          })}
-          <span className="text-[10px] text-text-muted ml-1">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 flex-wrap text-[11px]">
+            <span className="text-text-muted">Pilar:</span>
+            {(['auto', 'curiosity', 'fear', 'desire'] as const).map((p) => {
+              const active = selectedPillar === p;
+              const label = p === 'auto' ? 'Auto' : `${PILLAR_META[p].icon} ${PILLAR_META[p].label}`;
+              const activeColor = p === 'auto' ? '#94a3b8' : PILLAR_META[p].color;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  disabled={improving}
+                  onClick={() => setSelectedPillar(p)}
+                  className="px-2 py-1 rounded-md border transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    borderColor: active ? activeColor : '#2e3348',
+                    background: active ? `${activeColor}22` : 'transparent',
+                    color: active ? activeColor : '#94a3b8',
+                    fontWeight: active ? 600 : 400,
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-text-muted leading-snug">
             {selectedPillar === 'auto'
-              ? 'Uses the detected pillar (or lets the model pick if none).'
-              : `Forces every rewrite to intensify ${PILLAR_META[selectedPillar].label.toLowerCase()}.`}
-          </span>
+              ? 'Auto-improve usa el pilar detectado (o deja que el modelo escoja si no hay).'
+              : `Auto-improve forzará intensificar ${PILLAR_META[selectedPillar].label.toLowerCase()}.`}
+          </p>
         </div>
       )}
 
@@ -791,116 +836,18 @@ export default function PostChecklist({ text, onImproved }: Props) {
         </div>
       )}
 
-      {iterLog.length > 0 && (
-        <div className="border-t border-border pt-3 space-y-2">
-          <p className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
-            Iteration history
-          </p>
-          {iterLog.map((log) => (
-            <div key={log.iteration} className="text-[10px] space-y-0.5">
-              <div className="flex items-center gap-2">
-                <span className={`font-bold text-[9px] px-1.5 py-0.5 rounded ${log.accepted ? 'bg-green-900/40 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
-                  {log.accepted ? '✓ aceptada' : '✗ revertida'}
-                </span>
-                <span className="font-semibold text-text-primary">Iter {log.iteration}</span>
-                <span className="font-bold" style={{ color: log.score >= 75 ? '#10b981' : log.score >= 50 ? '#f59e0b' : '#ef4444' }}>
-                  {log.score}/100
-                </span>
-                <span className={`text-[9px] ${log.delta > 0 ? 'text-green-400' : log.delta < 0 ? 'text-red-400' : 'text-text-muted'}`}>
-                  {log.delta > 0 ? `+${log.delta}` : log.delta}
-                </span>
-              </div>
-              {log.critique && (
-                <p className="text-text-muted leading-tight italic pl-3 border-l border-border">
-                  {log.critique}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
       {improveError && (
         <div className="text-[10px] text-danger">Error: {improveError}</div>
       )}
 
-      {/* PILLAR SECTION — the big lever */}
-      <div className="border-t border-border pt-3">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
-            Pilar psicológico (dispara UNO al máximo)
-          </p>
-          {domPillar && (
-            <span className="text-[10px] font-medium" style={{ color: PILLAR_META[domPillar].color }}>
-              {PILLAR_META[domPillar].icon} {PILLAR_META[domPillar].label} · {Math.round(pillars.intensity * 100)}%
-            </span>
-          )}
-        </div>
-        <div className="space-y-2">
-          {(['curiosity', 'fear', 'desire'] as Pillar[]).map((p) => {
-            const val = pillars[p];
-            const isDom = domPillar === p;
-            const meta = PILLAR_META[p];
-            return (
-              <div key={p}>
-                <div className="flex items-center justify-between text-[10px] mb-0.5">
-                  <span className={`font-medium ${isDom ? 'text-text-primary' : 'text-text-secondary'}`}>
-                    {meta.icon} {meta.label}
-                  </span>
-                  <span style={{ color: meta.color, opacity: isDom ? 1 : 0.6 }}>
-                    {Math.round(val * 100)}%
-                  </span>
-                </div>
-                <div className="h-1.5 bg-bg-primary rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-300"
-                    style={{ width: `${val * 100}%`, backgroundColor: meta.color, opacity: isDom ? 1 : 0.45 }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        {!domPillar && (
-          <p className="text-[10px] text-text-muted mt-2 italic">
-            Ningún pilar disparado. Elige UNO (curiosidad, miedo o deseo) e intensifícalo — no mezcles.
-          </p>
-        )}
-      </div>
-
-      {/* Structural category bars */}
-      <div className="border-t border-border pt-3 space-y-2">
-        <p className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
-          Craft estructural
-        </p>
-        {(Object.keys(byCategory) as Category[]).map((cat) => {
-          const meta = CATEGORY_META[cat];
-          const pct = Math.round(byCategory[cat].score * 100);
-          return (
-            <div key={cat}>
-              <div className="flex items-center justify-between text-[10px] mb-0.5">
-                <span className="text-text-secondary font-medium">
-                  {meta.label} <span className="text-text-muted">· {Math.round(meta.weight * 100)}%</span>
-                </span>
-                <span style={{ color: meta.color }}>{pct}%</span>
-              </div>
-              <div className="h-1.5 bg-bg-primary rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-300"
-                  style={{ width: `${pct}%`, backgroundColor: meta.color }}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Suggestions: pillar first, then structural */}
+      {/* SUGGESTIONS — the actionable bit. Always visible (no inner scroll).
+          The previous max-h-56 created a nested scrollbar inside an already
+          scrolling column, which was a usability landmine. */}
       <div className="border-t border-border pt-3">
         <p className="text-[10px] font-semibold text-text-secondary mb-2 uppercase tracking-wide">
           Sugerencias
         </p>
-        <div className="space-y-1.5 max-h-56 overflow-y-auto">
+        <div className="space-y-1.5">
           {domPillar && pillarSuggestions.length > 0 && (
             <>
               <p className="text-[9px] uppercase tracking-wide" style={{ color: PILLAR_META[domPillar].color }}>
@@ -939,15 +886,143 @@ export default function PostChecklist({ text, onImproved }: Props) {
         </div>
       </div>
 
-      <div className="border-t border-border pt-2 flex items-center justify-between text-[10px] text-text-muted">
-        <span>
-          {CHECKLIST.filter((item) => byCategory[item.category].items.find((i) => i.item.id === item.id)?.passed).length}
-          /{CHECKLIST.length} craft checks · {PILLAR_TRIGGERS.filter((t) => {
-            const entry = pillars.triggersByPillar[t.pillar].find((e) => e.trigger.id === t.id);
-            return entry?.passed;
-          }).length}/{PILLAR_TRIGGERS.length} pillar triggers
-        </span>
+      {/* COLLAPSIBLE DETAIL — pillar bars, craft bars, history.
+          Hidden by default to keep the panel scannable. The summary in the
+          header already shows totals, so the bars are reference-only. */}
+      <div className="border-t border-border pt-2 -mx-1 -mb-1">
+        <CollapsibleSection
+          label="Pilar breakdown"
+          open={openSections.pillars}
+          onToggle={() => toggleSection('pillars')}
+        >
+          <div className="space-y-2 pt-1">
+            {(['curiosity', 'fear', 'desire'] as Pillar[]).map((p) => {
+              const val = pillars[p];
+              const isDom = domPillar === p;
+              const meta = PILLAR_META[p];
+              return (
+                <div key={p}>
+                  <div className="flex items-center justify-between text-[10px] mb-0.5">
+                    <span className={`font-medium ${isDom ? 'text-text-primary' : 'text-text-secondary'}`}>
+                      {meta.icon} {meta.label}
+                    </span>
+                    <span style={{ color: meta.color, opacity: isDom ? 1 : 0.6 }}>
+                      {Math.round(val * 100)}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-bg-primary rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{ width: `${val * 100}%`, backgroundColor: meta.color, opacity: isDom ? 1 : 0.45 }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            {!domPillar && (
+              <p className="text-[10px] text-text-muted italic pt-1">
+                Ningún pilar disparado. Elige UNO e intensifícalo — no mezcles.
+              </p>
+            )}
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection
+          label="Craft estructural"
+          open={openSections.craft}
+          onToggle={() => toggleSection('craft')}
+        >
+          <div className="space-y-2 pt-1">
+            {(Object.keys(byCategory) as Category[]).map((cat) => {
+              const meta = CATEGORY_META[cat];
+              const pct = Math.round(byCategory[cat].score * 100);
+              return (
+                <div key={cat}>
+                  <div className="flex items-center justify-between text-[10px] mb-0.5">
+                    <span className="text-text-secondary font-medium">
+                      {meta.label} <span className="text-text-muted">· {Math.round(meta.weight * 100)}%</span>
+                    </span>
+                    <span style={{ color: meta.color }}>{pct}%</span>
+                  </div>
+                  <div className="h-1.5 bg-bg-primary rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{ width: `${pct}%`, backgroundColor: meta.color }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
+
+        {iterLog.length > 0 && (
+          <CollapsibleSection
+            label={`Iteration history (${iterLog.length})`}
+            // Force open while improving so the user sees deltas land in
+            // real time. Once the run finishes, falls back to user choice.
+            open={improving || openSections.history}
+            onToggle={() => toggleSection('history')}
+          >
+            <div className="space-y-2 pt-1">
+              {iterLog.map((log) => (
+                <div key={log.iteration} className="text-[10px] space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-bold text-[9px] px-1.5 py-0.5 rounded ${log.accepted ? 'bg-green-900/40 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                      {log.accepted ? '✓ aceptada' : '✗ revertida'}
+                    </span>
+                    <span className="font-semibold text-text-primary">Iter {log.iteration}</span>
+                    <span className="font-bold" style={{ color: log.score >= 75 ? '#10b981' : log.score >= 50 ? '#f59e0b' : '#ef4444' }}>
+                      {log.score}/100
+                    </span>
+                    <span className={`text-[9px] ${log.delta > 0 ? 'text-green-400' : log.delta < 0 ? 'text-red-400' : 'text-text-muted'}`}>
+                      {log.delta > 0 ? `+${log.delta}` : log.delta}
+                    </span>
+                  </div>
+                  {log.critique && (
+                    <p className="text-text-muted leading-tight italic pl-3 border-l border-border">
+                      {log.critique}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CollapsibleSection>
+        )}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Lightweight accordion row. Used for "Pilar breakdown", "Craft estructural"
+ * and "Iteration history" — all three are reference detail that the user
+ * rarely needs in their flow, so we keep them collapsed by default.
+ */
+function CollapsibleSection({
+  label,
+  open,
+  onToggle,
+  children,
+}: {
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="px-1">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between py-2 text-[10px] font-semibold text-text-secondary uppercase tracking-wide hover:text-text-primary transition-colors"
+      >
+        <span>{label}</span>
+        <span className={`text-text-muted transition-transform duration-200 ${open ? 'rotate-90' : ''}`}>
+          ▸
+        </span>
+      </button>
+      {open && <div className="pb-2">{children}</div>}
     </div>
   );
 }
