@@ -240,7 +240,8 @@ RULES:
 - LIST FORMATTING: when you write a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), put each item on its own line and KEEP THEM AS A SINGLE TIGHT BLOCK — no blank line between items. The blank line goes BEFORE and AFTER the whole list, never inside it. Outliers consistently use this dense list format; spacing every list item like a paragraph reads as low-effort and breaks the rhythm.
 - Personal, concrete, conversational — not corporate
 - 150-400 words
-- End with a question or CTA
+- End with EXACTLY ONE CTA — pick a single closer: an opinion-forcing question, OR a "Comenta 'X' y te lo mando" lead-magnet ask (only if there's a real deliverable), OR no CTA at all (a strong claim can close). NEVER stack two CTAs at the end (no question + lead-magnet together, no two questions). One closer, sharp.
+- ONE PILLAR ONLY: every post must commit to a single dominant psychological pillar (curiosity / fear / desire) and push it to the maximum. Trace amounts of the others are fine — actively triggering all three dilutes the message. Pick the one that fits the raw idea best and lean hard.
 - NEVER use: "I'm excited to share", "In today's world", "Game changer", "Leverage", "Synergy"
 - NEVER use markdown formatting inside the post: no **bold**, no *italic*, no \`code\`, no # headers. LinkedIn renders none of this — **word** shows up literally in the feed. Express emphasis with line breaks, caps on 1–2 words max, or punctuation instead.
 - 2-3 relevant hashtags at the end

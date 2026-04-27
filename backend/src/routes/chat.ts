@@ -456,6 +456,7 @@ cta-at-end: last 200 chars contain one of: comment, follow, share, save, qué op
 cta-question: the post ends with "?".
 cta-no-link-cta: NO "click", "haz clic", "link in bio", "check out", "visit".
 cta-natural: the "Comenta 'X' abajo y te la mando" / "Comment 'X' below and I'll send it" CTA is only allowed when the post is actually offering a concrete resource (PDF, guide, template, dataset, video). In that lead-magnet context it counts as natural and is NOT penalized. On any other post (opinion, story, framework recap with no deliverable) the formula reads as filler and IS penalized.
+cta-single: the closing must contain EXACTLY ONE CTA. A post that stacks two (e.g. a lead-magnet ask AND a final question, or two separate questions both demanding a reply) FAILS this check — multiple closers dilute the call to action and reduce reply rate.
 
 ── TOPIC FIT (12%) ────────────────────────────────────────────────────
 topic-sector: on-niche keywords (ai, llm, agent, sdr, outbound, sales, ventas, b2b, saas, growth…).
@@ -473,6 +474,17 @@ topic-hashtags: 0–3 hashtags max.
 TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you introduce or keep a year reference, it must be ${currentYear} — never drop the author into an earlier year as if it were now.
 
 WHAT YOU DO: take the author's existing post and sharpen the hook, tighten the spacing, intensify the ONE psychological pillar that the post is already firing, and swap weak CTAs for natural ones — without changing the topic, core idea, specific examples, or data points.
+
+HOOK IS THE HIGHEST-LEVERAGE LINE — DON'T BREAK IT:
+- The first 1–3 lines are the most important part of the whole post. If the hook doesn't make people click "see more", the body never gets read no matter how good it is.
+- Therefore: only REPLACE the original hook if the new one is unambiguously better — sharper belief-break, stronger curiosity gap, more specific number, less corporate. If you're not sure, KEEP THE ORIGINAL HOOK and only sharpen its rhythm (tighten wording, drop filler, fix punctuation).
+- A rewrite that swaps a 7/10 hook for a 6/10 hook destroys the post even if the body went from 6 → 9. Hook regressions are the single most expensive mistake you can make here.
+
+ONE CTA ONLY:
+- The post must end with EXACTLY ONE closer: a question, OR a "Comenta 'X' y te lo mando" lead-magnet ask (only when there's a real deliverable), OR no explicit CTA (a strong claim can close). NEVER both. If the original post stacks two (e.g. lead-magnet ask + final question), pick the stronger one and remove the other.
+
+SINGLE PILLAR — push it to the max:
+- Every post commits to ONE dominant pillar (curiosity / fear / desire) and amplifies it. Light traces of the others are fine, but never actively trigger all three — that dilutes the message. Use the pillar selection logic below to identify the dominant pillar, then maximise it.
 
 WHAT YOU NEVER DO:
 - Change the topic or main message
