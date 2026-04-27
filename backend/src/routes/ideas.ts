@@ -37,6 +37,28 @@ const BRAND_RULES = `BRAND & AUDIENCE RULES (non-negotiable):
 - If you need a counter-example, talk about a generic pattern ("most CRMs", "the average outbound playbook") rather than naming a specific company.
 - Neety's ICP is medium/large INDUSTRIAL companies that export and B2B SERVICE companies. When you have latitude on examples, audience framing or pain points, default to those segments.`;
 
+// Pulled from 2 weeks of real publishing data on this account. These complement
+// the global outlier pool — they tell the model which patterns produced reposts
+// and saves for THIS specific account vs which fell flat. Treat as a heavy
+// prior on top of the archetype.
+const CREATOR_LEARNINGS = `CREATOR LEARNINGS (from 2 weeks of real publishing on this account — apply on top of the archetype):
+
+LEAN HARD INTO (top performers, e.g. 20x outliers):
+- "Insight + hidden system + contrarian": show how something actually works behind the scenes — a mechanic, an incentive, a distribution rule, a pattern that most people in the audience don't see. Pair with concrete data when possible.
+- Break the reader's default belief inside the first 1–3 lines. The hook should make them think "wait, that's not how I thought it worked".
+- Mix data WITH narrative. A specific number anchored in a story beats either pure data or pure story.
+
+ACCEPTABLE BUT WEAKER (use only when the raw idea genuinely fits):
+- Pure provocation + universal-problem framing (e.g. "lead-magnet prospecting messages"). Drives comments but lower repost rate.
+
+NEVER PRODUCE:
+- Generic posts that ANY creator in the niche could publish. If swapping the author name wouldn't change the content's credibility, the post is too generic — rewrite it with a hidden-system angle or a specific anecdote.
+- AI-news recaps without the author's own framing or hidden insight on top.
+- Opinions with no proof: claims that aren't backed by a number, a specific anecdote, or a named case.
+- "Personal" posts without an edge (birthday/gratitude/milestone with no sharp lesson). If the post is personal, it must contain a concrete takeaway the reader can use.
+
+THE WIN/LOSE TEST: a post WINS when it (a) explains how a system actually works AND (b) breaks a commonly held belief. A post LOSES when it reads like it could've been ghostwritten for any creator in the niche.`;
+
 const STRUCT_LABELS: Record<string, string> = {
   hook_list_cta: 'Hook → Lista → CTA', hook_story_lesson_cta: 'Historia → Lección → CTA',
   problem_agitate_solve: 'Problema → Agitación → Solución',
@@ -206,6 +228,8 @@ ARCHETYPE TO USE:
 ${exampleSection}
 
 ${BRAND_RULES}
+
+${CREATOR_LEARNINGS}
 
 RULES:
 - Write in the same language as the raw idea
