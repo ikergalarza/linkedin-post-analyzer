@@ -401,15 +401,17 @@ The post doesn't fire any pillar clearly. Pick the ONE most aligned with the pos
 `;
 
     const ANTI_FORMULA_RULES = `
-=== FORBIDDEN REPETITIVE FORMULAS ===
-Variety matters. Do NOT default to these overused templates (they're burned out):
-- "Comenta 'GUÍA' abajo y te la mando" / "Comment 'YES' below and I'll send it"
+=== AVOID DEFAULTING TO THESE FORMULAS ===
+Variety matters. Do NOT default to these overused templates — they're burned out from being applied to every post:
+- "Comenta 'GUÍA' abajo y te la mando" / "Comment 'YES' below and I'll send it" — see lead-magnet exception below
 - "Nadie te dice esto, pero…" as an opener (unless it's genuinely central to the post)
 - "Aquí está la razón:" / "Here's why:" as the only hook ending
 - "Me ha costado X años aprender esto"
 - "Este es el error más grande que…"
 
-Instead, draw CTAs and hooks from the real outlier examples below. Rotate techniques across iterations — if you used a curiosity gap last time, try a reversal or insider frame this time.
+LEAD-MAGNET EXCEPTION: the "Comenta 'X' abajo y te lo mando" CTA is a legitimately strong outlier format WHEN the post is genuinely offering a concrete resource (PDF, guide, template, video, dataset, framework doc) the reader actually wants. In that case, use it — that's its job. The rule is: don't slap it on every post; do use it when the post is actually a resource giveaway.
+
+Instead of leaning on burned formulas, draw CTAs and hooks from the real outlier examples below. Rotate techniques across iterations — if you used a curiosity gap last time, try a reversal or insider frame this time.
 
 CTA variety options (pick ONE that fits the post's tone, not a formula):
 - A real opinion-forcing question tied to the topic
@@ -417,6 +419,7 @@ CTA variety options (pick ONE that fits the post's tone, not a formula):
 - A short provocation that takes a side
 - A direct "Disagree?" / "Change my mind"
 - A conditional — "If you're doing X, try Y this week and tell me how it went"
+- The "Comenta 'X' y te lo mando" CTA — only when the post is actually offering a resource
 - No explicit CTA at all (some outliers close with a strong claim, not a question)
 `;
 
@@ -452,7 +455,7 @@ fmt-scannable: 2+ short lines (≤ 40 chars) to break rhythm.
 cta-at-end: last 200 chars contain one of: comment, follow, share, save, qué opinas, tu opinión, let me know, dime, agree, disagree.
 cta-question: the post ends with "?".
 cta-no-link-cta: NO "click", "haz clic", "link in bio", "check out", "visit".
-cta-natural: does NOT use the templated formula "Comenta 'X' abajo y te la mando" / "Comment 'X' below and I'll send it" — penalized, NOT rewarded.
+cta-natural: the "Comenta 'X' abajo y te la mando" / "Comment 'X' below and I'll send it" CTA is only allowed when the post is actually offering a concrete resource (PDF, guide, template, dataset, video). In that lead-magnet context it counts as natural and is NOT penalized. On any other post (opinion, story, framework recap with no deliverable) the formula reads as filler and IS penalized.
 
 ── TOPIC FIT (12%) ────────────────────────────────────────────────────
 topic-sector: on-niche keywords (ai, llm, agent, sdr, outbound, sales, ventas, b2b, saas, growth…).
