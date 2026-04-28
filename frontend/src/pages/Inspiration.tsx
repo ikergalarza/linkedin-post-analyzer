@@ -194,6 +194,10 @@ export default function Inspiration() {
   const [filterCreator, setFilterCreator] = useState('');
   const [filterTopic, setFilterTopic] = useState('');
   const [filterContentType, setFilterContentType] = useState('');
+  // Free-text search across hook + content + creator name. Case-insensitive
+  // substring match — supports finding things like "CLAUDE", "outbound", etc.
+  // across the whole corpus regardless of how the AI classified the topic.
+  const [searchQuery, setSearchQuery] = useState('');
   const [tab, setTab] = useState<InspirationTab>('steal');
   const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
   const [classifying, setClassifying] = useState(false);
@@ -240,6 +244,18 @@ export default function Inspiration() {
     if (filterCreator) list = list.filter((p) => p.creator_name === filterCreator);
     if (filterContentType) list = list.filter((p) => (p.content_type || 'text') === filterContentType);
 
+    // Free-text search: case-insensitive substring across content + hook + creator.
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      list = list.filter((p) => {
+        const haystack = [p.content_text, p.hook_text, p.creator_name]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(q);
+      });
+    }
+
     switch (sortBy) {
       case 'likes': list.sort((a, b) => b.likes_count - a.likes_count); break;
       case 'comments': list.sort((a, b) => b.comments_count - a.comments_count); break;
@@ -247,7 +263,7 @@ export default function Inspiration() {
       default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
     return list;
-  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, sortBy]);
+  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, sortBy, searchQuery]);
 
   const handleClassify = async () => {
     setClassifying(true);
@@ -392,6 +408,29 @@ export default function Inspiration() {
 
           {/* Filters & sort */}
           <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
+            {/* Free-text search across content / hook / creator. Lives at the top
+                because it's the most direct way to find a specific post (e.g.
+                everything mentioning "CLAUDE" or "cold outreach"). */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-text-muted font-medium shrink-0">🔎 Buscar:</span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder='Palabra exacta en el contenido (p.ej. "CLAUDE", "outbound", "HubSpot")'
+                className="flex-1 bg-bg-secondary border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="text-[11px] text-text-muted hover:text-accent shrink-0"
+                  title="Borrar búsqueda"
+                >
+                  ✕ limpiar
+                </button>
+              )}
+            </div>
+
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-text-muted font-medium">Sort:</span>
               {([
@@ -514,7 +553,9 @@ export default function Inspiration() {
           {/* Results count */}
           <p className="text-xs text-text-muted">
             {filtered.length} outlier{filtered.length !== 1 ? 's' : ''}{' '}
-            {filterHook || filterStructure || filterCreator || filterTopic || filterContentType ? `(filtered from ${outliers.length} total)` : 'total'}
+            {filterHook || filterStructure || filterCreator || filterTopic || filterContentType || searchQuery
+              ? `(filtered from ${outliers.length} total${searchQuery ? ` · search: "${searchQuery}"` : ''})`
+              : 'total'}
           </p>
 
           {/* Cards grid */}

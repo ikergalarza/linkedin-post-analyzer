@@ -655,8 +655,21 @@ El "suggested_hook" debe referenciar la noticia y aportar tu postura en la prime
   },
 };
 
-function buildBrainstormSystem(postType: PostType, count: number): string {
+function buildBrainstormSystem(postType: PostType, count: number, hasUserAngle: boolean): string {
   const meta = POST_TYPE_PROMPTS[postType];
+  const angleSection = hasUserAngle
+    ? `\n═══ EL ÁNGULO DEL USUARIO MANDA SOBRE TODO ═══
+El usuario te ha dado un ÁNGULO / MENSAJE concreto (verás "ÁNGULO DEL USUARIO" en el mensaje). Esto es la tesis que él quiere defender. Tu trabajo NO es proponer ideas genéricas sobre el topic — es proponer ${count} formas DISTINTAS de comunicar EL ÁNGULO QUE ÉL TE DA.
+
+Reglas duras cuando hay ángulo del usuario:
+- CADA IDEA debe defender o explorar EL MISMO ÁNGULO desde un sub-ángulo distinto. No cambies de tesis.
+- Si el ángulo es "el cold outreach está muerto por la IA", NO propongas ideas defendiendo lo contrario, ni ideas neutras tipo "5 tips de cold outreach".
+- Lo que varía entre las ${count} ideas es el ENFOQUE / PRUEBA / FORMATO con el que comunicas la tesis, no la tesis en sí.
+- El "suggested_hook" debe sonar a algo que el usuario diría — directo, con su tesis explícita o teaseada en la primera línea.
+═════════════════════════════════════════════
+`
+    : '';
+
   return `Eres un estratega de contenido para LinkedIn especializado en posts tipo "${meta.label}".
 
 ═══ PATRÓN DE ESTE TIPO DE POST ═══
@@ -664,7 +677,7 @@ ${meta.instructions}
 
 ═══ SUB-ÁNGULOS DISPONIBLES ═══
 Cuando generes ${count} ideas, asegúrate de variar el "sub_angle" — cada idea debe atacar el tema desde un sub-ángulo distinto. Ejemplos válidos para este tipo: ${meta.subAngles.map((s) => `"${s}"`).join(', ')}. Puedes proponer otros que encajen.
-
+${angleSection}
 ═══ REGLAS GENERALES ═══
 - Genera EXACTAMENTE ${count} ideas, todas claramente DIFERENTES entre sí (no 3 versiones del mismo ángulo).
 - Cada idea debe ser específica y accionable — no vaguedades tipo "habla sobre la importancia de X".
@@ -677,6 +690,7 @@ Responde SOLO un JSON array: [{"title","body","sub_angle","suggested_hook"}]. Si
 function buildBrainstormUser(
   postType: PostType,
   topic: string,
+  angle: string | undefined,
   audience: string | undefined,
   outlierContext: string | undefined,
   newsContext: string | undefined,
@@ -684,14 +698,33 @@ function buildBrainstormUser(
 ): string {
   const lines: string[] = [];
   lines.push(`TOPIC: "${topic}"`);
-  if (audience?.trim()) lines.push(`AUDIENCIA: ${audience.trim()}`);
+
+  // The user's angle / message is the highest-signal input. Render it as a
+  // visually-distinct block so the model can't miss it.
+  if (angle?.trim()) {
+    lines.push(
+      '',
+      '═══ ÁNGULO DEL USUARIO (esta es la tesis que él quiere defender — NO la cambies) ═══',
+      angle.trim().substring(0, 1500),
+      '═══════════════════════════════════════════════════════════════════════════════════'
+    );
+  }
+
+  if (audience?.trim()) lines.push(`\nAUDIENCIA: ${audience.trim()}`);
   if (postType === 'news_reaction' && newsContext?.trim()) {
     lines.push(`\nNOTICIA / CONTEXTO:\n"""\n${newsContext.trim().substring(0, 2500)}\n"""`);
   }
   if (outlierContext) {
     lines.push(`\n${outlierContext}\n\nUsa estos posts solo como REFERENCIA del tipo de tema y tono que funciona — no copies texto, extrae los patrones y propón ángulos NUEVOS.`);
   }
-  lines.push(`\nGenera ${count} ideas de tipo "${POST_TYPE_PROMPTS[postType].label}" sobre este topic.`);
+
+  if (angle?.trim()) {
+    lines.push(
+      `\nGenera ${count} ideas de tipo "${POST_TYPE_PROMPTS[postType].label}" que defiendan EL ÁNGULO DEL USUARIO desde sub-ángulos distintos. NO propongas tesis alternativas — explora la suya con distintos enfoques.`
+    );
+  } else {
+    lines.push(`\nGenera ${count} ideas de tipo "${POST_TYPE_PROMPTS[postType].label}" sobre este topic.`);
+  }
   return lines.join('\n');
 }
 
@@ -766,9 +799,10 @@ router.get('/inspiration/trending-topics', async (_req: Request, res: Response) 
 // Unified ideation endpoint. Replaces the 4 old /generate/* routes.
 router.post('/inspiration/brainstorm', async (req: Request, res: Response) => {
   try {
-    const { postType, topic, audience, grounding, count, newsContext } = req.body as {
+    const { postType, topic, angle, audience, grounding, count, newsContext } = req.body as {
       postType?: string;
       topic?: string;
+      angle?: string;
       audience?: string;
       grounding?: string;
       count?: number;
@@ -783,22 +817,28 @@ router.post('/inspiration/brainstorm', async (req: Request, res: Response) => {
     }
     const grounded = grounding === 'all_posts' || grounding === 'none' ? grounding : 'outliers_only';
     const n = Math.max(3, Math.min(20, Number(count) || 10));
+    const userAngle = (angle || '').trim();
 
-    // Pull outlier context (or skip if grounding === 'none')
-    let outlierContext = await getBrainstormContext(topic.trim(), grounded as any);
+    // Pull outlier context (or skip if grounding === 'none').
+    // When the user has provided an angle, the outlier search uses both the
+    // topic AND the angle as keywords, so we surface posts that talk about
+    // similar tesis instead of just the broad topic.
+    const groundingQuery = userAngle ? `${topic.trim()} ${userAngle}`.slice(0, 200) : topic.trim();
+    let outlierContext = await getBrainstormContext(groundingQuery, grounded as any);
     let groundingFallback: string | null = null;
 
     // If user asked for outliers-only but we found nothing, fall back to all_posts
     // rather than failing — the user gets ideas + a flag we surface in the response.
     if (!outlierContext && grounded === 'outliers_only') {
-      outlierContext = await getBrainstormContext(topic.trim(), 'all_posts');
+      outlierContext = await getBrainstormContext(groundingQuery, 'all_posts');
       if (outlierContext) groundingFallback = 'all_posts';
     }
 
-    const system = buildBrainstormSystem(postType as PostType, n);
+    const system = buildBrainstormSystem(postType as PostType, n, !!userAngle);
     const user = buildBrainstormUser(
       postType as PostType,
       topic.trim(),
+      userAngle || undefined,
       audience,
       outlierContext,
       newsContext,

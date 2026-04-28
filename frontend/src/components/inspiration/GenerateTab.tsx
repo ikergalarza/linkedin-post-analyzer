@@ -166,6 +166,10 @@ export default function GenerateTab() {
   // State
   const [postType, setPostType] = useState<PostType>('opinion');
   const [topic, setTopic] = useState('');
+  // The user's actual message / angle / take. This is the highest-signal input —
+  // a topic alone ("ventas B2B") doesn't tell the AI what to argue. The angle
+  // ("creo que el cold outreach está muerto por la IA") gives it a tesis.
+  const [angle, setAngle] = useState('');
   const [audience, setAudience] = useState('');
   const [newsContext, setNewsContext] = useState('');
   const [grounding, setGrounding] = useState<Grounding>('outliers_only');
@@ -220,6 +224,7 @@ export default function GenerateTab() {
         body: JSON.stringify({
           postType,
           topic: topic.trim(),
+          angle: angle.trim() || undefined,
           audience: audience.trim() || undefined,
           grounding,
           count,
@@ -338,11 +343,40 @@ export default function GenerateTab() {
         </div>
       </div>
 
-      {/* Topic + audience + grounding + count + generate */}
-      <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
+      {/* Topic + angle + audience + grounding + count + generate */}
+      <div className="bg-bg-card border border-border rounded-xl p-4 space-y-4">
+        {/* The angle is the highest-signal input. Without it the AI has to
+            guess what tesis the user wants to defend, and ideas come back
+            generic. We make this the visual centerpiece (full width, accent
+            border) and treat topic / audience as supporting metadata below. */}
+        <div>
+          <label className="block text-xs font-semibold text-fuchsia-300 mb-1.5 flex items-center gap-1.5">
+            <span>💭</span> Tu mensaje / ángulo
+            <span className="text-[10px] font-normal text-text-muted ml-1">— qué quieres defender o decir</span>
+          </label>
+          <textarea
+            value={angle}
+            onChange={(e) => setAngle(e.target.value)}
+            rows={4}
+            placeholder={
+              'Ejemplos:\n' +
+              '• "El cold outreach masivo está muerto por la IA. Las empresas que ganan en 2026 vuelven a relaciones humanas + datos."\n' +
+              '• "Contratar SDRs sin experiencia funciona mejor que SDRs senior si tienes un buen playbook. Lo he probado 3 veces."\n' +
+              '• "El error que veo en 9 de cada 10 startups B2B: invierten en marketing antes de tener product-market fit en ventas directas."'
+            }
+            className="w-full bg-bg-primary border border-fuchsia-400/30 rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted/60 focus:outline-none focus:border-fuchsia-400/70 resize-y leading-relaxed"
+          />
+          <p className="text-[10px] text-text-muted mt-1 leading-snug">
+            Cuanto más concreto sea tu ángulo (tesis + por qué + a quién aplica), más afiladas serán las ideas.
+            Si lo dejas vacío, generaremos ideas genéricas sobre el topic.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-[11px] text-text-muted font-medium mb-1">Topic</label>
+            <label className="block text-[11px] text-text-muted font-medium mb-1">
+              Topic <span className="text-[10px] text-text-muted">— para filtrar outliers de referencia</span>
+            </label>
             <input
               type="text"
               value={topic}
