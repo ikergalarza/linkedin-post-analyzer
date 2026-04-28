@@ -264,12 +264,22 @@ export default function CreatorDetail() {
 
       {/* Outlier posts table */}
       {outlierPosts.length > 0 && (
-        <OutlierTable posts={outlierPosts} title="Outlier Posts" />
+        <OutlierTable
+          posts={outlierPosts}
+          title="Outlier Posts"
+          creatorName={creator.name}
+          creatorHeadline={creator.headline}
+        />
       )}
 
       {/* All posts table */}
       {allPosts.length > 0 && (
-        <OutlierTable posts={allPosts} title="All Posts" />
+        <OutlierTable
+          posts={allPosts}
+          title="All Posts"
+          creatorName={creator.name}
+          creatorHeadline={creator.headline}
+        />
       )}
     </div>
   );

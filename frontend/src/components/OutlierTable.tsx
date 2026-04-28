@@ -155,6 +155,10 @@ const structLabels: Record<string, string> = {
 interface Props {
   posts: Post[];
   title?: string;
+  // Optional: creator name + headline so the saved idea carries attribution.
+  // CreatorDetail passes these when rendering a single creator's posts.
+  creatorName?: string | null;
+  creatorHeadline?: string | null;
 }
 
 const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string; hasMedia: boolean }> = {
@@ -193,9 +197,57 @@ function ExpandableText({ text }: { text: string }) {
   );
 }
 
-export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) {
+export default function OutlierTable({ posts, title = 'Outlier Posts', creatorName, creatorHeadline }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  // Track which posts have been saved as ideas in this session, plus per-row
+  // pending state, so the button gives immediate feedback without needing
+  // the parent to know.
+  const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
+  const [stealingId, setStealingId] = useState<string | null>(null);
+  const [stealError, setStealError] = useState<string | null>(null);
+
+  const handleSteal = async (post: Post) => {
+    if (stolenIds.has(post.id)) return;
+    setStealingId(post.id);
+    setStealError(null);
+    try {
+      const hookLabel = hookLabels[post.hook_type || ''] || post.hook_type || '';
+      const structLabel = structLabels[post.post_structure || ''] || post.post_structure || '';
+      // Compose a self-explanatory raw_content with attribution at the top so
+      // when the idea opens in /ideas → Post Creator the user remembers where
+      // it came from. Same shape the Inspiration page uses.
+      const attribution = creatorName
+        ? `From ${creatorName}${creatorHeadline ? ` — ${creatorHeadline}` : ''}${post.outlier_ratio ? ` · ${post.outlier_ratio}x outlier` : ''}\n\n`
+        : '';
+      const raw_content = `${attribution}${post.content_text || ''}`.trim();
+      if (!raw_content) {
+        throw new Error('Post sin contenido');
+      }
+      const tags = ['stolen'];
+      if (hookLabel) tags.push(hookLabel);
+      if (structLabel) tags.push(structLabel);
+      const res = await fetch(`${BASE}/api/ideas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          raw_content,
+          source_type: 'observation',
+          tags,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Error ${res.status}`);
+      }
+      setStolenIds((prev) => new Set(prev).add(post.id));
+    } catch (e: any) {
+      setStealError(e.message || 'Error al guardar');
+      // Surface the row so the user sees the inline error message
+      setExpandedId(post.id);
+    }
+    setStealingId(null);
+  };
 
   const typeCounts = useMemo(() => {
     const map = new Map<string, number>();
@@ -313,18 +365,46 @@ export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) 
                     <td className="py-3 text-right">
                       {post.outlier_ratio > 0 && ratioBadge(post.outlier_ratio)}
                     </td>
-                    <td className="py-3 text-right">
-                      {getLinkedInUrl(post) && (
-                        <a
-                          href={getLinkedInUrl(post)!}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-accent hover:text-accent-light text-xs"
-                          onClick={(e) => e.stopPropagation()}
+                    <td className="py-3 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-2">
+                        {getLinkedInUrl(post) && (
+                          <a
+                            href={getLinkedInUrl(post)!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent hover:text-accent-light text-xs"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            View
+                          </a>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSteal(post);
+                          }}
+                          disabled={stealingId === post.id || stolenIds.has(post.id) || !post.content_text}
+                          title={
+                            !post.content_text
+                              ? 'Post sin contenido'
+                              : stolenIds.has(post.id)
+                              ? 'Ya está en Ideas'
+                              : 'Guardar como idea para usar en Post Creator'
+                          }
+                          className={`text-xs px-2 py-1 rounded border transition-colors ${
+                            stolenIds.has(post.id)
+                              ? 'border-green-400/30 bg-green-400/10 text-green-400 cursor-default'
+                              : 'border-accent/30 text-accent hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed'
+                          }`}
                         >
-                          View
-                        </a>
-                      )}
+                          {stolenIds.has(post.id)
+                            ? '✓ Saved'
+                            : stealingId === post.id
+                            ? '…'
+                            : '🔥 Steal'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                   {expandedId === post.id && (
@@ -342,6 +422,11 @@ export default function OutlierTable({ posts, title = 'Outlier Posts' }: Props) 
                         {TYPE_CONFIG[post.content_type]?.hasMedia && (
                           <div className="mt-3">
                             <MediaViewer postId={post.id} contentType={post.content_type} />
+                          </div>
+                        )}
+                        {stealError && (
+                          <div className="mt-3 text-xs text-danger bg-danger/10 border border-danger/30 rounded px-2.5 py-1.5">
+                            {stealError}
                           </div>
                         )}
                       </td>
