@@ -748,7 +748,7 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
       });
     }
 
-    const comments = await generateComments({
+    const rawComments = await generateComments({
       postContent: post.content_text || '',
       creatorName: post.creator_name,
       creatorHeadline: post.creator_headline || null,
@@ -762,6 +762,24 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
         expertise: profile.expertise,
       },
     });
+
+    // Defensive cap per comment. The system prompt asks for ≤ 280 chars but
+    // the model occasionally overshoots. Keeping each comment ≤ 300 chars
+    // means 9 × 300 + structural overhead (~250) stays comfortably under
+    // Google Chat's 4096-char message limit (we cap UX at 3800 to leave room).
+    const PER_COMMENT_CAP = 300;
+    const truncate = (s: string) => {
+      const t = (s || '').trim();
+      if (t.length <= PER_COMMENT_CAP) return t;
+      // Try to break on a sentence/word boundary near the cap
+      const slice = t.slice(0, PER_COMMENT_CAP - 1);
+      const lastBreak = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('? '), slice.lastIndexOf('! '), slice.lastIndexOf('\n'));
+      const cutAt = lastBreak > PER_COMMENT_CAP * 0.6 ? lastBreak + 1 : slice.lastIndexOf(' ');
+      return (cutAt > PER_COMMENT_CAP * 0.5 ? t.slice(0, cutAt) : slice).trimEnd() + '…';
+    };
+    const comments = Object.fromEntries(
+      Object.entries(rawComments).map(([k, v]) => [k, truncate(String(v || ''))])
+    ) as unknown as typeof rawComments;
 
     res.json({
       post: {
@@ -783,21 +801,49 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
 });
 
 // POST /api/accounts/posts/:postId/send-to-google-chat
-// Body: { message: string } — already-composed text (header + comments).
+// Body: { message: string } OR { messages: string[] } — already-composed text.
+// Array form lets the frontend split a long message into several sequential
+// chat messages when the total exceeds Google Chat's 4096-char per-message
+// limit (we enforce 3800 to keep a safety margin).
 router.post('/posts/:postId/send-to-google-chat', async (req: Request, res: Response) => {
   try {
     const webhook = process.env.GOOGLE_CHAT_WEBHOOK_URL;
     if (!webhook) {
       return res.status(400).json({ error: 'GOOGLE_CHAT_WEBHOOK_URL no está configurado en el backend.' });
     }
-    const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
-    if (!message) return res.status(400).json({ error: 'message is required' });
-    if (message.length > 3800) {
-      return res.status(400).json({ error: 'message demasiado largo para Google Chat (>3800 chars)' });
+
+    // Normalise to an array so the rest of the handler is uniform.
+    const body = req.body || {};
+    let messages: string[];
+    if (Array.isArray(body.messages)) {
+      messages = body.messages.map((m: unknown) => (typeof m === 'string' ? m.trim() : '')).filter(Boolean);
+    } else if (typeof body.message === 'string') {
+      messages = [body.message.trim()].filter(Boolean);
+    } else {
+      messages = [];
     }
 
-    await sendToGoogleChat(webhook, message);
-    res.json({ ok: true });
+    if (messages.length === 0) {
+      return res.status(400).json({ error: 'message is required' });
+    }
+    if (messages.length > 5) {
+      return res.status(400).json({ error: 'no se permiten más de 5 mensajes en una tanda' });
+    }
+    for (const m of messages) {
+      if (m.length > 3800) {
+        return res.status(400).json({ error: `un mensaje supera 3800 chars (${m.length}). Edita o usa el split.` });
+      }
+    }
+
+    // Send sequentially. If one fails midway, return what succeeded so the
+    // user knows partial state rather than a generic 500.
+    let sent = 0;
+    for (const m of messages) {
+      await sendToGoogleChat(webhook, m);
+      sent++;
+    }
+
+    res.json({ ok: true, sent, total: messages.length });
   } catch (err: any) {
     console.error('[send-to-google-chat] Error:', err.message);
     res.status(500).json({ error: err.message });

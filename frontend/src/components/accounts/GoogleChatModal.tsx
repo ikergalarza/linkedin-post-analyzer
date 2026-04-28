@@ -47,6 +47,10 @@ const ANGLE_META: Record<keyof Comments, { emoji: string; label: string }> = {
   better_question: { emoji: '❓', label: 'Better question' },
 };
 
+// Google Chat caps messages at 4096 chars; we keep a 296-char safety margin
+// for mid-character UTF-16 surrogates and any small system overhead.
+const MAX_LEN = 3800;
+
 function buildHeader(owner: 'Iker' | 'Unai' | 'unknown', creatorName: string | null, url: string | null): string {
   const label = owner === 'unknown'
     ? `NUEVO POST ${(creatorName || 'ACCOUNT').toUpperCase()}`
@@ -54,15 +58,66 @@ function buildHeader(owner: 'Iker' | 'Unai' | 'unknown', creatorName: string | n
   return `🐝 ${label}:\n${url || '(sin URL)'}`;
 }
 
-function buildMessage(header: string, comments: Comments): string {
-  const parts = [header, '', '💬 Comentarios sugeridos (copia y pega):'];
+interface CommentBlock {
+  index: number; // 1-based original position
+  text: string; // the full block: "1. 💪 Reinforce\n<comment text>"
+}
+
+function buildBlocks(comments: Comments): CommentBlock[] {
+  const blocks: CommentBlock[] = [];
   ANGLE_KEYS.forEach((key, i) => {
     const text = (comments[key] || '').trim();
     if (!text) return;
     const meta = ANGLE_META[key];
-    parts.push('', `${i + 1}. ${meta.emoji} ${meta.label}`, text);
+    blocks.push({ index: i + 1, text: `${i + 1}. ${meta.emoji} ${meta.label}\n${text}` });
   });
-  return parts.join('\n');
+  return blocks;
+}
+
+function buildMessage(header: string, comments: Comments): string {
+  const blocks = buildBlocks(comments);
+  if (blocks.length === 0) return header;
+  return [header, '', '💬 Comentarios sugeridos (copia y pega):', '', blocks.map((b) => b.text).join('\n\n')].join('\n');
+}
+
+// Greedy split: keeps each chunk ≤ MAX_LEN, never breaks a comment in half.
+// Each chunk gets its own header so the receiving Chat thread stays readable.
+function splitIntoMessages(
+  baseHeader: string,
+  blocks: CommentBlock[]
+): string[] {
+  if (blocks.length === 0) return [baseHeader];
+
+  // First, try a single message — most common case.
+  const single = [baseHeader, '', '💬 Comentarios sugeridos (copia y pega):', '', blocks.map((b) => b.text).join('\n\n')].join('\n');
+  if (single.length <= MAX_LEN) return [single];
+
+  // Otherwise, split greedily. Each chunk header includes a part counter we
+  // know to fill in after we know the total chunks count. First pass collects
+  // the groups; second pass renders the headers.
+  const groups: CommentBlock[][] = [];
+  let current: CommentBlock[] = [];
+  const headerOverhead = (partLabel: string) =>
+    `${baseHeader} ${partLabel}\n\n💬 Comentarios sugeridos (copia y pega):\n\n`.length;
+
+  for (const block of blocks) {
+    const trial = [...current, block];
+    const body = trial.map((b) => b.text).join('\n\n');
+    const length = headerOverhead('(99/99)') + body.length; // worst-case label
+    if (length > MAX_LEN && current.length > 0) {
+      groups.push(current);
+      current = [block];
+    } else {
+      current = trial;
+    }
+  }
+  if (current.length > 0) groups.push(current);
+
+  return groups.map((group, i) => {
+    const partLabel = `(${i + 1}/${groups.length})`;
+    const body = group.map((b) => b.text).join('\n\n');
+    return `${baseHeader} ${partLabel}\n\n💬 Comentarios sugeridos (copia y pega):\n\n${body}`;
+  });
 }
 
 export default function GoogleChatModal({
@@ -108,6 +163,18 @@ export default function GoogleChatModal({
     return buildMessage(buildHeader(data.owner, data.post.creator_name, data.post.url), comments);
   }, [data, comments]);
 
+  // Pre-compute the split so the UI can show how many parts it will be.
+  const splitMessages = useMemo<string[]>(() => {
+    if (!data || !comments) return [];
+    const header = buildHeader(data.owner, data.post.creator_name, data.post.url);
+    return splitIntoMessages(header, buildBlocks(comments));
+  }, [data, comments]);
+
+  const willSplit = splitMessages.length > 1;
+  const overLimit = message.length > MAX_LEN;
+  const longestPart = splitMessages.reduce((m, p) => Math.max(m, p.length), 0);
+  const partsOverLimit = splitMessages.some((p) => p.length > MAX_LEN);
+
   const handleRegenerate = async (newVoice: VoiceChoice) => {
     if (newVoice === voice) return;
     await loadPreview(newVoice);
@@ -123,19 +190,25 @@ export default function GoogleChatModal({
   };
 
   const handleSend = async () => {
-    if (!message) return;
+    if (splitMessages.length === 0) return;
+    if (partsOverLimit) {
+      setError(`Una de las partes sigue pasando ${MAX_LEN} chars. Acorta algún comentario manualmente.`);
+      return;
+    }
     setSending(true);
     setError(null);
     try {
       const res = await fetch(`${BASE}/api/accounts/posts/${postId}/send-to-google-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
+        // The endpoint accepts both `message` (single) and `messages` (split).
+        // We always send the array — backend handles 1 or many uniformly.
+        body: JSON.stringify({ messages: splitMessages }),
       });
       const json = await res.json();
       if (!res.ok) { setError(json.error || `Error ${res.status}`); setSending(false); return; }
       setSent(true);
-      setTimeout(onClose, 1200);
+      setTimeout(onClose, 1500);
     } catch (e: any) {
       setError(e.message || 'Error al enviar');
     }
@@ -230,9 +303,22 @@ export default function GoogleChatModal({
                 <pre className="bg-bg-secondary border border-border rounded-lg p-3 text-[11px] text-text-secondary whitespace-pre-wrap font-mono leading-relaxed max-h-64 overflow-y-auto">
                   {message}
                 </pre>
-                <p className="text-[10px] text-text-muted mt-1">
-                  {message.length} / 3800 caracteres
-                </p>
+                <div className="flex items-center justify-between mt-1">
+                  <p className={`text-[10px] ${overLimit ? 'text-amber-400' : 'text-text-muted'}`}>
+                    {message.length} caracteres
+                    {willSplit && (
+                      <> · se enviará en <strong className="text-amber-400">{splitMessages.length} mensajes</strong> (Google Chat limita a {MAX_LEN}/mensaje)</>
+                    )}
+                    {!willSplit && (
+                      <> / {MAX_LEN} máx por mensaje</>
+                    )}
+                  </p>
+                  {partsOverLimit && (
+                    <span className="text-[10px] text-danger">
+                      ⚠️ una parte aún pasa el límite — acorta un comentario
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Individual editable comments */}
@@ -289,14 +375,27 @@ export default function GoogleChatModal({
             </button>
             <button
               onClick={handleSend}
-              disabled={!data.webhook_configured || sending || sent || !message}
+              disabled={!data.webhook_configured || sending || sent || !message || partsOverLimit}
+              title={
+                partsOverLimit
+                  ? `Una de las ${splitMessages.length} partes pasa de ${MAX_LEN} chars. Edita los comentarios.`
+                  : willSplit
+                  ? `Se enviarán ${splitMessages.length} mensajes consecutivos (la parte más larga tiene ${longestPart} chars).`
+                  : 'Enviar al espacio configurado.'
+              }
               className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
                 sent
                   ? 'bg-green-500/15 text-green-400 cursor-default'
                   : 'bg-accent text-bg-primary hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed'
               }`}
             >
-              {sent ? '✓ Enviado' : sending ? 'Enviando…' : '📤 Enviar al Chat'}
+              {sent
+                ? '✓ Enviado'
+                : sending
+                ? 'Enviando…'
+                : willSplit
+                ? `📤 Enviar en ${splitMessages.length} mensajes`
+                : '📤 Enviar al Chat'}
             </button>
           </div>
         )}
