@@ -327,6 +327,13 @@ const migration = `
       FROM creators
      WHERE is_managed = TRUE
   ON CONFLICT (creator_id, captured_on) DO NOTHING;
+
+  -- v17: Allow 'generated' source_type for AI-brainstormed ideas (Inspiration → Generate).
+  -- The original CREATE TABLE at v9 only listed 5 source types; CREATE TABLE IF NOT EXISTS
+  -- skips re-applying the constraint, so we explicitly drop & recreate it here.
+  ALTER TABLE post_ideas DROP CONSTRAINT IF EXISTS post_ideas_source_type_check;
+  ALTER TABLE post_ideas ADD CONSTRAINT post_ideas_source_type_check
+    CHECK (source_type IN ('manual','book_quote','demo_moment','observation','meeting','generated'));
 `;
 
 export async function runMigrations() {
