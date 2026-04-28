@@ -536,8 +536,8 @@ Return ONLY the JSON object. No markdown, no explanation.`,
 interface GeneratedIdea {
   title: string;
   body: string;
-  angle?: string;
-  tone?: string;
+  sub_angle?: string;
+  suggested_hook?: string;
 }
 
 const sanitizeTextShort = (t: string) =>
@@ -556,8 +556,8 @@ function parseIdeasJson(raw: string): GeneratedIdea[] {
       .map((x) => ({
         title: sanitizeTextShort(String(x.title)).substring(0, 180),
         body: sanitizeTextShort(String(x.body)).substring(0, 1200),
-        angle: x.angle ? sanitizeTextShort(String(x.angle)).substring(0, 60) : undefined,
-        tone: x.tone ? sanitizeTextShort(String(x.tone)).substring(0, 40) : undefined,
+        sub_angle: x.sub_angle ? sanitizeTextShort(String(x.sub_angle)).substring(0, 60) : undefined,
+        suggested_hook: x.suggested_hook ? sanitizeTextShort(String(x.suggested_hook)).substring(0, 220) : undefined,
       }))
       .filter((x) => x.title.length > 0 && x.body.length > 0);
   } catch {
@@ -565,153 +565,274 @@ function parseIdeasJson(raw: string): GeneratedIdea[] {
   }
 }
 
-async function callClaudeForIdeas(system: string, user: string, maxTokens = 2048): Promise<GeneratedIdea[]> {
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: maxTokens,
-    system,
-    messages: [{ role: 'user', content: user }],
-  });
-  const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
-  return parseIdeasJson(raw);
+// ─── Brainstorm v2: parametric by post type ─────────────────────────────────
+
+type PostType =
+  | 'lead_magnet' | 'opinion' | 'story' | 'listicle' | 'how_to'
+  | 'contrarian' | 'data_driven' | 'behind_scenes' | 'question' | 'news_reaction';
+
+const POST_TYPES: PostType[] = [
+  'lead_magnet', 'opinion', 'story', 'listicle', 'how_to',
+  'contrarian', 'data_driven', 'behind_scenes', 'question', 'news_reaction',
+];
+
+// One specialised system prompt per post type. Each one defines:
+// - the canonical pattern of that post type (so the model writes the right shape)
+// - examples of valid sub_angles (so 10-20 ideas come back genuinely different)
+// - what the hook should look like
+// The shared boilerplate (JSON shape, language matching, count, etc.) is appended
+// in `buildBrainstormSystem` below.
+const POST_TYPE_PROMPTS: Record<PostType, { label: string; instructions: string; subAngles: string[] }> = {
+  lead_magnet: {
+    label: 'Lead magnet',
+    instructions: `Posts tipo "comenta SÍ y te lo mando" / "escribe GUÍA abajo y te paso el PDF". El gancho promete un recurso valioso (template, checklist, base de datos, framework, dossier, audit) a cambio de un comentario simple. La estructura típica: hook con la promesa concreta del recurso → 2-3 líneas validando por qué ese recurso es valioso (resultado, datos, ahorro de tiempo) → CTA del tipo "Comenta 'X' y te lo mando" o "Escribe Y abajo y te paso Z".
+
+EL "suggested_hook" DEBE seguir literalmente uno de estos patrones (en el idioma del topic): "Comenta 'PALABRA' y te paso…", "Escribe SÍ debajo y te mando…", "Pon 'X' en comentarios y te envío…". El recurso prometido tiene que ser concreto y específico — no "te paso info", sino "te paso la plantilla de 12 emails outbound que usan los 30 mejores SDRs B2B".`,
+    subAngles: ['plantilla', 'checklist', 'base de datos', 'framework', 'audit', 'caso real / case study'],
+  },
+  opinion: {
+    label: 'Opinión / hot take',
+    instructions: `Postura clara, primera persona, polémica pero defendible. Hook = la opinión cruda, sin matices. El cuerpo aporta 2-3 razones concretas o una anécdota corta que la sostiene. Termina con un cierre o pregunta provocadora ("Cambio mi opinión?", "¿Tengo razón o estoy loco?").
+
+El "suggested_hook" debe sonar a opinión personal sin filler, NO a observación neutral. Ejemplos del tono: "Vendéis B2B y aún no hostáis vuestro CRM en HubSpot. Es un error caro.", "El mejor SDR que he contratado nunca había hecho ventas".`,
+    subAngles: ['anti-consenso', 'anti-tendencia', 'predicción polémica', 'crítica al sector', 'autocrítica'],
+  },
+  story: {
+    label: 'Personal story',
+    instructions: `Anécdota concreta → giro → lección. Hook teaser ("Hace 6 meses perdí mi mayor cliente. Lo que aprendí cambió mi forma de vender."), cuerpo narrativo en 3-5 párrafos cortos, cierre con la lección extraída. La historia debe sentirse vivida — fecha, nombre del cliente (anonimizado o real), cifras concretas, emoción.
+
+El "suggested_hook" es el primer párrafo (1-2 líneas) que abre el loop sin spoilear el desenlace.`,
+    subAngles: ['fracaso', 'aprendizaje caro', 'momento decisivo', 'mentor / lección de otro', 'cliente difícil', 'pivote'],
+  },
+  listicle: {
+    label: 'Listicle',
+    instructions: `Hook con número específico ("5 errores", "7 tácticas", "3 patrones"), cuerpo con la lista enumerada (cada item con 1-2 líneas), cierre con CTA o reflexión. El número debe ser justificable — si pones 7 es porque tienes 7 sólidos, no para inflar.
+
+El "suggested_hook" debe contener el número y el beneficio claro: "5 errores que vi en 30 calls de ventas B2B esta semana".`,
+    subAngles: ['errores comunes', 'tácticas / playbook', 'patrones observados', 'señales de alerta', 'preguntas de entrevista', 'reglas / heurísticas'],
+  },
+  how_to: {
+    label: 'How-to / framework',
+    instructions: `Framework reproducible paso a paso. Hook con el resultado prometido ("Cómo cerré 3 deals B2B con un solo email"), cuerpo con los pasos numerados (cada uno accionable, con detalle suficiente para replicar), cierre con la promesa cumplida o el siguiente paso.
+
+El "suggested_hook" debe empezar con "Cómo…" o "Así…" y prometer un resultado concreto.`,
+    subAngles: ['proceso completo', 'mini-framework (3 pasos)', 'tactic + tool stack', 'transformación antes/después', 'anti-framework (qué NO hacer)'],
+  },
+  contrarian: {
+    label: 'Contrarian',
+    instructions: `Rompe una creencia común del sector. Hook = la creencia + tu rechazo ("Todo el mundo dice X. Es mentira."), cuerpo con la prueba concreta de por qué la creencia falla (datos, anécdota, lógica), cierre con la versión correcta o el reframe.
+
+El "suggested_hook" debe nombrar explícitamente la creencia que estás rompiendo. Patrones: "Todo el mundo dice X. Es mentira.", "El consejo de 'X' está roto.", "X no funciona — y los datos lo demuestran."`,
+    subAngles: ['mito desmontado', 'consejo común roto', 'best practice obsoleta', 'sentido común invertido', 'gurú equivocado'],
+  },
+  data_driven: {
+    label: 'Data-driven',
+    instructions: `Caso o dato específico que sorprende. Hook con la cifra impactante ("Analicé 200 emails outbound. Solo el 3% tenían lo que importa."), cuerpo desglosando la metodología y el insight, cierre con la implicación para el lector.
+
+El "suggested_hook" debe contener una cifra concreta y un sujeto preciso. Evita números redondos vagos ("muchas empresas") — usa datos auditables ("12 de 47 deals", "3.4x ratio").`,
+    subAngles: ['benchmark del sector', 'mini-estudio propio', 'análisis de competencia', 'patrón estadístico', 'caso con números'],
+  },
+  behind_scenes: {
+    label: 'Behind-the-scenes',
+    instructions: `Vulnerabilidad selectiva — muestra el "cómo se hace la salchicha" que normalmente no se cuenta. Hook con la confesión o la apertura de loop ("Lo que no te cuentan sobre cerrar tu primer deal de 6 cifras…"), cuerpo con detalles concretos del proceso real (no la versión LinkedIn), cierre con la lección o el "lo que cambiaría".
+
+El "suggested_hook" debe sentirse íntimo y específico, nunca genérico ("mi proceso es…").`,
+    subAngles: ['lo que no te cuentan', 'el coste real', 'fracaso en directo', 'proceso completo paso a paso', 'la verdad sobre…'],
+  },
+  question: {
+    label: 'Pregunta / debate',
+    instructions: `Post corto (1-3 líneas) cuya función es generar comentarios. La pregunta debe forzar una postura — no admitir respuestas tibias. Buenas preguntas tienen un sesgo claro o ponen al lector en un dilema concreto.
+
+El "suggested_hook" ES el post entero — 1-2 frases. El "body" en el JSON sugiere por qué la pregunta funciona y cómo enmarcar las respuestas.`,
+    subAngles: ['dilema binario', 'unpopular opinion (pregunta)', 'asunción cuestionada', 'escenario hipotético', 'encuesta abierta'],
+  },
+  news_reaction: {
+    label: 'Reacción a noticia',
+    instructions: `El usuario te pega una noticia del sector. Tú generas reacciones distintas — al menos un ángulo optimista, uno crítico, uno práctico ("qué hacer ahora").
+
+El "suggested_hook" debe referenciar la noticia y aportar tu postura en la primera línea, no resumirla. El cuerpo aporta valor propio (datos, anécdota, predicción) — nunca resume la noticia ni dice "como leí en…".`,
+    subAngles: ['optimista / oportunidad', 'crítico / escéptico', 'práctico / qué hacer ahora', 'predicción de segundo orden', 'caso de uso concreto'],
+  },
+};
+
+function buildBrainstormSystem(postType: PostType, count: number): string {
+  const meta = POST_TYPE_PROMPTS[postType];
+  return `Eres un estratega de contenido para LinkedIn especializado en posts tipo "${meta.label}".
+
+═══ PATRÓN DE ESTE TIPO DE POST ═══
+${meta.instructions}
+
+═══ SUB-ÁNGULOS DISPONIBLES ═══
+Cuando generes ${count} ideas, asegúrate de variar el "sub_angle" — cada idea debe atacar el tema desde un sub-ángulo distinto. Ejemplos válidos para este tipo: ${meta.subAngles.map((s) => `"${s}"`).join(', ')}. Puedes proponer otros que encajen.
+
+═══ REGLAS GENERALES ═══
+- Genera EXACTAMENTE ${count} ideas, todas claramente DIFERENTES entre sí (no 3 versiones del mismo ángulo).
+- Cada idea debe ser específica y accionable — no vaguedades tipo "habla sobre la importancia de X".
+- Escribe en el idioma del topic / contexto que recibas. Si el topic está en español, responde en español. NO mezcles idiomas.
+- Cada idea es un objeto JSON con campos: "title" (1 línea, <90 chars, resume el ángulo), "body" (2-4 líneas explicando qué se desarrollaría en el post), "sub_angle" (etiqueta corta que clasifique el ángulo dentro del tipo, en minúsculas, ej: "${meta.subAngles[0]}"), "suggested_hook" (la primera línea propuesta del post real, lista para copiar).
+
+Responde SOLO un JSON array: [{"title","body","sub_angle","suggested_hook"}]. Sin markdown, sin texto extra, sin preámbulo.`;
 }
 
-// POST /api/ideas/inspiration/generate/topic
-router.post('/inspiration/generate/topic', async (req: Request, res: Response) => {
-  try {
-    const { topic, audience, count } = req.body as { topic?: string; audience?: string; count?: number };
-    if (!topic || !topic.trim()) return res.status(400).json({ error: 'topic is required' });
-    const n = Math.max(3, Math.min(8, Number(count) || 5));
-
-    const system = `Eres un estratega de contenido para LinkedIn. Generas ángulos de post distintos y accionables.
-
-REGLAS:
-- Genera exactamente ${n} ideas DIFERENTES entre sí (distintos enfoques: dato duro, historia personal, contrarian/hot take, how-to/framework, mito desmontado, caso real).
-- Cada idea debe ser específica y accionable — no vaguedades.
-- Escribe en el idioma del tema (si el tema está en español, responde en español).
-- Cada idea tiene: "title" (hook de 1 línea, <140 chars), "body" (2-4 líneas explicando el ángulo y qué desarrollar), "angle" (tag corto como "data", "story", "contrarian", "how-to", "mito").
-
-Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown, sin texto extra.`;
-
-    const user = `Tema: "${topic.trim()}"${audience?.trim() ? `\nAudiencia: ${audience.trim()}` : ''}\n\nGenera ${n} ángulos de post.`;
-
-    const ideas = await callClaudeForIdeas(system, user);
-    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
-    res.json({ ideas });
-  } catch (err: any) {
-    console.error('[Generate topic] Error:', err.message);
-    res.status(500).json({ error: err.message });
+function buildBrainstormUser(
+  postType: PostType,
+  topic: string,
+  audience: string | undefined,
+  outlierContext: string | undefined,
+  newsContext: string | undefined,
+  count: number
+): string {
+  const lines: string[] = [];
+  lines.push(`TOPIC: "${topic}"`);
+  if (audience?.trim()) lines.push(`AUDIENCIA: ${audience.trim()}`);
+  if (postType === 'news_reaction' && newsContext?.trim()) {
+    lines.push(`\nNOTICIA / CONTEXTO:\n"""\n${newsContext.trim().substring(0, 2500)}\n"""`);
   }
-});
+  if (outlierContext) {
+    lines.push(`\n${outlierContext}\n\nUsa estos posts solo como REFERENCIA del tipo de tema y tono que funciona — no copies texto, extrae los patrones y propón ángulos NUEVOS.`);
+  }
+  lines.push(`\nGenera ${count} ideas de tipo "${POST_TYPE_PROMPTS[postType].label}" sobre este topic.`);
+  return lines.join('\n');
+}
 
-// POST /api/ideas/inspiration/generate/from-outliers
-router.post('/inspiration/generate/from-outliers', async (req: Request, res: Response) => {
+// Pull outliers as inspiration context for the brainstorm prompt.
+// `grounding === 'outliers_only'` only uses validated outliers; `'all_posts'`
+// widens to all posts. `'none'` returns no context (pure brainstorm).
+async function getBrainstormContext(
+  topic: string,
+  grounding: 'outliers_only' | 'all_posts' | 'none'
+): Promise<string | undefined> {
+  if (grounding === 'none') return undefined;
+
+  const params: any[] = [];
+  let topicFilter = '';
+  // Loose match: ILIKE %topic% on either the AI-classified topic field or
+  // a substring of the content. The user's topic might be "ventas B2B" and
+  // the topic column might say "Sales Tactics" — we widen the search rather
+  // than miss everything.
+  if (topic && topic.trim()) {
+    params.push(`%${topic.trim()}%`);
+    topicFilter = `AND (p.topic ILIKE $${params.length} OR p.content_text ILIKE $${params.length})`;
+  }
+
+  const outlierFilter = grounding === 'outliers_only' ? 'AND p.is_outlier = TRUE' : '';
+
+  const { rows } = await pool.query(`
+    SELECT p.content_text, p.hook_text, p.topic, p.outlier_ratio, p.likes_count, p.comments_count
+    FROM posts p
+    WHERE p.linkedin_post_id <> 'DEMO_LIVE_POST'
+      AND p.content_text IS NOT NULL AND LENGTH(p.content_text) > 80
+      ${outlierFilter}
+      ${topicFilter}
+    ORDER BY p.outlier_ratio DESC NULLS LAST, p.engagement_score DESC NULLS LAST
+    LIMIT 12
+  `, params);
+
+  if (rows.length === 0) return undefined;
+
+  const lines: string[] = [`POSTS DE REFERENCIA (${grounding === 'outliers_only' ? 'outliers validados' : 'todos los posts'}):`];
+  rows.forEach((p: any, i: number) => {
+    const text = (p.content_text || '').replace(/\s+/g, ' ').substring(0, 350);
+    lines.push(`[${i + 1}] (${p.outlier_ratio ? p.outlier_ratio.toFixed(1) + 'x' : '—'}${p.topic ? ` | ${p.topic}` : ''}) "${text}${text.length === 350 ? '…' : ''}"`);
+  });
+  return lines.join('\n');
+}
+
+// GET /api/ideas/inspiration/trending-topics
+// Returns the top topics by outlier count from the user's classified corpus.
+// Used by the Generate tab as quick-pick chips ("what's hot in your data").
+router.get('/inspiration/trending-topics', async (_req: Request, res: Response) => {
   try {
-    const { topic, count } = req.body as { topic?: string; count?: number };
-    const n = Math.max(3, Math.min(8, Number(count) || 5));
-
-    const params: any[] = [];
-    let topicFilter = '';
-    if (topic && topic.trim()) {
-      params.push(topic.trim());
-      topicFilter = `AND p.topic = $${params.length}`;
-    }
-
-    const { rows: outliers } = await pool.query(`
-      SELECT p.content_text, p.hook_text, p.topic, p.outlier_ratio,
-             p.likes_count, p.comments_count
+    const { rows } = await pool.query(`
+      SELECT p.topic,
+             COUNT(*)::int AS outlier_count,
+             AVG(p.outlier_ratio)::float AS avg_ratio
       FROM posts p
       WHERE p.is_outlier = TRUE
         AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-        AND p.content_text IS NOT NULL AND LENGTH(p.content_text) > 80
-        ${topicFilter}
-      ORDER BY p.outlier_ratio DESC
+        AND p.topic IS NOT NULL AND p.topic != ''
+      GROUP BY p.topic
+      ORDER BY outlier_count DESC, avg_ratio DESC NULLS LAST
       LIMIT 12
-    `, params);
+    `);
+    res.json({ topics: rows });
+  } catch (err: any) {
+    console.error('[Trending topics] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    if (outliers.length < 3) {
-      return res.status(400).json({ error: 'No hay suficientes outliers trackeados para derivar ideas. Añade creadores y refresca sus posts primero.' });
+// POST /api/ideas/inspiration/brainstorm
+// Unified ideation endpoint. Replaces the 4 old /generate/* routes.
+router.post('/inspiration/brainstorm', async (req: Request, res: Response) => {
+  try {
+    const { postType, topic, audience, grounding, count, newsContext } = req.body as {
+      postType?: string;
+      topic?: string;
+      audience?: string;
+      grounding?: string;
+      count?: number;
+      newsContext?: string;
+    };
+
+    if (!postType || !POST_TYPES.includes(postType as PostType)) {
+      return res.status(400).json({ error: `postType must be one of: ${POST_TYPES.join(', ')}` });
+    }
+    if (!topic || !topic.trim()) {
+      return res.status(400).json({ error: 'topic is required' });
+    }
+    const grounded = grounding === 'all_posts' || grounding === 'none' ? grounding : 'outliers_only';
+    const n = Math.max(3, Math.min(20, Number(count) || 10));
+
+    // Pull outlier context (or skip if grounding === 'none')
+    let outlierContext = await getBrainstormContext(topic.trim(), grounded as any);
+    let groundingFallback: string | null = null;
+
+    // If user asked for outliers-only but we found nothing, fall back to all_posts
+    // rather than failing — the user gets ideas + a flag we surface in the response.
+    if (!outlierContext && grounded === 'outliers_only') {
+      outlierContext = await getBrainstormContext(topic.trim(), 'all_posts');
+      if (outlierContext) groundingFallback = 'all_posts';
     }
 
-    const context = outliers.map((p: any, i: number) => {
-      const text = (p.content_text || '').replace(/\s+/g, ' ').substring(0, 400);
-      return `[${i + 1}] (${p.outlier_ratio}x${p.topic ? ` | ${p.topic}` : ''}) "${text}"`;
-    }).join('\n\n');
+    const system = buildBrainstormSystem(postType as PostType, n);
+    const user = buildBrainstormUser(
+      postType as PostType,
+      topic.trim(),
+      audience,
+      outlierContext,
+      newsContext,
+      n
+    );
 
-    const system = `Eres un estratega de contenido. Te dan posts virales reales del feed del usuario y debes proponer ${n} ÁNGULOS NUEVOS Y ADYACENTES — no copies textos, extrae los temas recurrentes y propón variaciones frescas que exploren el mismo espacio desde otro ángulo.
+    // Higher max_tokens for larger counts (each idea ≈ 250 tokens worst case)
+    const maxTokens = Math.min(8192, 1024 + n * 320);
 
-REGLAS:
-- Identifica 3-5 temas/patrones recurrentes en los posts (no los listes, úsalos).
-- Genera ${n} ideas que sean DERIVADAS (misma familia temática) pero con un ángulo distinto al de los ejemplos.
-- Escribe en el idioma predominante de los posts.
-- Cada idea tiene: "title" (hook 1 línea, <140 chars), "body" (2-4 líneas), "angle" (tag corto).
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: maxTokens,
+      system,
+      messages: [{ role: 'user', content: user }],
+    });
+    const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
+    const ideas = parseIdeasJson(raw);
 
-Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown.`;
+    if (ideas.length === 0) {
+      return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
+    }
 
-    const user = `POSTS VIRALES REALES DEL USUARIO:\n${context}\n\nGenera ${n} ángulos nuevos y adyacentes${topic ? ` sobre "${topic}"` : ''}.`;
-
-    const ideas = await callClaudeForIdeas(system, user);
-    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
-    res.json({ ideas });
+    res.json({
+      ideas,
+      meta: {
+        postType,
+        grounding: grounded,
+        groundingFallback, // null unless we silently widened from outliers_only → all_posts
+        count: ideas.length,
+        requested: n,
+      },
+    });
   } catch (err: any) {
-    console.error('[Generate from-outliers] Error:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/ideas/inspiration/generate/conversation
-router.post('/inspiration/generate/conversation', async (req: Request, res: Response) => {
-  try {
-    const { context, count } = req.body as { context?: string; count?: number };
-    if (!context || !context.trim()) return res.status(400).json({ error: 'context is required' });
-    const n = Math.max(3, Math.min(8, Number(count) || 5));
-
-    const system = `Eres un experto en generar conversación en LinkedIn. Produces preguntas provocadoras y hot takes cortos que invitan a comentar.
-
-REGLAS:
-- ${n} propuestas DIFERENTES: mezcla pregunta directa, hipotético, hot take, contrarian, observación.
-- Cada propuesta es BREVE: 1-2 frases tipo post corto, listas para publicar o usar como apertura.
-- Deben invitar al debate — opiniones encontradas, escenarios dudosos, asunciones que muchos dan por hecho.
-- Escribe en el idioma del contexto.
-- Cada idea tiene: "title" (la pregunta o hot take, 1-2 frases), "body" (1-2 líneas sugiriendo cómo enmarcarla o por qué funciona), "angle" (tag: "pregunta", "hot-take", "contrarian", "hipotético", "observación").
-
-Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown.`;
-
-    const user = `Contexto / tema: "${context.trim()}"\n\nGenera ${n} disparadores de conversación.`;
-
-    const ideas = await callClaudeForIdeas(system, user);
-    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
-    res.json({ ideas });
-  } catch (err: any) {
-    console.error('[Generate conversation] Error:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/ideas/inspiration/generate/news
-router.post('/inspiration/generate/news', async (req: Request, res: Response) => {
-  try {
-    const { news, count } = req.body as { news?: string; count?: number };
-    if (!news || !news.trim()) return res.status(400).json({ error: 'news is required' });
-    const n = Math.max(2, Math.min(5, Number(count) || 3));
-
-    const system = `Eres un estratega de contenido. El usuario pega una noticia del sector y tú propones ${n} ángulos de post con opinión/reacción personal.
-
-REGLAS:
-- Propón ángulos DISTINTOS: al menos uno optimista/entusiasta, uno crítico/escéptico, y uno práctico/accionable ("qué hacer ahora").
-- Referencia la noticia pero aporta valor propio — no resumas, reacciona.
-- Escribe en el idioma de la noticia.
-- Cada idea tiene: "title" (hook 1 línea, <140 chars), "body" (2-4 líneas explicando el ángulo y el punto de vista), "angle" (tag: "optimista", "crítico", "práctico", u otro que describa).
-
-Responde SOLO un JSON array: [{"title","body","angle"}]. Sin markdown.`;
-
-    const user = `NOTICIA:\n"""\n${news.trim().substring(0, 2500)}\n"""\n\nGenera ${n} ángulos de post reaccionando a esta noticia.`;
-
-    const ideas = await callClaudeForIdeas(system, user);
-    if (ideas.length === 0) return res.status(500).json({ error: 'No se pudieron generar ideas, intenta de nuevo' });
-    res.json({ ideas });
-  } catch (err: any) {
-    console.error('[Generate news] Error:', err.message);
+    console.error('[Brainstorm] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

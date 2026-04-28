@@ -1,31 +1,85 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
-type Mode = 'topic' | 'outliers' | 'conversation' | 'news';
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+type PostType =
+  | 'lead_magnet' | 'opinion' | 'story' | 'listicle' | 'how_to'
+  | 'contrarian' | 'data_driven' | 'behind_scenes' | 'question' | 'news_reaction';
+
+type Grounding = 'outliers_only' | 'all_posts' | 'none';
 
 interface GeneratedIdea {
   title: string;
   body: string;
-  angle?: string;
-  tone?: string;
+  sub_angle?: string;
+  suggested_hook?: string;
 }
 
-const MODES: { key: Mode; icon: string; label: string; desc: string }[] = [
-  { key: 'topic', icon: '🎯', label: 'Tema / nicho', desc: 'Ángulos de post a partir de un tema o nicho' },
-  { key: 'outliers', icon: '🧠', label: 'Desde tus outliers', desc: 'Ideas nuevas derivadas del patrón de tus outliers' },
-  { key: 'conversation', icon: '💬', label: 'Conversación', desc: 'Preguntas y hot takes para generar debate' },
-  { key: 'news', icon: '📰', label: 'Noticia del sector', desc: 'Ángulos reaccionando a una noticia' },
+interface BrainstormResponse {
+  ideas: GeneratedIdea[];
+  meta: {
+    postType: PostType;
+    grounding: Grounding;
+    groundingFallback: Grounding | null;
+    count: number;
+    requested: number;
+  };
+}
+
+interface TrendingTopic {
+  topic: string;
+  outlier_count: number;
+  avg_ratio: number | null;
+}
+
+// ─── Static config ──────────────────────────────────────────────────────────
+
+interface PostTypeMeta {
+  key: PostType;
+  icon: string;
+  label: string;
+  desc: string;
+}
+
+const POST_TYPE_META: PostTypeMeta[] = [
+  { key: 'lead_magnet',   icon: '🧲', label: 'Lead magnet',     desc: '"Comenta SÍ y te lo mando"' },
+  { key: 'opinion',       icon: '🔥', label: 'Opinión / hot take', desc: 'Postura clara y polémica' },
+  { key: 'story',         icon: '📖', label: 'Personal story',   desc: 'Anécdota → lección' },
+  { key: 'listicle',      icon: '📋', label: 'Listicle',         desc: '"5 cosas que…", "3 pasos para…"' },
+  { key: 'how_to',        icon: '🛠️', label: 'How-to',           desc: 'Framework reproducible' },
+  { key: 'contrarian',    icon: '⚡', label: 'Contrarian',        desc: '"Todo el mundo dice X. Es mentira."' },
+  { key: 'data_driven',   icon: '📊', label: 'Data-driven',       desc: 'Caso o dato sorprendente' },
+  { key: 'behind_scenes', icon: '🎬', label: 'Behind-the-scenes', desc: 'Lo que no te cuentan' },
+  { key: 'question',      icon: '❓', label: 'Pregunta / debate', desc: 'Pregunta provocadora corta' },
+  { key: 'news_reaction', icon: '📰', label: 'Reacción a noticia', desc: 'Reacción a evento del sector' },
 ];
 
-function IdeaCard({ idea, mode, onSave }: {
+const GROUNDING_META: { key: Grounding; label: string; desc: string }[] = [
+  { key: 'outliers_only', label: 'Solo validados', desc: 'Usa outliers reales como referencia' },
+  { key: 'all_posts',     label: 'Todos los posts', desc: 'Inspiración más amplia' },
+  { key: 'none',          label: 'Sin contexto',    desc: 'Brainstorm libre sin tu corpus' },
+];
+
+const COUNT_OPTIONS = [5, 10, 20] as const;
+type CountOption = typeof COUNT_OPTIONS[number];
+
+// ─── IdeaCard ───────────────────────────────────────────────────────────────
+
+function IdeaCard({
+  idea,
+  postType,
+  onSave,
+}: {
   idea: GeneratedIdea;
-  mode: Mode;
+  postType: PostType;
   onSave: (idea: GeneratedIdea) => Promise<void>;
 }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hookCopied, setHookCopied] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
@@ -39,6 +93,17 @@ function IdeaCard({ idea, mode, onSave }: {
     setSaving(false);
   };
 
+  const copyHook = async () => {
+    if (!idea.suggested_hook) return;
+    try {
+      await navigator.clipboard.writeText(idea.suggested_hook);
+      setHookCopied(true);
+      setTimeout(() => setHookCopied(false), 1500);
+    } catch {}
+  };
+
+  const meta = POST_TYPE_META.find((m) => m.key === postType);
+
   return (
     <div className={`bg-bg-card border rounded-xl p-4 transition-all ${saved ? 'border-green-400/30 opacity-70' : 'border-border hover:border-fuchsia-400/40'}`}>
       <div className="flex items-start gap-2 mb-2">
@@ -50,18 +115,30 @@ function IdeaCard({ idea, mode, onSave }: {
         {idea.body}
       </p>
 
+      {idea.suggested_hook && (
+        <div className="mb-3 bg-bg-secondary border border-border rounded-lg p-2.5">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[9px] uppercase tracking-wide text-text-muted font-semibold">Hook sugerido</span>
+            <button
+              onClick={copyHook}
+              className="text-[10px] text-accent hover:text-accent-light transition-colors"
+            >
+              {hookCopied ? '✓ Copiado' : '📋 Copiar'}
+            </button>
+          </div>
+          <p className="text-xs text-text-primary leading-snug italic">
+            "{idea.suggested_hook}"
+          </p>
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-1.5 mb-3">
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-400/10 text-fuchsia-400 font-medium">
-          ✨ {MODES.find((m) => m.key === mode)?.label || mode}
+          {meta?.icon} {meta?.label}
         </span>
-        {idea.angle && (
+        {idea.sub_angle && (
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-bg-secondary text-text-muted">
-            {idea.angle}
-          </span>
-        )}
-        {idea.tone && (
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-bg-secondary text-text-muted">
-            {idea.tone}
+            {idea.sub_angle}
           </span>
         )}
       </div>
@@ -72,298 +149,353 @@ function IdeaCard({ idea, mode, onSave }: {
         className={`w-full py-2 rounded-lg text-xs font-medium transition-colors ${
           saved
             ? 'bg-green-500/15 text-green-400 cursor-default'
-            : 'bg-fuchsia-500/80 text-white hover:bg-fuchsia-500 disabled:opacity-50'
+            : 'bg-fuchsia-500/90 hover:bg-fuchsia-500 text-white disabled:opacity-50 disabled:cursor-not-allowed'
         }`}
       >
         {saved ? '✓ Guardado en Ideas' : saving ? 'Guardando…' : '💾 Guardar en Ideas'}
       </button>
-      {error && <p className="text-[10px] text-danger mt-2">{error}</p>}
+
+      {error && <p className="text-[10px] text-danger mt-1.5">{error}</p>}
     </div>
   );
 }
 
-interface OutlierTopicsData {
-  outliers: { topic: string | null }[];
-}
+// ─── Main component ─────────────────────────────────────────────────────────
 
 export default function GenerateTab() {
-  const [mode, setMode] = useState<Mode>('topic');
-
-  // Per-mode inputs
-  const [topicInput, setTopicInput] = useState('');
-  const [audienceInput, setAudienceInput] = useState('');
-  const [outliersTopic, setOutliersTopic] = useState('');
-  const [conversationInput, setConversationInput] = useState('');
-  const [newsInput, setNewsInput] = useState('');
-
-  // Per-mode results
-  const [results, setResults] = useState<Record<Mode, GeneratedIdea[]>>({
-    topic: [], outliers: [], conversation: [], news: [],
-  });
-  const [loading, setLoading] = useState(false);
+  // State
+  const [postType, setPostType] = useState<PostType>('opinion');
+  const [topic, setTopic] = useState('');
+  const [audience, setAudience] = useState('');
+  const [newsContext, setNewsContext] = useState('');
+  const [grounding, setGrounding] = useState<Grounding>('outliers_only');
+  const [count, setCount] = useState<CountOption>(10);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<BrainstormResponse | null>(null);
+  const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
 
-  // Outlier topics (for the "from outliers" mode) — fetched on demand
-  const [topicsList, setTopicsList] = useState<string[] | null>(null);
-  const [topicsLoading, setTopicsLoading] = useState(false);
+  // Trending topics
+  const [trending, setTrending] = useState<TrendingTopic[]>([]);
+  const [trendingLoaded, setTrendingLoaded] = useState(false);
 
-  // Load outlier topics the first time the user opens the "outliers" mode
+  // Load trending topics on mount
   useEffect(() => {
-    if (mode !== 'outliers' || topicsList !== null || topicsLoading) return;
     let cancelled = false;
-    setTopicsLoading(true);
-    (async () => {
-      try {
-        const res = await fetch(`${BASE}/api/ideas/inspiration`);
-        const data: OutlierTopicsData = await res.json();
-        const set = new Set<string>();
-        (data.outliers || []).forEach((p) => { if (p.topic) set.add(p.topic); });
-        if (!cancelled) setTopicsList([...set].sort());
-      } catch {
-        if (!cancelled) setTopicsList([]);
-      } finally {
-        if (!cancelled) setTopicsLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [mode, topicsList, topicsLoading]);
-
-  const canGenerate = useMemo(() => {
-    if (loading) return false;
-    switch (mode) {
-      case 'topic': return topicInput.trim().length > 2;
-      case 'outliers': return true;
-      case 'conversation': return conversationInput.trim().length > 2;
-      case 'news': return newsInput.trim().length > 10;
-    }
-  }, [mode, loading, topicInput, conversationInput, newsInput]);
+    fetch(`${BASE}/api/ideas/inspiration/trending-topics`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        setTrending(Array.isArray(data?.topics) ? data.topics : []);
+        setTrendingLoaded(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setTrendingLoaded(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleGenerate = async () => {
-    setLoading(true);
+    if (!topic.trim()) {
+      setError('Pon un topic primero (p.ej. "ventas B2B", "cold outreach").');
+      return;
+    }
+    if (postType === 'news_reaction' && !newsContext.trim()) {
+      setError('Pega el contexto de la noticia para generar reacciones.');
+      return;
+    }
+
+    setGenerating(true);
     setError(null);
+    setResults(null);
+    setSavedIds(new Set());
+
     try {
-      let path = '';
-      let body: any = {};
-      switch (mode) {
-        case 'topic':
-          path = '/api/ideas/inspiration/generate/topic';
-          body = { topic: topicInput.trim(), audience: audienceInput.trim() || undefined, count: 5 };
-          break;
-        case 'outliers':
-          path = '/api/ideas/inspiration/generate/from-outliers';
-          body = { topic: outliersTopic || undefined, count: 5 };
-          break;
-        case 'conversation':
-          path = '/api/ideas/inspiration/generate/conversation';
-          body = { context: conversationInput.trim(), count: 5 };
-          break;
-        case 'news':
-          path = '/api/ideas/inspiration/generate/news';
-          body = { news: newsInput.trim(), count: 3 };
-          break;
-      }
-      const res = await fetch(`${BASE}${path}`, {
+      const res = await fetch(`${BASE}/api/ideas/inspiration/brainstorm`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          postType,
+          topic: topic.trim(),
+          audience: audience.trim() || undefined,
+          grounding,
+          count,
+          newsContext: postType === 'news_reaction' ? newsContext.trim() : undefined,
+        }),
       });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error || `Error ${res.status}`); setLoading(false); return; }
-      setResults((prev) => ({ ...prev, [mode]: data.ideas || [] }));
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error || `Error ${res.status}`);
+        setGenerating(false);
+        return;
+      }
+      setResults(json);
     } catch (e: any) {
       setError(e.message || 'Error al generar ideas');
     }
-    setLoading(false);
+    setGenerating(false);
   };
 
-  const handleSaveIdea = async (idea: GeneratedIdea) => {
-    const raw_content = `${idea.title}\n\n${idea.body}`;
-    const tags = ['generated', mode];
-    if (idea.angle) tags.push(idea.angle);
+  const handleSave = async (idx: number, idea: GeneratedIdea) => {
+    if (!results) return;
+    const subAngle = idea.sub_angle || 'general';
+    const tags = ['generated', postType, subAngle];
+
+    const lines = [idea.title.trim(), '', idea.body.trim()];
+    if (idea.suggested_hook) {
+      lines.push('', `Hook sugerido: ${idea.suggested_hook.trim()}`);
+    }
+    const raw_content = lines.filter((l) => l !== undefined).join('\n');
+
     const res = await fetch(`${BASE}/api/ideas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ raw_content, source_type: 'generated', tags }),
     });
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || `Error ${res.status}`);
+      const j = await res.json().catch(() => ({}));
+      throw new Error(j.error || `Error ${res.status}`);
     }
+    setSavedIds((prev) => new Set(prev).add(idx));
   };
 
-  const currentResults = results[mode];
-  const activeMode = MODES.find((m) => m.key === mode)!;
+  // Group ideas by sub_angle for display
+  const groupedIdeas = useMemo(() => {
+    if (!results) return [];
+    const map = new Map<string, { idea: GeneratedIdea; idx: number }[]>();
+    results.ideas.forEach((idea, idx) => {
+      const key = idea.sub_angle?.trim() || 'sin clasificar';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push({ idea, idx });
+    });
+    return Array.from(map.entries());
+  }, [results]);
+
+  const handleTrendingClick = (t: TrendingTopic) => {
+    setTopic(t.topic);
+    setGrounding('outliers_only');
+  };
 
   return (
-    <div className="space-y-5">
-      {/* Mode selector */}
-      <div className="bg-bg-card border border-border rounded-xl p-4">
-        <div className="flex flex-wrap gap-2">
-          {MODES.map((m) => (
-            <button
-              key={m.key}
-              onClick={() => setMode(m.key)}
-              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                mode === m.key
-                  ? 'border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-400'
-                  : 'border-border bg-bg-secondary text-text-muted hover:border-fuchsia-400/30'
-              }`}
-            >
-              {m.icon} {m.label}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-text-muted mt-3">{activeMode.desc}</p>
-      </div>
-
-      {/* Inputs per mode */}
-      <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
-        {mode === 'topic' && (
-          <>
-            <div>
-              <label className="block text-xs text-text-muted font-medium mb-1">Tema o nicho</label>
-              <input
-                type="text"
-                value={topicInput}
-                onChange={(e) => setTopicInput(e.target.value)}
-                placeholder='Ej: "Cold outreach B2B para fundadores técnicos"'
-                className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-fuchsia-400"
-                onKeyDown={(e) => { if (e.key === 'Enter' && canGenerate) handleGenerate(); }}
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-text-muted font-medium mb-1">Audiencia (opcional)</label>
-              <input
-                type="text"
-                value={audienceInput}
-                onChange={(e) => setAudienceInput(e.target.value)}
-                placeholder='Ej: "CEOs de SaaS early stage"'
-                className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-fuchsia-400"
-              />
-            </div>
-          </>
-        )}
-
-        {mode === 'outliers' && (
-          <div>
-            <label className="block text-xs text-text-muted font-medium mb-2">
-              Filtrar por topic de tus outliers (opcional)
-            </label>
-            <div className="flex flex-wrap gap-2">
+    <div className="space-y-6">
+      {/* Trending topics — quick-pick chips from your outlier corpus */}
+      {trendingLoaded && trending.length > 0 && (
+        <div className="bg-bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
+              <span>🔥</span> Topics calientes en tus outliers
+            </p>
+            <span className="text-[10px] text-text-muted">click para usar</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {trending.map((t) => (
               <button
-                onClick={() => setOutliersTopic('')}
-                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                  !outliersTopic
-                    ? 'border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-400'
-                    : 'border-border text-text-muted hover:border-fuchsia-400/30'
+                key={t.topic}
+                onClick={() => handleTrendingClick(t)}
+                className="text-[11px] px-2.5 py-1 rounded-full bg-bg-secondary border border-border text-text-secondary hover:border-fuchsia-400/50 hover:text-text-primary transition-colors"
+                title={`${t.outlier_count} outliers · ${t.avg_ratio ? t.avg_ratio.toFixed(1) + 'x avg ratio' : ''}`}
+              >
+                {t.topic} <span className="text-text-muted">· {t.outlier_count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {trendingLoaded && trending.length === 0 && (
+        <div className="bg-bg-card border border-dashed border-border rounded-xl p-3 text-[11px] text-text-muted">
+          Aún no hay topics calientes en tu corpus — clasifica outliers desde la pestaña <strong>Steal</strong> y vuelve.
+        </div>
+      )}
+
+      {/* Post type picker — 10 cards in a 5×2 (or 2×5 mobile) grid */}
+      <div className="bg-bg-card border border-border rounded-xl p-4">
+        <p className="text-xs font-semibold text-text-primary mb-2.5">Tipo de post</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+          {POST_TYPE_META.map((m) => {
+            const active = postType === m.key;
+            return (
+              <button
+                key={m.key}
+                onClick={() => setPostType(m.key)}
+                className={`text-left p-2.5 rounded-lg border transition-all ${
+                  active
+                    ? 'border-fuchsia-400/60 bg-fuchsia-400/10'
+                    : 'border-border bg-bg-secondary hover:border-fuchsia-400/30'
                 }`}
               >
-                Todos
+                <div className="text-base mb-0.5">{m.icon}</div>
+                <div className={`text-xs font-semibold leading-tight ${active ? 'text-fuchsia-300' : 'text-text-primary'}`}>
+                  {m.label}
+                </div>
+                <div className="text-[10px] text-text-muted leading-tight mt-0.5">{m.desc}</div>
               </button>
-              {topicsLoading && <span className="text-xs text-text-muted">Cargando topics…</span>}
-              {(topicsList || []).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setOutliersTopic(outliersTopic === t ? '' : t)}
-                  className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                    outliersTopic === t
-                      ? 'border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-400'
-                      : 'border-border text-text-muted hover:border-fuchsia-400/30'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-              {topicsList && topicsList.length === 0 && !topicsLoading && (
-                <span className="text-xs text-text-muted">No hay topics aún — clasifica tus outliers primero en la pestaña Steal.</span>
-              )}
-            </div>
-          </div>
-        )}
+            );
+          })}
+        </div>
+      </div>
 
-        {mode === 'conversation' && (
+      {/* Topic + audience + grounding + count + generate */}
+      <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-text-muted font-medium mb-1">Tema o contexto</label>
-            <textarea
-              value={conversationInput}
-              onChange={(e) => setConversationInput(e.target.value)}
-              placeholder='Ej: "El fin del trabajo en oficina" o "IA reemplazando SDRs"'
-              className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-fuchsia-400 resize-none"
-              rows={3}
+            <label className="block text-[11px] text-text-muted font-medium mb-1">Topic</label>
+            <input
+              type="text"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="ventas B2B, cold outreach, hiring SDRs…"
+              className="w-full bg-bg-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-fuchsia-400/50"
             />
           </div>
-        )}
-
-        {mode === 'news' && (
           <div>
-            <label className="block text-xs text-text-muted font-medium mb-1">
-              Titular + contexto de la noticia
+            <label className="block text-[11px] text-text-muted font-medium mb-1">Audiencia (opcional)</label>
+            <input
+              type="text"
+              value={audience}
+              onChange={(e) => setAudience(e.target.value)}
+              placeholder="founders técnicos B2B, equipos de ventas industriales…"
+              className="w-full bg-bg-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-fuchsia-400/50"
+            />
+          </div>
+        </div>
+
+        {postType === 'news_reaction' && (
+          <div>
+            <label className="block text-[11px] text-text-muted font-medium mb-1">
+              Contexto de la noticia (titular + 2-3 líneas)
             </label>
             <textarea
-              value={newsInput}
-              onChange={(e) => setNewsInput(e.target.value)}
-              placeholder='Pega el titular y 2-3 líneas de contexto. Ej: "OpenAI lanza GPT-5 con razonamiento nativo. Disponible desde hoy para clientes enterprise…"'
-              className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-fuchsia-400 resize-none"
-              rows={5}
+              value={newsContext}
+              onChange={(e) => setNewsContext(e.target.value)}
+              rows={3}
+              placeholder="Pega aquí el titular y un breve resumen de la noticia"
+              className="w-full bg-bg-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-fuchsia-400/50 resize-y"
             />
-            <p className="text-[10px] text-text-muted mt-1">
-              Cuantos más datos concretos pegues (número, fecha, nombres), mejores serán los ángulos.
-            </p>
           </div>
         )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] text-text-muted font-medium mb-1">Anclaje</label>
+            <div className="flex flex-wrap gap-1.5">
+              {GROUNDING_META.map((g) => {
+                const active = grounding === g.key;
+                return (
+                  <button
+                    key={g.key}
+                    onClick={() => setGrounding(g.key)}
+                    title={g.desc}
+                    className={`text-[11px] px-2.5 py-1.5 rounded-full border transition-colors ${
+                      active
+                        ? 'border-fuchsia-400/60 bg-fuchsia-400/10 text-fuchsia-300'
+                        : 'border-border bg-bg-secondary text-text-muted hover:border-fuchsia-400/30'
+                    }`}
+                  >
+                    {g.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <label className="block text-[11px] text-text-muted font-medium mb-1">Cantidad</label>
+            <div className="flex gap-1.5">
+              {COUNT_OPTIONS.map((c) => {
+                const active = count === c;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setCount(c)}
+                    className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors ${
+                      active
+                        ? 'border-fuchsia-400/60 bg-fuchsia-400/10 text-fuchsia-300'
+                        : 'border-border bg-bg-secondary text-text-muted hover:border-fuchsia-400/30'
+                    }`}
+                  >
+                    {c} ideas
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
 
         <button
           onClick={handleGenerate}
-          disabled={!canGenerate}
-          className="w-full py-2.5 bg-fuchsia-500/80 text-white rounded-lg text-sm font-medium hover:bg-fuchsia-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          disabled={generating || !topic.trim()}
+          className="w-full py-2.5 rounded-lg text-sm font-semibold bg-fuchsia-500 hover:bg-fuchsia-400 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? '✨ Generando ideas…' : `✨ Generar ideas`}
+          {generating ? `Generando ${count} ideas…` : `✨ Generar ${count} ideas`}
         </button>
+
+        {error && (
+          <div className="bg-danger/10 border border-danger/30 rounded-lg p-2.5 text-danger text-xs">
+            {error}
+          </div>
+        )}
       </div>
 
-      {error && (
-        <div className="bg-danger/10 border border-danger/30 rounded-lg p-3 text-danger text-sm">
-          {error}
-        </div>
-      )}
-
       {/* Loading skeleton */}
-      {loading && (
+      {generating && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {[1, 2, 3, 4].map((i) => (
+          {Array.from({ length: Math.min(6, count) }).map((_, i) => (
             <div key={i} className="bg-bg-card border border-border rounded-xl p-4 animate-pulse">
-              <div className="h-4 bg-bg-secondary rounded w-3/4 mb-3" />
-              <div className="h-3 bg-bg-secondary rounded w-full mb-2" />
-              <div className="h-3 bg-bg-secondary rounded w-2/3 mb-4" />
-              <div className="h-7 bg-bg-secondary rounded w-full" />
+              <div className="h-4 bg-bg-secondary rounded w-3/4 mb-2" />
+              <div className="h-3 bg-bg-secondary rounded w-full mb-1.5" />
+              <div className="h-3 bg-bg-secondary rounded w-5/6 mb-3" />
+              <div className="h-12 bg-bg-secondary rounded mb-3" />
+              <div className="h-8 bg-bg-secondary rounded" />
             </div>
           ))}
         </div>
       )}
 
-      {/* Results */}
-      {!loading && currentResults.length > 0 && (
-        <>
-          <p className="text-xs text-text-muted">
-            {currentResults.length} idea{currentResults.length !== 1 ? 's' : ''} generada{currentResults.length !== 1 ? 's' : ''} — guarda las que te gusten y pásalas a <span className="text-fuchsia-400">Ideas</span> para generar variantes.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {currentResults.map((idea, i) => (
-              <IdeaCard
-                key={`${mode}-${i}-${idea.title.slice(0, 20)}`}
-                idea={idea}
-                mode={mode}
-                onSave={handleSaveIdea}
-              />
-            ))}
+      {/* Results — grouped by sub_angle */}
+      {results && !generating && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-text-muted">
+              <strong className="text-text-primary">{results.ideas.length} ideas generadas</strong> ·
+              guarda las que te gusten y pásalas a <a href="/ideas" className="text-accent hover:text-accent-light underline">Ideas</a> para generar variantes.
+            </p>
+            <button
+              onClick={handleGenerate}
+              className="text-[11px] text-fuchsia-400 hover:text-fuchsia-300 transition-colors"
+            >
+              ↻ Regenerar
+            </button>
           </div>
-        </>
-      )}
 
-      {!loading && currentResults.length === 0 && !error && (
-        <div className="text-center py-10 text-text-muted text-sm">
-          <p className="text-3xl mb-2">✨</p>
-          <p>Rellena el input y pulsa "Generar ideas" para empezar a brainstormear.</p>
+          {results.meta.groundingFallback && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2.5 text-amber-400 text-[11px]">
+              ⚠️ No se encontraron outliers para "{topic}" — generamos las ideas usando todos tus posts como referencia.
+            </div>
+          )}
+
+          {groupedIdeas.map(([subAngle, items]) => (
+            <div key={subAngle}>
+              <p className="text-[10px] uppercase tracking-wide text-text-muted font-semibold mb-2 pl-1">
+                {subAngle} <span className="text-text-muted">· {items.length}</span>
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {items.map(({ idea, idx }) => (
+                  <IdeaCard
+                    key={idx}
+                    idea={idea}
+                    postType={postType}
+                    onSave={async () => {
+                      if (savedIds.has(idx)) return;
+                      await handleSave(idx, idea);
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
