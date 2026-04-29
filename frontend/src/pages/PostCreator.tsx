@@ -3,6 +3,7 @@ import LinkedInPostPreview from '../components/postcreator/LinkedInPostPreview';
 import CreatorProfileForm from '../components/postcreator/CreatorProfileForm';
 import PostChecklist from '../components/postcreator/PostChecklist';
 import MarkdownMessage from '../components/postcreator/MarkdownMessage';
+import ImageGenerator from '../components/postcreator/ImageGenerator';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -359,6 +360,12 @@ export default function PostCreator() {
                 </div>
                 <div className="mt-4 max-w-lg mx-auto">
                   <PostChecklist text={activePreviewText} onImproved={setManualPreview} />
+                </div>
+                {/* Image generator — collapsed by default. Lives at the bottom
+                    of the preview column so the user reaches for it after the
+                    post text feels right. */}
+                <div className="mt-4 max-w-lg mx-auto">
+                  <ImageGenerator postContext={activePreviewText} />
                 </div>
               </>
             ) : (

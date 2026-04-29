@@ -20,6 +20,7 @@ import analysisRouter from './routes/analysis';
 import chatRouter from './routes/chat';
 import networkRouter from './routes/network';
 import postCreatorProfileRouter from './routes/postCreatorProfile';
+import imageGeneratorRouter from './routes/imageGenerator';
 import discoverRouter from './routes/discover';
 import ideasRouter from './routes/ideas';
 import accountsRouter from './routes/accounts';
@@ -29,7 +30,10 @@ const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
 app.use(cors({ origin: '*' }));
-app.use(express.json());
+// Limit lifted from the default (~100kb) so the Post Creator image generator
+// can POST base64-encoded reference images / logos. Capped at 16mb to stay
+// well under typical proxy limits.
+app.use(express.json({ limit: '16mb' }));
 
 // Log every request
 app.use((req, _res, next) => {
@@ -46,6 +50,9 @@ app.use('/api/analysis', analysisRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/network', networkRouter);
 app.use('/api/post-creator/profile', postCreatorProfileRouter);
+// Image generation lives under /api/post-creator/* alongside the profile route
+// so the Post Creator preview UI can call sibling endpoints.
+app.use('/api/post-creator', imageGeneratorRouter);
 app.use('/api/discover', discoverRouter);
 app.use('/api/ideas', ideasRouter);
 app.use('/api/accounts', accountsRouter);
