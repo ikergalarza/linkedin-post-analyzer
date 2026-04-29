@@ -47,6 +47,16 @@ interface Result {
   model: string;
   size: string;
   prompt: string;
+  allowText?: boolean;
+  textIntentAuto?: boolean;
+}
+
+// Mirror of the backend heuristic. Used to give the user a visual hint that
+// auto-detection has spotted text intent in their prompt, so they understand
+// why the toggle is going to flip.
+function detectTextIntent(prompt: string): boolean {
+  const p = prompt.toLowerCase();
+  return /\b(tweet|tuit|screenshot|captura\s+de|poster|cartel|letrero|sign|quote|cita|frase|mensaje|caption|subt[íi]tulo|t[íi]tulo|titular|headline|que\s+diga|that\s+says|with\s+the\s+text|con\s+el\s+texto|texto\s+que\s+diga|texto:|writes?\s+that|escribe\s+que|reads?\s+that)\b/.test(p);
 }
 
 // Read a File as a data URL (kept inline so the component is self-contained).
@@ -77,6 +87,11 @@ export default function ImageGenerator({
   const [styleText, setStyleText] = useState('');
   const [palette, setPalette] = useState('');
   const [size, setSize] = useState<Size>('1024x1024');
+  // Tri-state text policy:
+  //   'auto' (default) → backend decides from the prompt
+  //   'on'  → force text in image (overrides auto)
+  //   'off' → forbid text in image (overrides auto)
+  const [textPolicy, setTextPolicy] = useState<'auto' | 'on' | 'off'>('auto');
 
   const [logoFile, setLogoFile] = useState<{ file: File; dataUrl: string } | null>(null);
   const [referenceFile, setReferenceFile] = useState<{ file: File; dataUrl: string } | null>(null);
@@ -141,6 +156,11 @@ export default function ImageGenerator({
           logoDataUrl: logoFile?.dataUrl,
           referenceDataUrl: referenceFile?.dataUrl,
           postContext: postContext?.trim() || undefined,
+          // Send `allowText` only when the user has explicitly chosen on/off.
+          // Leaving it undefined lets the backend auto-detect, which keeps
+          // the no-text default for the common case.
+          allowText:
+            textPolicy === 'auto' ? undefined : textPolicy === 'on',
         }),
       });
       const json = await res.json();
@@ -317,6 +337,49 @@ export default function ImageGenerator({
                 );
               })}
             </div>
+          </div>
+
+          {/* Text-in-image policy. Defaults to "auto" (backend reads the
+              prompt). Use "Sí" when asking for tweets, posters, quotes, etc.
+              to force the model to render the literal text. Use "No" when
+              you want a clean illustrative image. */}
+          <div>
+            <label className="block text-[11px] text-text-muted font-medium mb-1">
+              ¿Texto en la imagen?
+              {textPolicy === 'auto' && detectTextIntent(prompt) && (
+                <span className="ml-1.5 text-[10px] text-accent">✨ detectado en el prompt</span>
+              )}
+            </label>
+            <div className="flex gap-1">
+              {([
+                ['auto', 'Auto', 'Decide según el prompt'],
+                ['on',   'Sí',   'Forzar texto (tweets, citas, posters…)'],
+                ['off',  'No',   'Imagen ilustrativa, sin letras'],
+              ] as const).map(([key, label, hint]) => {
+                const active = textPolicy === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setTextPolicy(key)}
+                    title={hint}
+                    className={`text-[10px] px-2.5 py-1 rounded-full border transition-colors ${
+                      active
+                        ? 'border-accent/50 bg-accent/10 text-accent'
+                        : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            {textPolicy === 'on' && (
+              <p className="text-[10px] text-text-muted mt-1 leading-snug">
+                Mete entre comillas el texto exacto que quieres ver.
+                Ej: <em>un tweet que diga "Si haces outbound como hace 5 años, estás quemando dinero"</em>.
+              </p>
+            )}
           </div>
 
           {/* Optional uploads */}

@@ -33,6 +33,14 @@ async function dataUrlToFile(dataUrl: string, name: string) {
   return toFile(buffer, name, { type: mime });
 }
 
+// Auto-detect when the user is asking for an image that NEEDS text in it.
+// Without this we used to blanket-forbid text and the model would silently
+// drop the user's "tweet that says X" intent in favour of a thematic collage.
+function detectTextIntent(prompt: string): boolean {
+  const p = prompt.toLowerCase();
+  return /\b(tweet|tuit|screenshot|captura\s+de|poster|cartel|letrero|sign|quote|cita|frase|mensaje|caption|subt[íi]tulo|t[íi]tulo|titular|headline|que\s+diga|that\s+says|with\s+the\s+text|con\s+el\s+texto|texto\s+que\s+diga|texto:|writes?\s+that|escribe\s+que|reads?\s+that)\b/.test(p);
+}
+
 // Compose the final prompt from the user's intent plus optional modifiers.
 // We keep their prompt as the centerpiece and append style / palette / context
 // as instructions the model can layer on top.
@@ -43,8 +51,14 @@ function buildPrompt(opts: {
   hasLogo?: boolean;
   hasReference?: boolean;
   postContext?: string;
+  // Caller can force text on/off; if undefined we auto-detect from the prompt.
+  allowText?: boolean;
 }): string {
   const parts: string[] = [opts.prompt.trim()];
+
+  // Resolve the text policy first so downstream logic (postContext gating,
+  // hard rules) can branch on it.
+  const allowText = opts.allowText !== undefined ? opts.allowText : detectTextIntent(opts.prompt);
 
   if (opts.style?.trim()) {
     parts.push(`Visual style: ${opts.style.trim()}.`);
@@ -64,13 +78,32 @@ function buildPrompt(opts: {
       'A reference image is also provided as a STYLE / COMPOSITION guide only. Do not copy its content; mirror its mood, lighting and layout patterns.'
     );
   }
-  if (opts.postContext?.trim()) {
-    parts.push(`The image accompanies this LinkedIn post (use only as context, do not include literal text from it):\n"""\n${opts.postContext.trim().slice(0, 800)}\n"""`);
+
+  // Only inject postContext when the image is meant to ACCOMPANY the post
+  // (no text in image). When the user asked for text-in-image, the post
+  // context fights with their prompt and the model produces collages — see
+  // the "tweet of an industrial outbound quote" failure case.
+  if (!allowText && opts.postContext?.trim()) {
+    parts.push(
+      `The image accompanies this LinkedIn post (use only as context, do not include literal text from it):\n"""\n${opts.postContext.trim().slice(0, 800)}\n"""`
+    );
   }
 
-  // Hard rules to reduce common failure modes on social-media imagery.
+  // Text policy. Was a hard "no text ever" rule which broke "tweet that
+  // says X" prompts; now it adapts to user intent.
+  if (allowText) {
+    parts.push(
+      'Text policy: render the text from the user\'s prompt VERBATIM — preserve every word, accent and punctuation exactly as written. Type must be crisp and legible; no decorative or distorted lettering unless the prompt explicitly asks for it. Do not invent additional text beyond what the user specified.'
+    );
+  } else {
+    parts.push(
+      'Text policy: do NOT include any text, words, letters or numbers in the image (the LinkedIn post already carries the text).'
+    );
+  }
+
+  // General quality rules — independent of the text policy.
   parts.push(
-    'Hard rules: do NOT include any text, words, letters or numbers in the image (LinkedIn posts have their own text). Avoid generic stock-photo aesthetics. Prefer specific, distinctive compositions over safe defaults.'
+    'Avoid generic stock-photo aesthetics. Prefer specific, distinctive compositions over safe defaults.'
   );
 
   return parts.join('\n\n');
@@ -104,6 +137,12 @@ router.post('/generate-image', async (req: Request, res: Response) => {
     const style = typeof body.style === 'string' ? body.style : undefined;
     const palette = typeof body.palette === 'string' ? body.palette : undefined;
     const postContext = typeof body.postContext === 'string' ? body.postContext : undefined;
+    // `allowText` modes:
+    //   true  → user explicitly wants text in the image (tweet, quote, poster…)
+    //   false → user explicitly forbids text
+    //   undefined → auto-detect from prompt heuristics
+    const allowText: boolean | undefined =
+      typeof body.allowText === 'boolean' ? body.allowText : undefined;
     const sizeRaw = typeof body.size === 'string' ? body.size : '1024x1024';
     const size: SizeOption = (VALID_SIZES as string[]).includes(sizeRaw)
       ? (sizeRaw as SizeOption)
@@ -126,7 +165,12 @@ router.post('/generate-image', async (req: Request, res: Response) => {
       hasLogo: !!logoDataUrl,
       hasReference: !!referenceDataUrl,
       postContext,
+      allowText,
     });
+    // Resolve once for the response, so the frontend can show the user
+    // whether text-in-image was applied (auto or explicit).
+    const resolvedAllowText =
+      allowText !== undefined ? allowText : detectTextIntent(prompt);
 
     const client = new OpenAI({ apiKey });
 
@@ -166,6 +210,9 @@ router.post('/generate-image', async (req: Request, res: Response) => {
       model: IMAGE_MODEL,
       size,
       prompt: finalPrompt,
+      // Surface the resolved text policy so the UI can show it (auto vs explicit).
+      allowText: resolvedAllowText,
+      textIntentAuto: allowText === undefined,
     });
   } catch (err: any) {
     // OpenAI errors carry a structured `.status` and `.error.message`. Surface
