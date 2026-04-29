@@ -21,6 +21,7 @@ import chatRouter from './routes/chat';
 import networkRouter from './routes/network';
 import postCreatorProfileRouter from './routes/postCreatorProfile';
 import imageGeneratorRouter from './routes/imageGenerator';
+import carouselGeneratorRouter from './routes/carouselGenerator';
 import discoverRouter from './routes/discover';
 import ideasRouter from './routes/ideas';
 import accountsRouter from './routes/accounts';
@@ -53,6 +54,7 @@ app.use('/api/post-creator/profile', postCreatorProfileRouter);
 // Image generation lives under /api/post-creator/* alongside the profile route
 // so the Post Creator preview UI can call sibling endpoints.
 app.use('/api/post-creator', imageGeneratorRouter);
+app.use('/api/post-creator', carouselGeneratorRouter);
 app.use('/api/discover', discoverRouter);
 app.use('/api/ideas', ideasRouter);
 app.use('/api/accounts', accountsRouter);

@@ -4,6 +4,7 @@ import CreatorProfileForm from '../components/postcreator/CreatorProfileForm';
 import PostChecklist, { scorePost } from '../components/postcreator/PostChecklist';
 import MarkdownMessage from '../components/postcreator/MarkdownMessage';
 import ImageGenerator from '../components/postcreator/ImageGenerator';
+import CarouselGenerator from '../components/postcreator/CarouselGenerator';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -553,7 +554,14 @@ export default function PostCreator() {
                     />
                   </div>
 
-                  {/* 3. Full score panel with all detail (collapsible internal sections) */}
+                  {/* 3. Carousel generator — collapsed by default. Writes
+                      slide content with Claude, renders Neety-branded HTML
+                      templates, exports to PDF for LinkedIn document posts. */}
+                  <div className="max-w-lg mx-auto">
+                    <CarouselGenerator postContext={activePreviewText} />
+                  </div>
+
+                  {/* 4. Full score panel with all detail (collapsible internal sections) */}
                   <div className="max-w-lg mx-auto">
                     <PostChecklist text={activePreviewText} onImproved={setManualPreview} />
                   </div>

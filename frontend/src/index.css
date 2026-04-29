@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Neety brand fonts — used by the carousel generator templates so the
+   exported PDFs render in the actual brand typography, not a substitute.
+   Switzer comes from Fontshare (free, no-account CDN); Bricolage Grotesque
+   is on Google Fonts. Loaded early so html2canvas captures fully-rendered
+   glyphs (we also gate the export on document.fonts.ready). */
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap');
+
 @theme {
   --color-bg-primary: #0f1117;
   --color-bg-secondary: #1a1d27;
