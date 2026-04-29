@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface Props {
   text: string;
@@ -6,6 +6,10 @@ interface Props {
   authorHeadline?: string | null;
   authorImage?: string | null;
   followersCount?: number | null;
+  // When set, overrides the local drag/drop image with whatever the
+  // parent has provided (typically the AI-generated result). The user
+  // can still clear it via the ✕ button on the image overlay.
+  externalImageUrl?: string | null;
 }
 
 type ViewMode = 'desktop' | 'mobile';
@@ -265,12 +269,35 @@ export default function LinkedInPostPreview({
   authorHeadline,
   authorImage,
   followersCount,
+  externalImageUrl,
 }: Props) {
   const [view, setView] = useState<ViewMode>('desktop');
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
   const [imageRatio, setImageRatio] = useState<ImageRatio>('1:1');
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // External (AI-generated) wins; local drag/drop is the fallback. The user
+  // can hide either via the ✕ overlay; when the parent pushes a NEW external
+  // URL we un-hide automatically so a regenerated image appears in the post.
+  const [externalCleared, setExternalCleared] = useState(false);
+  useEffect(() => {
+    // Any time externalImageUrl changes (parent generated/regenerated), reset
+    // the user-cleared flag so the new image is visible.
+    setExternalCleared(false);
+  }, [externalImageUrl]);
+
+  const effectiveExternalUrl = externalCleared ? null : externalImageUrl;
+  const imageUrl = effectiveExternalUrl || localImageUrl;
+  const setImageUrl = (url: string | null) => {
+    if (url === null) {
+      setLocalImageUrl(null);
+      if (effectiveExternalUrl) setExternalCleared(true);
+    } else {
+      setExternalCleared(false);
+      setLocalImageUrl(url);
+    }
+  };
 
   const CARD_WIDTH = view === 'desktop' ? 555 : 347;
   const chars = charCount(text);

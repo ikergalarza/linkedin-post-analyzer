@@ -1,13 +1,20 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
 type Size = '1024x1024' | '1024x1536' | '1536x1024';
 
-const SIZE_OPTIONS: { key: Size; label: string; aspect: string }[] = [
-  { key: '1024x1024', label: 'Cuadrada',  aspect: '1:1'  },
-  { key: '1536x1024', label: 'Apaisada',  aspect: '3:2'  },
-  { key: '1024x1536', label: 'Vertical',  aspect: '2:3'  },
+// gpt-image-2 only supports these three sizes natively. For LinkedIn the
+// closest matches to each native ratio:
+//   1024×1024 (1:1)  → LinkedIn feed image (recommended 1200×1200) — exact match
+//   1024×1536 (2:3)  → LinkedIn portrait (recommended 4:5 = 1080×1350) — slightly taller, crop after
+//   1536×1024 (3:2)  → LinkedIn landscape / link preview (recommended 1.91:1 = 1200×627) — slightly less wide
+// We label the native ratio + the LinkedIn use case so the user knows what
+// to expect. For exact-fit LinkedIn ratios crop in any image editor after.
+const SIZE_OPTIONS: { key: Size; label: string; sub: string }[] = [
+  { key: '1024x1024', label: 'Cuadrada · 1:1',   sub: 'feed standard' },
+  { key: '1024x1536', label: 'Vertical · 2:3',   sub: 'tipo 4:5 LinkedIn' },
+  { key: '1536x1024', label: 'Apaisada · 3:2',   sub: 'tipo link preview' },
 ];
 
 // Curated style presets — small enough to be scannable, broad enough to cover
@@ -93,12 +100,44 @@ export default function ImageGenerator({
   //   'off' → forbid text in image (overrides auto)
   const [textPolicy, setTextPolicy] = useState<'auto' | 'on' | 'off'>('auto');
 
+  // Compact mode hides the heavy advanced fields (style / palette / uploads /
+  // text policy) behind a toggle. Always-visible: prompt, size, generate.
+  // Useful when this component lives inside a tight column alongside the
+  // post preview.
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   const [logoFile, setLogoFile] = useState<{ file: File; dataUrl: string } | null>(null);
   const [referenceFile, setReferenceFile] = useState<{ file: File; dataUrl: string } | null>(null);
 
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+
+  // Elapsed-time tracker for the loading state. The OpenAI image API is
+  // blocking and exposes no progress events, so we surface elapsed seconds +
+  // a rotating phase hint to keep the wait understandable.
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!generating) {
+      setElapsed(0);
+      return;
+    }
+    const start = Date.now();
+    const t = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - start) / 1000));
+    }, 250);
+    return () => clearInterval(t);
+  }, [generating]);
+
+  const PHASES = [
+    'Pensando composición',
+    'Aplicando estilo',
+    'Aplicando paleta',
+    'Renderizando detalles',
+    'Puliendo',
+    'Casi',
+  ];
+  const phaseLabel = PHASES[Math.min(Math.floor(elapsed / 7), PHASES.length - 1)];
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const referenceInputRef = useRef<HTMLInputElement>(null);
@@ -248,6 +287,60 @@ export default function ImageGenerator({
             />
           </div>
 
+          {/* Always-visible: Tamaño (small row of 3 pills). gpt-image-2 only
+              ships these three native sizes; the sub-label maps each to the
+              closest LinkedIn use case. */}
+          <div>
+            <label className="block text-[11px] text-text-muted font-medium mb-1">Tamaño</label>
+            <div className="flex flex-wrap gap-1">
+              {SIZE_OPTIONS.map((s) => {
+                const active = size === s.key;
+                return (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => setSize(s.key)}
+                    title={s.sub}
+                    className={`text-[10px] px-2.5 py-1 rounded-full border transition-colors ${
+                      active
+                        ? 'border-accent/50 bg-accent/10 text-accent'
+                        : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-text-muted mt-1 leading-snug">
+              gpt-image-2 solo genera estos tres tamaños nativos. Para encajar exactamente con LinkedIn (1:1 1200×1200, 4:5 1080×1350, 1.91:1 1200×627) recorta después en cualquier editor.
+            </p>
+          </div>
+
+          {/* Advanced fields toggle. Prompt + size + generate are the minimum
+              form; everything else (style, palette, text policy, uploads)
+              lives behind this toggle so the panel stays short by default. */}
+          <button
+            type="button"
+            onClick={() => setShowAdvanced((v) => !v)}
+            className="w-full flex items-center justify-between text-[11px] text-text-muted hover:text-text-primary py-1.5 px-2 rounded border border-border bg-bg-secondary/50 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <span className={`transition-transform ${showAdvanced ? 'rotate-90' : ''}`}>▸</span>
+              Más opciones
+              {!showAdvanced && (
+                <span className="text-[10px] text-text-muted">
+                  estilo · paleta · referencia · texto
+                </span>
+              )}
+            </span>
+            {!showAdvanced && (styleText || palette || logoFile || referenceFile || textPolicy !== 'auto') && (
+              <span className="text-[10px] text-accent">configurado</span>
+            )}
+          </button>
+
+          {showAdvanced && (
+            <>
           {/* Style presets + free text */}
           <div>
             <label className="block text-[11px] text-text-muted font-medium mb-1">Estilo</label>
@@ -315,30 +408,6 @@ export default function ImageGenerator({
             />
           </div>
 
-          {/* Size */}
-          <div>
-            <label className="block text-[11px] text-text-muted font-medium mb-1">Tamaño</label>
-            <div className="flex gap-1">
-              {SIZE_OPTIONS.map((s) => {
-                const active = size === s.key;
-                return (
-                  <button
-                    key={s.key}
-                    type="button"
-                    onClick={() => setSize(s.key)}
-                    className={`text-[10px] px-2.5 py-1 rounded-full border transition-colors ${
-                      active
-                        ? 'border-accent/50 bg-accent/10 text-accent'
-                        : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'
-                    }`}
-                  >
-                    {s.label} <span className="text-text-muted">· {s.aspect}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Text-in-image policy. Defaults to "auto" (backend reads the
               prompt). Use "Sí" when asking for tweets, posters, quotes, etc.
               to force the model to render the literal text. Use "No" when
@@ -401,16 +470,33 @@ export default function ImageGenerator({
               hint="Guía de estilo / composición"
             />
           </div>
+            </>
+          )}
 
-          {/* Generate button */}
+          {/* Generate button + progress signal. The image API is blocking and
+              has no native progress events, so we show elapsed seconds + a
+              rotating phase label to make the wait legible. */}
           <button
             type="button"
             onClick={handleGenerate}
             disabled={generating || !prompt.trim()}
-            className="w-full py-2 rounded-lg text-xs font-semibold bg-accent text-bg-primary hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2 rounded-lg text-xs font-semibold bg-accent text-bg-primary hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
-            {generating ? '🎨 Generando…' : '✨ Generar imagen'}
+            {generating ? (
+              <>
+                <span className="inline-block w-3 h-3 rounded-full border-2 border-bg-primary border-t-transparent animate-spin" />
+                <span>{phaseLabel}…</span>
+                <span className="tabular-nums text-bg-primary/70">{elapsed}s</span>
+              </>
+            ) : (
+              <>✨ {result ? 'Regenerar imagen' : 'Generar imagen'}</>
+            )}
           </button>
+          {generating && (
+            <p className="text-[10px] text-text-muted text-center leading-snug">
+              gpt-image-2 normalmente tarda 15–40s. No hay progreso real disponible — solo tiempo transcurrido.
+            </p>
+          )}
 
           {error && (
             <div className={`text-xs rounded-lg px-2.5 py-1.5 ${
