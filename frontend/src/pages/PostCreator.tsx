@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import LinkedInPostPreview from '../components/postcreator/LinkedInPostPreview';
 import CreatorProfileForm from '../components/postcreator/CreatorProfileForm';
-import PostChecklist from '../components/postcreator/PostChecklist';
+import PostChecklist, { scorePost } from '../components/postcreator/PostChecklist';
 import MarkdownMessage from '../components/postcreator/MarkdownMessage';
 import ImageGenerator from '../components/postcreator/ImageGenerator';
 
@@ -27,11 +27,71 @@ const SUGGESTIONS = [
 ];
 
 type Tab = 'chat' | 'profile';
+type PreviewTab = 'preview' | 'score' | 'image';
 
-// Extract all post blocks (text between --- markers) from an assistant message
+// Extract post blocks from an assistant message. Tries several strategies in
+// order so it works whether the model emits `---` separators, numbered
+// "OPCIÓN" / "OPTION" / "VARIANTE" headings, fenced code blocks, or none.
 function extractPostBlocks(content: string): string[] {
-  const blocks = content.split(/\n---+\n/).map((b) => b.trim()).filter((b) => b.length > 50);
-  return blocks;
+  const cleaned = content.trim();
+  if (cleaned.length < 50) return [];
+
+  // 1. `---` delimited (legacy explicit separator)
+  const dashed = cleaned.split(/\n---+\n/).map((b) => b.trim()).filter((b) => b.length > 50);
+  if (dashed.length >= 2) return dashed;
+
+  // 2. Numbered "OPCIÓN N" / "OPTION N" / "VARIANTE N" / "VERSIÓN N" headings.
+  // This is what the chat actually emits most of the time, and is what the
+  // user sees in the screenshot. Each match starts a new block; the block
+  // runs until the next match or end of message.
+  const optionRegex =
+    /(?:^|\n)\s*(?:📌|✨|🎯|📝|⭐)?\s*(?:OPCIÓN|OPCION|OPTION|VARIANT|VARIANTE|VERSIÓN|VERSION|VARIACIÓN|VARIACION|VARIATION)\s*\d+\s*[:\-—]/gi;
+  const matches = [...cleaned.matchAll(optionRegex)];
+  if (matches.length >= 2) {
+    const blocks: string[] = [];
+    for (let i = 0; i < matches.length; i++) {
+      const start = matches[i].index ?? 0;
+      const end = i + 1 < matches.length ? (matches[i + 1].index ?? cleaned.length) : cleaned.length;
+      blocks.push(cleaned.slice(start, end).trim());
+    }
+    return blocks.filter((b) => b.length > 50);
+  }
+
+  // 3. Fenced code blocks (the model sometimes wraps the post in ```)
+  const fenceMatches = [...cleaned.matchAll(/```(?:[a-zA-Z0-9_-]*\n)?([\s\S]+?)```/g)];
+  if (fenceMatches.length >= 1) {
+    const blocks = fenceMatches.map((m) => m[1].trim()).filter((b) => b.length > 50);
+    if (blocks.length >= 1) return blocks;
+  }
+
+  // 4. Fall back: treat the whole message as a single block. The user can
+  // always click "send to preview" and trim by hand.
+  return [cleaned];
+}
+
+// Within a single detected block, find the actual post text. The chat often
+// wraps the post in commentary ("📌 OPCIÓN 1: archetype name…\n\n<post>\n\nPor
+// qué funciona: …"). We strip leading heading lines and trailing meta lines
+// so the preview gets the post body, not the wrapper text.
+function cleanBlockForPreview(block: string): string {
+  let text = block.trim();
+
+  // Strip a leading "OPCIÓN N: …" heading line and any immediately-following
+  // metadata line in parentheses (e.g. "(Arquetipo con 5.8x ratio…)").
+  text = text.replace(
+    /^\s*(?:📌|✨|🎯|📝|⭐)?\s*(?:OPCIÓN|OPCION|OPTION|VARIANT|VARIANTE|VERSIÓN|VERSION|VARIACIÓN|VARIACION|VARIATION)\s*\d+[^\n]*\n+/i,
+    ''
+  );
+  text = text.replace(/^\s*\([^)]*\)\s*\n+/, '');
+
+  // Strip a trailing "Por qué funciona:" / "Why this works:" commentary block
+  // (everything from that label to the end of the block).
+  text = text.replace(/\n+(?:Por qué funciona|Why this works|Why it works)[\s\S]*$/i, '');
+
+  // Strip surrounding code-block fences if any survived.
+  text = text.replace(/^```[a-zA-Z0-9_-]*\n?/, '').replace(/\n?```\s*$/, '');
+
+  return text.trim();
 }
 
 export default function PostCreator() {
@@ -43,6 +103,14 @@ export default function PostCreator() {
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [previewText, setPreviewText] = useState<string>('');
   const [manualPreview, setManualPreview] = useState<string>('');
+  // The right column is split into 3 tabs (Preview / Score / Image) instead
+  // of a single tall scroll. State persists per-mount so the user keeps
+  // their context after Auto-improve runs etc.
+  const [previewTab, setPreviewTab] = useState<PreviewTab>('preview');
+  const [editingText, setEditingText] = useState(false);
+  // Track whether the image generator has produced a result, so the Image
+  // tab label can show a discreet checkmark.
+  const [imageGenerated, setImageGenerated] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -73,14 +141,22 @@ export default function PostCreator() {
       if (messages[i].role === 'assistant') {
         const blocks = extractPostBlocks(messages[i].content);
         if (blocks.length > 0) {
-          // Pick longest block (typically the full post)
+          // Pick longest block (typically the full post) and strip wrapper text
           const longest = blocks.reduce((a, b) => (a.length > b.length ? a : b));
-          setPreviewText(longest);
+          setPreviewText(cleanBlockForPreview(longest));
           return;
         }
       }
     }
   }, [messages]);
+
+  // Live score for the Score tab label. Computed here (not inside PostChecklist)
+  // so the badge updates even when the user is on the Preview or Image tab.
+  const liveScore = useMemo(() => {
+    const text = manualPreview || previewText;
+    if (!text || text.trim().length < 20) return null;
+    return scorePost(text).overall;
+  }, [manualPreview, previewText]);
 
   const sendMessage = async (text?: string) => {
     const content = text || input.trim();
@@ -251,28 +327,49 @@ export default function PostCreator() {
                       <div>
                         <MarkdownMessage content={msg.content} />
 
-                        {msg.content && !streaming && (
-                          <div className="flex gap-2 mt-3 pt-2 border-t border-border/50 flex-wrap">
-                            <button
-                              onClick={() => copyToClipboard(msg.content)}
-                              className="text-[10px] text-text-muted hover:text-accent transition-colors"
-                            >
-                              Copy all
-                            </button>
-                            {extractPostBlocks(msg.content).map((block, bi) => (
-                              <button
-                                key={bi}
-                                onClick={() => {
-                                  setManualPreview(block);
-                                  copyToClipboard(block);
-                                }}
-                                className="text-[10px] text-accent hover:text-accent-light transition-colors"
-                              >
-                                Preview post {extractPostBlocks(msg.content).length > 1 ? bi + 1 : ''}
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        {msg.content && !streaming && (() => {
+                          const blocks = extractPostBlocks(msg.content);
+                          const showPerBlockButtons = blocks.length > 1;
+                          return (
+                            <div className="flex gap-1.5 mt-3 pt-2 border-t border-border/50 flex-wrap items-center">
+                              {showPerBlockButtons ? (
+                                blocks.map((block, bi) => (
+                                  <button
+                                    key={bi}
+                                    onClick={() => {
+                                      const clean = cleanBlockForPreview(block);
+                                      setManualPreview(clean);
+                                      setPreviewTab('preview');
+                                    }}
+                                    className="text-[11px] px-2.5 py-1 rounded-md border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+                                  >
+                                    📤 Preview opción {bi + 1}
+                                  </button>
+                                ))
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    const block = blocks[0] || msg.content;
+                                    const clean = cleanBlockForPreview(block);
+                                    setManualPreview(clean);
+                                    setPreviewTab('preview');
+                                  }}
+                                  className="text-[11px] px-2.5 py-1 rounded-md border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+                                >
+                                  📤 Send to preview
+                                </button>
+                              )}
+                              <span className="ml-auto flex gap-2">
+                                <button
+                                  onClick={() => copyToClipboard(msg.content)}
+                                  className="text-[10px] text-text-muted hover:text-accent transition-colors"
+                                >
+                                  Copy all
+                                </button>
+                              </span>
+                            </div>
+                          );
+                        })()}
 
                         {streaming && i === messages.length - 1 && (
                           <span className="inline-block w-2 h-4 bg-accent animate-pulse ml-0.5" />
@@ -316,73 +413,154 @@ export default function PostCreator() {
             </div>
           </div>
 
-          {/* Preview column */}
-          <div className="w-[460px] flex-shrink-0 overflow-y-auto pb-4">
-            <div className="sticky top-0 mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-text-primary">LinkedIn Preview</h3>
-              {activePreviewText && (
-                <button
-                  onClick={() => {
-                    setManualPreview('');
-                    setPreviewText('');
-                  }}
-                  className="text-[10px] text-text-muted hover:text-accent"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            {activePreviewText ? (
-              <>
-                <LinkedInPostPreview
-                  text={activePreviewText}
-                  authorName={profile?.name}
-                  authorHeadline={profile?.headline}
-                  authorImage={profile?.profile_image_url}
-                  followersCount={profile?.followers_count}
-                />
-                <div className="mt-3 max-w-lg mx-auto">
-                  <textarea
-                    value={activePreviewText}
-                    onChange={(e) => setManualPreview(e.target.value)}
-                    rows={6}
-                    className="w-full bg-bg-card border border-border rounded-lg px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-accent/50 resize-none"
-                    placeholder="Edit the post to see the preview update..."
-                  />
-                  <div className="flex gap-2 mt-2">
+          {/* Preview column — split into 3 tabs (Preview / Score / Image)
+              instead of one tall scroll, so the user can jump between
+              contexts without losing place. */}
+          <div className="w-[460px] flex-shrink-0 flex flex-col min-h-0">
+            {/* Header: title + tab bar. Stays at the top of the column as a
+                flex sibling above the scrolling content pane. */}
+            <div className="flex-shrink-0 pb-2">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-text-primary">LinkedIn Preview</h3>
+                {activePreviewText && (
+                  <div className="flex items-center gap-2 text-[10px] text-text-muted">
                     <button
                       onClick={() => copyToClipboard(activePreviewText)}
-                      className="px-3 py-1.5 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-medium hover:bg-accent/20 transition-colors"
+                      className="hover:text-accent transition-colors"
+                      title="Copiar texto"
                     >
-                      Copy
+                      📋 Copiar
+                    </button>
+                    <span className="text-border">·</span>
+                    <button
+                      onClick={() => setEditingText((v) => !v)}
+                      className={`transition-colors ${editingText ? 'text-accent' : 'hover:text-accent'}`}
+                      title="Editar texto a mano"
+                    >
+                      ✏️ Editar
+                    </button>
+                    <span className="text-border">·</span>
+                    <button
+                      onClick={() => {
+                        setManualPreview('');
+                        setPreviewText('');
+                        setEditingText(false);
+                        setImageGenerated(false);
+                      }}
+                      className="hover:text-danger transition-colors"
+                      title="Limpiar preview"
+                    >
+                      ✕ Clear
                     </button>
                   </div>
-                </div>
-                <div className="mt-4 max-w-lg mx-auto">
-                  <PostChecklist text={activePreviewText} onImproved={setManualPreview} />
-                </div>
-                {/* Image generator — collapsed by default. Lives at the bottom
-                    of the preview column so the user reaches for it after the
-                    post text feels right. */}
-                <div className="mt-4 max-w-lg mx-auto">
-                  <ImageGenerator postContext={activePreviewText} />
-                </div>
-              </>
-            ) : (
-              <div className="bg-bg-card border border-dashed border-border rounded-xl p-8 text-center text-text-muted text-xs">
-                Your post preview will appear here once the AI generates content.
-                <br />
-                <br />
-                You can also paste any text below to preview it.
-                <textarea
-                  value={manualPreview}
-                  onChange={(e) => setManualPreview(e.target.value)}
-                  rows={5}
-                  className="w-full mt-3 bg-bg-primary border border-border rounded-lg px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-accent/50 resize-none text-left"
-                  placeholder="Paste post text..."
-                />
+                )}
               </div>
-            )}
+
+              {activePreviewText && (
+                <div role="tablist" className="flex gap-1 border-b border-border">
+                  {([
+                    ['preview', '📝', 'Preview', null] as const,
+                    ['score', '📊', 'Score', liveScore != null ? String(liveScore) : null] as const,
+                    ['image', '🎨', 'Image', imageGenerated ? '✓' : null] as const,
+                  ]).map(([key, icon, label, badge]) => {
+                    const active = previewTab === key;
+                    return (
+                      <button
+                        key={key}
+                        role="tab"
+                        aria-selected={active}
+                        onClick={() => setPreviewTab(key as PreviewTab)}
+                        className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 -mb-px transition-colors ${
+                          active
+                            ? 'border-accent text-accent'
+                            : 'border-transparent text-text-muted hover:text-text-secondary'
+                        }`}
+                      >
+                        <span>{icon}</span>
+                        <span>{label}</span>
+                        {badge && (
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                              active
+                                ? 'bg-accent/20 text-accent'
+                                : 'bg-bg-secondary text-text-muted'
+                            }`}
+                          >
+                            {badge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Tab content — scrolls inside its own pane */}
+            <div className="flex-1 overflow-y-auto pb-4">
+              {!activePreviewText ? (
+                <div className="bg-bg-card border border-dashed border-border rounded-xl p-8 text-center text-text-muted text-xs">
+                  Your post preview will appear here once the AI generates content.
+                  <br />
+                  <br />
+                  You can also paste any text below to preview it.
+                  <textarea
+                    value={manualPreview}
+                    onChange={(e) => setManualPreview(e.target.value)}
+                    rows={5}
+                    className="w-full mt-3 bg-bg-primary border border-border rounded-lg px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-accent/50 resize-none text-left"
+                    placeholder="Paste post text..."
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* PREVIEW TAB */}
+                  {previewTab === 'preview' && (
+                    <div>
+                      <LinkedInPostPreview
+                        text={activePreviewText}
+                        authorName={profile?.name}
+                        authorHeadline={profile?.headline}
+                        authorImage={profile?.profile_image_url}
+                        followersCount={profile?.followers_count}
+                      />
+                      {editingText && (
+                        <div className="mt-3 max-w-lg mx-auto">
+                          <textarea
+                            value={activePreviewText}
+                            onChange={(e) => setManualPreview(e.target.value)}
+                            rows={8}
+                            className="w-full bg-bg-card border border-accent/30 rounded-lg px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-accent/50 resize-y"
+                            placeholder="Edit the post to see the preview update..."
+                          />
+                          <p className="text-[10px] text-text-muted mt-1">
+                            Los cambios se reflejan en vivo en el preview de arriba y en el score.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* SCORE TAB */}
+                  {previewTab === 'score' && (
+                    <div className="max-w-lg mx-auto">
+                      <PostChecklist text={activePreviewText} onImproved={setManualPreview} />
+                    </div>
+                  )}
+
+                  {/* IMAGE TAB */}
+                  {previewTab === 'image' && (
+                    <div className="max-w-lg mx-auto">
+                      <ImageGenerator
+                        postContext={activePreviewText}
+                        defaultOpen
+                        onResult={() => setImageGenerated(true)}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

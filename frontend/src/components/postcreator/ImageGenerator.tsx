@@ -14,6 +14,12 @@ const SIZE_OPTIONS: { key: Size; label: string; aspect: string }[] = [
 // most LinkedIn imagery. The user can always type something custom in the
 // textarea to override the picker.
 const STYLE_PRESETS: { key: string; label: string; value: string }[] = [
+  // The Neety brand preset goes first so it's the obvious default for this
+  // user. It bakes in the brand book rules: dark feel by default; switch to
+  // alabaster when text is the main element; typography references Switzer
+  // and Bricolage Grotesque (the model uses these as visual cues even if it
+  // can't render exact letterforms — we forbid literal text elsewhere).
+  { key: 'neety_brand', label: 'Neety brand',     value: 'Neety brand aesthetic: dark navy #0c202e dominant background giving a serious, dark, premium sensation; persian-orange #ee9363 reserved for accents and focal subjects; warm alabaster #f9f3ef only when text or empty negative space is the main element; clean editorial composition with confident geometry; visual language inspired by sans-serif geometric type (Switzer + Bricolage Grotesque-like proportions), warm vs cool contrast, no glossy gradients, no busy patterns' },
   { key: 'minimal_3d',  label: '3D minimal',     value: 'minimalist 3D illustration, soft shadows, clean isometric composition, premium B2B SaaS aesthetic' },
   { key: 'editorial',   label: 'Editorial',       value: 'editorial photography, natural lighting, shallow depth of field, magazine quality, candid composition' },
   { key: 'flat_vector', label: 'Flat vector',     value: 'flat vector illustration, geometric shapes, bold lines, limited palette, modern startup aesthetic' },
@@ -25,6 +31,11 @@ const STYLE_PRESETS: { key: string; label: string; value: string }[] = [
 // Common B2B-friendly palettes. The user can always override with a custom
 // hex string in the input below.
 const PALETTE_PRESETS: { key: string; label: string; value: string; preview: string[] }[] = [
+  // Official Neety brand palette: dark blue (formality) + persian orange
+  // (warmth/closeness) + alabaster (calm space). The order in the prompt
+  // matches the brand book proportions — navy dominates, orange accents,
+  // alabaster for breathing room.
+  { key: 'neety',        label: 'Neety oficial',  value: 'Neety brand palette: dark blue #0c202e as the dominant background (formality, serious mood); persian orange #ee9363 for warm accents and focal points; warm alabaster #f9f3ef for negative space and high-contrast surfaces. Navy should occupy ~60–70% of the image, orange ~15–25%, alabaster ~15–25%', preview: ['#0c202e', '#ee9363', '#f9f3ef'] },
   { key: 'navy_coral',   label: 'Navy + coral',   value: 'deep navy #0F1E3D and warm coral #FF6B5B with cream highlights', preview: ['#0F1E3D', '#FF6B5B', '#FAF3E0'] },
   { key: 'mint_charcoal',label: 'Mint + charcoal',value: 'mint green #6EE7B7 over charcoal #1F2937 with off-white accents',  preview: ['#1F2937', '#6EE7B7', '#F3F4F6'] },
   { key: 'amber_slate',  label: 'Amber + slate',  value: 'amber #F59E0B and slate #475569 with white space',                 preview: ['#475569', '#F59E0B', '#FFFFFF'] },
@@ -48,8 +59,20 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
-export default function ImageGenerator({ postContext }: { postContext?: string }) {
-  const [open, setOpen] = useState(false);
+export default function ImageGenerator({
+  postContext,
+  defaultOpen = false,
+  onResult,
+}: {
+  postContext?: string;
+  // When the parent already provides disclosure (e.g. a tab), we render
+  // the form expanded and skip the internal collapse header.
+  defaultOpen?: boolean;
+  // Fired the first time a generation succeeds, so the parent can light up
+  // a "✓ generada" indicator without polling state.
+  onResult?: (result: Result) => void;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
   const [prompt, setPrompt] = useState('');
   const [styleText, setStyleText] = useState('');
   const [palette, setPalette] = useState('');
@@ -127,6 +150,7 @@ export default function ImageGenerator({ postContext }: { postContext?: string }
         return;
       }
       setResult(json);
+      onResult?.(json);
     } catch (e: any) {
       setError(e.message || 'Error al generar la imagen');
     }
@@ -161,20 +185,26 @@ export default function ImageGenerator({ postContext }: { postContext?: string }
 
   return (
     <div className="bg-bg-card border border-border rounded-xl overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between p-3 hover:bg-bg-secondary transition-colors"
-      >
-        <span className="text-sm font-semibold text-text-primary flex items-center gap-2">
-          <span>🎨</span> Generar imagen para el post
-          {result && <span className="text-[10px] text-green-400">✓ generada</span>}
-        </span>
-        <span className={`text-text-muted transition-transform ${open ? 'rotate-90' : ''}`}>▸</span>
-      </button>
+      {/* Internal collapse header — only shown when the parent doesn't
+          provide disclosure (i.e. when this component is used standalone).
+          Inside the Post Creator preview tab the tab bar already serves as
+          the disclosure so we skip this header. */}
+      {!defaultOpen && (
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="w-full flex items-center justify-between p-3 hover:bg-bg-secondary transition-colors"
+        >
+          <span className="text-sm font-semibold text-text-primary flex items-center gap-2">
+            <span>🎨</span> Generar imagen para el post
+            {result && <span className="text-[10px] text-green-400">✓ generada</span>}
+          </span>
+          <span className={`text-text-muted transition-transform ${open ? 'rotate-90' : ''}`}>▸</span>
+        </button>
+      )}
 
       {open && (
-        <div className="p-3 border-t border-border space-y-3">
+        <div className={`${defaultOpen ? 'p-3' : 'p-3 border-t border-border'} space-y-3`}>
           {/* Prompt */}
           <div>
             <div className="flex items-center justify-between mb-1">
