@@ -1,4 +1,5 @@
-import { apiPatch, apiDelete } from '../../hooks/useApi';
+import { useState } from 'react';
+import { apiPatch, apiDelete, apiPost } from '../../hooks/useApi';
 
 interface NetworkCreator {
   id: string;
@@ -22,6 +23,11 @@ interface Props {
 }
 
 export default function NetworkCreatorList({ creators, onUpdate }: Props) {
+  // Per-row state: which creator is currently being refreshed, and the
+  // last-result message shown next to its name (auto-hides after 4s).
+  const [refreshingId, setRefreshingId] = useState<string | null>(null);
+  const [refreshMsg, setRefreshMsg] = useState<Record<string, string>>({});
+
   const handleTierChange = async (id: string, newTier: number) => {
     try {
       await apiPatch(`/api/network/creators/${id}`, { tier: newTier });
@@ -38,6 +44,22 @@ export default function NetworkCreatorList({ creators, onUpdate }: Props) {
       onUpdate();
     } catch (err: any) {
       console.error('Failed to delete:', err);
+    }
+  };
+
+  const handleRefresh = async (id: string) => {
+    setRefreshingId(id);
+    setRefreshMsg((m) => ({ ...m, [id]: '' }));
+    try {
+      const res = await apiPost<{ total_new_posts: number }>(`/api/network/creators/${id}/refresh`, {});
+      const n = res.total_new_posts || 0;
+      setRefreshMsg((m) => ({ ...m, [id]: `✓ ${n} new post${n === 1 ? '' : 's'}` }));
+      onUpdate();
+    } catch (err: any) {
+      setRefreshMsg((m) => ({ ...m, [id]: `✗ ${err.message}` }));
+    } finally {
+      setRefreshingId(null);
+      setTimeout(() => setRefreshMsg((m) => ({ ...m, [id]: '' })), 4000);
     }
   };
 
@@ -94,6 +116,25 @@ export default function NetworkCreatorList({ creators, onUpdate }: Props) {
                       )}
                     </p>
                   </div>
+
+                  {refreshMsg[creator.id] && (
+                    <span
+                      className={`text-[11px] whitespace-nowrap ${
+                        refreshMsg[creator.id].startsWith('✗') ? 'text-danger' : 'text-green-400'
+                      }`}
+                    >
+                      {refreshMsg[creator.id]}
+                    </span>
+                  )}
+
+                  <button
+                    onClick={() => handleRefresh(creator.id)}
+                    disabled={refreshingId === creator.id}
+                    className="text-text-muted hover:text-accent transition-colors text-xs px-2 disabled:opacity-50 disabled:cursor-wait"
+                    title="Refresh this creator's posts"
+                  >
+                    {refreshingId === creator.id ? '↻ Refreshing…' : '↻ Refresh'}
+                  </button>
 
                   <select
                     value={creator.tier}

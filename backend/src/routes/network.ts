@@ -140,6 +140,24 @@ router.delete('/creators/:id', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/network/creators/:id/refresh — refresh posts for a single network
+// creator. Mirror of the bulk feed/refresh loop, scoped to one creator so the
+// user can pull a specific account on demand without waiting for all of them.
+router.post('/creators/:id/refresh', async (req: Request, res: Response) => {
+  try {
+    const creator = await NetworkCreatorModel.findById(paramId(req));
+    if (!creator) return res.status(404).json({ error: 'Creator not found' });
+    if (!creator.linkedin_id) {
+      return res.status(400).json({ error: 'Creator has no LinkedIn ID resolved yet — re-add the URL or wait for the next bulk refresh.' });
+    }
+    const count = await fetchNetworkCreatorPosts(creator.id, creator.linkedin_id);
+    res.json({ refreshed: 1, total_new_posts: count, creator_id: creator.id, creator_name: creator.name });
+  } catch (err: any) {
+    console.error(`[network/creators/refresh]`, err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── Weekly Feed ───
 
 function getWeekBounds(offset: number = 0): { start: Date; end: Date } {
