@@ -59,6 +59,34 @@ NEVER PRODUCE:
 
 THE WIN/LOSE TEST: a post WINS when it (a) explains how a system actually works AND (b) breaks a commonly held belief. A post LOSES when it reads like it could've been ghostwritten for any creator in the niche.`;
 
+// Distilled from a research pass over ~45 top-performing B2B AI / sales
+// founders on LinkedIn (EN + ES). These are the structural moves that
+// separated 60-1.000+ like posts from generic noise. Treat as a heavy prior
+// the model can apply whenever the raw idea has latitude — without forcing
+// the framing if the idea genuinely doesn't fit.
+const POSITIONING_PRINCIPLES = `POSITIONING PRINCIPLES (research-backed — apply whenever the raw idea has latitude):
+
+THE 5 LEVERS:
+1. Position by CONTRAST, not features. "Most teams do X. We do Y because Z" outperforms "We do Y very well". Lead by naming what's broken in the default playbook before saying what we do.
+2. Client numbers beat self-praise. "+200 PYMES, +40% conversion" lands harder than "best AI sales platform". When a real client metric exists, use it.
+3. Lead with a market frame, not a product feature. Recurring contrasts like "operativa vs. operacional", "agentic vs. tool", "signal vs. cold volume", "ejecución vs. gestión" carry the post; bare feature descriptions read as ad copy.
+4. Reuse one concept word that's ours. A single term repeated across posts builds a category in the reader's head.
+5. Founder name > product name. The post sells the thinker; mention the product at most once near the end, not in the hook.
+
+5 HIGH-CONVICTION POST PATTERNS — pick one when the raw idea genuinely fits:
+- Anti-consensus on a hot category. "Everyone's launching AI SDRs. Most are flopping. Here's what actually moves outbound."
+- Founder microstory with a specific moment. "Closed a customer at 18:02 on a Saturday. No human would have. The agent did."
+- Numbered workflow with concrete tool stack. "Agent 1 captures X. Agent 2 enriches Y. Agent 3 decides Z." Each step has a real output.
+- Market thesis with hard numbers (CAC, reply rate, ARR comps) the reader can't easily argue with.
+- "Deciding in public" — "Considering X vs Y for [decision]. Trade-off as I see it: [...]. What would you do?"
+
+AUTHORITY STACK — strong posts combine all three:
+- Real data from our own deployments (not generic stats).
+- An opinion that goes against the consensus in the niche.
+- A market frame that's the author's, not the audience's default.
+
+SELLING WITHOUT SELLING: spend the bulk of the post documenting the market failure, sharing the framework, or telling the client story. The product/company is mentioned at most once near the end, almost as a signature — never in the hook.`;
+
 const STRUCT_LABELS: Record<string, string> = {
   hook_list_cta: 'Hook → Lista → CTA', hook_story_lesson_cta: 'Historia → Lección → CTA',
   problem_agitate_solve: 'Problema → Agitación → Solución',
@@ -228,6 +256,8 @@ ARCHETYPE TO USE:
 ${exampleSection}
 
 ${BRAND_RULES}
+
+${POSITIONING_PRINCIPLES}
 
 ${CREATOR_LEARNINGS}
 

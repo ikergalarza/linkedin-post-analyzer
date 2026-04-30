@@ -502,6 +502,13 @@ AUDIENCE CONTEXT:
 LIST FORMATTING (must-fix when present):
 - When the post contains a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), the items MUST be a contiguous block — one item per line, no blank lines between items. The blank line goes before and after the whole list, never inside it. If the original post has a blank line between every list item, COLLAPSE it: that's a near-zero-cost rewrite that materially improves rhythm and matches how outliers format their lists.
 
+POSITIONING PRINCIPLES (research-backed from top B2B AI / sales founders — apply ONLY where the original post's material already supports the move; never force-fit):
+- Position by CONTRAST: if the post is making a "we do X very well" claim, sharpen it to "most do A, we do X because B" — but only if the contrast is implicit in the original.
+- Client numbers beat self-praise. If the post mentions a vague benefit but the original raw text has a concrete client metric somewhere, surface that number into the visible body or hook.
+- Frame, not feature. If the post defaults to a feature description and the underlying argument has a market frame ("operativa vs. operacional", "agentic vs. tool", "signal vs. cold volume", "ejecución vs. gestión"), lead with that frame.
+- Authority stack — when the original already has two of [internal data, contrarian opinion, own market frame], nudge it to feature all three; don't invent the missing leg.
+- Sell without selling — if the original mentions the product/company in the hook, demote it to a single mention near the end. The body documents the failure / framework / story.
+
 CREATOR LEARNINGS (from 2 weeks of real publishing on this account — bias your scoring AND your edits towards this):
 - Top performers (e.g. 20x outliers) had: insight + hidden-system + contrarian framing — they showed how something actually works behind the scenes and broke a commonly held belief in the first 1–3 lines, mixing concrete data with narrative. When the original post is already doing this, intensify it. When it isn't, surface the hidden-system angle if the raw material allows.
 - Acceptable but weaker: pure provocation + universal-problem framing. It drives comments but a lower repost rate. Don't downgrade a post FROM the "insight + hidden-system" register TO this register.
