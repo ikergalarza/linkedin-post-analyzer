@@ -26,6 +26,7 @@ import discoverRouter from './routes/discover';
 import ideasRouter from './routes/ideas';
 import accountsRouter from './routes/accounts';
 import { startPostMonitor } from './services/postMonitor';
+import { basicAuthMiddleware } from './middleware/basicAuth';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -36,11 +37,17 @@ app.use(cors({ origin: '*' }));
 // well under typical proxy limits.
 app.use(express.json({ limit: '16mb' }));
 
-// Log every request
+// Log every request (before auth so probe attempts are visible in logs)
 app.use((req, _res, next) => {
   console.log(`[REQ] ${req.method} ${req.path}`);
   next();
 });
+
+// HTTP Basic Auth gate. Mounted BEFORE routes and static files so both the
+// API and the frontend index.html require credentials. Activated only when
+// APP_BASIC_USER and APP_BASIC_PASS are set in env (Railway). Skips OPTIONS
+// preflights and /health endpoints so CORS and uptime checks keep working.
+app.use(basicAuthMiddleware());
 
 // Routes
 app.use('/api/creators', creatorsRouter);
