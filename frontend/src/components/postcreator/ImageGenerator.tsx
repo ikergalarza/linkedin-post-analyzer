@@ -106,6 +106,13 @@ export default function ImageGenerator({
   // post preview.
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // When enabled (default ON if there's a post in context), the entire post
+  // text is sent to the backend as `postContext`. The model uses it as
+  // semantic background — the user only writes WHAT they want drawn in the
+  // prompt textarea, no need to paste the post content there.
+  const hasPostContext = !!(postContext && postContext.trim().length > 50);
+  const [usePostAsContext, setUsePostAsContext] = useState(hasPostContext);
+
   const [logoFile, setLogoFile] = useState<{ file: File; dataUrl: string } | null>(null);
   const [referenceFile, setReferenceFile] = useState<{ file: File; dataUrl: string } | null>(null);
 
@@ -165,16 +172,6 @@ export default function ImageGenerator({
     }
   };
 
-  const fillFromPost = () => {
-    if (!postContext?.trim()) return;
-    // Take the first 240 chars as a prompt seed — enough to give the AI
-    // direction without copying the whole post.
-    const seed = postContext.trim().slice(0, 240).replace(/\s+/g, ' ');
-    setPrompt(
-      `Imagen ilustrativa para acompañar este post de LinkedIn. Idea principal: ${seed}`
-    );
-  };
-
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       setError('Escribe un prompt primero.');
@@ -194,7 +191,10 @@ export default function ImageGenerator({
           size,
           logoDataUrl: logoFile?.dataUrl,
           referenceDataUrl: referenceFile?.dataUrl,
-          postContext: postContext?.trim() || undefined,
+          // The post is only forwarded when the user opts in via the toggle.
+          // Backend uses it as semantic context (not literal text inside
+          // the image — see imageGenerator.ts buildPrompt).
+          postContext: usePostAsContext ? postContext?.trim() || undefined : undefined,
           // Send `allowText` only when the user has explicitly chosen on/off.
           // Leaving it undefined lets the backend auto-detect, which keeps
           // the no-text default for the common case.
@@ -268,23 +268,48 @@ export default function ImageGenerator({
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-[11px] text-text-muted font-medium">Prompt — qué quieres que dibuje</label>
-              {postContext && postContext.trim().length > 30 && (
-                <button
-                  type="button"
-                  onClick={fillFromPost}
-                  className="text-[10px] text-accent hover:text-accent-light"
-                >
-                  ✨ Sugerir desde el post
-                </button>
-              )}
             </div>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               rows={3}
-              placeholder="Ej: Una abstracción isométrica de una abeja sobre un panal con líneas de datos fluyendo, simbolizando un sistema B2B colaborativo."
+              placeholder={
+                usePostAsContext
+                  ? 'Ej: Una abstracción isométrica de una abeja sobre un panal, estilo cómic. (El post entero ya va como contexto, aquí solo escribe lo VISUAL).'
+                  : 'Ej: Una abstracción isométrica de una abeja sobre un panal con líneas de datos fluyendo, simbolizando un sistema B2B colaborativo.'
+              }
               className="w-full bg-bg-primary border border-border rounded-lg px-2.5 py-2 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 resize-y leading-relaxed"
             />
+            {/* Toggle that controls whether the post text travels to the
+                backend as context. When ON, the model sees the whole post
+                as semantic background — the user only describes the
+                visual in the prompt above. When OFF, the prompt stands alone. */}
+            {hasPostContext && (
+              <label
+                className={`mt-2 flex items-start gap-2 px-2.5 py-2 rounded-lg border cursor-pointer select-none transition-colors ${
+                  usePostAsContext
+                    ? 'border-accent/40 bg-accent/5'
+                    : 'border-border bg-bg-secondary/50 hover:border-accent/30'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={usePostAsContext}
+                  onChange={(e) => setUsePostAsContext(e.target.checked)}
+                  className="accent-accent mt-0.5"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] font-medium text-text-primary leading-tight">
+                    📎 Basar en el post actual
+                  </div>
+                  <p className="text-[10px] text-text-muted mt-0.5 leading-snug">
+                    {usePostAsContext
+                      ? 'El post entero se envía al backend como contexto. Tú solo describes lo visual aquí arriba.'
+                      : 'Solo se envía tu prompt. Activa esto si quieres que la imagen se inspire en el contenido del post.'}
+                  </p>
+                </div>
+              </label>
+            )}
           </div>
 
           {/* Always-visible: Tamaño (small row of 3 pills). gpt-image-2 only

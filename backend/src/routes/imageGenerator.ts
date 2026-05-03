@@ -85,7 +85,10 @@ function buildPrompt(opts: {
   // the "tweet of an industrial outbound quote" failure case.
   if (!allowText && opts.postContext?.trim()) {
     parts.push(
-      `The image accompanies this LinkedIn post (use only as context, do not include literal text from it):\n"""\n${opts.postContext.trim().slice(0, 800)}\n"""`
+      // 3000 covers a full LinkedIn post (their hard limit). The model treats
+      // it as semantic background to inform mood / metaphor / subject — it
+      // shouldn't try to render the post text inside the image.
+      `The image accompanies this LinkedIn post. Use it as semantic context for what the image is ABOUT — the mood, the subject, the metaphor — but do NOT render literal text from the post in the image:\n"""\n${opts.postContext.trim().slice(0, 3000)}\n"""`
     );
   }
 
