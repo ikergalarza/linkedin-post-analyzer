@@ -4,7 +4,6 @@ import CreatorDetail from './pages/CreatorDetail'
 import OutlierExplorer from './pages/OutlierExplorer'
 import PostCreator from './pages/PostCreator'
 import StrategicNetwork from './pages/StrategicNetwork'
-import Discover from './pages/Discover'
 import Ideas from './pages/Ideas'
 import Inspiration from './pages/Inspiration'
 import Accounts from './pages/Accounts'
@@ -36,7 +35,6 @@ export default function App() {
               {navLink('/', '📊 Dashboard')}
               {navLink('/accounts', '📈 Accounts')}
               {navLink('/explore', '🔍 Explorer')}
-              {navLink('/discover', '🧭 Discover')}
             </div>
             <span className="text-border mx-1">|</span>
             {/* Create */}
@@ -61,7 +59,6 @@ export default function App() {
           <Route path="/explore" element={<OutlierExplorer />} />
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/inspiration" element={<Inspiration />} />
-          <Route path="/discover" element={<Discover />} />
           <Route path="/network" element={<StrategicNetwork />} />
           <Route path="/create" element={<PostCreator />} />
         </Routes>
