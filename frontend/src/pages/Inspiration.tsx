@@ -285,11 +285,22 @@ export default function Inspiration() {
     const hookLabel = HOOK_LABELS[post.hook_type] || post.hook_type;
     const structLabel = STRUCT_LABELS[post.post_structure] || post.post_structure;
 
+    // Build raw_content with attribution + original LinkedIn link at the top
+    // so the idea always carries its source. The improver and Post Creator
+    // ignore the meta lines (they're labelled), but the user sees them in
+    // /ideas and can jump back to the original post.
+    const metaLines: string[] = [];
+    metaLines.push(
+      `From ${post.creator_name}${post.creator_headline ? ` — ${post.creator_headline}` : ''}${post.outlier_ratio ? ` · ${post.outlier_ratio}x outlier` : ''}`
+    );
+    if (post.post_url) metaLines.push(`Original: ${post.post_url}`);
+    const raw_content = `${metaLines.join('\n')}\n\n${post.content_text || ''}`.trim();
+
     await fetch(`${BASE}/api/ideas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        raw_content: post.content_text,
+        raw_content,
         source_type: 'observation',
         tags: ['stolen', hookLabel, structLabel],
       }),

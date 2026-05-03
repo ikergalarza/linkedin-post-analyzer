@@ -214,13 +214,20 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', creatorNa
     try {
       const hookLabel = hookLabels[post.hook_type || ''] || post.hook_type || '';
       const structLabel = structLabels[post.post_structure || ''] || post.post_structure || '';
-      // Compose a self-explanatory raw_content with attribution at the top so
-      // when the idea opens in /ideas → Post Creator the user remembers where
-      // it came from. Same shape the Inspiration page uses.
-      const attribution = creatorName
-        ? `From ${creatorName}${creatorHeadline ? ` — ${creatorHeadline}` : ''}${post.outlier_ratio ? ` · ${post.outlier_ratio}x outlier` : ''}\n\n`
-        : '';
-      const raw_content = `${attribution}${post.content_text || ''}`.trim();
+      // Compose a self-explanatory raw_content with attribution + original
+      // LinkedIn link at the top so when the idea opens in /ideas → Post
+      // Creator the user remembers where it came from and can jump back to
+      // the original post. Same shape the Inspiration page uses.
+      const metaLines: string[] = [];
+      if (creatorName) {
+        metaLines.push(
+          `From ${creatorName}${creatorHeadline ? ` — ${creatorHeadline}` : ''}${post.outlier_ratio ? ` · ${post.outlier_ratio}x outlier` : ''}`
+        );
+      }
+      const linkedInUrl = getLinkedInUrl(post);
+      if (linkedInUrl) metaLines.push(`Original: ${linkedInUrl}`);
+      const meta = metaLines.length > 0 ? `${metaLines.join('\n')}\n\n` : '';
+      const raw_content = `${meta}${post.content_text || ''}`.trim();
       if (!raw_content) {
         throw new Error('Post sin contenido');
       }
