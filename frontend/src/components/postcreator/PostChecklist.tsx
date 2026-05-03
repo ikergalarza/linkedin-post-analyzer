@@ -565,6 +565,12 @@ export default function PostChecklist({ text, onImproved }: Props) {
   // the human is best placed to make.
   const [selectedPillar, setSelectedPillar] = useState<Pillar | 'auto'>('auto');
 
+  // Explicit lead-magnet flag. The improve prompt has a heuristic but it
+  // sometimes mis-classifies and strips the "Comenta X y te lo mando" CTA
+  // when the user actually wants it. With this flag ON, the rewrite MUST
+  // keep / add the lead-magnet ask.
+  const [isLeadMagnet, setIsLeadMagnet] = useState(false);
+
   // Collapsible detail sections — collapsed by default so the resting state
   // is just score + dominant pillar + suggestions + Auto-improve. Detail
   // expands on demand to avoid the "wall of bars" feeling.
@@ -663,6 +669,9 @@ export default function PostChecklist({ text, onImproved }: Props) {
             messages: conversation,
             pillar: targetPillar,
             pillarIntensity: originalIntensity,
+            // Hard-locks the lead-magnet CTA in the rewrite when the user
+            // has flagged this post as offering a deliverable.
+            leadMagnet: isLeadMagnet,
           }),
         });
         if (!res.ok) {
@@ -827,6 +836,34 @@ export default function PostChecklist({ text, onImproved }: Props) {
               ? 'Auto-improve usa el pilar detectado (o deja que el modelo escoja si no hay).'
               : `Auto-improve forzará intensificar ${PILLAR_META[selectedPillar].label.toLowerCase()}.`}
           </p>
+
+          {/* Lead-magnet override. With this on, the improve prompt locks
+              the "Comenta X y te lo mando" CTA — the model can't strip it
+              when it (sometimes wrongly) decides the post isn't actually
+              offering a deliverable. */}
+          <label
+            className={`mt-1 flex items-start gap-2 px-2 py-1.5 rounded-md border cursor-pointer select-none transition-colors text-[11px] ${
+              isLeadMagnet
+                ? 'border-accent/40 bg-accent/5 text-text-primary'
+                : 'border-border bg-bg-secondary/40 text-text-secondary hover:border-accent/30'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={isLeadMagnet}
+              onChange={(e) => setIsLeadMagnet(e.target.checked)}
+              disabled={improving}
+              className="accent-accent mt-0.5"
+            />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium leading-tight">🧲 Es lead magnet</div>
+              <p className="text-[10px] text-text-muted leading-snug mt-0.5">
+                {isLeadMagnet
+                  ? 'Auto-improve mantiene / añade el CTA "Comenta X y te lo mando" obligatorio.'
+                  : 'Marca esto si el post regala un recurso (PDF, plantilla, guía…) — evita que el improve te quite el CTA del lead magnet.'}
+              </p>
+            </div>
+          </label>
         </div>
       )}
 

@@ -351,7 +351,7 @@ async function buildPillarExamples(targetPillar: 'curiosity' | 'fear' | 'desire'
 // Response: { text: string, critique: string, raw: string }
 router.post('/improve', async (req: Request, res: Response) => {
   try {
-    const { messages, pillar, pillarIntensity } = req.body;
+    const { messages, pillar, pillarIntensity, leadMagnet } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'messages array required' });
     }
@@ -362,6 +362,11 @@ router.post('/improve', async (req: Request, res: Response) => {
 
     const targetPillar: 'curiosity' | 'fear' | 'desire' | null =
       pillar === 'curiosity' || pillar === 'fear' || pillar === 'desire' ? pillar : null;
+    // Explicit user signal that this post IS a lead magnet — overrides
+    // the model's heuristic, which sometimes mis-classifies and strips
+    // the "Comenta X y te lo mando" ask. When true, the lead-magnet CTA
+    // becomes a hard requirement of the rewrite.
+    const isLeadMagnet: boolean = leadMagnet === true;
 
     const client = new Anthropic({ apiKey });
     const profileContext = await buildProfileContext();
@@ -482,6 +487,19 @@ HOOK IS THE HIGHEST-LEVERAGE LINE — DON'T BREAK IT:
 
 ONE CTA ONLY:
 - The post must end with EXACTLY ONE closer: a question, OR a "Comenta 'X' y te lo mando" lead-magnet ask (only when there's a real deliverable), OR no explicit CTA (a strong claim can close). NEVER both. If the original post stacks two (e.g. lead-magnet ask + final question), pick the stronger one and remove the other.
+${
+  isLeadMagnet
+    ? `
+LEAD-MAGNET MODE — USER HAS EXPLICITLY MARKED THIS POST AS A LEAD MAGNET:
+- The post IS offering a concrete deliverable (PDF, guide, template, dataset, video, framework doc, checklist, file). This is a HARD signal — do not second-guess it.
+- The post MUST end with a "Comenta 'X' y te lo mando" / "Escribe 'Y' abajo y te paso Z" CTA. This is the ONLY allowed closer. Do not replace it with a question, provocation, or no-CTA close.
+- If the original post already has the lead-magnet ask, KEEP IT verbatim or only sharpen its trigger word for clarity. Do not rewrite it into something softer.
+- If the original lacks the ask, ADD ONE — pick a short trigger word in the post's language ("GUÍA", "PLANTILLA", "PDF", "SÍ", "YES", "DAME" — whatever fits the deliverable) and write the ask in 1–2 lines.
+- The trigger word should be SPECIFIC to what's offered, not generic. "Comenta 'PLANTILLA' y te paso el doc de outbound de 200 emails" beats "Comenta 'YES' y te lo mando".
+- Keep the ask BRIEF — 1–2 lines max. Do NOT pad it with explanation; the body should already justify why the resource is valuable.
+`
+    : ''
+}
 
 SINGLE PILLAR — push it to the max:
 - Every post commits to ONE dominant pillar (curiosity / fear / desire) and amplifies it. Light traces of the others are fine, but never actively trigger all three — that dilutes the message. Use the pillar selection logic below to identify the dominant pillar, then maximise it.
