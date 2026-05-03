@@ -497,7 +497,20 @@ router.post('/inspiration/classify', async (_req: Request, res: Response) => {
     }
 
     const cleanText = (t: string) =>
-      (t || '').replace(/[\x00-\x1F\x7F]/g, ' ').replace(/"/g, "'").replace(/\s+/g, ' ').trim().substring(0, 250);
+      (t || '')
+        // Strip control chars
+        .replace(/[\x00-\x1F\x7F]/g, ' ')
+        // Strip lone UTF-16 surrogates (orphan halves of an emoji pair) — these
+        // produce invalid JSON when the body is serialised and Anthropic's API
+        // returns 400 "no low surrogate in string". Real emoji pairs are
+        // preserved because the high+low pair matches as a unit elsewhere.
+        .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '')
+        // eslint-disable-next-line no-misleading-character-class
+        .replace(/(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '$1')
+        .replace(/"/g, "'")
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 250);
 
     const BATCH_SIZE = 30;
     let totalClassified = 0;

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { stripLoneSurrogates } from '../utils/sanitizeText';
 
 export interface CommentGenerationInput {
   postContent: string;
@@ -175,7 +176,12 @@ export async function generateComments(input: CommentGenerationInput): Promise<G
     ? `═══ COMMENTER VOICE PROFILE — THESE ARE HARD CONSTRAINTS ═══\n${voiceLines.join('\n')}\n═══════════════════════════════════════════════════════════`
     : '═══ COMMENTER VOICE PROFILE ═══\nNo profile configured — use a neutral, intellectually bold voice.';
 
-  const detectedLang = detectLanguageHint(input.postContent);
+  // Sanitise the post content before forwarding it to Claude. LinkedIn
+  // scrapes can contain orphan UTF-16 surrogates which produce invalid JSON
+  // bodies and the Anthropic API rejects them with a 400. Real emojis stay
+  // intact — only orphan halves are stripped.
+  const safePostContent = stripLoneSurrogates(input.postContent || '');
+  const detectedLang = detectLanguageHint(safePostContent);
 
   const userMessage = `${profileContext}
 
@@ -184,7 +190,7 @@ AUTHOR: ${input.creatorName || 'Unknown'}${input.creatorHeadline ? ` — ${input
 DETECTED POST LANGUAGE: ${detectedLang}
 
 POST CONTENT:
-${input.postContent}
+${safePostContent}
 ═════════════════════════
 
 TASK:

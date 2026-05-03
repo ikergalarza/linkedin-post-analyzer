@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import OpenAI from 'openai';
 import { toFile } from 'openai/uploads';
+import { stripLoneSurrogates } from '../utils/sanitizeText';
 
 const router = Router();
 
@@ -139,7 +140,11 @@ router.post('/generate-image', async (req: Request, res: Response) => {
 
     const style = typeof body.style === 'string' ? body.style : undefined;
     const palette = typeof body.palette === 'string' ? body.palette : undefined;
-    const postContext = typeof body.postContext === 'string' ? body.postContext : undefined;
+    // Strip lone UTF-16 surrogates from postContext — LinkedIn-scraped text
+    // can contain orphan emoji halves that break JSON encoding when forwarded
+    // to OpenAI / Anthropic.
+    const postContext =
+      typeof body.postContext === 'string' ? stripLoneSurrogates(body.postContext) : undefined;
     // `allowText` modes:
     //   true  → user explicitly wants text in the image (tweet, quote, poster…)
     //   false → user explicitly forbids text

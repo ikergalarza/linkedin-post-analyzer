@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Anthropic from '@anthropic-ai/sdk';
+import { stripLoneSurrogates } from '../utils/sanitizeText';
 
 const router = Router();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -18,7 +19,9 @@ interface Slide {
 }
 
 const sanitize = (t: unknown): string =>
-  typeof t === 'string' ? t.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim() : '';
+  typeof t === 'string'
+    ? stripLoneSurrogates(t.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim())
+    : '';
 
 // Robust JSON extraction. The model sometimes wraps the array in prose or
 // markdown fences; we extract the outermost {…} and try to parse.
