@@ -26,6 +26,101 @@ interface PostIdea {
   created_at: string;
 }
 
+// Stolen ideas store their attribution as plain text at the top of
+// `raw_content`:
+//   From <creator> — <headline> · <ratio>x outlier
+//   Original: <linkedin url>
+//   <blank>
+//   <post body…>
+// Parsing it lets us render the source as a styled chip + link banner
+// instead of raw text mashed into the post body. Falls back gracefully
+// when the lines aren't there (manual / generated ideas).
+interface ParsedSource {
+  creatorName?: string;
+  creatorHeadline?: string;
+  outlierRatio?: number;
+  originalUrl?: string;
+}
+
+function parseSourceFromRawContent(raw: string): { source: ParsedSource | null; body: string } {
+  if (!raw) return { source: null, body: '' };
+  const lines = raw.split('\n');
+  const source: ParsedSource = {};
+  // Keep matching meta lines from the top until we hit something that isn't
+  // a recognised pattern; then everything below is the post body.
+  const fromRe = /^From\s+(.+?)(?:\s+—\s+(.+?))?(?:\s+·\s+([\d.]+)x\s+outlier)?\s*$/i;
+  const origRe = /^Original:\s+(https?:\/\/\S+)\s*$/i;
+  let consumed = 0;
+  for (let i = 0; i < Math.min(4, lines.length); i++) {
+    const line = lines[i].trim();
+    if (line === '') {
+      // Blank line is fine between meta lines OR signalling end of meta.
+      consumed = i + 1;
+      // Stop if we already grabbed at least one meta line and hit a blank
+      if (source.creatorName || source.originalUrl) break;
+      continue;
+    }
+    const fromMatch = line.match(fromRe);
+    if (fromMatch) {
+      source.creatorName = fromMatch[1]?.trim();
+      source.creatorHeadline = fromMatch[2]?.trim();
+      source.outlierRatio = fromMatch[3] ? parseFloat(fromMatch[3]) : undefined;
+      consumed = i + 1;
+      continue;
+    }
+    const origMatch = line.match(origRe);
+    if (origMatch) {
+      source.originalUrl = origMatch[1];
+      consumed = i + 1;
+      continue;
+    }
+    break; // first non-meta line — bail
+  }
+  while (consumed < lines.length && lines[consumed].trim() === '') consumed++;
+
+  const hasAny = source.creatorName || source.originalUrl;
+  return {
+    source: hasAny ? source : null,
+    body: hasAny ? lines.slice(consumed).join('\n').trimStart() : raw,
+  };
+}
+
+function SourceBanner({ source }: { source: ParsedSource }) {
+  return (
+    <div className="mb-3 px-3 py-2.5 rounded-lg border border-accent/25 bg-accent/5 flex items-start gap-2.5">
+      <span className="text-base leading-none mt-0.5 select-none">🔥</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          {source.creatorName && (
+            <span className="text-xs font-semibold text-text-primary">{source.creatorName}</span>
+          )}
+          {typeof source.outlierRatio === 'number' && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/15 text-accent font-semibold tabular-nums">
+              {source.outlierRatio}x outlier
+            </span>
+          )}
+        </div>
+        {source.creatorHeadline && (
+          <p className="text-[11px] text-text-muted leading-snug mt-0.5 line-clamp-2">
+            {source.creatorHeadline}
+          </p>
+        )}
+        {source.originalUrl && (
+          <a
+            href={source.originalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] text-accent hover:text-accent-light inline-flex items-center gap-1 mt-1.5 underline-offset-2 hover:underline"
+          >
+            <span aria-hidden>↗</span>
+            <span>Ver post original en LinkedIn</span>
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const SOURCE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
   manual:      { icon: '💡', label: 'Idea',        color: 'text-accent bg-accent/10' },
   book_quote:  { icon: '📚', label: 'Book',        color: 'text-purple-400 bg-purple-400/10' },
@@ -203,8 +298,20 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
         </div>
       </div>
 
-      {/* Raw content */}
-      <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap mb-4">{idea.raw_content}</p>
+      {/* Raw content — stolen ideas carry a "From X / Original: <url>"
+          header at the top of raw_content; parse it out into a styled
+          source banner instead of leaving it mashed into the post body. */}
+      {(() => {
+        const { source, body } = parseSourceFromRawContent(idea.raw_content);
+        return (
+          <div className="mb-4">
+            {source && <SourceBanner source={source} />}
+            <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap">
+              {body}
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Generate / Reload buttons */}
       {!hasSelectedPost && (
