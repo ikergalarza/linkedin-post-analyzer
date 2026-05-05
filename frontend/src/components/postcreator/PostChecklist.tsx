@@ -60,7 +60,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-numeric',
     category: 'hook',
     label: 'Numeric contrast (concrete numbers in hook)',
-    weight: 0.22,
+    weight: 0.20,
     test: (c) => /\b\d+([.,]\d+)?(%|k|m|x|€|\$|€|h|hr|hrs|min|days?|años?|meses?|semanas?)?\b/i.test(c.hook),
     hint: 'Use a specific number: "$20K", "3x", "47%", "10 hours"',
   },
@@ -68,7 +68,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-short',
     category: 'hook',
     label: 'Hook ≤ 18 words',
-    weight: 0.20,
+    weight: 0.18,
     test: (c) => c.wordsHook > 0 && c.wordsHook <= 18,
     hint: 'Tighten the first line to 18 words or fewer',
   },
@@ -76,7 +76,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-tension',
     category: 'hook',
     label: 'Hook ends with an open loop (":" "…" "👇")',
-    weight: 0.18,
+    weight: 0.16,
     test: (c) => /(:|—|\.\.\.|👇|👉)$/.test(c.hook.trim()) || /\b(this is why|por eso|here is how|aquí está)/i.test(c.hookLower),
     hint: 'End the hook with a dangling promise: ":", "...", "Here\'s how 👇"',
   },
@@ -84,17 +84,32 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-first-line-length',
     category: 'hook',
     label: 'First line 20–140 chars (fits LinkedIn preview)',
-    weight: 0.20,
+    weight: 0.14,
     test: (c) => c.hook.length >= 20 && c.hook.length <= 140,
     hint: 'LinkedIn cuts at ~210 chars before "…see more". Keep line 1 between 20–140.',
   },
   {
-    id: 'hook-specificity',
+    id: 'hook-isolated',
     category: 'hook',
-    label: 'Hook names a specific subject (not generic)',
-    weight: 0.20,
-    test: (c) => /\b(claude|gpt|openai|anthropic|clay|apollo|hubspot|salesforce|linkedin|notion|zapier|n8n|ai|ia|llm|agent|sdr|outbound|saas|b2b)\b/i.test(c.hookLower) || /[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+/.test(c.hook),
-    hint: 'Anclar el hook en algo específico: herramienta, industria, o nombre propio',
+    label: 'Hook stands alone on the first line (paragraph break right after)',
+    weight: 0.10,
+    // Passes if there's a paragraph break after the hook OR the post is just
+    // the hook. Otherwise the "hook" visually runs into line 2 in the feed
+    // and gets cut mid-thought at LinkedIn's "see more" boundary.
+    test: (c) => c.lines.length <= 1 || c.lines[1].trim() === '',
+    hint: 'Leave a blank line right after the hook so it stands alone in the feed preview',
+  },
+  {
+    id: 'hook-sector-anchor',
+    category: 'hook',
+    label: 'Hook anchors to our sector (B2B sales + AI)',
+    weight: 0.22,
+    // Niche keywords + tools we live in. Generic personal-development hooks
+    // that any creator in any industry could publish FAIL — that's the
+    // exact bug we want to flag. The previous proper-noun fallback was too
+    // permissive and let "Hace 5 años pensaba que..." pass.
+    test: (c) => /\b(ai|ia|llm|gpt|claude|anthropic|openai|agent|agents?|agente|agentes?|sdr|sdrs|bdr|bdrs|outbound|outreach|cold[\s-]?email|prospect(?:ing|os?)?|pipeline|ventas|sales|selling|seller|b2b|saas|crm|gtm|go[\s-]?to[\s-]?market|lead[\s-]?gen(?:eration)?|leads?|closing|closer|discovery[\s-]?call|demo|hubspot|salesforce|clay|apollo|zoominfo|n8n|zapier|make|notion|slack)\b/i.test(c.hookLower),
+    hint: 'Mete una palanca de B2B+IA en el hook (AI, SDR, outbound, B2B, sales, Clay, HubSpot…). Los hooks genéricos los puede publicar cualquiera.',
   },
 
   // ---------- STRUCTURE (25%) ----------

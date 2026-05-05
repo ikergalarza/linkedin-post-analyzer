@@ -502,7 +502,8 @@ hook-numeric: a concrete number in the first line (3x, 47%, $20K, 10 horas, 5 d�
 hook-short: first line ≤ 18 words.
 hook-tension: first line ends with ":", "—", "...", "👇" or "👉" — an open loop.
 hook-first-line-length: first line between 20 and 140 characters.
-hook-specificity: hook names a specific tool / industry / proper noun (Claude, HubSpot, SDR, SaaS…).
+hook-single-line: the hook (everything before the first newline) is ONE physical line — no \\n inside it. A hook split into 2-3 lines will get cut at LinkedIn's "see more" boundary mid-thought.
+hook-sector-anchor: the first line references our niche — AI / IA / SDR / outbound / sales / ventas / B2B / SaaS / agent / LLM / pipeline / prospecting / GTM, OR a specific tool (Claude, Clay, Apollo, HubSpot, n8n…). Generic personal-development hooks that any creator in any industry could publish FAIL — they dissolve our positioning.
 
 ── STRUCTURE (25%) ────────────────────────────────────────────────────
 struct-numbered: at least 3 lines starting with "1.", "2.", "3." (or similar).
@@ -549,6 +550,13 @@ HOOK IS THE HIGHEST-LEVERAGE LINE — DON'T BREAK IT:
 - Therefore: only REPLACE the original hook if the new one is unambiguously better — sharper belief-break, stronger curiosity gap, more specific number, less corporate. If you're not sure, KEEP THE ORIGINAL HOOK and only sharpen its rhythm (tighten wording, drop filler, fix punctuation).
 - A rewrite that swaps a 7/10 hook for a 6/10 hook destroys the post even if the body went from 6 → 9. Hook regressions are the single most expensive mistake you can make here.
 - When the post's classified hook_type isn't a strong outlier pattern (e.g. classified as 'other', or a hook_type that doesn't appear in the leaderboard above), the highest-leverage fix is rewriting the FIRST LINE to match a top hook_type from the leaderboard — that single change can move the score more than fixing the entire body.
+
+HOOK SECTOR ANCHOR (non-negotiable):
+- Our niche is B2B sales + AI. The hook MUST reference at least one of: AI / IA / agente / agent / LLM / SDR / outbound / outreach / cold email / prospecting / pipeline / ventas / sales / B2B / SaaS / CRM / GTM / lead gen / closing / discovery / demo, OR a specific tool (Claude, GPT, Clay, Apollo, HubSpot, Salesforce, n8n, Make, Zapier, etc.). A generic personal-development hook ("Hace 5 años pensaba que…") FAILS — it could be ghost-written for any creator in any industry.
+- If the original post's hook is generic, REWRITE IT to bring the sector anchor into the first line. The body of the post almost always already references the niche; the fix is to surface that into the hook.
+
+HOOK MUST BE A SINGLE LINE:
+- The hook is whatever sits BEFORE the first newline in the post. It must be one continuous line (no soft or hard line breaks inside) and ≤ 140 characters. LinkedIn cuts the feed preview at ~210 chars and visually breaks at \\n; a hook split across multiple lines gets truncated mid-thought and the open loop never reaches the reader. If the original post's hook spans 2-3 lines, COLLAPSE it into one line during the rewrite.
 
 ONE CTA ONLY:
 - The post must end with EXACTLY ONE closer: a question, OR a "Comenta 'X' y te lo mando" lead-magnet ask (only when there's a real deliverable), OR no explicit CTA (a strong claim can close). NEVER both. If the original post stacks two (e.g. lead-magnet ask + final question), pick the stronger one and remove the other.
