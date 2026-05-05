@@ -630,14 +630,57 @@ export function computeDataFit(
   return { score, matched, rank: idx + 1 };
 }
 
-// New blended overall: structural craft + pillar intensity + data fit.
-// Reweighted so data fit pulls real weight (was 50/50 craft/pillar before).
-export function blendedOverall(
-  structural: number,
-  pillarIntensity: number,
-  dataFit: number
+// Score how well the post's hook_type maps onto a high-performing pattern in
+// our outlier data. We aggregate the leaderboard by hook_type (across all
+// structures it appears with) and use the avg of those archetype ratios. The
+// hook is the highest-leverage line on LinkedIn — only it shows above the
+// "see more" cut — so its data fit gets its own axis in the score, separate
+// from the whole-post archetype fit.
+export function computeHookDataFit(
+  classification: PostClassification | null,
+  leaderboard: ArchetypeEntry[]
+): { score: number; hookType: string | null; avgRatio: number | null } {
+  if (!classification || leaderboard.length === 0) return { score: 0, hookType: null, avgRatio: null };
+  if (classification.hook_type === 'other') return { score: 0, hookType: null, avgRatio: null };
+
+  const matches = leaderboard.filter((a) => a.hook_type === classification.hook_type);
+  if (matches.length === 0) return { score: 0, hookType: classification.hook_type, avgRatio: null };
+
+  const avg = matches.reduce((s, a) => s + a.avg_ratio, 0) / matches.length;
+  return { score: ratioToScore(avg), hookType: classification.hook_type, avgRatio: avg };
+}
+
+// Average of the body-only categories (structure, format, cta, topic) — i.e.
+// structural craft minus the hook portion, since hook is now its own axis.
+export function computeBodyStructural(
+  byCategory: Record<Category, { score: number }>
 ): number {
-  return Math.round((structural * 0.35 + pillarIntensity * 0.35 + dataFit * 0.30) * 100);
+  const bodyCats: Category[] = ['structure', 'format', 'cta', 'topic'];
+  const totalWeight = bodyCats.reduce((s, c) => s + CATEGORY_META[c].weight, 0);
+  let sum = 0;
+  for (const c of bodyCats) sum += byCategory[c].score * CATEGORY_META[c].weight;
+  return totalWeight > 0 ? sum / totalWeight : 0;
+}
+
+// New blended overall: hook is by far the highest-leverage line on LinkedIn
+// because it's the only thing readers see before clicking "see more". So it
+// gets a top-level 35% slot (split between craft regex and hook_type data
+// fit), with the rest of the score split across body craft, pillar intensity,
+// and whole-post archetype fit.
+export function blendedOverall(parts: {
+  hookCraft: number;
+  hookDataFit: number;
+  bodyStructural: number;
+  pillarIntensity: number;
+  archetypeFit: number;
+}): number {
+  return Math.round((
+    parts.hookCraft * 0.175 +
+    parts.hookDataFit * 0.175 +
+    parts.bodyStructural * 0.20 +
+    parts.pillarIntensity * 0.25 +
+    parts.archetypeFit * 0.20
+  ) * 100);
 }
 
 interface IterLog {
@@ -744,6 +787,10 @@ export default function PostChecklist({ text, onImproved }: Props) {
     () => computeDataFit(classification, leaderboard),
     [classification, leaderboard]
   );
+  const hookFit = useMemo(
+    () => computeHookDataFit(classification, leaderboard),
+    [classification, leaderboard]
+  );
 
   const runAutoImprove = async () => {
     if (!text || !onImproved) return;
@@ -753,19 +800,24 @@ export default function PostChecklist({ text, onImproved }: Props) {
     setBestScore(null);
     setIterLog([]);
 
-    // Helper: classify a post via the backend (same enrichPost the scrape
-    // pipeline uses) and return both the classification and the data-fit
-    // number against the leaderboard we already loaded. Tolerant of failures.
+    // Helper: classify a post + score the data axes against the leaderboard.
+    // Returns enough info to compute the new blended overall (hook craft,
+    // hook data fit, body structural, pillar, archetype fit). Tolerant of
+    // failures — falls back to zero data fit on classification errors.
     const classifyAndScore = async (
       txt: string
-    ): Promise<{ classification: PostClassification | null; dataFit: number }> => {
+    ): Promise<{
+      classification: PostClassification | null;
+      dataFit: number;
+      hookDataFit: number;
+    }> => {
       try {
         const res = await fetch(`${BASE}/api/analysis/classify-post`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: txt }),
         });
-        if (!res.ok) return { classification: null, dataFit: 0 };
+        if (!res.ok) return { classification: null, dataFit: 0, hookDataFit: 0 };
         const data = await res.json();
         const cls: PostClassification = {
           hook_type: data.hook_type,
@@ -773,18 +825,32 @@ export default function PostChecklist({ text, onImproved }: Props) {
           text_tone: data.text_tone,
           hook_text: data.hook_text,
         };
-        return { classification: cls, dataFit: computeDataFit(cls, leaderboard).score };
+        return {
+          classification: cls,
+          dataFit: computeDataFit(cls, leaderboard).score,
+          hookDataFit: computeHookDataFit(cls, leaderboard).score,
+        };
       } catch {
-        return { classification: null, dataFit: 0 };
+        return { classification: null, dataFit: 0, hookDataFit: 0 };
       }
     };
+
+    const blendFor = (s: ScoreResult, hookDataFit: number, archetypeFit: number) =>
+      blendedOverall({
+        hookCraft: s.byCategory.hook.score,
+        hookDataFit,
+        bodyStructural: computeBodyStructural(s.byCategory),
+        pillarIntensity: s.pillars.intensity,
+        archetypeFit,
+      });
 
     let bestText = text;
     let best = scorePost(text);
     const initial = await classifyAndScore(text);
     let bestClassification = initial.classification;
     let bestDataFit = initial.dataFit;
-    let bestScoreVal = blendedOverall(best.structural, best.pillars.intensity, bestDataFit);
+    let bestHookDataFit = initial.hookDataFit;
+    let bestScoreVal = blendFor(best, bestHookDataFit, bestDataFit);
     setBestScore(bestScoreVal);
     const originalText = text;
     // If the user manually picked a pillar, that wins. Otherwise fall back to
@@ -802,7 +868,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
 
         const score = scorePost(bestText);
         const { failing, pillars } = score;
-        const blendedCurrent = blendedOverall(score.structural, pillars.intensity, bestDataFit);
+        const blendedCurrent = blendFor(score, bestHookDataFit, bestDataFit);
 
         const passingLabels = CHECKLIST
           .filter((item) => score.byCategory[item.category].items.find((e) => e.item.id === item.id)?.passed)
@@ -829,22 +895,25 @@ export default function PostChecklist({ text, onImproved }: Props) {
             `Pick the one most aligned with the post's MESSAGE and intensify ONLY that one.`;
 
         let userContent: string;
+        const breakdown = `hook craft ${Math.round(score.byCategory.hook.score * 100)}% · hook data fit ${Math.round(bestHookDataFit * 100)}% · body ${Math.round(computeBodyStructural(score.byCategory) * 100)}% · pillar ${Math.round(pillars.intensity * 100)}% · archetype fit ${Math.round(bestDataFit * 100)}%`;
+
         if (i === 1) {
           userContent =
             `ORIGINAL POST (idea, topic and data CANNOT change):\n${originalText}\n\n` +
-            `CURRENT SCORE: ${blendedCurrent}/100 (structural ${Math.round(score.structural * 100)}% + pillar intensity ${Math.round(pillars.intensity * 100)}% + data fit ${Math.round(bestDataFit * 100)}%)\n\n` +
+            `CURRENT SCORE: ${blendedCurrent}/100 — ${breakdown}\n` +
+            `HOOK is the heaviest axis (35% combined) — only the hook is visible above LinkedIn's "see more". A weaker hook will tank the score even if the body improves.\n\n` +
             `${pillarDetail}\n\n` +
             `PASSING STRUCTURAL CHECKS ✓ — do not break:\n${passingLabels}\n\n` +
             `FAILING STRUCTURAL CHECKS ✗:\n${failingList}\n\n` +
-            `Improve structure + intensify the dominant pillar + nudge the post toward one of the proven outlier archetypes (see ARCHETYPE LEADERBOARD in system). Keep the core idea and specific data intact. ` +
+            `Sharpen the hook (or keep it if already strong) + intensify the dominant pillar + nudge the post toward the target archetype. Keep the core idea and specific data intact. ` +
             `Return CRITIQUE: + --- + improved post.`;
         } else {
           userContent =
-            `BEST VERSION SO FAR (score: ${blendedCurrent}/100, data fit ${Math.round(bestDataFit * 100)}%):\n${bestText}\n\n` +
+            `BEST VERSION SO FAR (score: ${blendedCurrent}/100) — ${breakdown}\n${bestText}\n\n` +
             `${pillarDetail}\n\n` +
             `PASSING STRUCTURAL CHECKS ✓ — do not break:\n${passingLabels}\n\n` +
             `STILL FAILING ✗ — use DIFFERENT techniques than last iteration:\n${failingList}\n\n` +
-            `Same idea, same data. Intensify the pillar. Move the post closer to a top archetype from the leaderboard. Read your previous CRITIQUE and build on it. ` +
+            `Same idea, same data. Hook is highest-leverage — only swap it if the new one is unambiguously better. Intensify the pillar. Move toward the target archetype. ` +
             `Return CRITIQUE: + --- + improved post.`;
         }
 
@@ -898,11 +967,8 @@ export default function PostChecklist({ text, onImproved }: Props) {
         const newScoreParts = scorePost(improved);
         const newClassified = await classifyAndScore(improved);
         const newDataFit = newClassified.dataFit;
-        const newScore = blendedOverall(
-          newScoreParts.structural,
-          newScoreParts.pillars.intensity,
-          newDataFit
-        );
+        const newHookDataFit = newClassified.hookDataFit;
+        const newScore = blendFor(newScoreParts, newHookDataFit, newDataFit);
         const delta = newScore - bestScoreVal;
         const accepted = newScore > bestScoreVal;
 
@@ -917,6 +983,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
           bestText = improved;
           bestScoreVal = newScore;
           bestDataFit = newDataFit;
+          bestHookDataFit = newHookDataFit;
           bestClassification = newClassified.classification;
           setBestScore(bestScoreVal);
           onImproved(improved);
@@ -939,11 +1006,20 @@ export default function PostChecklist({ text, onImproved }: Props) {
     );
   }
 
-  const { byCategory, pillars, structural } = result;
-  // Blend structural craft + pillar intensity + data fit. The score the user
-  // sees is the same number the auto-improve loop uses to accept/reject
-  // rewrites, so they stay in sync.
-  const overall = blendedOverall(structural, pillars.intensity, dataFit.score);
+  const { byCategory, pillars } = result;
+  const hookCraft = byCategory.hook.score;
+  const bodyStructural = computeBodyStructural(byCategory);
+  // Blended overall — hook is now the heaviest single axis (35% combined)
+  // because on LinkedIn only the hook is visible before "see more". The same
+  // blended number drives both the on-screen score and the auto-improve
+  // loop's accept/reject logic.
+  const overall = blendedOverall({
+    hookCraft,
+    hookDataFit: hookFit.score,
+    bodyStructural,
+    pillarIntensity: pillars.intensity,
+    archetypeFit: dataFit.score,
+  });
   const scoreColor = overall >= 75 ? '#10b981' : overall >= 50 ? '#f59e0b' : '#ef4444';
   const verdict = overall >= 75 ? 'Viral-ready' : overall >= 50 ? 'Decent — tighten' : 'Needs work';
 
@@ -1042,7 +1118,10 @@ export default function PostChecklist({ text, onImproved }: Props) {
           </div>
           <p className="text-xs mt-0.5" style={{ color: scoreColor }}>{verdict}</p>
           <p className="text-[10px] text-text-muted mt-0.5">
-            {result.ctx.words} words · hook {result.ctx.wordsHook}w · craft {Math.round(structural * 100)}% · pillar {Math.round(pillars.intensity * 100)}% · data {Math.round(dataFit.score * 100)}%
+            {result.ctx.words}w · hook {result.ctx.wordsHook}w · <span className="text-diamond">hook {Math.round(((hookCraft + hookFit.score) / 2) * 100)}%</span> · pillar {Math.round(pillars.intensity * 100)}% · archetype {Math.round(dataFit.score * 100)}% · body {Math.round(bodyStructural * 100)}%
+          </p>
+          <p className="text-[10px] text-text-muted/70 mt-0.5">
+            Hook is the heaviest axis (35%) — only the hook is visible above LinkedIn's "see more"
           </p>
         </div>
 

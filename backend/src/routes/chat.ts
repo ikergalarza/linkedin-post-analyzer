@@ -497,7 +497,7 @@ CTA variety options (pick ONE that fits the post's tone, not a formula):
 Only the HOOK, STRUCTURE, FORMAT, CTA and TOPIC categories are scored as craft.
 The EMOTIONAL side (curiosity / fear / desire triggers) is measured by the PILLAR layer above — do NOT treat pillar triggers as generic checkboxes.
 
-── HOOK (30%) ─────────────────────────────────────────────────────────
+── HOOK (top axis — 35% of the BLENDED overall, split between these regex checks and hook_type data fit) ─────────────────────────────────────────────────────────
 hook-numeric: a concrete number in the first line (3x, 47%, $20K, 10 horas, 5 días).
 hook-short: first line ≤ 18 words.
 hook-tension: first line ends with ":", "—", "...", "👇" or "👉" — an open loop.
@@ -544,9 +544,11 @@ TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you introduce 
 WHAT YOU DO: take the author's existing post and sharpen the hook, tighten the spacing, intensify the ONE psychological pillar that the post is already firing, and swap weak CTAs for natural ones — without changing the topic, core idea, specific examples, or data points.
 
 HOOK IS THE HIGHEST-LEVERAGE LINE — DON'T BREAK IT:
-- The first 1–3 lines are the most important part of the whole post. If the hook doesn't make people click "see more", the body never gets read no matter how good it is.
+- LinkedIn shows only the first ~210 characters above the "see more" cut. Everything past that line is invisible until the reader clicks. If the hook doesn't earn that click, the body never gets read no matter how good it is.
+- The score weights this directly: HOOK is 35% of the overall (split between regex craft and how the post's hook_type performs in our outlier data) — heavier than pillar (25%), archetype fit (20%), or body craft (20%). A weaker hook with a stronger body will score WORSE.
 - Therefore: only REPLACE the original hook if the new one is unambiguously better — sharper belief-break, stronger curiosity gap, more specific number, less corporate. If you're not sure, KEEP THE ORIGINAL HOOK and only sharpen its rhythm (tighten wording, drop filler, fix punctuation).
 - A rewrite that swaps a 7/10 hook for a 6/10 hook destroys the post even if the body went from 6 → 9. Hook regressions are the single most expensive mistake you can make here.
+- When the post's classified hook_type isn't a strong outlier pattern (e.g. classified as 'other', or a hook_type that doesn't appear in the leaderboard above), the highest-leverage fix is rewriting the FIRST LINE to match a top hook_type from the leaderboard — that single change can move the score more than fixing the entire body.
 
 ONE CTA ONLY:
 - The post must end with EXACTLY ONE closer: a question, OR a "Comenta 'X' y te lo mando" lead-magnet ask (only when there's a real deliverable), OR no explicit CTA (a strong claim can close). NEVER both. If the original post stacks two (e.g. lead-magnet ask + final question), pick the stronger one and remove the other.
