@@ -504,6 +504,7 @@ hook-tension: first line ends with ":", "—", "...", "👇" or "👉" — an op
 hook-first-line-length: first line between 20 and 140 characters.
 hook-single-line: the hook (everything before the first newline) is ONE physical line — no \\n inside it. A hook split into 2-3 lines will get cut at LinkedIn's "see more" boundary mid-thought.
 hook-sector-anchor: the first line references our niche — AI / IA / SDR / outbound / sales / ventas / B2B / SaaS / agent / LLM / pipeline / prospecting / GTM, OR a specific tool (Claude, Clay, Apollo, HubSpot, n8n…). Generic personal-development hooks that any creator in any industry could publish FAIL — they dissolve our positioning.
+hook-no-hedging: the hook contains NO hedge words ("quizás", "tal vez", "creo que", "puede que", "un poco", "algo", "bastante", "casi", "más o menos", "maybe", "I think", "kind of", "sort of"). Hedges soften the punch and signal weak conviction; punchy/extreme language wins ("tiré las llaves" > "di las llaves", "rampa de la muerte" > "rampa gigante").
 
 ── STRUCTURE (25%) ────────────────────────────────────────────────────
 struct-numbered: at least 3 lines starting with "1.", "2.", "3." (or similar).
@@ -557,6 +558,11 @@ HOOK SECTOR ANCHOR (non-negotiable):
 
 HOOK MUST BE A SINGLE LINE:
 - The hook is whatever sits BEFORE the first newline in the post. It must be one continuous line (no soft or hard line breaks inside) and ≤ 140 characters. LinkedIn cuts the feed preview at ~210 chars and visually breaks at \\n; a hook split across multiple lines gets truncated mid-thought and the open loop never reaches the reader. If the original post's hook spans 2-3 lines, COLLAPSE it into one line during the rewrite.
+
+HOOK MUST USE PUNCHY / EXTREME LANGUAGE:
+- Whenever the meaning isn't lost, replace neutral words with vivid, physical, or hyperbolic alternatives. Stronger verbs ("tiré las llaves" > "le di las llaves", "destrocé la cuota" > "superé la cuota", "reventé el pipeline" > "llené el pipeline"). Hyperbolic concrete adjectives ("rampa de la muerte" > "rampa gigante", "el error más caro de mi carrera" > "un error grande", "el 80% se está extinguiendo" > "muchos fallan"). Cinematic, not corporate.
+- NEVER use hedge words in the hook: "quizás", "tal vez", "creo que", "puede que", "un poco", "algo", "bastante", "casi", "más o menos", "I think", "maybe", "kind of", "sort of". They soften the punch and signal weak conviction. Strip them; commit.
+- This rule applies STRICTLY to the hook (first line). The body can use softer language for nuance.
 
 ONE CTA ONLY:
 - The post must end with EXACTLY ONE closer: a question, OR a "Comenta 'X' y te lo mando" lead-magnet ask (only when there's a real deliverable), OR no explicit CTA (a strong claim can close). NEVER both. If the original post stacks two (e.g. lead-magnet ask + final question), pick the stronger one and remove the other.

@@ -60,7 +60,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-numeric',
     category: 'hook',
     label: 'Numeric contrast (concrete numbers in hook)',
-    weight: 0.20,
+    weight: 0.18,
     test: (c) => /\b\d+([.,]\d+)?(%|k|m|x|€|\$|€|h|hr|hrs|min|days?|años?|meses?|semanas?)?\b/i.test(c.hook),
     hint: 'Use a specific number: "$20K", "3x", "47%", "10 hours"',
   },
@@ -68,7 +68,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-short',
     category: 'hook',
     label: 'Hook ≤ 18 words',
-    weight: 0.18,
+    weight: 0.16,
     test: (c) => c.wordsHook > 0 && c.wordsHook <= 18,
     hint: 'Tighten the first line to 18 words or fewer',
   },
@@ -76,7 +76,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-tension',
     category: 'hook',
     label: 'Hook ends with an open loop (":" "…" "👇")',
-    weight: 0.16,
+    weight: 0.14,
     test: (c) => /(:|—|\.\.\.|👇|👉)$/.test(c.hook.trim()) || /\b(this is why|por eso|here is how|aquí está)/i.test(c.hookLower),
     hint: 'End the hook with a dangling promise: ":", "...", "Here\'s how 👇"',
   },
@@ -84,7 +84,7 @@ const CHECKLIST: ChecklistItem[] = [
     id: 'hook-first-line-length',
     category: 'hook',
     label: 'First line 20–140 chars (fits LinkedIn preview)',
-    weight: 0.14,
+    weight: 0.12,
     test: (c) => c.hook.length >= 20 && c.hook.length <= 140,
     hint: 'LinkedIn cuts at ~210 chars before "…see more". Keep line 1 between 20–140.',
   },
@@ -110,6 +110,19 @@ const CHECKLIST: ChecklistItem[] = [
     // permissive and let "Hace 5 años pensaba que..." pass.
     test: (c) => /\b(ai|ia|llm|gpt|claude|anthropic|openai|agent|agents?|agente|agentes?|sdr|sdrs|bdr|bdrs|outbound|outreach|cold[\s-]?email|prospect(?:ing|os?)?|pipeline|ventas|sales|selling|seller|b2b|saas|crm|gtm|go[\s-]?to[\s-]?market|lead[\s-]?gen(?:eration)?|leads?|closing|closer|discovery[\s-]?call|demo|hubspot|salesforce|clay|apollo|zoominfo|n8n|zapier|make|notion|slack)\b/i.test(c.hookLower),
     hint: 'Mete una palanca de B2B+IA en el hook (AI, SDR, outbound, B2B, sales, Clay, HubSpot…). Los hooks genéricos los puede publicar cualquiera.',
+  },
+  {
+    id: 'hook-no-hedging',
+    category: 'hook',
+    label: 'Hook is punchy — no hedge words ("quizás", "creo que", "un poco"…)',
+    weight: 0.08,
+    // Hedge words soften the hook and signal weak conviction. Punchy/extreme
+    // language ("tiré las llaves" vs "di las llaves", "rampa de la muerte"
+    // vs "rampa gigante") drives reposts. We can't detect "is the verb
+    // strong enough" with a regex, but we CAN detect hedges as a proxy —
+    // a hook with no hedges is almost always punchier than one with them.
+    test: (c) => !/\b(quiz[áa]s|tal vez|puede que|creo que|pienso que|me parece|un poco|algo (?:as[íi]|de)|bastante|casi|m[áa]s o menos|maybe|i think|i guess|kind of|sort of|somewhat|fairly|a bit)\b/i.test(c.hookLower),
+    hint: 'Quita "quizás / creo que / un poco / casi" del hook. Verbos fuertes ("tiré", "destrocé", "reventé") y adjetivos extremos ("de la muerte", "más caro de mi carrera") en lugar de neutros.',
   },
 
   // ---------- STRUCTURE (25%) ----------
