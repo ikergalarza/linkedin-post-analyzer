@@ -56,6 +56,30 @@ async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number;
     );
   }
 
+  // Upsert today's profile-view snapshot. Same shape as followers, source is
+  // the WVMP feed via Unipile's raw passthrough. Soft-fail: if the call
+  // returns null (e.g. account isn't Premium, queryId rotated, transient
+  // 5xx) we just skip — better to keep the rest of the scrape running
+  // than to surface a noisy error to the caller. The follower snapshot
+  // and post pulls don't depend on this so they continue regardless.
+  try {
+    const wvmp = await unipileService.getProfileViewers(accountIdOverride);
+    if (wvmp) {
+      await pool.query(
+        `INSERT INTO creator_profile_view_snapshots
+           (creator_id, captured_on, captured_at, views_count, raw_response)
+         VALUES ($1, CURRENT_DATE, NOW(), $2, $3::jsonb)
+         ON CONFLICT (creator_id, captured_on) DO UPDATE
+           SET views_count = EXCLUDED.views_count,
+               raw_response = EXCLUDED.raw_response,
+               captured_at = NOW()`,
+        [creator.id, wvmp.count, JSON.stringify(wvmp.raw)]
+      );
+    }
+  } catch (err) {
+    console.warn('[accounts/scrape] profile-view snapshot failed:', (err as Error).message);
+  }
+
   if (!providerId) return { scraped: 0, with_impressions: 0 };
 
   const rawPosts = await unipileService.getPosts(providerId, undefined, accountIdOverride);
@@ -189,6 +213,40 @@ router.get('/follower-history', async (req: Request, res: Response) => {
     res.json({ points: rows });
   } catch (err: any) {
     console.error('[accounts/follower-history]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/profile-view-history?creator_id=xxx&days=90
+// If creator_id is omitted, sums viewers across all managed accounts per day.
+// Same shape as /follower-history so the frontend can reuse the chart logic.
+router.get('/profile-view-history', async (req: Request, res: Response) => {
+  try {
+    const days = Math.min(parseInt(req.query.days as string) || 90, 365);
+    const creatorId = (req.query.creator_id as string) || null;
+
+    const { rows } = creatorId
+      ? await pool.query(
+          `SELECT captured_on::text AS day, views_count::int AS views
+             FROM creator_profile_view_snapshots
+            WHERE creator_id = $1
+              AND captured_on >= CURRENT_DATE - ($2 || ' days')::interval
+            ORDER BY captured_on ASC`,
+          [creatorId, days]
+        )
+      : await pool.query(
+          `SELECT s.captured_on::text AS day, SUM(s.views_count)::int AS views
+             FROM creator_profile_view_snapshots s
+             JOIN creators c ON c.id = s.creator_id
+            WHERE c.is_managed = TRUE
+              AND s.captured_on >= CURRENT_DATE - ($1 || ' days')::interval
+            GROUP BY s.captured_on
+            ORDER BY s.captured_on ASC`,
+          [days]
+        );
+    res.json({ points: rows });
+  } catch (err: any) {
+    console.error('[accounts/profile-view-history]', err);
     res.status(500).json({ error: err.message });
   }
 });

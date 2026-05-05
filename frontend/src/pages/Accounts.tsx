@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import AccountsEngagementChart from '../components/AccountsEngagementChart';
 import FollowerGrowthChart from '../components/FollowerGrowthChart';
+import ProfileViewChart from '../components/ProfileViewChart';
 import GoogleChatModal from '../components/accounts/GoogleChatModal';
 
 interface ManagedAccount {
@@ -870,6 +871,15 @@ export default function Accounts() {
 
           {/* Follower growth — daily snapshots, complements the engagement curve */}
           <FollowerGrowthChart
+            creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            days={days}
+          />
+
+          {/* Profile views — same daily-snapshot pattern, sourced from
+              LinkedIn's WVMP feed via Unipile. Surfaces 24h / 7d / range
+              deltas so the user sees how visits trend, not just the
+              absolute. Requires Premium / Sales Nav to return real data. */}
+          <ProfileViewChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
             days={days}
           />

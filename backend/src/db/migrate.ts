@@ -334,6 +334,29 @@ const migration = `
   ALTER TABLE post_ideas DROP CONSTRAINT IF EXISTS post_ideas_source_type_check;
   ALTER TABLE post_ideas ADD CONSTRAINT post_ideas_source_type_check
     CHECK (source_type IN ('manual','book_quote','demo_moment','observation','meeting','generated'));
+
+  -- v21: Profile-view snapshots — daily count of recent profile viewers per
+  -- managed creator. Mirrors creator_follower_snapshots (1 row per creator
+  -- per day, unique on (creator_id, captured_on), upserted during scrape).
+  -- Source is LinkedIn's WVMP ("Who Viewed My Profile") feed proxied via
+  -- Unipile's raw-data passthrough — premium accounts return ~90 days of
+  -- viewers; free accounts only see a teaser so the metric is only useful
+  -- on Premium/Sales-Nav.
+  CREATE TABLE IF NOT EXISTS creator_profile_view_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    creator_id UUID NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
+    captured_on DATE NOT NULL DEFAULT CURRENT_DATE,
+    captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- Number of viewers visible in this snapshot (Premium = ~90-day window)
+    views_count INTEGER NOT NULL,
+    -- Full WVMP response so we can later mine individual viewers without
+    -- needing to re-fetch. JSONB so we can index into it if needed.
+    raw_response JSONB
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS uniq_profile_view_snapshot_day
+    ON creator_profile_view_snapshots (creator_id, captured_on);
+  CREATE INDEX IF NOT EXISTS idx_profile_view_snapshots_creator
+    ON creator_profile_view_snapshots (creator_id, captured_on);
 `;
 
 export async function runMigrations() {

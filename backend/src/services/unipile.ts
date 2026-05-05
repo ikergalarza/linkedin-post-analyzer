@@ -136,6 +136,79 @@ export class UnipileService {
   }
 
   /**
+   * Fetch the "Who Viewed My Profile" feed for a managed account.
+   *
+   * Unipile doesn't ship a typed wrapper for this — we go through their
+   * raw-data passthrough (POST /api/v1/linkedin) which forwards an
+   * arbitrary LinkedIn Voyager request. The Voyager surface here is
+   * `surfaceType:WVMP` against `voyagerPremiumDashAnalyticsObject`.
+   *
+   * Caveats:
+   * - Requires LinkedIn **Premium / Sales Navigator** on the connected
+   *   account. Free accounts get a teaser (5 viewers) and the count
+   *   never moves.
+   * - The `queryId` hash at the end of the URL is owned by LinkedIn and
+   *   can rotate. If WVMP starts returning empty results for accounts
+   *   that previously worked, refresh the hash by inspecting a real
+   *   request in the LinkedIn web UI (Network tab → premiumDashAnalyticsObject).
+   *
+   * Returns `null` (instead of throwing) when the call fails or the
+   * account doesn't have access — the snapshot routine treats that as
+   * "skip this creator today" instead of bailing out the whole scrape.
+   */
+  async getProfileViewers(
+    accountIdOverride?: string
+  ): Promise<{ count: number; raw: any } | null> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) {
+      console.warn('[Unipile WVMP] No account_id available, skipping');
+      return null;
+    }
+
+    // Voyager URL stays as one string (already URL-encoded as LinkedIn expects it).
+    // The queryId hash is current as of 2026-05; bump if LinkedIn rotates it.
+    const requestUrl =
+      'https://www.linkedin.com/voyager/api/graphql' +
+      '?variables=(start:0,query:(),analyticsEntityUrn:(activityUrn:urn%3Ali%3Adummy%3A-1),surfaceType:WVMP)' +
+      '&queryId=voyagerPremiumDashAnalyticsObject.c31102e906e7098910f44e0cecaa5b5c';
+
+    try {
+      const res = await fetch(`${this.baseUrl}/api/v1/linkedin`, {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': this.apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          account_id: accountId,
+          method: 'GET',
+          request_url: requestUrl,
+          encoding: false,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        console.warn(`[Unipile WVMP] ${res.status} for account ${accountId}: ${body.slice(0, 200)}`);
+        return null;
+      }
+      const data: any = await res.json();
+      // Unipile wraps the raw passthrough response in `data.data.<actual>`.
+      // The Voyager payload itself nests under `data.<…>` again, so the path
+      // ends up double-data. Defensive — if LinkedIn changes the shape we
+      // fall back to a 0 count rather than crash.
+      const elements: unknown =
+        data?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
+        data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
+        data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements;
+      const count = Array.isArray(elements) ? elements.length : 0;
+      return { count, raw: data };
+    } catch (err: any) {
+      console.warn(`[Unipile WVMP] Fetch failed for account ${accountId}: ${err.message}`);
+      return null;
+    }
+  }
+
+  /**
    * Step 2: Get posts using the provider_id (internal ID) from getProfile.
    * The identifier for posts MUST be the provider internal ID, not the public username.
    */
