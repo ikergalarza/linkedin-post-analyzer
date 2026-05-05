@@ -4,6 +4,7 @@ import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { getCrossCreatorPatterns } from '../services/patterns';
 import { CreatorProfileModel } from '../models/creatorProfile';
+import pool from '../db';
 
 const router = Router();
 
@@ -372,6 +373,39 @@ router.post('/improve', async (req: Request, res: Response) => {
     const profileContext = await buildProfileContext();
     const pillarExamples = await buildPillarExamples(targetPillar);
 
+    // Archetype leaderboard — same data the Post Creator uses to pick which
+    // (hook_type, post_structure) pairs to write into. We pass the top 8 so
+    // the rewriter knows which combinations are actually hitting outlier
+    // territory in our data and can bias its rewrite toward them rather than
+    // formatting heuristics.
+    let archetypeBlock = '';
+    try {
+      const { rows: archetypes } = await pool.query(`
+        SELECT
+          p.hook_type,
+          p.post_structure,
+          AVG(p.outlier_ratio)::float AS avg_ratio,
+          COUNT(*)::int AS sample_count
+        FROM posts p
+        WHERE p.is_outlier = TRUE
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.hook_type IS NOT NULL AND p.hook_type != 'other'
+          AND p.post_structure IS NOT NULL AND p.post_structure != 'other'
+        GROUP BY p.hook_type, p.post_structure
+        HAVING COUNT(*) >= 2
+        ORDER BY avg_ratio DESC
+        LIMIT 8
+      `);
+      if (archetypes.length > 0) {
+        archetypeBlock = `\n\nARCHETYPE LEADERBOARD (top performers in OUR data — bias your rewrite toward one of these (hook_type, post_structure) combinations when the original's content allows it):
+${archetypes.map((a: any, i: number) => `${i + 1}. ${a.hook_type} + ${a.post_structure} → ${(+a.avg_ratio).toFixed(1)}x avg outlier ratio (${a.sample_count} samples)`).join('\n')}
+
+When you score and rewrite the post, treat these archetypes as the gravity well. A post that lands in the top 3 is structurally aligned with what works for this account; a post whose hook_type/post_structure pair isn't in this list (especially "other" or any combo not above) is fighting the data and should be nudged toward one of these — provided the original idea genuinely supports it.`;
+      }
+    } catch (err) {
+      console.warn('[improve] archetype leaderboard query failed, continuing without it:', (err as Error).message);
+    }
+
     const PILLAR_DIRECTIVE = targetPillar
       ? `
 === PILLAR FOCUS — NON-NEGOTIABLE ===
@@ -541,7 +575,7 @@ ${ANTI_FORMULA_RULES}
 
 ${CHECKLIST_REFERENCE}
 
-${pillarExamples}
+${pillarExamples}${archetypeBlock}
 
 RESPONSE FORMAT — always use exactly this structure (no other text):
 CRITIQUE: [2-4 sentences: (1) which pillar you intensified and how, (2) which structural checks you fixed, (3) what technique you chose from the outlier examples and WHY it fits this post, (4) what still needs work]

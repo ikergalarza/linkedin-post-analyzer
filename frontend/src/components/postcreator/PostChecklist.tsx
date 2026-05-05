@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -544,6 +544,73 @@ export function scorePost(text: string): ScoreResult {
   return { byCategory, overall, ctx, failing, pillars, structural };
 }
 
+// ─── Data-driven scoring layer ────────────────────────────────────────────────
+// The structural CHECKLIST above is heuristic regex; this layer pulls actual
+// outlier archetypes from the database (same data the Post Creator picks
+// archetypes from) and grades how close the draft post's classified
+// (hook_type, post_structure) pair sits to those proven combinations.
+
+export interface ArchetypeEntry {
+  hook_type: string;
+  post_structure: string;
+  avg_ratio: number;
+  max_ratio: number;
+  sample_count: number;
+  example_hook: string | null;
+  dominant_tone: string | null;
+}
+
+export interface PostClassification {
+  hook_type: string;
+  post_structure: string;
+  text_tone: string;
+  hook_text: string | null;
+}
+
+// Map the leaderboard ratio onto a 0–1 score. We want a 5x archetype to feel
+// strong (≈0.85), a 3x to feel decent (≈0.55), and a sub-2x to feel weak. The
+// curve is gentle — small differences at the top shouldn't dominate.
+function ratioToScore(avgRatio: number): number {
+  if (avgRatio <= 0) return 0;
+  // Saturating curve: score = ratio / (ratio + 4) gives 0.5 at 4x, 0.6 at 6x,
+  // 0.71 at 10x. Then gently lifted so a 3x archetype still scores ~0.55.
+  const base = avgRatio / (avgRatio + 4);
+  return Math.min(1, base * 1.4);
+}
+
+// Compute the data-fit score for a classified post against the leaderboard.
+// Returns 0 when classification is missing or the (hook, structure) pair isn't
+// in the leaderboard at all — i.e. the post is fighting our outlier patterns.
+export function computeDataFit(
+  classification: PostClassification | null,
+  leaderboard: ArchetypeEntry[]
+): { score: number; matched: ArchetypeEntry | null; rank: number | null } {
+  if (!classification || leaderboard.length === 0) return { score: 0, matched: null, rank: null };
+  // 'other' classifications carry no information — treat as zero data fit.
+  if (classification.hook_type === 'other' || classification.post_structure === 'other') {
+    return { score: 0, matched: null, rank: null };
+  }
+  const idx = leaderboard.findIndex(
+    (a) => a.hook_type === classification.hook_type && a.post_structure === classification.post_structure
+  );
+  if (idx === -1) return { score: 0, matched: null, rank: null };
+  const matched = leaderboard[idx];
+  let score = ratioToScore(matched.avg_ratio);
+  // Tiny rank bonus so top-3 feel a touch better than mid-pack at the same ratio.
+  if (idx < 3) score = Math.min(1, score + 0.05);
+  return { score, matched, rank: idx + 1 };
+}
+
+// New blended overall: structural craft + pillar intensity + data fit.
+// Reweighted so data fit pulls real weight (was 50/50 craft/pillar before).
+export function blendedOverall(
+  structural: number,
+  pillarIntensity: number,
+  dataFit: number
+): number {
+  return Math.round((structural * 0.35 + pillarIntensity * 0.35 + dataFit * 0.30) * 100);
+}
+
 interface IterLog {
   iteration: number;
   score: number;
@@ -587,6 +654,68 @@ export default function PostChecklist({ text, onImproved }: Props) {
     return scorePost(text);
   }, [text]);
 
+  // ─── Data-driven scoring layer ─────────────────────────────────────────
+  // Fetch the archetype leaderboard once on mount — same query the Post
+  // Creator uses to pick which archetypes to write into. Cached for the
+  // session so live recomputes stay fast.
+  const [leaderboard, setLeaderboard] = useState<ArchetypeEntry[]>([]);
+  const [classification, setClassification] = useState<PostClassification | null>(null);
+  const [classifying, setClassifying] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${BASE}/api/analysis/archetype-leaderboard`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        setLeaderboard(Array.isArray(d?.archetypes) ? d.archetypes : []);
+      })
+      .catch(() => {
+        if (!cancelled) setLeaderboard([]);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Debounced classify — runs on the backend (reuses enrichPost) so the
+  // hook_type/post_structure detection matches scrape-time labels exactly.
+  // 600ms debounce keeps it cheap while typing.
+  useEffect(() => {
+    if (!text || text.trim().length < 20) {
+      setClassification(null);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setClassifying(true);
+      try {
+        const res = await fetch(`${BASE}/api/analysis/classify-post`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        if (cancelled) return;
+        setClassification({
+          hook_type: data.hook_type,
+          post_structure: data.post_structure,
+          text_tone: data.text_tone,
+          hook_text: data.hook_text,
+        });
+      } catch {
+        if (!cancelled) setClassification(null);
+      } finally {
+        if (!cancelled) setClassifying(false);
+      }
+    }, 600);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [text]);
+
+  const dataFit = useMemo(
+    () => computeDataFit(classification, leaderboard),
+    [classification, leaderboard]
+  );
+
   const runAutoImprove = async () => {
     if (!text || !onImproved) return;
     setImproving(true);
@@ -595,9 +724,34 @@ export default function PostChecklist({ text, onImproved }: Props) {
     setBestScore(null);
     setIterLog([]);
 
+    // Helper: classify a post via the backend (same enrichPost the scrape
+    // pipeline uses) and turn it into a data-fit number against the
+    // leaderboard we already loaded. Tolerant of failures — falls back to 0.
+    const computeDataFitFor = async (txt: string): Promise<number> => {
+      try {
+        const res = await fetch(`${BASE}/api/analysis/classify-post`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: txt }),
+        });
+        if (!res.ok) return 0;
+        const data = await res.json();
+        const cls: PostClassification = {
+          hook_type: data.hook_type,
+          post_structure: data.post_structure,
+          text_tone: data.text_tone,
+          hook_text: data.hook_text,
+        };
+        return computeDataFit(cls, leaderboard).score;
+      } catch {
+        return 0;
+      }
+    };
+
     let bestText = text;
     let best = scorePost(text);
-    let bestScoreVal = best.overall;
+    let bestDataFit = await computeDataFitFor(text);
+    let bestScoreVal = blendedOverall(best.structural, best.pillars.intensity, bestDataFit);
     setBestScore(bestScoreVal);
     const originalText = text;
     // If the user manually picked a pillar, that wins. Otherwise fall back to
@@ -615,6 +769,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
 
         const score = scorePost(bestText);
         const { failing, pillars } = score;
+        const blendedCurrent = blendedOverall(score.structural, pillars.intensity, bestDataFit);
 
         const passingLabels = CHECKLIST
           .filter((item) => score.byCategory[item.category].items.find((e) => e.item.id === item.id)?.passed)
@@ -644,19 +799,19 @@ export default function PostChecklist({ text, onImproved }: Props) {
         if (i === 1) {
           userContent =
             `ORIGINAL POST (idea, topic and data CANNOT change):\n${originalText}\n\n` +
-            `CURRENT SCORE: ${score.overall}/100 (structural ${Math.round(score.structural * 100)}% + pillar intensity ${Math.round(pillars.intensity * 100)}%)\n\n` +
+            `CURRENT SCORE: ${blendedCurrent}/100 (structural ${Math.round(score.structural * 100)}% + pillar intensity ${Math.round(pillars.intensity * 100)}% + data fit ${Math.round(bestDataFit * 100)}%)\n\n` +
             `${pillarDetail}\n\n` +
             `PASSING STRUCTURAL CHECKS ✓ — do not break:\n${passingLabels}\n\n` +
             `FAILING STRUCTURAL CHECKS ✗:\n${failingList}\n\n` +
-            `Improve structure + intensify the dominant pillar. Keep the core idea and specific data intact. ` +
+            `Improve structure + intensify the dominant pillar + nudge the post toward one of the proven outlier archetypes (see ARCHETYPE LEADERBOARD in system). Keep the core idea and specific data intact. ` +
             `Return CRITIQUE: + --- + improved post.`;
         } else {
           userContent =
-            `BEST VERSION SO FAR (score: ${score.overall}/100):\n${bestText}\n\n` +
+            `BEST VERSION SO FAR (score: ${blendedCurrent}/100, data fit ${Math.round(bestDataFit * 100)}%):\n${bestText}\n\n` +
             `${pillarDetail}\n\n` +
             `PASSING STRUCTURAL CHECKS ✓ — do not break:\n${passingLabels}\n\n` +
             `STILL FAILING ✗ — use DIFFERENT techniques than last iteration:\n${failingList}\n\n` +
-            `Same idea, same data. Intensify the pillar. Read your previous CRITIQUE and build on it. ` +
+            `Same idea, same data. Intensify the pillar. Move the post closer to a top archetype from the leaderboard. Read your previous CRITIQUE and build on it. ` +
             `Return CRITIQUE: + --- + improved post.`;
         }
 
@@ -684,7 +839,13 @@ export default function PostChecklist({ text, onImproved }: Props) {
         const raw = (data.raw || '').trim();
         if (!improved) throw new Error('Empty AI response');
 
-        const newScore = scorePost(improved).overall;
+        const newScoreParts = scorePost(improved);
+        const newDataFit = await computeDataFitFor(improved);
+        const newScore = blendedOverall(
+          newScoreParts.structural,
+          newScoreParts.pillars.intensity,
+          newDataFit
+        );
         const delta = newScore - bestScoreVal;
         const accepted = newScore > bestScoreVal;
 
@@ -698,6 +859,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
         if (accepted) {
           bestText = improved;
           bestScoreVal = newScore;
+          bestDataFit = newDataFit;
           setBestScore(bestScoreVal);
           onImproved(improved);
         }
@@ -719,7 +881,11 @@ export default function PostChecklist({ text, onImproved }: Props) {
     );
   }
 
-  const { byCategory, overall, pillars } = result;
+  const { byCategory, pillars, structural } = result;
+  // Blend structural craft + pillar intensity + data fit. The score the user
+  // sees is the same number the auto-improve loop uses to accept/reject
+  // rewrites, so they stay in sync.
+  const overall = blendedOverall(structural, pillars.intensity, dataFit.score);
   const scoreColor = overall >= 75 ? '#10b981' : overall >= 50 ? '#f59e0b' : '#ef4444';
   const verdict = overall >= 75 ? 'Viral-ready' : overall >= 50 ? 'Decent — tighten' : 'Needs work';
 
@@ -782,10 +948,43 @@ export default function PostChecklist({ text, onImproved }: Props) {
                 {PILLAR_META[domPillar].icon} {PILLAR_META[domPillar].label} · {Math.round(pillars.intensity * 100)}%
               </span>
             )}
+            {/* Data-fit chip — surfaces the (hook_type, post_structure) pair
+                the post classifies as, and how that pair has performed in our
+                actual outlier data. This is the part the regex checklist
+                can't see. */}
+            {classifying && !classification && (
+              <span className="text-[10px] text-text-muted px-1.5 py-0.5 rounded bg-bg-secondary border border-border">
+                Matching archetype…
+              </span>
+            )}
+            {classification && dataFit.matched && (
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-diamond/15 text-diamond"
+                title={`Top ${dataFit.rank} of ${leaderboard.length} archetypes in your outlier data — peak ${dataFit.matched.max_ratio}x`}
+              >
+                📊 {classification.hook_type} + {classification.post_structure} · {dataFit.matched.avg_ratio}x avg
+              </span>
+            )}
+            {classification && !dataFit.matched && (classification.hook_type === 'other' || classification.post_structure === 'other') && (
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30"
+                title="The classifier returned 'other' — the post doesn't fit any clear hook or structure pattern. Sharper hook + clearer structure will lift the score."
+              >
+                ⚠ Archetype unclear
+              </span>
+            )}
+            {classification && !dataFit.matched && classification.hook_type !== 'other' && classification.post_structure !== 'other' && (
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-bg-secondary text-text-muted border border-border"
+                title="This (hook, structure) pair isn't in your outlier leaderboard — no proven track record yet."
+              >
+                {classification.hook_type} + {classification.post_structure} · no outlier match
+              </span>
+            )}
           </div>
           <p className="text-xs mt-0.5" style={{ color: scoreColor }}>{verdict}</p>
           <p className="text-[10px] text-text-muted mt-0.5">
-            {result.ctx.words} words · hook {result.ctx.wordsHook}w · {totalCraftPassed}/{CHECKLIST.length} craft · {totalPillarPassed}/{PILLAR_TRIGGERS.length} triggers
+            {result.ctx.words} words · hook {result.ctx.wordsHook}w · craft {Math.round(structural * 100)}% · pillar {Math.round(pillars.intensity * 100)}% · data {Math.round(dataFit.score * 100)}%
           </p>
         </div>
 
