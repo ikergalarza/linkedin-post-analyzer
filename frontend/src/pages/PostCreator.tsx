@@ -121,7 +121,12 @@ export default function PostCreator() {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [previewText, setPreviewText] = useState<string>('');
-  const [manualPreview, setManualPreview] = useState<string>('');
+  // null = user hasn't edited (use the latest generated text); string = user
+  // has typed something, including '' if they cleared the field. This split
+  // matters because `manualPreview || previewText` falls back to previewText
+  // on empty, so without the sentinel the textarea snaps back to the
+  // pre-edit text the moment the user selects-all and deletes.
+  const [manualPreview, setManualPreview] = useState<string | null>(null);
   // The right column shows the FINAL artifact (post text + image) plus its
   // tools (score + image generator) all together, no tabs. The user wanted
   // to see post + score + image-control simultaneously, not switch contexts.
@@ -170,7 +175,7 @@ export default function PostCreator() {
   // Live score for the Score tab label. Computed here (not inside PostChecklist)
   // so the badge updates even when the user is on the Preview or Image tab.
   const liveScore = useMemo(() => {
-    const text = manualPreview || previewText;
+    const text = manualPreview != null ? manualPreview : previewText;
     if (!text || text.trim().length < 20) return null;
     return scorePost(text).overall;
   }, [manualPreview, previewText]);
@@ -252,7 +257,7 @@ export default function PostCreator() {
     navigator.clipboard.writeText(text);
   };
 
-  const activePreviewText = manualPreview || previewText;
+  const activePreviewText = manualPreview != null ? manualPreview : previewText;
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)]">
@@ -451,7 +456,7 @@ export default function PostCreator() {
                     <span className="text-border">·</span>
                     <button
                       onClick={() => {
-                        setManualPreview('');
+                        setManualPreview(null);
                         setPreviewText('');
                         setGeneratedImageUrl(null);
                       }}
@@ -498,7 +503,7 @@ export default function PostCreator() {
                   <br />
                   You can also paste any text below to preview it.
                   <textarea
-                    value={manualPreview}
+                    value={manualPreview ?? ''}
                     onChange={(e) => setManualPreview(e.target.value)}
                     rows={5}
                     className="w-full mt-3 bg-bg-primary border border-border rounded-lg px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-accent/50 resize-none text-left"
