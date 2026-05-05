@@ -557,7 +557,36 @@ export interface ArchetypeEntry {
   max_ratio: number;
   sample_count: number;
   example_hook: string | null;
+  example_text: string | null;
   dominant_tone: string | null;
+}
+
+// Pick the archetype the improver should aim for given the post's current
+// classification. If the post is already in the top-3 by avg_ratio we keep it
+// (the right move is to intensify it, not switch). Otherwise we try to find a
+// stronger archetype that shares either the hook_type or post_structure with
+// the current — that's the closest possible move. Falls back to the top
+// archetype overall if nothing partial-matches.
+export function pickTargetArchetype(
+  current: PostClassification | null,
+  leaderboard: ArchetypeEntry[]
+): ArchetypeEntry | null {
+  if (leaderboard.length === 0) return null;
+  if (current && current.hook_type !== 'other' && current.post_structure !== 'other') {
+    const currentIdx = leaderboard.findIndex(
+      (a) => a.hook_type === current.hook_type && a.post_structure === current.post_structure
+    );
+    // Already in top 3? Keep — intensify rather than switch shape.
+    if (currentIdx >= 0 && currentIdx < 3) return leaderboard[currentIdx];
+
+    const currentRatio = currentIdx >= 0 ? leaderboard[currentIdx].avg_ratio : 0;
+    const partialMatch = leaderboard.find(
+      (a) => a.avg_ratio > currentRatio &&
+        (a.hook_type === current.hook_type || a.post_structure === current.post_structure)
+    );
+    if (partialMatch) return partialMatch;
+  }
+  return leaderboard[0];
 }
 
 export interface PostClassification {
@@ -725,16 +754,18 @@ export default function PostChecklist({ text, onImproved }: Props) {
     setIterLog([]);
 
     // Helper: classify a post via the backend (same enrichPost the scrape
-    // pipeline uses) and turn it into a data-fit number against the
-    // leaderboard we already loaded. Tolerant of failures — falls back to 0.
-    const computeDataFitFor = async (txt: string): Promise<number> => {
+    // pipeline uses) and return both the classification and the data-fit
+    // number against the leaderboard we already loaded. Tolerant of failures.
+    const classifyAndScore = async (
+      txt: string
+    ): Promise<{ classification: PostClassification | null; dataFit: number }> => {
       try {
         const res = await fetch(`${BASE}/api/analysis/classify-post`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: txt }),
         });
-        if (!res.ok) return 0;
+        if (!res.ok) return { classification: null, dataFit: 0 };
         const data = await res.json();
         const cls: PostClassification = {
           hook_type: data.hook_type,
@@ -742,15 +773,17 @@ export default function PostChecklist({ text, onImproved }: Props) {
           text_tone: data.text_tone,
           hook_text: data.hook_text,
         };
-        return computeDataFit(cls, leaderboard).score;
+        return { classification: cls, dataFit: computeDataFit(cls, leaderboard).score };
       } catch {
-        return 0;
+        return { classification: null, dataFit: 0 };
       }
     };
 
     let bestText = text;
     let best = scorePost(text);
-    let bestDataFit = await computeDataFitFor(text);
+    const initial = await classifyAndScore(text);
+    let bestClassification = initial.classification;
+    let bestDataFit = initial.dataFit;
     let bestScoreVal = blendedOverall(best.structural, best.pillars.intensity, bestDataFit);
     setBestScore(bestScoreVal);
     const originalText = text;
@@ -817,6 +850,14 @@ export default function PostChecklist({ text, onImproved }: Props) {
 
         conversation.push({ role: 'user', content: userContent });
 
+        // Pick the archetype the rewriter should push toward this iteration.
+        // Re-evaluated each pass so once an iteration lands in a top-3 slot
+        // we shift to "intensify" mode instead of "switch shape" mode.
+        const targetArch = pickTargetArchetype(bestClassification, leaderboard);
+        const currentArchEntry = bestClassification && leaderboard.find(
+          (a) => a.hook_type === bestClassification!.hook_type && a.post_structure === bestClassification!.post_structure
+        ) || null;
+
         const res = await fetch(`${BASE}/api/chat/improve`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -827,6 +868,21 @@ export default function PostChecklist({ text, onImproved }: Props) {
             // Hard-locks the lead-magnet CTA in the rewrite when the user
             // has flagged this post as offering a deliverable.
             leadMagnet: isLeadMagnet,
+            // Archetype-aware payload — feeds the rewriter the same
+            // (hook_type, post_structure) targeting + example post that the
+            // Post Creator gets, so the Improver isn't choosing blind.
+            currentArchetype: bestClassification ? {
+              hook_type: bestClassification.hook_type,
+              post_structure: bestClassification.post_structure,
+              avg_ratio: currentArchEntry?.avg_ratio ?? null,
+            } : null,
+            targetArchetype: targetArch ? {
+              hook_type: targetArch.hook_type,
+              post_structure: targetArch.post_structure,
+              avg_ratio: targetArch.avg_ratio,
+              example_hook: targetArch.example_hook,
+              example_text: targetArch.example_text,
+            } : null,
           }),
         });
         if (!res.ok) {
@@ -840,7 +896,8 @@ export default function PostChecklist({ text, onImproved }: Props) {
         if (!improved) throw new Error('Empty AI response');
 
         const newScoreParts = scorePost(improved);
-        const newDataFit = await computeDataFitFor(improved);
+        const newClassified = await classifyAndScore(improved);
+        const newDataFit = newClassified.dataFit;
         const newScore = blendedOverall(
           newScoreParts.structural,
           newScoreParts.pillars.intensity,
@@ -860,6 +917,7 @@ export default function PostChecklist({ text, onImproved }: Props) {
           bestText = improved;
           bestScoreVal = newScore;
           bestDataFit = newDataFit;
+          bestClassification = newClassified.classification;
           setBestScore(bestScoreVal);
           onImproved(improved);
         }

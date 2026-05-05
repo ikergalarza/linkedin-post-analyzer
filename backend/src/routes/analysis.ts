@@ -358,6 +358,7 @@ router.get('/archetype-leaderboard', async (_req: Request, res: Response) => {
         COUNT(*)::int AS sample_count,
         MAX(p.outlier_ratio)::float AS max_ratio,
         (ARRAY_AGG(p.hook_text ORDER BY p.outlier_ratio DESC))[1] AS example_hook,
+        (ARRAY_AGG(p.content_text ORDER BY p.outlier_ratio DESC))[1] AS example_text,
         (ARRAY_AGG(p.text_tone ORDER BY p.outlier_ratio DESC))[1] AS dominant_tone
       FROM posts p
       WHERE p.is_outlier = TRUE
@@ -384,6 +385,9 @@ router.get('/archetype-leaderboard', async (_req: Request, res: Response) => {
         max_ratio: +r.max_ratio.toFixed(2),
         sample_count: r.sample_count,
         example_hook: r.example_hook,
+        // Truncate example_text so the leaderboard stays small over the wire;
+        // the rewriter only needs the first ~600 chars to grok the archetype.
+        example_text: r.example_text ? String(r.example_text).slice(0, 600) : null,
         dominant_tone: r.dominant_tone,
       })),
       total_outliers: totals.rows[0]?.total || 0,

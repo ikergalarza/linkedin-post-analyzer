@@ -352,7 +352,7 @@ async function buildPillarExamples(targetPillar: 'curiosity' | 'fear' | 'desire'
 // Response: { text: string, critique: string, raw: string }
 router.post('/improve', async (req: Request, res: Response) => {
   try {
-    const { messages, pillar, pillarIntensity, leadMagnet } = req.body;
+    const { messages, pillar, pillarIntensity, leadMagnet, currentArchetype, targetArchetype } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'messages array required' });
     }
@@ -404,6 +404,35 @@ When you score and rewrite the post, treat these archetypes as the gravity well.
       }
     } catch (err) {
       console.warn('[improve] archetype leaderboard query failed, continuing without it:', (err as Error).message);
+    }
+
+    // Specific archetype targeting — same level of grounding the Post Creator
+    // gets. The frontend classifies the current draft and picks a target
+    // archetype (intensify if already top-3, else closest stronger combo).
+    // We embed both + a real example post so the rewriter has a concrete
+    // model to imitate, not just a leaderboard.
+    let archetypeTargetingBlock = '';
+    if (currentArchetype || targetArchetype) {
+      const lines: string[] = ['\n\nARCHETYPE TARGETING (use this as the structural compass for the rewrite):'];
+      if (currentArchetype) {
+        const ratioStr = currentArchetype.avg_ratio != null ? ` · ${(+currentArchetype.avg_ratio).toFixed(1)}x avg` : ' · not in leaderboard';
+        lines.push(`- Current archetype: ${currentArchetype.hook_type} + ${currentArchetype.post_structure}${ratioStr}`);
+      }
+      if (targetArchetype) {
+        lines.push(`- Target archetype: ${targetArchetype.hook_type} + ${targetArchetype.post_structure} · ${(+targetArchetype.avg_ratio).toFixed(1)}x avg`);
+        if (targetArchetype.example_hook) {
+          lines.push(`  - Example hook in this archetype: "${String(targetArchetype.example_hook).slice(0, 200)}"`);
+        }
+        if (targetArchetype.example_text) {
+          lines.push(`  - Example post in this archetype (use as structural model — DO NOT copy content):\n---\n${String(targetArchetype.example_text).slice(0, 600)}\n---`);
+        }
+        if (currentArchetype && targetArchetype.hook_type === currentArchetype.hook_type && targetArchetype.post_structure === currentArchetype.post_structure) {
+          lines.push(`- The post is already in the target archetype — INTENSIFY it (sharper hook in this style, tighter structure beats), do NOT switch shape.`);
+        } else {
+          lines.push(`- Move the post toward the target archetype: open with a "${targetArchetype.hook_type}" hook and follow the "${targetArchetype.post_structure}" structure pattern. Match the rhythm of the example, not its content.`);
+        }
+      }
+      archetypeTargetingBlock = lines.join('\n');
     }
 
     const PILLAR_DIRECTIVE = targetPillar
@@ -575,7 +604,7 @@ ${ANTI_FORMULA_RULES}
 
 ${CHECKLIST_REFERENCE}
 
-${pillarExamples}${archetypeBlock}
+${pillarExamples}${archetypeBlock}${archetypeTargetingBlock}
 
 RESPONSE FORMAT — always use exactly this structure (no other text):
 CRITIQUE: [2-4 sentences: (1) which pillar you intensified and how, (2) which structural checks you fixed, (3) what technique you chose from the outlier examples and WHY it fits this post, (4) what still needs work]
