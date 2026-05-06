@@ -357,6 +357,16 @@ const migration = `
     ON creator_profile_view_snapshots (creator_id, captured_on);
   CREATE INDEX IF NOT EXISTS idx_profile_view_snapshots_creator
     ON creator_profile_view_snapshots (creator_id, captured_on);
+
+  -- v22: One-shot cleanup. The 2026-05-05/06 snapshots were captured before
+  -- the WVMP pagination fix and only saw LinkedIn's default first page
+  -- (~22 elements aggregated across both managed creators), so the chart
+  -- showed a flat 22→22 line with 0% deltas. Wiping them lets the curve
+  -- restart from real paginated counts on the next snapshot tick.
+  -- Idempotent: if these rows are already gone (re-runs / fresh installs),
+  -- the DELETE is a no-op.
+  DELETE FROM creator_profile_view_snapshots
+    WHERE captured_on IN (DATE '2026-05-05', DATE '2026-05-06');
 `;
 
 export async function runMigrations() {
