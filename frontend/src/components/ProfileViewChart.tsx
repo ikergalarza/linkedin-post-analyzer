@@ -99,9 +99,6 @@ function DeltaChip({
 export default function ProfileViewChart({ creatorId, days }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [backfilling, setBackfilling] = useState(false);
-  const [backfillMessage, setBackfillMessage] = useState<string | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -123,30 +120,7 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [creatorId, days, reloadKey]);
-
-  const handleBackfill = async () => {
-    setBackfilling(true);
-    setBackfillMessage(null);
-    try {
-      const params = new URLSearchParams();
-      if (creatorId) params.set('creator_id', creatorId);
-      const res = await fetch(
-        `${BASE}/api/accounts/profile-view-history/backfill?${params.toString()}`,
-        { method: 'POST' }
-      );
-      const json = await res.json();
-      if (!res.ok) {
-        setBackfillMessage(`Error: ${json.error || res.status}`);
-      } else {
-        setBackfillMessage(json.message || `Backfilled ${json.inserted} day(s).`);
-        setReloadKey((k) => k + 1);
-      }
-    } catch (e: any) {
-      setBackfillMessage(`Error: ${e.message}`);
-    }
-    setBackfilling(false);
-  };
+  }, [creatorId, days]);
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),
@@ -173,10 +147,6 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
       range: calc(points[0]),
     };
   }, [points]);
-
-  // Show the backfill button when the chart is sparse (≤2 days) — once
-  // we have a real history there's nothing to reconstruct.
-  const showBackfillCTA = !loading && (points?.length ?? 0) <= 2;
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-5">
@@ -213,30 +183,6 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
           )}
         </div>
       </div>
-
-      {/* Backfill control — visible when there's barely any history. The
-          server reads viewedAt from the cached WVMP raw_response and
-          synthesises one cumulative-count point per day from the earliest
-          viewer to today. Existing real snapshots are never overwritten. */}
-      {showBackfillCTA && (
-        <div className="mb-3 flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-accent/30 bg-accent/5">
-          <p className="text-[11px] text-text-secondary">
-            ¿Quieres rellenar el histórico desde el último snapshot? Reconstruye una curva acumulada usando los timestamps de cada viewer.
-          </p>
-          <button
-            onClick={handleBackfill}
-            disabled={backfilling}
-            className="text-[11px] px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
-          >
-            {backfilling ? 'Rellenando…' : '↺ Rellenar histórico'}
-          </button>
-        </div>
-      )}
-      {backfillMessage && (
-        <div className="mb-3 text-[11px] text-text-muted px-3">
-          {backfillMessage}
-        </div>
-      )}
 
       {loading ? (
         <p className="text-center text-text-muted text-sm py-12">Cargando…</p>

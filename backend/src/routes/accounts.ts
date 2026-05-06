@@ -194,89 +194,6 @@ router.get('/profile-view-history', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/accounts/profile-view-history/backfill?creator_id=xxx
-// Reads the most recent raw_response (the WVMP elements include each
-// viewer's viewedAt timestamp) and synthesises one snapshot per day from
-// the earliest viewer up to today, where each day's value is the
-// cumulative count of viewers whose viewedAt ≤ that day. Existing real
-// snapshots are never overwritten (ON CONFLICT DO NOTHING).
-//
-// This gives the chart a populated history immediately on first install
-// without waiting weeks for daily snapshots to accumulate. Accuracy is
-// best for recent days; days near the 90-day window edge are noisy
-// because we only see viewers who are still in the window today.
-router.post('/profile-view-history/backfill', async (req: Request, res: Response) => {
-  try {
-    const creatorId = (req.query.creator_id as string) || null;
-
-    // Pull the latest raw_response per creator. If creator_id is given we
-    // backfill that creator only; otherwise we backfill all managed creators
-    // that have at least one snapshot with a raw_response.
-    const rows: { creator_id: string; raw_response: any }[] = creatorId
-      ? (
-          await pool.query(
-            `SELECT creator_id, raw_response
-               FROM creator_profile_view_snapshots
-              WHERE creator_id = $1 AND raw_response IS NOT NULL
-              ORDER BY captured_at DESC
-              LIMIT 1`,
-            [creatorId]
-          )
-        ).rows
-      : (
-          await pool.query(
-            `SELECT DISTINCT ON (s.creator_id) s.creator_id, s.raw_response
-               FROM creator_profile_view_snapshots s
-               JOIN creators c ON c.id = s.creator_id
-              WHERE c.is_managed = TRUE
-                AND s.raw_response IS NOT NULL
-              ORDER BY s.creator_id, s.captured_at DESC`
-          )
-        ).rows;
-
-    if (rows.length === 0) {
-      return res.json({
-        inserted: 0,
-        creators: 0,
-        message: 'No snapshots with raw_response found. Run a scrape first.',
-      });
-    }
-
-    let totalInserted = 0;
-    let creatorsWithData = 0;
-
-    for (const row of rows) {
-      const timestamps = extractViewerTimestamps(row.raw_response);
-      if (timestamps.length === 0) continue;
-      creatorsWithData++;
-
-      const cumulative = buildCumulativeSeries(timestamps);
-      for (const point of cumulative) {
-        const result = await pool.query(
-          `INSERT INTO creator_profile_view_snapshots
-             (creator_id, captured_on, captured_at, views_count)
-           VALUES ($1, $2::date, ($2::date + TIME '12:00:00')::timestamptz, $3)
-           ON CONFLICT (creator_id, captured_on) DO NOTHING`,
-          [row.creator_id, point.day, point.count]
-        );
-        if (result.rowCount) totalInserted++;
-      }
-    }
-
-    res.json({
-      inserted: totalInserted,
-      creators: creatorsWithData,
-      message:
-        totalInserted === 0
-          ? 'No new historical points to insert (already filled).'
-          : `Backfilled ${totalInserted} day${totalInserted === 1 ? '' : 's'} across ${creatorsWithData} creator${creatorsWithData === 1 ? '' : 's'}.`,
-    });
-  } catch (err: any) {
-    console.error('[accounts/profile-view-history/backfill]', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Walks a WVMP raw_response and pulls every viewer's viewedAt timestamp.
 // LinkedIn's Voyager schema rotates field names, so we try several known
 // candidates and accept either ms or seconds. Returns ms-epoch numbers,
@@ -319,35 +236,6 @@ function extractViewerTimestamps(rawResponse: any): number[] {
       }
     }
     if (pickedMs !== null) out.push(pickedMs);
-  }
-  return out;
-}
-
-// Given a list of viewedAt ms timestamps, returns one row per day from the
-// earliest viewer to today, where `count` is the cumulative number of
-// viewers whose viewedAt fell on or before that day.
-function buildCumulativeSeries(
-  timestamps: number[]
-): { day: string; count: number }[] {
-  if (timestamps.length === 0) return [];
-  const byDay = new Map<string, number>();
-  for (const ts of timestamps) {
-    const day = new Date(ts).toISOString().slice(0, 10);
-    byDay.set(day, (byDay.get(day) || 0) + 1);
-  }
-  const days = Array.from(byDay.keys()).sort();
-  const earliest = new Date(days[0] + 'T00:00:00Z');
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
-  const out: { day: string; count: number }[] = [];
-  let cumulative = 0;
-  const cursor = new Date(earliest);
-  while (cursor.getTime() <= today.getTime()) {
-    const dayStr = cursor.toISOString().slice(0, 10);
-    cumulative += byDay.get(dayStr) || 0;
-    out.push({ day: dayStr, count: cumulative });
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
   return out;
 }
@@ -744,27 +632,33 @@ router.get('/live-posts', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/accounts/live-refresh — manually refresh every managed account: first re-scrape
-// their post feed (so freshly published posts get ingested), then force a snapshot capture
-// for every tracked post ignoring the per-phase cadence. Used by the Refresh button.
+// POST /api/accounts/live-refresh — manually refresh every managed account.
+// scrapeCreatorPosts internally upserts today's follower + WVMP profile-view
+// snapshot via captureAccountSnapshots before pulling posts, so the Refresh
+// button is the single trigger that updates everything.
 router.post('/live-refresh', async (_req: Request, res: Response) => {
   try {
-    // Scrape each managed account with a Unipile ID so any new posts land in the DB before
-    // we capture snapshots. Done sequentially to respect Unipile rate limits.
     const { rows: managed } = await pool.query(
       `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
     );
     let newPosts = 0;
+    let viewSnapshots = 0;
     for (const { id } of managed) {
       try {
         const { scraped } = await scrapeCreatorPosts(id);
         newPosts += scraped;
+        viewSnapshots++;
       } catch (err: any) {
         console.error(`[accounts/live-refresh] scrape failed for ${id}:`, err?.message);
       }
     }
     const capture = await forceLiveCapture();
-    res.json({ ...capture, scraped: newPosts, accounts: managed.length });
+    res.json({
+      ...capture,
+      scraped: newPosts,
+      accounts: managed.length,
+      view_snapshots: viewSnapshots,
+    });
   } catch (err: any) {
     console.error('[accounts/live-refresh]', err);
     res.status(500).json({ error: err.message });
