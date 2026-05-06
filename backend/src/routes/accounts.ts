@@ -853,7 +853,12 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
     // and engagement across the creator's *other* posts at the same age.
     // Buckets mirror the monitor cadence (15m in golden hour, then 30m, 2h,
     // 6h, 24h) so we don't over-resolve the band where captures are sparse.
-    // HAVING sample_count >= 3 drops noisy buckets with too few data points.
+    // HAVING sample_count >= 2 — kept as low as PERCENTILE_CONT can produce
+    // meaningful values. We had this at 3 before, which silently nuked the
+    // typical band for any creator with a small monitored-post pool (e.g.
+    // newer managed accounts where most age buckets only had 1–2 samples).
+    // Two samples give a min–max range that's still informative; below that
+    // the band would just be a flat line so we drop those buckets.
     const typicalQ = await pool.query(
       `WITH target AS (
          SELECT creator_id FROM posts WHERE id = $1
@@ -906,7 +911,7 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
          ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY engagement))::int AS "p75Eng"
        FROM bucketed
        GROUP BY bucket_min
-       HAVING COUNT(*) >= 3
+       HAVING COUNT(*) >= 2
        ORDER BY bucket_min ASC`,
       [req.params.id]
     );
