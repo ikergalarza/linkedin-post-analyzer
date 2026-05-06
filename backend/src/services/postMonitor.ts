@@ -1,6 +1,7 @@
 import pool from '../db';
 import { unipileService } from './unipile';
 import { calculateEngagement, calculateAverageEngagement, calculateOutlierRatio, isOutlier } from './engagement';
+import { captureAccountSnapshots } from './accountSnapshots';
 
 // Phase-based snapshot cadence for LinkedIn posts.
 // The algorithm distributes posts in waves, so we sample densely in the golden hour
@@ -205,6 +206,43 @@ async function backfillOutliers() {
   }
 }
 
+// Daily-ish snapshot of follower count + WVMP profile viewers for every
+// managed creator. Runs unconditionally on the cadence below; the underlying
+// upsert dedupes on (creator_id, captured_on), so re-running the same day
+// just refreshes the values rather than producing duplicate rows.
+//
+// Without this, profile-view snapshots only landed when someone manually
+// hit "Refresh" or POST /:id/scrape, which left the chart looking frozen
+// for whole days at a time.
+const ACCOUNT_SNAPSHOT_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+let accountSnapshotInFlight = false;
+
+async function accountSnapshotTick(): Promise<void> {
+  if (accountSnapshotInFlight) return;
+  accountSnapshotInFlight = true;
+  try {
+    const { rows: managed } = await pool.query(
+      `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
+    );
+    if (managed.length === 0) return;
+    console.log(`[accountSnapshot] refreshing follower + WVMP for ${managed.length} managed creator(s)`);
+    for (const { id } of managed) {
+      try {
+        const r = await captureAccountSnapshots(id);
+        console.log(
+          `[accountSnapshot] ${id}: views=${r.views} (${r.pages} page(s), paging.total=${r.pagingTotal}), followers=${r.followers}`
+        );
+      } catch (err: any) {
+        console.error(`[accountSnapshot] ${id} failed:`, err?.message);
+      }
+    }
+  } catch (err: any) {
+    console.error('[accountSnapshot] tick failed:', err?.message);
+  } finally {
+    accountSnapshotInFlight = false;
+  }
+}
+
 export function startPostMonitor() {
   console.log(`[postMonitor] starting — tick every ${TICK_MS / 60000} min, window ${MONITOR_WINDOW_MS / 3600000}h, phase-based cadence`);
   // One-shot heal for any posts whose outlier_ratio got zeroed by the pre-fix monitor
@@ -212,4 +250,10 @@ export function startPostMonitor() {
   // First run after 1 minute so the server has time to settle post-deploy
   setTimeout(tick, 60 * 1000);
   setInterval(tick, TICK_MS);
+
+  // First account snapshot ~2 min after boot (gives the post tick room),
+  // then every 6h so iekr / unai / any other managed account get fresh
+  // follower + WVMP numbers without anyone clicking Refresh.
+  setTimeout(accountSnapshotTick, 2 * 60 * 1000);
+  setInterval(accountSnapshotTick, ACCOUNT_SNAPSHOT_INTERVAL_MS);
 }

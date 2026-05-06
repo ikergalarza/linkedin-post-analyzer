@@ -158,50 +158,109 @@ export class UnipileService {
    */
   async getProfileViewers(
     accountIdOverride?: string
-  ): Promise<{ count: number; raw: any } | null> {
+  ): Promise<{ count: number; raw: any; pages: number; pagingTotal: number | null } | null> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) {
       console.warn('[Unipile WVMP] No account_id available, skipping');
       return null;
     }
 
-    // Voyager URL stays as one string (already URL-encoded as LinkedIn expects it).
-    // The queryId hash is current as of 2026-05; bump if LinkedIn rotates it.
-    const requestUrl =
+    // LinkedIn Voyager paginates WVMP. Without an explicit count it returns a
+    // small default page (~10–22 elements) and the same first slice every day,
+    // which makes the daily snapshot look frozen. We page through with count:50
+    // until LinkedIn stops returning elements (or we hit the safety cap), then
+    // merge everything into one response so the backfill can read every viewer.
+    const PAGE_SIZE = 50;
+    const MAX_PAGES = 20; // 1000 viewers ceiling — Premium WVMP rarely shows more
+    const queryId =
+      'voyagerPremiumDashAnalyticsObject.c31102e906e7098910f44e0cecaa5b5c';
+
+    const buildUrl = (start: number) =>
       'https://www.linkedin.com/voyager/api/graphql' +
-      '?variables=(start:0,query:(),analyticsEntityUrn:(activityUrn:urn%3Ali%3Adummy%3A-1),surfaceType:WVMP)' +
-      '&queryId=voyagerPremiumDashAnalyticsObject.c31102e906e7098910f44e0cecaa5b5c';
+      `?variables=(start:${start},count:${PAGE_SIZE},query:(),analyticsEntityUrn:(activityUrn:urn%3Ali%3Adummy%3A-1),surfaceType:WVMP)` +
+      `&queryId=${queryId}`;
+
+    // Defensive — LinkedIn occasionally rotates response shape. Same paths
+    // as before, just centralised so the loop and the merge step agree.
+    const extractRoot = (data: any) =>
+      data?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+      data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+      data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+      null;
+
+    const allElements: any[] = [];
+    let firstPageRaw: any = null;
+    let pagingTotal: number | null = null;
+    let pages = 0;
 
     try {
-      const res = await fetch(`${this.baseUrl}/api/v1/linkedin`, {
-        method: 'POST',
-        headers: {
-          'X-API-KEY': this.apiKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          account_id: accountId,
-          method: 'GET',
-          request_url: requestUrl,
-          encoding: false,
-        }),
-      });
-      if (!res.ok) {
-        const body = await res.text().catch(() => '');
-        console.warn(`[Unipile WVMP] ${res.status} for account ${accountId}: ${body.slice(0, 200)}`);
-        return null;
+      for (let page = 0; page < MAX_PAGES; page++) {
+        const start = page * PAGE_SIZE;
+        const res = await fetch(`${this.baseUrl}/api/v1/linkedin`, {
+          method: 'POST',
+          headers: {
+            'X-API-KEY': this.apiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            account_id: accountId,
+            method: 'GET',
+            request_url: buildUrl(start),
+            encoding: false,
+          }),
+        });
+        if (!res.ok) {
+          const body = await res.text().catch(() => '');
+          console.warn(
+            `[Unipile WVMP] ${res.status} for account ${accountId} page ${page}: ${body.slice(0, 200)}`
+          );
+          // If we already have at least one page, return what we have rather
+          // than discarding everything because page N failed.
+          if (page === 0) return null;
+          break;
+        }
+        const data: any = await res.json();
+        if (page === 0) firstPageRaw = data;
+
+        const root = extractRoot(data);
+        const elements: any[] = Array.isArray(root?.elements) ? root.elements : [];
+        // Voyager surfaces the total as paging.total when available — useful
+        // sanity check against the elements we accumulate.
+        const tot = root?.paging?.total;
+        if (typeof tot === 'number' && Number.isFinite(tot)) pagingTotal = tot;
+
+        if (elements.length === 0) {
+          pages = page; // last completed page index
+          break;
+        }
+        allElements.push(...elements);
+        pages = page + 1;
+        if (elements.length < PAGE_SIZE) break; // partial page → end of list
       }
-      const data: any = await res.json();
-      // Unipile wraps the raw passthrough response in `data.data.<actual>`.
-      // The Voyager payload itself nests under `data.<…>` again, so the path
-      // ends up double-data. Defensive — if LinkedIn changes the shape we
-      // fall back to a 0 count rather than crash.
-      const elements: unknown =
-        data?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
-        data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
-        data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements;
-      const count = Array.isArray(elements) ? elements.length : 0;
-      return { count, raw: data };
+
+      // Build a single "merged" raw payload that mirrors the first-page shape
+      // but carries every element we accumulated, so downstream consumers
+      // (backfill / debug endpoint) can read all viewer timestamps from one
+      // object. We splice the merged elements into whichever path exists.
+      let mergedRaw: any = firstPageRaw;
+      if (firstPageRaw) {
+        const cloned = JSON.parse(JSON.stringify(firstPageRaw));
+        if (cloned?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity) {
+          cloned.data.data.premiumDashAnalyticsObjectByAnalyticsEntity.elements = allElements;
+        } else if (cloned?.data?.premiumDashAnalyticsObjectByAnalyticsEntity) {
+          cloned.data.premiumDashAnalyticsObjectByAnalyticsEntity.elements = allElements;
+        } else if (cloned?.premiumDashAnalyticsObjectByAnalyticsEntity) {
+          cloned.premiumDashAnalyticsObjectByAnalyticsEntity.elements = allElements;
+        }
+        mergedRaw = cloned;
+      }
+
+      const count = allElements.length;
+      console.log(
+        `[Unipile WVMP] account ${accountId}: ${count} viewers across ${pages} page(s)` +
+          (pagingTotal != null ? ` (paging.total=${pagingTotal})` : '')
+      );
+      return { count, raw: mergedRaw, pages, pagingTotal };
     } catch (err: any) {
       console.warn(`[Unipile WVMP] Fetch failed for account ${accountId}: ${err.message}`);
       return null;

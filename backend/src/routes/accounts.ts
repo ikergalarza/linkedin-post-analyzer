@@ -8,6 +8,7 @@ import { forceLiveCapture, maybeTick } from '../services/postMonitor';
 import { generateComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import { sendToGoogleChat, detectOwner } from '../services/googleChat';
+import { captureAccountSnapshots } from '../services/accountSnapshots';
 
 const router = Router();
 
@@ -19,66 +20,8 @@ async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number;
   const accountIdOverride = (creator as any).unipile_account_id as string | null;
   if (!accountIdOverride) return { scraped: 0, with_impressions: 0 };
 
-  // Always fetch the profile so we get a fresh followers_count for the growth
-  // snapshot. The extra call is cheap compared to the per-post fetches below.
-  let providerId = creator.linkedin_id;
-  let latestFollowers: number | null = null;
-  try {
-    const rawProfile = await unipileService.getProfile(creator.linkedin_url, accountIdOverride);
-    const normalized = unipileService.normalizeProfile(rawProfile, creator.linkedin_url);
-    if (!providerId && normalized.linkedin_id) providerId = normalized.linkedin_id;
-    if (typeof normalized.followers_count === 'number' && normalized.followers_count >= 0) {
-      latestFollowers = normalized.followers_count;
-    }
-    const updates: Record<string, any> = {};
-    if (!creator.linkedin_id && normalized.linkedin_id) updates.linkedin_id = normalized.linkedin_id;
-    if (latestFollowers != null) updates.followers_count = latestFollowers;
-    if (Object.keys(updates).length > 0) {
-      await CreatorModel.update(creator.id, updates as any);
-    }
-  } catch (err) {
-    console.warn('[accounts/scrape] profile fetch failed, continuing with cached data:', (err as Error).message);
-  }
-  if (latestFollowers == null && typeof creator.followers_count === 'number') {
-    latestFollowers = creator.followers_count;
-  }
-
-  // Upsert today's follower snapshot (one row per creator per day — later
-  // writes overwrite the earlier value for the same day).
-  if (latestFollowers != null) {
-    await pool.query(
-      `INSERT INTO creator_follower_snapshots (creator_id, captured_on, captured_at, followers_count)
-         VALUES ($1, CURRENT_DATE, NOW(), $2)
-       ON CONFLICT (creator_id, captured_on) DO UPDATE
-         SET followers_count = EXCLUDED.followers_count,
-             captured_at = NOW()`,
-      [creator.id, latestFollowers]
-    );
-  }
-
-  // Upsert today's profile-view snapshot. Same shape as followers, source is
-  // the WVMP feed via Unipile's raw passthrough. Soft-fail: if the call
-  // returns null (e.g. account isn't Premium, queryId rotated, transient
-  // 5xx) we just skip — better to keep the rest of the scrape running
-  // than to surface a noisy error to the caller. The follower snapshot
-  // and post pulls don't depend on this so they continue regardless.
-  try {
-    const wvmp = await unipileService.getProfileViewers(accountIdOverride);
-    if (wvmp) {
-      await pool.query(
-        `INSERT INTO creator_profile_view_snapshots
-           (creator_id, captured_on, captured_at, views_count, raw_response)
-         VALUES ($1, CURRENT_DATE, NOW(), $2, $3::jsonb)
-         ON CONFLICT (creator_id, captured_on) DO UPDATE
-           SET views_count = EXCLUDED.views_count,
-               raw_response = EXCLUDED.raw_response,
-               captured_at = NOW()`,
-        [creator.id, wvmp.count, JSON.stringify(wvmp.raw)]
-      );
-    }
-  } catch (err) {
-    console.warn('[accounts/scrape] profile-view snapshot failed:', (err as Error).message);
-  }
+  const snap = await captureAccountSnapshots(creatorId);
+  const providerId = snap.providerId;
 
   if (!providerId) return { scraped: 0, with_impressions: 0 };
 
@@ -408,6 +351,104 @@ function buildCumulativeSeries(
   }
   return out;
 }
+
+// GET /api/accounts/profile-views/debug
+// Per managed creator: live-fetches WVMP (paginated) and reports how many
+// viewers Unipile actually returns vs. what's stored, with a sample of viewer
+// timestamps. Use this to confirm that both accounts are returning fresh data
+// when the chart looks frozen.
+router.get('/profile-views/debug', async (_req: Request, res: Response) => {
+  try {
+    const { rows: managed } = await pool.query(
+      `SELECT id, name, unipile_account_id, linkedin_url
+         FROM creators
+        WHERE is_managed = TRUE
+        ORDER BY name`
+    );
+
+    const out: any[] = [];
+    for (const c of managed) {
+      const latestQ = await pool.query(
+        `SELECT captured_on::text AS captured_on, captured_at, views_count, raw_response
+           FROM creator_profile_view_snapshots
+          WHERE creator_id = $1
+          ORDER BY captured_at DESC
+          LIMIT 1`,
+        [c.id]
+      );
+      const latest = latestQ.rows[0] ?? null;
+      const storedTimestamps = latest?.raw_response
+        ? extractViewerTimestamps(latest.raw_response)
+        : [];
+
+      let live: any = null;
+      if (c.unipile_account_id) {
+        const wvmp = await unipileService.getProfileViewers(c.unipile_account_id);
+        if (wvmp) {
+          const liveTimestamps = extractViewerTimestamps(wvmp.raw);
+          liveTimestamps.sort((a, b) => b - a); // newest first
+          live = {
+            count: wvmp.count,
+            pages: wvmp.pages,
+            paging_total: wvmp.pagingTotal,
+            timestamps_extracted: liveTimestamps.length,
+            sample_recent_viewers: liveTimestamps.slice(0, 5).map((ms) => new Date(ms).toISOString()),
+          };
+        }
+      }
+
+      out.push({
+        creator_id: c.id,
+        name: c.name,
+        has_unipile_account_id: !!c.unipile_account_id,
+        unipile_account_id_preview: c.unipile_account_id
+          ? `${String(c.unipile_account_id).slice(0, 6)}…${String(c.unipile_account_id).slice(-4)}`
+          : null,
+        latest_snapshot: latest
+          ? {
+              captured_on: latest.captured_on,
+              captured_at: latest.captured_at,
+              views_count: latest.views_count,
+              timestamps_in_raw: storedTimestamps.length,
+            }
+          : null,
+        live,
+      });
+    }
+
+    res.json({ creators: out });
+  } catch (err: any) {
+    console.error('[accounts/profile-views/debug]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/profile-views/refresh
+// Forces a fresh follower + WVMP snapshot for every managed creator with a
+// Unipile account_id, ignoring whether today's snapshot already exists
+// (the upsert overwrites the row). Used by the daily ticker, and also wired
+// into the UI button so the chart can be refreshed on demand without doing
+// a full post re-scrape.
+router.post('/profile-views/refresh', async (_req: Request, res: Response) => {
+  try {
+    const { rows: managed } = await pool.query(
+      `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
+    );
+    const results: any[] = [];
+    for (const { id } of managed) {
+      try {
+        const r = await captureAccountSnapshots(id);
+        results.push({ creator_id: id, ...r });
+      } catch (err: any) {
+        results.push({ creator_id: id, ok: false, error: err?.message });
+      }
+    }
+    res.json({ refreshed: results.length, results });
+  } catch (err: any) {
+    console.error('[accounts/profile-views/refresh]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // POST /api/accounts/:id/scrape — re-scrape posts using this account's unipile_account_id
 // so impressions come through (LinkedIn only returns impressions for the authenticated account).
