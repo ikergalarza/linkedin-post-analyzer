@@ -625,6 +625,42 @@ router.post('/profile-views/refresh', async (_req: Request, res: Response) => {
   }
 });
 
+// DELETE /api/accounts/posts/:id/snapshots/zero-impressions
+// One-shot cleanup: removes recent snapshots that have impressions_count=0
+// when an EARLIER snapshot for the same post had a real impressions value.
+// These are bogus (Unipile glitch / rate-limit) snapshots that poison the
+// impressions chart by dragging the line back to zero. Engagement-only
+// metrics aren't touched. Idempotent — running twice is safe.
+router.delete('/posts/:id/snapshots/zero-impressions', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.id as string;
+    // Find the latest snapshot with a real impressions count — anything
+    // captured AFTER that with 0/null is a regression we want gone.
+    const { rows: anchor } = await pool.query(
+      `SELECT MAX(captured_at) AS last_real
+         FROM post_snapshots
+        WHERE post_id = $1
+          AND impressions_count IS NOT NULL
+          AND impressions_count > 0`,
+      [postId]
+    );
+    const lastReal = anchor[0]?.last_real;
+    if (!lastReal) {
+      return res.json({ deleted: 0, reason: 'no real impressions snapshot found — nothing to clean up against' });
+    }
+    const { rowCount } = await pool.query(
+      `DELETE FROM post_snapshots
+        WHERE post_id = $1
+          AND captured_at > $2
+          AND (impressions_count IS NULL OR impressions_count = 0)`,
+      [postId, lastReal]
+    );
+    res.json({ deleted: rowCount ?? 0, anchor_captured_at: lastReal });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/accounts/posts/:id/refresh — force a single-post snapshot now.
 // Mirrors the bulk live-refresh button but scoped to one post, so the user
 // can pull fresh numbers for just the post they're staring at without

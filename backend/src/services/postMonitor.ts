@@ -205,6 +205,24 @@ export async function capturePostSnapshot(postId: string): Promise<{
   }
 
   try {
+    // Warm up the Unipile auth surface by hitting the profile endpoint first,
+    // mirroring scrapeCreatorPosts. Without this, getPosts sometimes comes
+    // back with impressions_counter: 0 for recent posts even when the bulk
+    // refresh (which always fetches the profile first) gets real numbers.
+    // Best-effort — don't fail the whole refresh if profile fetch errors,
+    // just log and proceed with what we have.
+    try {
+      const { rows: creatorRows } = await pool.query(
+        `SELECT linkedin_url FROM creators WHERE id = $1 LIMIT 1`,
+        [target.creator_id]
+      );
+      if (creatorRows[0]?.linkedin_url) {
+        await unipileService.getProfile(creatorRows[0].linkedin_url, target.unipile_account_id);
+      }
+    } catch (warmErr) {
+      console.warn('[capturePostSnapshot] profile warm-up failed, continuing:', (warmErr as Error).message);
+    }
+
     // Pull recent posts from this creator's account and find ours by id. Same
     // window the bulk monitor uses so a post older than MONITOR_WINDOW_MS
     // gracefully falls out of range.
@@ -217,6 +235,47 @@ export async function capturePostSnapshot(postId: string): Promise<{
 
     const normalized = unipileService.normalizePost(raw, target.creator_id);
     const engagement = calculateEngagement(normalized);
+
+    // Defensive: if Unipile returned impressions=0/null but the most recent
+    // prior snapshot had a real value, that's almost certainly a transient
+    // upstream glitch (rate limit, throttling, missing analytics access on
+    // this specific call). Refuse the snapshot rather than poison the curve
+    // with a fake zero, and surface the reason to the caller. Engagement is
+    // computed from likes/comments/reposts which Unipile reports reliably,
+    // so we still update the post's live counters from those.
+    const newImp = typeof normalized.impressions_count === 'number' ? normalized.impressions_count : null;
+    const looksLikeImpZero = newImp == null || newImp === 0;
+    if (looksLikeImpZero) {
+      const { rows: prior } = await pool.query(
+        `SELECT impressions_count FROM post_snapshots
+          WHERE post_id = $1 AND impressions_count IS NOT NULL AND impressions_count > 0
+          ORDER BY captured_at DESC LIMIT 1`,
+        [target.id]
+      );
+      if (prior.length > 0) {
+        // Update live counters anyway (engagement is reliable) but skip the
+        // snapshot insert so the impressions chart doesn't dip to 0.
+        await pool.query(
+          `UPDATE posts SET
+             likes_count = $2,
+             comments_count = $3,
+             reposts_count = $4,
+             engagement_score = $5
+           WHERE id = $1`,
+          [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, engagement]
+        );
+        return {
+          ok: false,
+          reason: `Unipile returned 0 impressions but prior snapshot had ${prior[0].impressions_count} — skipped snapshot to avoid poisoning the curve. Engagement counters were still updated. Try again in a few seconds.`,
+          likes: normalized.likes_count,
+          comments: normalized.comments_count,
+          reposts: normalized.reposts_count,
+          engagement,
+        };
+      }
+      // No prior real impressions value (post genuinely has none yet) —
+      // proceed with the 0/null insert as before.
+    }
 
     await pool.query(
       `INSERT INTO post_snapshots (post_id, impressions_count, likes_count, comments_count, reposts_count)
