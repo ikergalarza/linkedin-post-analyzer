@@ -168,6 +168,105 @@ export async function forceLiveCapture(): Promise<{ captured: number; candidates
   return tick(true);
 }
 
+// Per-post refresh — captures a fresh snapshot for ONE specific post and
+// updates its live counters. Mirrors the inner loop of tick() but scoped to
+// a single post so the user can refresh just the post they're looking at
+// without waiting on the bulk loop hitting every monitored creator.
+//
+// Returns the new captured numbers + a small status flag the API can echo
+// back. Tolerant to the case where the post is no longer findable on
+// LinkedIn (the original was deleted, or the creator's account_id changed)
+// — returns ok:false rather than throwing.
+export async function capturePostSnapshot(postId: string): Promise<{
+  ok: boolean;
+  reason?: string;
+  impressions?: number | null;
+  likes?: number;
+  comments?: number;
+  reposts?: number;
+  engagement?: number;
+}> {
+  const { rows } = await pool.query(
+    `SELECT p.id, p.linkedin_post_id, p.creator_id,
+            c.linkedin_id, c.unipile_account_id
+       FROM posts p
+       JOIN creators c ON c.id = p.creator_id
+      WHERE p.id = $1
+      LIMIT 1`,
+    [postId]
+  );
+  const target = rows[0];
+  if (!target) return { ok: false, reason: 'post not found' };
+  if (!target.linkedin_id || !target.unipile_account_id) {
+    return { ok: false, reason: 'creator missing linkedin_id or unipile_account_id' };
+  }
+  if (!target.linkedin_post_id) {
+    return { ok: false, reason: 'post has no linkedin_post_id (cannot match against feed)' };
+  }
+
+  try {
+    // Pull recent posts from this creator's account and find ours by id. Same
+    // window the bulk monitor uses so a post older than MONITOR_WINDOW_MS
+    // gracefully falls out of range.
+    const since = new Date(Date.now() - MONITOR_WINDOW_MS - 60 * 60 * 1000);
+    const raws = await unipileService.getPosts(target.linkedin_id, since, target.unipile_account_id);
+    const raw = raws.find((r: any) => String(r.social_id || r.id) === String(target.linkedin_post_id));
+    if (!raw) {
+      return { ok: false, reason: 'post not in current feed (older than monitor window or deleted)' };
+    }
+
+    const normalized = unipileService.normalizePost(raw, target.creator_id);
+    const engagement = calculateEngagement(normalized);
+
+    await pool.query(
+      `INSERT INTO post_snapshots (post_id, impressions_count, likes_count, comments_count, reposts_count)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [target.id, normalized.impressions_count, normalized.likes_count, normalized.comments_count, normalized.reposts_count]
+    );
+
+    await pool.query(
+      `UPDATE posts SET
+         likes_count = $2,
+         comments_count = $3,
+         reposts_count = $4,
+         impressions_count = $5,
+         engagement_score = $6
+       WHERE id = $1`,
+      [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, normalized.impressions_count, engagement]
+    );
+
+    // Recompute outlier_ratio for the whole creator since the average shifted.
+    const { rows: allPosts } = await pool.query(
+      `SELECT id, engagement_score FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
+      [target.creator_id]
+    );
+    if (allPosts.length > 0) {
+      const avg = calculateAverageEngagement(
+        allPosts.map((p) => ({ engagement_score: Number(p.engagement_score) || 0 }))
+      );
+      for (const p of allPosts) {
+        const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
+        await pool.query(
+          `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
+          [Math.round(ratio * 100) / 100, isOutlier(ratio), p.id]
+        );
+      }
+    }
+
+    return {
+      ok: true,
+      impressions: normalized.impressions_count,
+      likes: normalized.likes_count,
+      comments: normalized.comments_count,
+      reposts: normalized.reposts_count,
+      engagement,
+    };
+  } catch (err: any) {
+    console.error(`[postMonitor] capturePostSnapshot ${postId} failed:`, err?.message);
+    return { ok: false, reason: err?.message || 'unknown error' };
+  }
+}
+
 // Opportunistic tick triggered by HTTP requests (GET /live-posts polls every 2 min from the UI).
 // Makes snapshot capture resilient to Railway recycling the Node process or setInterval drift:
 // any time a user has the Accounts page open, ticks stay on cadence even if the background

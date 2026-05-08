@@ -637,9 +637,13 @@ export default function Accounts() {
                   setLiveRefreshing(true);
                   setLiveRefreshMsg(null);
                   try {
+                    // When the page-level selector is on a specific creator,
+                    // scope the bulk refresh to that one. 'all' falls back to
+                    // refreshing every managed account.
+                    const body = selectedCreator !== 'all' ? { creator_id: selectedCreator } : {};
                     const res = await apiPost<{ captured: number; candidates: number; scraped: number; accounts: number }>(
                       '/api/accounts/live-refresh',
-                      {}
+                      body
                     );
                     setLiveRefreshMsg(`✓ ${res.scraped} posts scraped · ${res.captured} snapshots`);
                     refetchLive();
@@ -652,9 +656,15 @@ export default function Accounts() {
                 }}
                 disabled={liveRefreshing}
                 className="text-xs text-text-muted hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Scrape new posts from every managed account and force-capture snapshots for tracked ones"
+                title={selectedCreator !== 'all'
+                  ? "Re-scrape this account's posts and capture snapshots for tracked ones"
+                  : "Re-scrape every managed account and capture snapshots for tracked ones"}
               >
-                {liveRefreshing ? '↻ Scraping…' : '↻ Refresh'}
+                {liveRefreshing
+                  ? '↻ Scraping…'
+                  : selectedCreator !== 'all'
+                    ? '↻ Refresh this account'
+                    : '↻ Refresh all'}
               </button>
               {liveRefreshMsg && (
                 <span className="text-[11px] text-text-muted whitespace-nowrap">{liveRefreshMsg}</span>
@@ -706,6 +716,7 @@ export default function Accounts() {
                   key={p.id}
                   post={p}
                   onOpenChat={() => setChatPostId(p.id)}
+                  onRefreshed={refetchLive}
                   onRemoveDemo={
                     p.content_text?.startsWith('DEMO ·')
                       ? async () => {
@@ -1561,8 +1572,33 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   );
 }
 
-function LivePostRow({ post, onRemoveDemo, onOpenChat }: { post: LivePost; onRemoveDemo?: () => void; onOpenChat?: () => void }) {
+function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: LivePost; onRemoveDemo?: () => void; onOpenChat?: () => void; onRefreshed?: () => void }) {
   const [open, setOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setRefreshMsg(null);
+    try {
+      const r = await apiPost<{ ok: boolean; reason?: string; engagement?: number; impressions?: number | null }>(
+        `/api/accounts/posts/${post.id}/refresh`,
+        {}
+      );
+      if (r.ok) {
+        const eng = typeof r.engagement === 'number' ? r.engagement : null;
+        setRefreshMsg(eng != null ? `✓ ${fmtNum(eng)} eng` : '✓ refreshed');
+        onRefreshed?.();
+      } else {
+        setRefreshMsg(`✗ ${r.reason || 'failed'}`);
+      }
+    } catch (err: any) {
+      setRefreshMsg(`✗ ${err.message}`);
+    } finally {
+      setRefreshing(false);
+      setTimeout(() => setRefreshMsg(null), 4000);
+    }
+  };
 
   return (
     <div className={`rounded-lg border ${post.is_live ? 'border-red-500/20 bg-red-500/5' : 'border-border bg-bg-primary'}`}>
@@ -1619,8 +1655,21 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat }: { post: LivePost; onRem
             )}
             <span className="text-accent font-medium">{fmtNum(post.engagement_score)} eng</span>
             <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="ml-auto text-text-muted hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-wait"
+              title="Capture a fresh snapshot for this post"
+            >
+              {refreshing ? '↻ …' : '↻ Refresh'}
+            </button>
+            {refreshMsg && (
+              <span className={`text-[10px] whitespace-nowrap ${refreshMsg.startsWith('✗') ? 'text-danger' : 'text-green-400'}`}>
+                {refreshMsg}
+              </span>
+            )}
+            <button
               onClick={() => setOpen((v) => !v)}
-              className="ml-auto text-accent hover:text-accent-light"
+              className="text-accent hover:text-accent-light"
             >
               {open ? 'Hide curve' : 'Show curve'}
             </button>

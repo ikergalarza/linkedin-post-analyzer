@@ -4,7 +4,7 @@ import { unipileService } from '../services/unipile';
 import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
-import { forceLiveCapture, maybeTick } from '../services/postMonitor';
+import { forceLiveCapture, maybeTick, capturePostSnapshot } from '../services/postMonitor';
 import { generateComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import { sendToGoogleChat, detectOwner } from '../services/googleChat';
@@ -625,6 +625,20 @@ router.post('/profile-views/refresh', async (_req: Request, res: Response) => {
   }
 });
 
+// POST /api/accounts/posts/:id/refresh — force a single-post snapshot now.
+// Mirrors the bulk live-refresh button but scoped to one post, so the user
+// can pull fresh numbers for just the post they're staring at without
+// waiting on every monitored creator. Idempotent: re-hitting it captures
+// another snapshot row, which is fine — those are the time-series points.
+router.post('/posts/:id/refresh', async (req: Request, res: Response) => {
+  try {
+    const result = await capturePostSnapshot(req.params.id as string);
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/accounts/:id/scrape — re-scrape posts using this account's unipile_account_id
 // so impressions come through (LinkedIn only returns impressions for the authenticated account).
 router.post('/:id/scrape', async (req: Request, res: Response) => {
@@ -971,11 +985,24 @@ router.get('/live-posts', async (req: Request, res: Response) => {
 // scrapeCreatorPosts internally upserts today's follower + WVMP profile-view
 // snapshot via captureAccountSnapshots before pulling posts, so the Refresh
 // button is the single trigger that updates everything.
-router.post('/live-refresh', async (_req: Request, res: Response) => {
+//
+// Accepts an optional `creator_id` in the body so the UI can scope the
+// refresh to the currently-selected creator instead of always refreshing
+// every managed account.
+router.post('/live-refresh', async (req: Request, res: Response) => {
   try {
-    const { rows: managed } = await pool.query(
-      `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
-    );
+    const creatorId = typeof req.body?.creator_id === 'string' ? req.body.creator_id : null;
+    const { rows: managed } = creatorId
+      ? await pool.query(
+          `SELECT id FROM creators
+            WHERE id = $1
+              AND is_managed = TRUE
+              AND unipile_account_id IS NOT NULL`,
+          [creatorId]
+        )
+      : await pool.query(
+          `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
+        );
     let newPosts = 0;
     let viewSnapshots = 0;
     for (const { id } of managed) {
