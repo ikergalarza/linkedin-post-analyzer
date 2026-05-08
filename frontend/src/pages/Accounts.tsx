@@ -195,6 +195,9 @@ interface Analytics {
     total_impressions: number;
     posts_with_impressions: number;
     avg_impressions: number;
+    followers_gained: number;
+    profile_views_gained: number;
+    posts_per_week: number;
   };
   comparison: Comparison;
   daily: DailyRow[];
@@ -758,6 +761,57 @@ export default function Accounts() {
               <div className="text-[10px] uppercase tracking-wide text-text-muted">Best post</div>
               <div className="text-2xl font-bold text-text-primary mt-1">{fmtNum(analytics.totals.max_engagement)}</div>
               <div className="text-[10px] text-text-muted mt-0.5">peak engagement</div>
+            </div>
+          </div>
+
+          {/* Account-level deltas — followers + profile views over the same
+              window. Both come from the daily snapshot tables (last - first).
+              Profile views show as '—' when there's no Premium-backed data
+              flowing in. Posts/week is a cadence sanity check — paired with
+              the engagement KPIs above so you can tell whether you're
+              under-posting or over-posting for the engagement you're getting. */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="bg-bg-card border border-border rounded-xl p-4">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted flex items-center gap-1.5">
+                <span>👥</span>
+                <span>Followers gained</span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1">
+                <div className={`text-2xl font-bold ${analytics.totals.followers_gained > 0 ? 'text-green-400' : analytics.totals.followers_gained < 0 ? 'text-red-400' : 'text-text-primary'}`}>
+                  {analytics.totals.followers_gained > 0 ? '+' : ''}{fmtNum(analytics.totals.followers_gained)}
+                </div>
+              </div>
+              <div className="text-[10px] text-text-muted mt-0.5">over {days}d (snapshot last − first)</div>
+            </div>
+            <div className="bg-bg-card border border-border rounded-xl p-4">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted flex items-center gap-1.5">
+                <span>👁️‍🗨️</span>
+                <span>Profile views gained</span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1">
+                {analytics.totals.profile_views_gained === 0 ? (
+                  <div className="text-2xl font-bold text-text-muted">—</div>
+                ) : (
+                  <div className={`text-2xl font-bold ${analytics.totals.profile_views_gained > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {analytics.totals.profile_views_gained > 0 ? '+' : ''}{fmtNum(analytics.totals.profile_views_gained)}
+                  </div>
+                )}
+              </div>
+              <div className="text-[10px] text-text-muted mt-0.5">
+                {analytics.totals.profile_views_gained === 0
+                  ? 'no snapshots yet (LinkedIn Premium req.)'
+                  : `over ${days}d (snapshot last − first)`}
+              </div>
+            </div>
+            <div className="bg-bg-card border border-border rounded-xl p-4">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted flex items-center gap-1.5">
+                <span>📅</span>
+                <span>Posts / week</span>
+              </div>
+              <div className="text-2xl font-bold text-text-primary mt-1 tabular-nums">
+                {analytics.totals.posts_per_week.toFixed(1)}
+              </div>
+              <div className="text-[10px] text-text-muted mt-0.5">avg cadence in range</div>
             </div>
           </div>
 

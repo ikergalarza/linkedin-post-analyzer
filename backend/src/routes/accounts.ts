@@ -160,6 +160,78 @@ router.get('/follower-history', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/accounts/:id/wvmp-debug — runs the live WVMP fetch for one creator
+// and dumps everything we get back so we can see why profile-view tracking
+// returns nothing for an account. Surfaces the parsed count, page count,
+// paging.total Voyager reports, the response keys at each candidate path,
+// and the latest stored snapshot. Hit it with the creator UUID:
+//   GET /api/accounts/<uuid>/wvmp-debug
+router.get('/:id/wvmp-debug', async (req: Request, res: Response) => {
+  try {
+    const creator = await CreatorModel.findById(req.params.id as string);
+    if (!creator) return res.status(404).json({ error: 'Creator not found' });
+    const accountIdOverride = (creator as any).unipile_account_id as string | null;
+    if (!accountIdOverride) {
+      return res.status(400).json({ error: 'Creator has no unipile_account_id set' });
+    }
+
+    const wvmp = await unipileService.getProfileViewers(accountIdOverride);
+    const lastStored = await pool.query(
+      `SELECT captured_on::text AS day, views_count
+         FROM creator_profile_view_snapshots
+        WHERE creator_id = $1
+        ORDER BY captured_on DESC
+        LIMIT 5`,
+      [creator.id]
+    );
+
+    // Map the response shape so we can see at a glance which path Voyager
+    // took without dumping the entire payload to the wire.
+    const raw = wvmp?.raw;
+    const shape = {
+      top_keys: raw && typeof raw === 'object' ? Object.keys(raw).slice(0, 10) : [],
+      data_keys: raw?.data && typeof raw.data === 'object' ? Object.keys(raw.data).slice(0, 10) : [],
+      data_data_keys: raw?.data?.data && typeof raw.data.data === 'object' ? Object.keys(raw.data.data).slice(0, 10) : [],
+      paging_total: raw?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.paging?.total
+        ?? raw?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.paging?.total
+        ?? raw?.premiumDashAnalyticsObjectByAnalyticsEntity?.paging?.total
+        ?? null,
+      first_element_keys: (() => {
+        const root =
+          raw?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+          raw?.data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+          raw?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+          null;
+        const els = Array.isArray(root?.elements) ? root.elements : [];
+        return els.length > 0 && typeof els[0] === 'object' ? Object.keys(els[0]).slice(0, 15) : [];
+      })(),
+    };
+
+    res.json({
+      creator_id: creator.id,
+      creator_name: creator.name,
+      unipile_account_id: accountIdOverride,
+      // null = the API call itself failed (logged to server console).
+      // Anything else = we got a response back; check parsed_count + shape
+      // to see whether it's actually carrying viewer data or a paywall.
+      live_wvmp: wvmp == null ? null : {
+        parsed_count: wvmp.count,
+        pages_walked: wvmp.pages,
+        voyager_paging_total: wvmp.pagingTotal,
+      },
+      response_shape: wvmp == null ? null : shape,
+      last_stored_snapshots: lastStored.rows,
+      hint: wvmp == null
+        ? 'Unipile passthrough returned an error or no body — check server logs for the [Unipile WVMP] line. Most common: queryId hash rotated or the connected account has zero Premium access.'
+        : wvmp.count === 0
+          ? 'Live call succeeded but returned zero viewer elements. This is the LinkedIn-free-tier signature (WVMP is gated behind Premium / Sales Navigator). Confirm the account has Premium or Sales Nav active; without it LinkedIn does not return real WVMP data through any client.'
+          : 'WVMP is returning data. If the chart is still empty, check that the daily scrape is running and inserting into creator_profile_view_snapshots.',
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/accounts/profile-view-history?creator_id=xxx&days=90
 // If creator_id is omitted, sums viewers across all managed accounts per day.
 // Same shape as /follower-history so the frontend can reuse the chart logic.
@@ -633,6 +705,49 @@ router.get('/analytics', async (req: Request, res: Response) => {
       [currentStartIso, ...hookScope.params]
     );
 
+    // Account-level deltas across the same date range. We track followers
+    // and profile views as daily snapshots in dedicated tables — for the
+    // KPI cards we just want last - first per creator, summed when scope
+    // is 'all'. Window functions over the snapshot rows give us the first
+    // and last value for each creator without N+1 subqueries.
+    const buildSnapshotDelta = async (table: string, valueCol: string): Promise<number> => {
+      const params: any[] = [days];
+      let creatorFilter = '';
+      if (creatorId) {
+        params.push(creatorId);
+        creatorFilter = `AND s.creator_id = $${params.length}`;
+      }
+      const { rows } = await pool.query(
+        `SELECT
+           COALESCE(SUM(last_v - first_v), 0)::int AS gained
+         FROM (
+           SELECT DISTINCT
+             s.creator_id,
+             FIRST_VALUE(s.${valueCol}) OVER (PARTITION BY s.creator_id ORDER BY s.captured_on ASC) AS first_v,
+             FIRST_VALUE(s.${valueCol}) OVER (PARTITION BY s.creator_id ORDER BY s.captured_on DESC) AS last_v
+           FROM ${table} s
+           JOIN creators c ON c.id = s.creator_id
+           WHERE c.is_managed = TRUE
+             AND s.captured_on >= CURRENT_DATE - ($1 || ' days')::interval
+             ${creatorFilter}
+         ) sub`,
+        params
+      );
+      return Number(rows[0]?.gained || 0);
+    };
+    const followersGained = await buildSnapshotDelta('creator_follower_snapshots', 'followers_count');
+    const profileViewsGained = await buildSnapshotDelta('creator_profile_view_snapshots', 'views_count');
+
+    // Posts/week cadence — always actionable. Uses the same scope filter.
+    const cadenceScope = scope(2);
+    const cadenceQ = await pool.query(
+      `SELECT COUNT(*)::float / GREATEST($2 / 7.0, 1) AS posts_per_week
+       FROM posts p
+       WHERE p.published_at >= $1 AND ${cadenceScope.sql}`,
+      [currentStartIso, days, ...cadenceScope.params]
+    );
+    const postsPerWeek = Number(cadenceQ.rows[0]?.posts_per_week || 0);
+
     // Per-account breakdown (only when aggregating across all managed)
     let perAccount: any[] = [];
     if (!creatorId) {
@@ -659,7 +774,12 @@ router.get('/analytics', async (req: Request, res: Response) => {
     res.json({
       days,
       creator_id: creatorId,
-      totals: totalsQ.rows[0],
+      totals: {
+        ...totalsQ.rows[0],
+        followers_gained: followersGained,
+        profile_views_gained: profileViewsGained,
+        posts_per_week: +postsPerWeek.toFixed(1),
+      },
       comparison: buildComparison(totalsQ.rows[0], prevTotalsQ.rows[0]),
       daily: dailyQ.rows,
       format_mix: formatQ.rows,
