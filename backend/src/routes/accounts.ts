@@ -160,12 +160,16 @@ router.get('/follower-history', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/accounts/wvmp-capture-now — runs captureAccountSnapshots() for
-// every managed account RIGHT NOW and returns whether each insert succeeded.
-// Use this to backfill today's snapshot without waiting for the daily scrape,
+// /api/accounts/wvmp-capture-now — runs captureAccountSnapshots() for every
+// managed account RIGHT NOW and returns whether each insert succeeded. Use
+// this to backfill today's snapshot without waiting for the daily scrape,
 // AND to surface insert errors that the previous silent-warn version was
 // swallowing. Hit it once per deploy fix to verify the row landed.
-router.post('/wvmp-capture-now', async (_req: Request, res: Response) => {
+//
+// Accepts both GET and POST so it can be triggered from the browser address
+// bar (debug-only endpoint, no user-facing side effect beyond an idempotent
+// upsert into the snapshot table).
+const wvmpCaptureNow = async (_req: Request, res: Response) => {
   try {
     const { rows: managed } = await pool.query(
       `SELECT id, name FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL ORDER BY name ASC`
@@ -201,7 +205,9 @@ router.post('/wvmp-capture-now', async (_req: Request, res: Response) => {
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
-});
+};
+router.get('/wvmp-capture-now', wvmpCaptureNow);
+router.post('/wvmp-capture-now', wvmpCaptureNow);
 
 // GET /api/accounts/wvmp-debug-all — runs the live WVMP fetch for EVERY
 // managed account and returns one debug record per account. Saves the user
