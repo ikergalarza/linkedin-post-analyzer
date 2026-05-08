@@ -870,12 +870,19 @@ router.get('/analytics', async (req: Request, res: Response) => {
     const profileViewsGained = await buildSnapshotDelta('creator_profile_view_snapshots', 'views_count');
 
     // Posts/week cadence — always actionable. Uses the same scope filter.
+    // `days` is a sanitised integer from the route handler so it's safe to
+    // interpolate directly. The previous version passed it as a positional
+    // param, which collided with scope()'s $2 placeholder for creator_id and
+    // crashed the whole /analytics endpoint with "invalid uuid syntax"
+    // whenever a specific creator was selected — that's why every chart
+    // looked combined: the request 500'd silently and useApi kept rendering
+    // the last successful (all-managed) response.
     const cadenceScope = scope(2);
     const cadenceQ = await pool.query(
-      `SELECT COUNT(*)::float / GREATEST($2 / 7.0, 1) AS posts_per_week
+      `SELECT COUNT(*)::float / GREATEST(${days} / 7.0, 1) AS posts_per_week
        FROM posts p
        WHERE p.published_at >= $1 AND ${cadenceScope.sql}`,
-      [currentStartIso, days, ...cadenceScope.params]
+      [currentStartIso, ...cadenceScope.params]
     );
     const postsPerWeek = Number(cadenceQ.rows[0]?.posts_per_week || 0);
 

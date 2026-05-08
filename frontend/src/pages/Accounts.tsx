@@ -1587,7 +1587,15 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
       );
       if (r.ok) {
         const eng = typeof r.engagement === 'number' ? r.engagement : null;
-        setRefreshMsg(eng != null ? `✓ ${fmtNum(eng)} eng` : '✓ refreshed');
+        const imp = r.impressions;
+        // Surface the impressions value too: when LinkedIn doesn't return
+        // impressions for a post (Unipile gives back 0/null), we still write
+        // the snapshot so engagement keeps tracking. Showing 'imp 0' makes
+        // it clear that's coming from upstream, not a refresh-button bug.
+        const parts: string[] = [];
+        if (eng != null) parts.push(`${fmtNum(eng)} eng`);
+        if (imp != null) parts.push(`${fmtNum(imp)} imp`);
+        setRefreshMsg(parts.length > 0 ? `✓ ${parts.join(' · ')}` : '✓ refreshed');
         onRefreshed?.();
       } else {
         setRefreshMsg(`✗ ${r.reason || 'failed'}`);
@@ -1596,7 +1604,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
       setRefreshMsg(`✗ ${err.message}`);
     } finally {
       setRefreshing(false);
-      setTimeout(() => setRefreshMsg(null), 4000);
+      setTimeout(() => setRefreshMsg(null), 6000);
     }
   };
 
