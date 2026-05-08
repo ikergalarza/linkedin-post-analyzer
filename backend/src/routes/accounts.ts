@@ -160,6 +160,49 @@ router.get('/follower-history', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/accounts/wvmp-capture-now — runs captureAccountSnapshots() for
+// every managed account RIGHT NOW and returns whether each insert succeeded.
+// Use this to backfill today's snapshot without waiting for the daily scrape,
+// AND to surface insert errors that the previous silent-warn version was
+// swallowing. Hit it once per deploy fix to verify the row landed.
+router.post('/wvmp-capture-now', async (_req: Request, res: Response) => {
+  try {
+    const { rows: managed } = await pool.query(
+      `SELECT id, name FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL ORDER BY name ASC`
+    );
+    const results = [];
+    for (const row of managed) {
+      try {
+        const r = await captureAccountSnapshots(row.id);
+        // Verify the row actually landed by re-reading it.
+        const stored = await pool.query(
+          `SELECT views_count, captured_at
+             FROM creator_profile_view_snapshots
+            WHERE creator_id = $1 AND captured_on = CURRENT_DATE`,
+          [row.id]
+        );
+        results.push({
+          creator_id: row.id,
+          creator_name: row.name,
+          live_views: r.views,
+          pages_walked: r.pages,
+          views_error: r.viewsError,
+          stored_today: stored.rows[0] || null,
+        });
+      } catch (err: any) {
+        results.push({
+          creator_id: row.id,
+          creator_name: row.name,
+          fatal_error: err.message,
+        });
+      }
+    }
+    res.json({ count: results.length, results });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/accounts/wvmp-debug-all — runs the live WVMP fetch for EVERY
 // managed account and returns one debug record per account. Saves the user
 // from looking up UUIDs by hand. Same shape as /:id/wvmp-debug per entry.

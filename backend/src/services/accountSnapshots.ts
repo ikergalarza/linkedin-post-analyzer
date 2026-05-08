@@ -18,10 +18,11 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
   views: number | null;
   pages: number | null;
   pagingTotal: number | null;
+  viewsError: string | null;
 }> {
   const creator = await CreatorModel.findById(creatorId);
   if (!creator) {
-    return { ok: false, providerId: null, followers: null, views: null, pages: null, pagingTotal: null };
+    return { ok: false, providerId: null, followers: null, views: null, pages: null, pagingTotal: null, viewsError: null };
   }
   const accountIdOverride = (creator as any).unipile_account_id as string | null;
   if (!accountIdOverride) {
@@ -32,6 +33,7 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
       views: null,
       pages: null,
       pagingTotal: null,
+      viewsError: null,
     };
   }
 
@@ -74,25 +76,38 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
   let viewsCount: number | null = null;
   let pages: number | null = null;
   let pagingTotal: number | null = null;
+  let viewsError: string | null = null;
   try {
     const wvmp = await unipileService.getProfileViewers(accountIdOverride);
     if (wvmp) {
       viewsCount = wvmp.count;
       pages = wvmp.pages;
       pagingTotal = wvmp.pagingTotal;
+      // We deliberately NO LONGER persist wvmp.raw — for accounts with full
+      // Premium history that payload is several MB of JSON (one object per
+      // viewer × hundreds of viewers × daily snapshots), and writing it on
+      // every scrape was triggering silent insert failures (timeouts /
+      // pg-pool buffer issues). The raw is only useful for debugging, and
+      // /wvmp-debug-all already pulls it live on demand. Setting NULL on
+      // the existing column keeps the schema stable.
       await pool.query(
         `INSERT INTO creator_profile_view_snapshots
            (creator_id, captured_on, captured_at, views_count, raw_response)
-         VALUES ($1, CURRENT_DATE, NOW(), $2, $3::jsonb)
+         VALUES ($1, CURRENT_DATE, NOW(), $2, NULL)
          ON CONFLICT (creator_id, captured_on) DO UPDATE
            SET views_count = EXCLUDED.views_count,
-               raw_response = EXCLUDED.raw_response,
+               raw_response = NULL,
                captured_at = NOW()`,
-        [creator.id, wvmp.count, JSON.stringify(wvmp.raw)]
+        [creator.id, wvmp.count]
       );
     }
   } catch (err) {
-    console.warn('[accountSnapshots] profile-view snapshot failed:', (err as Error).message);
+    // Promote from console.warn to console.error — we were swallowing real
+    // failures (the silent reason this whole thing has been stuck). The
+    // error message also rides back in the return so callers (e.g. the
+    // capture-now route) can surface it to the user.
+    viewsError = (err as Error).message;
+    console.error('[accountSnapshots] profile-view snapshot failed:', err);
   }
 
   return {
@@ -102,5 +117,6 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
     views: viewsCount,
     pages,
     pagingTotal,
+    viewsError,
   };
 }
