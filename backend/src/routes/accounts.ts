@@ -160,6 +160,74 @@ router.get('/follower-history', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/accounts/wvmp-debug-all — runs the live WVMP fetch for EVERY
+// managed account and returns one debug record per account. Saves the user
+// from looking up UUIDs by hand. Same shape as /:id/wvmp-debug per entry.
+router.get('/wvmp-debug-all', async (_req: Request, res: Response) => {
+  try {
+    const { rows: managed } = await pool.query(
+      `SELECT id, name, unipile_account_id
+         FROM creators
+        WHERE is_managed = TRUE
+          AND unipile_account_id IS NOT NULL
+        ORDER BY name ASC`
+    );
+
+    const buildShape = (raw: any) => ({
+      top_keys: raw && typeof raw === 'object' ? Object.keys(raw).slice(0, 10) : [],
+      data_keys: raw?.data && typeof raw.data === 'object' ? Object.keys(raw.data).slice(0, 10) : [],
+      data_data_keys: raw?.data?.data && typeof raw.data.data === 'object' ? Object.keys(raw.data.data).slice(0, 10) : [],
+      paging_total: raw?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.paging?.total
+        ?? raw?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.paging?.total
+        ?? raw?.premiumDashAnalyticsObjectByAnalyticsEntity?.paging?.total
+        ?? null,
+      first_element_keys: (() => {
+        const root =
+          raw?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+          raw?.data?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+          raw?.premiumDashAnalyticsObjectByAnalyticsEntity ??
+          null;
+        const els = Array.isArray(root?.elements) ? root.elements : [];
+        return els.length > 0 && typeof els[0] === 'object' ? Object.keys(els[0]).slice(0, 15) : [];
+      })(),
+    });
+
+    const results = [];
+    for (const row of managed) {
+      const wvmp = await unipileService.getProfileViewers(row.unipile_account_id);
+      const lastStored = await pool.query(
+        `SELECT captured_on::text AS day, views_count
+           FROM creator_profile_view_snapshots
+          WHERE creator_id = $1
+          ORDER BY captured_on DESC
+          LIMIT 5`,
+        [row.id]
+      );
+      results.push({
+        creator_id: row.id,
+        creator_name: row.name,
+        unipile_account_id: row.unipile_account_id,
+        live_wvmp: wvmp == null ? null : {
+          parsed_count: wvmp.count,
+          pages_walked: wvmp.pages,
+          voyager_paging_total: wvmp.pagingTotal,
+        },
+        response_shape: wvmp == null ? null : buildShape(wvmp.raw),
+        last_stored_snapshots: lastStored.rows,
+        hint: wvmp == null
+          ? 'Unipile passthrough returned an error or no body — check server logs for the [Unipile WVMP] line.'
+          : wvmp.count === 0
+            ? 'Live call succeeded but returned zero viewer elements. Either the queryId hash rotated, the connected LinkedIn account is rate-limited, or the response shape changed.'
+            : 'WVMP is returning data. If the chart is still empty, check that the daily scrape is running and inserting snapshots.',
+      });
+    }
+
+    res.json({ count: results.length, results });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/accounts/:id/wvmp-debug — runs the live WVMP fetch for one creator
 // and dumps everything we get back so we can see why profile-view tracking
 // returns nothing for an account. Surfaces the parsed count, page count,
