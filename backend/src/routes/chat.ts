@@ -5,6 +5,7 @@ import { CreatorModel } from '../models/creator';
 import { getCrossCreatorPatterns } from '../services/patterns';
 import { CreatorProfileModel } from '../models/creatorProfile';
 import pool from '../db';
+import { ensureSingleLineHook } from '../utils/sanitizeText';
 
 const router = Router();
 
@@ -599,6 +600,11 @@ AUDIENCE CONTEXT:
 LIST FORMATTING (must-fix when present):
 - When the post contains a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), the items MUST be a contiguous block — one item per line, no blank lines between items. The blank line goes before and after the whole list, never inside it. If the original post has a blank line between every list item, COLLAPSE it: that's a near-zero-cost rewrite that materially improves rhythm and matches how outliers format their lists.
 
+REMIX (when the post is clearly a re-take on an outlier idea — apply ONLY in that case, never force-fit):
+- If the original post is leaning on a known outlier hook template (e.g. "If I had to start over…", "1-star vs 5-star", "Before / after", "Don't do X, do Y", "I tried X for Y days", "What I'd do differently today", "Top 1% method"), sharpen toward that template and bring it firmly into our B2B sales + AI niche. Surface elements (industry / role / tool names / numbers) should read as ours: SDR, outbound, prospecting, AI agent, CRM, GTM, Clay, HubSpot, etc.
+- Keep the emotional core of the outlier (curiosity / transformation / contrast / aspiration / concrete result) intact while you swap the surface. Diluting the emotion makes the remix flop even with a good hook.
+- If the post is clearly a copy of an outlier (same examples, same numbers, same industry references) rewrite the surface to ours — the rewriter is allowed to swap "restaurant" → "B2B sales team", "10K/month" → "30 meetings/month", etc., as long as the post's actual idea / data points are preserved. If the original IS already in our niche, leave the surface alone and just sharpen rhythm/hook.
+
 POSITIONING PRINCIPLES (research-backed from top B2B AI / sales founders — apply ONLY where the original post's material already supports the move; never force-fit):
 - Position by CONTRAST: if the post is making a "we do X very well" claim, sharpen it to "most do A, we do X because B" — but only if the contrast is implicit in the original.
 - Client numbers beat self-praise. If the post mentions a vague benefit but the original raw text has a concrete client metric somewhere, surface that number into the visible body or hook.
@@ -668,6 +674,11 @@ Additional rules:
       .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
       .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
       .replace(/`([^`\n]+?)`/g, '$1');
+    // Collapse any \n inside the hook section — LinkedIn cuts the preview at
+    // the first \n, so a hook split across short sentences gets truncated.
+    // Hardcoded boundary defence: even if the model violates the prompt rule
+    // and emits a multi-line hook, we merge it back into one physical line.
+    postText = ensureSingleLineHook(postText);
 
     res.json({ text: postText, critique, raw });
   } catch (err: any) {

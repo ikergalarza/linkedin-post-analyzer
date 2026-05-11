@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import Anthropic from '@anthropic-ai/sdk';
 import { PostIdeaModel } from '../models/postIdea';
 import pool from '../db';
+import { ensureSingleLineHook } from '../utils/sanitizeText';
 
 const router = Router();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -86,6 +87,59 @@ AUTHORITY STACK — strong posts combine all three:
 - A market frame that's the author's, not the audience's default.
 
 SELLING WITHOUT SELLING: spend the bulk of the post documenting the market failure, sharing the framework, or telling the client story. The product/company is mentioned at most once near the end, almost as a signature — never in the hook.`;
+
+// Distilled from a video-remix checklist the author uses when consuming
+// outliers. Same logic translates to LinkedIn text posts: decompose the
+// outlier, find the structural pattern that produced the lift, then rebuild
+// it in our B2B-sales-AI niche. The Creator already picks a (hook_type,
+// post_structure) archetype from the outlier pool — REMIX_PRINCIPLES tells
+// the model what to do once it has the archetype, so it doesn't ape the
+// outlier's surface (its specific examples, industry, tools) and instead
+// reconstructs the pattern with our content.
+const REMIX_PRINCIPLES = `REMIX PRINCIPLES (turn outliers into original posts in OUR niche — never copy):
+
+DECOMPOSE THE OUTLIER FIRST:
+- Ignore the outlier's surface topic. Identify what actually made it work:
+  hook pattern, post structure, promise, contrast, the emotion it triggered.
+- Common winning hook patterns to recognise + remix:
+  - "If I had to start over, I'd do X"
+  - "1-star vs 5-star" / "expensive vs cheap" comparisons
+  - "Before / after" transformations
+  - "Don't do X, do Y" reversals
+  - "I tried X for Y days" experiments
+  - "From beginner to expert" progressions
+  - "The top 1% method" / "what the best Xs do differently"
+  - "What I'd do differently if I started today"
+  Any of these formats has earned outlier engagement across multiple niches —
+  if the raw idea fits one, take the FORMAT not the example.
+
+KEEP THE EMOTIONAL CORE, SWAP THE SURFACE:
+- The emotion that drove the outlier (curiosity, transformation, contrast,
+  challenge, social proof, aspiration, concrete result) MUST stay intact.
+  Without it the remix collapses.
+- Surface elements (industry, role, tool names, numbers) get swapped to ours:
+  Other niche → ours
+    restaurants / chefs   →  B2B sales teams, SDRs
+    "money in 90 days"    →  "pipeline / replies / meetings in 90 days"
+    "students"            →  "founders" / "SDRs" / "GTM teams"
+    "10K/month"           →  "30 meetings/month" or "+200% reply rate"
+    finance / personal dev →  outbound, AI agents, prospecting, CRM, GTM
+
+REMIX TEMPLATES (use when the raw idea naturally fits):
+- "Cómo cerraría 30 reuniones/mes si tuviera que empezar de nuevo en outbound"
+- "El método del top 1% de SDRs que nadie copia"
+- "Antes vs después de meter agentes en mi prospección"
+- "1 SDR humano vs 1 agente AI: lo que vi en 90 días"
+- "Lo que haría diferente si empezara hoy con AI SDR"
+- "Probé X herramienta de outbound durante Y días y esto pasó"
+
+VALIDATE BEFORE SHIPPING (the model should self-check):
+- Could this read as a literal copy of the outlier? If yes → rewrite.
+- Does the example list, hook, and promise feel specific to B2B sales + AI?
+  If swapping nothing it could ship in any niche, it's too generic.
+- Is the format proven across multiple niches (one of the patterns above) or
+  am I inventing structure? Lean on the proven pattern.
+- Is the emotion / promise the SAME as the outlier or have I diluted it?`;
 
 const STRUCT_LABELS: Record<string, string> = {
   hook_list_cta: 'Hook → Lista → CTA', hook_story_lesson_cta: 'Historia → Lección → CTA',
@@ -259,6 +313,8 @@ ${BRAND_RULES}
 
 ${POSITIONING_PRINCIPLES}
 
+${REMIX_PRINCIPLES}
+
 ${CREATOR_LEARNINGS}
 
 RULES:
@@ -391,16 +447,18 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
     );
 
     const sanitizeText = (t: string) =>
-      t
-        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-        // LinkedIn doesn't render markdown — strip **bold** / *italic* / `code`
-        // wrappers so they don't appear as literal asterisks in the feed. We
-        // tell the model not to use them in the prompt too, but defend at the
-        // boundary.
-        .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
-        .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
-        .replace(/`([^`\n]+?)`/g, '$1')
-        .trim();
+      ensureSingleLineHook(
+        t
+          .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+          // LinkedIn doesn't render markdown — strip **bold** / *italic* / `code`
+          // wrappers so they don't appear as literal asterisks in the feed. We
+          // tell the model not to use them in the prompt too, but defend at the
+          // boundary.
+          .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
+          .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
+          .replace(/`([^`\n]+?)`/g, '$1')
+          .trim()
+      );
 
     const variants = archetypes.slice(0, 3).map((arch, i) => ({
       archetype_key: `${arch.hook_type}__${arch.post_structure}`,
