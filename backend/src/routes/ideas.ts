@@ -30,13 +30,14 @@ const HOOK_LABELS: Record<string, string> = {
 // - LinkedIn distribution favours reposts above any other engagement metric;
 //   a company that gets criticised in your post will never repost it, so the
 //   downside vs. the upside is heavily asymmetric. Frame any mention positive.
-// - Neety's current ICP is medium/large industrial exporters and B2B service
-//   companies. When the model has freedom to choose examples or audience
-//   framing, it should default to those.
+// - Neety's audience is broadly medium/large B2B companies. Industrial
+//   exporters are a strong recurring segment (proven in the 15.9x regional-
+//   map outliers) but NOT exclusive — many clients are B2B services, SaaS,
+//   etc. Don't force every post into an industrial frame.
 const BRAND_RULES = `BRAND & AUDIENCE RULES (non-negotiable):
 - NEVER criticise, mock, or speak negatively about any other company, brand or competitor by name. If a company is mentioned, the framing MUST be positive or neutral-respectful. Reposts are the highest-leverage LinkedIn metric and a criticised company won't repost — the upside of a sharp jab almost never beats the lost reach.
 - If you need a counter-example, talk about a generic pattern ("most CRMs", "the average outbound playbook") rather than naming a specific company.
-- Neety's ICP is medium/large INDUSTRIAL companies that export and B2B SERVICE companies. When you have latitude on examples, audience framing or pain points, default to those segments.`;
+- Neety's audience is BROADLY medium/large B2B companies. Industrial exporters are a strong recurring segment (and a proven angle in winning posts — e.g. the 15.9x regional-map outliers) but NOT exclusive: B2B service companies, SaaS, agencies' B2B clients, consultancies, and other B2B segments all fit too. DO NOT assume every post must be industrial-flavoured. When you have latitude on examples or framing, pick the segment that best fits the raw idea — if the idea is industrial, lean industrial; if it's a SaaS / B2B-services angle, lean that way. Forcing every post into the industrial frame is a known failure mode.`;
 
 // Pulled from 2 weeks of real publishing data on this account. These complement
 // the global outlier pool — they tell the model which patterns produced reposts

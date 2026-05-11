@@ -165,30 +165,63 @@ async function getAnalysisContext(): Promise<string> {
 
 async function buildProfileContext(): Promise<string> {
   const profile = await CreatorProfileModel.get();
-  if (!profile) return '';
 
   const lines: string[] = [];
   lines.push('\n\n=== USER PROFILE (who is writing the post) ===');
-  if (profile.name) lines.push(`Name: ${profile.name}`);
-  if (profile.headline) lines.push(`Headline: ${profile.headline}`);
-  if (profile.followers_count) lines.push(`Followers: ${profile.followers_count}`);
-  if (profile.company) lines.push(`Company: ${profile.company}`);
-  if (profile.product) lines.push(`Product: ${profile.product}`);
-  if (profile.positioning) lines.push(`Positioning / What they want to stand for: ${profile.positioning}`);
-  if (profile.tone_style) lines.push(`Tone & style preference: ${profile.tone_style}`);
+  if (profile) {
+    if (profile.name) lines.push(`Name: ${profile.name}`);
+    if (profile.headline) lines.push(`Headline: ${profile.headline}`);
+    if (profile.followers_count) lines.push(`Followers: ${profile.followers_count}`);
+    if (profile.company) lines.push(`Company: ${profile.company}`);
+    if (profile.product) lines.push(`Product: ${profile.product}`);
+    if (profile.positioning) lines.push(`Positioning / What they want to stand for: ${profile.positioning}`);
+    if (profile.tone_style) lines.push(`Tone & style preference: ${profile.tone_style}`);
+  }
 
-  if (profile.my_posts && profile.my_posts.length > 0) {
-    lines.push('');
-    lines.push(`--- Top ${Math.min(profile.my_posts.length, 10)} posts by this user (for voice/style reference) ---`);
-    for (const p of profile.my_posts.slice(0, 10)) {
-      lines.push(`\n[${p.likes_count} likes, ${p.comments_count} comments, ${p.reposts_count} reposts]`);
-      lines.push(p.content_text.substring(0, 600));
-      lines.push('---');
+  // LIVE pull of the user's top managed-account posts from the posts table
+  // (not the stale `my_posts` JSONB on creator_profile, which is a manual
+  // snapshot from when the user set up their profile and doesn't reflect
+  // anything published since). We want the model to reason about what's
+  // *actually* working right now, including the outliers from the last few
+  // weeks of publishing.
+  try {
+    const { rows: myTop } = await pool.query(
+      `SELECT p.content_text, p.hook_text, p.likes_count, p.comments_count,
+              p.reposts_count, p.impressions_count, p.engagement_score,
+              p.outlier_ratio, p.is_outlier, p.published_at,
+              p.hook_type, p.post_structure,
+              c.name AS creator_name
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND p.content_text IS NOT NULL
+          AND LENGTH(TRIM(p.content_text)) > 50
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+        ORDER BY p.outlier_ratio DESC NULLS LAST, p.engagement_score DESC
+        LIMIT 12`
+    );
+    if (myTop.length > 0) {
+      lines.push('');
+      lines.push(`--- TOP POSTS BY THIS USER (LIVE from DB — sorted by outlier ratio; ALWAYS up to date with the latest scrape, including the past week) ---`);
+      lines.push(`Use this list as the source of truth when the user asks "what's working for me", "what are my best posts", "what should I write more of". The static profile.my_posts field is intentionally NOT used — it was a manual one-time load and may be months out of date.`);
+      for (const p of myTop) {
+        const ratio = p.outlier_ratio ? `${(+p.outlier_ratio).toFixed(1)}x` : '—';
+        const imp = p.impressions_count ? ` · ${p.impressions_count} imp` : '';
+        const date = p.published_at ? new Date(p.published_at).toISOString().slice(0, 10) : '?';
+        const arche = (p.hook_type && p.hook_type !== 'other' && p.post_structure && p.post_structure !== 'other')
+          ? ` · ${p.hook_type} + ${p.post_structure}`
+          : '';
+        lines.push(`\n[${date} · ${p.creator_name} · ${ratio} ratio · ${p.likes_count}❤ ${p.comments_count}💬 ${p.reposts_count}🔁${imp}${arche}]`);
+        lines.push((p.content_text as string).slice(0, 600));
+        lines.push('---');
+      }
     }
+  } catch (err) {
+    console.warn('[buildProfileContext] live top-posts query failed:', (err as Error).message);
   }
 
   lines.push('');
-  lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above. Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic.');
+  lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above (which are LIVE from the database — never refer to a previous version of their post history). Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic.');
   return lines.join('\n');
 }
 
@@ -616,7 +649,7 @@ WHAT YOU NEVER DO:
 - Criticise, mock, or speak negatively about any other company, brand or competitor by name. If the original post does this, soften it: keep the lesson but reframe the named company in a positive or neutral-respectful light. Reposts are the highest-leverage LinkedIn metric and a criticised company won't repost — the trade is not worth it. If a contrast is needed, swap the named brand for a generic pattern ("most CRMs", "the average outbound playbook").
 
 AUDIENCE CONTEXT:
-- Neety's ICP is medium/large INDUSTRIAL companies that export and B2B SERVICE companies. When you have latitude on examples, framing or pain points, default to those segments. Do not change a post's topic to fit them — only nudge framing where it's already flexible.
+- Neety's audience is BROADLY medium/large B2B companies. Industrial exporters are a strong recurring segment (and a proven angle in regional-map outliers) but NOT exclusive: B2B service companies, SaaS, consultancies, agencies' B2B clients, and other B2B segments fit too. DO NOT assume every post must be industrial-flavoured. Pick the segment that best fits the original post's content; only nudge framing where it's already flexible. Forcing every post into the industrial frame is a known failure mode.
 
 LIST FORMATTING (must-fix when present):
 - When the post contains a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), the items MUST be a contiguous block — one item per line, no blank lines between items. The blank line goes before and after the whole list, never inside it. If the original post has a blank line between every list item, COLLAPSE it: that's a near-zero-cost rewrite that materially improves rhythm and matches how outliers format their lists.
