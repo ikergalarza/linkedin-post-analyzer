@@ -600,6 +600,38 @@ AUDIENCE CONTEXT:
 LIST FORMATTING (must-fix when present):
 - When the post contains a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), the items MUST be a contiguous block — one item per line, no blank lines between items. The blank line goes before and after the whole list, never inside it. If the original post has a blank line between every list item, COLLAPSE it: that's a near-zero-cost rewrite that materially improves rhythm and matches how outliers format their lists.
 
+NEETY VIRAL MECHANICS (proven on this account — 1 month of data on Iker + Unai's founder posts):
+
+THREE MECHANICS that have produced 2x+ outliers on this account. When the post you're rewriting is clearly one of them, sharpen toward the proven shape. When it isn't but the topic naturally fits one, you may nudge — never force-fit a mechanic on a misfit topic.
+
+1. COMMENT-GATED LEAD MAGNET — CTA "comenta '<keyword>' y te mando el <recurso>"
+   - Real outliers on this account: 7.3x · 5.0x · 2.9x · 2.5x (300–625 comments/post)
+   - The CTA inflates comments → LinkedIn algorithm reads "high engagement" → amplifies reach.
+   - Required: a SPECIFIC, valuable lead magnet (doc / framework / dataset / video — not a generic PDF).
+   - Frequency cap: 1 every 7–10 posts. Comment-bait gets penalised if overused.
+   - If the original post already has a strong lead-magnet ask and a real deliverable, KEEP it. If it has the ask but the deliverable feels generic, do NOT invent a fake one — surface the genericness in the critique and propose toning down to a question CTA instead.
+
+2. INTERACTIVE MAP + REGIONAL IDENTITY (top performer 15.9x · 7.7x · 2.5x)
+   - Hook formula A: "Nadie habla de [zona pequeña] que [logro económico shock]. En 60 segundos te explico por qué 👇"
+   - Hook formula B: "[Zona] exporta más que [referente conocido]. Y casi nadie lo cuenta porque [razón] 👇"
+   - The map IS the engagement tool. Activates identity + social currency + belonging simultaneously.
+   - If the original post is regional / industrial in nature and has the data points for a map but the hook reads flat, sharpen the hook toward formula A or B above. Keep the map.
+   - Regions still to mine: Euskadi (industrial), La Rioja (vino + tech), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Navarra (automoción + energía), Valencia (cerámica).
+
+3. PUNCHY SHORT + MEME IMAGE
+   - Real outlier on this account: 3.7x with 130K impressions (highest reach of the month — "Subir en ventas siempre pasa factura.")
+   - 1–3 short lines + meme image. The image carries ~80% of the message; text only activates it. Drives REPOSTS (not comments).
+   - If the original post is meme-friendly (one painful B2B truth, one image), shorten the text to 1–3 lines and let the meme work. Do NOT add a CTA or filler. If the post is genuinely meme-friendly but currently a wall of text, the highest-leverage edit is to STRIP IT BACK.
+
+WHAT BREAKS POSTS on this account (avoid reproducing these failure modes in the rewrite):
+- Listicles with no viral mechanic ("6 IAs que uso para cerrar más reuniones" → 0.3x)
+- Talking to the wrong audience (agencies vs medium/large B2B exporters and B2B services) → 0.3x
+- Burnt templates ("y nadie te lo dice", "el problema eres tú") without a fresh mechanic → 0.3x
+- Strong hook + no mechanic attached (no lead magnet, no map, no meme) → 0.3–0.4x
+- Founder-centric milestones without a replicable lesson ("12 meses en Lanzadera", "cumplo 27") → 0.7–0.9x
+- Cryptic one-liners with no B2B context → 0.5x
+- If the original post matches one of these failure patterns, the highest-leverage rewrite is to attach it to one of the three mechanics above (when feasible) or strip out the failure-mode element rather than polishing the surface.
+
 REMIX (when the post is clearly a re-take on an outlier idea — apply ONLY in that case, never force-fit):
 - If the original post is leaning on a known outlier hook template (e.g. "If I had to start over…", "1-star vs 5-star", "Before / after", "Don't do X, do Y", "I tried X for Y days", "What I'd do differently today", "Top 1% method"), sharpen toward that template and bring it firmly into our B2B sales + AI niche. Surface elements (industry / role / tool names / numbers) should read as ours: SDR, outbound, prospecting, AI agent, CRM, GTM, Clay, HubSpot, etc.
 - Keep the emotional core of the outlier (curiosity / transformation / contrast / aspiration / concrete result) intact while you swap the surface. Diluting the emotion makes the remix flop even with a good hook.

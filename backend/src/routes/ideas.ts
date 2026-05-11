@@ -88,14 +88,57 @@ AUTHORITY STACK — strong posts combine all three:
 
 SELLING WITHOUT SELLING: spend the bulk of the post documenting the market failure, sharing the framework, or telling the client story. The product/company is mentioned at most once near the end, almost as a signature — never in the hook.`;
 
+// Concrete viral mechanics that have proven to land outliers on THIS account
+// over one month of publishing (22 posts, founders Iker + Unai). Numbers are
+// real 2x+ outliers from the data — when the model lands a raw idea on one
+// of these mechanics, it inherits a track record. When it tries to invent
+// a different shape, it usually flops (see the "WHAT BREAKS POSTS" list).
+const NEETY_MECHANICS = `NEETY VIRAL MECHANICS (proven on this account — 1 month of data on Iker + Unai's founder posts):
+
+THREE MECHANICS THAT PRODUCE 2x+ OUTLIERS — pick the one the raw idea naturally fits, do NOT force one in:
+
+1. COMMENT-GATED LEAD MAGNET — CTA "comenta '<keyword>' y te mando el <recurso>"
+   - Real outliers on this account: 7.3x · 5.0x · 2.9x · 2.5x (300–625 comments/post)
+   - How it lands: the CTA inflates comments → LinkedIn algorithm reads "high engagement" → amplifies reach
+   - Required: a SPECIFIC, valuable lead magnet (a real doc, framework, dataset, video — not a generic PDF)
+   - Frequency cap: max 1 every 7–10 posts. LinkedIn is starting to penalise comment-bait; fatigue is real.
+   - DO use: real curiosity-driven topic with a concrete deliverable
+   - DON'T use: personal stories (breaks tone), generic PDF, anything < 5 days after the previous lead-magnet post
+
+2. INTERACTIVE MAP + REGIONAL IDENTITY (TOP performer)
+   - Real outliers on this account: 15.9x · 7.7x · 2.5x
+   - Hook formula A: "Nadie habla de [zona pequeña] que [logro económico shock]. En 60 segundos te explico por qué 👇"
+   - Hook formula B: "[Zona] exporta más que [referente conocido]. Y casi nadie lo cuenta porque [razón] 👇"
+   - Variant: "Esta empresa española de [pueblo] factura más que [referente conocido]"
+   - The map IS the engagement tool, not decoration. Triggers identity + social currency + belonging simultaneously; comments turn into regional debates → algorithm gold.
+   - Regions still to mine: Euskadi (industrial), La Rioja (vino + tech), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Navarra (automoción + energía), Valencia (cerámica)
+   - Frequency cap: max 1 every 10–14 days
+
+3. PUNCHY SHORT + MEME IMAGE
+   - Real outlier on this account: 3.7x with 130K impressions (highest reach of the month)
+   - Format: 1–3 short lines of text + meme image carrying an uncomfortable truth with humor
+   - The IMAGE carries 80% of the message; the text only activates it. This won't work as text-only — only pick this mechanic when the idea is genuinely meme-able and there's a visual to ship.
+   - Drives reposts (not comments) → broad organic reach, very different shape from the other two
+
+WHAT BREAKS POSTS (sub-1.0x flops to AVOID reproducing):
+- Listicles with no viral mechanic ("6 IAs que uso para cerrar más reuniones" → 0.3x)
+- Wrong audience (talking to agencies when ICP is medium/large B2B exporters + B2B services) → 0.3x
+- Burnt templates ("el problema eres tú", "y nadie te lo dice" without a fresh mechanic) → 0.3x
+- Good hook with no mechanic attached ("7.153 llamadas en frío después...") → 0.3x — strong line that goes nowhere
+- Provocative metaphor with no payoff ("Tu mejor comercial bloqueado por un bot de 5€") → 0.4x
+- Founder-centric without a replicable lesson ("12 meses en Lanzadera", "cumplo 27 y…") → 0.7–0.9x
+- Cryptic one-liners with no B2B context ("Twitter = Gratis") → 0.5x
+
+CHOOSING MATRIX (apply only when the raw idea fits — never force):
+- Need a lead spike this week + the topic has a real deliverable → COMMENT-GATED LEAD MAGNET
+- Need broad reach + reposts + the idea is meme-able → PUNCHY + MEME
+- Need both reach AND brand identity + the topic has regional / industrial angle → MAP + REGION
+- Idea doesn't fit any of the three → fall back to the archetype the system already picked and a clean execution. Don't bolt a mechanic on top of a misfit idea — that's how the 0.3x flops above happened.`;
+
 // Distilled from a video-remix checklist the author uses when consuming
 // outliers. Same logic translates to LinkedIn text posts: decompose the
 // outlier, find the structural pattern that produced the lift, then rebuild
-// it in our B2B-sales-AI niche. The Creator already picks a (hook_type,
-// post_structure) archetype from the outlier pool — REMIX_PRINCIPLES tells
-// the model what to do once it has the archetype, so it doesn't ape the
-// outlier's surface (its specific examples, industry, tools) and instead
-// reconstructs the pattern with our content.
+// it in our B2B-sales-AI niche.
 const REMIX_PRINCIPLES = `REMIX PRINCIPLES (turn outliers into original posts in OUR niche — never copy):
 
 DECOMPOSE THE OUTLIER FIRST:
@@ -314,6 +357,8 @@ ${BRAND_RULES}
 ${POSITIONING_PRINCIPLES}
 
 ${REMIX_PRINCIPLES}
+
+${NEETY_MECHANICS}
 
 ${CREATOR_LEARNINGS}
 
