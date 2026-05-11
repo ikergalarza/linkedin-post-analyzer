@@ -135,6 +135,42 @@ CHOOSING MATRIX (apply only when the raw idea fits — never force):
 - Need both reach AND brand identity + the topic has regional / industrial angle → MAP + REGION
 - Idea doesn't fit any of the three → fall back to the archetype the system already picked and a clean execution. Don't bolt a mechanic on top of a misfit idea — that's how the 0.3x flops above happened.`;
 
+// The single highest-priority rule about how the hook reaches the reader.
+// We've explained it a dozen ways across other blocks; this version owns it
+// in one place with the WHY, a real-account example, and the structure rule.
+// Read this BEFORE any other rule.
+const HOOK_LAW = `HOOK FORMATTING LAW (read this BEFORE writing the first line — it is the single most important rule):
+
+WHY THIS MATTERS:
+LinkedIn cuts the post in the feed after roughly 210 characters or the first 2–3 visible lines, with "...ver más" / "...see more". That cut is the ONLY moment you have to earn the click. The 90% mistake is dropping a DOUBLE LINE BREAK (\\n\\n) right after the first sentence of the hook, thinking it "breathes better". That hands LinkedIn a natural cut point much earlier than you intended — the feed shows ONLY that first sentence on its own, the reader processes it as a closed thought, thinks "ah, interesante" and keeps scrolling. No tension, no open loop, no reason to click.
+
+CONCRETE EXAMPLE (Cataluña post — real 7.7x outlier on this account):
+
+WRONG (blank line breaks the hook — LinkedIn cuts here):
+  Cataluña exporta más que Portugal entera.
+
+  Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇
+
+  [User sees the first sentence alone in the feed, reads it as a closed factoid, scrolls past. Hook wasted.]
+
+RIGHT (two sentences, one block, no blank between them):
+  Cataluña exporta más que Portugal entera. Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇
+
+  [User sees the shock data + the open loop in one glance, before the cut. Curiosity forces the click.]
+
+THE RULE:
+- The hook is ONE block. It can be a single sentence OR two short sentences, but both must live in the SAME paragraph — no \\n\\n between them — and the total must fit in ≤ 210 characters.
+- If it's two sentences, separate them with a period + space (". "). NEVER \\n. NEVER \\n\\n.
+- Two-part hook pattern that works:
+  - First sentence in the block: a blunt declarative claim or a shock data point.
+  - Second sentence in the same block: a bridge that opens curiosity ("Y casi nadie lo cuenta…", "Pero el motivo real…", "Y aquí está lo que nadie te cuenta…", "And almost nobody talks about why 👇").
+- The FIRST blank line of the entire post goes AFTER the hook block, never inside it.
+
+AFTER THE "VER MÁS" CUT YOU'RE FREE:
+Once the user clicks, every \\n and \\n\\n you want is fair game — that's how you give rhythm to the body, separate list items, etc. The rule above is ONLY about the hook block (everything before the first paragraph break).
+
+IF YOU WROTE A HOOK WITH \\n OR \\n\\n IN IT: COLLAPSE IT. Re-read it once and merge the two short lines into one before you output the post.`;
+
 // Distilled from a video-remix checklist the author uses when consuming
 // outliers. Same logic translates to LinkedIn text posts: decompose the
 // outlier, find the structural pattern that produced the lift, then rebuild
@@ -351,6 +387,8 @@ ARCHETYPE TO USE:
 - Post structure: ${structLabel} (${archetype.post_structure})
 - This archetype achieves ${archetype.avg_ratio.toFixed(1)}x average engagement in real data
 ${exampleSection}
+
+${HOOK_LAW}
 
 ${BRAND_RULES}
 

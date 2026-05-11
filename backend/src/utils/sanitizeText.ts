@@ -63,6 +63,8 @@ export function sanitizeForLLM(t: string): string {
  */
 export function ensureSingleLineHook(text: string): string {
   if (!text) return text;
+
+  // ── Step 1: classic collapse of consecutive prose lines (Line A\nLine B). ──
   const lines = text.split('\n');
   if (lines.length <= 1) return text;
   // List markers + numbered items + arrows + tick/cross + emoji-bullets that
@@ -77,20 +79,55 @@ export function ensureSingleLineHook(text: string): string {
     if (listMarker.test(trimmed)) break; // list begins → end of hook section
     hookEnd = i;
   }
-  if (hookEnd === 0) return text;   // already single-line hook
 
-  const hookLine = lines
-    .slice(0, hookEnd + 1)
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .join(' ')
-    .replace(/\s+/g, ' ');
+  let normalised = text;
+  if (hookEnd > 0) {
+    const hookLine = lines
+      .slice(0, hookEnd + 1)
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ');
+    let restStart = hookEnd + 1;
+    while (restStart < lines.length && !lines[restStart].trim()) restStart++;
+    const rest = lines.slice(restStart);
+    normalised = rest.length === 0 ? hookLine : `${hookLine}\n\n${rest.join('\n')}`;
+  }
 
-  // Trim leading blank lines from the rest so we don't double the blank
-  // separator we're about to insert.
-  let restStart = hookEnd + 1;
-  while (restStart < lines.length && !lines[restStart].trim()) restStart++;
-  const rest = lines.slice(restStart);
-  if (rest.length === 0) return hookLine;
-  return `${hookLine}\n\n${rest.join('\n')}`;
+  // ── Step 2: catch the harder case — two short prose paragraphs at the    ──
+  // ── top of the post, separated by a blank line. LinkedIn cuts at the     ──
+  // ── first \n\n so this splits the hook in two, and only the first        ──
+  // ── sentence reaches the reader. Detect by:                              ──
+  //  - both paragraphs are single-line (no internal \n)
+  //  - first paragraph ≤ 140 chars
+  //  - second paragraph ≤ 140 chars
+  //  - combined ≤ 210 chars (fits in the see-more preview window)
+  //  - second paragraph ends with an open-loop signal (👇 ? : … ...) OR
+  //    starts with a bridge connector ("y ", "pero ", "and ", "but ", etc.)
+  //
+  // If all match, merge them with ". " into one block. Conservative on
+  // purpose — false positives risk eating a deliberate one-line standalone
+  // body intro, so we require BOTH a length window and a curiosity tell.
+  const parts = normalised.split(/\n\s*\n/);
+  if (parts.length >= 2) {
+    const p1 = parts[0].trim();
+    const p2 = parts[1].trim();
+    const isOneLine = (s: string) => !s.includes('\n');
+    const lowerP2 = p2.toLowerCase();
+    const hasOpenLoop = /(👇|👉|→|↳|\?|:|…|\.\.\.)\s*$/u.test(p2);
+    const startsWithBridge = /^(y |y aquí|y casi|pero |pero ahora|aquí |aquí está|aquí tienes|and |but |here is|here's|or )/i.test(lowerP2);
+    const fits = p1.length <= 140 && p2.length <= 140 && (p1.length + p2.length + 1) <= 210;
+    const looksLikeListStart = listMarker.test(p2);
+
+    if (isOneLine(p1) && isOneLine(p2) && fits && !looksLikeListStart && (hasOpenLoop || startsWithBridge)) {
+      // Merge p1 + p2 with ". " unless p1 already ends with sentence punctuation,
+      // in which case use a single space.
+      const sep = /[.!?…]\s*$/.test(p1) ? ' ' : '. ';
+      const mergedHook = (p1 + sep + p2).replace(/\s+/g, ' ').trim();
+      const restParts = parts.slice(2);
+      return restParts.length > 0 ? `${mergedHook}\n\n${restParts.join('\n\n')}` : mergedHook;
+    }
+  }
+
+  return normalised;
 }

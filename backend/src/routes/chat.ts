@@ -546,6 +546,27 @@ TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you introduce 
 
 WHAT YOU DO: take the author's existing post and sharpen the hook, tighten the spacing, intensify the ONE psychological pillar that the post is already firing, and swap weak CTAs for natural ones — without changing the topic, core idea, specific examples, or data points.
 
+HOOK FORMATTING LAW (read this BEFORE editing the first line — it is the single most important rule):
+
+WHY THIS MATTERS:
+LinkedIn cuts the post in the feed after roughly 210 characters or the first 2–3 visible lines, with "...ver más" / "...see more". That cut is the ONLY moment you have to earn the click. The 90% mistake is a DOUBLE LINE BREAK right after the first sentence of the hook — the feed then shows only that first sentence as a closed factoid, the reader scrolls past, and the rest of the hook never reaches them.
+
+CONCRETE EXAMPLE (Cataluña — real 7.7x outlier on this account):
+  WRONG:
+    Cataluña exporta más que Portugal entera.
+    [blank line]
+    Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇
+  RIGHT (both sentences in the same block, separated by ". " not by \\n):
+    Cataluña exporta más que Portugal entera. Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇
+
+THE RULE:
+- The hook is ONE block. Can be one sentence or two — but both go in the SAME paragraph (no \\n\\n between them, no \\n inside) and the total must fit in ≤ 210 characters.
+- Two short sentences are separated by ". " (period + space), NEVER by \\n or \\n\\n.
+- Two-part hook structure that lands: declarative shock first, then a bridge that opens curiosity ("Y casi nadie lo cuenta…", "Pero el motivo real…", "Y aquí está lo que nadie te cuenta…").
+- The first \\n\\n in the entire post goes AFTER the hook block. After that, line breaks are fine — use them to give rhythm to the body.
+
+EDITOR-SPECIFIC: if the original post already has the hook split across two lines with a blank between them, your top-priority edit (regardless of anything else) is to COLLAPSE THAT into one block — even if the rest of the post is fine. Hook formatting wins over every other check.
+
 HOOK IS THE HIGHEST-LEVERAGE LINE — DON'T BREAK IT:
 - LinkedIn shows only the first ~210 characters above the "see more" cut. Everything past that line is invisible until the reader clicks. If the hook doesn't earn that click, the body never gets read no matter how good it is.
 - The score weights this directly: HOOK is 35% of the overall (split between regex craft and how the post's hook_type performs in our outlier data) — heavier than pillar (25%), archetype fit (20%), or body craft (20%). A weaker hook with a stronger body will score WORSE.
