@@ -466,12 +466,22 @@ router.get('/profile-views/debug', async (_req: Request, res: Response) => {
         if (wvmp) {
           const liveTimestamps = extractViewerTimestamps(wvmp.raw);
           liveTimestamps.sort((a, b) => b - a); // newest first
+          // First element of the feed, raw — lets us see which fields the
+          // current LinkedIn schema actually carries the timestamp under
+          // when the extractor returns zero matches.
+          const firstEl: any =
+            wvmp.raw?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements?.[0] ??
+            wvmp.raw?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements?.[0] ??
+            wvmp.raw?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements?.[0] ??
+            null;
           live = {
             count: wvmp.count,
             pages: wvmp.pages,
             paging_total: wvmp.pagingTotal,
             timestamps_extracted: liveTimestamps.length,
             sample_recent_viewers: liveTimestamps.slice(0, 5).map((ms) => new Date(ms).toISOString()),
+            first_element_keys: firstEl && typeof firstEl === 'object' ? Object.keys(firstEl) : null,
+            first_element_sample: firstEl,
           };
         }
       }
@@ -525,77 +535,6 @@ router.post('/profile-views/refresh', async (_req: Request, res: Response) => {
     res.json({ refreshed: results.length, results });
   } catch (err: any) {
     console.error('[accounts/profile-views/refresh]', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// GET /api/accounts/profile-views/debug
-// Per managed creator: live-fetches WVMP (paginated) and reports how many
-// viewers Unipile actually returns vs. what's stored, with a sample of viewer
-// timestamps. Use this to confirm that both accounts are returning fresh data
-// when the chart looks frozen.
-router.get('/profile-views/debug', async (_req: Request, res: Response) => {
-  try {
-    const { rows: managed } = await pool.query(
-      `SELECT id, name, unipile_account_id, linkedin_url
-         FROM creators
-        WHERE is_managed = TRUE
-        ORDER BY name`
-    );
-
-    const out: any[] = [];
-    for (const c of managed) {
-      const latestQ = await pool.query(
-        `SELECT captured_on::text AS captured_on, captured_at, views_count, raw_response
-           FROM creator_profile_view_snapshots
-          WHERE creator_id = $1
-          ORDER BY captured_at DESC
-          LIMIT 1`,
-        [c.id]
-      );
-      const latest = latestQ.rows[0] ?? null;
-      const storedTimestamps = latest?.raw_response
-        ? extractViewerTimestamps(latest.raw_response)
-        : [];
-
-      let live: any = null;
-      if (c.unipile_account_id) {
-        const wvmp = await unipileService.getProfileViewers(c.unipile_account_id);
-        if (wvmp) {
-          const liveTimestamps = extractViewerTimestamps(wvmp.raw);
-          liveTimestamps.sort((a, b) => b - a); // newest first
-          live = {
-            count: wvmp.count,
-            pages: wvmp.pages,
-            paging_total: wvmp.pagingTotal,
-            timestamps_extracted: liveTimestamps.length,
-            sample_recent_viewers: liveTimestamps.slice(0, 5).map((ms) => new Date(ms).toISOString()),
-          };
-        }
-      }
-
-      out.push({
-        creator_id: c.id,
-        name: c.name,
-        has_unipile_account_id: !!c.unipile_account_id,
-        unipile_account_id_preview: c.unipile_account_id
-          ? `${String(c.unipile_account_id).slice(0, 6)}…${String(c.unipile_account_id).slice(-4)}`
-          : null,
-        latest_snapshot: latest
-          ? {
-              captured_on: latest.captured_on,
-              captured_at: latest.captured_at,
-              views_count: latest.views_count,
-              timestamps_in_raw: storedTimestamps.length,
-            }
-          : null,
-        live,
-      });
-    }
-
-    res.json({ creators: out });
-  } catch (err: any) {
-    console.error('[accounts/profile-views/debug]', err);
     res.status(500).json({ error: err.message });
   }
 });
