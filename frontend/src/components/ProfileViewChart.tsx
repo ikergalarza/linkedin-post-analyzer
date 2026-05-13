@@ -35,18 +35,25 @@ const TOOLTIP_STYLE = {
   fontSize: '12px',
 };
 
-// Helper that returns the last point on or before "today minus daysBack",
-// so we can compute deltas robustly even when snapshots have gaps.
-function findPointBefore(points: Point[], daysBack: number): Point | null {
-  if (!points.length) return null;
-  const target = new Date();
-  target.setDate(target.getDate() - daysBack);
-  const targetTs = target.getTime();
-  // Walk backwards: the last point whose date is ≤ target
-  for (let i = points.length - 1; i >= 0; i--) {
-    if (new Date(points[i].day).getTime() <= targetTs) return points[i];
+// Sum the last `n` daily points (most-recent-first). Returns 0 if the
+// series is shorter than n — caller decides whether that's enough signal
+// to display a delta.
+function sumLastN(points: Point[], n: number): number {
+  let total = 0;
+  for (let i = Math.max(0, points.length - n); i < points.length; i++) {
+    total += points[i].views || 0;
   }
-  return points[0];
+  return total;
+}
+
+// Sum points [end-n*2, end-n) — i.e. the window of size n immediately
+// before the most-recent window of size n. Used for rolling delta math.
+function sumPrevN(points: Point[], n: number): number | null {
+  if (points.length < n * 2) return null;
+  const start = points.length - n * 2;
+  let total = 0;
+  for (let i = start; i < start + n; i++) total += points[i].views || 0;
+  return total;
 }
 
 // Compact delta chip — value + colour + sign. Used for 24h / 7d / range.
@@ -129,24 +136,37 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
 
   const xTickInterval = Math.max(0, Math.floor(chartData.length / 8) - 1);
 
+  // Deltas in the new model = window-sums vs. previous window-sums (rolling).
+  // "vs ayer" still compares two single days (today vs. yesterday). The 7d
+  // and Nd chips compare "last N days summed" against "prior N days summed",
+  // which is how LinkedIn's own analytics surface presents the trend.
   const deltas = useMemo(() => {
     if (!points || points.length === 0) {
-      return { d1: null, d7: null, range: null };
+      return { d1: null, d7: null, range: null, totalRange: 0 };
     }
-    const last = points[points.length - 1].views;
-    const calc = (basePoint: Point | null) => {
-      if (!basePoint) return null;
-      const abs = last - basePoint.views;
-      const pct = basePoint.views > 0 ? (abs / basePoint.views) * 100 : null;
+    const calcWindow = (n: number) => {
+      const cur = sumLastN(points, n);
+      const prev = sumPrevN(points, n);
+      if (prev === null) return null;
+      const abs = cur - prev;
+      const pct = prev > 0 ? (abs / prev) * 100 : null;
       return { abs, pct };
     };
+    const d1 = (() => {
+      if (points.length < 2) return null;
+      const today = points[points.length - 1].views;
+      const yesterday = points[points.length - 2].views;
+      const abs = today - yesterday;
+      const pct = yesterday > 0 ? (abs / yesterday) * 100 : null;
+      return { abs, pct };
+    })();
     return {
-      // 24h: penultimate point if it exists; null if we only have 1 snapshot
-      d1: points.length >= 2 ? calc(points[points.length - 2]) : null,
-      d7: calc(findPointBefore(points, 7)),
-      range: calc(points[0]),
+      d1,
+      d7: calcWindow(7),
+      range: calcWindow(Math.floor(days / 2)), // current half vs prior half
+      totalRange: sumLastN(points, days),
     };
-  }, [points]);
+  }, [points, days]);
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-5">
@@ -155,8 +175,8 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
           <h3 className="text-lg font-semibold">Profile views</h3>
           <p className="text-xs text-text-muted mt-0.5">
             {creatorId
-              ? 'Visitas al perfil (snapshot diario, ventana ~90 días LinkedIn Premium)'
-              : 'Suma de visitas al perfil de todas las cuentas managed (snapshot diario)'}
+              ? `Visitas nuevas al perfil por día (últimos ${days}d · ${fmtNum(deltas.totalRange)} total)`
+              : `Visitas nuevas al perfil por día — todas las cuentas managed (últimos ${days}d · ${fmtNum(deltas.totalRange)} total)`}
           </p>
         </div>
         <div className="flex items-start gap-5 flex-wrap">
@@ -169,14 +189,14 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
           )}
           {deltas.d7 && (
             <DeltaChip
-              label="vs hace 7d"
+              label="últimos 7d vs prev. 7d"
               abs={deltas.d7.abs}
               pct={deltas.d7.pct}
             />
           )}
           {deltas.range && (
             <DeltaChip
-              label={`vs hace ${days}d`}
+              label={`últ. ${Math.floor(days / 2)}d vs prev. ${Math.floor(days / 2)}d`}
               abs={deltas.range.abs}
               pct={deltas.range.pct}
             />
@@ -186,15 +206,11 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
 
       {loading ? (
         <p className="text-center text-text-muted text-sm py-12">Cargando…</p>
-      ) : chartData.length === 0 ? (
+      ) : chartData.length === 0 || deltas.totalRange === 0 ? (
         <p className="text-center text-text-muted text-sm py-12">
-          Aún no hay snapshots — corre un scrape para empezar a trackear visitas.
+          Aún no hay datos de visitas — corre un refresh para capturar los
+          timestamps de viewers desde el feed de LinkedIn.
           (Requiere LinkedIn Premium / Sales Navigator activo en la cuenta.)
-        </p>
-      ) : chartData.length === 1 ? (
-        <p className="text-center text-text-muted text-sm py-12">
-          Solo un snapshot por ahora ({fmtNum(chartData[0].views)} viewers el {chartData[0].label}).
-          La curva se rellena según se capturan más días.
         </p>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
@@ -215,7 +231,7 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
             <Tooltip
               contentStyle={TOOLTIP_STYLE}
               cursor={{ stroke: '#2e3348', strokeWidth: 1 }}
-              formatter={(v: any) => [fmtNum(Number(v)) + ' viewers', '']}
+              formatter={(v: any) => [fmtNum(Number(v)) + ' viewers nuevos', '']}
               labelFormatter={(label: string) => label}
             />
             <Line

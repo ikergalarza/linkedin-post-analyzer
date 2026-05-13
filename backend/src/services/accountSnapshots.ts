@@ -1,6 +1,7 @@
 import pool from '../db';
 import { unipileService } from './unipile';
 import { CreatorModel } from '../models/creator';
+import { extractViewerTimestamps } from '../utils/wvmp';
 
 // Captures today's follower + profile-view snapshots for a single managed
 // creator. Idempotent: re-running on the same calendar day overwrites the
@@ -90,15 +91,23 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
       // pg-pool buffer issues). The raw is only useful for debugging, and
       // /wvmp-debug-all already pulls it live on demand. Setting NULL on
       // the existing column keeps the schema stable.
+      //
+      // viewer_timestamps DOES get persisted: it's a compact BIGINT[] of
+      // ms-epoch viewedAt values (≤1000 entries × 8 bytes ≤ 8 KB), and is
+      // what the chart uses to bucket "new viewers per day" instead of
+      // plotting the rolling feed size (which produced flat stretches and
+      // didn't match LinkedIn's UI numbers).
+      const viewerTimestamps = extractViewerTimestamps(wvmp.raw);
       await pool.query(
         `INSERT INTO creator_profile_view_snapshots
-           (creator_id, captured_on, captured_at, views_count, raw_response)
-         VALUES ($1, CURRENT_DATE, NOW(), $2, NULL)
+           (creator_id, captured_on, captured_at, views_count, raw_response, viewer_timestamps)
+         VALUES ($1, CURRENT_DATE, NOW(), $2, NULL, $3::bigint[])
          ON CONFLICT (creator_id, captured_on) DO UPDATE
            SET views_count = EXCLUDED.views_count,
                raw_response = NULL,
+               viewer_timestamps = EXCLUDED.viewer_timestamps,
                captured_at = NOW()`,
-        [creator.id, wvmp.count]
+        [creator.id, wvmp.count, viewerTimestamps]
       );
     }
   } catch (err) {

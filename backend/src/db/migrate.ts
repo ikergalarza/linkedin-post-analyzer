@@ -367,6 +367,24 @@ const migration = `
   -- the DELETE is a no-op.
   DELETE FROM creator_profile_view_snapshots
     WHERE captured_on IN (DATE '2026-05-05', DATE '2026-05-06');
+
+  -- v23: Per-viewer timestamps for the WVMP feed.
+  --
+  -- Before this change, views_count = "viewers currently visible in the WVMP
+  -- feed" (a rolling ~90-day window). Plotting that daily produced flat
+  -- stretches on consecutive captures because the feed itself rarely moves
+  -- by much from one day to the next, and the cumulative number never lined
+  -- up with LinkedIn's "viewers in last 28 days" headline (which also
+  -- includes anonymous viewers we can't fetch element-by-element).
+  --
+  -- viewer_timestamps stores the ms-epoch viewedAt for every viewer in the
+  -- feed. We bucket by day at read time to compute true "new viewers per
+  -- day" — matching what LinkedIn's UI shows. A single capture backfills
+  -- ~90 days of bucket data because each WVMP response carries the full
+  -- rolling history. Compact (8 bytes × ≤1000 viewers per capture ≤ 8 KB)
+  -- so we can keep it inline without the raw_response blow-up.
+  ALTER TABLE creator_profile_view_snapshots
+    ADD COLUMN IF NOT EXISTS viewer_timestamps BIGINT[];
 `;
 
 export async function runMigrations() {

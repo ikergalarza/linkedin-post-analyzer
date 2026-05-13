@@ -9,6 +9,7 @@ import { generateComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import { sendToGoogleChat, detectOwner } from '../services/googleChat';
 import { captureAccountSnapshots } from '../services/accountSnapshots';
+import { extractViewerTimestamps } from '../utils/wvmp';
 
 const router = Router();
 
@@ -350,84 +351,85 @@ router.get('/:id/wvmp-debug', async (req: Request, res: Response) => {
 });
 
 // GET /api/accounts/profile-view-history?creator_id=xxx&days=90
-// If creator_id is omitted, sums viewers across all managed accounts per day.
-// Same shape as /follower-history so the frontend can reuse the chart logic.
+//
+// "New profile viewers per day" — bucketed from the per-viewer viewedAt
+// timestamps stored on each WVMP snapshot. This is what matches LinkedIn's
+// own UI ("X viewers in the last N days"), and it gives an honest daily
+// series instead of the rolling-feed-size we used to plot (which produced
+// flat stretches across consecutive captures with no real new viewers).
+//
+// Reading strategy: each WVMP capture stores the FULL rolling viewer
+// history (~90 days for Premium) as viewer_timestamps. So we only need
+// the LATEST snapshot per creator to compute the per-day buckets — every
+// previous capture is a strict subset of the one after it (apart from
+// viewers that fell off the trailing edge of LinkedIn's window).
+//
+// Combined view (no creator_id): unions across all managed creators and
+// sums per day. A single human viewing both managed profiles on the same
+// day counts twice — they ARE two views, and LinkedIn surfaces them as
+// two rows. The selected `days` window clamps the range.
 router.get('/profile-view-history', async (req: Request, res: Response) => {
   try {
     const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
 
-    const { rows } = creatorId
-      ? await pool.query(
-          `SELECT captured_on::text AS day, views_count::int AS views
-             FROM creator_profile_view_snapshots
-            WHERE creator_id = $1
-              AND captured_on >= CURRENT_DATE - ($2 || ' days')::interval
-            ORDER BY captured_on ASC`,
-          [creatorId, days]
-        )
-      : await pool.query(
-          `SELECT s.captured_on::text AS day, SUM(s.views_count)::int AS views
-             FROM creator_profile_view_snapshots s
-             JOIN creators c ON c.id = s.creator_id
-            WHERE c.is_managed = TRUE
-              AND s.captured_on >= CURRENT_DATE - ($1 || ' days')::interval
-            GROUP BY s.captured_on
-            ORDER BY s.captured_on ASC`,
-          [days]
-        );
-    res.json({ points: rows });
+    // Pull the latest snapshot (with its timestamps) per scoped creator.
+    // DISTINCT ON keeps one row per creator, ordering by captured_on DESC.
+    const params: any[] = [];
+    let creatorFilter = 'c.is_managed = TRUE';
+    if (creatorId) {
+      params.push(creatorId);
+      creatorFilter = `s.creator_id = $${params.length}`;
+    }
+    const { rows: latestRows } = await pool.query(
+      `SELECT DISTINCT ON (s.creator_id)
+         s.creator_id, s.captured_on::text AS captured_on, s.viewer_timestamps
+         FROM creator_profile_view_snapshots s
+         JOIN creators c ON c.id = s.creator_id
+        WHERE ${creatorFilter}
+        ORDER BY s.creator_id, s.captured_on DESC`,
+      params
+    );
+
+    // Bucket timestamps by local-ish day. We use UTC day buckets — LinkedIn's
+    // viewedAt is already a server timestamp, and bucketing by UTC keeps the
+    // logic simple. Off-by-one for viewers right at the day boundary is fine
+    // for a trend chart at this resolution.
+    const dayBuckets = new Map<string, number>();
+    const now = Date.now();
+    const windowStart = now - days * 86400_000;
+    for (const row of latestRows) {
+      const ts: number[] | null = row.viewer_timestamps;
+      if (!Array.isArray(ts)) continue;
+      for (const raw of ts) {
+        const ms = typeof raw === 'string' ? Number(raw) : raw;
+        if (!Number.isFinite(ms) || ms < windowStart || ms > now + 86400_000) continue;
+        const d = new Date(ms);
+        // YYYY-MM-DD in UTC
+        const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+        dayBuckets.set(key, (dayBuckets.get(key) || 0) + 1);
+      }
+    }
+
+    // Densify: fill every day in the window with 0 when no viewers landed
+    // there, so the chart line is continuous and the delta math doesn't
+    // skip days.
+    const out: { day: string; views: number }[] = [];
+    const startDay = new Date(windowStart);
+    startDay.setUTCHours(0, 0, 0, 0);
+    const today = new Date(now);
+    today.setUTCHours(0, 0, 0, 0);
+    for (let d = new Date(startDay); d.getTime() <= today.getTime(); d.setUTCDate(d.getUTCDate() + 1)) {
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+      out.push({ day: key, views: dayBuckets.get(key) || 0 });
+    }
+
+    res.json({ points: out });
   } catch (err: any) {
     console.error('[accounts/profile-view-history]', err);
     res.status(500).json({ error: err.message });
   }
 });
-
-// Walks a WVMP raw_response and pulls every viewer's viewedAt timestamp.
-// LinkedIn's Voyager schema rotates field names, so we try several known
-// candidates and accept either ms or seconds. Returns ms-epoch numbers,
-// filtered to the last 365 days to ignore garbage values.
-function extractViewerTimestamps(rawResponse: any): number[] {
-  const elements: any[] =
-    rawResponse?.data?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
-    rawResponse?.data?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
-    rawResponse?.premiumDashAnalyticsObjectByAnalyticsEntity?.elements ??
-    [];
-  if (!Array.isArray(elements)) return [];
-
-  const out: number[] = [];
-  const now = Date.now();
-  const yearAgo = now - 365 * 86400_000;
-
-  for (const el of elements) {
-    if (!el || typeof el !== 'object') continue;
-    // Try the common field names. Walk shallowly through nested objects too —
-    // sometimes the timestamp is buried under "actionContext" or similar.
-    const candidates: unknown[] = [
-      el.viewedAt,
-      el.viewerActorViewedAt,
-      el.time,
-      el.actionAt,
-      el.viewedAtMs,
-      el.timestamp,
-      el?.actionContext?.actionAt,
-      el?.actionContext?.viewedAt,
-      el?.viewerInfo?.viewedAt,
-    ];
-    let pickedMs: number | null = null;
-    for (const c of candidates) {
-      if (typeof c !== 'number' || !Number.isFinite(c) || c <= 0) continue;
-      // > 1e12 → already ms; otherwise treat as seconds.
-      const ms = c > 1e12 ? c : c * 1000;
-      if (ms >= yearAgo && ms <= now + 86400_000) {
-        pickedMs = ms;
-        break;
-      }
-    }
-    if (pickedMs !== null) out.push(pickedMs);
-  }
-  return out;
-}
 
 // GET /api/accounts/profile-views/debug
 // Per managed creator: live-fetches WVMP (paginated) and reports how many
@@ -903,7 +905,42 @@ router.get('/analytics', async (req: Request, res: Response) => {
       return Number(rows[0]?.gained || 0);
     };
     const followersGained = await buildSnapshotDelta('creator_follower_snapshots', 'followers_count');
-    const profileViewsGained = await buildSnapshotDelta('creator_profile_view_snapshots', 'views_count');
+
+    // Profile-views KPI used to be `last - first` of the rolling-feed size,
+    // which is misleading — see the comment on /profile-view-history. Now
+    // we count *distinct viewer events* within the date window by reading
+    // viewer_timestamps off the latest snapshot per scoped creator and
+    // bucketing in JS. Same data source as the chart, so the KPI and the
+    // chart agree by construction.
+    const buildViewsInWindow = async (): Promise<number> => {
+      const p: any[] = [];
+      let cFilter = 'c.is_managed = TRUE';
+      if (creatorId) {
+        p.push(creatorId);
+        cFilter = `s.creator_id = $${p.length}`;
+      }
+      const { rows: latest } = await pool.query(
+        `SELECT DISTINCT ON (s.creator_id) s.creator_id, s.viewer_timestamps
+           FROM creator_profile_view_snapshots s
+           JOIN creators c ON c.id = s.creator_id
+          WHERE ${cFilter}
+          ORDER BY s.creator_id, s.captured_on DESC`,
+        p
+      );
+      const now = Date.now();
+      const windowStart = now - days * 86400_000;
+      let total = 0;
+      for (const r of latest) {
+        const ts: number[] | null = r.viewer_timestamps;
+        if (!Array.isArray(ts)) continue;
+        for (const raw of ts) {
+          const ms = typeof raw === 'string' ? Number(raw) : raw;
+          if (Number.isFinite(ms) && ms >= windowStart && ms <= now + 86400_000) total += 1;
+        }
+      }
+      return total;
+    };
+    const profileViewsGained = await buildViewsInWindow();
 
     // Posts/week cadence — always actionable. Uses the same scope filter.
     // `days` is a sanitised integer from the route handler so it's safe to

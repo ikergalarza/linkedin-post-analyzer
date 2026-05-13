@@ -797,21 +797,21 @@ export default function Accounts() {
             <div className="bg-bg-card border border-border rounded-xl p-4">
               <div className="text-[10px] uppercase tracking-wide text-text-muted flex items-center gap-1.5">
                 <span>👁️‍🗨️</span>
-                <span>Profile views gained</span>
+                <span>Profile viewers</span>
               </div>
               <div className="flex items-baseline gap-2 mt-1">
                 {analytics.totals.profile_views_gained === 0 ? (
                   <div className="text-2xl font-bold text-text-muted">—</div>
                 ) : (
-                  <div className={`text-2xl font-bold ${analytics.totals.profile_views_gained > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {analytics.totals.profile_views_gained > 0 ? '+' : ''}{fmtNum(analytics.totals.profile_views_gained)}
+                  <div className="text-2xl font-bold text-text-primary">
+                    {fmtNum(analytics.totals.profile_views_gained)}
                   </div>
                 )}
               </div>
               <div className="text-[10px] text-text-muted mt-0.5">
                 {analytics.totals.profile_views_gained === 0
                   ? 'no snapshots yet (LinkedIn Premium req.)'
-                  : `over ${days}d (snapshot last − first)`}
+                  : `viewers únicos en últimos ${days}d`}
               </div>
             </div>
             <div className="bg-bg-card border border-border rounded-xl p-4">
