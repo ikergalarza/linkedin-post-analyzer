@@ -350,70 +350,102 @@ router.get('/:id/wvmp-debug', async (req: Request, res: Response) => {
   }
 });
 
+// Helper — for the scoped creator(s), compute per-day viewer counts by
+// taking MAX across all snapshots that captured that day.
+//
+// Rationale: LinkedIn's WVMP feed is a rolling window. If we used only
+// the latest snapshot, viewers that fell off LinkedIn's trailing edge
+// since the prior capture would disappear from our chart too. By taking
+// MAX over every snapshot's bucket for each (creator, day), we keep the
+// highest count we ever recorded for that day — so older days stay
+// truthful even as LinkedIn rotates viewers out of its feed.
+//
+// Returns a Map<dayKey, totalViewers> where total = sum across creators
+// of MAX-per-snapshot for that creator/day.
+async function buildDailyViewerBuckets(
+  creatorId: string | null,
+  days: number
+): Promise<Map<string, number>> {
+  const params: any[] = [];
+  let creatorFilter = 'c.is_managed = TRUE';
+  if (creatorId) {
+    params.push(creatorId);
+    creatorFilter = `s.creator_id = $${params.length}`;
+  }
+  // Pull every snapshot (across history). We need ALL of them, not just
+  // those captured within `days`, because a snapshot captured weeks ago
+  // may still be the only record of a viewer event whose day-bucket falls
+  // inside the requested window (the snapshot captured the rolling window
+  // around that day, including its events).
+  const { rows: snapshots } = await pool.query(
+    `SELECT s.creator_id, s.viewer_timestamps
+       FROM creator_profile_view_snapshots s
+       JOIN creators c ON c.id = s.creator_id
+      WHERE ${creatorFilter}
+        AND s.viewer_timestamps IS NOT NULL
+        AND array_length(s.viewer_timestamps, 1) > 0`,
+    params
+  );
+
+  const now = Date.now();
+  const windowStart = now - days * 86400_000;
+  const dayKey = (ms: number) => {
+    const d = new Date(ms);
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  };
+
+  // perCreatorDay = creator_id → (dayKey → MAX count seen across that
+  // creator's snapshots). MAX, not sum: the same viewer captured today
+  // and again tomorrow would otherwise be counted twice.
+  const perCreatorDay = new Map<string, Map<string, number>>();
+  for (const snap of snapshots) {
+    const ts: number[] | null = snap.viewer_timestamps;
+    if (!Array.isArray(ts)) continue;
+    const snapBucket = new Map<string, number>();
+    for (const raw of ts) {
+      const ms = typeof raw === 'string' ? Number(raw) : raw;
+      if (!Number.isFinite(ms) || ms < windowStart || ms > now + 86400_000) continue;
+      const key = dayKey(ms);
+      snapBucket.set(key, (snapBucket.get(key) || 0) + 1);
+    }
+    let creatorMap = perCreatorDay.get(snap.creator_id);
+    if (!creatorMap) {
+      creatorMap = new Map<string, number>();
+      perCreatorDay.set(snap.creator_id, creatorMap);
+    }
+    for (const [k, v] of snapBucket) {
+      const prev = creatorMap.get(k) || 0;
+      if (v > prev) creatorMap.set(k, v);
+    }
+  }
+
+  // Combine across creators — sum per day. A human who viewed both
+  // managed profiles on the same day counts twice (it IS two views).
+  const combined = new Map<string, number>();
+  for (const creatorMap of perCreatorDay.values()) {
+    for (const [k, v] of creatorMap) {
+      combined.set(k, (combined.get(k) || 0) + v);
+    }
+  }
+  return combined;
+}
+
 // GET /api/accounts/profile-view-history?creator_id=xxx&days=90
 //
 // "New profile viewers per day" — bucketed from the per-viewer viewedAt
-// timestamps stored on each WVMP snapshot. This is what matches LinkedIn's
-// own UI ("X viewers in the last N days"), and it gives an honest daily
-// series instead of the rolling-feed-size we used to plot (which produced
-// flat stretches across consecutive captures with no real new viewers).
-//
-// Reading strategy: each WVMP capture stores the FULL rolling viewer
-// history (~90 days for Premium) as viewer_timestamps. So we only need
-// the LATEST snapshot per creator to compute the per-day buckets — every
-// previous capture is a strict subset of the one after it (apart from
-// viewers that fell off the trailing edge of LinkedIn's window).
-//
-// Combined view (no creator_id): unions across all managed creators and
-// sums per day. A single human viewing both managed profiles on the same
-// day counts twice — they ARE two views, and LinkedIn surfaces them as
-// two rows. The selected `days` window clamps the range.
+// timestamps stored on each WVMP snapshot. Counts daily traffic in a way
+// that survives LinkedIn rotating viewers out of its rolling feed: we
+// MAX across all stored snapshots per (creator, day) instead of trusting
+// only the latest capture. See buildDailyViewerBuckets for the details.
 router.get('/profile-view-history', async (req: Request, res: Response) => {
   try {
     const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
 
-    // Pull the latest snapshot (with its timestamps) per scoped creator.
-    // DISTINCT ON keeps one row per creator, ordering by captured_on DESC.
-    const params: any[] = [];
-    let creatorFilter = 'c.is_managed = TRUE';
-    if (creatorId) {
-      params.push(creatorId);
-      creatorFilter = `s.creator_id = $${params.length}`;
-    }
-    const { rows: latestRows } = await pool.query(
-      `SELECT DISTINCT ON (s.creator_id)
-         s.creator_id, s.captured_on::text AS captured_on, s.viewer_timestamps
-         FROM creator_profile_view_snapshots s
-         JOIN creators c ON c.id = s.creator_id
-        WHERE ${creatorFilter}
-        ORDER BY s.creator_id, s.captured_on DESC`,
-      params
-    );
+    const dayBuckets = await buildDailyViewerBuckets(creatorId, days);
 
-    // Bucket timestamps by local-ish day. We use UTC day buckets — LinkedIn's
-    // viewedAt is already a server timestamp, and bucketing by UTC keeps the
-    // logic simple. Off-by-one for viewers right at the day boundary is fine
-    // for a trend chart at this resolution.
-    const dayBuckets = new Map<string, number>();
     const now = Date.now();
     const windowStart = now - days * 86400_000;
-    for (const row of latestRows) {
-      const ts: number[] | null = row.viewer_timestamps;
-      if (!Array.isArray(ts)) continue;
-      for (const raw of ts) {
-        const ms = typeof raw === 'string' ? Number(raw) : raw;
-        if (!Number.isFinite(ms) || ms < windowStart || ms > now + 86400_000) continue;
-        const d = new Date(ms);
-        // YYYY-MM-DD in UTC
-        const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
-        dayBuckets.set(key, (dayBuckets.get(key) || 0) + 1);
-      }
-    }
-
-    // Densify: fill every day in the window with 0 when no viewers landed
-    // there, so the chart line is continuous and the delta math doesn't
-    // skip days.
     const out: { day: string; views: number }[] = [];
     const startDay = new Date(windowStart);
     startDay.setUTCHours(0, 0, 0, 0);
@@ -856,40 +888,13 @@ router.get('/analytics', async (req: Request, res: Response) => {
     const followersGained = await buildSnapshotDelta('creator_follower_snapshots', 'followers_count');
 
     // Profile-views KPI used to be `last - first` of the rolling-feed size,
-    // which is misleading — see the comment on /profile-view-history. Now
-    // we count *distinct viewer events* within the date window by reading
-    // viewer_timestamps off the latest snapshot per scoped creator and
-    // bucketing in JS. Same data source as the chart, so the KPI and the
-    // chart agree by construction.
-    const buildViewsInWindow = async (): Promise<number> => {
-      const p: any[] = [];
-      let cFilter = 'c.is_managed = TRUE';
-      if (creatorId) {
-        p.push(creatorId);
-        cFilter = `s.creator_id = $${p.length}`;
-      }
-      const { rows: latest } = await pool.query(
-        `SELECT DISTINCT ON (s.creator_id) s.creator_id, s.viewer_timestamps
-           FROM creator_profile_view_snapshots s
-           JOIN creators c ON c.id = s.creator_id
-          WHERE ${cFilter}
-          ORDER BY s.creator_id, s.captured_on DESC`,
-        p
-      );
-      const now = Date.now();
-      const windowStart = now - days * 86400_000;
-      let total = 0;
-      for (const r of latest) {
-        const ts: number[] | null = r.viewer_timestamps;
-        if (!Array.isArray(ts)) continue;
-        for (const raw of ts) {
-          const ms = typeof raw === 'string' ? Number(raw) : raw;
-          if (Number.isFinite(ms) && ms >= windowStart && ms <= now + 86400_000) total += 1;
-        }
-      }
-      return total;
-    };
-    const profileViewsGained = await buildViewsInWindow();
+    // which is misleading. Now we share the bucketing logic with the chart
+    // (buildDailyViewerBuckets) so KPI and chart agree by construction —
+    // both MAX across snapshots per (creator, day) and sum the resulting
+    // per-day counts within the selected window.
+    const dailyBuckets = await buildDailyViewerBuckets(creatorId, days);
+    let profileViewsGained = 0;
+    for (const v of dailyBuckets.values()) profileViewsGained += v;
 
     // Posts/week cadence — always actionable. Uses the same scope filter.
     // `days` is a sanitised integer from the route handler so it's safe to
