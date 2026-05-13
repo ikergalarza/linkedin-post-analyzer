@@ -628,26 +628,36 @@ router.post('/profile-views/refresh', async (_req: Request, res: Response) => {
 });
 
 // DELETE /api/accounts/posts/:id/snapshots/zero-impressions
-// One-shot cleanup: removes recent snapshots that have impressions_count=0
-// when an EARLIER snapshot for the same post had a real impressions value.
-// These are bogus (Unipile glitch / rate-limit) snapshots that poison the
-// impressions chart by dragging the line back to zero. Engagement-only
-// metrics aren't touched. Idempotent — running twice is safe.
+//
+// Cleanup for "bogus zero" snapshots. A snapshot is bogus when:
+//   - impressions_count is NULL or 0, AND
+//   - there exists an EARLIER snapshot for the same post with impressions > 0.
+//
+// Engagement (likes/comments/reposts) staying flat or growing across those
+// rows is the giveaway that Unipile returned a partial/glitched payload
+// while we were polling. Rows like that drag the impressions line back to
+// zero and ruin the chart.
+//
+// The earlier "after last_real only" rule missed interior zeros — i.e. a
+// bad snapshot surrounded by good ones on either side. The new logic
+// catches both trailing AND interior cases, while still preserving the
+// legitimate `impressions=0` at the very start of a post's life (no prior
+// real snapshot exists at that point, so the rule doesn't fire).
+//
+// Idempotent — running twice is safe (the second run finds nothing).
 router.delete('/posts/:id/snapshots/zero-impressions', async (req: Request, res: Response) => {
   try {
     const postId = req.params.id as string;
-    // Find the latest snapshot with a real impressions count — anything
-    // captured AFTER that with 0/null is a regression we want gone.
     const { rows: anchor } = await pool.query(
-      `SELECT MAX(captured_at) AS last_real
+      `SELECT MIN(captured_at) AS first_real
          FROM post_snapshots
         WHERE post_id = $1
           AND impressions_count IS NOT NULL
           AND impressions_count > 0`,
       [postId]
     );
-    const lastReal = anchor[0]?.last_real;
-    if (!lastReal) {
+    const firstReal = anchor[0]?.first_real;
+    if (!firstReal) {
       return res.json({ deleted: 0, reason: 'no real impressions snapshot found — nothing to clean up against' });
     }
     const { rowCount } = await pool.query(
@@ -655,9 +665,9 @@ router.delete('/posts/:id/snapshots/zero-impressions', async (req: Request, res:
         WHERE post_id = $1
           AND captured_at > $2
           AND (impressions_count IS NULL OR impressions_count = 0)`,
-      [postId, lastReal]
+      [postId, firstReal]
     );
-    res.json({ deleted: rowCount ?? 0, anchor_captured_at: lastReal });
+    res.json({ deleted: rowCount ?? 0, anchor_first_real: firstReal });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
