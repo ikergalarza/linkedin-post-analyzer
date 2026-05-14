@@ -38,7 +38,7 @@ function buildHeader(owner: 'Iker' | 'Unai' | 'unknown', creatorName: string | n
 // teammate actions. Comment is implicit since the comments block is
 // right below.
 const REMINDER_LINE =
-  '⚠️ RECORDATORIO: si podéis LIKE + REPOST + COMENTARIO + GUARDAR (pulsando 3 puntos del post) nos vamos VIRALES 🔥';
+  '⚠️ RECORDATORIO: si podéis LIKE + COMPARTIR + COMENTARIO + GUARDAR (pulsando 3 puntos del post) nos vamos VIRALES 🔥';
 
 function buildMessage(header: string, comments: string[]): string {
   const cleaned = comments.map((c) => c.trim()).filter(Boolean);
