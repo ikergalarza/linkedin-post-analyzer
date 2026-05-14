@@ -8,6 +8,7 @@ import AccountsEngagementChart from '../components/AccountsEngagementChart';
 import FollowerGrowthChart from '../components/FollowerGrowthChart';
 import ProfileViewChart from '../components/ProfileViewChart';
 import GoogleChatModal from '../components/accounts/GoogleChatModal';
+import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
 
 interface ManagedAccount {
   id: string;
@@ -263,19 +264,37 @@ function truncate(s: string | null, n: number): string {
   return s.length > n ? s.slice(0, n) + '…' : s;
 }
 
-// Inline "see more" toggle for post-row body text. Reuses the look of the
-// Dashboard's PostCard ExpandableText so the two surfaces feel consistent.
-// Preserves whitespace + line breaks (LinkedIn posts depend on them) and
-// only shows the toggle when the text actually needs truncating.
-function ExpandablePostText({ text, previewChars = 180 }: { text: string | null; previewChars?: number }) {
+// Inline "see more" toggle for post-row body text. Mirrors LinkedIn's
+// own preview cut: collapsed view shows the hook only — everything up to
+// the first line break. That's the part the feed actually surfaces before
+// "…ver más", so it's the most honest preview of what readers see.
+//
+// Fallback for hooks longer than HARD_PREVIEW_CAP (a single long sentence
+// with no \n): cut at the cap so a hook that overruns the see-more zone
+// still gets visually flagged. Toggle expands to the full body in both
+// cases. \r\n is normalised to \n before scanning so Windows-typed posts
+// don't fool the cut.
+const HARD_PREVIEW_CAP = 220;
+function ExpandablePostText({ text }: { text: string | null }) {
   const [expanded, setExpanded] = useState(false);
-  const value = text || '';
+  const value = (text || '').replace(/\r\n/g, '\n');
   if (!value) return <p className="text-sm text-text-muted italic">(sin texto)</p>;
-  const needsTrunc = value.length > previewChars;
+
+  const firstBreak = value.indexOf('\n');
+  let preview = value;
+  let needsTrunc = false;
+  if (firstBreak >= 0 && firstBreak < value.length - 1) {
+    preview = value.slice(0, firstBreak);
+    needsTrunc = true;
+  } else if (value.length > HARD_PREVIEW_CAP) {
+    preview = value.slice(0, HARD_PREVIEW_CAP) + '…';
+    needsTrunc = true;
+  }
+
   return (
     <div>
       <p className="text-sm text-text-primary whitespace-pre-wrap leading-snug">
-        {expanded || !needsTrunc ? value : value.slice(0, previewChars) + '…'}
+        {expanded ? value : preview}
       </p>
       {needsTrunc && (
         <button
@@ -1680,6 +1699,11 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             </span>
           </div>
           <ExpandablePostText text={post.content_text || post.hook_text} />
+          {!NO_MEDIA_TYPES.has(post.content_type) && (
+            <div className="mt-2">
+              <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={post.post_url} />
+            </div>
+          )}
           <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
             <span>{fmtNum(post.likes_count)} likes</span>
             <span>{fmtNum(post.comments_count)} comments</span>
@@ -1781,6 +1805,11 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
             )}
           </div>
           <ExpandablePostText text={post.content_text || post.hook_text} />
+          {!NO_MEDIA_TYPES.has(post.content_type) && (
+            <div className="mt-2">
+              <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={post.post_url} />
+            </div>
+          )}
           <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
             <span>{fmtNum(post.likes_count)} likes</span>
             <span>{fmtNum(post.comments_count)} comments</span>
