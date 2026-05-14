@@ -31,13 +31,24 @@ function buildHeader(owner: 'Iker' | 'Unai' | 'unknown', creatorName: string | n
   return `🐝 ${label}:\n${url || '(sin URL)'}`;
 }
 
+// Single-line reminder slot between the header and the comments. Keeps
+// the playbook front-of-mind without bloating the message: the 1st-hour
+// signal is what the algorithm uses to decide whether to push the post,
+// and Repost + Save (3-dot menu → Guardar) are the highest-impact
+// teammate actions. Comment is implicit since the comments block is
+// right below.
+const REMINDER_LINE =
+  '⚠️ RECORDATORIO: si podéis LIKE + REPOST + COMENTARIO + GUARDAR (pulsando 3 puntos del post) nos vamos VIRALES 🔥';
+
 function buildMessage(header: string, comments: string[]): string {
   const cleaned = comments.map((c) => c.trim()).filter(Boolean);
-  if (cleaned.length === 0) return header;
+  if (cleaned.length === 0) {
+    return [header, '', REMINDER_LINE].join('\n');
+  }
   const count = cleaned.length;
-  const subtitle = `💬 ${count} propuestas de comentarios de apoyo (copia y pega):`;
+  const subtitle = `💬 ${count} COMENTARIOS de APOYO (copia y pega):`;
   const numbered = cleaned.map((c, i) => `${i + 1}. ${c}`).join('\n\n');
-  return [header, '', subtitle, '', numbered].join('\n');
+  return [header, '', REMINDER_LINE, '', subtitle, '', numbered].join('\n');
 }
 
 export default function GoogleChatModal({

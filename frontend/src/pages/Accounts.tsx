@@ -1729,11 +1729,11 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
               onClick={() => setOpen((v) => !v)}
               className="text-accent hover:text-accent-light"
             >
-              {open ? 'Hide curve' : 'Show curve'}
+              {open ? 'Hide stats' : 'Show stats'}
             </button>
             {post.post_url && (
               <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
-                View →
+                View on LinkedIn →
               </a>
             )}
             {onOpenChat && (
@@ -1823,12 +1823,12 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
                 onClick={() => setOpen((v) => !v)}
                 className="text-accent hover:text-accent-light"
               >
-                {open ? 'Hide curve' : 'Show curve'}
+                {open ? 'Hide stats' : 'Show stats'}
               </button>
             )}
             {post.post_url && (
               <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
-                View →
+                View on LinkedIn →
               </a>
             )}
             {onOpenChat && (
