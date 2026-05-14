@@ -224,3 +224,96 @@ Return ONLY the JSON object with keys: ${COMMENT_KEYS.map(k => `"${k}"`).join(',
 
   return parsed;
 }
+
+/**
+ * Generates N short supportive comments (warm or reinforce-style) in the
+ * post's language. Used by the Accounts → Google Chat flow, where the
+ * goal is to give teammates copy-pasteable cheerleader lines that won't
+ * damage their professional image. Short by design: real teammates won't
+ * read paragraphs and won't post anything risky.
+ *
+ * Compared to generateComments (9 angles for the Network feature):
+ * - Only "reinforce" + "warm_supportive" registers — never contrarian.
+ * - 2 lines max per comment (≤180 chars enforced downstream).
+ * - Variable N (3, 4, or 5) so daily Chat messages don't repeat the
+ *   same shape — small surprise factor each day prevents fatigue.
+ */
+export async function generateSupportiveComments(
+  input: CommentGenerationInput,
+  count: number
+): Promise<string[]> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not configured');
+  const n = Math.max(3, Math.min(5, Math.round(count)));
+
+  const client = new Anthropic({ apiKey });
+
+  const voiceLines: string[] = [];
+  if (input.profile.headline) voiceLines.push(`IDENTITY: ${input.profile.headline}`);
+  if (input.profile.voice_style) voiceLines.push(`WRITING STYLE: ${input.profile.voice_style}`);
+  if (input.profile.worldview) voiceLines.push(`WORLDVIEW: ${input.profile.worldview}`);
+  if (input.profile.signature_moves) voiceLines.push(`SIGNATURE MOVES: ${input.profile.signature_moves}`);
+  if (input.profile.avoid) voiceLines.push(`AVOID: ${input.profile.avoid}`);
+
+  const profileContext = voiceLines.length > 0
+    ? `COMMENTER VOICE PROFILE:\n${voiceLines.join('\n')}`
+    : 'COMMENTER VOICE PROFILE: neutral, warm, professional.';
+
+  const safePostContent = stripLoneSurrogates(input.postContent || '');
+  const detectedLang = detectLanguageHint(safePostContent);
+
+  const system = `You write short, warm LinkedIn comments AS the person described in the voice profile.
+
+═══ NON-NEGOTIABLE RULES ═══
+
+LANGUAGE: every comment in ${detectedLang}. Never switch languages. Never mix English into a Spanish thread.
+
+REGISTER: every comment is SUPPORTIVE — either "reinforce" (extend the post's idea with one extra layer) or "warm_supportive" (genuinely happy for the author). NEVER contrarian, NEVER skeptical, NEVER provocative. These are colleagues backing each other up — they will not risk their professional image with edgy takes.
+
+LENGTH: MAX 2 lines, ≤ 180 characters each. Tight beats verbose. One sharp sentence is better than three filler ones.
+
+NO HOLLOW OPENERS: never "Great post!", "Love this", "Totalmente de acuerdo", "Qué bueno", "Muy buen punto". Reference something SPECIFIC from the post (a number, a phrase, a claim) so it's clear you actually read it.
+
+VARIETY: each comment must come from a different angle. If two sound similar, rewrite. Mix:
+- One that reinforces the main point with a concrete personal angle
+- One that picks up a specific phrase or number from the post
+- One that's warm and human ("me ha pasado lo mismo", "esto resuena", etc.)
+- Add more if asked for 4 or 5, never repeat the same angle
+
+Return ONLY a JSON object: { "comments": ["...", "...", ...] } with exactly ${n} strings. No markdown fences, no explanation.`;
+
+  const userMessage = `${profileContext}
+
+POST AUTHOR: ${input.creatorName || 'Unknown'}${input.creatorHeadline ? ` — ${input.creatorHeadline}` : ''}
+POST LANGUAGE: ${detectedLang}
+
+POST CONTENT:
+${safePostContent}
+
+TASK: Write exactly ${n} supportive comments (mix of reinforce + warm), each ≤ 180 chars, each ≤ 2 lines, all in ${detectedLang}. No risky takes — these go to colleagues who don't want to dent their professional image.
+
+Return JSON only: { "comments": ["...", "..."] }`;
+
+  const response = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 1024,
+    system,
+    messages: [{ role: 'user', content: userMessage }],
+  });
+
+  const text = response.content
+    .filter((block): block is Anthropic.TextBlock => block.type === 'text')
+    .map((block) => block.text)
+    .join('');
+
+  const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  const parsed = JSON.parse(cleaned) as { comments: unknown };
+  if (!Array.isArray(parsed.comments)) throw new Error('Supportive generator returned no comments array');
+
+  const out = parsed.comments
+    .filter((c): c is string => typeof c === 'string')
+    .map((c) => c.trim())
+    .filter(Boolean);
+  if (out.length === 0) throw new Error('Supportive generator returned an empty list');
+  return out.slice(0, n);
+}

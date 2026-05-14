@@ -263,6 +263,32 @@ function truncate(s: string | null, n: number): string {
   return s.length > n ? s.slice(0, n) + '…' : s;
 }
 
+// Inline "see more" toggle for post-row body text. Reuses the look of the
+// Dashboard's PostCard ExpandableText so the two surfaces feel consistent.
+// Preserves whitespace + line breaks (LinkedIn posts depend on them) and
+// only shows the toggle when the text actually needs truncating.
+function ExpandablePostText({ text, previewChars = 180 }: { text: string | null; previewChars?: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const value = text || '';
+  if (!value) return <p className="text-sm text-text-muted italic">(sin texto)</p>;
+  const needsTrunc = value.length > previewChars;
+  return (
+    <div>
+      <p className="text-sm text-text-primary whitespace-pre-wrap leading-snug">
+        {expanded || !needsTrunc ? value : value.slice(0, previewChars) + '…'}
+      </p>
+      {needsTrunc && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setExpanded((v) => !v); }}
+          className="text-[11px] text-accent hover:text-accent-light mt-1"
+        >
+          {expanded ? 'Ver menos ↑' : 'Ver más ↓'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 function Delta({ pct }: { pct: number | null }) {
   if (pct === null || !isFinite(pct)) return null;
   const rounded = Math.round(pct);
@@ -1653,7 +1679,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
               )}
             </span>
           </div>
-          <p className="text-sm text-text-primary line-clamp-2">{truncate(post.hook_text || post.content_text, 180)}</p>
+          <ExpandablePostText text={post.content_text || post.hook_text} />
           <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
             <span>{fmtNum(post.likes_count)} likes</span>
             <span>{fmtNum(post.comments_count)} comments</span>
@@ -1754,7 +1780,7 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
               </span>
             )}
           </div>
-          <p className="text-sm text-text-primary line-clamp-2">{truncate(post.hook_text || post.content_text, 180)}</p>
+          <ExpandablePostText text={post.content_text || post.hook_text} />
           <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
             <span>{fmtNum(post.likes_count)} likes</span>
             <span>{fmtNum(post.comments_count)} comments</span>

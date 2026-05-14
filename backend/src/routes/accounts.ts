@@ -5,7 +5,7 @@ import { enrichPost, recalculateOutliers } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { forceLiveCapture, maybeTick, capturePostSnapshot } from '../services/postMonitor';
-import { generateComments } from '../services/commentGenerator';
+import { generateComments, generateSupportiveComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import { sendToGoogleChat, detectOwner } from '../services/googleChat';
 import { captureAccountSnapshots } from '../services/accountSnapshots';
@@ -1257,23 +1257,20 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
   }
 });
 
-// ─── Google Chat: notify group about a just-published post ─────────────────
-
-const ANGLE_LABELS: Record<string, string> = {
-  reinforce: 'Reinforce',
-  contrarian_data: 'Contrarian · data',
-  contrarian_premise: 'Contrarian · premise',
-  contrarian_survivorship: 'Contrarian · survivorship',
-  reframe: 'Reframe',
-  add_missing: 'Add missing',
-  steal_phrase: 'Steal phrase',
-  warm_supportive: 'Warm & supportive',
-  better_question: 'Better question',
-};
+// ─── Google Chat: notify teammates about a just-published post ─────────────
+//
+// Internal team flow: when one of us posts, we ping the group chat so
+// colleagues can quickly drop a supportive comment from their own profile.
+// Past iteration generated 9 different angles (some contrarian) — teammates
+// found the message too long and shied away from the edgier takes, so the
+// engagement on managed-account posts dropped. This trimmed flow ships only
+// reinforce + warm_supportive lines, 3-5 of them (varied daily to avoid
+// fatigue), all in the post's language.
 
 // GET /api/accounts/posts/:postId/google-chat-preview
-// Returns owner detection, post info, and generated comments using the
-// opposite-owner voice (or the requested profile_name override).
+// Returns owner detection, post info, and 3-5 supportive comments generated
+// in the post's language using the opposite-owner voice (or the requested
+// profile_name override).
 router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId;
@@ -1300,38 +1297,42 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
       });
     }
 
-    const rawComments = await generateComments({
-      postContent: post.content_text || '',
-      creatorName: post.creator_name,
-      creatorHeadline: post.creator_headline || null,
-      profile: {
-        headline: profile.headline,
-        voice_style: profile.voice_style,
-        worldview: profile.worldview,
-        signature_moves: profile.signature_moves,
-        avoid: profile.avoid,
-        tone: profile.tone,
-        expertise: profile.expertise,
+    // Randomise the count between 3 and 5 so daily messages don't feel like
+    // a template. Variety reduces fatigue on the receiving side without
+    // changing the underlying intent.
+    const targetCount = 3 + Math.floor(Math.random() * 3);
+    const rawComments = await generateSupportiveComments(
+      {
+        postContent: post.content_text || '',
+        creatorName: post.creator_name,
+        creatorHeadline: post.creator_headline || null,
+        profile: {
+          headline: profile.headline,
+          voice_style: profile.voice_style,
+          worldview: profile.worldview,
+          signature_moves: profile.signature_moves,
+          avoid: profile.avoid,
+          tone: profile.tone,
+          expertise: profile.expertise,
+        },
       },
-    });
+      targetCount
+    );
 
-    // Defensive cap per comment. The system prompt asks for ≤ 280 chars but
-    // the model occasionally overshoots. Keeping each comment ≤ 300 chars
-    // means 9 × 300 + structural overhead (~250) stays comfortably under
-    // Google Chat's 4096-char message limit (we cap UX at 3800 to leave room).
-    const PER_COMMENT_CAP = 300;
+    // Defensive cap per comment: prompt asks for ≤ 180 chars but models
+    // overshoot occasionally. 200 chars × 5 comments + header stays well
+    // under Google Chat's 4096-char per-message ceiling, so the FE never
+    // has to split a single-message-per-post send into chunks.
+    const PER_COMMENT_CAP = 200;
     const truncate = (s: string) => {
       const t = (s || '').trim();
       if (t.length <= PER_COMMENT_CAP) return t;
-      // Try to break on a sentence/word boundary near the cap
       const slice = t.slice(0, PER_COMMENT_CAP - 1);
       const lastBreak = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('? '), slice.lastIndexOf('! '), slice.lastIndexOf('\n'));
       const cutAt = lastBreak > PER_COMMENT_CAP * 0.6 ? lastBreak + 1 : slice.lastIndexOf(' ');
       return (cutAt > PER_COMMENT_CAP * 0.5 ? t.slice(0, cutAt) : slice).trimEnd() + '…';
     };
-    const comments = Object.fromEntries(
-      Object.entries(rawComments).map(([k, v]) => [k, truncate(String(v || ''))])
-    ) as unknown as typeof rawComments;
+    const comments = rawComments.map(truncate);
 
     res.json({
       post: {
@@ -1400,11 +1401,6 @@ router.post('/posts/:postId/send-to-google-chat', async (req: Request, res: Resp
     console.error('[send-to-google-chat] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
-});
-
-// Expose angle labels so the frontend can render nice headings without duplicating the dict.
-router.get('/google-chat/angle-labels', (_req: Request, res: Response) => {
-  res.json(ANGLE_LABELS);
 });
 
 export default router;
