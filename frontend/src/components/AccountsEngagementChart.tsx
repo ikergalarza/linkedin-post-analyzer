@@ -28,12 +28,18 @@ interface Props {
 
 interface HoverState {
   day: string;
+  // x / y are ALWAYS relative to the wrapper div, so the absolutely-
+  // positioned tooltip lines up regardless of the filter-buttons row
+  // that sits between the wrapper top and the chart's SVG.
   x: number;
   y: number;
   // 'pencil' = hovering a publish-day badge (rich tooltip with top-post
   // preview). 'point' = hovering the line/area itself (compact values-
   // only tooltip, positioned so it never clips off the top of the card).
   source: 'pencil' | 'point';
+  // For point hovers: was the point in the top half of the plot? If so
+  // the tooltip drops below the cursor; otherwise it grows above.
+  flipBelow?: boolean;
 }
 
 type Range = '7d' | '30d' | '90d' | 'all';
@@ -74,6 +80,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
   const [hover, setHover] = useState<HoverState | null>(null);
   const [range, setRange] = useState<Range>('30d');
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const chartBoxRef = useRef<HTMLDivElement>(null);
   const clearTimerRef = useRef<number | null>(null);
 
   const cancelClear = () => {
@@ -122,6 +129,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
         ))}
       </div>
 
+      <div ref={chartBoxRef}>
       <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
         <ComposedChart
           data={filteredData}
@@ -129,11 +137,19 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           onMouseMove={(state: any) => {
             if (state?.isTooltipActive && state.activeLabel && state.activeCoordinate) {
               cancelClear();
+              // activeCoordinate is SVG-space (chart-relative). Add the
+              // chart box's offset within the wrapper so the tooltip,
+              // which is positioned against the wrapper, lands on the
+              // actual point instead of ~44px too high (the filter row).
+              const wrapperRect = wrapperRef.current?.getBoundingClientRect();
+              const chartRect = chartBoxRef.current?.getBoundingClientRect();
+              const chartTop = wrapperRect && chartRect ? chartRect.top - wrapperRect.top : 0;
               setHover({
                 day: state.activeLabel,
                 x: state.activeCoordinate.x,
-                y: state.activeCoordinate.y,
+                y: chartTop + state.activeCoordinate.y,
                 source: 'point',
+                flipBelow: state.activeCoordinate.y < CHART_HEIGHT * 0.5,
               });
             }
           }}
@@ -221,6 +237,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           )}
         </ComposedChart>
       </ResponsiveContainer>
+      </div>
 
       {/* Pencil strip — matches the Dashboard's Engagement Timeline pattern.
           Each publication day gets a pencil badge aligned exactly under the
@@ -304,7 +321,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
         //   up there would clip the tooltip off-screen, so for points we
         //   flip: below the cursor when it's in the top half, above it
         //   when it's in the bottom half.
-        const flipBelow = isPoint && hover.y < CHART_HEIGHT * 0.5;
+        const flipBelow = isPoint && hover.flipBelow === true;
         const verticalStyle = flipBelow
           ? { top: hover.y + 18, transform: 'none' as const }
           : { top: Math.max(0, hover.y) - 8, transform: 'translateY(-100%)' as const };
