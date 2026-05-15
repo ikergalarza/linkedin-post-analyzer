@@ -101,32 +101,53 @@ function PointTooltip({ active, payload, hasImpressions }: any) {
         maxWidth: 240,
       }}
     >
-      <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
-      <div style={{ color: '#cbd5e1' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-          <span style={{ width: 9, height: 2, background: '#e8935a', display: 'inline-block', borderRadius: 1 }} />
-          Engagement (7d):
-        </span>{' '}
-        <span style={{ color: '#e8eaf0', fontWeight: 600 }}>{fmtNum(d.rolling)}</span>
-        {d.raw > 0 && (
-          <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}> · {fmtNum(d.raw)} that day</span>
-        )}
-      </div>
+      <div style={{ fontWeight: 600, marginBottom: 6 }}>{heading}</div>
+
+      <MetricRow
+        swatch="#e8935a"
+        label="Engagement (7d)"
+        value={fmtNum(d.rolling)}
+        valueColor="#e8eaf0"
+        sub={d.raw > 0 ? `${fmtNum(d.raw)} that day` : null}
+      />
+
       {hasImpressions && (
-        <div style={{ color: '#7dd3fc', fontSize: 12, marginTop: 3 }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 9, height: 2, background: '#38bdf8', display: 'inline-block', borderRadius: 1 }} />
-            Impressions (7d):
-          </span>{' '}
-          <span style={{ color: '#bae6fd', fontWeight: 600 }}>{fmtNum(d.rollingImpressions)}</span>
-          {d.rawImpressions > 0 && (
-            <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}> · {fmtNum(d.rawImpressions)} that day</span>
-          )}
+        <div style={{ marginTop: 6 }}>
+          <MetricRow
+            swatch="#38bdf8"
+            label="Impressions (7d)"
+            value={fmtNum(d.rollingImpressions)}
+            valueColor="#bae6fd"
+            sub={d.rawImpressions > 0 ? `${fmtNum(d.rawImpressions)} that day` : null}
+          />
         </div>
       )}
+
       {d.activePosts > 0 && (
-        <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
+        <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 6 }}>
           {d.activePosts} post{d.activePosts > 1 ? 's' : ''} active in 7-day window
+        </div>
+      )}
+    </div>
+  );
+}
+
+// One metric line: label + big number baseline-aligned on row 1, the
+// "X that day" qualifier alone on row 2 (so it never wraps mid-phrase
+// and the big number doesn't look like it's floating).
+function MetricRow({
+  swatch, label, value, valueColor, sub,
+}: { swatch: string; label: string; value: string; valueColor: string; sub: string | null }) {
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+        <span style={{ width: 9, height: 2, background: swatch, display: 'inline-block', borderRadius: 1, alignSelf: 'center' }} />
+        <span style={{ color: '#cbd5e1', fontSize: 13 }}>{label}:</span>
+        <span style={{ color: valueColor, fontWeight: 700, fontSize: 15 }}>{value}</span>
+      </div>
+      {sub && (
+        <div style={{ color: '#94a3b8', fontSize: 11, marginLeft: 15, marginTop: 1 }}>
+          {sub}
         </div>
       )}
     </div>
@@ -336,33 +357,21 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
         })}
       </div>
 
-      {/* Sticky custom tooltip — rendered outside Recharts so it stays open
-          while the cursor hovers the card and the "View on LinkedIn" button
-          remains clickable. */}
+      {/* Pencil-driven sticky tooltip — rendered outside Recharts so it
+          stays open while the cursor hovers it and the "View on LinkedIn"
+          button stays clickable. Pencils sit at the bottom, so it always
+          grows upward and stays inside the clipped card. */}
       {hover && (() => {
         const d = filteredData.find((x) => x.day === hover.day);
         if (!d) return null;
         const heading = d.posts > 0
           ? `${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}`
           : `${fmtFullDay(d.day)} · no post`;
-        const isPoint = hover.source === 'point';
         const containerW = wrapperRef.current?.offsetWidth ?? 600;
-        const tooltipW = isPoint ? 210 : 240;
+        const tooltipW = 240;
         const gap = 12;
         const showLeft = hover.x + tooltipW + gap + 4 > containerW;
         const leftPx = showLeft ? hover.x - tooltipW - gap : hover.x + gap;
-
-        // Vertical placement:
-        // - pencil badges live at the BOTTOM, so the rich tooltip grows
-        //   upward (translateY(-100%)) and stays inside the clipped card.
-        // - line points can be anywhere, including the very top. Growing
-        //   up there would clip the tooltip off-screen, so for points we
-        //   flip: below the cursor when it's in the top half, above it
-        //   when it's in the bottom half.
-        const flipBelow = isPoint && hover.flipBelow === true;
-        const verticalStyle = flipBelow
-          ? { top: hover.y + 18, transform: 'none' as const }
-          : { top: Math.max(0, hover.y) - 8, transform: 'translateY(-100%)' as const };
         return (
           <div
             onMouseEnter={cancelClear}
@@ -370,10 +379,11 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
             style={{
               position: 'absolute',
               left: Math.max(0, leftPx),
-              ...verticalStyle,
+              top: Math.max(0, hover.y) - 8,
+              transform: 'translateY(-100%)',
               width: tooltipW,
               background: '#222639',
-              border: `1px solid ${isPoint ? '#3a4566' : '#2e3348'}`,
+              border: '1px solid #2e3348',
               borderRadius: 8,
               color: '#e8eaf0',
               fontSize: 13,
@@ -383,43 +393,11 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
               pointerEvents: 'auto',
             }}
           >
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
-            <div style={{ color: '#cbd5e1' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ width: 9, height: 2, background: '#e8935a', display: 'inline-block', borderRadius: 1 }} />
-                Engagement (7d):
-              </span>{' '}
-              <span style={{ color: '#e8eaf0', fontWeight: 600 }}>
-                {fmtNum(d.rolling)}
-              </span>
-              {d.raw > 0 && (
-                <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}>
-                  {' '}· {fmtNum(d.raw)} that day
-                </span>
-              )}
-            </div>
-            {hasImpressions && (
-              <div style={{ color: '#7dd3fc', fontSize: 12, marginTop: 3 }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ width: 9, height: 2, background: '#38bdf8', display: 'inline-block', borderRadius: 1 }} />
-                  Impressions (7d):
-                </span>{' '}
-                <span style={{ color: '#bae6fd', fontWeight: 600 }}>
-                  {fmtNum(d.rollingImpressions)}
-                </span>
-                {d.rawImpressions > 0 && (
-                  <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}>
-                    {' '}· {fmtNum(d.rawImpressions)} that day
-                  </span>
-                )}
-              </div>
-            )}
-            {d.activePosts > 0 && (
-              <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
-                {d.activePosts} post{d.activePosts > 1 ? 's' : ''} active in 7-day window
-              </div>
-            )}
-            {!isPoint && d.posts > 0 && d.topPostOutlierRatio != null && d.topPostOutlierRatio > 0 && (
+            {/* Pencil tooltip is now content-only — the per-day numbers
+                (engagement / impressions / active posts) live in the
+                in-chart point tooltip, so they're not duplicated here. */}
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>{heading}</div>
+            {d.posts > 0 && d.topPostOutlierRatio != null && d.topPostOutlierRatio > 0 && (
               <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #2e3348', fontSize: 12 }}>
                 <span style={{ color: '#94a3b8' }}>Top post: </span>
                 <span
@@ -448,7 +426,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 )}
               </div>
             )}
-            {!isPoint && d.posts > 0 && (d.topPostPreview || d.topPostUrl) && (
+            {d.posts > 0 && (d.topPostPreview || d.topPostUrl) && (
               <div
                 style={{
                   marginTop: 8,
