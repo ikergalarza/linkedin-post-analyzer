@@ -159,7 +159,7 @@ export default function MonthlyBarChart({
         </div>
         {chartData.length > 0 && (
           <div className="text-right">
-            <div className="text-[10px] uppercase tracking-wide text-text-muted">Total · {chartData.length}m</div>
+            <div className="text-[10px] uppercase tracking-wide text-text-muted">Total</div>
             <div className={`text-sm font-semibold tabular-nums ${signed && total < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
               {signed && total > 0 ? '+' : ''}{fmtNum(total)}
             </div>
@@ -207,7 +207,9 @@ export default function MonthlyBarChart({
           </ResponsiveContainer>
 
           {/* Year band — one label per contiguous year, centred under its
-              months, aligned to the plot area via the shared geometry. */}
+              months, aligned to the plot area via the shared geometry.
+              A vertical divider at every year boundary gives a clear
+              visual cut between e.g. 2025 and 2026. */}
           <div
             style={{
               position: 'relative',
@@ -216,25 +218,39 @@ export default function MonthlyBarChart({
               marginRight: PLOT_MARGIN.right,
             }}
           >
-            {yearGroups.map((g) => {
+            {yearGroups.map((g, gi) => {
               const leftPct = (g.start / n) * 100;
               const widthPct = (g.count / n) * 100;
               return (
-                <div
-                  key={g.year + g.start}
-                  style={{
-                    position: 'absolute',
-                    left: `${leftPct}%`,
-                    width: `${widthPct}%`,
-                    top: 0,
-                    textAlign: 'center',
-                    borderTop: '1px solid #2e3348',
-                    paddingTop: 4,
-                  }}
-                >
-                  <span style={{ color: '#9ca3af', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }}>
-                    {g.year}
-                  </span>
+                <div key={g.year + g.start}>
+                  {/* boundary divider (skip the very first group) */}
+                  {gi > 0 && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: `${leftPct}%`,
+                        top: -6,
+                        height: 22,
+                        width: 1,
+                        background: '#3a4566',
+                      }}
+                    />
+                  )}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${leftPct}%`,
+                      width: `${widthPct}%`,
+                      top: 0,
+                      textAlign: 'center',
+                      borderTop: '1px solid #2e3348',
+                      paddingTop: 4,
+                    }}
+                  >
+                    <span style={{ color: '#9ca3af', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }}>
+                      {g.year}
+                    </span>
+                  </div>
                 </div>
               );
             })}

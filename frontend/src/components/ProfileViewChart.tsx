@@ -155,34 +155,21 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
 
   const xTickInterval = Math.max(0, Math.floor(chartData.length / 8) - 1);
 
-  // Deltas in the new model = window-sums vs. previous window-sums (rolling).
-  // "vs ayer" still compares two single days (today vs. yesterday). The 7d
-  // and Nd chips compare "last N days summed" against "prior N days summed",
-  // which is how LinkedIn's own analytics surface presents the trend.
+  // One headline delta: the last `days` window summed vs the `days`
+  // window immediately before it (how LinkedIn's own analytics frames
+  // the trend). null when there isn't enough prior history yet.
   const deltas = useMemo(() => {
     if (!points || points.length === 0) {
-      return { d1: null, d7: null, range: null, totalRange: 0 };
+      return { vsRange: null, totalRange: 0 };
     }
-    const calcWindow = (n: number) => {
-      const cur = sumLastN(points, n);
-      const prev = sumPrevN(points, n);
-      if (prev === null) return null;
-      const abs = cur - prev;
-      const pct = prev > 0 ? (abs / prev) * 100 : null;
-      return { abs, pct };
-    };
-    const d1 = (() => {
-      if (points.length < 2) return null;
-      const today = points[points.length - 1].views;
-      const yesterday = points[points.length - 2].views;
-      const abs = today - yesterday;
-      const pct = yesterday > 0 ? (abs / yesterday) * 100 : null;
-      return { abs, pct };
-    })();
+    const cur = sumLastN(points, days);
+    const prev = sumPrevN(points, days);
+    const vsRange =
+      prev === null
+        ? null
+        : { abs: cur - prev, pct: prev > 0 ? ((cur - prev) / prev) * 100 : null };
     return {
-      d1,
-      d7: calcWindow(7),
-      range: calcWindow(Math.floor(days / 2)), // current half vs prior half
+      vsRange,
       totalRange: sumLastN(points, days),
     };
   }, [points, days]);
@@ -194,42 +181,26 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
           <h3 className="text-lg font-semibold">Profile views</h3>
           <p className="text-xs text-text-muted mt-0.5">
             {creatorId
-              ? `Visitas nuevas al perfil por día (últimos ${days}d · ${fmtNum(deltas.totalRange)} total)`
-              : `Visitas nuevas al perfil por día — todas las cuentas managed (últimos ${days}d · ${fmtNum(deltas.totalRange)} total)`}
+              ? `New profile views per day (last ${days}d · ${fmtNum(deltas.totalRange)} total)`
+              : `New profile views per day — all managed accounts (last ${days}d · ${fmtNum(deltas.totalRange)} total)`}
           </p>
         </div>
         <div className="flex items-start gap-5 flex-wrap">
-          {deltas.d1 && (
-            <DeltaChip
-              label="vs ayer"
-              abs={deltas.d1.abs}
-              pct={deltas.d1.pct}
-            />
-          )}
-          {deltas.d7 && (
-            <DeltaChip
-              label="últimos 7d vs prev. 7d"
-              abs={deltas.d7.abs}
-              pct={deltas.d7.pct}
-            />
-          )}
-          {deltas.range && (
-            <DeltaChip
-              label={`últ. ${Math.floor(days / 2)}d vs prev. ${Math.floor(days / 2)}d`}
-              abs={deltas.range.abs}
-              pct={deltas.range.pct}
-            />
-          )}
+          <DeltaChip
+            label={`vs last ${days}d`}
+            abs={deltas.vsRange ? deltas.vsRange.abs : null}
+            pct={deltas.vsRange ? deltas.vsRange.pct : null}
+          />
         </div>
       </div>
 
       {loading ? (
-        <p className="text-center text-text-muted text-sm py-12">Cargando…</p>
+        <p className="text-center text-text-muted text-sm py-12">Loading…</p>
       ) : chartData.length === 0 || deltas.totalRange === 0 ? (
         <p className="text-center text-text-muted text-sm py-12">
-          Aún no hay datos de visitas — corre un refresh para capturar los
-          timestamps de viewers desde el feed de LinkedIn.
-          (Requiere LinkedIn Premium / Sales Navigator activo en la cuenta.)
+          No profile-view data yet — run a refresh to capture viewer
+          timestamps from LinkedIn's feed.
+          (Requires an active LinkedIn Premium / Sales Navigator on the account.)
         </p>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
