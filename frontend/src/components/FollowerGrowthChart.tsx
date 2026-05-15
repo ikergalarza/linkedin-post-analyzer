@@ -108,7 +108,7 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
     <div className="bg-bg-card border border-border rounded-xl p-5">
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div>
-          <h3 className="text-lg font-semibold">Follower growth</h3>
+          <h3 className="text-lg font-semibold">New followers per day</h3>
           <p className="text-xs text-text-muted mt-0.5">
             {creatorId
               ? 'Net new followers per day (this account)'
