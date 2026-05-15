@@ -30,6 +30,10 @@ interface HoverState {
   day: string;
   x: number;
   y: number;
+  // 'pencil' = hovering a publish-day badge (rich tooltip with top-post
+  // preview). 'point' = hovering the line/area itself (compact values-
+  // only tooltip, positioned so it never clips off the top of the card).
+  source: 'pencil' | 'point';
 }
 
 type Range = '7d' | '30d' | '90d' | 'all';
@@ -129,6 +133,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 day: state.activeLabel,
                 x: state.activeCoordinate.x,
                 y: state.activeCoordinate.y,
+                source: 'point',
               });
             }
           }}
@@ -251,6 +256,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                   // on the tooltip, it sits right above the pencil and grows
                   // up into the chart area without spilling below.
                   y: pencilRect.top - wrapperRect.top,
+                  source: 'pencil',
                 });
               }}
               onMouseLeave={scheduleClear}
@@ -284,11 +290,24 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
         const heading = d.posts > 0
           ? `${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}`
           : `${fmtFullDay(d.day)} · no post`;
+        const isPoint = hover.source === 'point';
         const containerW = wrapperRef.current?.offsetWidth ?? 600;
-        const tooltipW = 240;
+        const tooltipW = isPoint ? 210 : 240;
         const gap = 12;
         const showLeft = hover.x + tooltipW + gap + 4 > containerW;
         const leftPx = showLeft ? hover.x - tooltipW - gap : hover.x + gap;
+
+        // Vertical placement:
+        // - pencil badges live at the BOTTOM, so the rich tooltip grows
+        //   upward (translateY(-100%)) and stays inside the clipped card.
+        // - line points can be anywhere, including the very top. Growing
+        //   up there would clip the tooltip off-screen, so for points we
+        //   flip: below the cursor when it's in the top half, above it
+        //   when it's in the bottom half.
+        const flipBelow = isPoint && hover.y < CHART_HEIGHT * 0.5;
+        const verticalStyle = flipBelow
+          ? { top: hover.y + 18, transform: 'none' as const }
+          : { top: Math.max(0, hover.y) - 8, transform: 'translateY(-100%)' as const };
         return (
           <div
             onMouseEnter={cancelClear}
@@ -296,14 +315,10 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
             style={{
               position: 'absolute',
               left: Math.max(0, leftPx),
-              // Anchor the BOTTOM of the tooltip just above the hovered point
-              // using translateY(-100%). The outer card has overflow-hidden;
-              // growing the tooltip upward keeps it inside that clip region.
-              top: Math.max(0, hover.y) - 8,
-              transform: 'translateY(-100%)',
+              ...verticalStyle,
               width: tooltipW,
               background: '#222639',
-              border: '1px solid #2e3348',
+              border: `1px solid ${isPoint ? '#3a4566' : '#2e3348'}`,
               borderRadius: 8,
               color: '#e8eaf0',
               fontSize: 13,
@@ -349,7 +364,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 {d.activePosts} post{d.activePosts > 1 ? 's' : ''} active in 7-day window
               </div>
             )}
-            {d.posts > 0 && d.topPostOutlierRatio != null && d.topPostOutlierRatio > 0 && (
+            {!isPoint && d.posts > 0 && d.topPostOutlierRatio != null && d.topPostOutlierRatio > 0 && (
               <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #2e3348', fontSize: 12 }}>
                 <span style={{ color: '#94a3b8' }}>Top post: </span>
                 <span
@@ -378,7 +393,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 )}
               </div>
             )}
-            {d.posts > 0 && (d.topPostPreview || d.topPostUrl) && (
+            {!isPoint && d.posts > 0 && (d.topPostPreview || d.topPostUrl) && (
               <div
                 style={{
                   marginTop: 8,
