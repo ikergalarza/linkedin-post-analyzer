@@ -103,7 +103,7 @@ export default function MonthlyBarChart({
         </div>
         {chartData.length > 0 && (
           <div className="text-right">
-            <div className="text-[10px] uppercase tracking-wide text-text-muted">Total ({chartData.length}m)</div>
+            <div className="text-[10px] uppercase tracking-wide text-text-muted">Total · {chartData.length}m</div>
             <div className={`text-sm font-semibold tabular-nums ${signed && total < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
               {signed && total > 0 ? '+' : ''}{fmtNum(total)}
             </div>
@@ -115,7 +115,7 @@ export default function MonthlyBarChart({
         <p className="text-center text-text-muted text-sm py-12">Loading…</p>
       ) : chartData.length === 0 ? (
         <p className="text-center text-text-muted text-sm py-12">
-          Aún no hay suficientes datos mensuales — se irá rellenando con cada mes capturado.
+          Not enough monthly data yet — this fills in as each month is captured.
         </p>
       ) : (
         <ResponsiveContainer width="100%" height={220}>

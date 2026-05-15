@@ -1005,6 +1005,22 @@ export default function Accounts() {
             )}
           </div>
 
+          {/* Monthly impressions — sits right after the engagement curve
+              since both are "reach" views. Lifetime impressions of posts
+              published that month; only managed accounts' own posts
+              report impressions, which is exactly this scope. */}
+          <MonthlyBarChart
+            endpoint="/api/accounts/impressions-monthly"
+            valueKey="impressions"
+            creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            title="Impressions per month"
+            subtitle={selectedCreator === 'all'
+              ? 'Impressions from posts published each month — all managed accounts'
+              : 'Impressions from posts published each month (this account)'}
+            unit="impressions"
+            color="#e8935a"
+          />
+
           {/* Follower growth — net new followers per day */}
           <FollowerGrowthChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
@@ -1019,11 +1035,11 @@ export default function Accounts() {
             endpoint="/api/accounts/follower-monthly"
             valueKey="gained"
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
-            title="Seguidores nuevos por mes"
+            title="New followers per month"
             subtitle={selectedCreator === 'all'
-              ? 'Suma mensual de seguidores ganados — todas las cuentas managed'
-              : 'Seguidores ganados cada mes (esta cuenta)'}
-            unit="seguidores"
+              ? 'Monthly followers gained — all managed accounts'
+              : 'Followers gained each month (this account)'}
+            unit="followers"
             color="#34d399"
             signed
           />
@@ -1035,21 +1051,6 @@ export default function Accounts() {
           <ProfileViewChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
             days={days}
-          />
-
-          {/* Monthly impressions — lifetime impressions of posts published
-              that month. Only the managed accounts' own posts report
-              impressions, which is exactly this scope. */}
-          <MonthlyBarChart
-            endpoint="/api/accounts/impressions-monthly"
-            valueKey="impressions"
-            creatorId={selectedCreator === 'all' ? null : selectedCreator}
-            title="Impresiones por mes"
-            subtitle={selectedCreator === 'all'
-              ? 'Impresiones de los posts publicados cada mes — todas las cuentas managed'
-              : 'Impresiones de los posts publicados cada mes (esta cuenta)'}
-            unit="impresiones"
-            color="#e8935a"
           />
 
           {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}

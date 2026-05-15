@@ -29,13 +29,34 @@ function fmtNum(n: number): string {
   return n.toLocaleString();
 }
 
-const TOOLTIP_STYLE = {
-  backgroundColor: '#222639',
-  border: '1px solid #2e3348',
-  borderRadius: '8px',
-  color: '#e8eaf0',
-  fontSize: '12px',
-};
+// Custom tooltip — shows ONLY that day's net new followers, big and
+// colour-coded (green up / red down) so the signal pops at a glance.
+// The cumulative total is intentionally dropped: per-day delta is the
+// point of this chart.
+function GainedTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+  const g = Number(payload[0]?.value ?? 0);
+  const colour = g > 0 ? '#34d399' : g < 0 ? '#f87171' : '#9ca3af';
+  return (
+    <div
+      style={{
+        backgroundColor: '#222639',
+        border: `1px solid ${colour}55`,
+        borderRadius: 10,
+        padding: '8px 12px',
+        boxShadow: `0 0 14px ${colour}33`,
+      }}
+    >
+      <div style={{ color: '#9ca3af', fontSize: 11, marginBottom: 2 }}>{label}</div>
+      <div style={{ color: colour, fontSize: 18, fontWeight: 700, letterSpacing: '-0.01em' }}>
+        {g > 0 ? '+' : ''}{fmtNum(g)}
+        <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 500, marginLeft: 6 }}>
+          new {Math.abs(g) === 1 ? 'follower' : 'followers'}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 /**
  * FollowerGrowth — net new followers per day (bars), derived from the
@@ -90,20 +111,20 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
           <h3 className="text-lg font-semibold">Follower growth</h3>
           <p className="text-xs text-text-muted mt-0.5">
             {creatorId
-              ? 'Seguidores nuevos por día (esta cuenta)'
-              : 'Seguidores nuevos por día — suma de todas las cuentas managed'}
+              ? 'Net new followers per day (this account)'
+              : 'Net new followers per day — all managed accounts'}
           </p>
         </div>
         {summary && (
           <div className="flex items-start gap-5 flex-wrap text-right">
             <div>
-              <div className="text-[10px] uppercase tracking-wide text-text-muted">Ganados ({days}d)</div>
+              <div className="text-[10px] uppercase tracking-wide text-text-muted">Gained · {days}d</div>
               <div className={`text-sm font-semibold tabular-nums ${summary.totalGained > 0 ? 'text-green-400' : summary.totalGained < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
                 {summary.totalGained > 0 ? '+' : ''}{fmtNum(summary.totalGained)}
               </div>
             </div>
             <div>
-              <div className="text-[10px] uppercase tracking-wide text-text-muted">Total ahora</div>
+              <div className="text-[10px] uppercase tracking-wide text-text-muted">Current total</div>
               <div className="text-sm font-semibold tabular-nums text-text-secondary">
                 {fmtNum(summary.currentTotal)}
               </div>
@@ -135,14 +156,8 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
               allowDecimals={false}
             />
             <Tooltip
-              contentStyle={TOOLTIP_STYLE}
+              content={<GainedTooltip />}
               cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-              formatter={(v: any, _n: any, item: any) => {
-                const g = Number(v);
-                const total = item?.payload?.followers;
-                return [`${g > 0 ? '+' : ''}${fmtNum(g)} nuevos · ${fmtNum(total)} total`, ''];
-              }}
-              labelFormatter={(label: string) => label}
             />
             <ReferenceLine y={0} stroke="#2e3348" />
             <Bar dataKey="gained" radius={[2, 2, 0, 0]} isAnimationActive={false}>
