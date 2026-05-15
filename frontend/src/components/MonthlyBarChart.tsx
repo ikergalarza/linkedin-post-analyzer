@@ -23,10 +23,11 @@ interface Props {
 }
 
 function fmtMonth(ym: string): string {
-  // ym = 'YYYY-MM' → 'mmm yy'
+  // ym = 'YYYY-MM' → 'Mmm YYYY'. Full 4-digit year on purpose: a
+  // 2-digit year ("May 26") gets misread as a day-of-month.
   const [y, m] = ym.split('-').map(Number);
   const d = new Date(y, (m || 1) - 1, 1);
-  return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 }
 
 function fmtNum(n: number): string {

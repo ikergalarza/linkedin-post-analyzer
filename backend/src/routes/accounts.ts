@@ -208,33 +208,40 @@ router.get('/follower-monthly', async (req: Request, res: Response) => {
       creatorFilter = `s.creator_id = $${params.length}`;
     }
 
+    // For each (creator, month) take BOTH the first and last snapshot of
+    // the month. A month's gain = its end total − the previous month's end
+    // total. For the very FIRST tracked month there is no previous month,
+    // so we fall back to that month's own first snapshot — i.e. "followers
+    // gained during the portion of the month we actually tracked". This
+    // makes April show up (its tracked half) instead of being dropped for
+    // lacking a prior month to diff against.
     const { rows } = await pool.query(
-      `WITH month_end AS (
-         -- last snapshot per (creator, month)
-         SELECT DISTINCT ON (s.creator_id, date_trunc('month', s.captured_on))
+      `WITH month_bounds AS (
+         SELECT
            s.creator_id,
            date_trunc('month', s.captured_on) AS month,
-           s.followers_count
+           (ARRAY_AGG(s.followers_count ORDER BY s.captured_on ASC))[1]  AS first_count,
+           (ARRAY_AGG(s.followers_count ORDER BY s.captured_on DESC))[1] AS last_count
          FROM creator_follower_snapshots s
          JOIN creators c ON c.id = s.creator_id
         WHERE ${creatorFilter}
-        ORDER BY s.creator_id, date_trunc('month', s.captured_on), s.captured_on DESC
+        GROUP BY s.creator_id, date_trunc('month', s.captured_on)
        ),
        month_delta AS (
          SELECT
            creator_id,
            month,
-           followers_count - LAG(followers_count) OVER (
-             PARTITION BY creator_id ORDER BY month ASC
+           last_count - COALESCE(
+             LAG(last_count) OVER (PARTITION BY creator_id ORDER BY month ASC),
+             first_count
            ) AS gained
-         FROM month_end
+         FROM month_bounds
        )
        SELECT
          to_char(month, 'YYYY-MM') AS month,
          COALESCE(SUM(gained), 0)::int AS gained
        FROM month_delta
-       WHERE gained IS NOT NULL
-         AND month >= date_trunc('month', CURRENT_DATE) - ((${months} - 1) || ' months')::interval
+       WHERE month >= date_trunc('month', CURRENT_DATE) - ((${months} - 1) || ' months')::interval
        GROUP BY month
        ORDER BY month ASC`,
       params
