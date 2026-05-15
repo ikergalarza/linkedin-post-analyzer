@@ -315,15 +315,33 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           >
             <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
             <div style={{ color: '#cbd5e1' }}>
-              Engagement (7d):{' '}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ width: 9, height: 2, background: '#e8935a', display: 'inline-block', borderRadius: 1 }} />
+                Engagement (7d):
+              </span>{' '}
               <span style={{ color: '#e8eaf0', fontWeight: 600 }}>
                 {fmtNum(d.rolling)}
               </span>
+              {d.raw > 0 && (
+                <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}>
+                  {' '}· {fmtNum(d.raw)} that day
+                </span>
+              )}
             </div>
-            {d.rollingImpressions > 0 && (
-              <div style={{ color: '#7dd3fc', fontSize: 12, marginTop: 2 }}>
-                👁️ {fmtNum(d.rollingImpressions)}{' '}
-                <span style={{ color: '#94a3b8', fontWeight: 400 }}>impressions</span>
+            {hasImpressions && (
+              <div style={{ color: '#7dd3fc', fontSize: 12, marginTop: 3 }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ width: 9, height: 2, background: '#38bdf8', display: 'inline-block', borderRadius: 1 }} />
+                  Impressions (7d):
+                </span>{' '}
+                <span style={{ color: '#bae6fd', fontWeight: 600 }}>
+                  {fmtNum(d.rollingImpressions)}
+                </span>
+                {d.rawImpressions > 0 && (
+                  <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}>
+                    {' '}· {fmtNum(d.rawImpressions)} that day
+                  </span>
+                )}
               </div>
             )}
             {d.activePosts > 0 && (
