@@ -1102,6 +1102,9 @@ export default function Accounts() {
             )}
           </div>
 
+          {/* Format mix + Best hooks share one row — both are compact
+              "what's working" breakdowns, no need for a full row each. */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
           {/* Format mix */}
           {formatChartData.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
@@ -1187,6 +1190,7 @@ export default function Accounts() {
               </ResponsiveContainer>
             </div>
           )}
+          </div>
 
           {/* Per-account comparison */}
           {!selectedCreator || selectedCreator === 'all' ? (

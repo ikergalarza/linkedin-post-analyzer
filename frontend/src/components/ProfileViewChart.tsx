@@ -27,13 +27,32 @@ function fmtNum(n: number): string {
   return n.toLocaleString();
 }
 
-const TOOLTIP_STYLE = {
-  backgroundColor: '#222639',
-  border: '1px solid #2e3348',
-  borderRadius: '8px',
-  color: '#e8eaf0',
-  fontSize: '12px',
-};
+// Big-number tooltip — same design language as the follower charts:
+// large value in the chart's orange with a soft glow.
+const PV_COLOR = '#e8935a';
+function ViewsTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+  const n = Number(payload[0]?.value ?? 0);
+  return (
+    <div
+      style={{
+        backgroundColor: '#222639',
+        border: `1px solid ${PV_COLOR}55`,
+        borderRadius: 10,
+        padding: '8px 12px',
+        boxShadow: `0 0 14px ${PV_COLOR}33`,
+      }}
+    >
+      <div style={{ color: '#9ca3af', fontSize: 11, marginBottom: 2 }}>{label}</div>
+      <div style={{ color: PV_COLOR, fontSize: 18, fontWeight: 700, letterSpacing: '-0.01em' }}>
+        {fmtNum(n)}
+        <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 500, marginLeft: 6 }}>
+          {n === 1 ? 'viewer nuevo' : 'viewers nuevos'}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 // Sum the last `n` daily points (most-recent-first). Returns 0 if the
 // series is shorter than n — caller decides whether that's enough signal
@@ -229,10 +248,8 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
               domain={['auto', 'auto']}
             />
             <Tooltip
-              contentStyle={TOOLTIP_STYLE}
               cursor={{ stroke: '#2e3348', strokeWidth: 1 }}
-              formatter={(v: any) => [fmtNum(Number(v)) + ' viewers nuevos', '']}
-              labelFormatter={(label: string) => label}
+              content={<ViewsTooltip />}
             />
             <Line
               type="monotone"

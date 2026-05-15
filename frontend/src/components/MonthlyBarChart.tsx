@@ -37,13 +37,37 @@ function fmtNum(n: number): string {
   return n.toLocaleString();
 }
 
-const TOOLTIP_STYLE = {
-  backgroundColor: '#222639',
-  border: '1px solid #2e3348',
-  borderRadius: '8px',
-  color: '#e8eaf0',
-  fontSize: '12px',
-};
+// Big-number tooltip — same language as FollowerGrowthChart's daily
+// tooltip: a large value in the chart's own colour with a soft glow,
+// so monthly followers / impressions read at a glance.
+function BigValueTooltip({
+  active, payload, label, color, unit, signed,
+}: any) {
+  if (!active || !payload || !payload.length) return null;
+  const n = Number(payload[0]?.value ?? 0);
+  const colour = signed
+    ? (n > 0 ? '#34d399' : n < 0 ? '#f87171' : '#9ca3af')
+    : color;
+  return (
+    <div
+      style={{
+        backgroundColor: '#222639',
+        border: `1px solid ${colour}55`,
+        borderRadius: 10,
+        padding: '8px 12px',
+        boxShadow: `0 0 14px ${colour}33`,
+      }}
+    >
+      <div style={{ color: '#9ca3af', fontSize: 11, marginBottom: 2 }}>{label}</div>
+      <div style={{ color: colour, fontSize: 18, fontWeight: 700, letterSpacing: '-0.01em' }}>
+        {signed && n > 0 ? '+' : ''}{fmtNum(n)}
+        <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 500, marginLeft: 6 }}>
+          {unit}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 /**
  * Generic "value per month" bar chart. Fetches `${endpoint}?months=&creator_id=`
@@ -133,13 +157,10 @@ export default function MonthlyBarChart({
               allowDecimals={false}
             />
             <Tooltip
-              contentStyle={TOOLTIP_STYLE}
               cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-              formatter={(v: any) => {
-                const n = Number(v);
-                return [`${signed && n > 0 ? '+' : ''}${fmtNum(n)} ${unit}`, ''];
-              }}
-              labelFormatter={(label: string) => label}
+              content={(p: any) => (
+                <BigValueTooltip {...p} color={color} unit={unit} signed={signed} />
+              )}
             />
             {signed && <ReferenceLine y={0} stroke="#2e3348" />}
             <Bar dataKey="_v" radius={[3, 3, 0, 0]} isAnimationActive={false}>
