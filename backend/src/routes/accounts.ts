@@ -129,34 +129,161 @@ router.patch('/:id', async (req: Request, res: Response) => {
 });
 
 // GET /api/accounts/follower-history?creator_id=xxx&days=90
-// If creator_id is omitted, sums followers across all managed accounts per day.
+//
+// Returns one point per captured day with BOTH the cumulative total
+// (`followers`) and the net new followers that day (`gained`). The chart
+// plots `gained` — "followers won per day" is far more actionable than a
+// slowly-rising cumulative line.
+//
+// `gained` is computed per creator with a window LAG over that creator's
+// own snapshot history (so a gap of N days lumps the growth on the next
+// captured day rather than corrupting other creators), THEN summed across
+// creators for the combined view. Deltas are derived over ALL history and
+// only filtered to the window afterwards, so the first in-window day still
+// gets a correct delta against the snapshot just before the window.
 router.get('/follower-history', async (req: Request, res: Response) => {
   try {
     const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
 
-    const { rows } = creatorId
-      ? await pool.query(
-          `SELECT captured_on::text AS day, followers_count::int AS followers
-             FROM creator_follower_snapshots
-            WHERE creator_id = $1
-              AND captured_on >= CURRENT_DATE - ($2 || ' days')::interval
-            ORDER BY captured_on ASC`,
-          [creatorId, days]
-        )
-      : await pool.query(
-          `SELECT s.captured_on::text AS day, SUM(s.followers_count)::int AS followers
-             FROM creator_follower_snapshots s
-             JOIN creators c ON c.id = s.creator_id
-            WHERE c.is_managed = TRUE
-              AND s.captured_on >= CURRENT_DATE - ($1 || ' days')::interval
-            GROUP BY s.captured_on
-            ORDER BY s.captured_on ASC`,
-          [days]
-        );
+    const params: any[] = [];
+    let creatorFilter = 'c.is_managed = TRUE';
+    if (creatorId) {
+      params.push(creatorId);
+      creatorFilter = `s.creator_id = $${params.length}`;
+    }
+
+    // deltas: per-creator gained = followers_count - prior snapshot's count.
+    // windowed: keep only the requested range. combined: sum per day.
+    const { rows } = await pool.query(
+      `WITH deltas AS (
+         SELECT
+           s.creator_id,
+           s.captured_on,
+           s.followers_count,
+           s.followers_count - LAG(s.followers_count) OVER (
+             PARTITION BY s.creator_id ORDER BY s.captured_on ASC
+           ) AS gained
+         FROM creator_follower_snapshots s
+         JOIN creators c ON c.id = s.creator_id
+        WHERE ${creatorFilter}
+       )
+       SELECT
+         captured_on::text AS day,
+         SUM(followers_count)::int AS followers,
+         COALESCE(SUM(gained), 0)::int AS gained
+       FROM deltas
+       WHERE captured_on >= CURRENT_DATE - (${days} || ' days')::interval
+       GROUP BY captured_on
+       ORDER BY captured_on ASC`,
+      params
+    );
     res.json({ points: rows });
   } catch (err: any) {
     console.error('[accounts/follower-history]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/follower-monthly?creator_id=xxx&months=12
+//
+// Net new followers per calendar month. For each creator we take the LAST
+// snapshot in each month (its end-of-month total) and diff against the
+// previous month's end-of-month total — that's the followers genuinely
+// won that month. Combined view sums each creator's monthly gain so a
+// gap in one account never distorts the other.
+//
+// Data is preserved indefinitely in creator_follower_snapshots (we never
+// delete rows), so this stays reconstructable even if LinkedIn changes
+// what it surfaces.
+router.get('/follower-monthly', async (req: Request, res: Response) => {
+  try {
+    const months = Math.min(parseInt(req.query.months as string) || 12, 36);
+    const creatorId = (req.query.creator_id as string) || null;
+
+    const params: any[] = [];
+    let creatorFilter = 'c.is_managed = TRUE';
+    if (creatorId) {
+      params.push(creatorId);
+      creatorFilter = `s.creator_id = $${params.length}`;
+    }
+
+    const { rows } = await pool.query(
+      `WITH month_end AS (
+         -- last snapshot per (creator, month)
+         SELECT DISTINCT ON (s.creator_id, date_trunc('month', s.captured_on))
+           s.creator_id,
+           date_trunc('month', s.captured_on) AS month,
+           s.followers_count
+         FROM creator_follower_snapshots s
+         JOIN creators c ON c.id = s.creator_id
+        WHERE ${creatorFilter}
+        ORDER BY s.creator_id, date_trunc('month', s.captured_on), s.captured_on DESC
+       ),
+       month_delta AS (
+         SELECT
+           creator_id,
+           month,
+           followers_count - LAG(followers_count) OVER (
+             PARTITION BY creator_id ORDER BY month ASC
+           ) AS gained
+         FROM month_end
+       )
+       SELECT
+         to_char(month, 'YYYY-MM') AS month,
+         COALESCE(SUM(gained), 0)::int AS gained
+       FROM month_delta
+       WHERE gained IS NOT NULL
+         AND month >= date_trunc('month', CURRENT_DATE) - ((${months} - 1) || ' months')::interval
+       GROUP BY month
+       ORDER BY month ASC`,
+      params
+    );
+    res.json({ points: rows });
+  } catch (err: any) {
+    console.error('[accounts/follower-monthly]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/impressions-monthly?creator_id=xxx&months=12
+//
+// Total impressions of posts PUBLISHED in each calendar month. LinkedIn
+// doesn't expose a standalone monthly-impressions metric, and post
+// snapshots only cover the first 7 days of a post's life, so the only
+// faithful aggregate we can build is "lifetime impressions of content
+// published that month" — i.e. all of a post's impressions are credited
+// to its publish month. Impressions only flow for the authenticated
+// (managed) accounts' own posts, which is exactly this scope.
+router.get('/impressions-monthly', async (req: Request, res: Response) => {
+  try {
+    const months = Math.min(parseInt(req.query.months as string) || 12, 36);
+    const creatorId = (req.query.creator_id as string) || null;
+
+    const params: any[] = [];
+    let scopeSql = `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE)`;
+    if (creatorId) {
+      params.push(creatorId);
+      scopeSql = `p.creator_id = $${params.length}`;
+    }
+
+    const { rows } = await pool.query(
+      `SELECT
+         to_char(date_trunc('month', p.published_at), 'YYYY-MM') AS month,
+         COALESCE(SUM(p.impressions_count), 0)::bigint AS impressions,
+         COUNT(*)::int AS posts
+       FROM posts p
+       WHERE ${scopeSql}
+         AND p.published_at IS NOT NULL
+         AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+         AND p.published_at >= date_trunc('month', CURRENT_DATE) - ((${months} - 1) || ' months')::interval
+       GROUP BY date_trunc('month', p.published_at)
+       ORDER BY date_trunc('month', p.published_at) ASC`,
+      params
+    );
+    res.json({ points: rows.map((r) => ({ ...r, impressions: Number(r.impressions) })) });
+  } catch (err: any) {
+    console.error('[accounts/impressions-monthly]', err);
     res.status(500).json({ error: err.message });
   }
 });

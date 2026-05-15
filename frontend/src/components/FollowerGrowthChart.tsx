@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ReferenceLine,
 } from 'recharts';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
 interface Point {
   day: string;
-  followers: number;
+  followers: number; // cumulative total that day (for tooltip context)
+  gained: number;    // net new followers that day
 }
 
 interface Props {
@@ -21,9 +22,10 @@ function fmtDay(iso: string): string {
 }
 
 function fmtNum(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 10_000) return `${Math.round(n / 1_000)}K`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (abs >= 10_000) return `${Math.round(n / 1_000)}K`;
+  if (abs >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
   return n.toLocaleString();
 }
 
@@ -35,6 +37,13 @@ const TOOLTIP_STYLE = {
   fontSize: '12px',
 };
 
+/**
+ * FollowerGrowth — net new followers per day (bars), derived from the
+ * daily total snapshots in our DB. Positive = green, negative = red.
+ * The cumulative total still rides along in the tooltip so you don't
+ * lose the "where are we now" context. Works for a single account or
+ * the summed managed view (creatorId null).
+ */
 export default function FollowerGrowthChart({ creatorId, days }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,14 +75,13 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
 
   const xTickInterval = Math.max(0, Math.floor(chartData.length / 8) - 1);
 
-  const delta = useMemo(() => {
-    if (!chartData || chartData.length < 2) return null;
-    const first = chartData[0].followers;
-    const last = chartData[chartData.length - 1].followers;
-    const abs = last - first;
-    const pct = first > 0 ? (abs / first) * 100 : 0;
-    return { abs, pct, first, last };
-  }, [chartData]);
+  const summary = useMemo(() => {
+    if (!points || points.length === 0) return null;
+    const totalGained = points.reduce((s, p) => s + (p.gained || 0), 0);
+    const currentTotal = points[points.length - 1].followers;
+    const bestDay = points.reduce((b, p) => (p.gained > (b?.gained ?? -Infinity) ? p : b), points[0]);
+    return { totalGained, currentTotal, bestDay };
+  }, [points]);
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-5">
@@ -81,31 +89,27 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
         <div>
           <h3 className="text-lg font-semibold">Follower growth</h3>
           <p className="text-xs text-text-muted mt-0.5">
-            {creatorId ? 'Daily followers for this account' : 'Sum of followers across all managed accounts'}
+            {creatorId
+              ? 'Seguidores nuevos por día (esta cuenta)'
+              : 'Seguidores nuevos por día — suma de todas las cuentas managed'}
           </p>
         </div>
-        <div className="flex items-start gap-4 flex-wrap">
-          <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-1">
-              <span className="w-4 h-[2px] bg-green-400" />
-              followers
-            </span>
-            <span>one snapshot per day</span>
-          </p>
-          {delta && (
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-wide text-text-muted">Change in range</div>
-              <div className={`text-sm font-semibold tabular-nums ${delta.abs > 0 ? 'text-green-400' : delta.abs < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
-                {delta.abs > 0 ? '+' : ''}{fmtNum(delta.abs)}
-                {delta.first > 0 && (
-                  <span className="text-text-muted font-normal ml-1">
-                    ({delta.abs > 0 ? '+' : ''}{delta.pct.toFixed(1)}%)
-                  </span>
-                )}
+        {summary && (
+          <div className="flex items-start gap-5 flex-wrap text-right">
+            <div>
+              <div className="text-[10px] uppercase tracking-wide text-text-muted">Ganados ({days}d)</div>
+              <div className={`text-sm font-semibold tabular-nums ${summary.totalGained > 0 ? 'text-green-400' : summary.totalGained < 0 ? 'text-red-400' : 'text-text-secondary'}`}>
+                {summary.totalGained > 0 ? '+' : ''}{fmtNum(summary.totalGained)}
               </div>
             </div>
-          )}
-        </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wide text-text-muted">Total ahora</div>
+              <div className="text-sm font-semibold tabular-nums text-text-secondary">
+                {fmtNum(summary.currentTotal)}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -114,14 +118,9 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
         <p className="text-center text-text-muted text-sm py-12">
           No snapshots captured yet — run a scrape to start tracking growth.
         </p>
-      ) : chartData.length === 1 ? (
-        <p className="text-center text-text-muted text-sm py-12">
-          Only one snapshot so far ({fmtNum(chartData[0].followers)} followers on {chartData[0].label}).
-          The curve will fill in as more days are captured.
-        </p>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+          <BarChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
             <XAxis
               dataKey="label"
@@ -133,24 +132,25 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
               tick={{ fill: '#9ca3af', fontSize: 11 }}
               axisLine={{ stroke: '#2e3348' }}
               tickFormatter={fmtNum}
-              domain={['auto', 'auto']}
+              allowDecimals={false}
             />
             <Tooltip
               contentStyle={TOOLTIP_STYLE}
-              cursor={{ stroke: '#2e3348', strokeWidth: 1 }}
-              formatter={(v: any) => [fmtNum(Number(v)) + ' followers', '']}
+              cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+              formatter={(v: any, _n: any, item: any) => {
+                const g = Number(v);
+                const total = item?.payload?.followers;
+                return [`${g > 0 ? '+' : ''}${fmtNum(g)} nuevos · ${fmtNum(total)} total`, ''];
+              }}
               labelFormatter={(label: string) => label}
             />
-            <Line
-              type="monotone"
-              dataKey="followers"
-              stroke="#34d399"
-              strokeWidth={2}
-              dot={{ r: 2, fill: '#34d399' }}
-              activeDot={{ r: 4 }}
-              isAnimationActive={false}
-            />
-          </LineChart>
+            <ReferenceLine y={0} stroke="#2e3348" />
+            <Bar dataKey="gained" radius={[2, 2, 0, 0]} isAnimationActive={false}>
+              {chartData.map((p, i) => (
+                <Cell key={i} fill={p.gained >= 0 ? '#34d399' : '#f87171'} />
+              ))}
+            </Bar>
+          </BarChart>
         </ResponsiveContainer>
       )}
     </div>

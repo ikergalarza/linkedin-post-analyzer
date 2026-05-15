@@ -9,6 +9,7 @@ import FollowerGrowthChart from '../components/FollowerGrowthChart';
 import ProfileViewChart from '../components/ProfileViewChart';
 import GoogleChatModal from '../components/accounts/GoogleChatModal';
 import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
+import MonthlyBarChart from '../components/MonthlyBarChart';
 
 interface ManagedAccount {
   id: string;
@@ -334,6 +335,9 @@ export default function Accounts() {
   const [liveRefreshMsg, setLiveRefreshMsg] = useState<string | null>(null);
   const [topPostsTypeFilter, setTopPostsTypeFilter] = useState<string>('all');
   const [chatPostId, setChatPostId] = useState<string | null>(null);
+  // Live-posts list grows long fast; reveal in pages of LIVE_PAGE.
+  const LIVE_PAGE = 12;
+  const [visibleLive, setVisibleLive] = useState(LIVE_PAGE);
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -345,6 +349,12 @@ export default function Accounts() {
     const timer = setInterval(() => refetchLive(), 2 * 60 * 1000);
     return () => clearInterval(timer);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Collapse the list back to the first page whenever the creator filter
+  // changes — otherwise switching accounts keeps a stale large reveal.
+  useEffect(() => {
+    setVisibleLive(LIVE_PAGE);
+  }, [selectedCreator]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const analyticsPath = `/api/accounts/analytics?days=${days}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
   const { data: analytics, loading: loadingAnalytics } = useApi<Analytics>(analyticsPath);
@@ -756,7 +766,7 @@ export default function Accounts() {
             </div>
           ) : (
             <div className="space-y-3">
-              {livePosts.map((p) => (
+              {livePosts.slice(0, visibleLive).map((p) => (
                 <LivePostRow
                   key={p.id}
                   post={p}
@@ -776,6 +786,22 @@ export default function Accounts() {
                   }
                 />
               ))}
+              {livePosts.length > visibleLive && (
+                <button
+                  onClick={() => setVisibleLive((v) => v + LIVE_PAGE)}
+                  className="w-full py-2.5 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+                >
+                  Ver más ({livePosts.length - visibleLive} restantes) ↓
+                </button>
+              )}
+              {visibleLive > LIVE_PAGE && livePosts.length <= visibleLive && (
+                <button
+                  onClick={() => setVisibleLive(LIVE_PAGE)}
+                  className="w-full py-2 text-[11px] text-text-muted hover:text-text-secondary transition-colors"
+                >
+                  Ver menos ↑
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -979,10 +1005,27 @@ export default function Accounts() {
             )}
           </div>
 
-          {/* Follower growth — daily snapshots, complements the engagement curve */}
+          {/* Follower growth — net new followers per day */}
           <FollowerGrowthChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
             days={days}
+          />
+
+          {/* Monthly followers gained — longer-horizon view, ignores the
+              top day filter on purpose (months are inherently coarser).
+              Reconstructed from our own daily snapshots so it survives
+              LinkedIn dropping any metric. */}
+          <MonthlyBarChart
+            endpoint="/api/accounts/follower-monthly"
+            valueKey="gained"
+            creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            title="Seguidores nuevos por mes"
+            subtitle={selectedCreator === 'all'
+              ? 'Suma mensual de seguidores ganados — todas las cuentas managed'
+              : 'Seguidores ganados cada mes (esta cuenta)'}
+            unit="seguidores"
+            color="#34d399"
+            signed
           />
 
           {/* Profile views — same daily-snapshot pattern, sourced from
@@ -992,6 +1035,21 @@ export default function Accounts() {
           <ProfileViewChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
             days={days}
+          />
+
+          {/* Monthly impressions — lifetime impressions of posts published
+              that month. Only the managed accounts' own posts report
+              impressions, which is exactly this scope. */}
+          <MonthlyBarChart
+            endpoint="/api/accounts/impressions-monthly"
+            valueKey="impressions"
+            creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            title="Impresiones por mes"
+            subtitle={selectedCreator === 'all'
+              ? 'Impresiones de los posts publicados cada mes — todas las cuentas managed'
+              : 'Impresiones de los posts publicados cada mes (esta cuenta)'}
+            unit="impresiones"
+            color="#e8935a"
           />
 
           {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
