@@ -76,6 +76,63 @@ function fmtFullDay(iso: string): string {
   });
 }
 
+// In-chart tooltip for hovering the line/area. Rendered THROUGH Recharts
+// (content prop) so Recharts owns its positioning and keeps it on-screen
+// — the previous onMouseMove-driven DOM tooltip never reliably fired for
+// line hovers. Values only (no top-post preview / link): the rich
+// pencil-driven tooltip still covers that.
+function PointTooltip({ active, payload, hasImpressions }: any) {
+  if (!active || !payload || !payload.length) return null;
+  const d = payload[0]?.payload;
+  if (!d) return null;
+  const heading = d.posts > 0
+    ? `${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}`
+    : `${fmtFullDay(d.day)} · no post`;
+  return (
+    <div
+      style={{
+        background: '#222639',
+        border: '1px solid #3a4566',
+        borderRadius: 8,
+        color: '#e8eaf0',
+        fontSize: 13,
+        padding: 10,
+        boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
+        maxWidth: 240,
+      }}
+    >
+      <div style={{ fontWeight: 600, marginBottom: 4 }}>{heading}</div>
+      <div style={{ color: '#cbd5e1' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          <span style={{ width: 9, height: 2, background: '#e8935a', display: 'inline-block', borderRadius: 1 }} />
+          Engagement (7d):
+        </span>{' '}
+        <span style={{ color: '#e8eaf0', fontWeight: 600 }}>{fmtNum(d.rolling)}</span>
+        {d.raw > 0 && (
+          <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}> · {fmtNum(d.raw)} that day</span>
+        )}
+      </div>
+      {hasImpressions && (
+        <div style={{ color: '#7dd3fc', fontSize: 12, marginTop: 3 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 9, height: 2, background: '#38bdf8', display: 'inline-block', borderRadius: 1 }} />
+            Impressions (7d):
+          </span>{' '}
+          <span style={{ color: '#bae6fd', fontWeight: 600 }}>{fmtNum(d.rollingImpressions)}</span>
+          {d.rawImpressions > 0 && (
+            <span style={{ color: '#94a3b8', fontWeight: 400, fontSize: 11 }}> · {fmtNum(d.rawImpressions)} that day</span>
+          )}
+        </div>
+      )}
+      {d.activePosts > 0 && (
+        <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
+          {d.activePosts} post{d.activePosts > 1 ? 's' : ''} active in 7-day window
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AccountsEngagementChart({ data, hasImpressions, xTickInterval }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null);
   const [range, setRange] = useState<Range>('30d');
@@ -134,26 +191,6 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
         <ComposedChart
           data={filteredData}
           margin={CHART_MARGIN}
-          onMouseMove={(state: any) => {
-            if (state?.isTooltipActive && state.activeLabel && state.activeCoordinate) {
-              cancelClear();
-              // activeCoordinate is SVG-space (chart-relative). Add the
-              // chart box's offset within the wrapper so the tooltip,
-              // which is positioned against the wrapper, lands on the
-              // actual point instead of ~44px too high (the filter row).
-              const wrapperRect = wrapperRef.current?.getBoundingClientRect();
-              const chartRect = chartBoxRef.current?.getBoundingClientRect();
-              const chartTop = wrapperRect && chartRect ? chartRect.top - wrapperRect.top : 0;
-              setHover({
-                day: state.activeLabel,
-                x: state.activeCoordinate.x,
-                y: chartTop + state.activeCoordinate.y,
-                source: 'point',
-                flipBelow: state.activeCoordinate.y < CHART_HEIGHT * 0.5,
-              });
-            }
-          }}
-          onMouseLeave={scheduleClear}
         >
           <defs>
             <linearGradient id="rollingFill" x1="0" y1="0" x2="0" y2="1">
@@ -190,7 +227,8 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           )}
           <Tooltip
             cursor={{ stroke: '#e8935a', strokeOpacity: 0.3, strokeWidth: 1 }}
-            content={() => null}
+            content={<PointTooltip hasImpressions={hasImpressions} />}
+            wrapperStyle={{ zIndex: 60, outline: 'none' }}
           />
           <Area
             yAxisId="left"
