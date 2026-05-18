@@ -12,6 +12,10 @@ interface ArchetypeVariant {
   post_structure: string;
   avg_ratio: number;
   text: string;
+  // Optional — only present when the generator judged a visual would
+  // materially amplify the post. Kept out of `text` so it never gets
+  // copied into the LinkedIn post by accident.
+  image_suggestion?: string | null;
 }
 
 interface PostIdea {
@@ -383,6 +387,19 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
                   {v.text}
                 </p>
 
+                {/* Optional image idea — visually separated so it's clearly
+                    NOT part of the post text you copy to LinkedIn. */}
+                {v.image_suggestion && (
+                  <div className="mb-3 rounded-lg border border-dashed border-border bg-bg-primary/50 p-2.5">
+                    <div className="text-[10px] uppercase tracking-wide text-text-muted mb-1 flex items-center gap-1">
+                      📸 Image idea <span className="normal-case tracking-normal text-text-muted/70">· not part of the post</span>
+                    </div>
+                    <p className="text-[11px] text-text-secondary leading-relaxed whitespace-pre-wrap">
+                      {v.image_suggestion}
+                    </p>
+                  </div>
+                )}
+
                 {/* Select button */}
                 <button
                   onClick={() => handleSelectVariant(v)}
@@ -417,6 +434,16 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
             initialText={selectedVariant.text}
             onSave={(text, score) => onUpdate(idea.id, { generated_post: text, generation_score: score })}
           />
+          {selectedVariant.image_suggestion && (
+            <div className="mt-3 rounded-lg border border-dashed border-border bg-bg-primary/50 p-3">
+              <div className="text-[10px] uppercase tracking-wide text-text-muted mb-1 flex items-center gap-1">
+                📸 Image idea <span className="normal-case tracking-normal text-text-muted/70">· suggestion only — don't paste into the post</span>
+              </div>
+              <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
+                {selectedVariant.image_suggestion}
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

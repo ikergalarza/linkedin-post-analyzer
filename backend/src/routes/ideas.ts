@@ -172,6 +172,61 @@ Once the user clicks, every \\n and \\n\\n you want is fair game — that's how 
 
 IF YOU WROTE A HOOK WITH \\n OR \\n\\n IN IT: COLLAPSE IT. Re-read it once and merge the two short lines into one before you output the post.`;
 
+// What separates a hook/idea that travels from one that dies. Observed
+// directly on this account — the hooks that outperformed all share these
+// three traits. HOOK_LAW governs the *format* of the hook; this governs
+// whether the *idea* behind it is even worth writing.
+const HOOK_QUALITY = `HOOK & IDEA QUALITY (the idea has to be strong BEFORE formatting can save it):
+
+A hook that travels does THREE things at once. If the raw idea can't carry all three, bend it until it can — or it won't move.
+
+1. IT PAINTS A PICTURE IN THE READER'S HEAD.
+   The strongest hooks make you involuntarily SEE something. "Tiré las llaves a Claude" → you picture a person literally throwing keys at an AI. That mental image is what stops the scroll, not the concept behind it.
+   - Prefer concrete physical action + a real object over abstract statements.
+     "Le di mi pipeline a un agente y me fui a comer" beats "Automaticé mi prospección".
+     "Borré el CRM un viernes" beats "Replanteé nuestro proceso comercial".
+   - If you can't draw the hook as a single frame, it's still too abstract. Rewrite it as something a person could photograph.
+
+2. IT HITS A REAL PSYCHOLOGICAL WOUND.
+   The hooks that detonate poke a fear/insecurity the reader already carries and rarely says out loud. In consumer it's weight, height, going bald. In OUR B2B-sales+AI niche the equivalents are: being the slowest/most manual rep on the team, getting quietly replaced by an agent, missing quota while a peer using AI crushes it, looking incompetent next to someone younger + AI-native, your role not existing in 18 months.
+   - Aim the hook at that nerve. Don't be cruel — be honest about the thing they're already worried about, then make the post the relief.
+   - A hook with zero psychological stake ("5 herramientas de IA que uso") has nothing to detonate. Attach it to a wound or pick a different angle.
+
+3. IT MAXES OUT ONE OF THE THREE PILLARS.
+   Curiosity, desire, or fear — pick the ONE the idea fits best and push it to the extreme (this is the same single-pillar rule enforced later; the hook is where it has to be most violent). A hook that's mildly all three is weak. A hook that is RUTHLESSLY one of them travels.
+
+QUICK SELF-CHECK before you commit to a hook — it must pass all three:
+[ ] Can I picture it as one photo/frame?  [ ] Does it touch a fear/insecurity our ICP actually has?  [ ] Is one pillar cranked to the maximum (not three at medium)?
+If any box fails, the hook is not ready — rewrite the IDEA, not just the wording.`;
+
+// Distilled from a viral-thumbnail checklist (YouTube origin, adapted to
+// LinkedIn). Only consulted when an image would materially amplify the
+// post — see the IMAGE OUTPUT rule in generateVariant. LinkedIn-specific
+// reality baked in: once a photo is attached to a published post it
+// CANNOT be swapped, so there is no post-publish A/B — it has to be right
+// the first time and prepared WITH the post, never as an afterthought.
+const IMAGE_PRINCIPLES = `IMAGE SUGGESTION PRINCIPLES (when a visual will amplify the post):
+
+LINKEDIN REALITY: once you publish a post with a photo you cannot change the photo (you'd have to delete and repost, losing all reach). So there is NO post-publish A/B test. The image must be decided and nailed BEFORE publishing, treated as part of the post — never an afterthought. If the idea can't be represented by a strong single image, that's a signal the visual angle is weak; say so instead of forcing a mediocre image.
+
+THE IMAGE EXISTS TO DO ONE JOB: open a curiosity gap that only a click/read can close. Start from the psychology of the scroll-stop, not from "what looks nice".
+
+1. CURIOSITY GAP — the image must make the viewer ask a question so strong the only way to resolve it is to stop and read. Types that work: the moment right before a big reaction; a tension/story mid-beat; a desired result ("how did they get that?"); a before→after transformation (the more relatable the "before", the better); something genuinely unexpected (familiar thing + a twist).
+
+2. 1–2 SCROLL STOPPERS, NOT TEN — pick at most two of: a human face with a strong emotion; a big round number; money; danger; motion/action; a bright colour; a recognisable interface/tool/logo our ICP knows; something absurd or unexpected. More than two and it reads as noise.
+
+3. CLARITY IN UNDER 2 SECONDS — one main subject that carries the curiosity; everything else supports it or is deleted. If it needs explaining, it fails.
+
+4. COMPOSITION & HIERARCHY — centre + symmetry if the subject is central; rule of thirds if it's off to one side. Make the main subject dominate via scale (bigger), focus (sharp vs blurred background), depth (closer to camera) or position. Guide the eye with lines/arrows/contrast.
+
+5. TEXT ONLY IF IT ADDS — max ~5 words, never repeats the hook, used only for scale ("Día 7", "230K"), context, or extra curiosity. Big, legible, high-contrast. It must never compete with the main subject.
+
+6. CONTRAST — make it pop off the LinkedIn feed: light vs dark, one saturated element on a muted/greyscale background, complementary colours (blue/orange, red/green), and deliberately different from what everyone else in our niche posts (if the feed is busy, go clean; if it's all blue corporate, go warm).
+
+7. THREE QUICK TESTS before recommending it: (a) still readable as a tiny thumbnail; (b) interrupts the pattern when mentally placed next to other feed posts; (c) a person who hasn't seen the post gets the idea in a 2-second glance.
+
+When you propose an image, give a CONCRETE, shootable concept (subject, expression/action, key prop, text overlay if any, colour/contrast direction) — not vague adjectives. Offer the single strongest concept plus one genuinely different alternative concept (different curiosity gap, not just a recolour).`;
+
 // Distilled from a video-remix checklist the author uses when consuming
 // outliers. Same logic translates to LinkedIn text posts: decompose the
 // outlier, find the structural pattern that produced the lift, then rebuild
@@ -367,7 +422,7 @@ async function generateVariant(
   sourceType: string,
   archetype: ArchetypeRaw,
   outlierContext: string
-): Promise<string> {
+): Promise<{ text: string; image_suggestion: string | null }> {
   const hookLabel = HOOK_LABELS[archetype.hook_type] || archetype.hook_type;
   const structLabel = STRUCT_LABELS[archetype.post_structure] || archetype.post_structure;
 
@@ -390,6 +445,8 @@ ARCHETYPE TO USE:
 ${exampleSection}
 
 ${HOOK_LAW}
+
+${HOOK_QUALITY}
 
 ${BRAND_RULES}
 
@@ -419,9 +476,22 @@ RULES:
 - NEVER use markdown formatting inside the post: no **bold**, no *italic*, no \`code\`, no # headers. LinkedIn renders none of this — **word** shows up literally in the feed. Express emphasis with line breaks, caps on 1–2 words max, or punctuation instead.
 - 2-3 relevant hashtags at the end
 
+${IMAGE_PRINCIPLES}
+
 ${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}` : ''}
 
-Respond with ONLY the post text — no preamble, no explanation.`;
+OUTPUT FORMAT:
+Respond with the post text first — no preamble, no explanation.
+
+THEN, only if a visual would MATERIALLY amplify this specific post (it genuinely will for the PUNCHY + MEME mechanic, and for posts built on a striking contrast, a big number, a before→after, or an absurd image; it will NOT for most text-first posts), append a separate image suggestion in EXACTLY this shape:
+
+===IMAGE===
+<2–4 lines: a concrete, shootable concept following the IMAGE SUGGESTION PRINCIPLES — main subject, expression/action, key prop, any ≤5-word text overlay, colour/contrast direction. Then "Alt:" + one genuinely different alternative concept.>
+
+Rules for the image block:
+- Output the \`===IMAGE===\` marker on its own line, nothing before it on that line.
+- If a visual would NOT clearly help this post, OMIT the marker and the whole block entirely. Do not pad with a weak image. A missing image block is the correct answer for most posts.
+- Never put the marker or image text inside the post body — it goes strictly AFTER the post, after the marker.`;
 
   const response = await client.messages.create({
     model: 'claude-opus-4-7',
@@ -433,7 +503,14 @@ Respond with ONLY the post text — no preamble, no explanation.`;
     system,
   });
 
-  return response.content[0].type === 'text' ? response.content[0].text.trim() : '';
+  const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : '';
+  // Split off the optional image block. The model emits `===IMAGE===` on
+  // its own line ONLY when a visual genuinely helps; everything after it
+  // is the suggestion and must never leak into the copyable post text.
+  const m = raw.split(/\n?^\s*={2,}\s*IMAGE\s*={2,}\s*$\n?/im);
+  const text = (m[0] || '').trim();
+  const image_suggestion = m.length > 1 ? (m.slice(1).join('\n').trim() || null) : null;
+  return { text, image_suggestion };
 }
 
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
@@ -544,15 +621,24 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
           .trim()
       );
 
-    const variants = archetypes.slice(0, 3).map((arch, i) => ({
-      archetype_key: `${arch.hook_type}__${arch.post_structure}`,
-      archetype_label: `${HOOK_LABELS[arch.hook_type] || arch.hook_type}`,
-      archetype_desc: `${STRUCT_LABELS[arch.post_structure] || arch.post_structure} · ${arch.avg_ratio.toFixed(1)}x ratio en outliers`,
-      hook_type: arch.hook_type,
-      post_structure: arch.post_structure,
-      avg_ratio: arch.avg_ratio,
-      text: results[i].status === 'fulfilled' ? sanitizeText((results[i] as PromiseFulfilledResult<string>).value) : '',
-    })).filter((v) => v.text.length > 0);
+    const variants = archetypes.slice(0, 3).map((arch, i) => {
+      const r = results[i];
+      const out = r.status === 'fulfilled'
+        ? (r as PromiseFulfilledResult<{ text: string; image_suggestion: string | null }>).value
+        : { text: '', image_suggestion: null };
+      return {
+        archetype_key: `${arch.hook_type}__${arch.post_structure}`,
+        archetype_label: `${HOOK_LABELS[arch.hook_type] || arch.hook_type}`,
+        archetype_desc: `${STRUCT_LABELS[arch.post_structure] || arch.post_structure} · ${arch.avg_ratio.toFixed(1)}x ratio en outliers`,
+        hook_type: arch.hook_type,
+        post_structure: arch.post_structure,
+        avg_ratio: arch.avg_ratio,
+        text: out.text ? sanitizeText(out.text) : '',
+        // Kept separate from `text` on purpose — the post the user copies
+        // to LinkedIn must never contain the image brief.
+        image_suggestion: out.image_suggestion,
+      };
+    }).filter((v) => v.text.length > 0);
 
     if (variants.length === 0) {
       await PostIdeaModel.update(id, { status: 'draft' });
