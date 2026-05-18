@@ -14,8 +14,18 @@ export function calculateOutlierRatio(postEngagement: number, avgEngagement: num
   return avgEngagement > 0 ? postEngagement / avgEngagement : 0;
 }
 
-export function isOutlier(ratio: number): boolean {
-  return ratio >= 3.0;
+// Absolute engagement floor a post must clear to count as an outlier, ON
+// TOP of the 3x relative ratio. Without it a tiny account whose average
+// is ~2 flags a 5-like post as a "20x outlier" — noise that pollutes the
+// research/remix pool. engagement_score = likes + comments*2 + reposts*3,
+// so 100 ≈ "~100 likes-equivalent" (the user's intuition) while still
+// crediting comment/repost-heavy posts. For our managed accounts (Iker/
+// Unai) every real 3x outlier is far above this, so nothing real is lost.
+// Tunable: raise to 150–200 if the pool still feels noisy.
+export const MIN_OUTLIER_ENGAGEMENT = 100;
+
+export function isOutlier(ratio: number, engagementScore: number): boolean {
+  return ratio >= 3.0 && engagementScore >= MIN_OUTLIER_ENGAGEMENT;
 }
 
 // Extract hook (first line)
@@ -591,7 +601,7 @@ export function recalculateOutliers(posts: { engagement_score: number }[]) {
     return {
       ...p,
       outlier_ratio: Math.round(ratio * 100) / 100,
-      is_outlier: isOutlier(ratio),
+      is_outlier: isOutlier(ratio, p.engagement_score),
     };
   });
 }

@@ -4,7 +4,7 @@ import { CreatorModel } from '../models/creator';
 import { unipileService } from '../services/unipile';
 import { tagCreatorNiche } from '../services/nicheTagging';
 import { normalizeLinkedInUrl, isValidLinkedInUrl } from '../utils/linkedin';
-import { calculateEngagement } from '../services/engagement';
+import { calculateEngagement, MIN_OUTLIER_ENGAGEMENT } from '../services/engagement';
 
 const router = Router();
 
@@ -53,8 +53,12 @@ async function enrichCreator(linkedinUrl: string, searchQuery?: string): Promise
   const avgEngagement = totalPosts > 0 ? scores.reduce((a, b) => a + b, 0) / totalPosts : 0;
   const maxEngagement = totalPosts > 0 ? Math.max(...scores) : 0;
 
-  // Outliers = posts with score >= 3x average
-  const outlierScores = scores.filter((s) => avgEngagement > 0 && s >= avgEngagement * 3);
+  // Outliers = posts with score >= 3x average AND past the absolute floor
+  // (same rule as recalculateOutliers — a 20x on a 5-like post isn't a
+  // real outlier and shouldn't inflate the virality score).
+  const outlierScores = scores.filter(
+    (s) => avgEngagement > 0 && s >= avgEngagement * 3 && s >= MIN_OUTLIER_ENGAGEMENT
+  );
   const outlierCount = outlierScores.length;
   const outlierRatioAvg = totalPosts > 0
     ? scores.reduce((sum, s) => sum + (avgEngagement > 0 ? s / avgEngagement : 0), 0) / totalPosts

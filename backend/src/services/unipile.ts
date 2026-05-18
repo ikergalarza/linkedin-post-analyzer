@@ -274,11 +274,19 @@ export class UnipileService {
   async getPosts(providerInternalId: string, since?: Date, accountIdOverride?: string): Promise<UnipilePost[]> {
     const allPosts: UnipilePost[] = [];
     let cursor: string | undefined;
-    const sixMonthsAgo = since || new Date(Date.now() - 180 * 24 * 60 * 60 * 1000);
+    // `since` is a HARD time floor for callers that intentionally want a
+    // bounded window (Discover/monitor/network). When NO `since` is given
+    // (managed-account + Dashboard creator scrapes) we pull the FULL
+    // history — LinkedIn serves a profile's activity well past 6 months
+    // and the old 180-day early-return was a self-imposed cap, not a
+    // LinkedIn limit. Only the page safety cap bounds the no-floor path.
+    const floor: Date | null = since ?? null;
     const accountId = accountIdOverride || this.accountId;
 
     let page = 0;
-    const maxPages = 20;
+    // Bounded window → 20 pages is plenty. Full history → allow far more
+    // (2000 posts) so multi-year accounts aren't silently truncated.
+    const maxPages = floor ? 20 : 40;
 
     console.log(`[Unipile] Fetching posts for identifier: ${providerInternalId} (account_id: ${accountId})`);
 
@@ -305,8 +313,8 @@ export class UnipileService {
 
       for (const post of posts) {
         const publishedAt = post.parsed_datetime || post.created_at || post.published_at || post.date;
-        if (publishedAt && new Date(publishedAt) < sixMonthsAgo) {
-          console.log(`[Unipile] Reached posts older than 6 months, stopping. Total: ${allPosts.length}`);
+        if (floor && publishedAt && new Date(publishedAt) < floor) {
+          console.log(`[Unipile] Reached posts older than the requested window, stopping. Total: ${allPosts.length}`);
           return allPosts;
         }
         allPosts.push(post);

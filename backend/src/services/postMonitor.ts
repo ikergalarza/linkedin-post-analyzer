@@ -146,7 +146,7 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
           const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
           await pool.query(
             `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
-            [Math.round(ratio * 100) / 100, isOutlier(ratio), p.id]
+            [Math.round(ratio * 100) / 100, isOutlier(ratio, Number(p.engagement_score) || 0), p.id]
           );
         }
       } catch (err: any) {
@@ -307,7 +307,7 @@ export async function capturePostSnapshot(postId: string): Promise<{
         const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
         await pool.query(
           `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
-          [Math.round(ratio * 100) / 100, isOutlier(ratio), p.id]
+          [Math.round(ratio * 100) / 100, isOutlier(ratio, Number(p.engagement_score) || 0), p.id]
         );
       }
     }
@@ -354,7 +354,7 @@ async function backfillOutliers() {
         const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
         await pool.query(
           `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
-          [Math.round(ratio * 100) / 100, isOutlier(ratio), p.id]
+          [Math.round(ratio * 100) / 100, isOutlier(ratio, Number(p.engagement_score) || 0), p.id]
         );
       }
     }
