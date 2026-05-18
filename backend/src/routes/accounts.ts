@@ -1402,13 +1402,14 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
 // fatigue), all in the post's language.
 
 // GET /api/accounts/posts/:postId/google-chat-preview
-// Returns owner detection, post info, and 3-5 supportive comments generated
-// in the post's language using the opposite-owner voice (or the requested
-// profile_name override).
+// Returns owner detection (just for the message header label) + post info +
+// 3-5 supportive comments. There is NO voice/profile selection: this button
+// exists only to feed our internal support network with safe, warm
+// copy-paste comments — it never speaks "as Iker" or "as Unai". Dropping
+// the profile lookup also makes it load noticeably faster.
 router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId;
-    const profileOverride = typeof req.query.profile_name === 'string' ? req.query.profile_name : null;
 
     const { rows } = await pool.query(
       `SELECT p.id, p.content_text, p.post_url, p.hook_text,
@@ -1421,15 +1422,9 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
     const post = rows[0];
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
+    // Owner is still detected — but only to label the header
+    // ("NUEVO POST IKER/UNAI"), not to pick a commenter voice.
     const ownerInfo = detectOwner(post.creator_name);
-    const voiceName = profileOverride || ownerInfo.suggestedVoice;
-
-    const profile = await CommenterProfileModel.getByName(voiceName);
-    if (!profile) {
-      return res.status(400).json({
-        error: `No se encontró el perfil de voz "${voiceName}". Configúralo en Network → Profiles.`,
-      });
-    }
 
     // Randomise the count between 3 and 5 so daily messages don't feel like
     // a template. Variety reduces fatigue on the receiving side without
@@ -1440,14 +1435,14 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
         postContent: post.content_text || '',
         creatorName: post.creator_name,
         creatorHeadline: post.creator_headline || null,
+        // Neutral voice on purpose — these are network-support comments any
+        // teammate can paste, not a specific person's voice.
         profile: {
-          headline: profile.headline,
-          voice_style: profile.voice_style,
-          worldview: profile.worldview,
-          signature_moves: profile.signature_moves,
-          avoid: profile.avoid,
-          tone: profile.tone,
-          expertise: profile.expertise,
+          headline: null,
+          voice_style: null,
+          worldview: null,
+          signature_moves: null,
+          avoid: null,
         },
       },
       targetCount
@@ -1477,7 +1472,6 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
         creator_name: post.creator_name,
       },
       owner: ownerInfo.owner,
-      voice_used: voiceName,
       comments,
       webhook_configured: !!process.env.GOOGLE_CHAT_WEBHOOK_URL,
     });

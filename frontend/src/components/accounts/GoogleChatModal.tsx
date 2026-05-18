@@ -2,8 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
-type VoiceChoice = 'Iker' | 'Unai';
-
 interface PreviewData {
   post: {
     id: string;
@@ -13,8 +11,8 @@ interface PreviewData {
     creator_name: string | null;
   };
   owner: 'Iker' | 'Unai' | 'unknown';
-  voice_used: VoiceChoice;
-  // Backend now returns a flat array of supportive comments (3-5).
+  // Flat array of supportive comments (3-5). No voice selection — these
+  // are neutral network-support comments, not anyone's personal voice.
   comments: string[];
   webhook_configured: boolean;
 }
@@ -31,12 +29,9 @@ function buildHeader(owner: 'Iker' | 'Unai' | 'unknown', creatorName: string | n
   return `🐝 ${label}:\n${url || '(sin URL)'}`;
 }
 
-// Single-line reminder slot between the header and the comments. Keeps
-// the playbook front-of-mind without bloating the message: the 1st-hour
-// signal is what the algorithm uses to decide whether to push the post,
-// and Repost + Save (3-dot menu → Guardar) are the highest-impact
-// teammate actions. Comment is implicit since the comments block is
-// right below.
+// Single-line reminder between the header and the comments — the 1st-hour
+// signal is what the algorithm uses, and Like/Compartir/Comentario/Guardar
+// are the highest-impact teammate actions.
 const REMINDER_LINE =
   '⚠️ RECORDATORIO: si podéis LIKE + COMPARTIR + COMENTARIO + GUARDAR (pulsando 3 puntos del post) nos vamos VIRALES 🔥';
 
@@ -45,10 +40,11 @@ function buildMessage(header: string, comments: string[]): string {
   if (cleaned.length === 0) {
     return [header, '', REMINDER_LINE].join('\n');
   }
-  const count = cleaned.length;
-  const subtitle = `💬 ${count} COMENTARIOS de APOYO (copia y pega):`;
-  const numbered = cleaned.map((c, i) => `${i + 1}. ${c}`).join('\n\n');
-  return [header, '', REMINDER_LINE, '', subtitle, '', numbered].join('\n');
+  const subtitle = `💬 ${cleaned.length} COMENTARIOS de APOYO (copia y pega):`;
+  // No numbering in front of each comment — teammates copy the one they
+  // want as-is, faster, with nothing to strip.
+  const body = cleaned.join('\n\n');
+  return [header, '', REMINDER_LINE, '', subtitle, '', body].join('\n');
 }
 
 export default function GoogleChatModal({
@@ -61,23 +57,20 @@ export default function GoogleChatModal({
   const [data, setData] = useState<PreviewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [voice, setVoice] = useState<VoiceChoice>('Iker');
   const [comments, setComments] = useState<string[]>([]);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  const loadPreview = async (profileName?: VoiceChoice) => {
+  const loadPreview = async () => {
     setLoading(true);
     setError(null);
     try {
-      const qs = profileName ? `?profile_name=${encodeURIComponent(profileName)}` : '';
-      const res = await fetch(`${BASE}/api/accounts/posts/${postId}/google-chat-preview${qs}`);
+      const res = await fetch(`${BASE}/api/accounts/posts/${postId}/google-chat-preview`);
       const json = await res.json();
       if (!res.ok) { setError(json.error || `Error ${res.status}`); setLoading(false); return; }
       setData(json);
       setComments(Array.isArray(json.comments) ? json.comments : []);
-      setVoice(json.voice_used);
     } catch (e: any) {
       setError(e.message || 'Error al cargar preview');
     }
@@ -96,15 +89,9 @@ export default function GoogleChatModal({
 
   const overLimit = message.length > MAX_LEN;
 
-  const handleRegenerate = async (newVoice: VoiceChoice) => {
-    if (newVoice === voice) return;
-    await loadPreview(newVoice);
-  };
-
-  // "Re-roll" — re-fetch with the current voice so the user can ask for a
-  // fresh batch (different count + different angles) without changing voice.
+  // Re-roll — fetch a fresh batch (count varies 3-5 for variety).
   const handleReRoll = async () => {
-    await loadPreview(voice);
+    await loadPreview();
   };
 
   const handleCopy = async (key: 'all' | number) => {
@@ -161,7 +148,6 @@ export default function GoogleChatModal({
             {data && (
               <p className="text-xs text-text-muted mt-0.5">
                 Post de <span className="text-text-secondary font-medium">{data.post.creator_name || '—'}</span>
-                {data.owner !== 'unknown' && <> · detectado como <span className="text-accent">{data.owner}</span></>}
                 {' '}· <span className="text-text-secondary">{comments.length} comentarios de apoyo</span>
               </p>
             )}
@@ -192,31 +178,15 @@ export default function GoogleChatModal({
 
           {!loading && data && (
             <>
-              {/* Voice + re-roll */}
-              <div className="flex items-end justify-between gap-3 flex-wrap">
-                <div>
-                  <label className="block text-xs text-text-muted font-medium mb-1.5">Voz para los comentarios</label>
-                  <div className="flex gap-2">
-                    {(['Iker', 'Unai'] as const).map((v) => (
-                      <button
-                        key={v}
-                        onClick={() => handleRegenerate(v)}
-                        disabled={loading}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                          voice === v
-                            ? 'border-accent/50 bg-accent/10 text-accent'
-                            : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'
-                        }`}
-                      >
-                        {v}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              {/* Re-roll */}
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <p className="text-xs text-text-muted">
+                  Comentarios de apoyo para la red de compañeros — neutrales, listos para copiar y pegar.
+                </p>
                 <button
                   onClick={handleReRoll}
                   className="text-[11px] text-accent hover:text-accent-light border border-border px-3 py-1.5 rounded-full"
-                  title="Regenerar (cantidad varía 3-5 para evitar fatiga)"
+                  title="Regenerar (la cantidad varía 3-5 para evitar fatiga)"
                 >
                   🎲 Regenerar
                 </button>
@@ -237,7 +207,7 @@ export default function GoogleChatModal({
                   {message}
                 </pre>
                 <p className={`text-[10px] mt-1 ${overLimit ? 'text-amber-400' : 'text-text-muted'}`}>
-                  {message.length} / {MAX_LEN} chars · todos los comentarios son de apoyo (reinforce + warm), pensados para que cualquier compañero los pueda pegar sin riesgo de imagen.
+                  {message.length} / {MAX_LEN} chars · todos de apoyo (reinforce + warm), sin numerar, pensados para que cualquier compañero los pegue sin riesgo de imagen.
                 </p>
               </div>
 
@@ -247,9 +217,7 @@ export default function GoogleChatModal({
                 {comments.map((value, idx) => (
                   <div key={idx} className="bg-bg-secondary border border-border rounded-lg p-3">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[11px] font-medium text-text-primary">
-                        💪 Comentario {idx + 1}
-                      </span>
+                      <span className="text-[11px] font-medium text-text-primary">💪 Comentario de apoyo</span>
                       <button
                         onClick={() => handleCopy(idx)}
                         className="text-[10px] text-accent hover:text-accent-light"
