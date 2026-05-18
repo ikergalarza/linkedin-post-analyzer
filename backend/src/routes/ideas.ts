@@ -227,6 +227,46 @@ THE IMAGE EXISTS TO DO ONE JOB: open a curiosity gap that only a click/read can 
 
 When you propose an image, give a CONCRETE, shootable concept (subject, expression/action, key prop, text overlay if any, colour/contrast direction) — not vague adjectives. Offer the single strongest concept plus one genuinely different alternative concept (different curiosity gap, not just a recolour).`;
 
+// ONLY injected when the raw idea is a VIDEO request (isVideoRequest()).
+// Distilled from ASR transcripts of 11 TikTok B2B-AI outliers (Apify
+// clockworks/tiktok-video-scraper). A video post is a fundamentally
+// different artifact than a text or text+image post — three separate
+// pieces, each with its own job — so this block REPLACES the text-post
+// hook expectations when active.
+const VIDEO_SCRIPT = `VIDEO SCRIPT MODE (the raw idea is for a LinkedIn text+video post — this is a DIFFERENT artifact than a text post):
+
+THE #1 RULE — THREE SEPARATE PIECES, NEVER COPIED BETWEEN THEM:
+A video post is not one piece of copy. It is three, each optimising a different thing. In the real outliers studied, the caption and the spoken hook were deliberately DIFFERENT strategies on the same video.
+1. CAPTION (the LinkedIn post text under the video) — job: get found + give the algorithm context. Can be a provocative question or an SEO-ish line. HOOK_LAW still applies to the caption's first line (the feed still cuts it).
+2. TEXT ON SCREEN (burned onto the first frames of the video) — job: reinforce/ reframe the promise visually and force a read in the silent-autoplay scroll. ≤6 words, emotional framing ("GENIUS mode", "nobody does this").
+3. SPOKEN HOOK (the first 0–9s of audio) — job: retention. This is where the real promise lands. It is NOT the caption reworded.
+Write all three. Make them deliberately different. The caption sells the click, the spoken hook sells the stay.
+
+THE 6 PROVEN SPOKEN-HOOK PATTERNS (from the outliers — adapt to Neety's B2B sales + AI niche, never copy verbatim):
+1. "X just killed Y" + "here's how in 3 steps" — provocation then low entry cost. The hook sells destruction, the body promises construction. (Maverick Claude editors 1.4M; Joshua agencies 472k)
+   → "Neety just killed cold-email writers. Here's how to run outbound hands-off in 3 steps."
+2. "Nobody's talking about it" / "stay to the end — the [thing] no one is using yet" — insider exclusivity. Highest-leverage retention lever observed. (Maverick Kimi K2 34.5M; Joshua 5 Skills 491k)
+   → "This outbound tactic works 10x better and nobody's talking about it." / "Stay to the end — the setup no SDR is using yet."
+3. "Everyone tells you X, but [if you're a beginner you won't know how / it breaks at scale]" — contradicts the consensus, names the pain. (Joshua 5 Skills 491k)
+   → "Everyone tells you to personalise every email by hand. Do that at scale and you never send. Here's what actually works."
+4. "This is THE ONE [prompt/sequence/playbook]…" + ultra-specific outcome stated in the negative ("never lies, never hallucinates"). Triple-negative = eliminate ALL the base pains at once. (Maverick 6.2M & 3.9M)
+   → "This is THE ONE prospecting chain so your SDR never misses a follow-up, never drops a hot lead, never sends a generic email."
+5. "Let's [verb] in 60 seconds" + a mundane, universally-relatable problem setup. "Let's" (not "I'll show you") makes the viewer do it WITH you — closes distance. (Kyle 351k, +3.7x — easiest to produce)
+   → "Let's set up your first prospecting agent in 60 seconds. Here's my inbox right now — 200 leads untouched."
+6. "$X/year [human equivalent]" — quantified outcome benchmarked against a human team. Greed + status + concreteness. (Joshua 472k)
+   → "Here's how to run a $500k/year SDR team with 3 Neety agents."
+
+FIRST-3-SECONDS TECHNIQUES that recur in the biggest outliers:
+- Raw recited numbers as social proof ("3 million. 800k. 1.2 million.") before any sentence — the brain sums it unprompted. Only if the numbers are real.
+- Deliver the global promise BEFORE asking for the engagement action. The save/follow/comment ask comes AFTER the hook has landed, never before.
+
+DO NOT COPY (seen in outliers but they don't transfer to a small/new account):
+- Blatant comment-gate at second 0 (Maverick-style) — only works on large pre-trained audiences. Embed the comment-gate at ~sec 12–15, AFTER the hook lands (Joshua pattern).
+- Geopolitical / breaking-news hijack (Kimi K2 34.5M) — not reproducible on demand. Needs a real news event; wait for it, never fake it.
+- Pure listicle with no antagonist — lists with no "vs" / "instead of" / "everyone tells you… but" stay flat.
+
+A video idea that can't carry a strong SPOKEN hook (one of the 6 above) is a weak video idea — say so rather than forcing a flat script.`;
+
 // Distilled from a video-remix checklist the author uses when consuming
 // outliers. Same logic translates to LinkedIn text posts: decompose the
 // outlier, find the structural pattern that produced the lift, then rebuild
@@ -417,6 +457,19 @@ async function getOutlierContext(): Promise<string> {
   return lines.join('\n');
 }
 
+// True when the raw idea is asking for help with a VIDEO (idea, script,
+// guion, review of a video, etc.). Video posts are a different artifact
+// (caption + on-screen text + spoken hook) so the VIDEO_SCRIPT block is
+// only injected for these. Accent-insensitive, word-boundary matched so
+// an incidental "video" inside a longer word doesn't trigger it.
+function isVideoRequest(raw: string): boolean {
+  const s = (raw || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, ''); // strip accents: vídeo→video, guión→guion
+  return /\b(video|videos|guion|guiones|script|scripts|reel|reels|grabar|grabacion|rodar|rodaje|filmar|tiktok|short|shorts)\b/.test(s);
+}
+
 async function generateVariant(
   rawContent: string,
   sourceType: string,
@@ -433,6 +486,7 @@ async function generateVariant(
   const today = new Date();
   const todayStr = today.toISOString().slice(0, 10);
   const currentYear = today.getUTCFullYear();
+  const videoMode = isVideoRequest(rawContent);
 
   const system = `You are a LinkedIn post writer. Write a complete LinkedIn post based on a raw idea, using a SPECIFIC viral archetype.
 
@@ -447,7 +501,7 @@ ${exampleSection}
 ${HOOK_LAW}
 
 ${HOOK_QUALITY}
-
+${videoMode ? `\n${VIDEO_SCRIPT}\n` : ''}
 ${BRAND_RULES}
 
 ${POSITIONING_PRINCIPLES}
@@ -480,7 +534,22 @@ ${IMAGE_PRINCIPLES}
 
 ${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}` : ''}
 
-OUTPUT FORMAT:
+${videoMode ? `OUTPUT FORMAT (VIDEO — produce the three pieces, clearly labelled, in this exact order, nothing else):
+
+CAPTION:
+<the LinkedIn post text that goes under the video. HOOK_LAW applies to its first line. 1–3 short paragraphs + 2–3 hashtags. This is what gets posted as the text of the LinkedIn post.>
+
+TEXT ON SCREEN:
+<≤6 words, burned on the first frames. Emotional/curiosity framing. Must NOT be the caption reworded.>
+
+SPOKEN HOOK (0–9s):
+<the literal words said out loud in the first ~9 seconds. Must follow ONE of the 6 proven spoken-hook patterns. NOT the caption reworded.>
+
+SCRIPT BEATS (~30–60s):
+<5–8 short bullet beats for the rest of the video: the payoff, the steps/demo, and the engagement ask embedded at ~sec 12–15 (never at second 0).>
+
+Do NOT output an ===IMAGE=== block in video mode — the on-screen text above is the visual.`
+: `OUTPUT FORMAT:
 Respond with the post text first — no preamble, no explanation.
 
 THEN, only if a visual would MATERIALLY amplify this specific post (it genuinely will for the PUNCHY + MEME mechanic, and for posts built on a striking contrast, a big number, a before→after, or an absurd image; it will NOT for most text-first posts), append a separate image suggestion in EXACTLY this shape:
@@ -491,7 +560,7 @@ THEN, only if a visual would MATERIALLY amplify this specific post (it genuinely
 Rules for the image block:
 - Output the \`===IMAGE===\` marker on its own line, nothing before it on that line.
 - If a visual would NOT clearly help this post, OMIT the marker and the whole block entirely. Do not pad with a weak image. A missing image block is the correct answer for most posts.
-- Never put the marker or image text inside the post body — it goes strictly AFTER the post, after the marker.`;
+- Never put the marker or image text inside the post body — it goes strictly AFTER the post, after the marker.`}`;
 
   const response = await client.messages.create({
     model: 'claude-opus-4-7',
@@ -607,19 +676,24 @@ router.post('/:id/generate', async (req: Request, res: Response) => {
       archetypes.slice(0, 3).map((arch) => generateVariant(idea.raw_content, idea.source_type, arch, outlierContext))
     );
 
-    const sanitizeText = (t: string) =>
-      ensureSingleLineHook(
-        t
-          .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-          // LinkedIn doesn't render markdown — strip **bold** / *italic* / `code`
-          // wrappers so they don't appear as literal asterisks in the feed. We
-          // tell the model not to use them in the prompt too, but defend at the
-          // boundary.
-          .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
-          .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
-          .replace(/`([^`\n]+?)`/g, '$1')
-          .trim()
-      );
+    // Video output is a structured CAPTION/TEXT-ON-SCREEN/SPOKEN-HOOK/
+    // BEATS package — collapsing its first lines into a single hook would
+    // wreck it, so ensureSingleLineHook is skipped in video mode. The
+    // control-char + markdown strip still applies in both modes.
+    const videoMode = isVideoRequest(idea.raw_content);
+    const sanitizeText = (t: string) => {
+      const cleaned = t
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+        // LinkedIn doesn't render markdown — strip **bold** / *italic* / `code`
+        // wrappers so they don't appear as literal asterisks in the feed. We
+        // tell the model not to use them in the prompt too, but defend at the
+        // boundary.
+        .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
+        .replace(/(^|[\s(])\*([^*\n]+?)\*(?=[\s).,!?]|$)/g, '$1$2')
+        .replace(/`([^`\n]+?)`/g, '$1')
+        .trim();
+      return videoMode ? cleaned : ensureSingleLineHook(cleaned);
+    };
 
     const variants = archetypes.slice(0, 3).map((arch, i) => {
       const r = results[i];
