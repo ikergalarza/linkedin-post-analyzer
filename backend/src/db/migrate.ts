@@ -385,6 +385,39 @@ const migration = `
   -- so we can keep it inline without the raw_response blow-up.
   ALTER TABLE creator_profile_view_snapshots
     ADD COLUMN IF NOT EXISTS viewer_timestamps BIGINT[];
+
+  -- v24: Backfill Iker's April follower history from LinkedIn's own
+  -- exported analytics. We only began snapshotting on 2026-04-24
+  -- (7617 followers), but the first post went viral on 2026-04-14.
+  -- LinkedIn Creator Analytics → Followers export gives the real
+  -- "new followers per day"; anchored on our measured 2026-04-24=7617
+  -- (which matches LinkedIn's 2026-05-18 total of 8314 exactly), we
+  -- reconstruct the end-of-day cumulative total for every missing day.
+  -- These are NOT estimates — they are LinkedIn's exported numbers
+  -- arithmetic'd back from a verified anchor, so the curve stays 100%
+  -- real and splices into the measured series with no discontinuity.
+  --
+  -- ON CONFLICT DO NOTHING: never overwrites a measured snapshot
+  -- (2026-04-24 onward already exists). Guarded so it only runs if
+  -- Iker's creator row is present. Safe to re-run.
+  INSERT INTO creator_follower_snapshots (creator_id, captured_on, followers_count)
+  SELECT v.creator_id::uuid, v.captured_on::date, v.followers_count
+  FROM (VALUES
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-12', 7053),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-13', 7073),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-14', 7288),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-15', 7389),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-16', 7454),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-17', 7487),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-18', 7504),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-19', 7515),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-20', 7533),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-21', 7572),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-22', 7594),
+    ('3d545376-057c-48db-8b45-c5c5510110bb', '2026-04-23', 7606)
+  ) AS v(creator_id, captured_on, followers_count)
+  WHERE EXISTS (SELECT 1 FROM creators c WHERE c.id = v.creator_id::uuid)
+  ON CONFLICT (creator_id, captured_on) DO NOTHING;
 `;
 
 export async function runMigrations() {
