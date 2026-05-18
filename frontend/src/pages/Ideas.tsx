@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { useApi } from '../hooks/useApi';
-import PostChecklist, { scorePost } from '../components/postcreator/PostChecklist';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -140,12 +139,6 @@ const ARCHETYPE_COLORS = [
   { border: 'border-blue-400/30', bg: 'bg-blue-400/5', badge: 'bg-blue-400/15 text-blue-400', btn: 'bg-blue-500/80 text-white hover:bg-blue-500' },
 ];
 
-function scoreColor(score: number) {
-  if (score >= 80) return 'text-green-400';
-  if (score >= 60) return 'text-amber-400';
-  return 'text-danger';
-}
-
 // ─── Voice capture ────────────────────────────────────────────────────────────
 function useVoiceCapture(onResult: (text: string) => void) {
   const [listening, setListening] = useState(false);
@@ -173,30 +166,25 @@ function useVoiceCapture(onResult: (text: string) => void) {
   return { listening, start, stop };
 }
 
-// ─── Post editor with auto-improve ───────────────────────────────────────────
-// Thin wrapper around <PostChecklist/>, which already renders the score ring,
-// pillar bars (curiosity/fear/desire), craft category bars, and suggestions.
+// ─── Post editor ─────────────────────────────────────────────────────────────
+// Plain editable textarea + copy. The scorer/checklist was removed: the
+// Post Creator already bakes the strategy knowledge + real outlier data
+// into generation, so a separate regex score added no signal here.
 function PostEditor({ ideaId, initialText, onSave }: {
   ideaId: string;
   initialText: string;
-  onSave: (text: string, score: number) => void;
+  onSave: (text: string) => void;
 }) {
   const [postText, setPostText] = useState(initialText);
   const [copied, setCopied] = useState(false);
 
   const persist = (text: string) => {
-    const score = scorePost(text).overall;
     fetch(`${BASE}/api/ideas/${ideaId}/save-post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ generated_post: text, generation_score: score }),
+      body: JSON.stringify({ generated_post: text }),
     }).catch(() => {});
-    onSave(text, score);
-  };
-
-  const handleImproved = (newText: string) => {
-    setPostText(newText);
-    persist(newText);
+    onSave(text);
   };
 
   const handleCopy = () => {
@@ -211,11 +199,9 @@ function PostEditor({ ideaId, initialText, onSave }: {
         value={postText}
         onChange={(e) => setPostText(e.target.value)}
         onBlur={() => persist(postText)}
-        className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-sm text-text-primary resize-none focus:outline-none focus:border-accent"
-        rows={12}
+        className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-sm text-text-primary resize-y focus:outline-none focus:border-accent leading-relaxed"
+        rows={14}
       />
-
-      <PostChecklist text={postText} onImproved={handleImproved} />
 
       <button
         onClick={handleCopy}
@@ -276,9 +262,9 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
     fetch(`${BASE}/api/ideas/${idea.id}/save-post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ generated_post: v.text, generation_score: scorePost(v.text).overall }),
+      body: JSON.stringify({ generated_post: v.text }),
     }).catch(() => {});
-    onUpdate(idea.id, { generated_post: v.text, generation_score: scorePost(v.text).overall });
+    onUpdate(idea.id, { generated_post: v.text });
   };
 
   return (
@@ -292,9 +278,6 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
           {idea.tags.map((tag) => (
             <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-bg-secondary text-text-muted border border-border">{tag}</span>
           ))}
-          {idea.generation_score !== null && (
-            <span className={`text-xs font-bold ${scoreColor(idea.generation_score)}`}>{idea.generation_score}/100</span>
-          )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-[10px] text-text-muted">{new Date(idea.created_at).toLocaleDateString()}</span>
@@ -368,18 +351,14 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
           <p className="text-xs text-text-muted">Choose the archetype that fits best:</p>
           {variants.map((v, i) => {
             const colors = ARCHETYPE_COLORS[i % ARCHETYPE_COLORS.length];
-            const previewScore = scorePost(v.text).overall;
             return (
               <div key={v.archetype_key} className={`border rounded-xl p-4 ${colors.border} ${colors.bg}`}>
-                {/* Archetype badge + score */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${colors.badge}`}>
-                      {v.archetype_label}
-                    </span>
-                    <span className="text-[10px] text-text-muted">{v.archetype_desc}</span>
-                  </div>
-                  <span className={`text-xs font-bold tabular-nums ${scoreColor(previewScore)}`}>{previewScore}/100</span>
+                {/* Archetype badge */}
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${colors.badge}`}>
+                    {v.archetype_label}
+                  </span>
+                  <span className="text-[10px] text-text-muted">{v.archetype_desc}</span>
                 </div>
 
                 {/* Post preview */}
@@ -432,7 +411,7 @@ function IdeaCard({ idea, onUpdate, onDelete }: {
           <PostEditor
             ideaId={idea.id}
             initialText={selectedVariant.text}
-            onSave={(text, score) => onUpdate(idea.id, { generated_post: text, generation_score: score })}
+            onSave={(text) => onUpdate(idea.id, { generated_post: text })}
           />
           {selectedVariant.image_suggestion && (
             <div className="mt-3 rounded-lg border border-dashed border-border bg-bg-primary/50 p-3">

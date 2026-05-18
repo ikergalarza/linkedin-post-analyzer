@@ -3,7 +3,6 @@ import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { detectPatterns, getCrossCreatorPatterns, generatePostExplanation, analyzeNarrativeRhythm, detectViralityDriver } from '../services/patterns';
 import { formatUtcOffset } from '../utils/timezone';
-import { enrichPost } from '../services/engagement';
 import pool from '../db';
 
 function paramId(req: Request): string {
@@ -344,90 +343,9 @@ router.get('/:id/export', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/analysis/archetype-leaderboard
-// Returns the (hook_type, post_structure) pairs that have produced outliers,
-// ranked by avg outlier ratio. Used by the Post Scorer to grade a draft post
-// against patterns that have actually worked, not just regex heuristics.
-router.get('/archetype-leaderboard', async (_req: Request, res: Response) => {
-  try {
-    const { rows } = await pool.query(`
-      SELECT
-        p.hook_type,
-        p.post_structure,
-        AVG(p.outlier_ratio)::float AS avg_ratio,
-        COUNT(*)::int AS sample_count,
-        MAX(p.outlier_ratio)::float AS max_ratio,
-        (ARRAY_AGG(p.hook_text ORDER BY p.outlier_ratio DESC))[1] AS example_hook,
-        (ARRAY_AGG(p.content_text ORDER BY p.outlier_ratio DESC))[1] AS example_text,
-        (ARRAY_AGG(p.text_tone ORDER BY p.outlier_ratio DESC))[1] AS dominant_tone
-      FROM posts p
-      WHERE p.is_outlier = TRUE
-        AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-        AND p.hook_type IS NOT NULL AND p.hook_type != 'other'
-        AND p.post_structure IS NOT NULL AND p.post_structure != 'other'
-      GROUP BY p.hook_type, p.post_structure
-      HAVING COUNT(*) >= 2
-      ORDER BY avg_ratio DESC
-      LIMIT 20
-    `);
-
-    // Also return totals so the frontend can rank a classified post against
-    // the full distribution (top X of N).
-    const totals = await pool.query(
-      `SELECT COUNT(*)::int AS total FROM posts WHERE is_outlier = TRUE AND linkedin_post_id <> 'DEMO_LIVE_POST'`
-    );
-
-    res.json({
-      archetypes: rows.map((r: any) => ({
-        hook_type: r.hook_type,
-        post_structure: r.post_structure,
-        avg_ratio: +r.avg_ratio.toFixed(2),
-        max_ratio: +r.max_ratio.toFixed(2),
-        sample_count: r.sample_count,
-        example_hook: r.example_hook,
-        // Truncate example_text so the leaderboard stays small over the wire;
-        // the rewriter only needs the first ~600 chars to grok the archetype.
-        example_text: r.example_text ? String(r.example_text).slice(0, 600) : null,
-        dominant_tone: r.dominant_tone,
-      })),
-      total_outliers: totals.rows[0]?.total || 0,
-    });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/analysis/classify-post
-// Body: { text: string }
-// Runs the same enrichPost classifier the scrape pipeline uses, so the Scorer
-// gets the post's hook_type + post_structure + tone and can compare it to the
-// archetype leaderboard for data-driven scoring.
-router.post('/classify-post', async (req: Request, res: Response) => {
-  try {
-    const text = (req.body?.text || '').toString();
-    if (!text.trim()) return res.status(400).json({ error: 'text is required' });
-
-    // enrichPost reads engagement counters too; pass zeros — we only need the
-    // text-derived fields (hook_type / post_structure / text_tone / hook_text).
-    const enriched = enrichPost({
-      content_text: text,
-      likes_count: 0,
-      comments_count: 0,
-      reposts_count: 0,
-    });
-
-    res.json({
-      hook_type: enriched.hook_type,
-      post_structure: enriched.post_structure,
-      text_tone: enriched.text_tone,
-      hook_text: enriched.hook_text,
-      word_count: enriched.word_count,
-      char_count: enriched.char_count,
-      language: enriched.language,
-    });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// NOTE: /archetype-leaderboard and /classify-post were removed along with
+// the Post Scorer/Checklist. The Post Creator already grounds generation
+// in the same real outlier data, so the separate scoring layer (and its
+// divergent ruleset) was redundant.
 
 export default router;
