@@ -17,12 +17,16 @@ export function calculateOutlierRatio(postEngagement: number, avgEngagement: num
 // Absolute engagement floor a post must clear to count as an outlier, ON
 // TOP of the 3x relative ratio. Without it a tiny account whose average
 // is ~2 flags a 5-like post as a "20x outlier" — noise that pollutes the
-// research/remix pool. engagement_score = likes + comments*2 + reposts*3,
-// so 100 ≈ "~100 likes-equivalent" (the user's intuition) while still
-// crediting comment/repost-heavy posts. For our managed accounts (Iker/
-// Unai) every real 3x outlier is far above this, so nothing real is lost.
-// Tunable: raise to 150–200 if the pool still feels noisy.
-export const MIN_OUTLIER_ENGAGEMENT = 100;
+// research/remix pool. engagement_score = likes + comments*2 + reposts*3.
+//
+// Set to 200 (not 100): on LinkedIn B2B ~100 is just a "did okay" post,
+// too low a bar for the teaching pool. 200 ≈ ~120 likes + 25 comments +
+// a few reposts — genuine traction. Iker/Unai's real outliers run into
+// the thousands (300-625 comments each) so this loses none of them, and
+// it still lets a strong post from a small niche account qualify.
+// Tunable: 300 for a stricter pool, or switch to a follower-relative
+// floor if small-account discovery signal starts disappearing.
+export const MIN_OUTLIER_ENGAGEMENT = 200;
 
 export function isOutlier(ratio: number, engagementScore: number): boolean {
   return ratio >= 3.0 && engagementScore >= MIN_OUTLIER_ENGAGEMENT;
