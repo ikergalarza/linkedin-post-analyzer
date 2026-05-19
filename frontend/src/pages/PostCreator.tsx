@@ -21,9 +21,8 @@ interface CreatorProfile {
 
 const SUGGESTIONS = [
   'Write me a viral LinkedIn post about hiring mistakes',
-  'Create a post about leadership lessons using the best-performing archetype',
   'Write 3 variations of a post about AI replacing jobs',
-  'Analyze this topic and give me the best angle: remote work vs office',
+  'Give me a video script idea about cold outbound',
 ];
 
 type Tab = 'chat' | 'profile';
@@ -315,7 +314,7 @@ export default function PostCreator() {
                       → Link your LinkedIn profile for personalized posts
                     </button>
                   )}
-                  <div className="flex flex-wrap gap-2 max-w-2xl justify-center">
+                  <div className="flex flex-col gap-2 w-full max-w-md">
                     {SUGGESTIONS.map((s, i) => (
                       <button
                         key={i}
@@ -325,6 +324,19 @@ export default function PostCreator() {
                         {s}
                       </button>
                     ))}
+                  </div>
+
+                  {/* Quick how-to-use reminders */}
+                  <div className="mt-5 max-w-md text-left text-[11px] text-text-muted space-y-1.5 border-t border-border/50 pt-4">
+                    <p>
+                      🖼️ También te propone <span className="text-text-secondary">ideas de imagen</span> para el post, basadas en los datos de qué funciona.
+                    </p>
+                    <p>
+                      🎬 Para <span className="text-text-secondary">guiones de vídeo</span>, menciona la palabra <span className="text-accent">"vídeo"</span> en tu petición.
+                    </p>
+                    <p>
+                      🔥 Cada propuesta llega etiquetada con su multiplicador real de viralidad según tus outliers.
+                    </p>
                   </div>
                 </div>
               )}
