@@ -369,10 +369,10 @@ export default function Dashboard() {
                     <button
                       onClick={(e) => handleRowRefresh(creator.id, e)}
                       disabled={rowRefreshing === creator.id}
-                      className="text-text-muted hover:text-accent transition-all text-sm px-2 py-1 disabled:opacity-60 disabled:cursor-wait"
+                      className="flex items-center gap-1 text-[11px] text-text-muted hover:text-accent border border-border hover:border-accent/40 rounded-md px-2 py-1 transition-all disabled:opacity-60 disabled:cursor-wait whitespace-nowrap"
                       title="Refresh this profile now"
                     >
-                      {rowRefreshing === creator.id ? '↻…' : '↻'}
+                      {rowRefreshing === creator.id ? '↻ Refreshing…' : '↻ Refresh'}
                     </button>
                     <button
                       onClick={(e) => handleDelete(creator.id, e)}

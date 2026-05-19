@@ -250,7 +250,10 @@ export default function PostCreator() {
   const activePreviewText = manualPreview != null ? manualPreview : previewText;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)]">
+    // Offset = global nav (~64px) + the <main> py-8 top+bottom (64px) so
+    // the input bar lands inside the viewport at entry (no scroll). The
+    // old -80px under-counted the chrome and pushed Send below the fold.
+    <div className="flex flex-col h-[calc(100vh-128px)]">
       {/* Compact header — title + tabs share a single 48px row.
           The long descriptive subtitle from the original layout was
           eating ~110px of vertical space and only restated what the
