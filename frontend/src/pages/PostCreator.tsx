@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import LinkedInPostPreview from '../components/postcreator/LinkedInPostPreview';
-import CreatorProfileForm from '../components/postcreator/CreatorProfileForm';
 import MarkdownMessage from '../components/postcreator/MarkdownMessage';
 import ImageGenerator from '../components/postcreator/ImageGenerator';
 import CarouselGenerator from '../components/postcreator/CarouselGenerator';
@@ -12,7 +11,12 @@ interface Message {
   content: string;
 }
 
-interface CreatorProfile {
+// Preview persona = one of our managed accounts (Iker / Unai). We post
+// for both now, so the preview shows whichever identity you pick. Name +
+// photo + headline come straight from the Accounts data (always fresh),
+// not the old standalone creator_profile.
+interface Persona {
+  id: string;
   name: string | null;
   headline: string | null;
   profile_image_url: string | null;
@@ -24,8 +28,6 @@ const SUGGESTIONS = [
   'Write 3 variations of a post about AI replacing jobs',
   'Give me a video script idea about cold outbound',
 ];
-
-type Tab = 'chat' | 'profile';
 
 // Extract post blocks from an assistant message. Tries several strategies in
 // order so it works whether the model emits `---` separators, numbered
@@ -112,12 +114,12 @@ function cleanBlockForPreview(block: string): string {
 }
 
 export default function PostCreator() {
-  const [tab, setTab] = useState<Tab>('chat');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [profile, setProfile] = useState<CreatorProfile | null>(null);
+  const [personas, setPersonas] = useState<Persona[]>([]);
+  const [personaId, setPersonaId] = useState<string | null>(null);
   const [previewText, setPreviewText] = useState<string>('');
   // null = user hasn't edited (use the latest generated text); string = user
   // has typed something, including '' if they cleared the field. This split
@@ -133,15 +135,27 @@ export default function PostCreator() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Load profile on mount
+  // Load managed accounts (Iker / Unai …) for the preview persona picker.
   useEffect(() => {
-    fetch(`${BASE}/api/post-creator/profile`)
+    fetch(`${BASE}/api/accounts`)
       .then((r) => r.json())
       .then((data) => {
-        if (data && data.id) setProfile(data);
+        const list: Persona[] = Array.isArray(data)
+          ? data.map((a: any) => ({
+              id: a.id,
+              name: a.name,
+              headline: a.headline,
+              profile_image_url: a.profile_image_url,
+              followers_count: a.followers_count ?? 0,
+            }))
+          : [];
+        setPersonas(list);
+        if (list.length > 0) setPersonaId((prev) => prev ?? list[0].id);
       })
       .catch(() => {});
   }, []);
+
+  const activePersona = personas.find((p) => p.id === personaId) || null;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -253,47 +267,15 @@ export default function PostCreator() {
     // the input bar lands inside the viewport at entry (no scroll). The
     // old -80px under-counted the chrome and pushed Send below the fold.
     <div className="flex flex-col h-[calc(100vh-128px)]">
-      {/* Compact header — title + tabs share a single 48px row.
-          The long descriptive subtitle from the original layout was
-          eating ~110px of vertical space and only restated what the
-          page already implies, so it's been removed. The inline
-          subtitle keeps a hint of context for first-time visitors. */}
-      <div className="flex items-center gap-6 border-b border-border mb-3 pr-1">
-        <div className="flex items-baseline gap-3 py-2 flex-shrink-0">
-          <h1 className="text-lg font-semibold text-text-primary leading-none">Post Creator</h1>
-          <span className="hidden md:inline text-[11px] text-text-muted leading-none">
-            AI writer trained on your outlier data
-          </span>
-        </div>
-        <div className="flex gap-1 ml-auto">
-          <button
-            onClick={() => setTab('chat')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-              tab === 'chat'
-                ? 'border-accent text-accent'
-                : 'border-transparent text-text-muted hover:text-text-secondary'
-            }`}
-          >
-            Chat
-          </button>
-          <button
-            onClick={() => setTab('profile')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-              tab === 'profile'
-                ? 'border-accent text-accent'
-                : 'border-transparent text-text-muted hover:text-text-secondary'
-            }`}
-          >
-            My Profile {profile?.name ? `· ${profile.name}` : ''}
-          </button>
-        </div>
+      {/* Compact header — just the title. The "My Profile" tab was removed:
+          we post for both Iker & Unai and that standalone profile was
+          stale; voice/style now comes from the live managed-account data
+          and the preview identity is chosen per-post below. */}
+      <div className="flex items-center border-b border-border mb-3 pr-1">
+        <h1 className="text-lg font-semibold text-text-primary leading-none py-2">Post Creator</h1>
       </div>
 
-      {tab === 'profile' ? (
-        <div className="overflow-y-auto">
-          <CreatorProfileForm onSaved={(p) => setProfile(p)} />
-        </div>
-      ) : (
+      {(
         <div className="flex-1 flex gap-4 min-h-0">
           {/* Chat column */}
           <div className="flex-1 flex flex-col min-w-0">
@@ -302,18 +284,10 @@ export default function PostCreator() {
                 <div className="flex flex-col items-center justify-center h-full text-center">
                   <div className="text-5xl mb-4">&#x270D;&#xFE0F;</div>
                   <h2 className="text-xl font-semibold text-text-primary mb-2">Create viral LinkedIn posts</h2>
-                  <p className="text-text-muted text-sm max-w-md mb-4">
+                  <p className="text-text-muted text-sm max-w-md mb-6">
                     Tell me a topic, audience, or goal and I'll write posts using the patterns
                     that actually produce outliers in your data.
                   </p>
-                  {!profile?.name && (
-                    <button
-                      onClick={() => setTab('profile')}
-                      className="text-xs text-accent hover:text-accent-light mb-6"
-                    >
-                      → Link your LinkedIn profile for personalized posts
-                    </button>
-                  )}
                   <div className="flex flex-col gap-2 w-full max-w-md">
                     {SUGGESTIONS.map((s, i) => (
                       <button
@@ -473,6 +447,33 @@ export default function PostCreator() {
                 )}
               </div>
 
+              {/* Persona picker — preview the post as Iker or Unai
+                  (name + photo pulled live from Accounts). */}
+              {personas.length > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-text-muted mr-0.5">Ver como:</span>
+                  {personas.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setPersonaId(p.id)}
+                      className={`flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors ${
+                        p.id === personaId
+                          ? 'border-accent/50 bg-accent/10 text-accent'
+                          : 'border-border bg-bg-card text-text-muted hover:border-accent/30'
+                      }`}
+                    >
+                      {p.profile_image_url ? (
+                        <img src={p.profile_image_url} alt="" className="w-4 h-4 rounded-full object-cover" />
+                      ) : (
+                        <span className="w-4 h-4 rounded-full bg-bg-secondary inline-flex items-center justify-center text-[8px]">
+                          {(p.name || '?')[0]}
+                        </span>
+                      )}
+                      {(p.name || 'Cuenta').split(' ')[0]}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Stacked content — preview + editor + image/carousel
@@ -499,10 +500,10 @@ export default function PostCreator() {
                   <div>
                     <LinkedInPostPreview
                       text={activePreviewText}
-                      authorName={profile?.name}
-                      authorHeadline={profile?.headline}
-                      authorImage={profile?.profile_image_url}
-                      followersCount={profile?.followers_count}
+                      authorName={activePersona?.name}
+                      authorHeadline={activePersona?.headline}
+                      authorImage={activePersona?.profile_image_url}
+                      followersCount={activePersona?.followers_count}
                       externalImageUrl={generatedImageUrl}
                     />
                     {/* Always-visible edit textarea — typing here updates the
