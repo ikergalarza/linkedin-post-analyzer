@@ -95,22 +95,41 @@ export default function Dashboard() {
       ? creators.filter((c) => selectedIds.has(c.id))
       : creators;
 
+    const total = toRefresh.length;
+    let completed = 0;
     let errors = 0;
-    setRefreshProgress({ current: 0, total: toRefresh.length, currentName: null, errors: 0 });
+    setRefreshProgress({ current: 0, total, currentName: null, errors: 0 });
 
-    // Sequential refresh — one at a time
-    for (let i = 0; i < toRefresh.length; i++) {
-      const creator = toRefresh[i];
-      setRefreshProgress({ current: i, total: toRefresh.length, currentName: creator.name || 'Unknown', errors });
-      try {
-        const res = await fetch(`${BASE}/api/creators/${creator.id}/refresh`, { method: 'POST' });
-        if (!res.ok) errors++;
-      } catch {
-        errors++;
+    // Concurrency pool — N refreshes in flight at once instead of strictly
+    // one-by-one. Combined with the backend's incremental scrape (it stops
+    // paginating at the first already-stored post), a 120-creator refresh
+    // goes from ~40 min to a couple of minutes. 5 is a safe ceiling for
+    // Unipile's rate limit; raise cautiously if needed.
+    const CONCURRENCY = 5;
+    let next = 0;
+    const worker = async () => {
+      // `next++` is atomic between awaits (single-threaded JS), so each
+      // worker pulls a distinct index — no double-processing.
+      while (true) {
+        const idx = next++;
+        if (idx >= total) return;
+        const creator = toRefresh[idx];
+        try {
+          const res = await fetch(`${BASE}/api/creators/${creator.id}/refresh`, { method: 'POST' });
+          if (!res.ok) errors++;
+        } catch {
+          errors++;
+        } finally {
+          completed++;
+          setRefreshProgress({ current: completed, total, currentName: creator.name || 'Unknown', errors });
+        }
       }
-    }
+    };
+    await Promise.all(
+      Array.from({ length: Math.min(CONCURRENCY, total) }, () => worker())
+    );
 
-    setRefreshProgress({ current: toRefresh.length, total: toRefresh.length, currentName: null, errors });
+    setRefreshProgress({ current: total, total, currentName: null, errors });
     refetch();
 
     // Clear progress after a few seconds

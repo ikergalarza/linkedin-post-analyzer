@@ -271,7 +271,16 @@ export class UnipileService {
    * Step 2: Get posts using the provider_id (internal ID) from getProfile.
    * The identifier for posts MUST be the provider internal ID, not the public username.
    */
-  async getPosts(providerInternalId: string, since?: Date, accountIdOverride?: string): Promise<UnipilePost[]> {
+  async getPosts(
+    providerInternalId: string,
+    since?: Date,
+    accountIdOverride?: string,
+    // INCREMENTAL: ids (social_id/id) already stored for this creator.
+    // LinkedIn returns posts newest-first, so as soon as we hit one we
+    // already have, everything older is already stored — stop paging.
+    // Pass undefined / empty for a full scrape (first time for a creator).
+    knownIds?: Set<string>
+  ): Promise<UnipilePost[]> {
     const allPosts: UnipilePost[] = [];
     let cursor: string | undefined;
     // `since` is a HARD time floor for callers that intentionally want a
@@ -311,11 +320,19 @@ export class UnipileService {
         console.log(`[Unipile] Sample post keys: ${Object.keys(posts[0]).join(', ')}`);
       }
 
+      const incremental = !!knownIds && knownIds.size > 0;
       for (const post of posts) {
         const publishedAt = post.parsed_datetime || post.created_at || post.published_at || post.date;
         if (floor && publishedAt && new Date(publishedAt) < floor) {
           console.log(`[Unipile] Reached posts older than the requested window, stopping. Total: ${allPosts.length}`);
           return allPosts;
+        }
+        if (incremental) {
+          const pid = post.social_id || post.id;
+          if (pid && knownIds!.has(pid)) {
+            console.log(`[Unipile] Reached already-stored post (incremental), stopping. New: ${allPosts.length}`);
+            return allPosts;
+          }
         }
         allPosts.push(post);
       }

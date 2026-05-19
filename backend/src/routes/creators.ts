@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { CreatorModel } from '../models/creator';
 import { PostModel } from '../models/post';
 import { unipileService, scanMediaSignalsImpl } from '../services/unipile';
-import { enrichPost, recalculateOutliers } from '../services/engagement';
+import { enrichPost, MIN_OUTLIER_ENGAGEMENT } from '../services/engagement';
 import { normalizeLinkedInUrl, isValidLinkedInUrl } from '../utils/linkedin';
 import { estimateTimezone } from '../utils/timezone';
 import pool from '../db';
@@ -338,10 +338,26 @@ const scanMediaSignals = scanMediaSignalsImpl;
 async function scrapeCreatorPosts(creatorId: string, linkedinIdentifier: string) {
   console.log(`Scraping posts for creator ${creatorId}...`);
 
-  const rawPosts = await unipileService.getPosts(linkedinIdentifier);
-  console.log(`Fetched ${rawPosts.length} posts from Unipile`);
+  // INCREMENTAL: if we already have posts for this creator, pass their ids
+  // so pagination stops at the first one we already stored (LinkedIn is
+  // newest-first). The very first scrape has none → full history; every
+  // refresh after that only pulls genuinely new posts. This is what makes
+  // a 120-creator refresh-all go from ~40 min to ~1-2 min without losing
+  // any history (it's already persisted from the first pass).
+  const { rows: knownRows } = await pool.query(
+    `SELECT linkedin_post_id FROM posts
+      WHERE creator_id = $1 AND linkedin_post_id IS NOT NULL`,
+    [creatorId]
+  );
+  const knownIds = new Set<string>(knownRows.map((r: any) => r.linkedin_post_id));
 
-  if (rawPosts.length === 0) return;
+  const rawPosts = await unipileService.getPosts(
+    linkedinIdentifier,
+    undefined,
+    undefined,
+    knownIds
+  );
+  console.log(`Fetched ${rawPosts.length} ${knownIds.size > 0 ? 'new ' : ''}posts from Unipile`);
 
   // Filter out reposts — only keep original content
   const originalPosts = rawPosts.filter((raw) => {
@@ -352,27 +368,32 @@ async function scrapeCreatorPosts(creatorId: string, linkedinIdentifier: string)
   });
   console.log(`Filtered to ${originalPosts.length} original posts (removed ${rawPosts.length - originalPosts.length} reposts)`);
 
-  if (originalPosts.length === 0) return;
-
-  // Normalize and enrich posts
-  let posts = originalPosts.map((raw) => {
+  // Normalize, enrich and upsert any NEW posts (may be none on an
+  // incremental refresh — that's the fast path).
+  const posts = originalPosts.map((raw) => {
     const normalized = unipileService.normalizePost(raw, creatorId);
     const enriched = enrichPost(normalized);
     return { ...normalized, ...enriched };
   });
+  if (posts.length > 0) {
+    await PostModel.bulkUpsert(posts);
+  }
 
-  // Calculate outliers
-  const withOutliers = recalculateOutliers(posts);
-  posts = withOutliers.map((o, i) => ({
-    ...posts[i],
-    outlier_ratio: o.outlier_ratio,
-    is_outlier: o.is_outlier,
-  }));
+  // Always recompute outlier flags over the creator's FULL stored set —
+  // not just this batch. An incremental batch has a meaningless local
+  // average, so the 3x ratio + MIN_OUTLIER_ENGAGEMENT floor must run
+  // against every post the creator has. One set-based UPDATE, cheap even
+  // for a first full-history scrape, and it keeps the floor consistent
+  // even for creators that had zero new posts this round.
+  await pool.query(
+    `UPDATE posts p SET
+       outlier_ratio = COALESCE(round((p.engagement_score / NULLIF(a.avg, 0))::numeric, 2), 0),
+       is_outlier = (a.avg > 0 AND p.engagement_score >= a.avg * 3 AND p.engagement_score >= $2)
+     FROM (SELECT AVG(engagement_score)::float AS avg FROM posts WHERE creator_id = $1) a
+     WHERE p.creator_id = $1`,
+    [creatorId, MIN_OUTLIER_ENGAGEMENT]
+  );
 
-  // Save to DB
-  await PostModel.bulkUpsert(posts);
-
-  // Update creator's last_scraped_at
   await CreatorModel.update(creatorId, { last_scraped_at: new Date() } as any);
 
   console.log(`Saved ${posts.length} posts for creator ${creatorId}`);
