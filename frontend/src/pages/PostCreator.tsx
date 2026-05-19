@@ -23,12 +23,6 @@ interface Persona {
   followers_count: number;
 }
 
-const SUGGESTIONS = [
-  'Write me a viral LinkedIn post about hiring mistakes',
-  'Write 3 variations of a post about AI replacing jobs',
-  'Give me a video script idea about cold outbound',
-];
-
 // Extract post blocks from an assistant message. Tries several strategies in
 // order so it works whether the model emits `---` separators, numbered
 // "OPCIÓN" / "OPTION" / "VARIANTE" headings, fenced code blocks, or none.
@@ -283,34 +277,11 @@ export default function PostCreator() {
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center">
                   <div className="text-5xl mb-4">&#x270D;&#xFE0F;</div>
-                  <h2 className="text-xl font-semibold text-text-primary mb-2">Create viral LinkedIn posts</h2>
-                  <p className="text-text-muted text-sm max-w-md mb-6">
-                    Tell me a topic, audience, or goal and I'll write posts using the patterns
-                    that actually produce outliers in your data.
-                  </p>
-                  <div className="flex flex-col gap-2 w-full max-w-md">
-                    {SUGGESTIONS.map((s, i) => (
-                      <button
-                        key={i}
-                        onClick={() => sendMessage(s)}
-                        className="px-3 py-2 bg-bg-card border border-border rounded-lg text-xs text-text-secondary hover:border-accent/50 hover:text-text-primary transition-colors text-left"
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Quick how-to-use reminders */}
-                  <div className="mt-5 max-w-md text-left text-[11px] text-text-muted space-y-1.5 border-t border-border/50 pt-4">
-                    <p>
-                      🖼️ También te propone <span className="text-text-secondary">ideas de imagen</span> para el post, basadas en los datos de qué funciona.
-                    </p>
-                    <p>
-                      🎬 Para <span className="text-text-secondary">guiones de vídeo</span>, menciona la palabra <span className="text-accent">"vídeo"</span> en tu petición.
-                    </p>
-                    <p>
-                      🔥 Cada propuesta llega etiquetada con su multiplicador real de viralidad según tus outliers.
-                    </p>
+                  <h2 className="text-xl font-semibold text-text-primary mb-1">Create viral LinkedIn posts</h2>
+                  <p className="text-text-muted text-sm mb-5">Based on your outlier data.</p>
+                  <div className="max-w-md text-left text-xs text-text-muted space-y-2">
+                    <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
+                    <p>🎬 For video scripts, just say <span className="text-accent">"video"</span> in your request.</p>
                   </div>
                 </div>
               )}
