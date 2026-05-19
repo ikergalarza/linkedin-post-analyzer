@@ -64,6 +64,7 @@ export default function Dashboard() {
   const { data: creators, loading, error, refetch } = useApi<Creator[]>('/api/creators');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [refreshing, setRefreshing] = useState(false);
+  const [rowRefreshing, setRowRefreshing] = useState<string | null>(null);
   const [refreshProgress, setRefreshProgress] = useState<{ current: number; total: number; currentName: string | null; errors: number } | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>('avg_engagement');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
@@ -103,9 +104,10 @@ export default function Dashboard() {
     // Concurrency pool — N refreshes in flight at once instead of strictly
     // one-by-one. Combined with the backend's incremental scrape (it stops
     // paginating at the first already-stored post), a 120-creator refresh
-    // goes from ~40 min to a couple of minutes. 5 is a safe ceiling for
-    // Unipile's rate limit; raise cautiously if needed.
-    const CONCURRENCY = 5;
+    // goes from ~40 min to a couple of minutes. Kept at 3 (not higher) so
+    // we don't trip Unipile's rate limit — that was causing the 500s; the
+    // backend now also retries 429/5xx with backoff as a second safety net.
+    const CONCURRENCY = 3;
     let next = 0;
     const worker = async () => {
       // `next++` is atomic between awaits (single-threaded JS), so each
@@ -148,6 +150,24 @@ export default function Dashboard() {
       refetch();
     } catch (err: any) {
       alert(err.message);
+    }
+  };
+
+  // Per-row refresh — same endpoint as the "open profile → refresh" flow,
+  // exposed directly in the list so you don't have to enter each profile.
+  const handleRowRefresh = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (rowRefreshing) return;
+    setRowRefreshing(id);
+    try {
+      const res = await fetch(`${BASE}/api/creators/${id}/refresh`, { method: 'POST' });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      refetch();
+    } catch (err: any) {
+      alert(`Refresh failed: ${err.message}`);
+    } finally {
+      setRowRefreshing(null);
     }
   };
 
@@ -346,6 +366,14 @@ export default function Dashboard() {
                         <p className="text-text-muted text-xs truncate">{creator.location}</p>
                       )}
                     </div>
+                    <button
+                      onClick={(e) => handleRowRefresh(creator.id, e)}
+                      disabled={rowRefreshing === creator.id}
+                      className="text-text-muted hover:text-accent transition-all text-sm px-2 py-1 disabled:opacity-60 disabled:cursor-wait"
+                      title="Refresh this profile now"
+                    >
+                      {rowRefreshing === creator.id ? '↻…' : '↻'}
+                    </button>
                     <button
                       onClick={(e) => handleDelete(creator.id, e)}
                       className="opacity-0 group-hover:opacity-100 text-text-muted hover:text-danger transition-all text-sm px-2 py-1"

@@ -86,23 +86,43 @@ export class UnipileService {
     const url = `${this.baseUrl}${path}`;
     console.log(`[Unipile] ${options.method || 'GET'} ${url}`);
 
-    const res = await fetch(url, {
-      ...options,
-      headers: {
-        'X-API-KEY': this.apiKey,
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
+    // Transient errors (429 rate-limit, 502/503/504 gateway) are retried
+    // with backoff instead of bubbling straight up as a 500 to the
+    // Dashboard. This is the main source of the 500s during refresh-all:
+    // concurrent scrapes briefly trip Unipile's rate limit. Respect
+    // Retry-After when present, otherwise exponential (0.8s, 2s, 4s).
+    const RETRYABLE = new Set([429, 502, 503, 504]);
+    const MAX_ATTEMPTS = 4;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      const res = await fetch(url, {
+        ...options,
+        headers: {
+          'X-API-KEY': this.apiKey,
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
 
-    if (!res.ok) {
-      const body = await res.text();
+      if (res.ok) {
+        return (await res.json()) as T;
+      }
+
+      const body = await res.text().catch(() => '');
+      if (RETRYABLE.has(res.status) && attempt < MAX_ATTEMPTS) {
+        const retryAfter = Number(res.headers.get('retry-after'));
+        const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
+          ? retryAfter * 1000
+          : Math.min(4000, 800 * Math.pow(2, attempt - 1));
+        console.warn(`[Unipile] ${res.status} (attempt ${attempt}/${MAX_ATTEMPTS}) — retrying in ${waitMs}ms`);
+        await new Promise((r) => setTimeout(r, waitMs));
+        continue;
+      }
+
       console.error(`[Unipile] Error ${res.status}: ${body}`);
       throw new Error(`Unipile API error ${res.status}: ${body}`);
     }
-
-    const data = await res.json();
-    return data as T;
+    // Unreachable (loop either returns or throws), but satisfies the type.
+    throw new Error('Unipile API: exhausted retries');
   }
 
   extractLinkedInIdentifier(linkedinUrl: string): string {
@@ -293,9 +313,12 @@ export class UnipileService {
     const accountId = accountIdOverride || this.accountId;
 
     let page = 0;
-    // Bounded window → 20 pages is plenty. Full history → allow far more
-    // (2000 posts) so multi-year accounts aren't silently truncated.
-    const maxPages = floor ? 20 : 40;
+    // 20 pages = 1000 posts. Capped here (was 40) so a single first-time
+    // full-history request stays under Railway's gateway timeout — that
+    // was the source of the 502s. Incremental refreshes only fetch new
+    // posts so they never approach this anyway, and 1000 is already ~2x
+    // the old 6-month window for the vast majority of creators.
+    const maxPages = 20;
 
     console.log(`[Unipile] Fetching posts for identifier: ${providerInternalId} (account_id: ${accountId})`);
 
@@ -340,9 +363,12 @@ export class UnipileService {
       cursor = response.cursor || response.paging?.cursor;
       page++;
 
-      // Rate limiting: wait 500ms between pages
+      // Polite pacing between pages. 250ms (was 500): over a 20-page
+      // first scrape this halves the wall-time (~5s vs ~10s of pure
+      // sleep), keeping the request under the gateway timeout. The
+      // request() retry/backoff absorbs any 429 if we pace too fast.
       if (cursor) {
-        await new Promise((r) => setTimeout(r, 500));
+        await new Promise((r) => setTimeout(r, 250));
       }
     } while (cursor && page < maxPages);
 
