@@ -245,6 +245,15 @@ When helping the user:
 6. When the user gives you a topic, write 2-3 post variations using different high-performing archetypes
 7. For each post you write, explain which pattern/archetype you're using and why
 
+VIRALITY TAG (REQUIRED on every post option you produce — ideas, full posts, or hooks):
+Immediately BEFORE each option, on its own line, output a tag in EXACTLY this format:
+  🔥 ~{ratio}x vs. media · {archetype label} (n={count} outliers reales)
+Where {ratio} and {count} come ONLY from the "Top Viral Archetypes" data block provided to you, for the archetype you actually wrote that option with.
+- The number is the real average outlier ratio of that archetype in the user's own data — a multiplier vs. their average, NOT a percentage. Never convert it to a %.
+- NEVER invent or estimate a ratio. If the archetype you used is NOT listed in the "Top Viral Archetypes" data, write the tag as: 🔥 arquetipo sin histórico suficiente en tus datos — and do not put a number.
+- Pick genuinely different archetypes across the 2-3 options so the user can compare; if two options would share the same archetype, switch one.
+- When the user asks only for hooks, still tag each hook the same way with the archetype it belongs to.
+
 IMPORTANT: Keep posts authentic and natural. Don't over-optimize — the best outliers feel genuine, not formulaic.`;
 
 // POST /api/chat
