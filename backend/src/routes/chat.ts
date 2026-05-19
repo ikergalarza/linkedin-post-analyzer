@@ -4,6 +4,7 @@ import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { getCrossCreatorPatterns } from '../services/patterns';
 import { CreatorProfileModel } from '../models/creatorProfile';
+import { CommenterProfileModel } from '../models/commenterProfile';
 import pool from '../db';
 import { ensureSingleLineHook } from '../utils/sanitizeText';
 
@@ -225,6 +226,41 @@ async function buildProfileContext(): Promise<string> {
   return lines.join('\n');
 }
 
+// If the latest user message says it's a post FOR "Iker" or "Unai",
+// load that person's voice profile from Network (commenter_profile) and
+// return a voice block. Accent/case-insensitive, word-boundary so it
+// doesn't fire on substrings. If both names appear, the later mention
+// wins (it's usually the actual subject). Empty string = no persona.
+async function buildVoiceContext(messages: any[]): Promise<string> {
+  const lastUser = [...(messages || [])].reverse().find((m) => m?.role === 'user');
+  const raw = typeof lastUser?.content === 'string' ? lastUser.content : '';
+  if (!raw) return '';
+  const s = raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const iAt = (() => { const m = s.match(/\biker\b/); return m ? m.index! : -1; })();
+  const uAt = (() => { const m = s.match(/\bunai\b/); return m ? m.index! : -1; })();
+  if (iAt < 0 && uAt < 0) return '';
+  const name = uAt > iAt ? 'Unai' : 'Iker';
+
+  try {
+    const p = await CommenterProfileModel.getByName(name);
+    if (!p) return '';
+    const v: string[] = [];
+    if (p.headline) v.push(`Identity: ${p.headline}`);
+    if (p.voice_style) v.push(`Writing style (match exactly): ${p.voice_style}`);
+    if (p.worldview) v.push(`Worldview / lens: ${p.worldview}`);
+    if (p.signature_moves) v.push(`Signature moves: ${p.signature_moves}`);
+    if (p.avoid) v.push(`Never do: ${p.avoid}`);
+    if (v.length === 0) return '';
+    return `\n\n═══ WRITE THIS POST IN ${name.toUpperCase()}'S VOICE (from Network → My Profile) ═══
+${v.join('\n')}
+
+PRECEDENCE — READ CAREFULLY: The voice profile above only controls HOW the post is written (tone, phrasing, rhythm, vocabulary). It does NOT decide WHAT the post is. The hook type, post structure, archetype, angle and the virality tag MUST still come from the real outlier data above — viral data ALWAYS takes priority. If ${name}'s natural style would weaken a proven viral pattern, keep the pattern and bend the wording toward ${name}, not the other way around. Voice is the paint; the data is the blueprint.`;
+  } catch (err) {
+    console.warn('[buildVoiceContext] failed:', (err as Error).message);
+    return '';
+  }
+}
+
 const SYSTEM_PROMPT = `You are a LinkedIn viral content strategist and copywriter. You have access to real data from analyzing thousands of LinkedIn posts across multiple creators, identifying which posts became "outliers" (3x+ their creator's average engagement).
 
 Your job is to help the user create LinkedIn posts that have the highest chance of going viral, based on the real patterns you've observed in the data.
@@ -280,8 +316,9 @@ router.post('/', async (req: Request, res: Response) => {
     const client = new Anthropic({ apiKey });
     const analysisContext = await getAnalysisContext();
     const profileContext = await buildProfileContext();
+    const voiceContext = await buildVoiceContext(messages);
 
-    const systemPrompt = `${SYSTEM_PROMPT}\n\nHere is the real analysis data from the LinkedIn posts database:\n\n${analysisContext}${profileContext}`;
+    const systemPrompt = `${SYSTEM_PROMPT}\n\nHere is the real analysis data from the LinkedIn posts database:\n\n${analysisContext}${profileContext}${voiceContext}`;
 
     // Stream the response
     res.setHeader('Content-Type', 'text/event-stream');

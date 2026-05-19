@@ -282,6 +282,7 @@ export default function PostCreator() {
                   <div className="max-w-md text-left text-xs text-text-muted space-y-2">
                     <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
                     <p>🎬 For video scripts, just say <span className="text-accent">"video"</span> in your request.</p>
+                    <p>🧑 Say <span className="text-accent">"Iker"</span> or <span className="text-accent">"Unai"</span> to write in that person's voice.</p>
                   </div>
                 </div>
               )}
