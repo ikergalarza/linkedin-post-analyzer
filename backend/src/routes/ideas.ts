@@ -815,6 +815,46 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
   }
 });
 
+// POST /api/ideas/inspiration/reset-topics — clear topic on outlier posts so
+// they get re-classified next time /classify runs. Optional body filters let
+// the caller target a subset:
+//   { content_types: ['text_image', 'image'] }  → only image posts (e.g. to
+//      re-tag memes after the prompt was updated to recognise them)
+//   { topics: ['Other', 'Misc'] }              → only specific old labels
+// With no body, clears every outlier's topic — use sparingly, it costs an
+// LLM call per ~30 posts on the next classify run.
+router.post('/inspiration/reset-topics', async (req: Request, res: Response) => {
+  try {
+    const contentTypes = Array.isArray(req.body?.content_types) ? req.body.content_types : null;
+    const topics = Array.isArray(req.body?.topics) ? req.body.topics : null;
+
+    const where: string[] = [
+      'is_outlier = TRUE',
+      `linkedin_post_id <> 'DEMO_LIVE_POST'`,
+      `topic IS NOT NULL`,
+      `topic <> ''`,
+    ];
+    const params: any[] = [];
+    if (contentTypes && contentTypes.length > 0) {
+      params.push(contentTypes);
+      where.push(`content_type = ANY($${params.length}::text[])`);
+    }
+    if (topics && topics.length > 0) {
+      params.push(topics);
+      where.push(`topic = ANY($${params.length}::text[])`);
+    }
+
+    const { rowCount } = await pool.query(
+      `UPDATE posts SET topic = NULL WHERE ${where.join(' AND ')}`,
+      params
+    );
+    res.json({ reset: rowCount, filters: { content_types: contentTypes, topics } });
+  } catch (err: any) {
+    console.error('[Reset Topics] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/ideas/inspiration/classify — AI-classify outlier posts by topic (one-time)
 router.post('/inspiration/classify', async (_req: Request, res: Response) => {
   try {
