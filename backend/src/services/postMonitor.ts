@@ -163,11 +163,6 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
   }
 }
 
-// Public hook for the Refresh button — forces a capture for every tracked post right now.
-export async function forceLiveCapture(): Promise<{ captured: number; candidates: number }> {
-  return tick(true);
-}
-
 // Per-post refresh — captures a fresh snapshot for ONE specific post and
 // updates its live counters. Mirrors the inner loop of tick() but scoped to
 // a single post so the user can refresh just the post they're looking at
