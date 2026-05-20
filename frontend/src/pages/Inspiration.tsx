@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useApi } from '../hooks/useApi';
 import GenerateTab from '../components/inspiration/GenerateTab';
+import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
 
 type InspirationTab = 'steal' | 'generate';
 
@@ -169,6 +170,12 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
           </a>
         )}
       </div>
+
+      {!NO_MEDIA_TYPES.has(post.content_type) && (
+        <div className="mb-3">
+          <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={post.post_url} />
+        </div>
+      )}
 
       {/* Steal button */}
       <button

@@ -819,7 +819,7 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
 router.post('/inspiration/classify', async (_req: Request, res: Response) => {
   try {
     const { rows: unclassified } = await pool.query(`
-      SELECT p.id, p.content_text, p.hook_text
+      SELECT p.id, p.content_text, p.hook_text, p.content_type
       FROM posts p
       WHERE p.is_outlier = TRUE
         AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
@@ -855,9 +855,13 @@ router.post('/inspiration/classify', async (_req: Request, res: Response) => {
     for (let start = 0; start < unclassified.length; start += BATCH_SIZE) {
       const batch = unclassified.slice(start, start + BATCH_SIZE);
 
-      const postsList = batch.map((p: any, i: number) =>
-        `${i + 1}. [ID:${p.id}] ${cleanText(p.content_text)}`
-      ).join('\n\n');
+      const postsList = batch.map((p: any, i: number) => {
+        // Surface content_type so the model can decide "Meme" — which by
+        // definition needs an image attached. A funny tweet-style post
+        // with no image is just a Hot Take, not a meme.
+        const typeHint = p.content_type && p.content_type !== 'text' ? ` [type:${p.content_type}]` : '';
+        return `${i + 1}. [ID:${p.id}]${typeHint} ${cleanText(p.content_text)}`;
+      }).join('\n\n');
 
       const response = await client.messages.create({
         model: 'claude-sonnet-4-6',
@@ -867,13 +871,20 @@ router.post('/inspiration/classify', async (_req: Request, res: Response) => {
           content: `Classify each LinkedIn post below into a short topic label (2-4 words max).
 
 Use CONSISTENT labels across posts — group similar themes under the SAME label.
-Good labels: "Sales Tactics", "Cold Outreach", "Hiring & Culture", "Founder Lessons", "AI & Automation", "Personal Growth", "Productivity", "Leadership", "Storytelling", "Marketing Strategy"
+Good labels: "Sales Tactics", "Cold Outreach", "Hiring & Culture", "Founder Lessons", "AI & Automation", "Personal Growth", "Productivity", "Leadership", "Storytelling", "Marketing Strategy", "Meme"
+
+"Meme" is RESERVED for posts where ALL of these are true:
+  - content_type contains "image" (e.g. text_image, image)
+  - the text is short and punchy (usually < 200 chars) OR purely a caption setup
+  - the appeal is humor, irony, satire, absurd observation or a relatable joke
+  - it is NOT a tutorial, opinion essay, story with a lesson, hiring announcement, or data takeaway with a chart
+A serious post with a screenshot or chart is NOT a Meme — that's "Data Shock" or whatever the underlying topic is.
 
 Posts:
 ${postsList}
 
 Return a JSON object mapping post number to topic label. Example:
-{"1": "Sales Tactics", "2": "Founder Lessons", "3": "Cold Outreach"}
+{"1": "Sales Tactics", "2": "Meme", "3": "Cold Outreach"}
 
 Return ONLY the JSON object. No markdown, no explanation.`,
         }],
