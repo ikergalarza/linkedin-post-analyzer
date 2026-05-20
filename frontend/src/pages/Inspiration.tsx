@@ -209,6 +209,7 @@ export default function Inspiration() {
   const [stolenIds, setStolenIds] = useState<Set<string>>(new Set());
   const [classifying, setClassifying] = useState(false);
   const [classifyResult, setClassifyResult] = useState<string | null>(null);
+  const [reclassifyScope, setReclassifyScope] = useState<'images' | 'all'>('images');
 
   const outliers = data?.outliers || [];
   const unclassifiedCount = outliers.filter((p) => !p.topic).length;
@@ -279,7 +280,44 @@ export default function Inspiration() {
       const res = await fetch(`${BASE}/api/ideas/inspiration/classify`, { method: 'POST' });
       const data = await res.json();
       if (!res.ok) { setClassifyResult(`Error: ${data.error}`); return; }
-      setClassifyResult(`Classified ${data.classified} of ${data.total} posts`);
+      let msg = `Classified ${data.classified} of ${data.total} posts`;
+      if (data.failed_batches > 0) msg += ` · ⚠️ ${data.failed_batches} batch(es) failed: ${data.errors?.[0]?.error || 'see backend logs'}`;
+      setClassifyResult(msg);
+      refetch();
+    } catch (e: any) {
+      setClassifyResult(`Error: ${e.message}`);
+    } finally {
+      setClassifying(false);
+    }
+  };
+
+  // Reset + re-classify in one go. Image scope only touches text_image/image
+  // posts (the meme candidates); "all" nukes every classified topic and
+  // re-tags the whole corpus from scratch. Confirms "all" because it costs
+  // an LLM call per ~30 posts.
+  const handleReclassify = async () => {
+    if (reclassifyScope === 'all' && !window.confirm('This will clear ALL topics and re-classify every outlier (costs API calls). Continue?')) {
+      return;
+    }
+    setClassifying(true);
+    setClassifyResult(null);
+    try {
+      const body = reclassifyScope === 'images' ? { content_types: ['text_image', 'image'] } : {};
+      const resetRes = await fetch(`${BASE}/api/ideas/inspiration/reset-topics`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const resetData = await resetRes.json();
+      if (!resetRes.ok) { setClassifyResult(`Reset error: ${resetData.error}`); return; }
+      setClassifyResult(`Reset ${resetData.reset} topics… classifying…`);
+
+      const res = await fetch(`${BASE}/api/ideas/inspiration/classify`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) { setClassifyResult(`Classify error: ${data.error}`); return; }
+      let msg = `Reset ${resetData.reset} · re-classified ${data.classified} of ${data.total}`;
+      if (data.failed_batches > 0) msg += ` · ⚠️ ${data.failed_batches} batch(es) failed: ${data.errors?.[0]?.error || 'see logs'}`;
+      setClassifyResult(msg);
       refetch();
     } catch (e: any) {
       setClassifyResult(`Error: ${e.message}`);
@@ -410,19 +448,39 @@ export default function Inspiration() {
             </div>
           )}
 
-          {/* Classify button */}
-          {unclassifiedCount > 0 && (
-            <div className="flex items-center gap-3">
+          {/* Classify + Reclassify controls */}
+          <div className="flex flex-wrap items-center gap-3">
+            {unclassifiedCount > 0 && (
               <button
                 onClick={handleClassify}
                 disabled={classifying}
                 className="px-4 py-2 bg-amber-400/15 text-amber-400 rounded-lg text-xs font-medium hover:bg-amber-400/25 disabled:opacity-50 transition-colors"
               >
-                {classifying ? '🧠 Classifying topics…' : `🏷️ Classify ${unclassifiedCount} untagged outlier${unclassifiedCount !== 1 ? 's' : ''} by topic`}
+                {classifying ? '🧠 Classifying…' : `🏷️ Classify ${unclassifiedCount} untagged outlier${unclassifiedCount !== 1 ? 's' : ''}`}
               </button>
-              {classifyResult && <span className="text-xs text-text-muted">{classifyResult}</span>}
+            )}
+
+            <div className="flex items-center gap-1.5">
+              <select
+                value={reclassifyScope}
+                onChange={(e) => setReclassifyScope(e.target.value as 'images' | 'all')}
+                disabled={classifying}
+                className="bg-bg-secondary border border-border rounded-lg px-2 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent/50 disabled:opacity-50"
+              >
+                <option value="images">🖼️ Image posts (meme candidates)</option>
+                <option value="all">🌍 All topics (full re-tag)</option>
+              </select>
+              <button
+                onClick={handleReclassify}
+                disabled={classifying}
+                className="px-3 py-1.5 bg-bg-secondary border border-border text-text-secondary rounded-lg text-xs font-medium hover:border-amber-400/40 hover:text-amber-400 disabled:opacity-50 transition-colors"
+              >
+                {classifying ? '🔄 Working…' : '🔄 Reset & reclassify'}
+              </button>
             </div>
-          )}
+
+            {classifyResult && <span className="text-xs text-text-muted">{classifyResult}</span>}
+          </div>
 
           {/* Filters & sort */}
           <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
