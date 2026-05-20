@@ -306,7 +306,19 @@ IMPORTANT: Keep posts authentic and natural. Don't over-optimize — the best ou
    - Palette (only these three): Dark Blue #0c202e (background), Persian Orange #ee9363 (accent/highlight), Alabastro #f9f3ef (light surface).
    - Typography: "Bricolage Grotesque" for titles (bold/display); "Switzer" for body/supporting text. Never propose other fonts.
    - ORANGE WORD RULE: if the image carries title text, the SINGLE most important word of that text MUST be coloured in Persian Orange (#ee9363); the rest stays Alabastro on Dark Blue. Pick that word deliberately — it's the scroll-stop.
-   - Every image suggestion must explicitly state which hex goes where, which font is used for which text, and which exact word is in Persian Orange. Don't leave it implicit.`;
+   - Every image suggestion must explicitly state which hex goes where, which font is used for which text, and which exact word is in Persian Orange. Don't leave it implicit.
+
+6. ONE PILLAR ONLY — push it to the extreme. Every post commits to a single dominant psychological pillar (curiosity / fear / desire) and uses ONLY that pillar's levers. Trace amounts of the others are fine; actively triggering all three dilutes the message. Pillar-specific levers (don't mix):
+   - CURIOSITY: information gap + "nobody talks about it" / insider framing, reversal ("everyone says X — actually Y"), open loop punctuation at the cut ("…", ":", "👇"), withheld key detail until the body.
+   - FEAR: obsolescence ("X is dead / dying"), replacement risk ("an agent doing this for €5"), bandwagon-against ("everyone is moving to X and you're not"), concrete stakes ("you're losing N% of pipeline to this").
+   - DESIRE: cash figures ($, €, MRR, ARR), speed ("in 60 seconds", "in 7 days"), a system/framework/playbook promise, status / top-1% framing, before→after with a concrete outcome.
+   If the hook borrows a different pillar's lever set, rewrite — pillar mix is the #1 dilution.
+
+7. EXACTLY ONE CTA at the end — pick a single closer: an opinion-forcing question, OR an IMPLICIT lead-magnet ask (rule #1; never the literal "Comenta 'X'"), OR no CTA at all (a strong claim can close). NEVER stack closers (no question + lead-magnet, no two questions). One closer, sharp.
+
+8. HOOK MUST ANCHOR TO OUR SECTOR (B2B sales + AI) in the FIRST line. It must reference at least one of: AI / IA / agente / agent / LLM / SDR / outbound / outreach / cold email / prospecting / pipeline / ventas / sales / B2B / SaaS / CRM / GTM / lead gen / closing / discovery / demo, OR a specific tool we live in (Claude, GPT, Clay, Apollo, HubSpot, Salesforce, n8n, Make, Zapier, etc.). A generic personal-development hook ("Hace 5 años pensaba que…", "El otro día me di cuenta…") FAILS — anyone in any industry could publish it, which dissolves our positioning. The sector anchor lives in the FIRST line, not buried in paragraph 3.
+
+9. BURNED OPENERS / CLOSERS — never reuse these verbatim (paraphrase or change angle): "Nadie te dice esto, pero…", "Lo que nadie te cuenta…", "Me ha costado X años aprender que…", "Este es el error más grande que…", "El problema eres tú", "Y nadie te lo dice" stacked at the end of a list, "Si has llegado hasta aquí, déjame un comentario" or any explicit lead-magnet bait, "Spoiler: …" / "Plot twist: …" as a closer. They signal low-effort the moment a reader sees them.`;
 
 // POST /api/chat
 // POST /api/chat/clear-cache — force recompute of analysis context on next chat call
