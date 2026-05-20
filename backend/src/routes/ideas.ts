@@ -35,8 +35,9 @@ const HOOK_LABELS: Record<string, string> = {
 //   map outliers) but NOT exclusive — many clients are B2B services, SaaS,
 //   etc. Don't force every post into an industrial frame.
 const BRAND_RULES = `BRAND & AUDIENCE RULES (non-negotiable):
-- NEVER criticise, mock, or speak negatively about any other company, brand or competitor by name. If a company is mentioned, the framing MUST be positive or neutral-respectful. Reposts are the highest-leverage LinkedIn metric and a criticised company won't repost — the upside of a sharp jab almost never beats the lost reach.
+- NEVER criticise, mock, or speak negatively about any other company, brand, tool or competitor by name. Any mention of another product, software, or company MUST be positive or neutral-respectful — never negative. Reposts are LinkedIn's highest-leverage metric and a criticised company won't repost; the upside of a sharp jab almost never beats the lost reach.
 - If you need a counter-example, talk about a generic pattern ("most CRMs", "the average outbound playbook") rather than naming a specific company.
+- ATTACK THE PROBLEM, NEVER THE READER. Outliers in our data confront a situation, a system, or a market — they do NOT point at the reader ("tú haces X mal", "you're doing this wrong", "you don't understand"). Direct second-person criticism triggers defensive rejection and kills engagement. Frame the wound as something happening TO people in the reader's role ("most SDRs are losing X to Y", "the typical outbound process is broken in this way"), not as a personal failing the reader is committing. The reader should nod at the diagnosis, never feel attacked.
 - Neety's audience is BROADLY medium/large B2B companies. Industrial exporters are a strong recurring segment (and a proven angle in winning posts — e.g. the 15.9x regional-map outliers) but NOT exclusive: B2B service companies, SaaS, agencies' B2B clients, consultancies, and other B2B segments all fit too. DO NOT assume every post must be industrial-flavoured. When you have latitude on examples or framing, pick the segment that best fits the raw idea — if the idea is industrial, lean industrial; if it's a SaaS / B2B-services angle, lean that way. Forcing every post into the industrial frame is a known failure mode.`;
 
 // Pulled from 2 weeks of real publishing data on this account. These complement
@@ -98,13 +99,19 @@ const NEETY_MECHANICS = `NEETY VIRAL MECHANICS (proven on this account — 1 mon
 
 THREE MECHANICS THAT PRODUCE 2x+ OUTLIERS — pick the one the raw idea naturally fits, do NOT force one in:
 
-1. COMMENT-GATED LEAD MAGNET — CTA "comenta '<keyword>' y te mando el <recurso>"
+1. COMMENT-GATED LEAD MAGNET — implicit-only phrasing
    - Real outliers on this account: 7.3x · 5.0x · 2.9x · 2.5x (300–625 comments/post)
-   - How it lands: the CTA inflates comments → LinkedIn algorithm reads "high engagement" → amplifies reach
+   - How it lands: human readers know they need to drop a comment to receive the resource → comments inflate → LinkedIn algorithm reads "high engagement" → amplifies reach
+   - CRITICAL — NO EXPLICIT COMMENT-BAIT (the rule has changed): never write the literal pattern "Comenta 'X' y te lo mando" / "Escribe SÍ debajo" / "Comment 'WORD' below and I'll DM you". LinkedIn's classifier now penalises explicit comment-bait and the reach gets capped before the comments can amplify it. Phrase the ask IMPLICITLY so a human understands "I have to comment to get this" but the algorithm doesn't auto-flag it. Good implicit patterns:
+       · "Si esto te resuena, dímelo abajo y te lo paso."
+       · "Lo tengo recogido en un doc — escríbeme aquí y te lo envío."
+       · "Si quieres el material, levanto la mano abajo y te llega."
+       · "Te paso la plantilla — solo deja una palabra abajo para tener tu nombre delante."
+     Bad (NEVER write): "Comenta 'GUÍA' y te mando el PDF.", "Escribe SÍ abajo.", "Drop 'YES' in the comments."
    - Required: a SPECIFIC, valuable lead magnet (a real doc, framework, dataset, video — not a generic PDF)
-   - Frequency cap: max 1 every 7–10 posts. LinkedIn is starting to penalise comment-bait; fatigue is real.
+   - Frequency cap: max 1 every 7–10 posts. Fatigue is real and the algorithm penalisation makes this worse than before.
    - DO use: real curiosity-driven topic with a concrete deliverable
-   - DON'T use: personal stories (breaks tone), generic PDF, anything < 5 days after the previous lead-magnet post
+   - DON'T use: personal stories (breaks tone), generic PDF, anything < 5 days after the previous lead-magnet post, or any explicit "Comenta X" phrasing
 
 2. INTERACTIVE MAP + REGIONAL IDENTITY (TOP performer)
    - Real outliers on this account: 15.9x · 7.7x · 2.5x
@@ -225,7 +232,16 @@ THE IMAGE EXISTS TO DO ONE JOB: open a curiosity gap that only a click/read can 
 
 7. THREE QUICK TESTS before recommending it: (a) still readable as a tiny thumbnail; (b) interrupts the pattern when mentally placed next to other feed posts; (c) a person who hasn't seen the post gets the idea in a 2-second glance.
 
-When you propose an image, give a CONCRETE, shootable concept (subject, expression/action, key prop, text overlay if any, colour/contrast direction) — not vague adjectives. Offer the single strongest concept plus one genuinely different alternative concept (different curiosity gap, not just a recolour).`;
+When you propose an image, give a CONCRETE, shootable concept (subject, expression/action, key prop, text overlay if any, colour/contrast direction) — not vague adjectives. Offer the single strongest concept plus one genuinely different alternative concept (different curiosity gap, not just a recolour).
+
+NEETY BRAND SYSTEM (always reference these — every image concept must be on-brand):
+- Palette (use these three, nothing else as base):
+  · Dark Blue   #0c202e   (background / dominant)
+  · Persian Orange #ee9363  (highlight / accent — the eye-magnet)
+  · Alabastro   #f9f3ef    (light surface / breathing space)
+- Typography: titles in "Bricolage Grotesque" (bold, display); body / supporting text in "Switzer". Never propose other fonts.
+- ORANGE WORD RULE: when the image carries a title or any text overlay, the SINGLE most important word of that text MUST be coloured in Persian Orange (#ee9363); the rest stays Alabastro (#f9f3ef) on the Dark Blue background. That orange word is the scroll-stop — pick it deliberately (the word that holds the whole curiosity gap).
+- Every image suggestion you give MUST explicitly name: the colour roles (which hex goes where), the typography (which font is used for which text), and which exact word is rendered in Persian Orange. Don't leave it implicit.`;
 
 // ONLY injected when the raw idea is a VIDEO request (isVideoRequest()).
 // Distilled from ASR transcripts of 11 TikTok B2B-AI outliers (Apify
@@ -933,9 +949,14 @@ const POST_TYPES: PostType[] = [
 const POST_TYPE_PROMPTS: Record<PostType, { label: string; instructions: string; subAngles: string[] }> = {
   lead_magnet: {
     label: 'Lead magnet',
-    instructions: `Posts tipo "comenta SÍ y te lo mando" / "escribe GUÍA abajo y te paso el PDF". El gancho promete un recurso valioso (template, checklist, base de datos, framework, dossier, audit) a cambio de un comentario simple. La estructura típica: hook con la promesa concreta del recurso → 2-3 líneas validando por qué ese recurso es valioso (resultado, datos, ahorro de tiempo) → CTA del tipo "Comenta 'X' y te lo mando" o "Escribe Y abajo y te paso Z".
+    instructions: `Posts cuyo objetivo es entregar un recurso concreto (template, checklist, base de datos, framework, dossier, audit) a cambio de un comentario, PERO con el CTA en IMPLÍCITO (no en explícito). LinkedIn penaliza ya el bait literal tipo "Comenta 'X' y te lo mando"; el humano entiende perfectamente que tiene que comentar para recibir el recurso si se le invita de forma natural. Estructura típica: hook con la promesa concreta del recurso → 2-3 líneas validando por qué ese recurso es valioso (resultado, datos, ahorro de tiempo) → cierre implícito que invita a pedirlo abajo sin nombrar la mecánica de "comenta X".
 
-EL "suggested_hook" DEBE seguir literalmente uno de estos patrones (en el idioma del topic): "Comenta 'PALABRA' y te paso…", "Escribe SÍ debajo y te mando…", "Pon 'X' en comentarios y te envío…". El recurso prometido tiene que ser concreto y específico — no "te paso info", sino "te paso la plantilla de 12 emails outbound que usan los 30 mejores SDRs B2B".`,
+EL "suggested_hook" DEBE seguir PATRONES IMPLÍCITOS (en el idioma del topic). Ejemplos válidos:
+- "Si esto te resuena, dímelo abajo y te lo paso."
+- "Lo tengo en un doc — escríbeme aquí y te lo envío."
+- "Levanto la mano abajo si lo quieres y te llega."
+- "Si te sirve, deja una palabra y te lo paso por privado."
+NUNCA escribas patrones literales como "Comenta 'PALABRA' y te paso…", "Escribe SÍ debajo y te mando…", "Pon 'X' en comentarios y te envío…", "Drop 'YES'…". Esa formulación explícita queda PROHIBIDA. El recurso prometido tiene que ser concreto y específico — no "te paso info", sino "te paso la plantilla de 12 emails outbound que usan los 30 mejores SDRs B2B".`,
     subAngles: ['plantilla', 'checklist', 'base de datos', 'framework', 'audit', 'caso real / case study'],
   },
   opinion: {
