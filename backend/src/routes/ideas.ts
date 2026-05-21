@@ -873,21 +873,39 @@ router.post('/inspiration/classify', async (_req: Request, res: Response) => {
       return res.json({ classified: 0, message: 'All outliers already classified' });
     }
 
-    const cleanText = (t: string) =>
-      (t || '')
-        // Strip control chars
+    // Bulletproof UTF-16 sanitiser. The previous regex-based version had a
+    // subtle bug: substring(0, 250) ran AFTER the surrogate strip, so if the
+    // 249th/250th chars formed a valid emoji pair, the cut would leave a
+    // dangling high surrogate at the end and Anthropic would reject the
+    // payload with `no low surrogate in string`. Here we walk code units
+    // and only ever emit complete surrogate pairs, so the truncated output
+    // is always valid UTF-16.
+    const cleanText = (t: string) => {
+      const collapsed = (t || '')
         .replace(/[\x00-\x1F\x7F]/g, ' ')
-        // Strip lone UTF-16 surrogates (orphan halves of an emoji pair) — these
-        // produce invalid JSON when the body is serialised and Anthropic's API
-        // returns 400 "no low surrogate in string". Real emoji pairs are
-        // preserved because the high+low pair matches as a unit elsewhere.
-        .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '')
-        // eslint-disable-next-line no-misleading-character-class
-        .replace(/(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '$1')
         .replace(/"/g, "'")
         .replace(/\s+/g, ' ')
-        .trim()
-        .substring(0, 250);
+        .trim();
+
+      let out = '';
+      for (let i = 0; i < collapsed.length && out.length < 250; i++) {
+        const code = collapsed.charCodeAt(i);
+        if (code >= 0xD800 && code <= 0xDBFF) {
+          const next = i + 1 < collapsed.length ? collapsed.charCodeAt(i + 1) : 0;
+          if (next >= 0xDC00 && next <= 0xDFFF) {
+            if (out.length + 2 > 250) break;
+            out += collapsed[i] + collapsed[i + 1];
+            i++;
+          }
+          // else: orphan high surrogate — skip
+        } else if (code >= 0xDC00 && code <= 0xDFFF) {
+          // orphan low surrogate — skip
+        } else {
+          out += collapsed[i];
+        }
+      }
+      return out;
+    };
 
     const BATCH_SIZE = 30;
     let totalClassified = 0;
