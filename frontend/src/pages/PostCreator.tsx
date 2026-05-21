@@ -516,9 +516,21 @@ export default function PostCreator() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={streaming}
                   title="Attach image (or paste from clipboard)"
-                  className="px-3 py-3 bg-bg-card border border-border rounded-xl text-text-muted hover:text-accent hover:border-accent/50 disabled:opacity-40 transition-colors"
+                  aria-label="Attach image"
+                  className="shrink-0 h-[46px] w-[46px] flex items-center justify-center bg-bg-card border border-border rounded-xl text-text-muted hover:text-accent hover:border-accent/50 disabled:opacity-40 transition-colors"
                 >
-                  📎
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-5 h-5"
+                  >
+                    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                  </svg>
                 </button>
                 <textarea
                   ref={textareaRef}
