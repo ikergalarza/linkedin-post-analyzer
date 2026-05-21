@@ -4,10 +4,27 @@ import MarkdownMessage from '../components/postcreator/MarkdownMessage';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
+// Attached image is held as a data URL on the client (no upload to our
+// server — the bytes are sent inline to Anthropic on each turn). We keep
+// the original mediaType so the API call uses the correct Content-Type.
+interface AttachedImage {
+  dataUrl: string;
+  mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  images?: AttachedImage[];
 }
+
+const ACCEPTED_IMAGE_TYPES: AttachedImage['mediaType'][] = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+];
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 // Preview persona = one of our managed accounts (Iker / Unai). We post
 // for both now, so the preview shows whichever identity you pick. Name +
@@ -124,6 +141,11 @@ export default function PostCreator() {
   // prefers producing those assets directly in ChatGPT's web app.
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Images the user has attached to the NEXT message they send. Cleared
+  // after send. Each entry is base64 in a data URL so we can both render
+  // a thumbnail and forward the bytes inline to Anthropic.
+  const [pendingImages, setPendingImages] = useState<AttachedImage[]>([]);
 
   // Load managed accounts (Iker / Unai …) for the preview persona picker.
   useEffect(() => {
@@ -173,14 +195,75 @@ export default function PostCreator() {
     }
   }, [messages]);
 
+  // File -> data URL with size/type validation. Sets error on rejection so
+  // the user sees why nothing happened.
+  const readFileAsImage = (file: File): Promise<AttachedImage | null> => {
+    return new Promise((resolve) => {
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type as AttachedImage['mediaType'])) {
+        setError(`Unsupported image type: ${file.type || 'unknown'}. Use JPEG, PNG, GIF or WebP.`);
+        resolve(null);
+        return;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        setError(`Image too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Max 5MB.`);
+        resolve(null);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = typeof reader.result === 'string' ? reader.result : '';
+        if (!dataUrl) { resolve(null); return; }
+        resolve({ dataUrl, mediaType: file.type as AttachedImage['mediaType'] });
+      };
+      reader.onerror = () => { setError('Could not read image file.'); resolve(null); };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFiles = async (files: FileList | File[]) => {
+    setError(null);
+    const arr = Array.from(files);
+    const results: AttachedImage[] = [];
+    for (const f of arr) {
+      const img = await readFileAsImage(f);
+      if (img) results.push(img);
+    }
+    if (results.length > 0) setPendingImages((prev) => [...prev, ...results]);
+  };
+
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const imgFiles: File[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.kind === 'file' && item.type.startsWith('image/')) {
+        const f = item.getAsFile();
+        if (f) imgFiles.push(f);
+      }
+    }
+    if (imgFiles.length > 0) {
+      e.preventDefault();
+      await handleFiles(imgFiles);
+    }
+  };
+
   const sendMessage = async (text?: string) => {
     const content = text || input.trim();
-    if (!content || streaming) return;
+    // Allow sending an image-only message (no text) — Claude can still
+    // analyse the image. But require at least one of the two.
+    if ((!content && pendingImages.length === 0) || streaming) return;
 
+    const imagesToSend = pendingImages;
     setInput('');
+    setPendingImages([]);
     setError(null);
 
-    const userMsg: Message = { role: 'user', content };
+    const userMsg: Message = {
+      role: 'user',
+      content,
+      ...(imagesToSend.length > 0 ? { images: imagesToSend } : {}),
+    };
     const newMessages = [...messages, userMsg];
     setMessages([...newMessages, { role: 'assistant', content: '' }]);
     setStreaming(true);
@@ -190,7 +273,28 @@ export default function PostCreator() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
+          // When a turn has images we send content blocks (text + image
+          // sources). Turns without images stay as plain strings to keep
+          // the payload small. Anthropic accepts both shapes in the same
+          // conversation.
+          messages: newMessages.map((m) => {
+            if (m.images && m.images.length > 0) {
+              const blocks: any[] = [];
+              if (m.content) blocks.push({ type: 'text', text: m.content });
+              for (const img of m.images) {
+                blocks.push({
+                  type: 'image',
+                  source: {
+                    type: 'base64',
+                    media_type: img.mediaType,
+                    data: img.dataUrl.split(',')[1] || '',
+                  },
+                });
+              }
+              return { role: m.role, content: blocks };
+            }
+            return { role: m.role, content: m.content };
+          }),
         }),
       });
 
@@ -277,6 +381,7 @@ export default function PostCreator() {
                   <p className="text-text-muted text-sm mb-5">Based on your outlier data.</p>
                   <div className="max-w-md text-left text-xs text-text-muted space-y-2">
                     <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
+                    <p>📎 Paste or attach images to use a real post as visual reference.</p>
                     <p>🎬 For video scripts, just say <span className="text-accent">"video"</span> in your request.</p>
                     <p>🧑 Say <span className="text-accent">"Iker"</span> or <span className="text-accent">"Unai"</span> to write in that person's voice.</p>
                   </div>
@@ -345,7 +450,21 @@ export default function PostCreator() {
                         )}
                       </div>
                     ) : (
-                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      <div>
+                        {msg.images && msg.images.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {msg.images.map((img, ii) => (
+                              <img
+                                key={ii}
+                                src={img.dataUrl}
+                                alt={`Attached ${ii + 1}`}
+                                className="max-h-48 rounded-lg border border-border object-cover"
+                              />
+                            ))}
+                          </div>
+                        )}
+                        {msg.content && <p className="text-sm whitespace-pre-wrap">{msg.content}</p>}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -360,20 +479,61 @@ export default function PostCreator() {
             )}
 
             <div className="border-t border-border pt-4">
+              {pendingImages.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {pendingImages.map((img, i) => (
+                    <div key={i} className="relative group">
+                      <img
+                        src={img.dataUrl}
+                        alt={`Attachment ${i + 1}`}
+                        className="h-16 w-16 rounded-lg border border-border object-cover"
+                      />
+                      <button
+                        onClick={() => setPendingImages((prev) => prev.filter((_, idx) => idx !== i))}
+                        disabled={streaming}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-bg-primary border border-border text-text-muted hover:text-danger hover:border-danger/50 text-[10px] leading-none flex items-center justify-center transition-colors disabled:opacity-40"
+                        aria-label="Remove image"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex gap-3 items-end">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files) handleFiles(e.target.files);
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                  }}
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={streaming}
+                  title="Attach image (or paste from clipboard)"
+                  className="px-3 py-3 bg-bg-card border border-border rounded-xl text-text-muted hover:text-accent hover:border-accent/50 disabled:opacity-40 transition-colors"
+                >
+                  📎
+                </button>
                 <textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Describe the post you want to create... (topic, audience, goal)"
+                  onPaste={handlePaste}
+                  placeholder="Describe the post you want to create... (paste or attach images for reference)"
                   rows={1}
                   className="flex-1 bg-bg-card border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 resize-none"
                   disabled={streaming}
                 />
                 <button
                   onClick={() => sendMessage()}
-                  disabled={!input.trim() || streaming}
+                  disabled={(!input.trim() && pendingImages.length === 0) || streaming}
                   className="px-5 py-3 bg-accent text-bg-primary rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-accent-light transition-colors whitespace-nowrap"
                 >
                   {streaming ? 'Writing...' : 'Send'}

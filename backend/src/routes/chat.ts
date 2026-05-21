@@ -233,7 +233,18 @@ async function buildProfileContext(): Promise<string> {
 // wins (it's usually the actual subject). Empty string = no persona.
 async function buildVoiceContext(messages: any[]): Promise<string> {
   const lastUser = [...(messages || [])].reverse().find((m) => m?.role === 'user');
-  const raw = typeof lastUser?.content === 'string' ? lastUser.content : '';
+  // Once images are attached, content becomes an array of blocks
+  // ([{type:'text',text:'…'},{type:'image',source:…}]). Pull the text out
+  // of those blocks so the Iker/Unai voice trigger still fires.
+  const raw =
+    typeof lastUser?.content === 'string'
+      ? lastUser.content
+      : Array.isArray(lastUser?.content)
+        ? lastUser.content
+            .filter((b: any) => b?.type === 'text' && typeof b.text === 'string')
+            .map((b: any) => b.text)
+            .join(' ')
+        : '';
   if (!raw) return '';
   const s = raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const iAt = (() => { const m = s.match(/\biker\b/); return m ? m.index! : -1; })();
