@@ -16,6 +16,7 @@ import {
   HOOK_QUALITY,
   IMAGE_PRINCIPLES,
   VIDEO_SCRIPT,
+  SHORT_FORM_VIDEO_PLAYBOOK,
   REMIX_PRINCIPLES,
   isVideoRequest,
 } from '../services/postPrompt';
@@ -401,7 +402,9 @@ router.post('/', async (req: Request, res: Response) => {
       }
       return '';
     })();
-    const videoContext = isVideoRequest(lastUserText) ? `\n\n${VIDEO_SCRIPT}` : '';
+    const videoContext = isVideoRequest(lastUserText)
+      ? `\n\n${VIDEO_SCRIPT}\n\n${SHORT_FORM_VIDEO_PLAYBOOK}`
+      : '';
 
     const systemPrompt = `${SYSTEM_PROMPT}
 

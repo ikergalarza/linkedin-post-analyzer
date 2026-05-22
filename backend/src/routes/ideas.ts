@@ -12,6 +12,7 @@ import {
   HOOK_QUALITY,
   IMAGE_PRINCIPLES,
   VIDEO_SCRIPT,
+  SHORT_FORM_VIDEO_PLAYBOOK,
   REMIX_PRINCIPLES,
   isVideoRequest,
 } from '../services/postPrompt';
@@ -217,7 +218,7 @@ ${exampleSection}
 ${HOOK_LAW}
 
 ${HOOK_QUALITY}
-${videoMode ? `\n${VIDEO_SCRIPT}\n` : ''}
+${videoMode ? `\n${VIDEO_SCRIPT}\n\n${SHORT_FORM_VIDEO_PLAYBOOK}\n` : ''}
 ${BRAND_RULES}
 
 ${POSITIONING_PRINCIPLES}

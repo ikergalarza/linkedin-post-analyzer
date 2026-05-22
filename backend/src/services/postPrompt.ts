@@ -287,6 +287,332 @@ DO NOT COPY (seen in outliers but they don't transfer to a small/new account):
 
 A video idea that can't carry a strong SPOKEN hook (one of the 6 above) is a weak video idea — say so rather than forcing a flat script.`;
 
+// Short-form video playbook contributed by the user (notes by "Jenny").
+// 36 checklist items + a final summary, on how to think about short-form
+// video (idea → story → hook → foreshadow → mechanism → payoff → twist
+// → cut). VIDEO_SCRIPT above covers "what to say in the spoken hook"
+// drawing from our B2B-AI TikTok outlier scrape; this block covers the
+// structural thinking around the video as a whole (idea selection,
+// retention mechanics, platform adaptation, pre-publish self-check) and
+// is consumer-content-savvy rather than B2B-specific — applied together
+// the two blocks give the model the full picture when a video request
+// is detected. Only injected alongside VIDEO_SCRIPT.
+export const SHORT_FORM_VIDEO_PLAYBOOK = `CHECKLIST PARA HACER VÍDEOS CORTOS VIRALES (playbook estructural — aplicar JUNTO con VIDEO SCRIPT MODE arriba: VIDEO_SCRIPT manda en el "qué decir" del spoken hook B2B; este playbook manda en la "estructura completa" del vídeo como artefacto):
+
+1. Empieza por una idea simple, pero conviértela en historia
+   - No pienses solo: "voy a hacer un vídeo sobre X".
+   - Añade una historia, un objetivo o un conflicto.
+   - Pregúntate: ¿por qué debería importarle esto al espectador?
+   - Añade un "por qué" personal.
+   - Añade ironía o contraste si puedes.
+
+   Ejemplo:
+   - Idea básica: cocinar para desconocidos.
+   - Historia mejorada: mi cocina está rota y voy a cocinar para ganar dinero y arreglarla.
+
+2. Haz que el espectador se implique rápido
+   - El vídeo debe tener un objetivo claro.
+   - El espectador debe entender qué está en juego.
+   - Tiene que haber una razón para ver hasta el final.
+   - Mejor si el protagonista tiene un problema, reto o misión.
+
+3. Crea un hook visual muy fuerte
+   - El primer frame debe entenderse sin audio.
+   - El hook debe funcionar casi como título + miniatura de un vídeo largo.
+   - Debe ser visual, simple y fácil de entender.
+   - Si alguien lo ve sin sonido, debería captar la idea.
+   - Evita hooks abstractos o demasiado explicativos.
+
+4. Escribe el hook como si se lo explicaras a un niño de 5 años
+   - Usa frases muy simples.
+   - Evita palabras complicadas.
+   - Si una palabra sube la dificultad, cámbiala.
+   - Mejor explicar una palabra difícil que usarla directamente.
+   - Objetivo: nivel de lectura de 5º de primaria o menos.
+
+5. Antes de grabar, dibuja o imagina el primer frame
+   - Piensa primero en la imagen, no en el texto.
+   - Boceta distintas opciones de primer plano.
+   - Pregúntate: ¿qué imagen resume mejor el vídeo?
+   - Luego añade la frase que acompaña a esa imagen.
+
+6. Usa una estructura clara
+   - Hook corto.
+   - Foreshadow: adelanta lo que pasará al final.
+   - Desarrollo con obstáculos o pasos.
+   - Payoff final.
+   - Cierre abrupto justo después del payoff.
+
+   Estructura base:
+   - "Voy a hacer X…"
+   - "para conseguir Y…"
+   - "pero antes tengo que superar Z…"
+   - "al final pasa esto…"
+   - FIN.
+
+7. Añade foreshadow siempre
+   - Después del hook, adelanta qué recompensa habrá al final.
+   - Da una razón concreta para quedarse.
+   - El espectador debe saber qué espera ver.
+
+   Ejemplo:
+   - "Voy a hacer este regalo con solo 5€ y al final se lo daré a mi madre."
+
+8. Diseña un mecanismo que empuje hasta el final
+   - El vídeo necesita una dinámica que haga avanzar la historia.
+   - Puede ser una cuenta atrás.
+   - Puede ser una lista de 3 pasos.
+   - Puede ser un reto.
+   - Puede ser algo que se va complicando.
+   - Puede ser una promesa que solo se resuelve al final.
+
+   Ejemplo:
+   - "Tengo que conseguir 3 cosas antes de poder hacer X."
+   - "Solo tengo 5€ para lograr Y."
+   - "Cada minuto se complica más."
+
+9. Usa listas de 3 pasos cuando no sepas cómo estructurar
+   - Son fáciles de seguir.
+   - Dan sensación de progreso.
+   - El espectador sabe cuánto queda.
+   - Ayudan a mantener la atención.
+
+   Ejemplo:
+   - Paso 1: conseguir el material.
+   - Paso 2: construirlo.
+   - Paso 3: probarlo con alguien.
+
+10. Usa storytelling de "pero / entonces / por eso"
+    - Evita contar cosas como una lista plana.
+    - Añade cambios constantes.
+    - Cada frase debe provocar la siguiente.
+    - Usa problemas y soluciones.
+
+    Malo:
+    - Fui a comprar comida. Cociné. Se la di a alguien.
+
+    Mejor:
+    - Quería cocinar algo barato, pero solo tenía 5€. Entonces busqué ingredientes baratos, pero el primero salió mal. Por eso tuve que improvisar.
+
+11. Crea expectativas y cúmplelas
+    - Si prometes algo en el hook, enséñalo al final.
+    - No abras un loop que luego no cierras.
+    - El espectador debe sentir que ha recibido lo prometido.
+    - Puedes añadir un giro, pero no traicionar la promesa inicial.
+
+12. Añade un twist final
+    - El final debe cerrar la historia.
+    - Pero también puede sorprender.
+    - El twist puede ser gracioso, emocional o inesperado.
+    - Después del twist, termina el vídeo inmediatamente.
+
+    Ejemplo:
+    - Le doy el regalo a mi madre.
+    - Se le cae y se rompe.
+    - Ella dice algo gracioso.
+    - FIN.
+
+13. Termina justo después de cumplir la promesa
+    - No expliques de más.
+    - No añadas despedidas.
+    - No metas una conclusión larga.
+    - Cuando ocurre el payoff, corta.
+    - Cuanto más limpio y abrupto, mejor.
+
+14. Cada segundo cuenta
+    - Revisa si cada segundo aporta algo.
+    - Si una frase no empuja la historia, córtala.
+    - Si el último segundo sobra, elimínalo.
+    - En vídeos cortos, 1 segundo puede cambiar mucho la retención.
+    - No dejes aire muerto al principio ni al final.
+
+15. Controla la duración
+    - Como referencia, vídeos de unos 30-35 segundos pueden funcionar muy bien.
+    - Si el vídeo dura menos de 30 segundos, probablemente necesita una retención altísima.
+    - Si es demasiado largo, puede perder ritmo.
+    - Analiza tu propio canal para encontrar tu duración ideal.
+
+16. Busca rewatch
+    - El objetivo no es solo que lo vean hasta el final.
+    - El objetivo es que algunos lo vuelvan a ver.
+    - Para eso, crea finales rápidos, detalles visuales o giros.
+    - Un buen loop puede hacer que el vídeo se reproduzca otra vez sin que moleste.
+
+17. Mide el "scroll through rate"
+    - Mira cuánta gente ve el vídeo en vez de deslizar.
+    - El primer frame y el hook afectan muchísimo.
+    - Si mucha gente desliza, el problema suele estar al inicio.
+    - Objetivo: que el máximo porcentaje posible se quede.
+
+18. No obsesionarse solo con retención
+    - La retención importa, pero no es lo único.
+    - También importan la satisfacción, los shares, el interés y la audiencia.
+    - Un vídeo puede tener buena retención y no explotar.
+    - Un vídeo puede empezar flojo y luego despegar si conecta con la audiencia adecuada.
+
+19. Haz muchas ideas antes de elegir una
+    - No grabes la primera idea que se te ocurra.
+    - Crea una lista grande de ideas.
+    - Filtra por deseo real de hacerla.
+    - Filtra por viabilidad.
+    - Filtra por hook.
+    - Filtra por mecanismo.
+    - Filtra por potencial de rewatch.
+    - Filtra por si es compartible.
+
+20. Criterios para elegir una idea
+    - ¿Me apetece hacerla?
+    - ¿Es posible grabarla?
+    - ¿Tiene un hook simple?
+    - ¿Tiene historia?
+    - ¿Tiene un mecanismo que empuja al final?
+    - ¿Tiene payoff?
+    - ¿Tiene potencial de rewatch?
+    - ¿Alguien lo compartiría?
+
+21. Saca ideas de tu vida diaria
+    - Las mejores ideas pueden venir de cosas reales.
+    - Si algo te sorprende, puede ser vídeo.
+    - Si algo te da rabia, puede ser vídeo.
+    - Si algo te parece absurdo, puede ser vídeo.
+    - Si algo tiene una solución rara, puede ser vídeo.
+    - Si hay una historia personal detrás, mejor.
+
+22. No preguntes primero "¿se hará viral?"
+    - Pregunta primero: ¿quiero hacerlo?
+    - Si la idea te interesa, luego puedes trabajar el formato para hacerla viral.
+    - La viralidad se construye con hook, historia, mecanismo y payoff.
+
+23. Prepara antes de grabar
+    - Escribe el hook.
+    - Escribe el foreshadow.
+    - Piensa el final.
+    - Escribe la última línea o deja un hueco para la reacción.
+    - Haz una estructura aproximada.
+    - Graba con esa dirección clara.
+
+24. Escribe primero el inicio y el final
+    - El hook define por qué entra la gente.
+    - El final define por qué se queda.
+    - El medio solo debe conectar ambas partes.
+    - Antes de grabar, ten claro qué payoff quieres conseguir.
+
+25. Usa una transición que no rompa el ritmo
+    - Evita frases tipo "vamos a empezar".
+    - Mejor usa una frase que mantenga la historia en movimiento.
+    - La transición debe dar aire sin frenar el vídeo.
+
+    Malo:
+    - "Bueno, empecemos."
+
+    Mejor:
+    - "Así que hice lo único lógico: cocinarlo ilegalmente."
+
+26. Mantén el lenguaje simple y directo
+    - Frases cortas.
+    - Verbos claros.
+    - Pocas ideas por frase.
+    - Nada de explicaciones largas.
+    - Nada de jerga innecesaria.
+
+27. Piensa en una persona concreta al escribir
+    - No escribas para todo el mundo.
+    - Piensa en alguien específico.
+    - Puede ser tu yo de hace años.
+    - Puede ser una persona joven.
+    - Puede ser alguien que no domina el tema.
+    - Si esa persona lo entiende, vas bien.
+
+28. Adapta el vídeo a cada plataforma
+    - No todo el short form funciona igual en todas partes.
+    - YouTube Shorts suele aceptar más historia y ritmo algo más lento.
+    - TikTok suele premiar vídeos más cortos, densos y rápidos.
+    - Instagram Reels necesita ser muy visual y compartible.
+    - En Instagram, los subtítulos y el entendimiento sin sonido importan mucho.
+
+29. Para YouTube Shorts
+    - Más historia.
+    - Ritmo algo más maduro.
+    - Duración aproximada de 30-35 segundos.
+    - Hook visual fuerte.
+    - Buen payoff final.
+    - Retención y rewatch importantes.
+
+30. Para TikTok
+    - Más corto.
+    - Más denso.
+    - Menos pausa.
+    - Más directo.
+    - Idealmente 10-20 segundos si el contenido lo permite.
+    - Mucha información o entretenimiento en poco tiempo.
+
+31. Para Instagram Reels
+    - Muy visual.
+    - Subtítulos claros.
+    - Que se entienda sin audio.
+    - Alto potencial de compartir.
+    - Ideas fáciles de enviar a otra persona.
+
+32. Revisa tus analíticas
+    - Mira dónde cae la gente.
+    - Mira el primer segundo.
+    - Mira el último segundo.
+    - Mira si hay rewatch.
+    - Mira qué hooks tienen mejor porcentaje de permanencia.
+    - Mira qué duración funciona mejor en tu cuenta.
+    - No copies métricas de otros sin analizar tu audiencia.
+
+33. Aprende de otros creadores, pero añade tu twist
+    - Analiza hooks de vídeos virales.
+    - Pregúntate por qué funcionan.
+    - Imagina cómo haría ese vídeo otro creador grande.
+    - Crea varias versiones del hook.
+    - Elige la mejor.
+    - Luego adapta el formato a tu estilo propio.
+
+34. Haz que el vídeo sea reconocible
+    - Usa patrones visuales repetibles.
+    - Mantén un estilo de framing.
+    - Usa elementos que la audiencia pueda identificar rápido.
+    - Si haces una serie, que el primer frame sea reconocible.
+
+35. Prioriza claridad sobre creatividad
+    - Si no se entiende en 1 segundo, falla.
+    - Si el hook necesita demasiada explicación, falla.
+    - Si el espectador no sabe qué esperar, falla.
+    - Una idea simple bien ejecutada gana a una idea compleja confusa.
+
+36. Preguntas finales antes de publicar
+    - ¿Se entiende el vídeo sin sonido?
+    - ¿El primer frame llama la atención?
+    - ¿El hook podría ser título de un vídeo largo?
+    - ¿Hay una razón clara para ver hasta el final?
+    - ¿Prometo algo y lo cumplo?
+    - ¿Hay historia?
+    - ¿Hay giro o payoff?
+    - ¿Puedo cortar algún segundo?
+    - ¿El final termina justo donde debe?
+    - ¿Alguien lo compartiría?
+    - ¿Alguien lo volvería a ver?
+
+RESUMEN RÁPIDO:
+- Idea simple + historia.
+- Hook visual que se entiende sin audio.
+- Lenguaje de niño de 5 años.
+- Foreshadow al principio.
+- Mecanismo que empuja hasta el final.
+- Expectativa clara.
+- Payoff final.
+- Twist si es posible.
+- Corte abrupto después del payoff.
+- Analizar retención, scroll through rate, rewatch y shares.
+- Adaptar el vídeo a cada plataforma.
+
+HOW TO COMBINE WITH VIDEO_SCRIPT (the B2B-AI spoken-hook block above):
+- VIDEO_SCRIPT decides the WORDS of the spoken hook (one of the 6 patterns adapted to B2B sales + AI), the caption strategy and the on-screen text. It is the "what to say" layer drawn from real outliers in our niche.
+- This playbook decides the SHAPE of the video around those words: the foreshadow, the mechanism that pushes to the end, the payoff, the twist, the abrupt cut, the duration target, and the per-platform adaptation.
+- When the user asks for a video, output BOTH layers: produce the three pieces from VIDEO_SCRIPT (caption + text on screen + spoken hook in one of the 6 patterns) AND a short structural outline using this playbook (foreshadow, mechanism, payoff/twist, cut). The playbook also governs the visual-first-frame thinking (rule 5) and the pre-publish self-check (rule 36).`;
+
 // Distilled from a video-remix checklist the author uses when consuming
 // outliers. Same logic translates to LinkedIn text posts: decompose the
 // outlier, find the structural pattern that produced the lift, then rebuild
