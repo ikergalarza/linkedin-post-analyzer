@@ -61,10 +61,16 @@ export default function GoogleChatModal({
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  // The full Google Chat message is editable now (instead of editing each
+  // comment individually). null = use the freshly computed one; string =
+  // user has typed, including '' if they cleared the field. Re-roll or a
+  // new preview load resets this back to null.
+  const [editedMessage, setEditedMessage] = useState<string | null>(null);
 
   const loadPreview = async () => {
     setLoading(true);
     setError(null);
+    setEditedMessage(null);
     try {
       const res = await fetch(`${BASE}/api/accounts/posts/${postId}/google-chat-preview`);
       const json = await res.json();
@@ -82,11 +88,12 @@ export default function GoogleChatModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
-  const message = useMemo(() => {
+  const computedMessage = useMemo(() => {
     if (!data) return '';
     return buildMessage(buildHeader(data.owner, data.post.creator_name, data.post.url), comments);
   }, [data, comments]);
 
+  const message = editedMessage ?? computedMessage;
   const overLimit = message.length > MAX_LEN;
 
   // Re-roll — fetch a fresh batch (count varies 3-5 for variety).
@@ -94,11 +101,10 @@ export default function GoogleChatModal({
     await loadPreview();
   };
 
-  const handleCopy = async (key: 'all' | number) => {
-    const text = key === 'all' ? message : (comments[key] || '');
+  const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      setCopiedKey(String(key));
+      await navigator.clipboard.writeText(message);
+      setCopiedKey('all');
       setTimeout(() => setCopiedKey(null), 1500);
     } catch {}
   };
@@ -125,12 +131,6 @@ export default function GoogleChatModal({
       setError(e.message || 'Error al enviar');
     }
     setSending(false);
-  };
-
-  const updateComment = (idx: number, value: string) => {
-    const next = [...comments];
-    next[idx] = value;
-    setComments(next);
   };
 
   return (
@@ -192,47 +192,38 @@ export default function GoogleChatModal({
                 </button>
               </div>
 
-              {/* Message preview */}
+              {/* Editable full message */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs text-text-muted font-medium">Mensaje completo (lo que se enviará al Chat)</label>
-                  <button
-                    onClick={() => handleCopy('all')}
-                    className="text-[11px] text-accent hover:text-accent-light"
-                  >
-                    {copiedKey === 'all' ? '✓ Copiado' : '📋 Copiar todo'}
-                  </button>
-                </div>
-                <pre className="bg-bg-secondary border border-border rounded-lg p-3 text-[11px] text-text-secondary whitespace-pre-wrap font-mono leading-relaxed max-h-64 overflow-y-auto">
-                  {message}
-                </pre>
-                <p className={`text-[10px] mt-1 ${overLimit ? 'text-amber-400' : 'text-text-muted'}`}>
-                  {message.length} / {MAX_LEN} chars · todos de apoyo (reinforce + warm), sin numerar, pensados para que cualquier compañero los pegue sin riesgo de imagen.
-                </p>
-              </div>
-
-              {/* Individual editable comments */}
-              <div className="space-y-2">
-                <p className="text-xs text-text-muted font-medium">Comentarios (editables antes de enviar)</p>
-                {comments.map((value, idx) => (
-                  <div key={idx} className="bg-bg-secondary border border-border rounded-lg p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[11px] font-medium text-text-primary">💪 Comentario de apoyo</span>
+                  <div className="flex items-center gap-3">
+                    {editedMessage !== null && (
                       <button
-                        onClick={() => handleCopy(idx)}
-                        className="text-[10px] text-accent hover:text-accent-light"
+                        onClick={() => setEditedMessage(null)}
+                        className="text-[11px] text-text-muted hover:text-text-primary"
+                        title="Restaurar el mensaje original generado"
                       >
-                        {copiedKey === String(idx) ? '✓ Copiado' : '📋 Copiar'}
+                        ↺ Restaurar
                       </button>
-                    </div>
-                    <textarea
-                      value={value}
-                      onChange={(e) => updateComment(idx, e.target.value)}
-                      rows={Math.max(2, Math.min(4, Math.ceil(value.length / 80)))}
-                      className="w-full bg-bg-primary border border-border rounded px-2 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent resize-y"
-                    />
+                    )}
+                    <button
+                      onClick={handleCopy}
+                      className="text-[11px] text-accent hover:text-accent-light"
+                    >
+                      {copiedKey === 'all' ? '✓ Copiado' : '📋 Copiar todo'}
+                    </button>
                   </div>
-                ))}
+                </div>
+                <textarea
+                  value={message}
+                  onChange={(e) => setEditedMessage(e.target.value)}
+                  rows={16}
+                  className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-[11px] text-text-secondary font-mono leading-relaxed focus:outline-none focus:border-accent resize-y"
+                  spellCheck={false}
+                />
+                <p className={`text-[10px] mt-1 ${overLimit ? 'text-amber-400' : 'text-text-muted'}`}>
+                  {message.length} / {MAX_LEN} chars · editable libremente antes de enviar. Re-roll o cerrar/abrir el modal recompone el mensaje desde cero.
+                </p>
               </div>
             </>
           )}
