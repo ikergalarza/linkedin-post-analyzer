@@ -17,9 +17,20 @@ import {
   IMAGE_PRINCIPLES,
   VIDEO_SCRIPT,
   SHORT_FORM_VIDEO_PLAYBOOK,
+  VIDEO_SYSTEM_PROMPT,
   REMIX_PRINCIPLES,
   isVideoRequest,
 } from '../services/postPrompt';
+
+// Set of content_type values that correspond to "video on LinkedIn".
+// Used to filter the analysis + profile context when the user asks for
+// a video — everything outside this set (text-only, text+image,
+// carousel, document, poll, article) is intentionally excluded so the
+// model is never shown text-post patterns while drafting a video.
+const VIDEO_CONTENT_TYPES = new Set(['video', 'text_video']);
+function isVideoContentType(t: any): boolean {
+  return typeof t === 'string' && VIDEO_CONTENT_TYPES.has(t);
+}
 
 const router = Router();
 
@@ -177,6 +188,73 @@ async function getAnalysisContext(): Promise<string> {
   return cachedContext;
 }
 
+// Video-mode analogue of getAnalysisContext: pulls ALL posts but keeps
+// only those with content_type in VIDEO_CONTENT_TYPES, then summarises
+// the same way (outlier counts, top hooks, full text samples). Avoids
+// the cross-creator pattern engine for now — text-post archetypes
+// don't describe videos, and the small text+video sample wouldn't
+// produce stable hook_type × post_structure distributions anyway. Has
+// its own 10-min cache so the two modes don't trample each other.
+let cachedVideoContext: string | null = null;
+let cachedVideoAt = 0;
+async function getVideoAnalysisContext(): Promise<string> {
+  if (cachedVideoContext && Date.now() - cachedVideoAt < CACHE_TTL) return cachedVideoContext;
+
+  const creators = await CreatorModel.findAll();
+  let allPosts: any[] = [];
+  for (const c of creators) {
+    const posts = await PostModel.findByCreator(c.id, { limit: 10000 });
+    allPosts = allPosts.concat(posts);
+  }
+  const videoPosts = allPosts.filter((p) => isVideoContentType(p.content_type));
+  const videoOutliers = videoPosts.filter((p) => p.is_outlier);
+
+  const lines: string[] = [];
+  lines.push(`=== LINKEDIN TEXT+VIDEO POSTS DATA (the ONLY relevant subset for a video request) ===`);
+  lines.push(`Total text+video posts on managed accounts: ${videoPosts.length} (across ${creators.length} creators)`);
+  lines.push(`Outliers among those (3x+ avg engagement): ${videoOutliers.length}`);
+  lines.push('');
+
+  if (videoPosts.length === 0) {
+    lines.push('NOTE: no text+video posts have been scraped from this account yet. Lean on VIDEO_SCRIPT MODE and SHORT_FORM_VIDEO_PLAYBOOK below as the source of truth; do not invent account-specific data.');
+    cachedVideoContext = lines.join('\n');
+    cachedVideoAt = Date.now();
+    return cachedVideoContext;
+  }
+
+  // Outlier hooks (text+video only)
+  const topVideoOutliers = videoOutliers
+    .sort((a, b) => (b.outlier_ratio || 0) - (a.outlier_ratio || 0))
+    .slice(0, 10);
+  if (topVideoOutliers.length > 0) {
+    lines.push('--- Top Text+Video Outlier Hooks (the user\'s own — by ratio) ---');
+    for (const p of topVideoOutliers) {
+      const ratio = (+(p.outlier_ratio || 0)).toFixed(1);
+      lines.push(`  [${ratio}x] "${(p.hook_text || '').substring(0, 140)}"`);
+    }
+    lines.push('');
+  }
+
+  // A few full captions for style reference (text+video only)
+  const topFullVideo = videoOutliers
+    .sort((a, b) => (b.outlier_ratio || 0) - (a.outlier_ratio || 0))
+    .slice(0, 3)
+    .filter((p) => p.content_text && p.content_text.length > 50);
+  if (topFullVideo.length > 0) {
+    lines.push('--- Full Captions of the User\'s Top Text+Video Outliers (style/rhythm reference for the caption piece) ---');
+    for (const p of topFullVideo) {
+      const ratio = (+(p.outlier_ratio || 0)).toFixed(1);
+      lines.push(`\n[${ratio}x ratio]`);
+      lines.push((p.content_text as string).substring(0, 600));
+      lines.push('---');
+    }
+  }
+
+  cachedVideoContext = lines.join('\n');
+  cachedVideoAt = Date.now();
+  return cachedVideoContext;
+}
+
 async function buildProfileContext(): Promise<string> {
   const profile = await CreatorProfileModel.get();
 
@@ -236,6 +314,64 @@ async function buildProfileContext(): Promise<string> {
 
   lines.push('');
   lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above (which are LIVE from the database — never refer to a previous version of their post history). Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic.');
+  return lines.join('\n');
+}
+
+// Video-mode analogue of buildProfileContext: same profile header, but
+// the LIVE top-posts query is restricted to text+video content types so
+// the model only sees the user's video work when drafting a video.
+async function buildVideoProfileContext(): Promise<string> {
+  const profile = await CreatorProfileModel.get();
+
+  const lines: string[] = [];
+  lines.push('\n\n=== USER PROFILE (who is publishing the video) ===');
+  if (profile) {
+    if (profile.name) lines.push(`Name: ${profile.name}`);
+    if (profile.headline) lines.push(`Headline: ${profile.headline}`);
+    if (profile.followers_count) lines.push(`Followers: ${profile.followers_count}`);
+    if (profile.company) lines.push(`Company: ${profile.company}`);
+    if (profile.product) lines.push(`Product: ${profile.product}`);
+    if (profile.positioning) lines.push(`Positioning / What they want to stand for: ${profile.positioning}`);
+    if (profile.tone_style) lines.push(`Tone & style preference: ${profile.tone_style}`);
+  }
+
+  try {
+    const { rows: myVideoTop } = await pool.query(
+      `SELECT p.content_text, p.hook_text, p.likes_count, p.comments_count,
+              p.reposts_count, p.impressions_count, p.engagement_score,
+              p.outlier_ratio, p.is_outlier, p.published_at, p.content_type,
+              c.name AS creator_name
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND p.content_text IS NOT NULL
+          AND LENGTH(TRIM(p.content_text)) > 50
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.content_type = ANY($1::text[])
+        ORDER BY p.outlier_ratio DESC NULLS LAST, p.engagement_score DESC
+        LIMIT 8`,
+      [Array.from(VIDEO_CONTENT_TYPES)]
+    );
+    if (myVideoTop.length > 0) {
+      lines.push('');
+      lines.push(`--- TOP TEXT+VIDEO POSTS BY THIS USER (LIVE from DB — text+video only, sorted by outlier ratio) ---`);
+      lines.push(`Use these as the only account-specific reference for what's working for the user in VIDEO format. Text-only / text+image posts are deliberately excluded — their patterns don't transfer to a video script.`);
+      for (const p of myVideoTop) {
+        const ratio = p.outlier_ratio ? `${(+p.outlier_ratio).toFixed(1)}x` : '—';
+        const imp = p.impressions_count ? ` · ${p.impressions_count} imp` : '';
+        const date = p.published_at ? new Date(p.published_at).toISOString().slice(0, 10) : '?';
+        lines.push(`\n[${date} · ${p.creator_name} · ${ratio} ratio · ${p.likes_count}❤ ${p.comments_count}💬 ${p.reposts_count}🔁${imp} · ${p.content_type}]`);
+        lines.push((p.content_text as string).slice(0, 500));
+        lines.push('---');
+      }
+    } else {
+      lines.push('');
+      lines.push('NOTE: no text+video posts published yet by this user. Base the script on VIDEO_SCRIPT MODE and SHORT_FORM_VIDEO_PLAYBOOK below — do NOT pull patterns from this user\'s text-only or text+image history.');
+    }
+  } catch (err) {
+    console.warn('[buildVideoProfileContext] live top-video-posts query failed:', (err as Error).message);
+  }
+
   return lines.join('\n');
 }
 
@@ -383,13 +519,13 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     const client = new Anthropic({ apiKey });
-    const analysisContext = await getAnalysisContext();
-    const profileContext = await buildProfileContext();
-    const voiceContext = await buildVoiceContext(messages);
-
-    // Detect video intent on the latest user turn so the VIDEO_SCRIPT block
-    // is only injected when the user actually asked for one. Mirrors the
-    // detection that Inspiration → Generate has been using for months.
+    // Detect video intent on the latest user turn. When true, the system
+    // prompt is rebuilt from a video-only stack — minimal VIDEO_SYSTEM_PROMPT
+    // plus BRAND_RULES + VIDEO_SCRIPT + SHORT_FORM_VIDEO_PLAYBOOK, with the
+    // data context filtered to ONLY text+video posts (no text-only or
+    // text+image patterns leak in). When false, the full text-post prompt
+    // is built as before. Voice context (Iker/Unai persona) still applies
+    // in both modes — voice is format-agnostic.
     const lastUserText = (() => {
       const lastUser = [...(messages || [])].reverse().find((m: any) => m?.role === 'user');
       if (!lastUser) return '';
@@ -402,11 +538,29 @@ router.post('/', async (req: Request, res: Response) => {
       }
       return '';
     })();
-    const videoContext = isVideoRequest(lastUserText)
-      ? `\n\n${VIDEO_SCRIPT}\n\n${SHORT_FORM_VIDEO_PLAYBOOK}`
-      : '';
+    const videoMode = isVideoRequest(lastUserText);
 
-    const systemPrompt = `${SYSTEM_PROMPT}
+    const voiceContext = await buildVoiceContext(messages);
+
+    let systemPrompt: string;
+    if (videoMode) {
+      const videoAnalysisContext = await getVideoAnalysisContext();
+      const videoProfileContext = await buildVideoProfileContext();
+      systemPrompt = `${VIDEO_SYSTEM_PROMPT}
+
+${BRAND_RULES}
+
+${VIDEO_SCRIPT}
+
+${SHORT_FORM_VIDEO_PLAYBOOK}
+
+Here is the real text+video data from the LinkedIn posts database (the only relevant subset for a video request):
+
+${videoAnalysisContext}${videoProfileContext}${voiceContext}`;
+    } else {
+      const analysisContext = await getAnalysisContext();
+      const profileContext = await buildProfileContext();
+      systemPrompt = `${SYSTEM_PROMPT}
 
 ${HOOK_LAW}
 
@@ -422,11 +576,12 @@ ${BRAND_RULES}
 
 ${IMAGE_PRINCIPLES}
 
-${REMIX_PRINCIPLES}${videoContext}
+${REMIX_PRINCIPLES}
 
 Here is the real analysis data from the LinkedIn posts database:
 
 ${analysisContext}${profileContext}${voiceContext}`;
+    }
 
     // Stream the response
     res.setHeader('Content-Type', 'text/event-stream');
