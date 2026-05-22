@@ -7,6 +7,18 @@ import { CreatorProfileModel } from '../models/creatorProfile';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import pool from '../db';
 import { ensureSingleLineHook } from '../utils/sanitizeText';
+import {
+  BRAND_RULES,
+  CREATOR_LEARNINGS,
+  POSITIONING_PRINCIPLES,
+  NEETY_MECHANICS,
+  HOOK_LAW,
+  HOOK_QUALITY,
+  IMAGE_PRINCIPLES,
+  VIDEO_SCRIPT,
+  REMIX_PRINCIPLES,
+  isVideoRequest,
+} from '../services/postPrompt';
 
 const router = Router();
 
@@ -374,7 +386,44 @@ router.post('/', async (req: Request, res: Response) => {
     const profileContext = await buildProfileContext();
     const voiceContext = await buildVoiceContext(messages);
 
-    const systemPrompt = `${SYSTEM_PROMPT}\n\nHere is the real analysis data from the LinkedIn posts database:\n\n${analysisContext}${profileContext}${voiceContext}`;
+    // Detect video intent on the latest user turn so the VIDEO_SCRIPT block
+    // is only injected when the user actually asked for one. Mirrors the
+    // detection that Inspiration → Generate has been using for months.
+    const lastUserText = (() => {
+      const lastUser = [...(messages || [])].reverse().find((m: any) => m?.role === 'user');
+      if (!lastUser) return '';
+      if (typeof lastUser.content === 'string') return lastUser.content;
+      if (Array.isArray(lastUser.content)) {
+        return lastUser.content
+          .filter((b: any) => b?.type === 'text' && typeof b.text === 'string')
+          .map((b: any) => b.text)
+          .join(' ');
+      }
+      return '';
+    })();
+    const videoContext = isVideoRequest(lastUserText) ? `\n\n${VIDEO_SCRIPT}` : '';
+
+    const systemPrompt = `${SYSTEM_PROMPT}
+
+${HOOK_LAW}
+
+${HOOK_QUALITY}
+
+${NEETY_MECHANICS}
+
+${POSITIONING_PRINCIPLES}
+
+${CREATOR_LEARNINGS}
+
+${BRAND_RULES}
+
+${IMAGE_PRINCIPLES}
+
+${REMIX_PRINCIPLES}${videoContext}
+
+Here is the real analysis data from the LinkedIn posts database:
+
+${analysisContext}${profileContext}${voiceContext}`;
 
     // Stream the response
     res.setHeader('Content-Type', 'text/event-stream');
