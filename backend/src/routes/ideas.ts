@@ -14,6 +14,7 @@ import {
   VIDEO_SCRIPT,
   SHORT_FORM_VIDEO_PLAYBOOK,
   REMIX_PRINCIPLES,
+  RECENT_DIAGNOSIS,
   isVideoRequest,
 } from '../services/postPrompt';
 
@@ -228,6 +229,8 @@ ${REMIX_PRINCIPLES}
 ${NEETY_MECHANICS}
 
 ${CREATOR_LEARNINGS}
+
+${RECENT_DIAGNOSIS}
 
 RULES:
 - Write in the same language as the raw idea

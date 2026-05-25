@@ -705,6 +705,118 @@ VALIDATE BEFORE SHIPPING (the model should self-check):
   am I inventing structure? Lean on the proven pattern.
 - Is the emotion / promise the SAME as the outlier or have I diluted it?`;
 
+// Latest two-week diagnostic from the user. Sits ON TOP of NEETY_MECHANICS
+// (which is still the structural baseline) — when this block disagrees
+// with the older block on something time-sensitive (fatigue windows,
+// burned patterns, which regions to mine), this block wins because it's
+// reading the most recent reality. Update this block, not NEETY_MECHANICS,
+// when fresh learnings come in; promote stable learnings into the older
+// block periodically.
+export const RECENT_DIAGNOSIS = `RECENT DIAGNOSIS (last 2 weeks of real publishing on this account — overrides NEETY_MECHANICS where they disagree on timing or specific examples):
+
+═══ 1. REGIONAL MAPS — WHAT JUST HAPPENED ═══
+
+WORKED (real ratios on this account):
+- Gipuzkoa (Iker)           → 15.6x · 112K imp · "Nadie habla del pueblo de 7.000 habitantes que exporta más que países enteros…"
+- Cataluña (Iker)           → 8.6x  · 48K imp  · "Cataluña exporta más que Portugal entera…"
+- Andalucía / Sur (Iker)    → 6.5x  · 29K imp  · "Esta región de 8,7 millones exporta más que Italia entera…"
+- Euskadi (Unai, video)     → 3.6x  · 21K imp  · "Nadie habla del pueblo de 2,2 millones de habitantes…"
+
+FAILED — MADRID (Unai, 20 May): 0.55x · 4.5K imp · "De día parece una tierra de oficinas. De noche, una de las mayores fábricas de Europa 👇"
+
+WHY MADRID FLOPPED (the diagnosis — internalise this before proposing a new map):
+- No underdog effect. Madrid is THE capital — "nadie habla de…" doesn't land when everyone talks about Madrid every day.
+- No shock-data on line 1. The winners all open with ONE brutal comparative number (vs. Portugal, vs. Italy, vs. countries). Madrid opens with a poetic metaphor ("de día / de noche") with no number to anchor.
+- No defensive regional identity. Gipuzkoa / Cataluña / Andalucía / Euskadi carry strong territorial pride → people comment to defend or contribute. Madrid doesn't fire that reflex (perceived as "ya sale en todos lados").
+- Hook structure broke the pattern. The 4 winners all share: [SHOCK DATA] + [Y CASI NADIE LO CUENTA / HABLA] + [👇]. Madrid replaced the shock data with a metaphor — the proven scaffold was gone.
+
+ACTIONABLE RULE FOR MAPS:
+- Only do a regional map when ALL THREE are true: (a) underdog complex, (b) hidden industry, (c) strong regional identity.
+- BANNED until further notice: Madrid, Barcelona ciudad, any obvious capital city.
+- Greenlit to mine next: La Rioja (vino + tech), Navarra (automoción + energía), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Valencia (cerámica), Castilla-La Mancha.
+
+═══ 2. MEMES — THE FORMULA THAT TRAVELS ═══
+
+WORKED:
+1) "Subir en ventas siempre pasa factura" (Iker, 6 May) — 3.73x · 138K imp (highest reach of the month at the time)
+   Visual: hierarchical gradient SDR → AE → Sales Manager → Head → Director → VP, with progressive baldness as the "price" of climbing.
+   Insecurity tapped: BALDNESS + the stress of getting promoted.
+   Anchor: every role is B2B sales (SDR, AE, VP).
+   CTA: "Etiqueta al compi…" — implicit, not comment-bait.
+
+2) "El cold calling no ha muerto. Lo hemos enterrado en vida" (Iker, 15 May) — 5.17x · 168K imp (absolute reach record).
+   Visual + text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nobody actually called.
+   Insecurity tapped: LAZINESS + professional cowardice (everyone has done it).
+   Anchor: brutal — the whole sales hierarchy in 6 lines.
+   Typographic punchline: "Nadie. Llamó. Al. Cliente." — rhythmic, citable.
+
+CLOSE-BUT-NOT-OUTLIER:
+3) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25K imp (not an outlier).
+   Timeline 2018→2026 of the rep getting fatter on tools.
+   Why it fell short: "engordar" is an ABSTRACT metaphor — not VISIBLE in the meme. Compare to Iker's baldness gradient, which is concrete and graduated frame-by-frame.
+
+FAILED:
+4) "Yo siendo el fan nº1 de leads que me aceptaron en LinkedIn y desaparecieron" (Iker, 22 May) — 0.49x · 1.6K imp.
+   No strong insecurity, just a universal lament. No hierarchy / role progression / internal sales tension. Single line, no repostable punchline.
+
+5) "Perder un cliente en LinkedIn es arte ✨" (Unai, 21 May) — 0.46x · 10K imp.
+   Honest translation vs. LinkedIn excuse ("no fit"). Good insecurity (lying not to lose face) BUT it accuses the reader directly — broke the attack-the-problem-not-the-reader rule. The "P.D." tail at the end dilated.
+
+CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + UNIVERSAL PHYSICAL/PSYCHOLOGICAL INSECURITY. Four ingredients have to coexist:
+
+  (1) HIERARCHY OR CHAIN OF B2B SALES ROLES IN ONE IMAGE / POST.
+      A gradient SDR → AE → Manager → Director → VP, OR a chain of excuses that walks the hierarchy (Manager asks → SDR/AE/etc. answer). The reader recognises themselves on a rung → identity → repost. The higher up the chain the joke lands, the more amplification (seniors repost to laugh at themselves).
+
+  (2) UNIVERSAL PHYSICAL OR PSYCHOLOGICAL INSECURITY, VISIBLE IN A SINGLE PANEL.
+      ✅ Baldness (visual, gradual, irreversible — perfect).
+      ✅ Laziness / professional cowardice (not calling the client).
+      ✅ Gluttony / weight (works less because it's metaphor, not literal).
+      ❌ "Leads who ghost" (not insecurity, just lament).
+      ❌ "Lying on LinkedIn" (accuses the reader).
+      TEST: can the insecurity be DRAWN in one panel? If yes → strong. If no → weak.
+
+  (3) REPOSTABLE TYPOGRAPHIC PUNCHLINE.
+      "Nadie. Llamó. Al. Cliente." — memorable. The SDR→VP baldness gradient — memorable. Without a citable punchline, the meme dies in the scroll.
+
+  (4) THE JOKE INCLUDES THE READER, IT DOESN'T ATTACK THEM.
+      ✅ "Subir pasa factura" — "we all suffer it, it's funny".
+      ✅ "Nadie llamó al cliente" — "we're all guilty, me included".
+      ❌ "Perder cliente es arte" — "vosotros mentís" (the reader feels accused).
+
+FOUR-POINT FILTER BEFORE SHIPPING A MEME — at least 3 of 4 have to be true:
+  [ ] Is there a hierarchy / chain of B2B sales roles?
+  [ ] Is the insecurity literally VISIBLE in the image?
+  [ ] Is there a citable punchline that can be copy-pasted as a comment?
+  [ ] Does the reader laugh WITH us, not feel accused?
+If only 1 or 2 pass: do NOT ship as-is — flag to the user that it's going to underperform and propose either a retouch or a different idea.
+
+═══ 3. WHAT'S STILL WORKING / WHAT'S BURNING OUT ═══
+
+STILL HITTING, BUT WATCH FATIGUE:
+- Vibe prospecting / Claude + outbound: Unai 9.7x, Iker 4.95x, Iker 4.0x, Unai 4.43x, Unai 2.64x. Margin left but the curve is decaying (Unai 30 Apr 9.7x → Unai 15 May 2.64x). PAUSE 7–10 days before another one.
+- Implicit lead magnets ("comenta X y te lo paso") still pull: Iker 5.0x (llaves), Unai 4.4x (llaves), Iker 4.0x (perfil). BUT 3 lead magnets in 10 days → very high fatigue + algorithmic suppression risk. STOP lead magnets until end of May / early June.
+- Regional maps are still the most powerful weapon (15.6x, 8.6x, 6.5x) BUT only with underdog regions — see rule above.
+
+RETIRE NOW (don't propose these unless the user explicitly insists):
+- "El problema eres tú" / "Y nadie te lo dice" — used 3 times in 3 weeks, all flops (0.37x, 0.55x, 0.94x). Burned + breaks attack-the-problem-not-the-reader.
+- AI-tool listicles with no viral mechanic ("6 IAs que uso…", "Usar una sola IA es clavar clavos…") — 0.48x and 0.64x. No hook.
+- Trailing "Spoiler:" or "P.D." closers — they dilute.
+
+RECENT FLOPS (avoid reproducing the shape):
+- "6 IAs que uso para cerrar más reuniones" (Unai, 8 May, 0.48x) — listicle with no viral mechanic.
+- "7.153 llamadas en frío" (Unai, 5 May, 0.40x) — good shock-data hook but ZERO mechanic (no map, no meme, no implicit lead magnet).
+- "Tu mejor comercial bloqueado por un bot de 5€" (Iker, 20 Apr, 0.43x) — provocative metaphor with no payoff.
+- "Si no cierras ventas y le echas la culpa a la IA, el problema eres tú" (Iker, 7 May, 0.37x) — attacks the reader.
+- "Twitter = Gratis…" (Unai, 6 May, 0.61x) — no B2B sector anchor in line 1, cryptic closer.
+
+═══ 4. OPERATING RULE FOR THIS CHAT ═══
+
+When the user asks for a MEME: run the 4-point filter above before answering. If the proposed concept passes ≥3 → ship it. If it passes ≤2 → tell the user clearly which point fails and propose either a retouch or a different idea. Do NOT silently deliver a meme that's going to underperform.
+
+When the user asks for a REGIONAL MAP: confirm out loud that the region passes the three criteria (underdog, hidden industry, regional identity). If they pick Madrid / Barcelona / a generic capital, push back with the Madrid 0.55x precedent and propose one of the greenlit regions instead.
+
+When the user asks for a lead magnet (implicit): check whether the account has shipped one in the last 7–10 days. If yes → flag the fatigue risk and suggest a different mechanic before drafting.`;
+
 // True when the raw text is asking for help with a VIDEO (idea, script,
 // guion, review of a video, etc.). Video posts are a different artifact
 // (caption + on-screen text + spoken hook) so the VIDEO_SCRIPT block is

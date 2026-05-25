@@ -19,6 +19,7 @@ import {
   SHORT_FORM_VIDEO_PLAYBOOK,
   VIDEO_SYSTEM_PROMPT,
   REMIX_PRINCIPLES,
+  RECENT_DIAGNOSIS,
   isVideoRequest,
 } from '../services/postPrompt';
 
@@ -725,6 +726,8 @@ ${BRAND_RULES}
 ${IMAGE_PRINCIPLES}
 
 ${REMIX_PRINCIPLES}
+
+${RECENT_DIAGNOSIS}
 
 Here is the real analysis data from the LinkedIn posts database:
 
