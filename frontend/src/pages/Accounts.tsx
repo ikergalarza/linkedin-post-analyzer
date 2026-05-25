@@ -1132,12 +1132,11 @@ export default function Accounts() {
             days={days}
           />
 
-          {/* Three compact "what's working" cards on a single row:
-              Publication cadence (when), Content format mix (what shape),
-              Best-performing hooks (what opener). Used to take three full
-              rows; the cadence chart in particular was just dead space at
-              full width, so they share now. */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+          {/* Two-column layout: Publication cadence on the left taking
+              the whole column (it needs the width — dates were colliding
+              when squeezed into a third), with Content format mix +
+              Best-performing hooks stacked on the right. */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
           {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
             <div className="mb-3">
@@ -1157,7 +1156,7 @@ export default function Accounts() {
             {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={180}>
+              <ResponsiveContainer width="100%" height={360}>
                 <BarChart data={dailyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
                   <XAxis
@@ -1187,6 +1186,8 @@ export default function Accounts() {
             )}
           </div>
 
+          {/* Right column: Format mix + Best hooks stacked. */}
+          <div className="space-y-4">
           {/* Format mix */}
           {formatChartData.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
@@ -1257,7 +1258,8 @@ export default function Accounts() {
               </ResponsiveContainer>
             </div>
           )}
-          </div>
+          </div>{/* /right column */}
+          </div>{/* /two-column grid */}
 
           {/* Per-account comparison */}
           {!selectedCreator || selectedCreator === 'all' ? (
