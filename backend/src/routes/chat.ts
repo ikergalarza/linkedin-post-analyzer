@@ -290,12 +290,13 @@ async function buildProfileContext(): Promise<string> {
           AND LENGTH(TRIM(p.content_text)) > 50
           AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
         ORDER BY p.outlier_ratio DESC NULLS LAST, p.engagement_score DESC
-        LIMIT 12`
+        LIMIT 8`
     );
     if (myTop.length > 0) {
       lines.push('');
       lines.push(`--- TOP POSTS BY THIS USER (LIVE from DB — sorted by outlier ratio; ALWAYS up to date with the latest scrape, including the past week) ---`);
       lines.push(`Use this list as the source of truth when the user asks "what's working for me", "what are my best posts", "what should I write more of". The static profile.my_posts field is intentionally NOT used — it was a manual one-time load and may be months out of date.`);
+      lines.push(`Each post is included with its FULL body (truncated only past ~2500 chars) so you can analyse the closer, CTA, rhythm of the cuts, not just the hook.`);
       for (const p of myTop) {
         const ratio = p.outlier_ratio ? `${(+p.outlier_ratio).toFixed(1)}x` : '—';
         const imp = p.impressions_count ? ` · ${p.impressions_count} imp` : '';
@@ -303,8 +304,10 @@ async function buildProfileContext(): Promise<string> {
         const arche = (p.hook_type && p.hook_type !== 'other' && p.post_structure && p.post_structure !== 'other')
           ? ` · ${p.hook_type} + ${p.post_structure}`
           : '';
+        const fullText = p.content_text as string;
+        const body = fullText.length > 2500 ? `${fullText.slice(0, 2500)}…[truncated]` : fullText;
         lines.push(`\n[${date} · ${p.creator_name} · ${ratio} ratio · ${p.likes_count}❤ ${p.comments_count}💬 ${p.reposts_count}🔁${imp}${arche}]`);
-        lines.push((p.content_text as string).slice(0, 600));
+        lines.push(body);
         lines.push('---');
       }
     }
@@ -312,9 +315,154 @@ async function buildProfileContext(): Promise<string> {
     console.warn('[buildProfileContext] live top-posts query failed:', (err as Error).message);
   }
 
+  // RECENT TIMELINE — chronological feed of the last 6 weeks, INCLUDING
+  // flops. The top-posts block above shows only the hits, which biases
+  // diagnosis ("everything works for me"). This block surfaces what
+  // actually got published when, in order, with the engagement /
+  // outlier-ratio markers — so when the user says "why has my reach
+  // dropped lately" or "give me a critical read", the model has the
+  // full activity, not just the survivor-bias highlights.
+  try {
+    const sinceIso = new Date(Date.now() - 42 * 86400000).toISOString();
+    const { rows: timeline } = await pool.query(
+      `SELECT p.content_text, p.hook_text, p.likes_count, p.comments_count,
+              p.reposts_count, p.impressions_count, p.engagement_score,
+              p.outlier_ratio, p.is_outlier, p.published_at, p.content_type,
+              c.name AS creator_name
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND p.content_text IS NOT NULL
+          AND LENGTH(TRIM(p.content_text)) > 30
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.published_at >= $1
+        ORDER BY p.published_at DESC
+        LIMIT 35`,
+      [sinceIso]
+    );
+    if (timeline.length > 0) {
+      lines.push('');
+      lines.push('--- RECENT TIMELINE (chronological — last 6 weeks, EVERY post including the flops) ---');
+      lines.push('Diagnostic feed: not filtered by outlier status. Read this when asked about cadence, trends, or "what changed lately" — flops are as informative as hits. Bodies kept short here (~400 chars) because the goal is the pattern, not deep close-reading; if you want to inspect a specific post in detail, that detail lives in TOP POSTS above or you can ask the user.');
+      for (const p of timeline) {
+        const ratio = p.outlier_ratio != null ? `${(+p.outlier_ratio).toFixed(2)}x` : '—';
+        const flopMarker = p.outlier_ratio != null && Number(p.outlier_ratio) < 0.7 ? ' [flop]' : '';
+        const outlierMarker = p.is_outlier ? ' [OUTLIER]' : '';
+        const date = p.published_at ? new Date(p.published_at).toISOString().slice(0, 10) : '?';
+        const imp = p.impressions_count ? ` · ${p.impressions_count} imp` : '';
+        const fullText = (p.content_text as string) || '';
+        const preview = fullText.length > 400 ? `${fullText.slice(0, 400)}…` : fullText;
+        lines.push(`\n[${date} · ${p.creator_name} · ${p.content_type || 'text'} · ${ratio}${outlierMarker}${flopMarker} · ${p.engagement_score} eng${imp}]`);
+        lines.push(preview.replace(/\n{2,}/g, '\n')); // collapse blank lines so each item stays compact
+      }
+    }
+  } catch (err) {
+    console.warn('[buildProfileContext] recent timeline query failed:', (err as Error).message);
+  }
+
   lines.push('');
-  lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above (which are LIVE from the database — never refer to a previous version of their post history). Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic.');
+  lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above (which are LIVE from the database — never refer to a previous version of their post history). Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic. When diagnosing performance, lean on the RECENT TIMELINE block (which includes flops) instead of cherry-picking from TOP POSTS.');
   return lines.join('\n');
+}
+
+// Pull the first image URL out of a post's stored raw_data, mirroring the
+// extraction logic of /api/posts/post/:id/media. Returns null when no
+// usable image is in the payload. Used by buildAccountImageBlocks so the
+// chat can reason visually about the user's meme / text+image work
+// without each turn having to call the media endpoint per post.
+function extractFirstImageUrl(raw: any): string | null {
+  if (raw && Array.isArray(raw.attachments)) {
+    for (const a of raw.attachments) {
+      const t = String(a?.type || '').toLowerCase();
+      const url = a?.url || a?.download_url || a?.media_url || null;
+      if (!url) continue;
+      if (t.includes('video') || t.includes('document') || t.includes('pdf')) continue;
+      if (t.includes('image') || t.includes('photo') || t.includes('picture') || t === '') return url;
+    }
+  }
+  if (raw && Array.isArray(raw.images)) {
+    for (const img of raw.images) {
+      const url = typeof img === 'string' ? img : (img?.url || img?.download_url || img?.media_url);
+      if (url) return url;
+    }
+  }
+  if (raw && Array.isArray(raw.media)) {
+    for (const m of raw.media) {
+      const t = String(m?.type || m?.media_type || '').toLowerCase();
+      const url = m?.url || m?.download_url || m?.media_url;
+      if (url && !t.includes('video')) return url;
+    }
+  }
+  return raw?.image_url || raw?.image || raw?.thumbnail_url || raw?.thumbnail || null;
+}
+
+// Build the visual reference block: a small content-block array with up
+// to 10 of the user's recent meme / text+image / carousel posts as real
+// images that the model can actually see, each tagged with date, creator,
+// outlier ratio, and a short hook. Lets Claude reason about which
+// visuals worked instead of operating blind on roughly half of the
+// account's output. Returns [] when nothing usable is in raw_data.
+const VISUAL_CONTENT_TYPES = ['text_image', 'image', 'text_carousel', 'carousel'];
+const MAX_IMAGES = 10;
+const IMAGES_LOOKBACK_DAYS = 42;
+
+async function buildAccountImageBlocks(): Promise<any[]> {
+  try {
+    const sinceIso = new Date(Date.now() - IMAGES_LOOKBACK_DAYS * 86400000).toISOString();
+    const { rows } = await pool.query(
+      `SELECT p.id, p.content_text, p.hook_text, p.published_at,
+              p.content_type, p.outlier_ratio, p.raw_data,
+              c.name AS creator_name
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.content_type = ANY($1::text[])
+          AND p.published_at >= $2
+          AND p.raw_data IS NOT NULL
+        ORDER BY p.published_at DESC
+        LIMIT 30`,
+      [VISUAL_CONTENT_TYPES, sinceIso]
+    );
+
+    const blocks: any[] = [];
+    let imageCount = 0;
+    for (const post of rows) {
+      if (imageCount >= MAX_IMAGES) break;
+      const url = extractFirstImageUrl(post.raw_data);
+      if (!url || !/^https?:\/\//i.test(url)) continue;
+      const date = post.published_at
+        ? new Date(post.published_at).toISOString().slice(0, 10)
+        : '?';
+      const ratio = post.outlier_ratio != null
+        ? `${(+post.outlier_ratio).toFixed(1)}x`
+        : '—';
+      const hook = (post.hook_text || post.content_text || '')
+        .toString()
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 140);
+      blocks.push({
+        type: 'text',
+        text: `\n[${date} · ${post.creator_name} · ${ratio} · ${post.content_type}] ${hook}`,
+      });
+      blocks.push({
+        type: 'image',
+        source: { type: 'url', url },
+      });
+      imageCount++;
+    }
+
+    if (blocks.length === 0) return [];
+    blocks.unshift({
+      type: 'text',
+      text: `═══ RECENT POST IMAGES (your last ${imageCount} text+image / carousel posts on this account, newest first) ═══\nWhat you're looking at: the actual visuals attached to recent posts. Use them when reasoning about what kinds of images travel for this account — meme angles, layouts, contrast, what the user has already tried, what flopped visually vs. what got reach. Without these you'd be operating blind on roughly half of the account's output.`,
+    });
+    return blocks;
+  } catch (err) {
+    console.warn('[buildAccountImageBlocks] failed:', (err as Error).message);
+    return [];
+  }
 }
 
 // Video-mode analogue of buildProfileContext: same profile header, but
@@ -588,11 +736,29 @@ ${analysisContext}${profileContext}${voiceContext}`;
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
+    // Visual reference: prepend a (user, assistant) turn carrying the
+    // user's recent post images so the model can SEE what they've
+    // published — not just read text summaries. Skipped in video mode
+    // (that path is already focused on text+video posts and pulls its
+    // own data context). LinkedIn CDN image URLs are temporary (~few
+    // weeks) but the lookback window is set to match.
+    const imageBlocks = videoMode ? [] : await buildAccountImageBlocks();
+    const augmentedMessages = imageBlocks.length > 0
+      ? [
+          { role: 'user' as const, content: imageBlocks },
+          {
+            role: 'assistant' as const,
+            content: "Got it — I'm holding your recent post images as visual reference alongside the text data above. Ready when you are.",
+          },
+          ...messages,
+        ]
+      : messages;
+
     const stream = await client.messages.stream({
       model: 'claude-opus-4-7',
       max_tokens: 4096,
       system: systemPrompt,
-      messages: messages.map((m: any) => ({
+      messages: augmentedMessages.map((m: any) => ({
         role: m.role,
         content: m.content,
       })),
