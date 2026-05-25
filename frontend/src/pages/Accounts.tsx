@@ -1061,7 +1061,7 @@ export default function Accounts() {
               <h3 className="text-lg font-semibold">Engagement over time</h3>
             </div>
             <p className="text-xs text-text-muted mb-3">
-              7-day rolling engagement (likes + comments×2 + reposts×3){analytics.totals.total_impressions > 0 ? ' and impressions' : ''} for the selected range.
+              {`Daily engagement${analytics.totals.total_impressions > 0 ? ' and impressions' : ''} from published posts ${selectedCreator === 'all' ? '— all managed accounts' : '(this account)'}`}
             </p>
             {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
