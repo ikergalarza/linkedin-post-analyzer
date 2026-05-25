@@ -707,7 +707,9 @@ export default function Accounts() {
                 />
               </div>
             )}
-            <span className="text-[10px] text-text-muted ml-2">{days} day{days === 1 ? '' : 's'}</span>
+            {datePreset === 'custom' && (
+              <span className="text-[10px] text-text-muted ml-2">{days} day{days === 1 ? '' : 's'}</span>
+            )}
           </div>
         </div>
       )}
