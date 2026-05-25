@@ -1866,15 +1866,17 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-xs text-text-muted mb-1 flex-wrap">
-            <span className="text-text-secondary font-medium">{post.creator_name}</span>
-            <span>·</span>
-            <span>{post.published_at ? new Date(post.published_at).toLocaleDateString() : '—'}</span>
-            <span>·</span>
-            <span>{FORMAT_LABELS[post.content_type] || post.content_type}</span>
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2 text-xs text-text-muted flex-wrap min-w-0">
+              <span className="text-text-secondary font-medium">{post.creator_name}</span>
+              <span>·</span>
+              <span>{post.published_at ? new Date(post.published_at).toLocaleDateString() : '—'}</span>
+              <span>·</span>
+              <span>{FORMAT_LABELS[post.content_type] || post.content_type}</span>
+            </div>
             {post.outlier_ratio != null && (
               <span
-                className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                className={`flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold tabular-nums ${
                   post.is_outlier
                     ? 'bg-diamond/15 text-diamond'
                     : 'bg-bg-secondary text-text-muted border border-border'
