@@ -71,6 +71,14 @@ interface HoverState {
 
 // Same colour the Dashboard uses for outliers — keeps the whole app coherent.
 const OUTLIER_COLOR = '#67e8f9';
+
+// The tooltip + pencil title only need the first name. Full creator
+// names ("Iker Galarza Rodríguez") visually overcrowded the small
+// tooltip card; first names are unambiguous in this product (the only
+// managed accounts are Iker and Unai).
+function firstName(name: string): string {
+  return (name || '').trim().split(/\s+/)[0] || name;
+}
 const PENCIL_BG_NORMAL = '#6b7280';
 const PENCIL_BG_OUTLIER = OUTLIER_COLOR;
 
@@ -378,7 +386,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                     justifyContent: 'center',
                     cursor: 'pointer',
                   }}
-                  title={`${p.creatorName} · ${d.day}`}
+                  title={`${firstName(p.creatorName)} · ${d.day}`}
                 >
                   <PencilIcon size={14} color="#ffffff" />
                 </div>
@@ -403,7 +411,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
           ? d.dayPosts.find((p) => p.id === hover.postId) ?? d.dayPosts[0] ?? null
           : d.dayPosts[0] ?? null;
         const heading = hoveredPost
-          ? `${fmtFullDay(d.day)} · ${hoveredPost.creatorName}`
+          ? `${fmtFullDay(d.day)} · ${firstName(hoveredPost.creatorName)}`
           : `${fmtFullDay(d.day)} · no post`;
         const containerW = wrapperRef.current?.offsetWidth ?? 600;
         const tooltipW = 240;
