@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db';
 import { unipileService } from '../services/unipile';
-import { enrichPost, recalculateOutliers } from '../services/engagement';
+import { enrichPost } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { maybeTick, capturePostSnapshot } from '../services/postMonitor';
@@ -41,23 +41,35 @@ function parseDateRange(req: Request): { startDate: string; endDate: string; day
   return { startDate: fmt(start), endDate: fmt(today), days };
 }
 
-// Fetch only NEW posts for a managed creator: pulls known linkedin_post_ids
-// first, then asks Unipile incrementally (getPosts stops as soon as it hits a
-// known id). The Refresh button in the Accounts UI uses this — its job is to
-// surface the post you just published, not to re-snapshot history. The
-// 15-min postMonitor tick is what keeps existing posts' curves fresh, so we
-// deliberately skip forceLiveCapture here to avoid pounding Unipile with
-// redundant snapshot requests every time the user clicks Refresh.
-async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number; new_post_db_ids: string[] }> {
+// Fetch only NEW posts for a managed creator and seed an initial snapshot
+// from the data we already pulled, INSIDE this function — no second
+// getPosts round-trip, no capturePostSnapshot follow-up call.
+//
+// The Refresh button in the Accounts UI uses this. Its only job is to
+// surface a post the user just published. Continuous tracking of
+// existing posts is handled by the postMonitor tick (every 15 min, with
+// per-age cadence inside the 7-day window), so this function deliberately
+// skips:
+//   - forceLiveCapture / re-snapshotting historical posts
+//   - capturePostSnapshot (would re-fetch getPosts and rebuild outlier_ratio
+//     for every post in the creator — pure waste on a refresh click)
+//   - recalculateOutliers (also handled by the tick; one new post barely
+//     moves the average and the tick will pick it up within minutes)
+//
+// Total Unipile calls per click: 1 getProfile + 1 getProfileViewers (the
+// account snapshot — followers + WVMP) + 1 getPosts (incremental, stops
+// at the first known id). With one new post, that's still ~3 HTTP calls
+// instead of the 5 the old path made.
+async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number; snapshots_seeded: number }> {
   const creator = await CreatorModel.findById(creatorId);
-  if (!creator) return { scraped: 0, new_post_db_ids: [] };
+  if (!creator) return { scraped: 0, snapshots_seeded: 0 };
   const accountIdOverride = (creator as any).unipile_account_id as string | null;
-  if (!accountIdOverride) return { scraped: 0, new_post_db_ids: [] };
+  if (!accountIdOverride) return { scraped: 0, snapshots_seeded: 0 };
 
   const snap = await captureAccountSnapshots(creatorId);
   const providerId = snap.providerId;
 
-  if (!providerId) return { scraped: 0, new_post_db_ids: [] };
+  if (!providerId) return { scraped: 0, snapshots_seeded: 0 };
 
   const { rows: knownRows } = await pool.query(
     `SELECT linkedin_post_id FROM posts
@@ -75,35 +87,56 @@ async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number;
   });
   if (originalPosts.length === 0) {
     await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
-    return { scraped: 0, new_post_db_ids: [] };
+    return { scraped: 0, snapshots_seeded: 0 };
   }
 
-  let posts = originalPosts.map((raw) => {
+  const posts = originalPosts.map((raw) => {
     const normalized = unipileService.normalizePost(raw, creator.id);
     const enriched = enrichPost(normalized);
     return { ...normalized, ...enriched };
   });
-  const withOutliers = recalculateOutliers(posts);
-  posts = withOutliers.map((o, i) => ({
-    ...posts[i],
-    outlier_ratio: o.outlier_ratio,
-    is_outlier: o.is_outlier,
-  }));
 
   await PostModel.bulkUpsert(posts);
   await CreatorModel.update(creator.id, { last_scraped_at: new Date() } as any);
 
+  // Seed the first snapshot for each newly-discovered post from the data
+  // we just downloaded — INSERT only, no extra Unipile calls. Lookup the
+  // DB id by linkedin_post_id in one query, then build values inline.
   const newLinkedinIds = posts.map((p: any) => p.linkedin_post_id).filter(Boolean);
-  let newPostDbIds: string[] = [];
+  let seededCount = 0;
   if (newLinkedinIds.length > 0) {
     const { rows: idRows } = await pool.query(
-      `SELECT id FROM posts WHERE creator_id = $1 AND linkedin_post_id = ANY($2::text[])`,
+      `SELECT id, linkedin_post_id
+         FROM posts
+        WHERE creator_id = $1 AND linkedin_post_id = ANY($2::text[])`,
       [creatorId, newLinkedinIds]
     );
-    newPostDbIds = idRows.map((r: any) => String(r.id));
+    const idByLinkedinId = new Map<string, string>();
+    for (const r of idRows) idByLinkedinId.set(String(r.linkedin_post_id), String(r.id));
+
+    for (const p of posts as any[]) {
+      const internalId = idByLinkedinId.get(String(p.linkedin_post_id));
+      if (!internalId) continue;
+      try {
+        await pool.query(
+          `INSERT INTO post_snapshots (post_id, impressions_count, likes_count, comments_count, reposts_count)
+           VALUES ($1, $2, $3, $4, $5)`,
+          [
+            internalId,
+            p.impressions_count ?? null,
+            p.likes_count ?? 0,
+            p.comments_count ?? 0,
+            p.reposts_count ?? 0,
+          ]
+        );
+        seededCount++;
+      } catch (err: any) {
+        console.error(`[scrapeCreatorPosts] seed snapshot failed for ${internalId}:`, err?.message);
+      }
+    }
   }
 
-  return { scraped: posts.length, new_post_db_ids: newPostDbIds };
+  return { scraped: posts.length, snapshots_seeded: seededCount };
 }
 
 // GET /api/accounts — list all creators flagged as managed accounts, with summary stats
@@ -1273,17 +1306,10 @@ router.post('/live-refresh', async (req: Request, res: Response) => {
     let captured = 0;
     for (const { id } of managed) {
       try {
-        const { scraped, new_post_db_ids } = await scrapeCreatorPosts(id);
+        const { scraped, snapshots_seeded } = await scrapeCreatorPosts(id);
         newPosts += scraped;
         viewSnapshots++;
-        for (const newId of new_post_db_ids) {
-          try {
-            const snap = await capturePostSnapshot(newId);
-            if (snap.ok) captured++;
-          } catch (snapErr: any) {
-            console.error(`[accounts/live-refresh] initial snapshot failed for ${newId}:`, snapErr?.message);
-          }
-        }
+        captured += snapshots_seeded;
       } catch (err: any) {
         console.error(`[accounts/live-refresh] scrape failed for ${id}:`, err?.message);
       }
