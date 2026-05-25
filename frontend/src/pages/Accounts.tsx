@@ -1132,21 +1132,27 @@ export default function Accounts() {
             days={days}
           />
 
+          {/* Three compact "what's working" cards on a single row:
+              Publication cadence (when), Content format mix (what shape),
+              Best-performing hooks (what opener). Used to take three full
+              rows; the cadence chart in particular was just dead space at
+              full width, so they share now. */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
           {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
-            <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
-              <div>
+            <div className="mb-3">
+              <div className="flex items-start justify-between gap-2 flex-wrap">
                 <h3 className="text-lg font-semibold">Publication cadence</h3>
-                <p className="text-xs text-text-muted mt-0.5">Posts published each day</p>
+                <p className="text-[11px] text-text-muted flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-sm bg-indigo-500" /> regular
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-sm bg-diamond" /> outlier
+                  </span>
+                </p>
               </div>
-              <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-indigo-500" /> regular day
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-diamond" /> had an outlier
-                </span>
-              </p>
+              <p className="text-xs text-text-muted mt-0.5">Posts published each day</p>
             </div>
             {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
@@ -1181,21 +1187,12 @@ export default function Accounts() {
             )}
           </div>
 
-          {/* Format mix + Best hooks share one row — both are compact
-              "what's working" breakdowns, no need for a full row each. */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
           {/* Format mix */}
           {formatChartData.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
-              <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
-                <div>
-                  <h3 className="text-lg font-semibold">Content format mix</h3>
-                  <p className="text-xs text-text-muted mt-0.5">Posts per content type</p>
-                </div>
-                <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3">
-                  <span>bar length = post count</span>
-                  <span>· hover for avg engagement &amp; outliers</span>
-                </p>
+              <div className="mb-3">
+                <h3 className="text-lg font-semibold">Content format mix</h3>
+                <p className="text-xs text-text-muted mt-0.5">Posts per content type · hover for avg engagement</p>
               </div>
               <ResponsiveContainer width="100%" height={Math.max(180, formatChartData.length * 48)}>
                 <BarChart data={formatChartData} layout="vertical" margin={{ top: 4, right: 48, left: 8, bottom: 4 }}>
@@ -1232,18 +1229,9 @@ export default function Accounts() {
           {/* Hook types */}
           {analytics.hook_types.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
-              <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
-                <div>
-                  <h3 className="text-lg font-semibold">Best-performing hooks</h3>
-                  <p className="text-xs text-text-muted mt-0.5">Avg engagement by hook type</p>
-                </div>
-                <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="inline-flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-accent" />
-                    avg engagement
-                  </span>
-                  <span>longer bar = better</span>
-                </p>
+              <div className="mb-3">
+                <h3 className="text-lg font-semibold">Best-performing hooks</h3>
+                <p className="text-xs text-text-muted mt-0.5">Avg engagement by hook type · longer = better</p>
               </div>
               <ResponsiveContainer width="100%" height={Math.max(180, analytics.hook_types.length * 40)}>
                 <BarChart data={analytics.hook_types} layout="vertical" margin={{ top: 4, right: 48, left: 8, bottom: 4 }}>
