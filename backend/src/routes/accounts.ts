@@ -1002,17 +1002,28 @@ router.get('/analytics', async (req: Request, res: Response) => {
         WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${dailyScope.sql}
         GROUP BY (p.published_at)::date
       ),
-      top_per_day AS (
-        SELECT DISTINCT ON ((p.published_at)::date)
+      day_post_arrays AS (
+        -- All posts published on each day, agg'd as a JSON array so the
+        -- chart can render ONE pencil per post (grouped by creator)
+        -- instead of a single "top post" badge that hid same-day
+        -- publications from the other managed account.
+        SELECT
           (p.published_at)::date AS day,
-          p.id AS top_post_id,
-          COALESCE(p.content_text, p.hook_text) AS top_post_preview,
-          p.post_url AS top_post_url,
-          p.outlier_ratio AS top_post_outlier_ratio,
-          p.is_outlier AS top_post_is_outlier
+          json_agg(
+            json_build_object(
+              'id', p.id,
+              'preview', COALESCE(p.content_text, p.hook_text),
+              'url', p.post_url,
+              'outlier_ratio', p.outlier_ratio,
+              'is_outlier', p.is_outlier,
+              'creator_id', p.creator_id,
+              'creator_name', c.name
+            ) ORDER BY p.engagement_score DESC
+          ) AS day_posts
         FROM posts p
+        JOIN creators c ON c.id = p.creator_id
         WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${dailyScope.sql}
-        ORDER BY (p.published_at)::date, p.engagement_score DESC
+        GROUP BY (p.published_at)::date
       ),
       filled AS (
         SELECT
@@ -1022,14 +1033,10 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(dr.total_engagement, 0) AS total_engagement,
           COALESCE(dr.avg_engagement, 0) AS avg_engagement,
           COALESCE(dr.total_impressions, 0) AS total_impressions,
-          tpd.top_post_id,
-          tpd.top_post_preview,
-          tpd.top_post_url,
-          tpd.top_post_outlier_ratio,
-          tpd.top_post_is_outlier
+          dpa.day_posts
         FROM day_series ds
         LEFT JOIN daily_raw dr ON dr.day = ds.day
-        LEFT JOIN top_per_day tpd ON tpd.day = ds.day
+        LEFT JOIN day_post_arrays dpa ON dpa.day = ds.day
       )
       SELECT
         day::text AS day,
@@ -1041,11 +1048,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
         SUM(total_engagement) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS rolling_sum_7d,
         SUM(total_impressions) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::bigint AS rolling_impressions_7d,
         SUM(posts) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)::int AS active_posts_7d,
-        top_post_id,
-        top_post_preview,
-        top_post_url,
-        top_post_outlier_ratio,
-        top_post_is_outlier
+        COALESCE(day_posts, '[]'::json) AS day_posts
       FROM filled
       ORDER BY day ASC`,
       [currentStartIso, currentEndIso, ...dailyScope.params]

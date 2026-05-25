@@ -3,6 +3,16 @@ import {
   ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 
+export interface DayPost {
+  id: string;
+  preview: string | null;
+  url: string | null;
+  outlierRatio: number | null;
+  isOutlier: boolean;
+  creatorId: string;
+  creatorName: string;
+}
+
 export interface DailyPoint {
   day: string;
   label: string;
@@ -13,6 +23,14 @@ export interface DailyPoint {
   rollingImpressions: number;
   rawImpressions: number;
   activePosts: number;
+  // All posts published this day, ordered by engagement DESC. Each one
+  // gets its own pencil badge in the strip below the chart, grouped by
+  // creator into stable horizontal rows (alphabetical by creator name)
+  // so the same person always sits on the same row when Iker+Unai both
+  // publish.
+  dayPosts: DayPost[];
+  // Derived from dayPosts[0] for the legacy single-post tooltip path —
+  // kept so any other consumer of DailyPoint doesn't break.
   topPostId: string | null;
   topPostPreview: string | null;
   topPostUrl: string | null;
@@ -28,14 +46,19 @@ interface Props {
 
 interface HoverState {
   day: string;
+  // For pencil hovers: the id of the specific post being hovered, so
+  // the tooltip can show THAT post's preview/ratio/link (not just the
+  // top-engagement post of the whole day). undefined for point hovers.
+  postId?: string;
   // x / y are ALWAYS relative to the wrapper div, so the absolutely-
   // positioned tooltip lines up regardless of the filter-buttons row
   // that sits between the wrapper top and the chart's SVG.
   x: number;
   y: number;
-  // 'pencil' = hovering a publish-day badge (rich tooltip with top-post
-  // preview). 'point' = hovering the line/area itself (compact values-
-  // only tooltip, positioned so it never clips off the top of the card).
+  // 'pencil' = hovering a publish-day badge (rich tooltip with that
+  // post's preview). 'point' = hovering the line/area itself (compact
+  // values-only tooltip, positioned so it never clips off the top of
+  // the card).
   source: 'pencil' | 'point';
   // For point hovers: was the point in the top half of the plot? If so
   // the tooltip drops below the cursor; otherwise it grows above.
@@ -175,6 +198,26 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
   const filteredData = data;
   const effectiveTickInterval = xTickInterval;
 
+  // Compute the stable ordering of creators that have at least one post
+  // in the visible range. Alphabetical by creator name so the same
+  // person always sits on the same row (Iker above, Unai below, etc.).
+  // If only one creator is visible (single-account filter, or only one
+  // of them published in the range) the strip collapses to one row.
+  const creatorRowOrder = (() => {
+    const map = new Map<string, string>(); // id → name
+    for (const d of filteredData) {
+      for (const p of d.dayPosts) {
+        if (!map.has(p.creatorId)) map.set(p.creatorId, p.creatorName);
+      }
+    }
+    return [...map.entries()]
+      .sort((a, b) => a[1].localeCompare(b[1], undefined, { sensitivity: 'base' }))
+      .map(([id]) => id);
+  })();
+  const creatorRowIndex = new Map(creatorRowOrder.map((id, i) => [id, i] as const));
+  const ROW_HEIGHT = 22; // px per pencil row
+  const stripHeight = Math.max(22, creatorRowOrder.length * ROW_HEIGHT);
+
   return (
     <div ref={wrapperRef} style={{ position: 'relative' }}>
       <div ref={chartBoxRef}>
@@ -268,62 +311,81 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
       </ResponsiveContainer>
       </div>
 
-      {/* Pencil strip — matches the Dashboard's Engagement Timeline pattern.
-          Each publication day gets a pencil badge aligned exactly under the
-          data point. Days with an outlier light up in diamond/cyan, matching
-          the outlier colour used throughout the rest of the app. */}
+      {/* Pencil strip — one pencil per published post. When the global
+          filter is "all managed accounts" and two creators published on
+          the same day, the pencils stack on different rows (alphabetical
+          by creator) instead of fighting for the same slot. Same-creator
+          double-publish days get a small horizontal offset so both
+          badges remain clickable. */}
       <div
         style={{
           position: 'relative',
           marginLeft: Y_AXIS_WIDTH + CHART_MARGIN.left,
           marginRight: (hasImpressions ? Y_AXIS_WIDTH : 0) + CHART_MARGIN.right,
           marginTop: 6,
-          minHeight: 22,
+          minHeight: stripHeight,
         }}
-        aria-label="Days with publications"
+        aria-label="Posts published in range"
       >
-        {filteredData.map((d, i) => {
-          if (d.posts <= 0) return null;
-          const isOut = (d.outliers || 0) > 0;
+        {filteredData.flatMap((d, i) => {
+          if (!d.dayPosts || d.dayPosts.length === 0) return [];
           const n = filteredData.length;
-          const left = n > 1 ? (i / (n - 1)) * 100 : 50;
-          return (
-            <div
-              key={`${d.day}-${i}`}
-              onMouseEnter={(e) => {
-                cancelClear();
-                const pencilRect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-                const wrapperRect = wrapperRef.current?.getBoundingClientRect();
-                if (!wrapperRect) return;
-                setHover({
-                  day: d.day,
-                  x: pencilRect.left + pencilRect.width / 2 - wrapperRect.left,
-                  // Use the pencil's real top — paired with translateY(-100%)
-                  // on the tooltip, it sits right above the pencil and grows
-                  // up into the chart area without spilling below.
-                  y: pencilRect.top - wrapperRect.top,
-                  source: 'pencil',
-                });
-              }}
-              onMouseLeave={scheduleClear}
-              style={{
-                position: 'absolute',
-                left: `${left}%`,
-                top: 0,
-                transform: 'translateX(-50%)',
-                width: 18,
-                height: 18,
-                borderRadius: 4,
-                background: isOut ? PENCIL_BG_OUTLIER : PENCIL_BG_NORMAL,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-              }}
-            >
-              <PencilIcon size={14} color="#ffffff" />
-            </div>
-          );
+          const leftPct = n > 1 ? (i / (n - 1)) * 100 : 50;
+          // Group day posts by creator so multiple-of-same-creator on a
+          // single day end up side by side on the SAME row instead of
+          // wandering across rows.
+          const byCreator = new Map<string, typeof d.dayPosts>();
+          for (const p of d.dayPosts) {
+            const list = byCreator.get(p.creatorId);
+            if (list) list.push(p);
+            else byCreator.set(p.creatorId, [p]);
+          }
+          const nodes: React.ReactNode[] = [];
+          for (const [creatorId, posts] of byCreator.entries()) {
+            const rowIdx = creatorRowIndex.get(creatorId) ?? 0;
+            posts.forEach((p, postIdxInRow) => {
+              // Horizontal nudge when the SAME creator has >1 post on
+              // one day. Keeps both pencils on the row but not stacked.
+              const nudgePx = (postIdxInRow - (posts.length - 1) / 2) * 22;
+              nodes.push(
+                <div
+                  key={`${d.day}-${p.id}`}
+                  onMouseEnter={(e) => {
+                    cancelClear();
+                    const pencilRect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                    const wrapperRect = wrapperRef.current?.getBoundingClientRect();
+                    if (!wrapperRect) return;
+                    setHover({
+                      day: d.day,
+                      postId: p.id,
+                      x: pencilRect.left + pencilRect.width / 2 - wrapperRect.left,
+                      y: pencilRect.top - wrapperRect.top,
+                      source: 'pencil',
+                    });
+                  }}
+                  onMouseLeave={scheduleClear}
+                  style={{
+                    position: 'absolute',
+                    left: `calc(${leftPct}% + ${nudgePx}px)`,
+                    top: rowIdx * ROW_HEIGHT,
+                    transform: 'translateX(-50%)',
+                    width: 18,
+                    height: 18,
+                    borderRadius: 4,
+                    background: p.isOutlier ? PENCIL_BG_OUTLIER : PENCIL_BG_NORMAL,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                  title={`${p.creatorName} · ${d.day}`}
+                >
+                  <PencilIcon size={14} color="#ffffff" />
+                </div>
+              );
+            });
+          }
+          return nodes;
         })}
       </div>
 
@@ -334,8 +396,14 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
       {hover && (() => {
         const d = filteredData.find((x) => x.day === hover.day);
         if (!d) return null;
-        const heading = d.posts > 0
-          ? `${fmtFullDay(d.day)} · ${d.posts} post${d.posts > 1 ? 's' : ''}`
+        // For pencil hovers we always have a postId — show THAT post.
+        // Fallback to dayPosts[0] for safety (and for point hovers,
+        // though those use Recharts' own tooltip, not this one).
+        const hoveredPost = hover.postId
+          ? d.dayPosts.find((p) => p.id === hover.postId) ?? d.dayPosts[0] ?? null
+          : d.dayPosts[0] ?? null;
+        const heading = hoveredPost
+          ? `${fmtFullDay(d.day)} · ${hoveredPost.creatorName}`
           : `${fmtFullDay(d.day)} · no post`;
         const containerW = wrapperRef.current?.offsetWidth ?? 600;
         const tooltipW = 240;
@@ -363,22 +431,23 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
               pointerEvents: 'auto',
             }}
           >
-            {/* Pencil tooltip is now content-only — the per-day numbers
-                (engagement / impressions / active posts) live in the
-                in-chart point tooltip, so they're not duplicated here. */}
+            {/* Pencil tooltip shows the SPECIFIC post the user is
+                hovering — not just the top of the day — so when two
+                creators publish on the same date, hovering each pencil
+                surfaces that author's post and link. */}
             <div style={{ fontWeight: 600, marginBottom: 6 }}>{heading}</div>
-            {d.posts > 0 && d.topPostOutlierRatio != null && d.topPostOutlierRatio > 0 && (
+            {hoveredPost && hoveredPost.outlierRatio != null && hoveredPost.outlierRatio > 0 && (
               <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #2e3348', fontSize: 12 }}>
-                <span style={{ color: '#94a3b8' }}>Top post: </span>
+                <span style={{ color: '#94a3b8' }}>This post: </span>
                 <span
                   style={{
-                    color: d.topPostIsOutlier ? OUTLIER_COLOR : '#cbd5e1',
+                    color: hoveredPost.isOutlier ? OUTLIER_COLOR : '#cbd5e1',
                     fontWeight: 600,
                   }}
                 >
-                  {d.topPostOutlierRatio.toFixed(1)}× creator avg
+                  {hoveredPost.outlierRatio.toFixed(1)}× creator avg
                 </span>
-                {d.topPostIsOutlier && (
+                {hoveredPost.isOutlier && (
                   <span
                     style={{
                       marginLeft: 6,
@@ -396,7 +465,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                 )}
               </div>
             )}
-            {d.posts > 0 && (d.topPostPreview || d.topPostUrl) && (
+            {hoveredPost && (hoveredPost.preview || hoveredPost.url) && (
               <div
                 style={{
                   marginTop: 8,
@@ -407,7 +476,7 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                   fontSize: 12,
                 }}
               >
-                {d.topPostPreview ? (
+                {hoveredPost.preview ? (
                   <div
                     style={{
                       color: '#cbd5e1',
@@ -420,16 +489,16 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
                       lineHeight: 1.35,
                     }}
                   >
-                    {d.topPostPreview}
+                    {hoveredPost.preview}
                   </div>
                 ) : (
                   <div style={{ color: '#64748b', fontStyle: 'italic', marginBottom: 8 }}>
                     (no preview available)
                   </div>
                 )}
-                {d.topPostUrl && (
+                {hoveredPost.url && (
                   <a
-                    href={d.topPostUrl}
+                    href={hoveredPost.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

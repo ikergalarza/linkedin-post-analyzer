@@ -38,6 +38,16 @@ interface Candidate {
   is_managed: boolean;
 }
 
+interface DailyRowPost {
+  id: string;
+  preview: string | null;
+  url: string | null;
+  outlier_ratio: number | null;
+  is_outlier: boolean | null;
+  creator_id: string;
+  creator_name: string;
+}
+
 interface DailyRow {
   day: string;
   posts: number;
@@ -48,11 +58,10 @@ interface DailyRow {
   rolling_sum_7d: number;
   rolling_impressions_7d: number;
   active_posts_7d: number;
-  top_post_id: string | null;
-  top_post_preview: string | null;
-  top_post_url: string | null;
-  top_post_outlier_ratio: number | null;
-  top_post_is_outlier: boolean | null;
+  // Array of all posts published on this day, ordered by engagement
+  // DESC. Empty array when no posts. Replaces the previous
+  // top_post_* fields (which only surfaced 1 post per day).
+  day_posts: DailyRowPost[];
 }
 
 interface CompareMetric {
@@ -445,22 +454,40 @@ export default function Accounts() {
 
   const dailyChartData = useMemo(() => {
     if (!analytics) return [];
-    return analytics.daily.map((d) => ({
-      day: d.day,
-      label: fmtDay(d.day),
-      rolling: d.rolling_sum_7d,
-      raw: d.total_engagement,
-      posts: d.posts,
-      outliers: d.outliers,
-      rollingImpressions: Number(d.rolling_impressions_7d || 0),
-      rawImpressions: Number(d.total_impressions || 0),
-      activePosts: d.active_posts_7d || 0,
-      topPostId: d.top_post_id,
-      topPostPreview: d.top_post_preview,
-      topPostUrl: d.top_post_url,
-      topPostOutlierRatio: d.top_post_outlier_ratio,
-      topPostIsOutlier: d.top_post_is_outlier,
-    }));
+    return analytics.daily.map((d: any) => {
+      // day_posts comes from the backend as a JSON array ordered by
+      // engagement_score DESC. Normalise it to the camelCase shape the
+      // chart expects, and derive `topPost*` from the first element so
+      // the per-day tooltip keeps working unchanged.
+      const rawDayPosts = Array.isArray(d.day_posts) ? d.day_posts : [];
+      const dayPosts = rawDayPosts.map((p: any) => ({
+        id: String(p.id),
+        preview: p.preview ?? null,
+        url: p.url ?? null,
+        outlierRatio: p.outlier_ratio != null ? Number(p.outlier_ratio) : null,
+        isOutlier: !!p.is_outlier,
+        creatorId: String(p.creator_id),
+        creatorName: p.creator_name || '—',
+      }));
+      const top = dayPosts[0];
+      return {
+        day: d.day,
+        label: fmtDay(d.day),
+        rolling: d.rolling_sum_7d,
+        raw: d.total_engagement,
+        posts: d.posts,
+        outliers: d.outliers,
+        rollingImpressions: Number(d.rolling_impressions_7d || 0),
+        rawImpressions: Number(d.total_impressions || 0),
+        activePosts: d.active_posts_7d || 0,
+        dayPosts,
+        topPostId: top?.id ?? null,
+        topPostPreview: top?.preview ?? null,
+        topPostUrl: top?.url ?? null,
+        topPostOutlierRatio: top?.outlierRatio ?? null,
+        topPostIsOutlier: top?.isOutlier ?? null,
+      };
+    });
   }, [analytics]);
 
   // Show ~8 ticks on the x-axis regardless of range length.
