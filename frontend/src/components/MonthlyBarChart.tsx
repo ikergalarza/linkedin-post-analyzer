@@ -11,6 +11,12 @@ interface Props {
   // Field on each returned point that holds the numeric value to plot.
   valueKey: string;
   creatorId: string | null;
+  // New range model: pass start_date + end_date (YYYY-MM-DD) and the
+  // backend returns the monthly aggregation for the overlapping months.
+  // The legacy `months` prop is kept as a fallback for any caller that
+  // hasn't migrated yet.
+  startDate?: string;
+  endDate?: string;
   months?: number;
   title: string;
   subtitle: string;
@@ -90,6 +96,8 @@ export default function MonthlyBarChart({
   endpoint,
   valueKey,
   creatorId,
+  startDate,
+  endDate,
   months = 12,
   title,
   subtitle,
@@ -103,7 +111,13 @@ export default function MonthlyBarChart({
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const params = new URLSearchParams({ months: String(months) });
+    const params = new URLSearchParams();
+    if (startDate && endDate) {
+      params.set('start_date', startDate);
+      params.set('end_date', endDate);
+    } else {
+      params.set('months', String(months));
+    }
     if (creatorId) params.set('creator_id', creatorId);
     fetch(`${BASE}${endpoint}?${params.toString()}`)
       .then((r) => r.json())
@@ -118,7 +132,7 @@ export default function MonthlyBarChart({
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [endpoint, creatorId, months]);
+  }, [endpoint, creatorId, startDate, endDate, months]);
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({

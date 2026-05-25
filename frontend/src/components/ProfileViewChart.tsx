@@ -12,6 +12,11 @@ interface Point {
 
 interface Props {
   creatorId: string | null;
+  // Range model (preferred). days is still accepted for the
+  // "vs last Nd" delta label so the caller can pass a derived day
+  // count instead of recomputing it here.
+  startDate: string;
+  endDate: string;
   days: number;
 }
 
@@ -122,14 +127,14 @@ function DeltaChip({
  * fluctuate more than follower counts and the day/week trend is what
  * actually matters.
  */
-export default function ProfileViewChart({ creatorId, days }: Props) {
+export default function ProfileViewChart({ creatorId, startDate, endDate, days }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const params = new URLSearchParams({ days: String(days) });
+    const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
     if (creatorId) params.set('creator_id', creatorId);
     fetch(`${BASE}/api/accounts/profile-view-history?${params.toString()}`)
       .then((r) => r.json())
@@ -146,7 +151,7 @@ export default function ProfileViewChart({ creatorId, days }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [creatorId, days]);
+  }, [creatorId, startDate, endDate]);
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),

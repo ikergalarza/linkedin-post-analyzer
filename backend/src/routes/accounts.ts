@@ -13,6 +13,34 @@ import { extractViewerTimestamps } from '../utils/wvmp';
 
 const router = Router();
 
+// Parse the date range from a request that supports both styles:
+//   - new style: ?start_date=2026-04-01&end_date=2026-05-25 (inclusive on both ends)
+//   - legacy:    ?days=30                                  (last N days, ending today)
+// Returns { startDate, endDate } as YYYY-MM-DD strings + a derived
+// `days` for endpoints that still want a single-number version (delta
+// comparison vs previous period in /analytics). Both bounds are clamped
+// to a sane max of 730 days to keep queries cheap.
+function parseDateRange(req: Request): { startDate: string; endDate: string; days: number } {
+  const startDateRaw = typeof req.query.start_date === 'string' ? req.query.start_date.trim() : '';
+  const endDateRaw = typeof req.query.end_date === 'string' ? req.query.end_date.trim() : '';
+  const ISO = /^\d{4}-\d{2}-\d{2}$/;
+
+  if (ISO.test(startDateRaw) && ISO.test(endDateRaw)) {
+    const start = new Date(`${startDateRaw}T00:00:00.000Z`);
+    const end = new Date(`${endDateRaw}T00:00:00.000Z`);
+    const diffDays = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
+    const clamped = Math.min(diffDays, 730);
+    return { startDate: startDateRaw, endDate: endDateRaw, days: clamped };
+  }
+
+  const days = Math.min(Math.max(parseInt(req.query.days as string) || 30, 1), 730);
+  const today = new Date();
+  const start = new Date(today.getTime() - (days - 1) * 86400000);
+  const fmt = (d: Date) =>
+    `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  return { startDate: fmt(start), endDate: fmt(today), days };
+}
+
 // Fetch only NEW posts for a managed creator: pulls known linkedin_post_ids
 // first, then asks Unipile incrementally (getPosts stops as soon as it hits a
 // known id). The Refresh button in the Accounts UI uses this — its job is to
@@ -164,8 +192,8 @@ router.patch('/:id', async (req: Request, res: Response) => {
 // gets a correct delta against the snapshot just before the window.
 router.get('/follower-history', async (req: Request, res: Response) => {
   try {
-    const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
+    const range = parseDateRange(req);
 
     const params: any[] = [];
     let creatorFilter = 'c.is_managed = TRUE';
@@ -176,6 +204,9 @@ router.get('/follower-history', async (req: Request, res: Response) => {
 
     // deltas: per-creator gained = followers_count - prior snapshot's count.
     // windowed: keep only the requested range. combined: sum per day.
+    params.push(range.startDate, range.endDate);
+    const startIdx = params.length - 1;
+    const endIdx = params.length;
     const { rows } = await pool.query(
       `WITH deltas AS (
          SELECT
@@ -194,7 +225,7 @@ router.get('/follower-history', async (req: Request, res: Response) => {
          SUM(followers_count)::int AS followers,
          COALESCE(SUM(gained), 0)::int AS gained
        FROM deltas
-       WHERE captured_on >= CURRENT_DATE - (${days} || ' days')::interval
+       WHERE captured_on >= $${startIdx}::date AND captured_on <= $${endIdx}::date
        GROUP BY captured_on
        ORDER BY captured_on ASC`,
       params
@@ -219,8 +250,8 @@ router.get('/follower-history', async (req: Request, res: Response) => {
 // what it surfaces.
 router.get('/follower-monthly', async (req: Request, res: Response) => {
   try {
-    const months = Math.min(parseInt(req.query.months as string) || 12, 36);
     const creatorId = (req.query.creator_id as string) || null;
+    const range = parseDateRange(req);
 
     const params: any[] = [];
     let creatorFilter = 'c.is_managed = TRUE';
@@ -236,6 +267,9 @@ router.get('/follower-monthly', async (req: Request, res: Response) => {
     // gained during the portion of the month we actually tracked". This
     // makes April show up (its tracked half) instead of being dropped for
     // lacking a prior month to diff against.
+    params.push(range.startDate, range.endDate);
+    const startIdx = params.length - 1;
+    const endIdx = params.length;
     const { rows } = await pool.query(
       `WITH month_bounds AS (
          SELECT
@@ -262,7 +296,8 @@ router.get('/follower-monthly', async (req: Request, res: Response) => {
          to_char(month, 'YYYY-MM') AS month,
          COALESCE(SUM(gained), 0)::int AS gained
        FROM month_delta
-       WHERE month >= date_trunc('month', CURRENT_DATE) - ((${months} - 1) || ' months')::interval
+       WHERE month >= date_trunc('month', $${startIdx}::date)
+         AND month <= date_trunc('month', $${endIdx}::date)
        GROUP BY month
        ORDER BY month ASC`,
       params
@@ -285,8 +320,8 @@ router.get('/follower-monthly', async (req: Request, res: Response) => {
 // (managed) accounts' own posts, which is exactly this scope.
 router.get('/impressions-monthly', async (req: Request, res: Response) => {
   try {
-    const months = Math.min(parseInt(req.query.months as string) || 12, 36);
     const creatorId = (req.query.creator_id as string) || null;
+    const range = parseDateRange(req);
 
     const params: any[] = [];
     let scopeSql = `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE)`;
@@ -295,6 +330,9 @@ router.get('/impressions-monthly', async (req: Request, res: Response) => {
       scopeSql = `p.creator_id = $${params.length}`;
     }
 
+    params.push(range.startDate, range.endDate);
+    const startIdx = params.length - 1;
+    const endIdx = params.length;
     const { rows } = await pool.query(
       `SELECT
          to_char(date_trunc('month', p.published_at), 'YYYY-MM') AS month,
@@ -304,7 +342,8 @@ router.get('/impressions-monthly', async (req: Request, res: Response) => {
        WHERE ${scopeSql}
          AND p.published_at IS NOT NULL
          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-         AND p.published_at >= date_trunc('month', CURRENT_DATE) - ((${months} - 1) || ' months')::interval
+         AND p.published_at >= date_trunc('month', $${startIdx}::date)
+         AND p.published_at < date_trunc('month', $${endIdx}::date) + interval '1 month'
        GROUP BY date_trunc('month', p.published_at)
        ORDER BY date_trunc('month', p.published_at) ASC`,
       params
@@ -594,19 +633,26 @@ async function buildDailyViewerBuckets(
 // only the latest capture. See buildDailyViewerBuckets for the details.
 router.get('/profile-view-history', async (req: Request, res: Response) => {
   try {
-    const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
+    const range = parseDateRange(req);
 
-    const dayBuckets = await buildDailyViewerBuckets(creatorId, days);
-
-    const now = Date.now();
-    const windowStart = now - days * 86400_000;
-    const out: { day: string; views: number }[] = [];
-    const startDay = new Date(windowStart);
-    startDay.setUTCHours(0, 0, 0, 0);
-    const today = new Date(now);
+    // buildDailyViewerBuckets only needs a "look-back window in days"
+    // (the underlying snapshots store raw viewer timestamps and we bucket
+    // them client-side). When end_date < today we still pass enough
+    // days to cover from startDate up to today, then filter the iteration
+    // window below so only requested days are returned.
+    const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
-    for (let d = new Date(startDay); d.getTime() <= today.getTime(); d.setUTCDate(d.getUTCDate() + 1)) {
+    const startDay = new Date(`${range.startDate}T00:00:00.000Z`);
+    const endDay = new Date(`${range.endDate}T00:00:00.000Z`);
+    const daysFromTodayBack = Math.max(
+      1,
+      Math.round((today.getTime() - startDay.getTime()) / 86400000) + 1
+    );
+    const dayBuckets = await buildDailyViewerBuckets(creatorId, daysFromTodayBack);
+
+    const out: { day: string; views: number }[] = [];
+    for (let d = new Date(startDay); d.getTime() <= endDay.getTime(); d.setUTCDate(d.getUTCDate() + 1)) {
       const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
       out.push({ day: key, views: dayBuckets.get(key) || 0 });
     }
@@ -834,11 +880,17 @@ router.post('/:id/scrape', async (req: Request, res: Response) => {
 // If creator_id is omitted, aggregates across all managed accounts.
 router.get('/analytics', async (req: Request, res: Response) => {
   try {
-    const days = Math.min(parseInt(req.query.days as string) || 90, 365);
     const creatorId = (req.query.creator_id as string) || null;
+    const range = parseDateRange(req);
+    const days = range.days;
 
-    const currentStartIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-    const previousStartIso = new Date(Date.now() - 2 * days * 24 * 60 * 60 * 1000).toISOString();
+    const currentStartIso = `${range.startDate}T00:00:00.000Z`;
+    const currentEndIso = `${range.endDate}T23:59:59.999Z`;
+    // Previous period of equal length, ending right before the current
+    // period starts. Used for the deltas in KPI cards.
+    const previousStartIso = new Date(
+      new Date(currentStartIso).getTime() - days * 24 * 60 * 60 * 1000
+    ).toISOString();
 
     // Build scope: either a specific creator or all managed accounts.
     // Queries use <SCOPE> as a placeholder so each query can append its own params.
@@ -870,7 +922,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
     };
 
     // Current-period totals
-    const currentTotals = totalsSql('p.published_at >= $1', [currentStartIso]);
+    const currentTotals = totalsSql('p.published_at >= $1 AND p.published_at <= $2', [currentStartIso, currentEndIso]);
     const totalsQ = await pool.query(currentTotals.sql, currentTotals.params);
 
     // Previous-period totals (same length immediately before current)
@@ -898,10 +950,12 @@ router.get('/analytics', async (req: Request, res: Response) => {
     // window function smooths the line so it's not all spikes. The top
     // post per day is carried through so the chart tooltip can show a
     // preview + link for days with publications.
-    const dailyScope = scope(2);
+    // First two params are the inclusive [start, end] of the requested
+    // window; scope params follow.
+    const dailyScope = scope(3);
     const dailyQ = await pool.query(
       `WITH day_series AS (
-        SELECT generate_series($1::date, CURRENT_DATE, '1 day'::interval)::date AS day
+        SELECT generate_series($1::date, $2::date, '1 day'::interval)::date AS day
       ),
       daily_raw AS (
         SELECT
@@ -912,7 +966,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
           COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions
         FROM posts p
-        WHERE p.published_at >= $1 AND ${dailyScope.sql}
+        WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${dailyScope.sql}
         GROUP BY (p.published_at)::date
       ),
       top_per_day AS (
@@ -924,7 +978,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
           p.outlier_ratio AS top_post_outlier_ratio,
           p.is_outlier AS top_post_is_outlier
         FROM posts p
-        WHERE p.published_at >= $1 AND ${dailyScope.sql}
+        WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${dailyScope.sql}
         ORDER BY (p.published_at)::date, p.engagement_score DESC
       ),
       filled AS (
@@ -961,11 +1015,11 @@ router.get('/analytics', async (req: Request, res: Response) => {
         top_post_is_outlier
       FROM filled
       ORDER BY day ASC`,
-      [currentStartIso, ...dailyScope.params]
+      [currentStartIso, currentEndIso, ...dailyScope.params]
     );
 
     // Content type mix with avg engagement per type
-    const formatScope = scope(2);
+    const formatScope = scope(3);
     const formatQ = await pool.query(
       `SELECT
         p.content_type,
@@ -973,14 +1027,14 @@ router.get('/analytics', async (req: Request, res: Response) => {
         COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
         COUNT(*) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers
        FROM posts p
-       WHERE p.published_at >= $1 AND ${formatScope.sql}
+       WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${formatScope.sql}
        GROUP BY p.content_type
        ORDER BY count DESC`,
-      [currentStartIso, ...formatScope.params]
+      [currentStartIso, currentEndIso, ...formatScope.params]
     );
 
     // Top posts
-    const topScope = scope(2);
+    const topScope = scope(3);
     const topPostsQ = await pool.query(
       `SELECT
         p.id, p.content_text, p.content_type, p.published_at,
@@ -990,24 +1044,24 @@ router.get('/analytics', async (req: Request, res: Response) => {
         c.name AS creator_name, c.profile_image_url AS creator_image
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
-       WHERE p.published_at >= $1 AND ${topScope.sql}
+       WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${topScope.sql}
        ORDER BY p.engagement_score DESC
        LIMIT 10`,
-      [currentStartIso, ...topScope.params]
+      [currentStartIso, currentEndIso, ...topScope.params]
     );
 
     // Hook type distribution
-    const hookScope = scope(2);
+    const hookScope = scope(3);
     const hookQ = await pool.query(
       `SELECT
         p.hook_type,
         COUNT(*)::int AS count,
         COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement
        FROM posts p
-       WHERE p.published_at >= $1 AND ${hookScope.sql} AND p.hook_type IS NOT NULL
+       WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${hookScope.sql} AND p.hook_type IS NOT NULL
        GROUP BY p.hook_type
        ORDER BY avg_engagement DESC`,
-      [currentStartIso, ...hookScope.params]
+      [currentStartIso, currentEndIso, ...hookScope.params]
     );
 
     // Account-level deltas across the same date range. We track followers
@@ -1016,7 +1070,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
     // is 'all'. Window functions over the snapshot rows give us the first
     // and last value for each creator without N+1 subqueries.
     const buildSnapshotDelta = async (table: string, valueCol: string): Promise<number> => {
-      const params: any[] = [days];
+      const params: any[] = [range.startDate, range.endDate];
       let creatorFilter = '';
       if (creatorId) {
         params.push(creatorId);
@@ -1033,7 +1087,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
            FROM ${table} s
            JOIN creators c ON c.id = s.creator_id
            WHERE c.is_managed = TRUE
-             AND s.captured_on >= CURRENT_DATE - ($1 || ' days')::interval
+             AND s.captured_on >= $1::date
+             AND s.captured_on <= $2::date
              ${creatorFilter}
          ) sub`,
         params
@@ -1046,10 +1101,21 @@ router.get('/analytics', async (req: Request, res: Response) => {
     // which is misleading. Now we share the bucketing logic with the chart
     // (buildDailyViewerBuckets) so KPI and chart agree by construction —
     // both MAX across snapshots per (creator, day) and sum the resulting
-    // per-day counts within the selected window.
-    const dailyBuckets = await buildDailyViewerBuckets(creatorId, days);
+    // per-day counts within the selected window. buildDailyViewerBuckets
+    // still takes a single look-back days arg, so we pass enough days to
+    // reach back to range.startDate, then filter the resulting bucket map
+    // to the requested window before summing.
+    const todayUtc = new Date();
+    todayUtc.setUTCHours(0, 0, 0, 0);
+    const startUtc = new Date(`${range.startDate}T00:00:00.000Z`);
+    const endUtc = new Date(`${range.endDate}T00:00:00.000Z`);
+    const buckLookback = Math.max(1, Math.round((todayUtc.getTime() - startUtc.getTime()) / 86400000) + 1);
+    const dailyBuckets = await buildDailyViewerBuckets(creatorId, buckLookback);
     let profileViewsGained = 0;
-    for (const v of dailyBuckets.values()) profileViewsGained += v;
+    for (const [key, v] of dailyBuckets.entries()) {
+      const d = new Date(`${key}T00:00:00.000Z`).getTime();
+      if (d >= startUtc.getTime() && d <= endUtc.getTime()) profileViewsGained += v;
+    }
 
     // Posts/week cadence — always actionable. Uses the same scope filter.
     // `days` is a sanitised integer from the route handler so it's safe to
@@ -1059,12 +1125,12 @@ router.get('/analytics', async (req: Request, res: Response) => {
     // whenever a specific creator was selected — that's why every chart
     // looked combined: the request 500'd silently and useApi kept rendering
     // the last successful (all-managed) response.
-    const cadenceScope = scope(2);
+    const cadenceScope = scope(3);
     const cadenceQ = await pool.query(
       `SELECT COUNT(*)::float / GREATEST(${days} / 7.0, 1) AS posts_per_week
        FROM posts p
-       WHERE p.published_at >= $1 AND ${cadenceScope.sql}`,
-      [currentStartIso, ...cadenceScope.params]
+       WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${cadenceScope.sql}`,
+      [currentStartIso, currentEndIso, ...cadenceScope.params]
     );
     const postsPerWeek = Number(cadenceQ.rows[0]?.posts_per_week || 0);
 
@@ -1082,17 +1148,21 @@ router.get('/analytics', async (req: Request, res: Response) => {
           COALESCE(SUM(p.impressions_count), 0)::bigint AS total_impressions,
           COALESCE(ROUND(AVG(p.impressions_count) FILTER (WHERE p.impressions_count IS NOT NULL))::int, 0) AS avg_impressions
          FROM creators c
-         LEFT JOIN posts p ON p.creator_id = c.id AND p.published_at >= $1 AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+         LEFT JOIN posts p ON p.creator_id = c.id
+           AND p.published_at >= $1 AND p.published_at <= $2
+           AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
          WHERE c.is_managed = TRUE
          GROUP BY c.id
          ORDER BY avg_engagement DESC`,
-        [currentStartIso]
+        [currentStartIso, currentEndIso]
       );
       perAccount = perAccountQ.rows;
     }
 
     res.json({
       days,
+      start_date: range.startDate,
+      end_date: range.endDate,
       creator_id: creatorId,
       totals: {
         ...totalsQ.rows[0],

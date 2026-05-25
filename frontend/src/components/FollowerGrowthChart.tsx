@@ -13,7 +13,11 @@ interface Point {
 
 interface Props {
   creatorId: string | null;
-  days: number;
+  // New range model: pass start_date + end_date (YYYY-MM-DD). The
+  // backend will serve the corresponding window. We still derive a
+  // numeric `days` from the range for the "Gained · Nd" label.
+  startDate: string;
+  endDate: string;
 }
 
 function fmtDay(iso: string): string {
@@ -65,14 +69,20 @@ function GainedTooltip({ active, payload, label }: any) {
  * lose the "where are we now" context. Works for a single account or
  * the summed managed view (creatorId null).
  */
-export default function FollowerGrowthChart({ creatorId, days }: Props) {
+export default function FollowerGrowthChart({ creatorId, startDate, endDate }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const days = useMemo(() => {
+    const a = new Date(`${startDate}T00:00:00`);
+    const b = new Date(`${endDate}T00:00:00`);
+    return Math.max(1, Math.round((b.getTime() - a.getTime()) / 86400000) + 1);
+  }, [startDate, endDate]);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const params = new URLSearchParams({ days: String(days) });
+    const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
     if (creatorId) params.set('creator_id', creatorId);
     fetch(`${BASE}/api/accounts/follower-history?${params.toString()}`)
       .then((r) => r.json())
@@ -87,7 +97,7 @@ export default function FollowerGrowthChart({ creatorId, days }: Props) {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [creatorId, days]);
+  }, [creatorId, startDate, endDate]);
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -42,8 +42,9 @@ interface HoverState {
   flipBelow?: boolean;
 }
 
-type Range = '7d' | '30d' | '90d' | 'all';
-const RANGE_DAYS: Record<Range, number | null> = { '7d': 7, '30d': 30, '90d': 90, all: null };
+// Note: the chart-internal range selector (7d/30d/90d/all) was removed.
+// The Accounts page now owns the only date range filter and feeds the
+// already-windowed data straight to this chart.
 
 // Same colour the Dashboard uses for outliers — keeps the whole app coherent.
 const OUTLIER_COLOR = '#67e8f9';
@@ -156,7 +157,6 @@ function MetricRow({
 
 export default function AccountsEngagementChart({ data, hasImpressions, xTickInterval }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null);
-  const [range, setRange] = useState<Range>('30d');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const chartBoxRef = useRef<HTMLDivElement>(null);
   const clearTimerRef = useRef<number | null>(null);
@@ -172,41 +172,11 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
     clearTimerRef.current = window.setTimeout(() => setHover(null), 150);
   };
 
-  // Chart-level range filter slices the already-loaded data client-side so
-  // changing range is instant (no new API call). The page-level range still
-  // controls how much data is fetched in total.
-  const filteredData = useMemo(() => {
-    const rangeDays = RANGE_DAYS[range];
-    if (rangeDays == null) return data;
-    return data.slice(-rangeDays);
-  }, [data, range]);
-
-  // Recompute tick interval when the range changes so the X axis stays readable.
-  const effectiveTickInterval = useMemo(() => {
-    if (range === 'all') return xTickInterval;
-    return Math.max(0, Math.floor(filteredData.length / 8) - 1);
-  }, [filteredData.length, range, xTickInterval]);
+  const filteredData = data;
+  const effectiveTickInterval = xTickInterval;
 
   return (
     <div ref={wrapperRef} style={{ position: 'relative' }}>
-      {/* Chart-level range filter — mirrors the Dashboard's engagement chart. */}
-      <div className="flex items-center gap-1 mb-3 flex-wrap">
-        <span className="text-xs text-text-muted mr-1">View:</span>
-        {(['7d', '30d', '90d', 'all'] as Range[]).map((r) => (
-          <button
-            key={r}
-            onClick={() => setRange(r)}
-            className={`px-2.5 py-1 rounded text-xs transition-colors ${
-              range === r
-                ? 'bg-diamond/15 text-diamond border border-diamond/30'
-                : 'bg-bg-secondary text-text-muted border border-border hover:border-diamond/30'
-            }`}
-          >
-            {r === 'all' ? 'All' : r}
-          </button>
-        ))}
-      </div>
-
       <div ref={chartBoxRef}>
       <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
         <ComposedChart

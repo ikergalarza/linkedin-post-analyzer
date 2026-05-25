@@ -323,9 +323,49 @@ function Delta({ pct }: { pct: number | null }) {
   );
 }
 
+// Format a Date as YYYY-MM-DD using LOCAL time (not UTC), so a user
+// picking "today" in the date input doesn't end up sending yesterday.
+function toIsoDay(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Compute the [start, end] (inclusive, both ISO YYYY-MM-DD) for a
+// "last N days ending today" preset. e.g. preset=30 returns the 30-day
+// window ending today, matching the previous `days=30` semantics.
+function presetRange(days: number): { start: string; end: string } {
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(start.getDate() - (days - 1));
+  return { start: toIsoDay(start), end: toIsoDay(today) };
+}
+
 export default function Accounts() {
   const [selectedCreator, setSelectedCreator] = useState<string>('all');
-  const [days, setDays] = useState(30);
+  // Date range model: preset = one of [30, 90, 180] OR 'custom' (free
+  // start/end selection). We compute startDate + endDate from the
+  // active mode and propagate those everywhere — endpoints accept
+  // start_date + end_date. `days` is derived for any chart prop that
+  // still wants a single number (e.g. ProfileViewChart's "vs last Nd"
+  // delta label).
+  const [datePreset, setDatePreset] = useState<30 | 90 | 180 | 'custom'>(30);
+  const [customStart, setCustomStart] = useState<string>(() => presetRange(30).start);
+  const [customEnd, setCustomEnd] = useState<string>(() => presetRange(30).end);
+
+  const dateRange = useMemo(() => {
+    if (datePreset === 'custom') {
+      // Guard against inverted ranges — UI prevents this but defend anyway.
+      const a = customStart <= customEnd ? customStart : customEnd;
+      const b = customStart <= customEnd ? customEnd : customStart;
+      return { start: a, end: b };
+    }
+    return presetRange(datePreset);
+  }, [datePreset, customStart, customEnd]);
+
+  const days = useMemo(() => {
+    const start = new Date(`${dateRange.start}T00:00:00`);
+    const end = new Date(`${dateRange.end}T00:00:00`);
+    return Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
+  }, [dateRange]);
   const [managerOpen, setManagerOpen] = useState(false);
   const [unipileEdits, setUnipileEdits] = useState<Record<string, string>>({});
   const [scrapingId, setScrapingId] = useState<string | null>(null);
@@ -356,7 +396,7 @@ export default function Accounts() {
     setVisibleLive(LIVE_PAGE);
   }, [selectedCreator]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const analyticsPath = `/api/accounts/analytics?days=${days}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
+  const analyticsPath = `/api/accounts/analytics?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
   const { data: analytics, loading: loadingAnalytics } = useApi<Analytics>(analyticsPath);
 
   const toggleManaged = async (id: string, is_managed: boolean) => {
@@ -590,21 +630,57 @@ export default function Accounts() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-wrap">
             <span className="text-xs text-text-muted mr-1">Range:</span>
-            {[30, 90, 180, 365].map((d) => (
+            {([30, 90, 180] as const).map((d) => (
               <button
                 key={d}
-                onClick={() => setDays(d)}
+                onClick={() => {
+                  setDatePreset(d);
+                  const r = presetRange(d);
+                  setCustomStart(r.start);
+                  setCustomEnd(r.end);
+                }}
                 className={`px-2.5 py-1 rounded text-xs transition-colors ${
-                  days === d
+                  datePreset === d
                     ? 'bg-accent/20 text-accent border border-accent/30'
                     : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
                 }`}
               >
-                {d === 365 ? '1y' : `${d}d`}
+                {`${d}d`}
               </button>
             ))}
+            <button
+              onClick={() => setDatePreset('custom')}
+              className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                datePreset === 'custom'
+                  ? 'bg-accent/20 text-accent border border-accent/30'
+                  : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+              }`}
+            >
+              📅 Custom
+            </button>
+            {datePreset === 'custom' && (
+              <div className="flex items-center gap-1.5 ml-2">
+                <input
+                  type="date"
+                  value={customStart}
+                  max={customEnd}
+                  onChange={(e) => setCustomStart(e.target.value)}
+                  className="bg-bg-card border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+                />
+                <span className="text-xs text-text-muted">→</span>
+                <input
+                  type="date"
+                  value={customEnd}
+                  min={customStart}
+                  max={toIsoDay(new Date())}
+                  onChange={(e) => setCustomEnd(e.target.value)}
+                  className="bg-bg-card border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+                />
+              </div>
+            )}
+            <span className="text-[10px] text-text-muted ml-2">{days} day{days === 1 ? '' : 's'}</span>
           </div>
         </div>
       )}
@@ -954,46 +1030,12 @@ export default function Accounts() {
 
           {/* Daily engagement trend — smoothed line with publication markers */}
           <div className="bg-bg-card border border-border rounded-xl p-5">
-            <div className="mb-2 flex items-start justify-between gap-3 flex-wrap">
+            <div className="mb-1 flex items-start justify-between gap-3 flex-wrap">
               <h3 className="text-lg font-semibold">Engagement over time</h3>
-              <p className="text-xs text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-4 h-[2px] bg-accent" />
-                  engagement (7d rolling)
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="inline-flex w-4 h-4 rounded-sm bg-text-muted items-center justify-center">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#ffffff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" /><path d="M20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                  </span>
-                  publish day
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="inline-flex w-4 h-4 rounded-sm bg-diamond items-center justify-center">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#ffffff"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" /><path d="M20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                  </span>
-                  outlier day
-                </span>
-                {analytics.totals.total_impressions > 0 && (
-                  <span className="inline-flex items-center gap-1">
-                    <span className="w-4 h-[2px] bg-sky-400" />
-                    impressions (right axis)
-                  </span>
-                )}
-              </p>
             </div>
-            <div className="text-[11px] text-text-muted mb-3 space-y-0.5">
-              <p>
-                <span className="text-text-secondary font-medium">Engagement</span>: likes + comments×2 + reposts×3.
-                For each day D, we show the 7-day rolling sum — every post published in the previous 7 days
-                contributes, so the curve reflects how much of the account's content is still actively gathering
-                reach in LinkedIn's distribution window.
-              </p>
-              <p className="text-text-muted/80 italic">
-                Because this account is connected via Unipile, the numbers come from real snapshots (hourly captures
-                for each post's first 7 days), not scrape-time totals. Hover any day to see the top post and whether
-                it beat the creator's average.
-              </p>
-            </div>
+            <p className="text-xs text-text-muted mb-3">
+              7-day rolling engagement (likes + comments×2 + reposts×3){analytics.totals.total_impressions > 0 ? ' and impressions' : ''} for the selected range.
+            </p>
             {dailyChartData.length === 0 ? (
               <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
             ) : (
@@ -1008,11 +1050,15 @@ export default function Accounts() {
           {/* Monthly impressions — sits right after the engagement curve
               since both are "reach" views. Lifetime impressions of posts
               published that month; only managed accounts' own posts
-              report impressions, which is exactly this scope. */}
+              report impressions, which is exactly this scope. Respects
+              the global date range — shows only the months that overlap
+              with the selected window. */}
           <MonthlyBarChart
             endpoint="/api/accounts/impressions-monthly"
             valueKey="impressions"
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            startDate={dateRange.start}
+            endDate={dateRange.end}
             title="Impressions per month"
             subtitle={selectedCreator === 'all'
               ? 'Impressions from posts published each month — all managed accounts'
@@ -1024,17 +1070,19 @@ export default function Accounts() {
           {/* Follower growth — net new followers per day */}
           <FollowerGrowthChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
-            days={days}
+            startDate={dateRange.start}
+            endDate={dateRange.end}
           />
 
-          {/* Monthly followers gained — longer-horizon view, ignores the
-              top day filter on purpose (months are inherently coarser).
-              Reconstructed from our own daily snapshots so it survives
-              LinkedIn dropping any metric. */}
+          {/* Monthly followers gained — same monthly aggregation as
+              impressions; also respects the global date range now so the
+              whole section stays in sync with the chosen window. */}
           <MonthlyBarChart
             endpoint="/api/accounts/follower-monthly"
             valueKey="gained"
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            startDate={dateRange.start}
+            endDate={dateRange.end}
             title="New followers per month"
             subtitle={selectedCreator === 'all'
               ? 'Monthly followers gained — all managed accounts'
@@ -1050,6 +1098,8 @@ export default function Accounts() {
               absolute. Requires Premium / Sales Nav to return real data. */}
           <ProfileViewChart
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            startDate={dateRange.start}
+            endDate={dateRange.end}
             days={days}
           />
 
