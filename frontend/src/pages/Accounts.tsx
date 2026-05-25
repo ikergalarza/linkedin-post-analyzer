@@ -1132,62 +1132,12 @@ export default function Accounts() {
             days={days}
           />
 
-          {/* Two-column layout: Publication cadence on the left taking
-              the whole column (it needs the width — dates were colliding
-              when squeezed into a third), with Content format mix +
-              Best-performing hooks stacked on the right. */}
+          {/* Format mix + Best hooks share one row — both are compact
+              "what's working" breakdowns. The previous Publication
+              cadence chart was dropped: when/where posts went out is
+              already visible via the pencil markers on the Engagement
+              chart, so the bar chart was redundant. */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-          {/* Daily post volume bar — every day gets a slot so publication cadence is visible */}
-          <div className="bg-bg-card border border-border rounded-xl p-5">
-            <div className="mb-3">
-              <div className="flex items-start justify-between gap-2 flex-wrap">
-                <h3 className="text-lg font-semibold">Publication cadence</h3>
-                <p className="text-[11px] text-text-muted flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-sm bg-indigo-500" /> regular
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-sm bg-diamond" /> outlier
-                  </span>
-                </p>
-              </div>
-              <p className="text-xs text-text-muted mt-0.5">Posts published each day</p>
-            </div>
-            {dailyChartData.length === 0 ? (
-              <p className="text-center text-text-muted text-sm py-12">No posts in this range.</p>
-            ) : (
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={dailyChartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
-                  <XAxis
-                    dataKey="label"
-                    tick={{ fill: '#9ca3af', fontSize: 11 }}
-                    axisLine={{ stroke: '#2e3348' }}
-                    interval={xTickInterval}
-                  />
-                  <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} allowDecimals={false} />
-                  <Tooltip
-                    contentStyle={CHART_TOOLTIP_STYLE}
-                    cursor={{ fill: 'rgba(232,147,90,0.05)' }}
-                    formatter={(_v: any, _n: any, entry: any) => {
-                      const p = entry?.payload;
-                      if (!p) return ['', ''];
-                      return [`${p.posts} post(s), ${p.outliers} outlier(s)`, fmtFullDay(p.day)];
-                    }}
-                    labelFormatter={() => ''}
-                  />
-                  <Bar dataKey="posts" radius={[3, 3, 0, 0]}>
-                    {dailyChartData.map((d, i) => (
-                      <Cell key={i} fill={d.outliers > 0 ? '#67e8f9' : '#6366f1'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-
-          {/* Right column: Format mix + Best hooks stacked. */}
-          <div className="space-y-4">
           {/* Format mix */}
           {formatChartData.length > 0 && (
             <div className="bg-bg-card border border-border rounded-xl p-5">
@@ -1258,7 +1208,6 @@ export default function Accounts() {
               </ResponsiveContainer>
             </div>
           )}
-          </div>{/* /right column */}
           </div>{/* /two-column grid */}
 
           {/* Per-account comparison */}
