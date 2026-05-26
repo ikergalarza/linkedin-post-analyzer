@@ -114,7 +114,7 @@ THREE MECHANICS THAT PRODUCE 2x+ OUTLIERS — pick the one the raw idea naturall
    - Real outliers on this account: 3.7x · 130K imp (baldness gradient SDR → VP) AND 5.2x · 168K imp ("Coge el teléfono" — manager goes bald across panels while shouting at the team to call the client). Validated TWICE — this is the most consistent winning pattern.
    - Format: 1–3 short lines of text + meme image that depicts a PROGRESSIVE PHYSICAL CHANGE happening to a character across the image (panel to panel, or step by step along a sales role hierarchy).
    - The bodily change is the engine: baldness, weight, eye bags, hunching, sweat — universal, drawable, gradual. Abstract metaphors that aren't literally drawn ("the rep got fatter on tools") fall to ~1x.
-   - IMPORTANT — image and text do NOT have to say the same thing. The image's job is to be an EMOTIONAL AMPLIFIER of the text's joke, not to repeat it. "Coge el teléfono" text is about excuses for not calling; image is about a manager visibly losing his hair from the frustration. Both winners follow this pattern. Forcing literal alignment between text and image is a known weak move on this account.
+   - IMPORTANT — image and text can be either ALIGNED (text describes the bodily change line by line — "Subir en ventas" did this with "pelo intactos → coronilla → calvicie → peluquín") or PARALLEL (text is about a different joke, image carries the bodily change as emotional amplifier — "Coge el teléfono" did this: text about excuses, image about the manager going bald). Both are validated. The non-negotiable is the bodily change LIVING in the image; whether the text mirrors it or runs in parallel is a creative choice that should fit the raw idea.
    - See RECENT_DIAGNOSIS § 2 for the 4-point pre-publish filter — at least 3 of 4 have to pass strong before shipping a meme.
    - Drives reposts (not comments) → broad organic reach, very different shape from the other two mechanics.
 
@@ -741,17 +741,19 @@ ACTIONABLE RULE FOR MAPS:
 
 WORKED:
 1) "Subir en ventas siempre pasa factura" (Iker, 6 May) — 3.73x · 138K imp (highest reach of the month at the time)
-   Visual: hierarchical gradient SDR → AE → Sales Manager → Head → Director → VP, with progressive baldness as the "price" of climbing.
-   Insecurity tapped: BALDNESS + the stress of getting promoted.
+   Image: hierarchical gradient SDR → AE → Sales Manager → Head → Director → VP, with progressive baldness as the "price" of climbing.
+   Text: every line of the role ladder spells out the same physical change in words — "SDR: ilusión y pelo intactos. AE: primeras cuotas, primeras entradas. Sales Manager: forecast mensual y coronilla en construcción. Head of Sales: pipeline del equipo y calvicie consolidada. Director Comercial: board decks y peluca discreta. VP: terapia, junta directiva y peluquín de calidad." → CTA "etiqueta al compi que ya empezó a mirar champús anticaída 👇".
+   → MODE A: text and image are ALIGNED. They tell the same bodily-change story in parallel. The image visualises what the text describes line by line.
    Anchor: every role is B2B sales (SDR, AE, VP).
    CTA: "Etiqueta al compi…" — implicit, not comment-bait.
 
 2) "El cold calling no ha muerto. Lo hemos enterrado en vida" / "Coge el teléfono" (Iker, 15 May) — 5.17x · 168K imp (absolute reach record).
-   Text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nadie llamó.
-   IMAGE (this is what the original write-up missed): progressive BALDNESS on the manager from panel to panel as he escalates — "¿le has llamado?" → "llámale" → "¡al cliente!" → "¡coge el teléfono!". The post text never mentions hair anywhere. The physical change lives purely in the image as an EMOTIONAL AMPLIFIER of the text's joke, not as a second joke.
+   Text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nadie llamó. The post text never mentions hair anywhere.
+   Image: progressive BALDNESS on the manager from panel to panel as he escalates — "¿le has llamado?" → "llámale" → "¡al cliente!" → "¡coge el teléfono!".
+   → MODE B: text and image are PARALLEL — different jokes that share the same emotion. Text carries the excuse chain; image carries the manager's physical collapse. They reinforce each other emotionally without saying the same thing literally.
    Anchor: brutal — the whole sales hierarchy in 6 lines.
    Typographic punchline: "Nadie. Llamó. Al. Cliente." — rhythmic, citable.
-   → This is why both verified outliers (3.7x baldness gradient + 5.2x manager balding mid-shout) share something more specific than "insecurity visible": a PROGRESSIVE BODILY CHANGE happening to a character across the image.
+   → Together these two outliers (3.7x baldness gradient + 5.2x manager balding mid-shout) prove the same engine works in both modes: what they share is a PROGRESSIVE BODILY CHANGE drawn into the image. Whether the text mirrors it (Mode A) or runs in parallel (Mode B) is OPTIONAL — both are validated. Don't force one shape over the other.
 
 CLOSE-BUT-NOT-OUTLIER:
 3) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25K imp (not an outlier).
@@ -787,8 +789,10 @@ CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + P
         [ ] Is it LITERALLY drawn, not just implied by the post text?
       If only "stern faces vs happy face" with no bodily transformation → point 2 passes WEAK, the meme will likely land at 1.5x–2x, not outlier territory.
 
-      DERIVED RULE — IMAGE AS AMPLIFIER, NOT REPETITION:
-      The bodily change does NOT need to be referenced in the post text. Image and text can tell two different things AS LONG AS the emotion lines up. The image is the EMOTIONAL AMPLIFIER, not the repetition of the text's joke. Forcing the text and the image to literally say the same thing is a mistake — neither of the two verified outliers does that ("Coge el teléfono" text is about excuses, image is about hair loss; "Subir pasa factura" text is about promotion, image is about baldness across roles).
+      DERIVED RULE — TWO VALID TEXT/IMAGE RELATIONSHIPS, NEITHER IS BETTER:
+      MODE A — ALIGNED ("Subir en ventas" 3.7x): text and image tell the SAME bodily-change story, each line of the text spelling out what the corresponding panel of the image draws ("pelo intactos" → "coronilla en construcción" → "calvicie consolidada" → "peluquín"). Reinforcement by repetition.
+      MODE B — PARALLEL ("Coge el teléfono" 5.2x): text carries one joke (excuses for not calling), image carries a different joke (manager going bald mid-shout). Different content, same emotion. The image acts as an EMOTIONAL AMPLIFIER, not a repetition.
+      Both are validated on this account. Pick whichever mode the raw idea naturally fits — do NOT force alignment when parallel works, and do NOT force parallel when the idea is screaming for alignment. The non-negotiable is the bodily change in the image; the text/image relationship is a creative choice.
 
   (3) REPOSTABLE TYPOGRAPHIC PUNCHLINE.
       "Nadie. Llamó. Al. Cliente." — memorable. The SDR→VP baldness gradient — memorable. Without a citable punchline, the meme dies in the scroll.
