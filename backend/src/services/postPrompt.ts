@@ -110,11 +110,13 @@ THREE MECHANICS THAT PRODUCE 2x+ OUTLIERS — pick the one the raw idea naturall
    - Regions still to mine: Euskadi (industrial), La Rioja (vino + tech), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Navarra (automoción + energía), Valencia (cerámica)
    - Frequency cap: max 1 every 10–14 days
 
-3. PUNCHY SHORT + MEME IMAGE
-   - Real outlier on this account: 3.7x with 130K impressions (highest reach of the month)
-   - Format: 1–3 short lines of text + meme image carrying an uncomfortable truth with humor
-   - The IMAGE carries 80% of the message; the text only activates it. This won't work as text-only — only pick this mechanic when the idea is genuinely meme-able and there's a visual to ship.
-   - Drives reposts (not comments) → broad organic reach, very different shape from the other two
+3. PUNCHY SHORT + MEME IMAGE — "progressive bodily change inside a B2B sales hierarchy"
+   - Real outliers on this account: 3.7x · 130K imp (baldness gradient SDR → VP) AND 5.2x · 168K imp ("Coge el teléfono" — manager goes bald across panels while shouting at the team to call the client). Validated TWICE — this is the most consistent winning pattern.
+   - Format: 1–3 short lines of text + meme image that depicts a PROGRESSIVE PHYSICAL CHANGE happening to a character across the image (panel to panel, or step by step along a sales role hierarchy).
+   - The bodily change is the engine: baldness, weight, eye bags, hunching, sweat — universal, drawable, gradual. Abstract metaphors that aren't literally drawn ("the rep got fatter on tools") fall to ~1x.
+   - IMPORTANT — image and text do NOT have to say the same thing. The image's job is to be an EMOTIONAL AMPLIFIER of the text's joke, not to repeat it. "Coge el teléfono" text is about excuses for not calling; image is about a manager visibly losing his hair from the frustration. Both winners follow this pattern. Forcing literal alignment between text and image is a known weak move on this account.
+   - See RECENT_DIAGNOSIS § 2 for the 4-point pre-publish filter — at least 3 of 4 have to pass strong before shipping a meme.
+   - Drives reposts (not comments) → broad organic reach, very different shape from the other two mechanics.
 
 WHAT BREAKS POSTS (sub-1.0x flops to AVOID reproducing):
 - Listicles with no viral mechanic ("6 IAs que uso para cerrar más reuniones" → 0.3x)
@@ -744,36 +746,49 @@ WORKED:
    Anchor: every role is B2B sales (SDR, AE, VP).
    CTA: "Etiqueta al compi…" — implicit, not comment-bait.
 
-2) "El cold calling no ha muerto. Lo hemos enterrado en vida" (Iker, 15 May) — 5.17x · 168K imp (absolute reach record).
-   Visual + text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nobody actually called.
-   Insecurity tapped: LAZINESS + professional cowardice (everyone has done it).
+2) "El cold calling no ha muerto. Lo hemos enterrado en vida" / "Coge el teléfono" (Iker, 15 May) — 5.17x · 168K imp (absolute reach record).
+   Text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nadie llamó.
+   IMAGE (this is what the original write-up missed): progressive BALDNESS on the manager from panel to panel as he escalates — "¿le has llamado?" → "llámale" → "¡al cliente!" → "¡coge el teléfono!". The post text never mentions hair anywhere. The physical change lives purely in the image as an EMOTIONAL AMPLIFIER of the text's joke, not as a second joke.
    Anchor: brutal — the whole sales hierarchy in 6 lines.
    Typographic punchline: "Nadie. Llamó. Al. Cliente." — rhythmic, citable.
+   → This is why both verified outliers (3.7x baldness gradient + 5.2x manager balding mid-shout) share something more specific than "insecurity visible": a PROGRESSIVE BODILY CHANGE happening to a character across the image.
 
 CLOSE-BUT-NOT-OUTLIER:
 3) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25K imp (not an outlier).
    Timeline 2018→2026 of the rep getting fatter on tools.
-   Why it fell short: "engordar" is an ABSTRACT metaphor — not VISIBLE in the meme. Compare to Iker's baldness gradient, which is concrete and graduated frame-by-frame.
+   Why it fell short: "engordar" is an ABSTRACT metaphor — the rep doesn't literally get drawn fatter panel to panel. Compare to Iker's baldness gradient, which is concrete and literally drawn frame-by-frame.
 
 FAILED:
 4) "Yo siendo el fan nº1 de leads que me aceptaron en LinkedIn y desaparecieron" (Iker, 22 May) — 0.49x · 1.6K imp.
-   No strong insecurity, just a universal lament. No hierarchy / role progression / internal sales tension. Single line, no repostable punchline.
+   No strong insecurity, just a universal lament. No hierarchy / role progression / internal sales tension. Single line, no repostable punchline. No bodily change in the visual.
 
 5) "Perder un cliente en LinkedIn es arte ✨" (Unai, 21 May) — 0.46x · 10K imp.
    Honest translation vs. LinkedIn excuse ("no fit"). Good insecurity (lying not to lose face) BUT it accuses the reader directly — broke the attack-the-problem-not-the-reader rule. The "P.D." tail at the end dilated.
 
-CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + UNIVERSAL PHYSICAL/PSYCHOLOGICAL INSECURITY. Four ingredients have to coexist:
+CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + PROGRESSIVE PHYSICAL CHANGE VISIBLE IN THE IMAGE. Four ingredients have to coexist:
 
   (1) HIERARCHY OR CHAIN OF B2B SALES ROLES IN ONE IMAGE / POST.
       A gradient SDR → AE → Manager → Director → VP, OR a chain of excuses that walks the hierarchy (Manager asks → SDR/AE/etc. answer). The reader recognises themselves on a rung → identity → repost. The higher up the chain the joke lands, the more amplification (seniors repost to laugh at themselves).
 
-  (2) UNIVERSAL PHYSICAL OR PSYCHOLOGICAL INSECURITY, VISIBLE IN A SINGLE PANEL.
-      ✅ Baldness (visual, gradual, irreversible — perfect).
-      ✅ Laziness / professional cowardice (not calling the client).
-      ✅ Gluttony / weight (works less because it's metaphor, not literal).
-      ❌ "Leads who ghost" (not insecurity, just lament).
-      ❌ "Lying on LinkedIn" (accuses the reader).
-      TEST: can the insecurity be DRAWN in one panel? If yes → strong. If no → weak.
+  (2) UNIVERSAL PHYSICAL CHANGE — VISIBLE AND IDEALLY PROGRESSIVE — DRAWN INTO THE IMAGE.
+      Both verified outliers share something more specific than "insecurity visible": a BODILY CHANGE that happens to a character across the image. The change does NOT need to be mentioned in the post text — its job is to amplify the text's emotion in parallel, not repeat the joke.
+
+      Bodily changes that work (universal, drawable, gradual):
+        - Progressive baldness         (validated x2 on this account)
+        - Weight gain / loss           (tried in "comercial ha engordado" — 1.1x, failed because it was an abstract metaphor, not literally drawn)
+        - Growing eye bags / no-sleep signs
+        - Hunching over / aging panel to panel
+        - Visible sweat / nerves intensifying
+        - Skin colour shift (pale → red with stress, etc.)
+
+      UPDATED TEST (point 2 only passes STRONG if all three are true):
+        [ ] Is there a bodily change literally DRAWN from panel to panel (or character to character along a hierarchy)?
+        [ ] Is that change UNIVERSAL — readable by anyone, no sector context required?
+        [ ] Is it LITERALLY drawn, not just implied by the post text?
+      If only "stern faces vs happy face" with no bodily transformation → point 2 passes WEAK, the meme will likely land at 1.5x–2x, not outlier territory.
+
+      DERIVED RULE — IMAGE AS AMPLIFIER, NOT REPETITION:
+      The bodily change does NOT need to be referenced in the post text. Image and text can tell two different things AS LONG AS the emotion lines up. The image is the EMOTIONAL AMPLIFIER, not the repetition of the text's joke. Forcing the text and the image to literally say the same thing is a mistake — neither of the two verified outliers does that ("Coge el teléfono" text is about excuses, image is about hair loss; "Subir pasa factura" text is about promotion, image is about baldness across roles).
 
   (3) REPOSTABLE TYPOGRAPHIC PUNCHLINE.
       "Nadie. Llamó. Al. Cliente." — memorable. The SDR→VP baldness gradient — memorable. Without a citable punchline, the meme dies in the scroll.
@@ -783,12 +798,12 @@ CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + U
       ✅ "Nadie llamó al cliente" — "we're all guilty, me included".
       ❌ "Perder cliente es arte" — "vosotros mentís" (the reader feels accused).
 
-FOUR-POINT FILTER BEFORE SHIPPING A MEME — at least 3 of 4 have to be true:
+FOUR-POINT FILTER BEFORE SHIPPING A MEME — at least 3 of 4 have to pass STRONG:
   [ ] Is there a hierarchy / chain of B2B sales roles?
-  [ ] Is the insecurity literally VISIBLE in the image?
-  [ ] Is there a citable punchline that can be copy-pasted as a comment?
+  [ ] Is there a universal bodily change literally drawn into the image (progressive across panels or across the hierarchy)? Image's job is to AMPLIFY the text's emotion, NOT repeat the same joke.
+  [ ] Is there a citable typographic punchline that can be copy-pasted as a comment?
   [ ] Does the reader laugh WITH us, not feel accused?
-If only 1 or 2 pass: do NOT ship as-is — flag to the user that it's going to underperform and propose either a retouch or a different idea.
+If only 1 or 2 pass: do NOT ship as-is — flag to the user that it's going to underperform and propose either a retouch (add a bodily change to the image, add a punchline, etc.) or a different idea. If point 2 only passes WEAK (stern vs happy faces, no real transformation) the realistic ceiling is ~1.5x–2x; tell the user honestly.
 
 ═══ 3. WHAT'S STILL WORKING / WHAT'S BURNING OUT ═══
 
