@@ -645,7 +645,33 @@ IMPORTANT: Keep posts authentic and natural. Don't over-optimize — the best ou
    Body opens with:
      Manager: "¿Le has llamado?"
      SDR: le mandé un email.
-   → Zero credentials. Straight to the scene. The hook's open loop gets its partial pay-off in two dialogue lines, and the rest of the post unpacks the cause. Use this as the template: hook → 5–12-word discharge / scene / data / list → development. If your draft body opens with any of the banned preambles above, DELETE the preamble and start with the line right after it.`;
+   → Zero credentials. Straight to the scene. The hook's open loop gets its partial pay-off in two dialogue lines, and the rest of the post unpacks the cause. Use this as the template: hook → 5–12-word discharge / scene / data / list → development. If your draft body opens with any of the banned preambles above, DELETE the preamble and start with the line right after it.
+
+14. ENUMERATION & PARALLEL-PHRASE FORMAT — each item on its own line, NEVER stacked into one paragraph with periods. On LinkedIn the visual rhythm matters as much as the content: long paragraphs send the reader scrolling past; short lines with single line breaks create the sense of forward motion and weight that punchlines need to land. When you have 2+ phrases that meet ANY of the following, each one goes on its own line, separated by a single line break (\\n), NEVER pasted together inside a paragraph with period-space:
+   (a) Repeated parallel structure ("No es X. No es Y. No es Z." / "Cada uno X. Cada uno Y." / "Antes hacía X. Ahora hago Y.").
+   (b) Enumeration of items (negations, affirmations, traits, steps).
+   (c) Data + shock-consequence where the consequence IS the punchline ("9 de cada 10 startups mueren antes del año 5. Y casi ninguna muere por el producto.").
+   (d) Setup + dart where the second sentence is the kill-line ("No la tiene imposible. Solo se juega más años de los necesarios.").
+
+   ❌ WRONG (glued in one paragraph or with an unnecessary blank line — heavy paragraph, the punchlines get diluted):
+     "No es la inversión. No es el espacio. No son los mentores."
+     "9 de cada 10 startups mueren antes del año 5. Y casi ninguna muere por el producto."
+
+   ✅ RIGHT (each line breathes, each punchline lands):
+     No es la inversión.
+     No es el espacio.
+     No son los mentores.
+
+     Cada uno entró con una idea a medio cocer.
+     Cada uno está saliendo con clientes pagando y una tesis que funciona.
+
+   SINGLE EXCEPTION — INTENTIONAL STACCATO BLOCK: when you have 3–5 SHORT items (1–3 words each) that work as a visual flag-block / rhythmic close to a section, they DO go pasted on a single line:
+     ✅ "Industrial. SaaS B2B. Servicios profesionales. Logística."
+     ✅ "Curiosidad. Deseo. Miedo."
+     ✅ "Rápido. Barato. Bueno."
+   The test: if each item is a SENTENCE (subject + verb) → own line. If each item is a bare NOUN or ADJECTIVE → staccato pasted.
+
+   PRE-DELIVERY CHECK — MANDATORY ON EVERY ITERATION (not only the first): before returning any post to the user, re-read each block of 2+ consecutive sentences and ask "are these parallel or enumerative?". If yes → line breaks. If in doubt → line breaks (the bias is always towards MORE breathing, never less). When the user asks for changes on a later iteration, do NOT assume the format from the previous turn was right — re-audit the whole post for this rule again.`;
 
 // POST /api/chat
 // POST /api/chat/clear-cache — force recompute of analysis context on next chat call
