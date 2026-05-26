@@ -249,6 +249,71 @@ NEETY BRAND SYSTEM (always reference these — every image concept must be on-br
 - ORANGE WORD RULE: when the image carries a title or any text overlay, the SINGLE most important word of that text MUST be coloured in Persian Orange (#ee9363); the rest stays Alabastro (#f9f3ef) on the Dark Blue background. That orange word is the scroll-stop — pick it deliberately (the word that holds the whole curiosity gap).
 - Every image suggestion you give MUST explicitly name: the colour roles (which hex goes where), the typography (which font is used for which text), and which exact word is rendered in Persian Orange. Don't leave it implicit.`;
 
+// MEME-ONLY visual system. Observed pattern across the meme images
+// that actually pulled outliers on this account (3.7x baldness gradient
+// SDR→VP, 5.2x manager balding mid-shout, plus an "IA roba el sueño"
+// concept in production). This block OVERRIDES IMAGE_PRINCIPLES'
+// "Neety brand system" defaults specifically for MEMES — memes use an
+// inverted version of the brand palette (light background instead of
+// dark) on purpose, so they have their own personality inside the feed.
+// DO NOT apply this block to non-meme image suggestions (text+image
+// data shocks, infographics, regular product visuals) — those follow
+// IMAGE_PRINCIPLES as written.
+export const MEME_VISUAL_SYSTEM = `MEME VISUAL SYSTEM (apply ONLY when proposing an image concept for a MEME post — NOT for any other image. Memes are a deliberate inversion of the base brand palette so they have their own personality inside the feed. Observed across the validated outlier memes on this account):
+
+─── COLOUR + BACKGROUND ───
+- Background: Alabastro #f9f3ef ALWAYS (NOT Dark Blue — this is the deliberate inversion of the base brand system for memes only).
+- Linework / outlines: Dark Blue #0c202e for everything — faces, clothing, panel borders, title typography except the orange scroll-stop word.
+- Persian Orange #ee9363 is RESERVED for exactly 3 slots:
+  (a) The character's tie — every Neety meme character wears it, it's the signature visual.
+  (b) ONE word of the title — the scroll-stop, always the last or near-last word of the headline.
+  (c) Narrative accent props that carry the joke: shout rays ⚡, a coffee mug, a phone, a stack of bills — whatever the punchline object is.
+Nothing else goes orange.
+
+─── LAYOUT ───
+- Symmetric grid (2 columns × 3-4 rows) OR a complete portrait grid. NOT comic-book panels with speech bubbles and complex scenery.
+- Each panel framed by a thin Dark Blue line, no fill colour other than the Alabastro background.
+- Role label below each character ALWAYS in Switzer bold Dark Blue. Big, plain, no shadows or flourishes.
+
+─── CHARACTERS ───
+- Style: flat vector illustration, clean lines — "corporate illustration" with personality (NOT the generic Notion-style flat figures).
+- The SAME base character (face + body) repeated and modified panel by panel — NOT 6 different people. Reuse builds the bodily-change effect that drives the meme.
+- Framing: bust / shoulders + head. Never full body. The face dominates the panel.
+- Uniform across ALL Neety memes: white shirt + Persian Orange tie. Build this as recognisable visual signature, don't break it from meme to meme.
+- Expression: neutral baseline. The BODILY CHANGE communicates the emotion (baldness, eye bags, hunch, sweat), NOT exaggerated smiles/frowns. ONE allowed exception: a character carrying the extreme emotion of the joke — the shouting manager in the "Coge el teléfono" meme — can have an open-mouthed shout.
+
+─── TYPOGRAPHY ───
+- Top title: Bricolage Grotesque BOLD, ALL CAPS, max 2 lines. Centred. Takes ~15-20% of the image height.
+- Title structure: [DARK BLUE PART] + [ONE PERSIAN ORANGE WORD at the end or near the end]. Validated examples:
+  · "EN VENTAS TODOS HUYEN DEL TELÉFONO" (orange = TELÉFONO)
+  · "AHORA LA IA LES ROBA EL SUEÑO" (orange = SUEÑO)
+- The orange word ALWAYS closes the concept — it's where the eye lands and rests. Never put it mid-sentence.
+- Panel-interior text (dialogue, role labels): Switzer bold, Dark Blue. Big enough to read at thumbnail size.
+
+─── RECURRING NARRATIVE ELEMENTS ───
+- Shout rays ⚡ in Persian Orange to signal tension / volume.
+- Progressive bodily change across panels (baldness, eye bags, hunching, sweat) — this is the engine of the meme (see RECENT_DIAGNOSIS § 2).
+- "Contrast character" in the final panel (Mikel with a coffee mug, the unbothered AE) = visual punchline.
+
+─── REQUIRED CHECKLIST WHEN PROPOSING A NEW MEME IMAGE ───
+Always state explicitly:
+1. Background: Alabastro #f9f3ef.
+2. Layout: symmetric grid (specify the panel count, e.g. 2×3, 3×2).
+3. Base character: white shirt + Persian Orange #ee9363 tie.
+4. Title: 2 lines, Bricolage Grotesque bold ALL CAPS, name the EXACT word rendered in Persian Orange (last or near-last in the headline).
+5. Panel-interior text: Switzer bold Dark Blue.
+6. Bodily change: which progression (baldness, eye bags, sweat, hunch, etc.) and which panels it occurs in.
+7. Contrast character if applicable: who is the "Mikel" of the meme and what prop they hold (coffee, bills, phone).
+8. Orange accents: list every place orange appears (ties, shout rays, prop).
+
+DO NOT PROPOSE:
+- Dark backgrounds for memes (Dark Blue is for non-meme posts only).
+- Characters wearing anything other than the white-shirt + orange-tie uniform.
+- More than ONE orange word in the title.
+- Comic-book panels with complex scenery / speech bubbles instead of clean grid layout.
+- Fonts other than Bricolage Grotesque (title) and Switzer (everything else).
+- Different people across panels — it must be the SAME character changing, not a cast.`;
+
 // ONLY injected when the raw idea is a VIDEO request (isVideoRequest()).
 // Distilled from ASR transcripts of 11 TikTok B2B-AI outliers (Apify
 // clockworks/tiktok-video-scraper). A video post is a fundamentally

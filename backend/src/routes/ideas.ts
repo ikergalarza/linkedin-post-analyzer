@@ -11,6 +11,7 @@ import {
   HOOK_LAW,
   HOOK_QUALITY,
   IMAGE_PRINCIPLES,
+  MEME_VISUAL_SYSTEM,
   VIDEO_SCRIPT,
   SHORT_FORM_VIDEO_PLAYBOOK,
   REMIX_PRINCIPLES,
@@ -255,6 +256,8 @@ RULES:
 - 2-3 relevant hashtags at the end
 
 ${IMAGE_PRINCIPLES}
+
+${MEME_VISUAL_SYSTEM}
 
 ${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}` : ''}
 
