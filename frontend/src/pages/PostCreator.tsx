@@ -146,6 +146,12 @@ export default function PostCreator() {
   // after send. Each entry is base64 in a data URL so we can both render
   // a thumbnail and forward the bytes inline to Anthropic.
   const [pendingImages, setPendingImages] = useState<AttachedImage[]>([]);
+  // Edit-in-place state: when the user clicks the pencil on a previous
+  // user turn we capture its index here and copy the current text into
+  // editingDraft. The chat then renders an inline editor in place of
+  // that bubble, with Send (truncates history + re-streams) / Cancel.
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingDraft, setEditingDraft] = useState<string>('');
 
   // Load managed accounts (Iker / Unai …) for the preview persona picker.
   useEffect(() => {
@@ -248,26 +254,14 @@ export default function PostCreator() {
     }
   };
 
-  const sendMessage = async (text?: string) => {
-    const content = text || input.trim();
-    // Allow sending an image-only message (no text) — Claude can still
-    // analyse the image. But require at least one of the two.
-    if ((!content && pendingImages.length === 0) || streaming) return;
-
-    const imagesToSend = pendingImages;
-    setInput('');
-    setPendingImages([]);
-    setError(null);
-
-    const userMsg: Message = {
-      role: 'user',
-      content,
-      ...(imagesToSend.length > 0 ? { images: imagesToSend } : {}),
-    };
-    const newMessages = [...messages, userMsg];
+  // Core streaming pipeline: takes a fully-formed message list ending in
+  // the user turn we want to fire, paints an empty assistant bubble,
+  // POSTs to /api/chat, and folds the SSE chunks into that bubble.
+  // Used by both sendMessage (new turn) and submitEdit (re-run from a
+  // truncated history). On error we roll the assistant placeholder back.
+  const streamResponseFor = async (newMessages: Message[]) => {
     setMessages([...newMessages, { role: 'assistant', content: '' }]);
     setStreaming(true);
-
     try {
       const res = await fetch(`${BASE}/api/chat`, {
         method: 'POST',
@@ -343,6 +337,60 @@ export default function PostCreator() {
     }
   };
 
+  const sendMessage = async (text?: string) => {
+    const content = text || input.trim();
+    // Allow sending an image-only message (no text) — Claude can still
+    // analyse the image. But require at least one of the two.
+    if ((!content && pendingImages.length === 0) || streaming) return;
+
+    const imagesToSend = pendingImages;
+    setInput('');
+    setPendingImages([]);
+    setError(null);
+
+    const userMsg: Message = {
+      role: 'user',
+      content,
+      ...(imagesToSend.length > 0 ? { images: imagesToSend } : {}),
+    };
+    await streamResponseFor([...messages, userMsg]);
+  };
+
+  // Re-send an earlier user turn after editing it. We DROP everything
+  // from that turn onwards (the assistant's old reply + any subsequent
+  // turns) and re-stream from the truncated history with the edited
+  // message in place — same shape ChatGPT / Claude.ai use when the
+  // user clicks the pencil on a previous turn.
+  const submitEdit = async (index: number) => {
+    const original = messages[index];
+    if (!original || original.role !== 'user' || streaming) return;
+    const newText = editingDraft.trim();
+    if (!newText && !(original.images && original.images.length > 0)) return;
+
+    const editedMsg: Message = {
+      role: 'user',
+      content: newText,
+      ...(original.images && original.images.length > 0 ? { images: original.images } : {}),
+    };
+    const truncated = messages.slice(0, index);
+    setEditingIndex(null);
+    setEditingDraft('');
+    setError(null);
+    await streamResponseFor([...truncated, editedMsg]);
+  };
+
+  const beginEdit = (index: number) => {
+    const msg = messages[index];
+    if (!msg || msg.role !== 'user' || streaming) return;
+    setEditingIndex(index);
+    setEditingDraft(msg.content || '');
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditingDraft('');
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -389,7 +437,83 @@ export default function PostCreator() {
               )}
 
               {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  key={i}
+                  className={`group flex items-start gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  {/* Pencil — only on user turns, only when not currently
+                      editing, only when not streaming. Sits to the LEFT
+                      of the bubble (which itself sits on the right edge),
+                      reveals on hover via group-hover, and on click swaps
+                      the bubble for an inline editor. */}
+                  {msg.role === 'user' && editingIndex !== i && !streaming && (
+                    <button
+                      onClick={() => beginEdit(i)}
+                      title="Edit this message and re-run the conversation from here"
+                      aria-label="Edit message"
+                      className="self-center mt-1 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md text-text-muted hover:text-accent hover:bg-bg-card border border-transparent hover:border-border"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* When this user turn is the one being edited, render
+                      an inline editor in place of the bubble. Cancel
+                      restores the bubble; Send truncates history at this
+                      index and re-streams with the new text. */}
+                  {msg.role === 'user' && editingIndex === i ? (
+                    <div className="max-w-[90%] w-full sm:w-[520px] bg-bg-card border border-accent/40 rounded-xl px-3 py-3">
+                      {msg.images && msg.images.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {msg.images.map((img, ii) => (
+                            <img
+                              key={ii}
+                              src={img.dataUrl}
+                              alt={`Attached ${ii + 1}`}
+                              className="max-h-32 rounded-lg border border-border object-cover"
+                            />
+                          ))}
+                        </div>
+                      )}
+                      <textarea
+                        value={editingDraft}
+                        onChange={(e) => setEditingDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            submitEdit(i);
+                          } else if (e.key === 'Escape') {
+                            e.preventDefault();
+                            cancelEdit();
+                          }
+                        }}
+                        autoFocus
+                        rows={Math.min(8, Math.max(2, editingDraft.split('\n').length))}
+                        className="w-full bg-bg-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 resize-none"
+                      />
+                      <div className="flex items-center justify-end gap-2 mt-2">
+                        <button
+                          onClick={cancelEdit}
+                          className="px-3 py-1.5 text-xs text-text-muted hover:text-text-primary transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => submitEdit(i)}
+                          disabled={!editingDraft.trim() && !(msg.images && msg.images.length > 0)}
+                          className="px-3 py-1.5 bg-accent text-bg-primary rounded-lg text-xs font-medium disabled:opacity-40 hover:bg-accent-light transition-colors"
+                        >
+                          Send
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-text-muted mt-1.5">
+                        Sending will discard the {messages.length - i - 1} message{messages.length - i - 1 === 1 ? '' : 's'} after this one and continue the conversation from here.
+                      </p>
+                    </div>
+                  ) : (
                   <div
                     className={`max-w-[90%] rounded-xl px-4 py-3 ${
                       msg.role === 'user'
@@ -467,6 +591,7 @@ export default function PostCreator() {
                       </div>
                     )}
                   </div>
+                  )}
                 </div>
               ))}
               <div ref={messagesEndRef} />
