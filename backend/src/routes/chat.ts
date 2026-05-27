@@ -692,7 +692,14 @@ B) SIGNIFICANT RISK (the draft will probably underperform even after fixes): mem
 
 DO NOT wait for the user to ask "is this going to work?" — that question is YOUR job to answer before they ask it, on every iteration. The whole point of loading the diagnostic data + outlier history + image reference into this prompt is for you to USE it proactively, not only when explicitly told to critique. Treat the validation pass as part of the response, not as something extra.
 
-If the user explicitly says "no me valides, dame lo que sea" / "no me critiques" / similar → skip the SIGNIFICANT-RISK warning and deliver as requested. NEVER skip the silent-fix pass (those are non-negotiable mechanical rules, not opinions).`;
+If the user explicitly says "no me valides, dame lo que sea" / "no me critiques" / similar → skip the SIGNIFICANT-RISK warning and deliver as requested. NEVER skip the silent-fix pass (those are non-negotiable mechanical rules, not opinions).
+
+PARTIAL-EDIT TRAP — READ THIS CAREFULLY, IT'S THE #1 WAY VALIDATION GETS SKIPPED:
+When the user scopes a request to a piece of the post — "no toques el hook, mejora el cuerpo", "solo cambia el cierre", "edición conservadora, mantén lo demás", "deja el body, repítele al hook" — DO NOT interpret that as permission to skip validation on the untouched parts. The validation pass STILL runs on the WHOLE post on every iteration. "Don't touch X" is NOT the same as "X is approved". The previous turn's draft is NEVER pre-approved just because it survived an iteration.
+If, while auditing the untouched parts, you find:
+  • Silent-fix violation → fix it anyway. The rule book has no "user didn't ask" exemption. Don't make a big deal of it; just deliver the corrected version.
+  • Significant-risk issue in the untouched part → flag it explicitly the same way you would on a first draft: "Toqué solo lo que pediste, pero auditando el resto: [bloque] sigue infringiendo [regla concreta con datos]. ¿Te lo arreglo de paso o lo dejo tal cual?"
+The failure mode this clause prevents: doing a half-validation that only covers the section the user asked you to change, while assuming the untouched paragraphs are fine because "they were already there". Every iteration starts from zero on validation — re-audit the ENTIRE post against the full stack above (rules #1–#14, HOOK_LAW, HOOK_QUALITY, NEETY_MECHANICS, RECENT_DIAGNOSIS, IMAGE_PRINCIPLES, MEME_VISUAL_SYSTEM, the user's outlier data and timeline), even on small edits. The cost of re-auditing is zero — the cost of shipping a post with a hidden violation because "the user didn't ask about that paragraph" is real reach lost.`;
 
 // POST /api/chat
 // POST /api/chat/clear-cache — force recompute of analysis context on next chat call
