@@ -45,9 +45,19 @@ function extractPostBlocks(content: string): string[] {
   const cleaned = content.trim();
   if (cleaned.length < 50) return [];
 
+  // Helper: when a chunk of text contains a triple-backtick fence (which is
+  // now the model's default for every post body), the pasteable content is
+  // ONLY the fence's interior — drop the surrounding OPCIÓN heading, the
+  // virality tag, and any 'why this works' commentary that lives outside it.
+  // Falls back to the original chunk when no fence is found.
+  const stripToFenceIfPresent = (chunk: string): string => {
+    const m = chunk.match(/```(?:[a-zA-Z0-9_-]*\n)?([\s\S]+?)```/);
+    return m ? m[1].trim() : chunk;
+  };
+
   // 1. `---` delimited (legacy explicit separator)
   const dashed = cleaned.split(/\n---+\n/).map((b) => b.trim()).filter((b) => b.length > 50);
-  if (dashed.length >= 2) return dashed;
+  if (dashed.length >= 2) return dashed.map(stripToFenceIfPresent);
 
   // 2. Numbered "OPCIÓN N" / "OPTION N" / "VARIANTE N" / "VERSIÓN N" headings.
   // This is what the chat actually emits most of the time, and is what the
@@ -61,7 +71,7 @@ function extractPostBlocks(content: string): string[] {
     for (let i = 0; i < matches.length; i++) {
       const start = matches[i].index ?? 0;
       const end = i + 1 < matches.length ? (matches[i + 1].index ?? cleaned.length) : cleaned.length;
-      blocks.push(cleaned.slice(start, end).trim());
+      blocks.push(stripToFenceIfPresent(cleaned.slice(start, end).trim()));
     }
     return blocks.filter((b) => b.length > 50);
   }

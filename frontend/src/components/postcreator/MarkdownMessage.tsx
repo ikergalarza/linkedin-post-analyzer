@@ -1,5 +1,49 @@
+import { useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
+// Fenced code blocks in assistant messages — the model now wraps every
+// LinkedIn post draft inside a ``` fence so whitespace + line breaks
+// (rule #14 / HOOK_LAW) survive the chat UI, and so the user gets a
+// one-click Copy button to paste straight into LinkedIn. Hover the
+// block (or focus it) to reveal Copy; clicking flips to ✓ Copied for
+// 1.5s then back. Uses preRef.innerText so the copied text matches
+// what's visually rendered — not the raw markdown source.
+function CopyablePre({ children }: { children: any }) {
+  const [copied, setCopied] = useState(false);
+  const preRef = useRef<HTMLPreElement>(null);
+
+  const handleCopy = async () => {
+    const text = preRef.current?.innerText ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
+
+  return (
+    <div className="relative my-2 group">
+      <pre
+        ref={preRef}
+        className="bg-bg-primary border border-border rounded-md px-3 py-2 pr-16 text-[12px] font-mono text-text-primary overflow-x-auto whitespace-pre [&_code]:bg-transparent [&_code]:border-0 [&_code]:p-0 [&_code]:text-text-primary"
+      >
+        {children}
+      </pre>
+      <button
+        onClick={handleCopy}
+        className={`absolute top-1.5 right-1.5 px-2 py-0.5 text-[10px] font-medium rounded border transition-all ${
+          copied
+            ? 'border-green-400/50 bg-green-400/10 text-green-400'
+            : 'border-border bg-bg-card text-text-muted hover:text-accent hover:border-accent/40 opacity-0 group-hover:opacity-100'
+        }`}
+        aria-label={copied ? 'Copied' : 'Copy post text'}
+      >
+        {copied ? '✓ Copied' : '📋 Copy'}
+      </button>
+    </div>
+  );
+}
 
 /**
  * Renders assistant chat content as proper markdown — full GFM support
@@ -69,11 +113,7 @@ export default function MarkdownMessage({ content }: { content: string }) {
               {children}
             </code>
           ),
-          pre: ({ children }) => (
-            <pre className="bg-bg-primary border border-border rounded-md px-3 py-2 my-2 text-[12px] font-mono text-text-primary overflow-x-auto whitespace-pre [&_code]:bg-transparent [&_code]:border-0 [&_code]:p-0 [&_code]:text-text-primary">
-              {children}
-            </pre>
-          ),
+          pre: ({ children }) => <CopyablePre>{children}</CopyablePre>,
           a: ({ children, href }) => (
             <a
               href={href}
