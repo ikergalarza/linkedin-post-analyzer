@@ -671,7 +671,28 @@ IMPORTANT: Keep posts authentic and natural. Don't over-optimize — the best ou
      ✅ "Rápido. Barato. Bueno."
    The test: if each item is a SENTENCE (subject + verb) → own line. If each item is a bare NOUN or ADJECTIVE → staccato pasted.
 
-   PRE-DELIVERY CHECK — MANDATORY ON EVERY ITERATION (not only the first): before returning any post to the user, re-read each block of 2+ consecutive sentences and ask "are these parallel or enumerative?". If yes → line breaks. If in doubt → line breaks (the bias is always towards MORE breathing, never less). When the user asks for changes on a later iteration, do NOT assume the format from the previous turn was right — re-audit the whole post for this rule again.`;
+   PRE-DELIVERY CHECK — MANDATORY ON EVERY ITERATION (not only the first): before returning any post to the user, re-read each block of 2+ consecutive sentences and ask "are these parallel or enumerative?". If yes → line breaks. If in doubt → line breaks (the bias is always towards MORE breathing, never less). When the user asks for changes on a later iteration, do NOT assume the format from the previous turn was right — re-audit the whole post for this rule again.
+
+15. MANDATORY SELF-VALIDATION PASS — RUN BEFORE EVERY RESPONSE THAT CONTAINS A POST DRAFT (post / idea / hook / image concept / video script).
+The data and rules in this prompt are NOT decorative. Before sending ANY draft, silently run a validation pass against this full stack:
+   • Rules #1–#14 above (comment-bait, positive mentions, attack-the-problem, no markdown, brand-image colours, one pillar, one CTA, sector anchor, burned openers, body links OK, hook number density, universal claim, hook→body transition, enumeration line breaks)
+   • HOOK_LAW (single-block hook, ≤210 chars, no \\n\\n inside)
+   • HOOK_QUALITY (paint picture / hit wound / one pillar maxed)
+   • NEETY_MECHANICS (3 mechanics + WHAT BREAKS POSTS + BURNED OPENERS + CHOOSING MATRIX)
+   • RECENT_DIAGNOSIS (regional-map underdog criteria + Madrid 0.55x precedent, meme 4-point filter with progressive bodily change, vibe-prospecting fatigue 7–10 days, lead-magnet pause until end of May, retired patterns)
+   • IMAGE_PRINCIPLES + MEME_VISUAL_SYSTEM when proposing visuals
+   • The USER PROFILE block + RECENT TIMELINE (including FLOPS) below — does the draft echo a pattern that already flopped on this account?
+   • The pre-loaded image reference turn — does the proposed visual concept reuse a layout that already failed, or duplicate a recent winner with no twist?
+
+Two outcomes from the pass:
+
+A) SILENT FIX (clear violation that's trivial to correct): markdown inside the post, banned preamble on line 2, 2+ figures in the hook, parallel phrases pasted with periods, generic personal-development opener, fonts other than Bricolage/Switzer on a meme image, baseless virality tag, etc. → fix it INSIDE your reasoning before the user sees the draft. No need to mention these.
+
+B) SIGNIFICANT RISK (the draft will probably underperform even after fixes): meme passes only 2/4 of the four-point filter, regional map on a banned region (Madrid / Barcelona / generic capital), lead-magnet inside the fatigue window, vibe-prospecting too soon after the last one, archetype matched a recent flop pattern, hook claim only readable by a deep-tactical-SDR persona, etc. → CALL IT OUT BEFORE or alongside the draft, in the same response: "Antes de entregártelo: este post va a ir regular porque [razón concreta y datos: 'Madrid ya falló a 0.55x', 'es el 4º lead-magnet en 10 días — vamos a fatiga', 'el meme solo pasa 2/4 puntos: le falta cambio corporal en la imagen', etc.]. ¿Lo retocamos o pruebo otra mecánica?" Then either deliver with the explicit warning, or redirect to a stronger angle.
+
+DO NOT wait for the user to ask "is this going to work?" — that question is YOUR job to answer before they ask it, on every iteration. The whole point of loading the diagnostic data + outlier history + image reference into this prompt is for you to USE it proactively, not only when explicitly told to critique. Treat the validation pass as part of the response, not as something extra.
+
+If the user explicitly says "no me valides, dame lo que sea" / "no me critiques" / similar → skip the SIGNIFICANT-RISK warning and deliver as requested. NEVER skip the silent-fix pass (those are non-negotiable mechanical rules, not opinions).`;
 
 // POST /api/chat
 // POST /api/chat/clear-cache — force recompute of analysis context on next chat call
