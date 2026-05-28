@@ -41,9 +41,21 @@ interface Persona {
 // Extract post blocks from an assistant message. Tries several strategies in
 // order so it works whether the model emits `---` separators, numbered
 // "OPCIÓN" / "OPTION" / "VARIANTE" headings, fenced code blocks, or none.
-function extractPostBlocks(content: string): string[] {
+// `strict` = "only treat this as a post if it's unambiguously a post".
+// The model now wraps every post body in a ``` fence (system-prompt rule
+// #16), so a code fence is the reliable signal that the message actually
+// contains a post. In strict mode we REQUIRE a fence and skip the
+// whole-message fallback — that fallback is what was dumping plain
+// non-post replies ("¿quieres que lo haga más agresivo?") into the
+// LinkedIn preview. The preview auto-update and the per-message preview
+// buttons both run strict; nothing else should leak into the preview.
+function extractPostBlocks(content: string, strict = false): string[] {
   const cleaned = content.trim();
   if (cleaned.length < 50) return [];
+
+  // In strict mode, no fence = not a post. Bail before any heuristic so a
+  // stray "---" or "OPCIÓN" inside an explanation can't masquerade as a post.
+  if (strict && !cleaned.includes('```')) return [];
 
   // Helper: when a chunk of text contains a triple-backtick fence (which is
   // now the model's default for every post body), the pasteable content is
@@ -84,7 +96,9 @@ function extractPostBlocks(content: string): string[] {
   }
 
   // 4. Fall back: treat the whole message as a single block. The user can
-  // always click "send to preview" and trim by hand.
+  // always click "send to preview" and trim by hand. NOT in strict mode —
+  // a fence-less message in strict mode is not a post.
+  if (strict) return [];
   return [cleaned];
 }
 
@@ -196,11 +210,16 @@ export default function PostCreator() {
     }
   }, [input]);
 
-  // Auto-update preview with the latest post block from the last assistant message
+  // Auto-update preview with the latest POST block from the most recent
+  // assistant message that actually contains a post. Strict mode: only
+  // messages with a fenced post count — a plain reply with no post (a
+  // question, an explanation, a validation warning) is skipped, so the
+  // preview keeps showing the last real post instead of dumping a
+  // non-post reply into it.
   useEffect(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === 'assistant') {
-        const blocks = extractPostBlocks(messages[i].content);
+        const blocks = extractPostBlocks(messages[i].content, true);
         if (blocks.length > 0) {
           // Pick longest block (typically the full post) and strip wrapper text
           const longest = blocks.reduce((a, b) => (a.length > b.length ? a : b));
@@ -536,11 +555,16 @@ export default function PostCreator() {
                         <MarkdownMessage content={msg.content} />
 
                         {msg.content && !streaming && (() => {
-                          const blocks = extractPostBlocks(msg.content);
+                          // Strict: only show preview buttons when the message
+                          // actually contains a fenced post. A plain reply with
+                          // no post gets just "Copy all" — never a button that
+                          // would push a non-post into the LinkedIn preview.
+                          const blocks = extractPostBlocks(msg.content, true);
+                          const hasPost = blocks.length > 0;
                           const showPerBlockButtons = blocks.length > 1;
                           return (
                             <div className="flex gap-1.5 mt-3 pt-2 border-t border-border/50 flex-wrap items-center">
-                              {showPerBlockButtons ? (
+                              {hasPost && showPerBlockButtons && (
                                 blocks.map((block, bi) => (
                                   <button
                                     key={bi}
@@ -554,11 +578,11 @@ export default function PostCreator() {
                                     📤 Preview opción {bi + 1}
                                   </button>
                                 ))
-                              ) : (
+                              )}
+                              {hasPost && !showPerBlockButtons && (
                                 <button
                                   onClick={() => {
-                                    const block = blocks[0] || msg.content;
-                                    const clean = cleanBlockForPreview(block);
+                                    const clean = cleanBlockForPreview(blocks[0]);
                                     setManualPreview(clean);
                                     setPreviewTab('preview');
                                   }}
