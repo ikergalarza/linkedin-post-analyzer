@@ -827,9 +827,10 @@ WORKED:
    → Across all three, the engine is the same: a PROGRESSIVE BODILY CHANGE drawn into the image. Whether the text mirrors it (Mode A, "Subir en ventas") or runs in parallel (Mode B, "Coge el teléfono" + "IA roba el sueño") is OPTIONAL — both are validated. Don't force one shape over the other.
 
 CLOSE-BUT-NOT-OUTLIER:
-4) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25.0K imp · 71 likes · 32 comments · 8 reposts · 159 eng. Decent engagement (32 comments is healthy) but NOT an outlier — and it had a hierarchy/chain + a tag CTA, so why only 1.1x?
+4) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25.0K imp · 71 likes · 32 comments · 8 reposts · 159 eng. Decent engagement (32 comments is healthy) but NOT an outlier.
    Text: timeline 2018→2026 of the rep accumulating tools — "2018: libreta, teléfono y cuota cerrada. … 2026: ya no vende. Pelea con la IA, optimiza dashboards y publica sobre 'el futuro de las ventas'." Closes "El stack ha crecido. El comercial ha encogido." + "Etiqueta al compi que sigue cogiendo el teléfono sin pensarlo 👇".
-   Why it fell short: "engordar / encoger" is an ABSTRACT metaphor — the rep doesn't literally get drawn fatter or smaller panel to panel; the image couldn't carry a concrete progressive bodily change the way baldness and eye bags do. Lesson: the bodily change has to be literally drawable and gradual (hair, eye bags), not a figure of speech. A metaphorical "change" caps you around 1x even with the hierarchy + CTA in place.
+   Image: SAME man getting progressively fatter across 5 panels (13% → 35% → 67% → 81% → 100% body fat, 2018 → 2026, ascending orange line). So the bodily change WAS literally drawn and gradual — weight is a valid drawable change, not the problem.
+   Why it fell short (corrected diagnosis): the axis was a TIMELINE OF ONE PERSON (the same rep across years), NOT a HIERARCHY OF B2B ROLES. The two baldness outliers and the eye-bags one each put a DIFFERENT role on each panel (SDR / AE / Manager / Director / VP, or CEO / CFO / Director Comercial / …), so every reader finds THEIR rung → identity → repost, and seniors repost to laugh at themselves. A single person aging on a timeline gives the reader no role-specific rung to claim → weaker identity trigger → fewer reposts (only 8 vs 9–22 on the role-ladder memes). Lesson: the progressive bodily change is necessary but NOT sufficient — it has to ride on a ROLE HIERARCHY (ingredient #1), not a one-person timeline. Same physical engine, wrong x-axis.
 
 FAILED:
 4) "Yo siendo el fan nº1 de leads que me aceptaron en LinkedIn y desaparecieron" (Iker, 22 May) — 0.49x · 1.6K imp.
@@ -840,8 +841,9 @@ FAILED:
 
 CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + PROGRESSIVE PHYSICAL CHANGE VISIBLE IN THE IMAGE. Four ingredients have to coexist:
 
-  (1) HIERARCHY OR CHAIN OF B2B SALES ROLES IN ONE IMAGE / POST.
+  (1) HIERARCHY OR CHAIN OF B2B SALES ROLES IN ONE IMAGE / POST — NOT a one-person timeline.
       A gradient SDR → AE → Manager → Director → VP, OR a chain of excuses that walks the hierarchy (Manager asks → SDR/AE/etc. answer). The reader recognises themselves on a rung → identity → repost. The higher up the chain the joke lands, the more amplification (seniors repost to laugh at themselves).
+      DO NOT use a single person changing over years (2018 → 2026). That's the trap that capped "el comercial ha engordado" at 1.1x: the bodily change was perfectly drawn, but a lone person on a timeline gives no reader a role to claim, so the identity → repost trigger never fires. Each panel must be a DIFFERENT role the audience can point at and say "ese soy yo / ese es mi jefe".
 
   (2) UNIVERSAL PHYSICAL CHANGE — VISIBLE AND IDEALLY PROGRESSIVE — DRAWN INTO THE IMAGE.
       Both verified outliers share something more specific than "insecurity visible": a BODILY CHANGE that happens to a character across the image. The change does NOT need to be mentioned in the post text — its job is to amplify the text's emotion in parallel, not repeat the joke.
@@ -849,10 +851,11 @@ CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + P
       Bodily changes that work (universal, drawable, gradual):
         - Progressive baldness         (VALIDATED x2 on this account — 3.7x and 5.2x)
         - Growing eye bags / no-sleep signs (VALIDATED x1 — "IA roba el sueño", ~32K imp; deepening eye bags down the org hierarchy)
-        - Weight gain / loss           (tried in "comercial ha engordado" — 1.1x, failed because it was an abstract metaphor, not literally drawn)
+        - Weight gain / loss           (drawable + validated as gradual in "comercial ha engordado" — but that meme only hit 1.1x because it ran on a ONE-PERSON TIMELINE instead of a role ladder; the weight change itself was fine)
         - Hunching over / aging panel to panel
         - Visible sweat / nerves intensifying
         - Skin colour shift (pale → red with stress, etc.)
+      CRITICAL PAIRING: the bodily change must ride on ingredient #1 (a hierarchy of DIFFERENT B2B roles, one per panel) — NOT on a timeline of the same person aging. Same physical engine, but a role ladder gives every reader a rung to claim (identity → repost); a one-person timeline doesn't. The weight meme proved this: great drawable change, wrong x-axis, 1.1x.
 
       UPDATED TEST (point 2 only passes STRONG if all three are true):
         [ ] Is there a bodily change literally DRAWN from panel to panel (or character to character along a hierarchy)?
