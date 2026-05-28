@@ -1,16 +1,8 @@
 import pool from '../db';
 import { MIN_OUTLIER_ENGAGEMENT } from './engagement';
 
-// Min impressions a post must clear to qualify as an outlier under the
-// engagement-RATE method (managed accounts only). Without this floor, a
-// low-reach post with a fluke-high engagement rate (e.g. 300 eng on 2K
-// impressions = 15%) would be flagged as a huge outlier — but it never
-// actually travelled. The floor keeps "outlier" meaning "engaged well AND
-// reached a real audience". Tunable: raise toward 10K for a stricter pool.
-export const MIN_OUTLIER_IMPRESSIONS = 5000;
-
 // Minimum number of posts WITH impressions a managed creator needs before
-// we trust the rate method. Below this the per-creator average rate is too
+// we factor reach in. Below this the per-creator average impressions is too
 // noisy, so we fall back to the absolute-engagement method.
 const MIN_POSTS_WITH_IMPRESSIONS = 3;
 
@@ -20,12 +12,17 @@ const MIN_POSTS_WITH_IMPRESSIONS = 3;
 // live in postMonitor and creators.
 //
 //   MANAGED accounts (Iker / Unai — connected via Unipile, so impressions
-//   are real): engagement RATE method. ratio = (post eng/impressions) ÷
-//   (creator's average eng/impressions). A post is an outlier when it
-//   engaged ≥3x better than the creator's typical rate AND cleared the
-//   impressions floor AND cleared the absolute engagement floor. This
-//   decouples "the post genuinely engaged the people who saw it" from
-//   "LinkedIn simply distributed it to more people".
+//   are real): HYBRID method. We compute TWO ratios and take the GREATER:
+//     · engagement ratio = post eng ÷ creator's avg eng
+//     · reach ratio      = post impressions ÷ creator's avg impressions
+//   outlier_ratio = max(engagement ratio, reach ratio). A post is an
+//   outlier when it stood out on EITHER axis (>=3x) and cleared the
+//   absolute engagement floor. This makes impressions count IN FAVOUR of
+//   a post (a record-reach post like the 168K cold-calling meme scores
+//   high via the reach ratio) instead of against it. We deliberately do
+//   NOT divide engagement by impressions — engagement RATE drops as reach
+//   grows (viral posts hit a colder audience), so dividing would punish
+//   exactly the posts that travelled.
 //
 //   EVERYONE ELSE (discovered profiles on the Dashboard — no impressions):
 //   absolute engagement method, unchanged. ratio = post eng ÷ creator avg
@@ -40,7 +37,7 @@ export async function recalcCreatorOutliers(creatorId: string): Promise<void> {
   );
   const isManaged = creatorRows[0]?.is_managed === true;
 
-  let useRate = false;
+  let useHybrid = false;
   if (isManaged) {
     const { rows } = await pool.query(
       `SELECT COUNT(*)::int AS n
@@ -51,38 +48,45 @@ export async function recalcCreatorOutliers(creatorId: string): Promise<void> {
           AND impressions_count > 0`,
       [creatorId]
     );
-    useRate = (rows[0]?.n || 0) >= MIN_POSTS_WITH_IMPRESSIONS;
+    useHybrid = (rows[0]?.n || 0) >= MIN_POSTS_WITH_IMPRESSIONS;
   }
 
-  if (useRate) {
-    // Engagement-RATE method. avg_rate = AVG(eng/impressions) over the
-    // creator's posts that have impressions. Posts without impressions
-    // get ratio 0 / not-outlier (they can't be scored on rate). Set-based
-    // single UPDATE so it stays cheap even on a full-history recompute.
+  if (useHybrid) {
+    // HYBRID method. outlier_ratio = GREATEST(engagement ratio, reach
+    // ratio). avg_eng over all posts; avg_imp over posts that have
+    // impressions. A post with no impressions still gets scored on its
+    // engagement ratio (reach side contributes 0). Set-based single
+    // UPDATE so it stays cheap even on a full-history recompute.
     await pool.query(
       `WITH stats AS (
-         SELECT AVG(engagement_score::float / NULLIF(impressions_count, 0)) AS avg_rate
+         SELECT
+           AVG(engagement_score)::float AS avg_eng,
+           AVG(impressions_count) FILTER (
+             WHERE impressions_count IS NOT NULL AND impressions_count > 0
+           )::float AS avg_imp
            FROM posts
-          WHERE creator_id = $1
-            AND linkedin_post_id <> 'DEMO_LIVE_POST'
-            AND impressions_count IS NOT NULL
-            AND impressions_count > 0
+          WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'
        )
        UPDATE posts p SET
-         outlier_ratio = CASE
-           WHEN p.impressions_count IS NULL OR p.impressions_count = 0 OR s.avg_rate IS NULL OR s.avg_rate = 0 THEN 0
-           ELSE COALESCE(round((((p.engagement_score::float / NULLIF(p.impressions_count, 0)) / s.avg_rate))::numeric, 2), 0)
-         END,
+         outlier_ratio = GREATEST(
+           CASE WHEN s.avg_eng > 0
+             THEN COALESCE(round((p.engagement_score / s.avg_eng)::numeric, 2), 0)
+             ELSE 0 END,
+           CASE WHEN p.impressions_count IS NOT NULL AND p.impressions_count > 0 AND s.avg_imp > 0
+             THEN COALESCE(round((p.impressions_count::float / s.avg_imp)::numeric, 2), 0)
+             ELSE 0 END
+         ),
          is_outlier = (
-           s.avg_rate IS NOT NULL AND s.avg_rate > 0
-           AND p.impressions_count IS NOT NULL
-           AND p.impressions_count >= $2
-           AND (p.engagement_score::float / NULLIF(p.impressions_count, 0)) >= s.avg_rate * 3
-           AND p.engagement_score >= $3
+           p.engagement_score >= $2
+           AND GREATEST(
+             CASE WHEN s.avg_eng > 0 THEN p.engagement_score::float / s.avg_eng ELSE 0 END,
+             CASE WHEN p.impressions_count IS NOT NULL AND p.impressions_count > 0 AND s.avg_imp > 0
+               THEN p.impressions_count::float / s.avg_imp ELSE 0 END
+           ) >= 3.0
          )
        FROM stats s
        WHERE p.creator_id = $1 AND p.linkedin_post_id <> 'DEMO_LIVE_POST'`,
-      [creatorId, MIN_OUTLIER_IMPRESSIONS, MIN_OUTLIER_ENGAGEMENT]
+      [creatorId, MIN_OUTLIER_ENGAGEMENT]
     );
   } else {
     // Absolute-engagement method (Dashboard / discovered profiles, or a
