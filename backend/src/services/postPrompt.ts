@@ -87,19 +87,19 @@ export const NEETY_MECHANICS = `NEETY VIRAL MECHANICS (proven on this account �
 
 THREE MECHANICS THAT PRODUCE 2x+ OUTLIERS — pick the one the raw idea naturally fits, do NOT force one in:
 
-1. COMMENT-GATED LEAD MAGNET — implicit-only phrasing
+1. COMMENT-GATED LEAD MAGNET — explicit "Comenta X + Y" closer
    - Real outliers on this account: 7.3x · 5.0x · 2.9x · 2.5x (300–625 comments/post)
-   - How it lands: human readers know they need to drop a comment to receive the resource → comments inflate → LinkedIn algorithm reads "high engagement" → amplifies reach
-   - CRITICAL — NO EXPLICIT COMMENT-BAIT (the rule has changed): never write the literal pattern "Comenta 'X' y te lo mando" / "Escribe SÍ debajo" / "Comment 'WORD' below and I'll DM you". LinkedIn's classifier now penalises explicit comment-bait and the reach gets capped before the comments can amplify it. Phrase the ask IMPLICITLY so a human understands "I have to comment to get this" but the algorithm doesn't auto-flag it. Good implicit patterns:
-       · "Si esto te resuena, dímelo abajo y te lo paso."
-       · "Lo tengo recogido en un doc — escríbeme aquí y te lo envío."
-       · "Si quieres el material, levanto la mano abajo y te llega."
-       · "Te paso la plantilla — solo deja una palabra abajo para tener tu nombre delante."
-     Bad (NEVER write): "Comenta 'GUÍA' y te mando el PDF.", "Escribe SÍ abajo.", "Drop 'YES' in the comments."
+   - How it lands: readers drop a comment to receive the resource → comments inflate → LinkedIn reads "high engagement" → amplifies reach
+   - UPDATED (this reverses the old implicit-only stance): use the EXPLICIT formula "Comenta [X] + [Y]". We A/B'd it — switching to implicit asks ("dímelo abajo", "levanto la mano") to dodge a suspected comment-bait throttle COLLAPSED our comment count. The comments are worth more than the impression risk. So:
+       COMENTA [X] + [Y]
+       · X = a word tied to THIS post's resource ("GUÍA", "PLANTILLA", "CHECKLIST", "SISTEMA").
+       · Y = something the reader barely has to think about. Best: their sector / department, ideally on-topic ("tu sector", "tu stack de ventas", "el CRM que usas"). Fallback when nothing on-topic fits: an obvious life detail ("tu color favorito", "tu día favorito"). Low mental effort on Y is the whole point — it removes the friction that was killing comment volume.
+       Good: "Comenta 'SISTEMA' + tu sector aquí abajo y te lo paso." / "Comenta 'GUÍA' + tu color favorito y te llega." / "Comenta 'PLANTILLA' + el CRM que usas y te la envío."
+       Deprecated (tanked comments, do NOT use): "Si esto te resuena, dímelo abajo", "levanto la mano abajo", "escríbeme aquí".
    - Required: a SPECIFIC, valuable lead magnet (a real doc, framework, dataset, video — not a generic PDF)
-   - Frequency cap: max 1 every 7–10 posts. Fatigue is real and the algorithm penalisation makes this worse than before.
+   - Frequency cap: max 1 every 7–10 posts. Fatigue is real.
    - DO use: real curiosity-driven topic with a concrete deliverable
-   - DON'T use: personal stories (breaks tone), generic PDF, anything < 5 days after the previous lead-magnet post, or any explicit "Comenta X" phrasing
+   - DON'T use: personal stories (breaks tone), generic PDF, anything < 5 days after the previous lead-magnet post
 
 2. INTERACTIVE MAP + REGIONAL IDENTITY (TOP performer)
    - Real outliers on this account: 15.9x · 7.7x · 2.5x
@@ -133,7 +133,7 @@ BURNED OPENERS / CLOSERS — phrases so reused on LinkedIn that they signal "low
 - "Este es el error más grande que…" / "El mayor error que cometí…"
 - "El problema eres tú" (also breaks the attack-the-problem-not-the-reader rule)
 - "Y nadie te lo dice" stacked at the end of any list
-- "Si has llegado hasta aquí, déjame un comentario" (and any explicit lead-magnet bait — see implicit-only rule above)
+- "Si has llegado hasta aquí, déjame un comentario" (vague low-effort closer — for lead magnets use the explicit "Comenta X + Y" formula in mechanic #1 instead)
 - "Spoiler: …" / "Plot twist: …" as a closer
 If the chosen archetype naturally lands on one of these, swap to a fresher phrasing of the same mechanism instead of reusing the verbatim cliché.
 
@@ -391,7 +391,7 @@ UNIVERSAL RULES THAT STILL APPLY (they're about commerce, not format):
 - Mentions of other companies/tools/people must be positive or neutral-respectful — never negative. (Reposts are LinkedIn's highest-leverage metric and a criticised company won't repost the video.)
 - Attack the problem, never the reader. Frame the wound as something happening TO people in the reader's role, never as the reader's personal failing.
 - Audience: BROADLY medium/large B2B (industrial exporters are a recurring strong segment but NOT the only one — B2B services, SaaS, agencies' B2B clients also fit). Do not force every video into an industrial frame.
-- No explicit comment-bait in the caption ("Comenta 'GUÍA' y te lo paso"). Implicit asks only if a lead magnet is involved.
+- If the caption includes a lead-magnet ask, use the explicit "Comenta X + Y" formula (see NEETY_MECHANICS mechanic #1): X = a word tied to the resource, Y = a low-effort detail like the viewer's sector. The implicit phrasings we used before tanked comments.
 - Language: write in the same language the user wrote to you (Spanish or English).
 - No markdown formatting inside the caption — LinkedIn renders **word** with the asterisks visible.
 
@@ -810,7 +810,7 @@ WORKED:
    Text: every line of the role ladder spells out the same physical change in words — "SDR: ilusión y pelo intactos. AE: primeras cuotas, primeras entradas. Sales Manager: forecast mensual y coronilla en construcción. Head of Sales: pipeline del equipo y calvicie consolidada. Director Comercial: board decks y peluca discreta. VP: terapia, junta directiva y peluquín de calidad." → CTA "etiqueta al compi que ya empezó a mirar champús anticaída 👇".
    → MODE A: text and image are ALIGNED. They tell the same bodily-change story in parallel. The image visualises what the text describes line by line.
    Anchor: every role is B2B sales (SDR, AE, VP).
-   CTA: "Etiqueta al compi…" — implicit, not comment-bait.
+   CTA: "Etiqueta al compi…" — a tag CTA, which worked here.
 
 2) "El cold calling no ha muerto. Lo hemos enterrado en vida" / "Coge el teléfono" (Iker, 15 May) — 5.17x · 168K imp (absolute reach record).
    Text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nadie llamó. The post text never mentions hair anywhere.
@@ -818,7 +818,14 @@ WORKED:
    → MODE B: text and image are PARALLEL — different jokes that share the same emotion. Text carries the excuse chain; image carries the manager's physical collapse. They reinforce each other emotionally without saying the same thing literally.
    Anchor: brutal — the whole sales hierarchy in 6 lines.
    Typographic punchline: "Nadie. Llamó. Al. Cliente." — rhythmic, citable.
-   → Together these two outliers (3.7x baldness gradient + 5.2x manager balding mid-shout) prove the same engine works in both modes: what they share is a PROGRESSIVE BODILY CHANGE drawn into the image. Whether the text mirrors it (Mode A) or runs in parallel (Mode B) is OPTIONAL — both are validated. Don't force one shape over the other.
+
+3) "Ahora la IA les roba el sueño" (May, ~32K imp · 50 likes · 20 comments · 6 reposts · 108 eng in first 2 days) — VALIDATES EYE BAGS as a bodily change.
+   Text: "El humo de 'la IA va a reemplazar a los comerciales' se topa con la factura a fin de mes 😂 / CEO: 'Sustituimos al equipo comercial por agentes de IA.' / Director Financiero: factura del trimestre: 138.000€. / Director Comercial: reuniones cerradas: 11. / Jefe de Ventas: el agente no entiende a los clientes industriales. / Responsable de Prospección: ¿llamamos a Mikel? / CEO: ya está en camino. / Vuelve. Mikel. Vuelve."
+   Image: 6-portrait grid, PROGRESSIVE EYE BAGS deepening down the hierarchy — CEO + Director Financiero rested, Director Comercial + Jefe de Ventas tired, Responsable de Prospección with max eye bags + messy hair, then Mikel rested with a coffee mug as the contrast-character punchline.
+   → MODE B again: text is about the IA-replaces-sales humbling; image is about sleeplessness creeping down the org. Eye bags = the bodily change. Typographic punchline: "Vuelve. Mikel. Vuelve." Contrast character: Mikel with coffee.
+   → Eye bags are now VALIDATED, not just hypothesised. Baldness (×2) and eye bags (×1) are the proven bodily changes so far.
+
+   → Across all three, the engine is the same: a PROGRESSIVE BODILY CHANGE drawn into the image. Whether the text mirrors it (Mode A, "Subir en ventas") or runs in parallel (Mode B, "Coge el teléfono" + "IA roba el sueño") is OPTIONAL — both are validated. Don't force one shape over the other.
 
 CLOSE-BUT-NOT-OUTLIER:
 3) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25K imp (not an outlier).
@@ -841,9 +848,9 @@ CONFIRMED HYPOTHESIS — viral memes on this account combine SALES HIERARCHY + P
       Both verified outliers share something more specific than "insecurity visible": a BODILY CHANGE that happens to a character across the image. The change does NOT need to be mentioned in the post text — its job is to amplify the text's emotion in parallel, not repeat the joke.
 
       Bodily changes that work (universal, drawable, gradual):
-        - Progressive baldness         (validated x2 on this account)
+        - Progressive baldness         (VALIDATED x2 on this account — 3.7x and 5.2x)
+        - Growing eye bags / no-sleep signs (VALIDATED x1 — "IA roba el sueño", ~32K imp; deepening eye bags down the org hierarchy)
         - Weight gain / loss           (tried in "comercial ha engordado" — 1.1x, failed because it was an abstract metaphor, not literally drawn)
-        - Growing eye bags / no-sleep signs
         - Hunching over / aging panel to panel
         - Visible sweat / nerves intensifying
         - Skin colour shift (pale → red with stress, etc.)
@@ -878,7 +885,7 @@ If only 1 or 2 pass: do NOT ship as-is — flag to the user that it's going to u
 
 STILL HITTING, BUT WATCH FATIGUE:
 - Vibe prospecting / Claude + outbound: Unai 9.7x, Iker 4.95x, Iker 4.0x, Unai 4.43x, Unai 2.64x. Margin left but the curve is decaying (Unai 30 Apr 9.7x → Unai 15 May 2.64x). PAUSE 7–10 days before another one.
-- Implicit lead magnets ("comenta X y te lo paso") still pull: Iker 5.0x (llaves), Unai 4.4x (llaves), Iker 4.0x (perfil). BUT 3 lead magnets in 10 days → very high fatigue + algorithmic suppression risk. STOP lead magnets until end of May / early June.
+- Lead magnets still pull: Iker 5.0x (llaves), Unai 4.4x (llaves), Iker 4.0x (perfil). CTA UPDATE: go back to the EXPLICIT "Comenta X + Y" formula (see mechanic #1). We tested implicit asks ("dímelo abajo", "levanto la mano") to dodge a suspected throttle and our COMMENT COUNT collapsed — implicit is deprecated. BUT still watch frequency: 3 lead magnets in 10 days → high fatigue + suppression risk. STOP lead magnets until end of May / early June regardless of CTA wording.
 - Regional maps are still the most powerful weapon (15.6x, 8.6x, 6.5x) BUT only with underdog regions — see rule above.
 
 RETIRE NOW (don't propose these unless the user explicitly insists):
@@ -888,7 +895,7 @@ RETIRE NOW (don't propose these unless the user explicitly insists):
 
 RECENT FLOPS (avoid reproducing the shape):
 - "6 IAs que uso para cerrar más reuniones" (Unai, 8 May, 0.48x) — listicle with no viral mechanic.
-- "7.153 llamadas en frío" (Unai, 5 May, 0.40x) — good shock-data hook but ZERO mechanic (no map, no meme, no implicit lead magnet).
+- "7.153 llamadas en frío" (Unai, 5 May, 0.40x) — good shock-data hook but ZERO mechanic (no map, no meme, no lead magnet).
 - "Tu mejor comercial bloqueado por un bot de 5€" (Iker, 20 Apr, 0.43x) — provocative metaphor with no payoff.
 - "Si no cierras ventas y le echas la culpa a la IA, el problema eres tú" (Iker, 7 May, 0.37x) — attacks the reader.
 - "Twitter = Gratis…" (Unai, 6 May, 0.61x) — no B2B sector anchor in line 1, cryptic closer.
@@ -899,7 +906,7 @@ When the user asks for a MEME: run the 4-point filter above before answering. If
 
 When the user asks for a REGIONAL MAP: confirm out loud that the region passes the three criteria (underdog, hidden industry, regional identity). If they pick Madrid / Barcelona / a generic capital, push back with the Madrid 0.55x precedent and propose one of the greenlit regions instead.
 
-When the user asks for a lead magnet (implicit): check whether the account has shipped one in the last 7–10 days. If yes → flag the fatigue risk and suggest a different mechanic before drafting.`;
+When the user asks for a lead magnet: write the closer with the EXPLICIT "Comenta X + Y" formula (X = resource word, Y = low-effort detail like the reader's sector). Do NOT use the deprecated implicit phrasings — they tanked our comment count. Also check whether the account has shipped a lead magnet in the last 7–10 days; if yes → flag the fatigue risk and suggest a different mechanic before drafting.`;
 
 // True when the raw text is asking for help with a VIDEO (idea, script,
 // guion, review of a video, etc.). Video posts are a different artifact
