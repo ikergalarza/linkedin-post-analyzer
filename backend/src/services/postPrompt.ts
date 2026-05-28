@@ -805,21 +805,20 @@ ACTIONABLE RULE FOR MAPS:
 ═══ 2. MEMES — THE FORMULA THAT TRAVELS ═══
 
 WORKED:
-1) "Subir en ventas siempre pasa factura" (Iker, 6 May) — 3.73x · 138K imp (highest reach of the month at the time)
+1) "Subir en ventas siempre pasa factura" (Iker, 6 May) — 3.73x · 138.8K imp · 288 likes · 42 comments · 9 reposts · 399 eng.
    Image: hierarchical gradient SDR → AE → Sales Manager → Head → Director → VP, with progressive baldness as the "price" of climbing.
-   Text: every line of the role ladder spells out the same physical change in words — "SDR: ilusión y pelo intactos. AE: primeras cuotas, primeras entradas. Sales Manager: forecast mensual y coronilla en construcción. Head of Sales: pipeline del equipo y calvicie consolidada. Director Comercial: board decks y peluca discreta. VP: terapia, junta directiva y peluquín de calidad." → CTA "etiqueta al compi que ya empezó a mirar champús anticaída 👇".
+   Text: every line of the role ladder spells out the same physical change in words — "SDR: ilusión y pelo intactos. AE: primeras cuotas, primeras entradas. Sales Manager: forecast mensual y coronilla en construcción. Head of Sales: pipeline del equipo y calvicie consolidada. Director Comercial: board decks y peluca discreta. VP: terapia, junta directiva y peluquín de calidad." Closes "El pipeline crece. El control se reduce." + tag CTA "Etiqueta al compi…".
    → MODE A: text and image are ALIGNED. They tell the same bodily-change story in parallel. The image visualises what the text describes line by line.
    Anchor: every role is B2B sales (SDR, AE, VP).
-   CTA: "Etiqueta al compi…" — a tag CTA, which worked here.
 
-2) "El cold calling no ha muerto. Lo hemos enterrado en vida" / "Coge el teléfono" (Iker, 15 May) — 5.17x · 168K imp (absolute reach record).
-   Text: chain of excuses Manager→SDR→AE→Sales Manager→Director→CEO. Nadie llamó. The post text never mentions hair anywhere.
+2) "El cold calling no ha muerto. Lo hemos enterrado en vida" / "Coge el teléfono" (Iker, 15 May) — 5.17x · 168.9K imp · 317 likes · 85 comments · 22 reposts · 553 eng. ABSOLUTE BEST PERFORMER: highest reach AND highest comments (85, ~2x the others) AND highest reposts (22) on the account.
+   Text: chain of excuses Manager→SDR→AE→Sales Manager→Director Comercial→CEO ("le mandé un email", "le escribí por LinkedIn", "le metí en una secuencia de 9 follow-ups", "lo estoy nurturing con contenido de valor", "pasé el lead a marketing"). Closes: "Nadie. Llamó. Al. Cliente." then "El 99% de los deals no mueren por falta de touchpoints. Mueren porque nadie descuelga el teléfono." The post text never mentions hair anywhere.
    Image: progressive BALDNESS on the manager from panel to panel as he escalates — "¿le has llamado?" → "llámale" → "¡al cliente!" → "¡coge el teléfono!".
    → MODE B: text and image are PARALLEL — different jokes that share the same emotion. Text carries the excuse chain; image carries the manager's physical collapse. They reinforce each other emotionally without saying the same thing literally.
    Anchor: brutal — the whole sales hierarchy in 6 lines.
    Typographic punchline: "Nadie. Llamó. Al. Cliente." — rhythmic, citable.
 
-3) "Ahora la IA les roba el sueño" (May, ~32K imp · 50 likes · 20 comments · 6 reposts · 108 eng in first 2 days) — VALIDATES EYE BAGS as a bodily change.
+3) "Ahora la IA les roba el sueño" (May) — ~32K imp · 50 likes · 20 comments · 6 reposts · 108 eng (first 2 days). VALIDATES EYE BAGS as a bodily change.
    Text: "El humo de 'la IA va a reemplazar a los comerciales' se topa con la factura a fin de mes 😂 / CEO: 'Sustituimos al equipo comercial por agentes de IA.' / Director Financiero: factura del trimestre: 138.000€. / Director Comercial: reuniones cerradas: 11. / Jefe de Ventas: el agente no entiende a los clientes industriales. / Responsable de Prospección: ¿llamamos a Mikel? / CEO: ya está en camino. / Vuelve. Mikel. Vuelve."
    Image: 6-portrait grid, PROGRESSIVE EYE BAGS deepening down the hierarchy — CEO + Director Financiero rested, Director Comercial + Jefe de Ventas tired, Responsable de Prospección with max eye bags + messy hair, then Mikel rested with a coffee mug as the contrast-character punchline.
    → MODE B again: text is about the IA-replaces-sales humbling; image is about sleeplessness creeping down the org. Eye bags = the bodily change. Typographic punchline: "Vuelve. Mikel. Vuelve." Contrast character: Mikel with coffee.
@@ -828,9 +827,9 @@ WORKED:
    → Across all three, the engine is the same: a PROGRESSIVE BODILY CHANGE drawn into the image. Whether the text mirrors it (Mode A, "Subir en ventas") or runs in parallel (Mode B, "Coge el teléfono" + "IA roba el sueño") is OPTIONAL — both are validated. Don't force one shape over the other.
 
 CLOSE-BUT-NOT-OUTLIER:
-3) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25K imp (not an outlier).
-   Timeline 2018→2026 of the rep getting fatter on tools.
-   Why it fell short: "engordar" is an ABSTRACT metaphor — the rep doesn't literally get drawn fatter panel to panel. Compare to Iker's baldness gradient, which is concrete and literally drawn frame-by-frame.
+4) "El comercial B2B ha engordado" (Unai, 13 May) — 1.12x · 25.0K imp · 71 likes · 32 comments · 8 reposts · 159 eng. Decent engagement (32 comments is healthy) but NOT an outlier — and it had a hierarchy/chain + a tag CTA, so why only 1.1x?
+   Text: timeline 2018→2026 of the rep accumulating tools — "2018: libreta, teléfono y cuota cerrada. … 2026: ya no vende. Pelea con la IA, optimiza dashboards y publica sobre 'el futuro de las ventas'." Closes "El stack ha crecido. El comercial ha encogido." + "Etiqueta al compi que sigue cogiendo el teléfono sin pensarlo 👇".
+   Why it fell short: "engordar / encoger" is an ABSTRACT metaphor — the rep doesn't literally get drawn fatter or smaller panel to panel; the image couldn't carry a concrete progressive bodily change the way baldness and eye bags do. Lesson: the bodily change has to be literally drawable and gradual (hair, eye bags), not a figure of speech. A metaphorical "change" caps you around 1x even with the hierarchy + CTA in place.
 
 FAILED:
 4) "Yo siendo el fan nº1 de leads que me aceptaron en LinkedIn y desaparecieron" (Iker, 22 May) — 0.49x · 1.6K imp.
