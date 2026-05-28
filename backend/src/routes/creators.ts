@@ -2,7 +2,8 @@ import { Router, Request, Response } from 'express';
 import { CreatorModel } from '../models/creator';
 import { PostModel } from '../models/post';
 import { unipileService, scanMediaSignalsImpl } from '../services/unipile';
-import { enrichPost, MIN_OUTLIER_ENGAGEMENT } from '../services/engagement';
+import { enrichPost } from '../services/engagement';
+import { recalcCreatorOutliers } from '../services/outliers';
 import { normalizeLinkedInUrl, isValidLinkedInUrl } from '../utils/linkedin';
 import { estimateTimezone } from '../utils/timezone';
 import pool from '../db';
@@ -381,18 +382,13 @@ async function scrapeCreatorPosts(creatorId: string, linkedinIdentifier: string)
 
   // Always recompute outlier flags over the creator's FULL stored set —
   // not just this batch. An incremental batch has a meaningless local
-  // average, so the 3x ratio + MIN_OUTLIER_ENGAGEMENT floor must run
-  // against every post the creator has. One set-based UPDATE, cheap even
-  // for a first full-history scrape, and it keeps the floor consistent
-  // even for creators that had zero new posts this round.
-  await pool.query(
-    `UPDATE posts p SET
-       outlier_ratio = COALESCE(round((p.engagement_score / NULLIF(a.avg, 0))::numeric, 2), 0),
-       is_outlier = (a.avg > 0 AND p.engagement_score >= a.avg * 3 AND p.engagement_score >= $2)
-     FROM (SELECT AVG(engagement_score)::float AS avg FROM posts WHERE creator_id = $1) a
-     WHERE p.creator_id = $1`,
-    [creatorId, MIN_OUTLIER_ENGAGEMENT]
-  );
+  // average, so the scoring must run against every post the creator has.
+  // recalcCreatorOutliers picks the method by account type: engagement-RATE
+  // (eng/impressions) for managed accounts where impressions are real,
+  // absolute engagement for discovered profiles. Set-based, cheap even on a
+  // first full-history scrape, and keeps the floor consistent for creators
+  // with zero new posts this round.
+  await recalcCreatorOutliers(creatorId);
 
   await CreatorModel.update(creatorId, { last_scraped_at: new Date() } as any);
 

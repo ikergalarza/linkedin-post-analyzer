@@ -1,6 +1,7 @@
 import pool from '../db';
 import { unipileService } from './unipile';
-import { calculateEngagement, calculateAverageEngagement, calculateOutlierRatio, isOutlier } from './engagement';
+import { calculateEngagement } from './engagement';
+import { recalcCreatorOutliers } from './outliers';
 import { captureAccountSnapshots } from './accountSnapshots';
 
 // Phase-based snapshot cadence for LinkedIn posts.
@@ -134,21 +135,11 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
 
     // Recalculate outlier ratios for every creator whose posts got new numbers.
     // The average has shifted, so all their posts' multipliers need a refresh.
+    // recalcCreatorOutliers picks the engagement-RATE method for managed
+    // accounts (impressions are real there) and the absolute method elsewhere.
     for (const creatorId of touchedCreators) {
       try {
-        const { rows: allPosts } = await pool.query(
-          `SELECT id, engagement_score FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
-          [creatorId]
-        );
-        if (allPosts.length === 0) continue;
-        const avg = calculateAverageEngagement(allPosts.map((p) => ({ engagement_score: Number(p.engagement_score) || 0 })));
-        for (const p of allPosts) {
-          const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
-          await pool.query(
-            `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
-            [Math.round(ratio * 100) / 100, isOutlier(ratio, Number(p.engagement_score) || 0), p.id]
-          );
-        }
+        await recalcCreatorOutliers(creatorId);
       } catch (err: any) {
         console.error(`[postMonitor] recalc outliers for ${creatorId} failed:`, err?.message);
       }
@@ -290,22 +281,8 @@ export async function capturePostSnapshot(postId: string): Promise<{
     );
 
     // Recompute outlier_ratio for the whole creator since the average shifted.
-    const { rows: allPosts } = await pool.query(
-      `SELECT id, engagement_score FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
-      [target.creator_id]
-    );
-    if (allPosts.length > 0) {
-      const avg = calculateAverageEngagement(
-        allPosts.map((p) => ({ engagement_score: Number(p.engagement_score) || 0 }))
-      );
-      for (const p of allPosts) {
-        const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
-        await pool.query(
-          `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
-          [Math.round(ratio * 100) / 100, isOutlier(ratio, Number(p.engagement_score) || 0), p.id]
-        );
-      }
-    }
+    // Method chosen by account type inside recalcCreatorOutliers.
+    await recalcCreatorOutliers(target.creator_id);
 
     return {
       ok: true,
@@ -339,19 +316,7 @@ async function backfillOutliers() {
       `SELECT id FROM creators WHERE is_managed = TRUE`
     );
     for (const { id: creatorId } of creators) {
-      const { rows: allPosts } = await pool.query(
-        `SELECT id, engagement_score FROM posts WHERE creator_id = $1`,
-        [creatorId]
-      );
-      if (allPosts.length === 0) continue;
-      const avg = calculateAverageEngagement(allPosts.map((p) => ({ engagement_score: Number(p.engagement_score) || 0 })));
-      for (const p of allPosts) {
-        const ratio = calculateOutlierRatio(Number(p.engagement_score) || 0, avg);
-        await pool.query(
-          `UPDATE posts SET outlier_ratio = $1, is_outlier = $2 WHERE id = $3`,
-          [Math.round(ratio * 100) / 100, isOutlier(ratio, Number(p.engagement_score) || 0), p.id]
-        );
-      }
+      await recalcCreatorOutliers(creatorId);
     }
     console.log(`[postMonitor] outlier backfill complete for ${creators.length} managed creator(s)`);
   } catch (err: any) {
