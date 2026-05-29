@@ -166,6 +166,9 @@ export default function PostCreator() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Lets the "Stop" button abort the in-flight /api/chat fetch. Set at the
+  // start of each stream, cleared when it ends.
+  const abortControllerRef = useRef<AbortController | null>(null);
   // Images the user has attached to the NEXT message they send. Cleared
   // after send. Each entry is base64 in a data URL so we can both render
   // a thumbnail and forward the bytes inline to Anthropic.
@@ -291,9 +294,13 @@ export default function PostCreator() {
   const streamResponseFor = async (newMessages: Message[]) => {
     setMessages([...newMessages, { role: 'assistant', content: '' }]);
     setStreaming(true);
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    let assistantContent = '';
     try {
       const res = await fetch(`${BASE}/api/chat`, {
         method: 'POST',
+        signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           // When a turn has images we send content blocks (text + image
@@ -330,7 +337,6 @@ export default function PostCreator() {
       if (!reader) throw new Error('No reader available');
 
       const decoder = new TextDecoder();
-      let assistantContent = '';
 
       while (true) {
         const { done, value } = await reader.read();
@@ -359,11 +365,25 @@ export default function PostCreator() {
         }
       }
     } catch (err: any) {
-      setError(err.message);
-      setMessages((prev) => prev.slice(0, -1));
+      // User pressed Stop → keep whatever the assistant streamed so far
+      // (don't roll the bubble back, don't surface an error). Only drop
+      // the placeholder if nothing had been generated yet.
+      if (err?.name === 'AbortError') {
+        if (!assistantContent) setMessages((prev) => prev.slice(0, -1));
+      } else {
+        setError(err.message);
+        setMessages((prev) => prev.slice(0, -1));
+      }
     } finally {
+      abortControllerRef.current = null;
       setStreaming(false);
     }
+  };
+
+  // Stop the in-flight response. Aborts the fetch; streamResponseFor's
+  // catch keeps the partial assistant text.
+  const stopStreaming = () => {
+    abortControllerRef.current?.abort();
   };
 
   const sendMessage = async (text?: string) => {
@@ -702,13 +722,24 @@ export default function PostCreator() {
                   className="flex-1 bg-bg-card border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 resize-none"
                   disabled={streaming}
                 />
-                <button
-                  onClick={() => sendMessage()}
-                  disabled={(!input.trim() && pendingImages.length === 0) || streaming}
-                  className="px-5 py-3 bg-accent text-bg-primary rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-accent-light transition-colors whitespace-nowrap"
-                >
-                  {streaming ? 'Writing...' : 'Send'}
-                </button>
+                {streaming ? (
+                  <button
+                    onClick={stopStreaming}
+                    title="Stop generating"
+                    className="px-5 py-3 bg-bg-card border border-border text-text-primary rounded-xl text-sm font-medium hover:border-danger/50 hover:text-danger transition-colors whitespace-nowrap inline-flex items-center gap-2"
+                  >
+                    <span className="inline-block w-2.5 h-2.5 bg-current rounded-[2px]" />
+                    Stop
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => sendMessage()}
+                    disabled={!input.trim() && pendingImages.length === 0}
+                    className="px-5 py-3 bg-accent text-bg-primary rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-accent-light transition-colors whitespace-nowrap"
+                  >
+                    Send
+                  </button>
+                )}
               </div>
             </div>
           </div>
