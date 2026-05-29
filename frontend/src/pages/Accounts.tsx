@@ -382,6 +382,10 @@ export default function Accounts() {
   const [legendOpen, setLegendOpen] = useState(false);
   const [liveRefreshing, setLiveRefreshing] = useState(false);
   const [liveRefreshMsg, setLiveRefreshMsg] = useState<string | null>(null);
+  // Bumped on Refresh so the snapshot-backed charts (followers, profile views)
+  // re-fetch — they own their data fetch internally and otherwise wouldn't
+  // notice that the backend just captured fresh snapshots.
+  const [refreshSignal, setRefreshSignal] = useState(0);
   const [topPostsTypeFilter, setTopPostsTypeFilter] = useState<string>('all');
   const [chatPostId, setChatPostId] = useState<string | null>(null);
   // Live-posts list grows long fast; reveal in pages of LIVE_PAGE.
@@ -406,7 +410,7 @@ export default function Accounts() {
   }, [selectedCreator]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const analyticsPath = `/api/accounts/analytics?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
-  const { data: analytics, loading: loadingAnalytics } = useApi<Analytics>(analyticsPath);
+  const { data: analytics, loading: loadingAnalytics, refetch: refetchAnalytics } = useApi<Analytics>(analyticsPath);
 
   const toggleManaged = async (id: string, is_managed: boolean) => {
     try {
@@ -807,6 +811,8 @@ export default function Accounts() {
                     );
                     setLiveRefreshMsg(`✓ ${res.scraped} posts scraped · ${res.captured} snapshots`);
                     refetchLive();
+                    refetchAnalytics();
+                    setRefreshSignal((s) => s + 1);
                     setTimeout(() => setLiveRefreshMsg(null), 5000);
                   } catch (err: any) {
                     setLiveRefreshMsg(`✗ ${err.message}`);
@@ -1101,6 +1107,7 @@ export default function Accounts() {
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
             startDate={dateRange.start}
             endDate={dateRange.end}
+            reloadSignal={refreshSignal}
           />
 
           {/* Monthly followers gained — same monthly aggregation as
@@ -1130,6 +1137,7 @@ export default function Accounts() {
             startDate={dateRange.start}
             endDate={dateRange.end}
             days={days}
+            reloadSignal={refreshSignal}
           />
 
           {/* Format mix + Best hooks share one row — both are compact

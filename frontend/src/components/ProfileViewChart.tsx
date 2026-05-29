@@ -18,6 +18,7 @@ interface Props {
   startDate: string;
   endDate: string;
   days: number;
+  reloadSignal?: number;
 }
 
 function fmtDay(iso: string): string {
@@ -127,7 +128,7 @@ function DeltaChip({
  * fluctuate more than follower counts and the day/week trend is what
  * actually matters.
  */
-export default function ProfileViewChart({ creatorId, startDate, endDate, days }: Props) {
+export default function ProfileViewChart({ creatorId, startDate, endDate, days, reloadSignal }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -151,7 +152,7 @@ export default function ProfileViewChart({ creatorId, startDate, endDate, days }
     return () => {
       cancelled = true;
     };
-  }, [creatorId, startDate, endDate]);
+  }, [creatorId, startDate, endDate, reloadSignal]);
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),
