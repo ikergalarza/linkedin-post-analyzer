@@ -61,12 +61,19 @@ function parseDateRange(req: Request): { startDate: string; endDate: string; day
 // at the first known id). With one new post, that's still ~3 HTTP calls
 // instead of the 5 the old path made.
 async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number; snapshots_seeded: number }> {
+  const t0 = Date.now();
   const creator = await CreatorModel.findById(creatorId);
   if (!creator) return { scraped: 0, snapshots_seeded: 0 };
   const accountIdOverride = (creator as any).unipile_account_id as string | null;
   if (!accountIdOverride) return { scraped: 0, snapshots_seeded: 0 };
 
-  const snap = await captureAccountSnapshots(creatorId);
+  // skipViewers: the WVMP profile-views fetch pages LinkedIn up to 20x and
+  // is the single biggest cost of a refresh (20-40s/account). The button is
+  // for surfacing a new post, so we only need a fast follower snapshot here;
+  // WVMP stays owned by the 6h tick + the profile-views refresh button.
+  const snapStart = Date.now();
+  const snap = await captureAccountSnapshots(creatorId, { skipViewers: true });
+  console.log(`[scrapeCreatorPosts] ${creator.name}: account snapshot (followers, no WVMP) ${Date.now() - snapStart}ms`);
   const providerId = snap.providerId;
 
   if (!providerId) return { scraped: 0, snapshots_seeded: 0 };
@@ -78,7 +85,9 @@ async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number;
   );
   const knownIds = new Set<string>(knownRows.map((r: any) => String(r.linkedin_post_id)));
 
+  const postsStart = Date.now();
   const rawPosts = await unipileService.getPosts(providerId, undefined, accountIdOverride, knownIds);
+  console.log(`[scrapeCreatorPosts] ${creator.name}: getPosts (incremental) ${Date.now() - postsStart}ms, ${rawPosts.length} raw`);
   const originalPosts = rawPosts.filter((raw: any) => {
     if (raw.type === 'repost' || raw.type === 'RESHARE' || raw.type === 'reshare') return false;
     if (raw.is_repost || raw.is_reshare) return false;
@@ -136,6 +145,7 @@ async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number;
     }
   }
 
+  console.log(`[scrapeCreatorPosts] ${creator.name}: TOTAL ${Date.now() - t0}ms (${posts.length} new posts, ${seededCount} snapshots seeded)`);
   return { scraped: posts.length, snapshots_seeded: seededCount };
 }
 
@@ -1284,14 +1294,17 @@ router.get('/live-posts', async (req: Request, res: Response) => {
 // frequently in the golden hour, less so after 24h), so manually refreshing
 // every post on every click would just spam Unipile.
 //
-// Account-level snapshots (follower count + WVMP) are still captured via
-// scrapeCreatorPosts → captureAccountSnapshots so the user sees a fresh
-// number after publishing.
+// Speed: each account does a fast follower snapshot + incremental getPosts
+// ONLY. The slow WVMP profile-views fetch (up to 20 paginated LinkedIn
+// calls = 20-40s/account) is skipped here — it's owned by the 6h tick and
+// the dedicated profile-views refresh button. Accounts are processed in
+// PARALLEL so Iker + Unai don't run back to back.
 //
 // Accepts an optional `creator_id` in the body so the UI can scope the
 // refresh to the currently-selected creator instead of every managed account.
 router.post('/live-refresh', async (req: Request, res: Response) => {
   try {
+    const t0 = Date.now();
     const creatorId = typeof req.body?.creator_id === 'string' ? req.body.creator_id : null;
     const { rows: managed } = creatorId
       ? await pool.query(
@@ -1304,19 +1317,25 @@ router.post('/live-refresh', async (req: Request, res: Response) => {
       : await pool.query(
           `SELECT id FROM creators WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL`
         );
+
+    // Process accounts in parallel — each one is independent (its own
+    // Unipile account_id), so there's no reason Iker should wait on Unai.
+    const settled = await Promise.allSettled(
+      managed.map(({ id }) => scrapeCreatorPosts(id))
+    );
     let newPosts = 0;
     let viewSnapshots = 0;
     let captured = 0;
-    for (const { id } of managed) {
-      try {
-        const { scraped, snapshots_seeded } = await scrapeCreatorPosts(id);
-        newPosts += scraped;
+    settled.forEach((r, i) => {
+      if (r.status === 'fulfilled') {
+        newPosts += r.value.scraped;
         viewSnapshots++;
-        captured += snapshots_seeded;
-      } catch (err: any) {
-        console.error(`[accounts/live-refresh] scrape failed for ${id}:`, err?.message);
+        captured += r.value.snapshots_seeded;
+      } else {
+        console.error(`[accounts/live-refresh] scrape failed for ${managed[i].id}:`, r.reason?.message);
       }
-    }
+    });
+    console.log(`[accounts/live-refresh] TOTAL ${Date.now() - t0}ms across ${managed.length} account(s), ${newPosts} new posts`);
     res.json({
       captured,
       candidates: newPosts,

@@ -12,7 +12,10 @@ import { extractViewerTimestamps } from '../utils/wvmp';
 // Lives in a dedicated service (rather than in routes/accounts.ts) so both
 // the HTTP handlers AND the background ticker in postMonitor can call it
 // without pulling in a circular import between routes ↔ services.
-export async function captureAccountSnapshots(creatorId: string): Promise<{
+export async function captureAccountSnapshots(
+  creatorId: string,
+  opts: { skipViewers?: boolean } = {}
+): Promise<{
   ok: boolean;
   providerId: string | null;
   followers: number | null;
@@ -21,6 +24,14 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
   pagingTotal: number | null;
   viewsError: string | null;
 }> {
+  // skipViewers: skip the WVMP (who-viewed-my-profile) fetch, which pages
+  // through LinkedIn Voyager up to 20 times and can take 20-40s per account.
+  // The Refresh-posts button passes this — it only needs the post scrape +
+  // a fast follower count, NOT the slow profile-views snapshot (that's owned
+  // by the 6-hourly accountSnapshotTick and the dedicated profile-views
+  // refresh button). Leaving WVMP in the post-refresh path was the reason a
+  // single click took 1min+.
+  const { skipViewers = false } = opts;
   const creator = await CreatorModel.findById(creatorId);
   if (!creator) {
     return { ok: false, providerId: null, followers: null, views: null, pages: null, pagingTotal: null, viewsError: null };
@@ -78,8 +89,21 @@ export async function captureAccountSnapshots(creatorId: string): Promise<{
   let pages: number | null = null;
   let pagingTotal: number | null = null;
   let viewsError: string | null = null;
+  if (skipViewers) {
+    return {
+      ok: true,
+      providerId: providerId ?? null,
+      followers: latestFollowers,
+      views: null,
+      pages: null,
+      pagingTotal: null,
+      viewsError: null,
+    };
+  }
   try {
+    const wvmpStart = Date.now();
     const wvmp = await unipileService.getProfileViewers(accountIdOverride);
+    console.log(`[accountSnapshots] WVMP fetch for ${creatorId} took ${Date.now() - wvmpStart}ms`);
     if (wvmp) {
       viewsCount = wvmp.count;
       pages = wvmp.pages;
