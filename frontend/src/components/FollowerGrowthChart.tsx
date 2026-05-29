@@ -18,6 +18,7 @@ interface Props {
   // numeric `days` from the range for the "Gained · Nd" label.
   startDate: string;
   endDate: string;
+  reloadSignal?: number;
 }
 
 function fmtDay(iso: string): string {
@@ -69,7 +70,7 @@ function GainedTooltip({ active, payload, label }: any) {
  * lose the "where are we now" context. Works for a single account or
  * the summed managed view (creatorId null).
  */
-export default function FollowerGrowthChart({ creatorId, startDate, endDate }: Props) {
+export default function FollowerGrowthChart({ creatorId, startDate, endDate, reloadSignal }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +98,7 @@ export default function FollowerGrowthChart({ creatorId, startDate, endDate }: P
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [creatorId, startDate, endDate]);
+  }, [creatorId, startDate, endDate, reloadSignal]);
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),
