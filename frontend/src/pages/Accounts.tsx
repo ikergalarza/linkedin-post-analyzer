@@ -823,14 +823,14 @@ export default function Accounts() {
                 disabled={liveRefreshing}
                 className="text-xs text-text-muted hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title={selectedCreator !== 'all'
-                  ? "Re-scrape this account's posts and capture snapshots for tracked ones"
-                  : "Re-scrape every managed account and capture snapshots for tracked ones"}
+                  ? "Fetch new posts from this account (only adds posts not already in the DB)"
+                  : "Fetch new posts from every managed account (only adds posts not already in the DB)"}
               >
                 {liveRefreshing
-                  ? '↻ Scraping…'
+                  ? '↻ Fetching…'
                   : selectedCreator !== 'all'
-                    ? '↻ Refresh this account'
-                    : '↻ Refresh all'}
+                    ? '+ Get new posts (this account)'
+                    : '+ Get new posts'}
               </button>
               {liveRefreshMsg && (
                 <span className="text-[11px] text-text-muted whitespace-nowrap">{liveRefreshMsg}</span>
