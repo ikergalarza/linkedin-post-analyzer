@@ -257,6 +257,21 @@ async function getVideoAnalysisContext(): Promise<string> {
   return cachedVideoContext;
 }
 
+// Truncate a long post body while ALWAYS preserving the closing — the
+// CTA / lead-magnet ask / sign-off lives at the end of every LinkedIn
+// post, and a head-only slice (the old behaviour) made the model
+// confabulate CTAs because it never saw the real one. If the text fits
+// under `max`, return it whole. If it overflows, keep `headChars` from
+// the start, drop the middle, keep `tailChars` from the end. Tail is
+// what the model needs to answer "what was the CTA / how did it close".
+function keepHeadAndTail(text: string, max: number, headChars: number, tailChars: number): string {
+  if (!text) return text;
+  if (text.length <= max) return text;
+  const head = text.slice(0, headChars).trimEnd();
+  const tail = text.slice(-tailChars).trimStart();
+  return `${head}\n\n…[truncated middle — full post is ${text.length} chars; the closing IS shown above the tail divider]…\n\n${tail}`;
+}
+
 async function buildProfileContext(): Promise<string> {
   const profile = await CreatorProfileModel.get();
 
@@ -298,7 +313,7 @@ async function buildProfileContext(): Promise<string> {
       lines.push('');
       lines.push(`--- TOP POSTS BY THIS USER (LIVE from DB — sorted by outlier ratio; ALWAYS up to date with the latest scrape, including the past week) ---`);
       lines.push(`Use this list as the source of truth when the user asks "what's working for me", "what are my best posts", "what should I write more of". The static profile.my_posts field is intentionally NOT used — it was a manual one-time load and may be months out of date.`);
-      lines.push(`Each post is included with its FULL body (truncated only past ~2500 chars) so you can analyse the closer, CTA, rhythm of the cuts, not just the hook.`);
+      lines.push(`Each post is included with its FULL body so you can analyse the closer, CTA, rhythm of the cuts, not just the hook. For unusually long posts the middle is collapsed but the HEAD and the TAIL (where the CTA lives) are always preserved.`);
       for (const p of myTop) {
         const ratio = p.outlier_ratio ? `${(+p.outlier_ratio).toFixed(1)}x` : '—';
         const imp = p.impressions_count ? ` · ${p.impressions_count} imp` : '';
@@ -306,8 +321,8 @@ async function buildProfileContext(): Promise<string> {
         const arche = (p.hook_type && p.hook_type !== 'other' && p.post_structure && p.post_structure !== 'other')
           ? ` · ${p.hook_type} + ${p.post_structure}`
           : '';
-        const fullText = p.content_text as string;
-        const body = fullText.length > 2500 ? `${fullText.slice(0, 2500)}…[truncated]` : fullText;
+        const fullText = (p.content_text as string) || '';
+        const body = keepHeadAndTail(fullText, 2500, 1700, 800);
         lines.push(`\n[${date} · ${p.creator_name} · ${ratio} ratio · ${p.likes_count}❤ ${p.comments_count}💬 ${p.reposts_count}🔁${imp}${arche}]`);
         lines.push(body);
         lines.push('---');
@@ -345,7 +360,7 @@ async function buildProfileContext(): Promise<string> {
     if (timeline.length > 0) {
       lines.push('');
       lines.push('--- RECENT TIMELINE (chronological — last 6 weeks, EVERY post including the flops) ---');
-      lines.push('Diagnostic feed: not filtered by outlier status. Read this when asked about cadence, trends, or "what changed lately" — flops are as informative as hits. Bodies kept short here (~400 chars) because the goal is the pattern, not deep close-reading; if you want to inspect a specific post in detail, that detail lives in TOP POSTS above or you can ask the user.');
+      lines.push('Diagnostic feed: not filtered by outlier status. Read this when asked about cadence, trends, or "what changed lately" — flops are as informative as hits. Bodies use a head+tail truncation: the HOOK and the CLOSING (CTA / lead-magnet ask / sign-off) are ALWAYS visible; only the middle is collapsed on very long posts. Do NOT use the middle being collapsed as license to guess what was there — if the user asks about a middle section, say it was truncated and ask.');
       for (const p of timeline) {
         const ratio = p.outlier_ratio != null ? `${(+p.outlier_ratio).toFixed(2)}x` : '—';
         const flopMarker = p.outlier_ratio != null && Number(p.outlier_ratio) < 0.7 ? ' [flop]' : '';
@@ -353,9 +368,9 @@ async function buildProfileContext(): Promise<string> {
         const date = p.published_at ? new Date(p.published_at).toISOString().slice(0, 10) : '?';
         const imp = p.impressions_count ? ` · ${p.impressions_count} imp` : '';
         const fullText = (p.content_text as string) || '';
-        const preview = fullText.length > 400 ? `${fullText.slice(0, 400)}…` : fullText;
+        const preview = keepHeadAndTail(fullText, 800, 450, 300).replace(/\n{2,}/g, '\n');
         lines.push(`\n[${date} · ${p.creator_name} · ${p.content_type || 'text'} · ${ratio}${outlierMarker}${flopMarker} · ${p.engagement_score} eng${imp}]`);
-        lines.push(preview.replace(/\n{2,}/g, '\n')); // collapse blank lines so each item stays compact
+        lines.push(preview);
       }
     }
   } catch (err) {
@@ -364,6 +379,7 @@ async function buildProfileContext(): Promise<string> {
 
   lines.push('');
   lines.push('CRITICAL: When writing posts for this user, match their voice and style based on their top posts above (which are LIVE from the database — never refer to a previous version of their post history). Incorporate their company, product, and positioning naturally. Use the viral patterns from the analysis data but adapt them to THIS user\'s authentic voice — not generic. When diagnosing performance, lean on the RECENT TIMELINE block (which includes flops) instead of cherry-picking from TOP POSTS.');
+  lines.push('NO-CONFABULATION RULE — applies when ANALYSING a specific past post (the user asks about its CTA, hook, closing, structure, archetype, what worked, etc.): only state details you can literally read in the post body shown above. If a specific detail (e.g. the CTA wording) is not in the head or tail of the truncated body, do NOT invent it from the archetype / hook / vibe — say "no veo el cierre en el contexto que tengo, ¿me lo pegas?" or similar. The bodies above use a head+tail slice that always preserves the closing, so the CTA almost always IS there — but if it isn\'t, asking is the only correct move. Confabulating CTAs on real published posts erodes the user\'s trust in every diagnosis you give afterwards.');
   return lines.join('\n');
 }
 
