@@ -398,22 +398,33 @@ function extractFirstImageUrl(raw: any): string | null {
   return raw?.image_url || raw?.image || raw?.thumbnail_url || raw?.thumbnail || null;
 }
 
-// Build the visual reference block: a small content-block array with up
-// to 10 of the user's recent meme / text+image / carousel posts as real
-// images that the model can actually see, each tagged with date, creator,
-// outlier ratio, and a short hook. Lets Claude reason about which
-// visuals worked instead of operating blind on roughly half of the
-// account's output. Returns [] when nothing usable is in raw_data.
+// Build the visual reference block: a content-block array with the
+// user's recent meme / text+image / carousel posts as real images that
+// the model can SEE, plus an INVENTORY of every such post in the
+// window (whether or not its CDN URL still loads) so the model never
+// silently forgets a post had an image.
+//
+// Why the inventory matters: LinkedIn CDN URLs are temporary and rotate
+// after a few weeks. Without the inventory, an old post whose URL has
+// expired falls out of the context entirely, and when the user asks
+// "what about my meme from May 13?" the model can't see the image AND
+// has no signal the post even existed as an image post — so it
+// confabulates ("you don't have a meme that day") instead of saying
+// "the CDN URL has expired but the post exists". The inventory closes
+// that gap: the model always knows which posts had images, and the
+// attached image blocks give it visuals for the ones still loadable.
 const VISUAL_CONTENT_TYPES = ['text_image', 'image', 'text_carousel', 'carousel'];
-const MAX_IMAGES = 10;
-const IMAGES_LOOKBACK_DAYS = 42;
+const MAX_IMAGES = 20;
+const IMAGES_LOOKBACK_DAYS = 56;
 
 async function buildAccountImageBlocks(): Promise<any[]> {
   try {
     const sinceIso = new Date(Date.now() - IMAGES_LOOKBACK_DAYS * 86400000).toISOString();
     const { rows } = await pool.query(
-      `SELECT p.id, p.content_text, p.hook_text, p.published_at,
-              p.content_type, p.outlier_ratio, p.raw_data,
+      `SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
+              p.content_type, p.outlier_ratio, p.is_outlier,
+              p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+              p.raw_data, p.post_url,
               c.name AS creator_name
          FROM posts p
          JOIN creators c ON c.id = p.creator_id
@@ -421,23 +432,72 @@ async function buildAccountImageBlocks(): Promise<any[]> {
           AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
           AND p.content_type = ANY($1::text[])
           AND p.published_at >= $2
-          AND p.raw_data IS NOT NULL
         ORDER BY p.published_at DESC
-        LIMIT 30`,
+        LIMIT 60`,
       [VISUAL_CONTENT_TYPES, sinceIso]
     );
 
-    const blocks: any[] = [];
-    let imageCount = 0;
+    if (rows.length === 0) return [];
+
+    // First pass: build the INVENTORY of every visual post in the
+    // window. Every row gets a line — even ones whose CDN URL has
+    // expired or whose raw_data we couldn't extract — so the model
+    // always knows the post existed and was image-bearing.
+    const inventoryLines: string[] = [];
+    const imageTargets: Array<{ post: any; url: string }> = [];
     for (const post of rows) {
-      if (imageCount >= MAX_IMAGES) break;
-      const url = extractFirstImageUrl(post.raw_data);
-      if (!url || !/^https?:\/\//i.test(url)) continue;
+      const url = post.raw_data ? extractFirstImageUrl(post.raw_data) : null;
+      const hasLoadableUrl = !!(url && /^https?:\/\//i.test(url));
+      if (hasLoadableUrl && imageTargets.length < MAX_IMAGES) {
+        imageTargets.push({ post, url: url as string });
+      }
       const date = post.published_at
         ? new Date(post.published_at).toISOString().slice(0, 10)
         : '?';
       const ratio = post.outlier_ratio != null
-        ? `${(+post.outlier_ratio).toFixed(1)}x`
+        ? `${(+post.outlier_ratio).toFixed(2)}x`
+        : '—';
+      const outlierMarker = post.is_outlier ? ' [OUTLIER]' : '';
+      const hook = (post.hook_text || post.content_text || '')
+        .toString()
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 200);
+      const stats = [
+        post.likes_count != null ? `${post.likes_count}❤` : null,
+        post.comments_count != null ? `${post.comments_count}💬` : null,
+        post.reposts_count != null ? `${post.reposts_count}🔁` : null,
+        post.impressions_count != null ? `${post.impressions_count}👁` : null,
+      ].filter(Boolean).join(' ');
+      const loaded = hasLoadableUrl
+        ? (imageTargets.length <= MAX_IMAGES ? '🖼️ image attached below' : '🖼️ image exists, not attached (over the visual-attach cap)')
+        : '🖼️ image exists, CDN URL expired or not extractable';
+      inventoryLines.push(
+        `- [${date} · ${post.creator_name} · ${post.content_type} · ${ratio}${outlierMarker}] ${stats} — ${loaded}\n  hook: "${hook}"`
+      );
+    }
+
+    const blocks: any[] = [];
+    blocks.push({
+      type: 'text',
+      text: `═══ ACCOUNTS — VISUAL POSTS INVENTORY (last ${IMAGES_LOOKBACK_DAYS} days, newest first) ═══
+The list below is EVERY post you've published in this window with content_type ∈ {text_image, image, text_carousel, carousel}. EVERY row in this list IS an image post by definition — the underlying LinkedIn post has an image attached, no exception. The flag at the end tells you whether the actual image file is attached below in this message:
+  - "🖼️ image attached below" → you can SEE the image in the message after the inventory.
+  - "🖼️ image exists, CDN URL expired or not extractable" → the post still has an image on LinkedIn, but LinkedIn's CDN URL has rotated (it does this after a few weeks) or our scrape couldn't extract a clean URL. You do NOT see the visual, but the post IS an image post. DO NOT tell the user the post has no image — say the visual isn't loadable right now and reason from the hook/metadata.
+  - "🖼️ image exists, not attached (over the visual-attach cap)" → we capped visual attachments at ${MAX_IMAGES} per turn to keep tokens reasonable. The image exists on LinkedIn; you just don't see it here.
+
+Inventory (${rows.length} posts):
+${inventoryLines.join('\n')}
+
+The actual image files for ${imageTargets.length} of these posts follow. Each is preceded by a header line identifying which post it belongs to, in the same order as the inventory above (oldest of the loadable ones first → newest visual just before the chat starts isn't guaranteed; treat the header text as the source of truth for which post each image is).`,
+    });
+
+    for (const { post, url } of imageTargets) {
+      const date = post.published_at
+        ? new Date(post.published_at).toISOString().slice(0, 10)
+        : '?';
+      const ratio = post.outlier_ratio != null
+        ? `${(+post.outlier_ratio).toFixed(2)}x`
         : '—';
       const hook = (post.hook_text || post.content_text || '')
         .toString()
@@ -452,14 +512,8 @@ async function buildAccountImageBlocks(): Promise<any[]> {
         type: 'image',
         source: { type: 'url', url },
       });
-      imageCount++;
     }
 
-    if (blocks.length === 0) return [];
-    blocks.unshift({
-      type: 'text',
-      text: `═══ RECENT POST IMAGES (your last ${imageCount} text+image / carousel posts on this account, newest first) ═══\nWhat you're looking at: the actual visuals attached to recent posts. Use them when reasoning about what kinds of images travel for this account — meme angles, layouts, contrast, what the user has already tried, what flopped visually vs. what got reach. Without these you'd be operating blind on roughly half of the account's output.`,
-    });
     return blocks;
   } catch (err) {
     console.warn('[buildAccountImageBlocks] failed:', (err as Error).message);
