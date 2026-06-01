@@ -468,8 +468,11 @@ export default function PostCreator() {
 
       {(
         <div className="flex-1 flex gap-4 min-h-0">
-          {/* Chat column */}
-          <div className="flex-1 flex flex-col min-w-0">
+          {/* Chat column — min-h-0 is essential: without it the column
+              expands with its content past the viewport, which silently
+              defeats the overflow-y-auto on the scroll wrapper below
+              and makes long assistant replies appear truncated. */}
+          <div className="flex-1 flex flex-col min-w-0 min-h-0">
             <div className="flex-1 overflow-y-auto space-y-4 pb-4">
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center">

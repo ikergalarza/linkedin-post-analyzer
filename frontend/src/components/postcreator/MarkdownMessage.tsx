@@ -26,7 +26,7 @@ function CopyablePre({ children }: { children: any }) {
     <div className="relative my-2 group">
       <pre
         ref={preRef}
-        className="bg-bg-primary border border-border rounded-md px-3 py-2 pr-16 text-[12px] font-mono text-text-primary overflow-x-auto whitespace-pre [&_code]:bg-transparent [&_code]:border-0 [&_code]:p-0 [&_code]:text-text-primary"
+        className="bg-bg-primary border border-border rounded-md px-3 py-2 pr-16 text-[12px] font-mono text-text-primary whitespace-pre-wrap break-words [&_code]:bg-transparent [&_code]:border-0 [&_code]:p-0 [&_code]:text-text-primary"
       >
         {children}
       </pre>
