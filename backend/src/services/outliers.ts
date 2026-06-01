@@ -57,6 +57,18 @@ export async function recalcCreatorOutliers(creatorId: string): Promise<void> {
     // impressions. A post with no impressions still gets scored on its
     // engagement ratio (reach side contributes 0). Set-based single
     // UPDATE so it stays cheap even on a full-history recompute.
+    //
+    // NOTE: the absolute engagement floor (MIN_OUTLIER_ENGAGEMENT = 200)
+    // is DELIBERATELY OMITTED here. With real impressions data the floor
+    // was creating visible inconsistencies on the Engagement-over-time
+    // chart — a post with reach 5x the creator's average but
+    // engagement<200 (people saw it but didn't interact strongly)
+    // showed outlier_ratio = 5.x while is_outlier stayed FALSE,
+    // painting it as a non-outlier (grey pencil) despite the multiplier.
+    // The reach itself IS the success signal in that case ("si llegó a
+    // tantas impresiones por algo será"). The floor stays in the
+    // absolute branch below for Dashboard / discovered profiles where
+    // no impressions exist and the floor is the only quality guard.
     await pool.query(
       `WITH stats AS (
          SELECT
@@ -77,8 +89,7 @@ export async function recalcCreatorOutliers(creatorId: string): Promise<void> {
              ELSE 0 END
          ),
          is_outlier = (
-           p.engagement_score >= $2
-           AND GREATEST(
+           GREATEST(
              CASE WHEN s.avg_eng > 0 THEN p.engagement_score::float / s.avg_eng ELSE 0 END,
              CASE WHEN p.impressions_count IS NOT NULL AND p.impressions_count > 0 AND s.avg_imp > 0
                THEN p.impressions_count::float / s.avg_imp ELSE 0 END
@@ -86,7 +97,7 @@ export async function recalcCreatorOutliers(creatorId: string): Promise<void> {
          )
        FROM stats s
        WHERE p.creator_id = $1 AND p.linkedin_post_id <> 'DEMO_LIVE_POST'`,
-      [creatorId, MIN_OUTLIER_ENGAGEMENT]
+      [creatorId]
     );
   } else {
     // Absolute-engagement method (Dashboard / discovered profiles, or a
