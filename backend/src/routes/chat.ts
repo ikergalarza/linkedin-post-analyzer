@@ -386,19 +386,32 @@ async function buildProfileContext(): Promise<string> {
   return lines.join('\n');
 }
 
-// Pull the first image URL out of a post's stored raw_data, mirroring the
-// extraction logic of /api/posts/post/:id/media. Returns null when no
-// usable image is in the payload. Used by buildAccountImageBlocks so the
-// chat can reason visually about the user's meme / text+image work
-// without each turn having to call the media endpoint per post.
+// Pull the first image URL out of a post's stored raw_data, MIRRORING
+// /api/posts/post/:id/media exactly. The previous version had a subtle
+// divergence: it only returned the URL when the attachment's `type`
+// matched a hard whitelist (image|photo|picture|''), so any attachment
+// whose `type` didn't match — Unipile's exact string varies across
+// post versions and the field can also be empty — got silently
+// discarded. The endpoint, by contrast, has an `else if (url)`
+// fallback that accepts any non-video / non-document attachment as an
+// image. That explains the reported symptom: recent posts whose
+// attachments showed up as e.g. `type: "img"` / `type: "shared_image"`
+// stopped extracting here, the inventory tagged them "CDN URL
+// expired or not extractable", and the model concluded the visuals
+// weren't loaded. Aligned the order-of-conditions to match the
+// endpoint byte-for-byte.
 function extractFirstImageUrl(raw: any): string | null {
   if (raw && Array.isArray(raw.attachments)) {
     for (const a of raw.attachments) {
       const t = String(a?.type || '').toLowerCase();
       const url = a?.url || a?.download_url || a?.media_url || null;
       if (!url) continue;
-      if (t.includes('video') || t.includes('document') || t.includes('pdf')) continue;
-      if (t.includes('image') || t.includes('photo') || t.includes('picture') || t === '') return url;
+      if (t.includes('video')) continue;
+      if (t.includes('document') || t.includes('pdf')) continue;
+      // Everything else with a URL is treated as an image — same fallback
+      // the /media endpoint uses. Covers known type strings (image, photo,
+      // picture) AND any future / undocumented variants.
+      return url;
     }
   }
   if (raw && Array.isArray(raw.images)) {
@@ -467,6 +480,18 @@ async function buildAccountImageBlocks(): Promise<any[]> {
     for (const post of rows) {
       const url = post.raw_data ? extractFirstImageUrl(post.raw_data) : null;
       const hasLoadableUrl = !!(url && /^https?:\/\//i.test(url));
+      // Diagnostic: if a post is supposedly an image post but we couldn't
+      // pull any URL out of raw_data, log it so a Unipile schema change
+      // surfaces in Railway logs instead of as model confabulation.
+      if (!hasLoadableUrl && post.raw_data) {
+        const attTypes = Array.isArray(post.raw_data.attachments)
+          ? post.raw_data.attachments.map((a: any) => String(a?.type ?? 'undef')).join(',')
+          : 'no-attachments';
+        const topKeys = Object.keys(post.raw_data).slice(0, 8).join(',');
+        console.warn(
+          `[buildAccountImageBlocks] no image URL for post ${post.linkedin_post_id} (${post.content_type}, ${post.published_at}) — att types: [${attTypes}] · top raw_data keys: [${topKeys}]`
+        );
+      }
       if (hasLoadableUrl && imageTargets.length < MAX_IMAGES) {
         imageTargets.push({ post, url: url as string });
       }
