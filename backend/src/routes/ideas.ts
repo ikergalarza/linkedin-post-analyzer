@@ -295,7 +295,7 @@ Rules for the image block:
 - Never put the marker or image text inside the post body — it goes strictly AFTER the post, after the marker.`}`;
 
   const response = await client.messages.create({
-    model: 'claude-opus-4-7',
+    model: 'claude-opus-4-8',
     max_tokens: 1024,
     messages: [{
       role: 'user',

@@ -947,7 +947,7 @@ ${analysisContext}${profileContext}${voiceContext}`;
       : messages;
 
     const stream = await client.messages.stream({
-      model: 'claude-opus-4-7',
+      model: 'claude-opus-4-8',
       // 16K output tokens (~12K words). Was 4096 (~3000 words), which
       // capped exhaustive analyses mid-word — the user reported a reply
       // ending in "- PROBL" with Copy-all visible (i.e. stream closed
