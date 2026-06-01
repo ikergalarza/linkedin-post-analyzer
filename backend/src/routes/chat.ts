@@ -948,7 +948,15 @@ ${analysisContext}${profileContext}${voiceContext}`;
 
     const stream = await client.messages.stream({
       model: 'claude-opus-4-7',
-      max_tokens: 4096,
+      // 16K output tokens (~12K words). Was 4096 (~3000 words), which
+      // capped exhaustive analyses mid-word — the user reported a reply
+      // ending in "- PROBL" with Copy-all visible (i.e. stream closed
+      // cleanly), the classic signature of an output-tokens cap, not
+      // any UI truncation. 16K comfortably covers weekly diagnoses,
+      // multi-post audits, 3-archetype variations with commentary, etc.
+      // Claude Opus 4.7 supports up to ~32K output tokens; this stays
+      // well below that with room to grow.
+      max_tokens: 16384,
       system: systemPrompt,
       messages: augmentedMessages.map((m: any) => ({
         role: m.role,
