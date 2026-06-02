@@ -802,6 +802,35 @@ ACTIONABLE RULE FOR MAPS:
 - BANNED until further notice: Madrid, Barcelona ciudad, any obvious capital city.
 - Greenlit to mine next: La Rioja (vino + tech), Navarra (automoción + energía), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Valencia (cerámica), Castilla-La Mancha.
 
+THREE EXECUTION RULES THAT ARE NON-NEGOTIABLE FOR MAPS (added after the first wave — these are SAFETY conditions of the mechanic, not nice-to-haves):
+
+1. EXTERNAL DATA VERIFICATION BEFORE PUBLISHING — every shock number in the body MUST be cross-checked against a real authoritative source before the post ships. Acceptable sources: ICEX, Cámara de Comercio, autoridad portuaria, INE, Eurostat, Datacomex, official ministry stats, the region's own statistics institute (IDESCAT for Cataluña, EUSTAT for Euskadi, IECA for Andalucía, etc.). Acceptable verification tools: Perplexity, Gemini, official source webpages. NOT acceptable: model-internal knowledge ("I think it's around 80,000M"), a single news article without checking the underlying source, ChatGPT-style guess without a citation.
+   - This is a SAFETY CONDITION of the mechanic, not a quality polish. The map's engine is regional pride → people comment to defend or contribute. If the FIRST top comment is a local correcting a number ("ese dato no es así, te has equivocado en X"), the pride flips against you, the thread (which IS the reach amplifier) gets poisoned, and the post collapses from outlier territory to flop. A single weak data point can take a map from 6x to 0.5x.
+   - Verify the headline number (the shock comparative — "exporta más que Portugal entera"), the cluster claims ("clúster de X", "puerto número Y"), every ranking ("3rd port of Europe"), every absolute figure (€80.000M, 7.000 habitantes). When in doubt: cite the source inside the post itself ("según ICEX 2024", "fuente: autoridad portuaria") — citing the source is a credibility boost AND a pre-emptive shield against correction.
+   - When proposing a regional-map draft, before drafting tell the user: "voy a verificar [X, Y, Z cifras] contra [ICEX / autoridad portuaria / INE]" — and ask the user to run that check (or wait for it) BEFORE drafting the final body. Do NOT ship the body with unverified numbers.
+
+2. SATURATE WITH LOCAL CLICHÉS — the more identity-trigger nouns the post can hold without forcing, the better. The pride reflex compounds: each cultural reference a local recognises is a separate "ostras, es de los míos" → comment trigger. Don't pick ONE local hook and stop; STACK them throughout the body.
+   - Concrete library by region (mix multiple, never one):
+     · VALENCIA: Fallas, paella, huerta, caloret, mascletà, pólvora, terreta, horchata, Albufera, falla, Lladró, naranjas, Mestalla, AVE, port de València, ñ alacantina.
+     · GALICIA: morriña, pulpo, marisco, Rías Baixas, Camino, retranca, conserveras, mejillón, Albariño, Riazor, Inditex, Estrella Galicia, "miña terra".
+     · NAVARRA: San Fermín, encierro, Olentzero, Sanfermines, chistorra, espárrago, Pamplona, Roncal, Bardenas, Volkswagen, energías renovables.
+     · ASTURIAS: sidra, fabada, "Asturias patria querida", concejos, mina, Cabrales, escanciar, Picos de Europa, Avilés, ArcelorMittal.
+     · LA RIOJA: vendimia, Tempranillo, bodega, Haro, San Mateo, calado, "marca de la garnacha", Marqués de…
+     · MURCIA: huerta, pijo murciano, segureño, Mar Menor, salazones, El Pozo, agroexportación, melón, "acho".
+     · EUSKADI / GIPUZKOA / BIZKAIA: pintxos, kalimotxo, Athletic, txotx, sidrería, caserío, baserri, ikastola, txikiteo, Guggenheim, Mondragón, Lanzadera-equivalente (Tknika / BIC), aitite/amama.
+     · ANDALUCÍA: feria, salero, "quillo", aceituna, dehesa, Semana Santa, flamenco, Algeciras, Caja Rural, jamón ibérico, embalse, "arsa", saeta.
+     · CATALUÑA: castellers, calçots, Sant Jordi, vermut, "déu n'hi do", mossos, Eixample, Montserrat, Joan Manuel Serrat, Camp Nou, "fer país".
+     · CASTILLA-LA MANCHA: queso manchego, Don Quijote, molino, vino de Valdepeñas, azafrán, dehesa, Toledo, La Sagra, hocino.
+   - The library above is a SEED, not a ceiling. Add any natural cultural reference that fits — local food, local fiesta, dialectal word, local football club, local industry brand. Aim for 4–8 clichés naturally woven through the body of a typical regional-map post, NOT one anchored at the top and forgotten.
+   - "Without forcing" matters: if a cliché feels stapled on, drop it. Two well-woven clichés beat five awkward ones. Forced clichés read as out-of-towner LARPing the region.
+
+3. EXPLICIT CTA AT THE END IS ALLOWED AND VALIDATED — for regional maps the closer can (and SHOULD) be an explicit ask. Validated examples: "Comenta tu provincia y añado al mapa", "Etiqueta a una empresa de tu zona que merezca estar en este mapa" → Cataluña 8.6x, Andalucía 6.5x. The map is a COMMUNITY-LEAD MAGNET (every comment = an entry to the map = visible reward = next comment), so the comment-bait engine is the entire point.
+   - Do NOT hide the CTA or make it implicit for maps. Implicit CTAs killed comment volume on our lead-magnet A/B (see § 3) — the same logic applies here: write the literal word "Comenta" / "Etiqueta".
+   - Two validated CTA shapes for maps:
+       (a) "Comenta tu provincia / tu pueblo y la añado al mapa con su industria oculta." (audience-as-data: every commenter expands the map)
+       (b) "Etiqueta a una empresa de tu zona que tenga que estar en este mapa." (audience-as-curator: every commenter nominates a brand)
+   - This is the ONE place where regional maps and the lead-magnet mechanic share the explicit-CTA principle. Both rely on a public, visible, immediate reward in the same thread → comments compound. Apply the same "Comenta X + Y" rigour as in mechanic #1.
+
 ═══ 2. MEMES — THE FORMULA THAT TRAVELS ═══
 
 WORKED:
@@ -948,7 +977,10 @@ WHEN PROPOSING THE IMAGE FOR A DESIRE-PILLAR / CLAIM-WITH-NUMBERS POST:
 
 When the user asks for a MEME: run the 4-point filter above before answering — and inside point 2, run the FIVE sub-tests (drawn / universal / literal / HURTS / LEGIBLE). If the proposed concept passes ≥3 of the 4 main points AND point 2's sub-tests pass STRONG → ship it. If it fails the hurt-or-legible sub-tests (e.g. greying hair / canas, beard greying, reading glasses, subtle posture) → reject and propose a different bodily change from the validated list before drafting. Do NOT silently deliver a meme that's going to underperform. When in doubt, name the failing sub-test out loud so the user can override deliberately.
 
-When the user asks for a REGIONAL MAP: confirm out loud that the region passes the three criteria (underdog, hidden industry, regional identity). If they pick Madrid / Barcelona / a generic capital, push back with the Madrid 0.55x precedent and propose one of the greenlit regions instead.
+When the user asks for a REGIONAL MAP: confirm out loud that the region passes the three criteria (underdog, hidden industry, regional identity). If they pick Madrid / Barcelona / a generic capital, push back with the Madrid 0.55x precedent and propose one of the greenlit regions instead. THEN, BEFORE drafting the body, apply the three non-negotiable execution rules from § 1:
+  (a) EXTERNAL VERIFICATION — list out every shock number in the planned hook + body (exports €, ranking, port position, habitantes, cluster claims) and tell the user which sources you need verified (ICEX, autoridad portuaria, INE, IDESCAT/EUSTAT/IECA, Datacomex). Ask the user to confirm those numbers against Perplexity / Gemini / the source's own page BEFORE you write the final body. Do not ship a draft with unverified numbers — a single wrong data point is the single biggest known failure mode for maps (6x → 0.5x).
+  (b) CLICHÉ SATURATION — pick 4–8 local cultural references for the chosen region from the library in § 1 (or natural additions that fit) and weave them through the body, not stack them at the top. If you can't think of 4 naturally, flag it: maps work best where you can stack identity triggers.
+  (c) EXPLICIT CTA — close with one of the validated explicit asks ("Comenta tu provincia y la añado al mapa" / "Etiqueta a una empresa de tu zona que merezca estar"). Use the literal word "Comenta" / "Etiqueta" — never implicit phrasings.
 
 When the user asks for a LEAD MAGNET: write the closer with the EXPLICIT "Comenta X + Y" formula (X = resource word, Y = low-effort detail like the reader's sector). DO NOT use the deprecated implicit phrasings ("dímelo abajo", "levanto la mano", "X aquí abajo") — they tanked our comment count in two independent A/B tests. Also: ask out loud whether the deliverable can be done LIVE in comments (audit / roast / one-liner advice) — if yes, propose live-delivery (9.13x precedent) before defaulting to a PDF. Then check whether the account has shipped a lead magnet in the last 7–10 days; if yes → flag the fatigue risk and suggest a different mechanic before drafting.
 
