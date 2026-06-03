@@ -1882,13 +1882,17 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
       console.log(`[comments/raw-sample] post=${postId} | ${json}`);
     }
 
-    // Two-pass grouping: collect top-levels first, then attach replies by
-    // parent_comment_id. Unipile's payload mixes both in a single flat list.
+    // Two-pass grouping: collect top-levels first, then attach inline
+    // replies by parent_comment_id (in case Unipile ever returns them
+    // mixed in the same list — which currently it does NOT, but keeping
+    // the safety net is cheap).
     const byId = new Map<string, ThreadedComment>();
     const topLevel: ThreadedComment[] = [];
+    const rawById = new Map<string, any>();
     for (const c of raw) {
       const id = String(c.id || c.social_id || '');
       if (!id) continue;
+      rawById.set(id, c);
       const parentId = c.parent_comment_id || c.comment_id || null;
       if (!parentId) {
         const t = shapeComment(c);
@@ -1901,6 +1905,35 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
       if (!parentId) continue;
       const parent = byId.get(String(parentId));
       if (parent) parent.replies.push(shapeComment(c));
+    }
+
+    // Unipile's /comments endpoint returns only top-level by default —
+    // each comment with reply_counter > 0 needs a follow-up fetch with
+    // ?comment_id=<parent>. Without these, "answered by author" looks
+    // unanswered even when the author already replied. Parallel fetch
+    // bounded by a small concurrency cap so we don't blow Unipile's rate
+    // limit on posts with dozens of threads.
+    const CONCURRENCY = 6;
+    const queue = topLevel.filter((t) => {
+      const r = rawById.get(t.id);
+      return r && Number(r.reply_counter) > 0 && t.replies.length === 0;
+    });
+    for (let i = 0; i < queue.length; i += CONCURRENCY) {
+      const batch = queue.slice(i, i + CONCURRENCY);
+      await Promise.all(
+        batch.map(async (t) => {
+          try {
+            const replyRaw = await unipileService.getPostComments(
+              post.linkedin_post_id,
+              post.unipile_account_id,
+              { parentCommentId: t.id }
+            );
+            t.replies = replyRaw.map(shapeComment);
+          } catch (err: any) {
+            console.warn(`[comments] reply fetch failed for ${t.id}:`, err?.message);
+          }
+        })
+      );
     }
 
     // Sort: replies oldest-first inside each thread (chronological feels
