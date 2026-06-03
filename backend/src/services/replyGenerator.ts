@@ -37,9 +37,11 @@ RULE 3 — LENGTH: 1–3 short sentences. A reply, not an essay. If a single tig
 
 RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, gently push back, or ask a sharpening question). NO generic "Thanks for sharing!" / "Great point!" filler. NO emoji unless your signature_moves explicitly include them.
 
-RULE 5 — NO META: Don't reference that this is LinkedIn. Don't talk about "the algorithm". Don't open with the commenter's name as a vocative ("Marcos: ...") unless your voice does that habitually.
+RULE 5 — START WITH THE NAME: Begin the reply with the commenter's full display name followed by a comma. Example: "Basilio García, ...". This is non-negotiable — the backend uses this prefix to insert a real LinkedIn @-mention tag, so the name must appear VERBATIM as given (exact casing, exact spelling) at position 0. If a name was not provided, skip this rule and open naturally instead.
 
-RULE 6 — OUTPUT: ONE reply. Plain text. No markdown, no quotes wrapping the whole thing, no preamble like "Here's the reply:". Just the reply.`;
+RULE 6 — NO META: Don't reference that this is LinkedIn. Don't talk about "the algorithm".
+
+RULE 7 — OUTPUT: ONE reply. Plain text. No markdown, no quotes wrapping the whole thing, no preamble like "Here's the reply:". Just the reply.`;
 
 function buildPrompt(input: ReplyGenerationInput): string {
   const v = input.authorVoice;
@@ -56,6 +58,13 @@ function buildPrompt(input: ReplyGenerationInput): string {
     ? `Commenter: ${input.commenterName}${input.commenterHeadline ? ` (${input.commenterHeadline})` : ''}`
     : 'Commenter: unknown';
 
+  // Surfaced as a separate, hard instruction so it doesn't get diluted by
+  // the post/voice context above. Keeps RULE 5 (mention prefix) front and
+  // centre right before the model writes.
+  const mentionInstruction = input.commenterName
+    ? `MENTION PREFIX (required): Begin your reply with exactly "${input.commenterName}, " — same casing and spelling, immediately followed by a comma and a space. The backend converts that prefix into a LinkedIn @-mention tag, so any deviation breaks the tag.`
+    : `MENTION PREFIX: Skip — no commenter name available, open naturally.`;
+
   return `You are ${input.authorName}. Reply to a comment on your own post.
 
 ${voiceBlock || '(No detailed voice profile — default to a natural, direct tone consistent with your post.)'}
@@ -66,6 +75,8 @@ ${input.postContent}
 ═══ THE COMMENT YOU ARE REPLYING TO ═══
 ${commenterLine}
 "${input.commentText}"
+
+${mentionInstruction}
 
 Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;
 }

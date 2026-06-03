@@ -596,25 +596,30 @@ export class UnipileService {
 
   // Post a reply under an existing comment. Unipile's API takes the parent
   // comment_id as part of the body — same endpoint as posting a top-level
-  // comment, just with the extra field. Returns the created comment so the
-  // caller can update local UI optimistically.
+  // comment, just with the extra field. Mentions use a templated syntax:
+  // text contains {{0}}, {{1}}, … placeholders that line up with entries
+  // in the mentions array (each {name, profile_id}). Without mentions the
+  // body is a plain {account_id, comment_id, text}.
   async replyToComment(
     postSocialId: string,
     parentCommentId: string,
     text: string,
+    mentions: { name: string; profile_id: string }[] | undefined,
     accountIdOverride?: string
   ): Promise<UnipileComment> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) throw new Error('No Unipile account_id available for reply');
+    const body: Record<string, unknown> = {
+      account_id: accountId,
+      text,
+      comment_id: parentCommentId,
+    };
+    if (mentions && mentions.length > 0) body.mentions = mentions;
     return this.request<UnipileComment>(
       `/api/v1/posts/${encodeURIComponent(postSocialId)}/comments`,
       {
         method: 'POST',
-        body: JSON.stringify({
-          account_id: accountId,
-          text,
-          comment_id: parentCommentId,
-        }),
+        body: JSON.stringify(body),
       }
     );
   }

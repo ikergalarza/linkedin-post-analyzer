@@ -30,6 +30,7 @@ interface CommentAuthor {
   headline: string | null;
   profile_picture_url: string | null;
   public_identifier: string | null;
+  profile_id: string | null;
 }
 
 interface Thread {
@@ -287,10 +288,21 @@ function ThreadCard({
 }) {
   const [draft, setDraft] = useState<string>('');
   const [voice, setVoice] = useState<string | null>(null);
+  // Whether the current draft will be sent with a @-mention chip tagging the
+  // commenter. True when the draft starts with the commenter's exact name
+  // (the backend rewrites that prefix into Unipile's {{0}} mention template).
   const [generating, setGenerating] = useState(false);
   const [sending, setSending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+
+  const mention = thread.author.name && thread.author.profile_id
+    ? { name: thread.author.name, profile_id: thread.author.profile_id }
+    : null;
+
+  const willMention = !!mention && draft
+    .slice(0, mention.name.length)
+    .toLowerCase() === mention.name.toLowerCase();
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -302,6 +314,7 @@ function ThreadCard({
           comment_text: thread.text,
           commenter_name: thread.author.name,
           commenter_headline: thread.author.headline,
+          commenter_profile_id: thread.author.profile_id,
         }
       );
       setDraft(res.reply);
@@ -320,7 +333,7 @@ function ThreadCard({
     try {
       await apiPost(
         `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/reply`,
-        { text: draft.trim() }
+        { text: draft.trim(), mention }
       );
       setSent(true);
       setMsg('✓ Enviado a LinkedIn');
@@ -410,8 +423,22 @@ function ThreadCard({
                     >
                       ↻ Regenerar
                     </button>
+                    {mention && (
+                      <span
+                        className={`text-[10px] ml-auto ${
+                          willMention ? 'text-accent' : 'text-text-muted'
+                        }`}
+                        title={
+                          willMention
+                            ? `LinkedIn etiquetará a ${mention.name} al inicio`
+                            : `El nombre "${mention.name}" debe ir al inicio para que se etiquete`
+                        }
+                      >
+                        {willMention ? `@${mention.name} ✓` : `@${mention.name} ✗`}
+                      </span>
+                    )}
                     {voice && (
-                      <span className="text-[10px] text-text-muted ml-auto">voz: {voice}</span>
+                      <span className="text-[10px] text-text-muted">voz: {voice}</span>
                     )}
                   </div>
                 </>

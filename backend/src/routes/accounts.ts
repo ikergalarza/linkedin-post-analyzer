@@ -1721,6 +1721,11 @@ interface ThreadedComment {
     headline: string | null;
     profile_picture_url: string | null;
     public_identifier: string | null;
+    // LinkedIn member provider_id (ACoXXX form). Used as the profile_id
+    // when building an @-mention in the reply — Unipile's mentions array
+    // expects this exact form. Sourced from comment.author.id; may be null
+    // for anonymised or company actors.
+    profile_id: string | null;
   };
   replies: ThreadedComment[];
   // True iff at least one reply in this thread is from the post author
@@ -1740,6 +1745,7 @@ function shapeComment(c: any): ThreadedComment {
       headline: c.author?.headline || null,
       profile_picture_url: c.author?.profile_picture_url || null,
       public_identifier: c.author?.public_identifier || null,
+      profile_id: c.author?.id || c.author?.provider_id || null,
     },
     replies: [],
   };
@@ -1827,7 +1833,7 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
   try {
     const postId = req.params.postId as string;
     const commentId = req.params.commentId as string;
-    const { comment_text, commenter_name, commenter_headline } = req.body || {};
+    const { comment_text, commenter_name, commenter_headline, commenter_profile_id } = req.body || {};
     if (!comment_text) return res.status(400).json({ error: 'comment_text required' });
 
     const postQ = await pool.query(
@@ -1867,18 +1873,52 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
       },
     });
 
-    res.json({ reply, voice: voiceName, comment_id: commentId });
+    // Echo the commenter identity back so the frontend can pass it to /reply
+    // unchanged. profile_id is the LinkedIn member provider_id (ACoXXX form)
+    // Unipile uses to render an @-mention chip — same value we get back in
+    // comment.author.id when we fetched the thread.
+    res.json({
+      reply,
+      voice: voiceName,
+      comment_id: commentId,
+      mention: commenter_name && commenter_profile_id
+        ? { name: String(commenter_name), profile_id: String(commenter_profile_id) }
+        : null,
+    });
   } catch (err: any) {
     console.error('[accounts/comments/generate]', err);
     res.status(500).json({ error: err.message });
   }
 });
 
+// If the reply text starts with the commenter's display name (case-insensitive
+// exact prefix match), convert that prefix into a templated mention so
+// Unipile renders it as a real LinkedIn @-tag. Returns the (possibly
+// rewritten) text and the mentions array to send. We deliberately match
+// only at position 0 — the AI is instructed to put the name there, and any
+// mid-sentence occurrence the user typed is left alone (probably not a tag
+// they intended).
+function buildMentionedReply(
+  text: string,
+  mention: { name: string; profile_id: string } | null
+): { text: string; mentions: { name: string; profile_id: string }[] | undefined } {
+  if (!mention || !mention.name || !mention.profile_id) {
+    return { text, mentions: undefined };
+  }
+  const name = mention.name;
+  const prefix = text.slice(0, name.length);
+  if (prefix.toLowerCase() !== name.toLowerCase()) {
+    return { text, mentions: undefined };
+  }
+  const rewritten = `{{0}}${text.slice(name.length)}`;
+  return { text: rewritten, mentions: [{ name, profile_id: mention.profile_id }] };
+}
+
 router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId as string;
     const commentId = req.params.commentId as string;
-    const { text } = req.body || {};
+    const { text, mention } = req.body || {};
     if (!text || typeof text !== 'string' || !text.trim()) {
       return res.status(400).json({ error: 'text required' });
     }
@@ -1895,13 +1935,21 @@ router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res
     if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no LinkedIn id' });
     if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
 
+    const { text: finalText, mentions } = buildMentionedReply(
+      text.trim(),
+      mention && typeof mention === 'object' && mention.name && mention.profile_id
+        ? { name: String(mention.name), profile_id: String(mention.profile_id) }
+        : null
+    );
+
     const created = await unipileService.replyToComment(
       post.linkedin_post_id,
       commentId,
-      text.trim(),
+      finalText,
+      mentions,
       post.unipile_account_id
     );
-    res.json({ ok: true, created });
+    res.json({ ok: true, mentioned: !!mentions, created });
   } catch (err: any) {
     console.error('[accounts/comments/reply]', err);
     res.status(500).json({ error: err.message });
