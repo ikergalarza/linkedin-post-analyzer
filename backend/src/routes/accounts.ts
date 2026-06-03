@@ -1736,16 +1736,42 @@ interface ThreadedComment {
 }
 
 function shapeComment(c: any): ThreadedComment {
+  // Unipile rotates the field name for the comment author depending on the
+  // surface — comments under a post come back with `actor` or `commenter`
+  // (LinkedIn Voyager terminology), some payloads use `author` (mirrors the
+  // post shape), and a few replies use `from`. Walk all the variants and
+  // pick the first non-empty.
+  const a: any = c.author || c.actor || c.commenter || c.from || c.user || {};
+  const fullName =
+    a.name ||
+    a.full_name ||
+    a.display_name ||
+    [a.first_name, a.last_name].filter(Boolean).join(' ').trim() ||
+    null;
   return {
     id: String(c.id || c.social_id || ''),
-    text: String(c.text || ''),
-    date: c.parsed_datetime || c.created_at || c.date || null,
+    text: String(c.text || c.body || c.content || ''),
+    date:
+      c.parsed_datetime ||
+      c.created_at ||
+      c.date ||
+      c.posted_at ||
+      c.timestamp ||
+      null,
     author: {
-      name: c.author?.name || null,
-      headline: c.author?.headline || null,
-      profile_picture_url: c.author?.profile_picture_url || null,
-      public_identifier: c.author?.public_identifier || null,
-      profile_id: c.author?.id || c.author?.provider_id || null,
+      name: fullName,
+      headline: a.headline || a.occupation || a.title || a.subtitle || null,
+      profile_picture_url:
+        a.profile_picture_url ||
+        a.profile_image_url ||
+        a.picture_url ||
+        a.image_url ||
+        a.avatar_url ||
+        a.picture ||
+        null,
+      public_identifier: a.public_identifier || a.username || a.handle || null,
+      profile_id:
+        a.id || a.provider_id || a.profile_id || a.member_id || a.urn || null,
     },
     replies: [],
   };
@@ -1769,6 +1795,19 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
     if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
 
     const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
+
+    // Diagnostic: log the shape of the first comment + its author block so
+    // when a field rename slips through (Unipile rotates these without
+    // warning) we can adjust shapeComment's fallback list. Trimmed to keep
+    // logs cheap. Look for this line in Railway when commenters show as
+    // "Anónimo".
+    if (raw.length > 0) {
+      const sample = raw[0] as any;
+      const top = Object.keys(sample).slice(0, 25).join(',');
+      const authorish = sample.author || sample.actor || sample.commenter || sample.from || sample.user || {};
+      const authorKeys = Object.keys(authorish).slice(0, 20).join(',');
+      console.log(`[comments/shape] top=${top} | author-keys=${authorKeys}`);
+    }
 
     // Two-pass grouping: collect top-levels first, then attach replies by
     // parent_comment_id. Unipile's payload mixes both in a single flat list.
@@ -1813,7 +1852,7 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
         : false;
     }
 
-    res.json({
+    const response: any = {
       post: {
         id: post.id,
         content_text: post.content_text,
@@ -1822,7 +1861,11 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
       threads: topLevel,
       total_threads: topLevel.length,
       unanswered_threads: topLevel.filter((t) => !t.answered_by_author).length,
-    });
+    };
+    if (req.query.debug === '1' && raw.length > 0) {
+      response._debug_sample = raw[0];
+    }
+    res.json(response);
   } catch (err: any) {
     console.error('[accounts/comments]', err);
     res.status(500).json({ error: err.message });

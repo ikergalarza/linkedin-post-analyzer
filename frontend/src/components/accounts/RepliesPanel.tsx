@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApi, apiPost } from '../../hooks/useApi';
 
 // RepliesPanel — the "Comentarios" sub-tab. Pick one of the managed posts
@@ -194,6 +194,14 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
   );
 }
 
+// Imperative handle each ThreadCard exposes, so the parent can ask "are you
+// already filled in, and if not generate a draft now". Bulk generation just
+// awaits each card in turn — sequential is intentional, both for cleaner
+// progress UX and to avoid hammering Anthropic / hitting per-key rate limits.
+interface ThreadCardHandle {
+  generateIfEmpty: () => Promise<void>;
+}
+
 // Thread view — fetches the comments for one post, shows the post excerpt
 // on top, then a list of top-level threads. By default we hide the ones
 // the author already replied to (toggleable) so the user only sees the
@@ -208,6 +216,32 @@ function PostThreadView({ post }: { post: LivePost }) {
     if (!data) return [];
     return showAnswered ? data.threads : data.threads.filter((t) => !t.answered_by_author);
   }, [data, showAnswered]);
+
+  // Refs keyed by thread id so they survive ordering changes (showAnswered
+  // toggle, refetch) without losing the slot that holds each card's handle.
+  const cardRefs = useRef<Map<string, ThreadCardHandle | null>>(new Map());
+  const [bulkRunning, setBulkRunning] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
+
+  const handleBulkGenerate = async () => {
+    if (bulkRunning) return;
+    // Snapshot the visible threads so refetches mid-run don't change the
+    // queue length under our feet.
+    const targets = threads.map((t) => t.id);
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: targets.length });
+    for (let i = 0; i < targets.length; i++) {
+      const handle = cardRefs.current.get(targets[i]);
+      try {
+        if (handle) await handle.generateIfEmpty();
+      } catch {
+        // Per-card errors are surfaced inside the card itself — keep the
+        // bulk loop going so one failure doesn't block the rest.
+      }
+      setBulkProgress({ done: i + 1, total: targets.length });
+    }
+    setBulkRunning(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -233,23 +267,37 @@ function PostThreadView({ post }: { post: LivePost }) {
         </p>
       </div>
 
-      {/* Counts + toggle */}
+      {/* Counts + toggle + bulk action */}
       {data && (
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between text-xs gap-3 flex-wrap">
           <div className="text-text-secondary">
             <span className="font-medium text-text-primary">{data.unanswered_threads}</span>{' '}
             sin responder
             <span className="text-text-muted"> · {data.total_threads} totales</span>
           </div>
-          <label className="flex items-center gap-2 text-text-muted cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showAnswered}
-              onChange={(e) => setShowAnswered(e.target.checked)}
-              className="accent-accent"
-            />
-            Mostrar también respondidos
-          </label>
+          <div className="flex items-center gap-3 flex-wrap">
+            {threads.length > 0 && (
+              <button
+                onClick={handleBulkGenerate}
+                disabled={bulkRunning}
+                className="text-xs px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="Genera un borrador por cada hilo visible (sólo los que no tengan ya draft)"
+              >
+                {bulkRunning && bulkProgress
+                  ? `Generando ${bulkProgress.done}/${bulkProgress.total}…`
+                  : `✨ Generar todas (${threads.length})`}
+              </button>
+            )}
+            <label className="flex items-center gap-2 text-text-muted cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showAnswered}
+                onChange={(e) => setShowAnswered(e.target.checked)}
+                className="accent-accent"
+              />
+              Mostrar también respondidos
+            </label>
+          </div>
         </div>
       )}
 
@@ -269,7 +317,16 @@ function PostThreadView({ post }: { post: LivePost }) {
 
       <div className="space-y-3">
         {threads.map((t) => (
-          <ThreadCard key={t.id} thread={t} postId={post.id} onReplied={refetch} />
+          <ThreadCard
+            key={t.id}
+            thread={t}
+            postId={post.id}
+            onReplied={refetch}
+            handleRef={(h) => {
+              if (h) cardRefs.current.set(t.id, h);
+              else cardRefs.current.delete(t.id);
+            }}
+          />
         ))}
       </div>
     </div>
@@ -281,10 +338,12 @@ function ThreadCard({
   thread,
   postId,
   onReplied,
+  handleRef,
 }: {
   thread: Thread;
   postId: string;
   onReplied: () => void;
+  handleRef?: (handle: ThreadCardHandle | null) => void;
 }) {
   const [draft, setDraft] = useState<string>('');
   const [voice, setVoice] = useState<string | null>(null);
@@ -346,6 +405,25 @@ function ThreadCard({
       setSending(false);
     }
   };
+
+  // Expose generateIfEmpty so the parent's "Generar todas" loop can drive
+  // us. We mirror state into refs so the closure inside the handle always
+  // reads the latest values (the handle is registered once on mount).
+  const stateRef = useRef({ draft, sent, generating });
+  stateRef.current = { draft, sent, generating };
+  const generateRef = useRef(handleGenerate);
+  generateRef.current = handleGenerate;
+  useEffect(() => {
+    const handle: ThreadCardHandle = {
+      generateIfEmpty: async () => {
+        const s = stateRef.current;
+        if (s.draft || s.sent || s.generating) return;
+        await generateRef.current();
+      },
+    };
+    handleRef?.(handle);
+    return () => handleRef?.(null);
+  }, [handleRef]);
 
   return (
     <div
