@@ -10,6 +10,7 @@ import ProfileViewChart from '../components/ProfileViewChart';
 import GoogleChatModal from '../components/accounts/GoogleChatModal';
 import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
 import MonthlyBarChart from '../components/MonthlyBarChart';
+import RepliesPanel from '../components/accounts/RepliesPanel';
 
 interface ManagedAccount {
   id: string;
@@ -388,6 +389,10 @@ export default function Accounts() {
   const [refreshSignal, setRefreshSignal] = useState(0);
   const [topPostsTypeFilter, setTopPostsTypeFilter] = useState<string>('all');
   const [chatPostId, setChatPostId] = useState<string | null>(null);
+  // Top-level tab — the BI view is the original Accounts BI dashboard; the
+  // Replies view is the new sub-section where the user picks one of their
+  // posts and answers unanswered comments in their own voice (Iker / Unai).
+  const [view, setView] = useState<'bi' | 'replies'>('bi');
   // Live-posts list grows long fast; reveal in pages of LIVE_PAGE.
   const LIVE_PAGE = 12;
   const [visibleLive, setVisibleLive] = useState(LIVE_PAGE);
@@ -645,6 +650,34 @@ export default function Accounts() {
         </div>
       )}
 
+      {/* Sub-section tabs — BI is the dashboard you've always had; Replies
+          is the new triage view for answering comments in your own voice. */}
+      {hasAccounts && (
+        <div className="flex items-center gap-1 border-b border-border">
+          {([
+            { key: 'bi', label: 'BI' },
+            { key: 'replies', label: 'Comentarios' },
+          ] as const).map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setView(t.key)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                view === t.key
+                  ? 'border-accent text-text-primary'
+                  : 'border-transparent text-text-muted hover:text-text-secondary'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {view === 'replies' && hasAccounts && (
+        <RepliesPanel accounts={accounts || []} selectedCreator={selectedCreator} onSelectCreator={setSelectedCreator} />
+      )}
+
+      {view === 'bi' && (<>
       {/* Filters */}
       {hasAccounts && (
         <div className="flex items-center gap-3 flex-wrap">
@@ -1329,6 +1362,8 @@ export default function Accounts() {
       {loadingAnalytics && hasAccounts && (
         <p className="text-center text-text-muted text-sm py-4">Loading analytics…</p>
       )}
+
+      </>)}
 
       {chatPostId && (
         <GoogleChatModal postId={chatPostId} onClose={() => setChatPostId(null)} />

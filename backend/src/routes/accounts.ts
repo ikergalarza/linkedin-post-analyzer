@@ -10,6 +10,7 @@ import { CommenterProfileModel } from '../models/commenterProfile';
 import { sendToGoogleChat, detectOwner } from '../services/googleChat';
 import { captureAccountSnapshots } from '../services/accountSnapshots';
 import { extractViewerTimestamps } from '../utils/wvmp';
+import { generateReply } from '../services/replyGenerator';
 
 const router = Router();
 
@@ -1681,6 +1682,276 @@ router.post('/posts/:postId/send-to-google-chat', async (req: Request, res: Resp
     res.json({ ok: true, sent, total: messages.length });
   } catch (err: any) {
     console.error('[send-to-google-chat] Error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ───────────────────────────── Replies sub-tab ─────────────────────────────
+//
+// Lets the user pick one of their managed-account posts and reply (in their
+// own voice — Iker as Iker, Unai as Unai) to comments they haven't answered
+// yet. Three endpoints:
+//   GET  /posts/:postId/comments                 → list comments + grouped replies + unanswered flag
+//   POST /posts/:postId/comments/:cid/generate   → AI draft reply in author's voice
+//   POST /posts/:postId/comments/:cid/reply      → send the reply via Unipile
+//
+// Comments are NOT cached — every GET hits Unipile live. If volume becomes a
+// problem we can add a creator_post_comments table; until then, freshness >
+// caching complexity.
+
+// Map a creator's stored name to the commenter_profile voice entry. The two
+// managed accounts share their first name with the commenter_profile rows
+// seeded in migrations ("Iker", "Unai"), so a substring match is enough and
+// resilient to the post-creator's full name including surnames.
+function voiceProfileNameForCreator(creatorName: string | null | undefined): 'Iker' | 'Unai' | null {
+  const n = (creatorName || '').toLowerCase();
+  if (n.includes('iker')) return 'Iker';
+  if (n.includes('unai')) return 'Unai';
+  return null;
+}
+
+// Group a flat Unipile comment list into top-level + replies, mark threads
+// where the post author already replied so the UI can collapse those.
+interface ThreadedComment {
+  id: string;
+  text: string;
+  date: string | null;
+  author: {
+    name: string | null;
+    headline: string | null;
+    profile_picture_url: string | null;
+    public_identifier: string | null;
+    // LinkedIn member provider_id (ACoXXX form). Used as the profile_id
+    // when building an @-mention in the reply — Unipile's mentions array
+    // expects this exact form. Sourced from comment.author.id; may be null
+    // for anonymised or company actors.
+    profile_id: string | null;
+  };
+  replies: ThreadedComment[];
+  // True iff at least one reply in this thread is from the post author
+  // (matched by public_identifier === creator.linkedin_id). Set on top-level
+  // comments only — nested replies are siblings of each other inside the
+  // same thread.
+  answered_by_author?: boolean;
+}
+
+function shapeComment(c: any): ThreadedComment {
+  return {
+    id: String(c.id || c.social_id || ''),
+    text: String(c.text || ''),
+    date: c.parsed_datetime || c.created_at || c.date || null,
+    author: {
+      name: c.author?.name || null,
+      headline: c.author?.headline || null,
+      profile_picture_url: c.author?.profile_picture_url || null,
+      public_identifier: c.author?.public_identifier || null,
+      profile_id: c.author?.id || c.author?.provider_id || null,
+    },
+    replies: [],
+  };
+}
+
+router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId as string;
+    const postQ = await pool.query(
+      `SELECT p.id, p.linkedin_post_id, p.content_text, p.creator_id,
+              c.name AS creator_name, c.linkedin_id AS creator_linkedin_id,
+              c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1`,
+      [postId]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = postQ.rows[0];
+    if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no LinkedIn id' });
+    if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
+
+    // Two-pass grouping: collect top-levels first, then attach replies by
+    // parent_comment_id. Unipile's payload mixes both in a single flat list.
+    const byId = new Map<string, ThreadedComment>();
+    const topLevel: ThreadedComment[] = [];
+    for (const c of raw) {
+      const id = String(c.id || c.social_id || '');
+      if (!id) continue;
+      const parentId = c.parent_comment_id || c.comment_id || null;
+      if (!parentId) {
+        const t = shapeComment(c);
+        byId.set(id, t);
+        topLevel.push(t);
+      }
+    }
+    for (const c of raw) {
+      const parentId = c.parent_comment_id || c.comment_id || null;
+      if (!parentId) continue;
+      const parent = byId.get(String(parentId));
+      if (parent) parent.replies.push(shapeComment(c));
+    }
+
+    // Sort: replies oldest-first inside each thread (chronological feels
+    // natural in a thread view); top-levels newest-first because that's
+    // what the user wants to triage.
+    const tsOf = (d: string | null) => (d ? new Date(d).getTime() : 0);
+    for (const t of topLevel) t.replies.sort((a, b) => tsOf(a.date) - tsOf(b.date));
+    topLevel.sort((a, b) => tsOf(b.date) - tsOf(a.date));
+
+    const authorLinkedInId: string | null = post.creator_linkedin_id || null;
+    for (const t of topLevel) {
+      // Author may have replied directly (top-level author === author) — skip
+      // their own top-level comments as "answered" so they don't appear as
+      // pending. Most threads we care about: someone-else top-level + has
+      // (or hasn't) an author reply underneath.
+      if (authorLinkedInId && t.author.public_identifier === authorLinkedInId) {
+        t.answered_by_author = true;
+        continue;
+      }
+      t.answered_by_author = authorLinkedInId
+        ? t.replies.some((r) => r.author.public_identifier === authorLinkedInId)
+        : false;
+    }
+
+    res.json({
+      post: {
+        id: post.id,
+        content_text: post.content_text,
+        creator_name: post.creator_name,
+      },
+      threads: topLevel,
+      total_threads: topLevel.length,
+      unanswered_threads: topLevel.filter((t) => !t.answered_by_author).length,
+    });
+  } catch (err: any) {
+    console.error('[accounts/comments]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId as string;
+    const commentId = req.params.commentId as string;
+    const { comment_text, commenter_name, commenter_headline, commenter_profile_id } = req.body || {};
+    if (!comment_text) return res.status(400).json({ error: 'comment_text required' });
+
+    const postQ = await pool.query(
+      `SELECT p.content_text, c.name AS creator_name
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1`,
+      [postId]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = postQ.rows[0];
+
+    const voiceName = voiceProfileNameForCreator(post.creator_name);
+    if (!voiceName) {
+      return res
+        .status(400)
+        .json({ error: `No voice profile mapped for creator "${post.creator_name}"` });
+    }
+    const profile = await CommenterProfileModel.getByName(voiceName);
+    if (!profile) {
+      return res
+        .status(400)
+        .json({ error: `commenter_profile entry for "${voiceName}" is missing — seed it first` });
+    }
+
+    const reply = await generateReply({
+      postContent: post.content_text || '',
+      commentText: String(comment_text),
+      commenterName: commenter_name || null,
+      commenterHeadline: commenter_headline || null,
+      authorName: voiceName,
+      authorVoice: {
+        voice_style: profile.voice_style,
+        worldview: profile.worldview,
+        signature_moves: profile.signature_moves,
+        avoid: profile.avoid,
+      },
+    });
+
+    // Echo the commenter identity back so the frontend can pass it to /reply
+    // unchanged. profile_id is the LinkedIn member provider_id (ACoXXX form)
+    // Unipile uses to render an @-mention chip — same value we get back in
+    // comment.author.id when we fetched the thread.
+    res.json({
+      reply,
+      voice: voiceName,
+      comment_id: commentId,
+      mention: commenter_name && commenter_profile_id
+        ? { name: String(commenter_name), profile_id: String(commenter_profile_id) }
+        : null,
+    });
+  } catch (err: any) {
+    console.error('[accounts/comments/generate]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// If the reply text starts with the commenter's display name (case-insensitive
+// exact prefix match), convert that prefix into a templated mention so
+// Unipile renders it as a real LinkedIn @-tag. Returns the (possibly
+// rewritten) text and the mentions array to send. We deliberately match
+// only at position 0 — the AI is instructed to put the name there, and any
+// mid-sentence occurrence the user typed is left alone (probably not a tag
+// they intended).
+function buildMentionedReply(
+  text: string,
+  mention: { name: string; profile_id: string } | null
+): { text: string; mentions: { name: string; profile_id: string }[] | undefined } {
+  if (!mention || !mention.name || !mention.profile_id) {
+    return { text, mentions: undefined };
+  }
+  const name = mention.name;
+  const prefix = text.slice(0, name.length);
+  if (prefix.toLowerCase() !== name.toLowerCase()) {
+    return { text, mentions: undefined };
+  }
+  const rewritten = `{{0}}${text.slice(name.length)}`;
+  return { text: rewritten, mentions: [{ name, profile_id: mention.profile_id }] };
+}
+
+router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId as string;
+    const commentId = req.params.commentId as string;
+    const { text, mention } = req.body || {};
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      return res.status(400).json({ error: 'text required' });
+    }
+
+    const postQ = await pool.query(
+      `SELECT p.linkedin_post_id, c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1`,
+      [postId]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = postQ.rows[0];
+    if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no LinkedIn id' });
+    if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const { text: finalText, mentions } = buildMentionedReply(
+      text.trim(),
+      mention && typeof mention === 'object' && mention.name && mention.profile_id
+        ? { name: String(mention.name), profile_id: String(mention.profile_id) }
+        : null
+    );
+
+    const created = await unipileService.replyToComment(
+      post.linkedin_post_id,
+      commentId,
+      finalText,
+      mentions,
+      post.unipile_account_id
+    );
+    res.json({ ok: true, mentioned: !!mentions, created });
+  } catch (err: any) {
+    console.error('[accounts/comments/reply]', err);
     res.status(500).json({ error: err.message });
   }
 });
