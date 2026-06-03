@@ -1736,12 +1736,24 @@ interface ThreadedComment {
 }
 
 function shapeComment(c: any): ThreadedComment {
-  // Unipile rotates the field name for the comment author depending on the
-  // surface and SDK version. Try every variant we've seen so far AND fall
-  // back to flat top-level keys (`commenter_name`, `actor_name`, etc.) that
-  // some payloads use instead of a nested object.
+  // Unipile's LinkedIn comment schema (confirmed against a live response,
+  // 2026-06):
+  //   c.author          → STRING display name (e.g. "Mario Carrillo")
+  //   c.author_details  → { id, headline, profile_url, profile_picture_url,
+  //                         is_company, network_distance }
+  //   c.text, c.date    → body and ISO timestamp
+  //   c.post_id, c.post_urn
+  //   c.reply_counter, c.reaction_counter
+  // Replies are returned in the same flat list with a parent_comment_id
+  // pointing at their top-level. We still keep the older nested-author
+  // and flat-name fallbacks below so older / company-actor payloads
+  // don't regress to "Anónimo".
+  const details: any = c.author_details || {};
+
+  // Some payloads still nest the author block — fall back to it for older
+  // surfaces or replies that haven't converged on the new shape.
   const sub: any =
-    c.author ||
+    (typeof c.author === 'object' && c.author) ||
     c.actor ||
     c.commenter ||
     c.from ||
@@ -1753,87 +1765,87 @@ function shapeComment(c: any): ThreadedComment {
     c.attributes?.actor ||
     c.attributes?.commenter ||
     {};
-  const nameFromSub =
+
+  const fullName =
+    (typeof c.author === 'string' && c.author.trim()) ||
+    details.name ||
+    details.full_name ||
     sub.name ||
     sub.full_name ||
     sub.display_name ||
-    sub.title ||
     [sub.first_name, sub.last_name].filter(Boolean).join(' ').trim() ||
-    null;
-  const nameFromFlat =
     c.actor_name ||
     c.commenter_name ||
     c.author_name ||
-    c.poster_name ||
-    [c.first_name, c.last_name].filter(Boolean).join(' ').trim() ||
     null;
-  const fullName = nameFromSub || nameFromFlat || null;
 
-  const pictureFromSub =
+  const picture =
+    details.profile_picture_url ||
+    details.profile_image_url ||
+    details.picture_url ||
     sub.profile_picture_url ||
     sub.profile_image_url ||
     sub.picture_url ||
     sub.image_url ||
     sub.avatar_url ||
-    sub.picture ||
-    sub.image ||
-    null;
-  const pictureFromFlat =
-    c.actor_picture ||
-    c.commenter_picture ||
-    c.author_picture ||
     c.profile_picture_url ||
     null;
 
-  const headlineFromSub =
+  const headline =
+    details.headline ||
+    details.occupation ||
     sub.headline ||
     sub.occupation ||
     sub.title ||
     sub.subtitle ||
-    sub.tagline ||
-    null;
-  const headlineFromFlat =
-    c.actor_headline || c.commenter_headline || c.author_headline || null;
-
-  const profileIdFromSub =
-    sub.id || sub.provider_id || sub.profile_id || sub.member_id || sub.urn || null;
-  const profileIdFromFlat =
-    c.actor_id ||
-    c.commenter_id ||
-    c.author_id ||
-    c.profile_id ||
-    c.actor_urn ||
-    c.commenter_urn ||
     null;
 
-  const publicIdFromSub =
-    sub.public_identifier || sub.username || sub.handle || sub.slug || null;
-
-  // Provider ids sometimes come prefixed (`urn:li:person:ACoXXX` or
-  // `urn:li:fsd_profile:ACoXXX`). Strip the prefix so the value matches
-  // creator.linkedin_id (stored without prefix) for the answered-by-author
-  // comparison downstream.
-  const rawProfileId = (profileIdFromSub || profileIdFromFlat || '') as string;
+  // Provider id from author_details.id (confirmed ACoXXX form, no prefix).
+  // Falls through to legacy nested/flat shapes. The .replace strips
+  // urn:li:<type>: prefixes so the value matches creator.linkedin_id
+  // (stored bare) for the answered-by-author comparison downstream.
+  const rawProfileId = String(
+    details.id ||
+      details.provider_id ||
+      details.member_id ||
+      sub.id ||
+      sub.provider_id ||
+      sub.profile_id ||
+      sub.member_id ||
+      sub.urn ||
+      c.author_id ||
+      c.profile_id ||
+      ''
+  );
   const profileId = rawProfileId
     ? rawProfileId.replace(/^urn:li:[a-z_]+:/, '')
     : null;
+
+  // Public identifier — derive from profile_url's /in/<slug> path when the
+  // payload only ships the URL (the confirmed shape does), otherwise fall
+  // back to nested public_identifier / username / handle.
+  let publicIdentifier: string | null = sub.public_identifier || sub.username || sub.handle || sub.slug || null;
+  if (!publicIdentifier && typeof details.profile_url === 'string') {
+    const m = details.profile_url.match(/linkedin\.com\/in\/([^/?#]+)/);
+    if (m) publicIdentifier = m[1];
+  }
 
   return {
     id: String(c.id || c.social_id || c.comment_id_str || ''),
     text: String(c.text || c.body || c.content || c.message || ''),
     date:
-      c.parsed_datetime ||
-      c.created_at ||
       c.date ||
+      c.created_at ||
+      c.parsed_datetime ||
       c.posted_at ||
       c.timestamp ||
       c.createdAt ||
       null,
     author: {
       name: fullName,
-      headline: headlineFromSub || headlineFromFlat,
-      profile_picture_url: pictureFromSub || pictureFromFlat,
-      public_identifier: publicIdFromSub || c.public_identifier || null,
+      headline,
+      profile_picture_url: picture,
+      public_identifier: publicIdentifier,
       profile_id: profileId,
     },
     replies: [],
