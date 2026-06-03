@@ -47,6 +47,10 @@ interface CommentsResponse {
   threads: Thread[];
   total_threads: number;
   unanswered_threads: number;
+  // Present when the backend couldn't parse an author name on any thread
+  // (Unipile rotated a field) — we render it inline so the shape can be
+  // diagnosed without leaving the browser.
+  _debug_sample?: unknown;
 }
 
 interface Props {
@@ -247,25 +251,49 @@ function PostThreadView({ post }: { post: LivePost }) {
     <div className="space-y-4">
       {/* Post header */}
       <div className="border-b border-border pb-3">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
           <Avatar src={post.creator_image} name={post.creator_name} size={28} />
           <span className="text-sm font-medium">{post.creator_name}</span>
           <span className="text-xs text-text-muted">· {fmtDate(post.published_at)}</span>
-          {post.post_url && (
-            <a
-              href={post.post_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-auto text-xs text-accent hover:text-accent-light"
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={refetch}
+              disabled={loading}
+              className="text-xs text-text-muted hover:text-text-primary disabled:opacity-50 transition-colors"
+              title="Vuelve a pedir los comentarios a LinkedIn por si hay nuevos"
             >
-              Ver en LinkedIn →
-            </a>
-          )}
+              {loading ? '↻ Cargando…' : '↻ Actualizar comentarios'}
+            </button>
+            {post.post_url && (
+              <a
+                href={post.post_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-accent hover:text-accent-light"
+              >
+                Ver en LinkedIn →
+              </a>
+            )}
+          </div>
         </div>
         <p className="text-sm text-text-secondary whitespace-pre-wrap line-clamp-4">
           {post.content_text}
         </p>
       </div>
+
+      {/* Inline debug — auto-shown when the backend couldn't parse author
+          names on any thread, so we can read the actual Unipile shape and
+          extend shapeComment's fallbacks. */}
+      {data?._debug_sample !== undefined && (
+        <details className="text-[11px] border border-red-400/30 bg-red-400/5 rounded p-2">
+          <summary className="cursor-pointer text-red-400 font-medium">
+            ⚠ Autor no detectado — pulsa para ver la respuesta cruda de Unipile (cópiamela)
+          </summary>
+          <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-all text-text-secondary">
+            {JSON.stringify(data._debug_sample, null, 2)}
+          </pre>
+        </details>
+      )}
 
       {/* Counts + toggle + bulk action */}
       {data && (

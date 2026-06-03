@@ -1737,41 +1737,104 @@ interface ThreadedComment {
 
 function shapeComment(c: any): ThreadedComment {
   // Unipile rotates the field name for the comment author depending on the
-  // surface — comments under a post come back with `actor` or `commenter`
-  // (LinkedIn Voyager terminology), some payloads use `author` (mirrors the
-  // post shape), and a few replies use `from`. Walk all the variants and
-  // pick the first non-empty.
-  const a: any = c.author || c.actor || c.commenter || c.from || c.user || {};
-  const fullName =
-    a.name ||
-    a.full_name ||
-    a.display_name ||
-    [a.first_name, a.last_name].filter(Boolean).join(' ').trim() ||
+  // surface and SDK version. Try every variant we've seen so far AND fall
+  // back to flat top-level keys (`commenter_name`, `actor_name`, etc.) that
+  // some payloads use instead of a nested object.
+  const sub: any =
+    c.author ||
+    c.actor ||
+    c.commenter ||
+    c.from ||
+    c.user ||
+    c.member ||
+    c.poster ||
+    c.profile ||
+    c.entity ||
+    c.attributes?.actor ||
+    c.attributes?.commenter ||
+    {};
+  const nameFromSub =
+    sub.name ||
+    sub.full_name ||
+    sub.display_name ||
+    sub.title ||
+    [sub.first_name, sub.last_name].filter(Boolean).join(' ').trim() ||
     null;
+  const nameFromFlat =
+    c.actor_name ||
+    c.commenter_name ||
+    c.author_name ||
+    c.poster_name ||
+    [c.first_name, c.last_name].filter(Boolean).join(' ').trim() ||
+    null;
+  const fullName = nameFromSub || nameFromFlat || null;
+
+  const pictureFromSub =
+    sub.profile_picture_url ||
+    sub.profile_image_url ||
+    sub.picture_url ||
+    sub.image_url ||
+    sub.avatar_url ||
+    sub.picture ||
+    sub.image ||
+    null;
+  const pictureFromFlat =
+    c.actor_picture ||
+    c.commenter_picture ||
+    c.author_picture ||
+    c.profile_picture_url ||
+    null;
+
+  const headlineFromSub =
+    sub.headline ||
+    sub.occupation ||
+    sub.title ||
+    sub.subtitle ||
+    sub.tagline ||
+    null;
+  const headlineFromFlat =
+    c.actor_headline || c.commenter_headline || c.author_headline || null;
+
+  const profileIdFromSub =
+    sub.id || sub.provider_id || sub.profile_id || sub.member_id || sub.urn || null;
+  const profileIdFromFlat =
+    c.actor_id ||
+    c.commenter_id ||
+    c.author_id ||
+    c.profile_id ||
+    c.actor_urn ||
+    c.commenter_urn ||
+    null;
+
+  const publicIdFromSub =
+    sub.public_identifier || sub.username || sub.handle || sub.slug || null;
+
+  // Provider ids sometimes come prefixed (`urn:li:person:ACoXXX` or
+  // `urn:li:fsd_profile:ACoXXX`). Strip the prefix so the value matches
+  // creator.linkedin_id (stored without prefix) for the answered-by-author
+  // comparison downstream.
+  const rawProfileId = (profileIdFromSub || profileIdFromFlat || '') as string;
+  const profileId = rawProfileId
+    ? rawProfileId.replace(/^urn:li:[a-z_]+:/, '')
+    : null;
+
   return {
-    id: String(c.id || c.social_id || ''),
-    text: String(c.text || c.body || c.content || ''),
+    id: String(c.id || c.social_id || c.comment_id_str || ''),
+    text: String(c.text || c.body || c.content || c.message || ''),
     date:
       c.parsed_datetime ||
       c.created_at ||
       c.date ||
       c.posted_at ||
       c.timestamp ||
+      c.createdAt ||
       null,
     author: {
       name: fullName,
-      headline: a.headline || a.occupation || a.title || a.subtitle || null,
-      profile_picture_url:
-        a.profile_picture_url ||
-        a.profile_image_url ||
-        a.picture_url ||
-        a.image_url ||
-        a.avatar_url ||
-        a.picture ||
-        null,
-      public_identifier: a.public_identifier || a.username || a.handle || null,
-      profile_id:
-        a.id || a.provider_id || a.profile_id || a.member_id || a.urn || null,
+      headline: headlineFromSub || headlineFromFlat,
+      profile_picture_url: pictureFromSub || pictureFromFlat,
+      public_identifier: publicIdFromSub || c.public_identifier || null,
+      profile_id: profileId,
     },
     replies: [],
   };
@@ -1796,17 +1859,15 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
 
     const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
 
-    // Diagnostic: log the shape of the first comment + its author block so
-    // when a field rename slips through (Unipile rotates these without
-    // warning) we can adjust shapeComment's fallback list. Trimmed to keep
-    // logs cheap. Look for this line in Railway when commenters show as
-    // "Anónimo".
+    // Diagnostic: dump the full first comment shape on every request — we
+    // keep hitting "Anónimo" because Unipile rotates author field names
+    // and the only way to lock down the right path is to see the actual
+    // payload. Heavy logging but the response is small and this only fires
+    // on user-initiated thread opens.
     if (raw.length > 0) {
-      const sample = raw[0] as any;
-      const top = Object.keys(sample).slice(0, 25).join(',');
-      const authorish = sample.author || sample.actor || sample.commenter || sample.from || sample.user || {};
-      const authorKeys = Object.keys(authorish).slice(0, 20).join(',');
-      console.log(`[comments/shape] top=${top} | author-keys=${authorKeys}`);
+      const sample = raw[0];
+      const json = JSON.stringify(sample).slice(0, 2000);
+      console.log(`[comments/raw-sample] post=${postId} | ${json}`);
     }
 
     // Two-pass grouping: collect top-levels first, then attach replies by
@@ -1837,21 +1898,32 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
     for (const t of topLevel) t.replies.sort((a, b) => tsOf(a.date) - tsOf(b.date));
     topLevel.sort((a, b) => tsOf(b.date) - tsOf(a.date));
 
-    const authorLinkedInId: string | null = post.creator_linkedin_id || null;
+    // Strip Voyager URN prefixes off the post author's linkedin_id so it
+    // matches what shapeComment normalised on the comment side (both end
+    // up as bare provider_id ACoXXX). Without this, threads where the
+    // author replied still showed as unanswered.
+    const authorLinkedInId: string | null = post.creator_linkedin_id
+      ? String(post.creator_linkedin_id).replace(/^urn:li:[a-z_]+:/, '')
+      : null;
     for (const t of topLevel) {
       // Author may have replied directly (top-level author === author) — skip
       // their own top-level comments as "answered" so they don't appear as
       // pending. Most threads we care about: someone-else top-level + has
       // (or hasn't) an author reply underneath.
-      if (authorLinkedInId && t.author.public_identifier === authorLinkedInId) {
+      if (authorLinkedInId && t.author.profile_id === authorLinkedInId) {
         t.answered_by_author = true;
         continue;
       }
       t.answered_by_author = authorLinkedInId
-        ? t.replies.some((r) => r.author.public_identifier === authorLinkedInId)
+        ? t.replies.some((r) => r.author.profile_id === authorLinkedInId)
         : false;
     }
 
+    // If none of the threads have an author name, surface the raw first
+    // comment in the response so we can read it from the browser and fix
+    // the shape mapping without round-tripping to Railway logs. Also
+    // available unconditionally via ?debug=1.
+    const noNamesParsed = topLevel.length > 0 && topLevel.every((t) => !t.author.name);
     const response: any = {
       post: {
         id: post.id,
@@ -1862,7 +1934,7 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
       total_threads: topLevel.length,
       unanswered_threads: topLevel.filter((t) => !t.answered_by_author).length,
     };
-    if (req.query.debug === '1' && raw.length > 0) {
+    if (raw.length > 0 && (req.query.debug === '1' || noNamesParsed)) {
       response._debug_sample = raw[0];
     }
     res.json(response);
