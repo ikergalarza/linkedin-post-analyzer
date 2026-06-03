@@ -561,15 +561,17 @@ export class UnipileService {
     return scanMediaSignalsImpl(raw);
   }
 
-  // Fetch every comment thread on a post (top-level + nested replies).
-  // The Unipile REST endpoint is paginated; we follow the cursor until empty
-  // or until the safety cap to keep wall-time bounded even for posts with
-  // hundreds of comments. Returns raw Unipile comment objects — the caller
-  // is responsible for grouping top-levels with their replies and figuring
-  // out which ones the post author hasn't replied to yet.
+  // Fetch every comment thread on a post.
+  // - Without opts.parentCommentId → top-level comments (Unipile's default).
+  // - With opts.parentCommentId    → the replies under that specific comment.
+  // The same endpoint serves both; we just pass `comment_id=<parent>` to
+  // scope it to a thread. Replies aren't included in the top-level call —
+  // each comment with reply_counter > 0 needs its own follow-up fetch
+  // (the route layer parallelises them with Promise.all).
   async getPostComments(
     postSocialId: string,
-    accountIdOverride?: string
+    accountIdOverride?: string,
+    opts: { parentCommentId?: string } = {}
   ): Promise<UnipileComment[]> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) {
@@ -582,6 +584,7 @@ export class UnipileService {
     for (let page = 0; page < MAX_PAGES; page++) {
       const params = new URLSearchParams({ account_id: accountId, limit: '50' });
       if (cursor) params.set('cursor', cursor);
+      if (opts.parentCommentId) params.set('comment_id', opts.parentCommentId);
       const res = await this.request<UnipileCommentListResponse>(
         `/api/v1/posts/${encodeURIComponent(postSocialId)}/comments?${params.toString()}`
       );
