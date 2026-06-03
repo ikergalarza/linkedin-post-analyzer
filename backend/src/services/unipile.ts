@@ -67,6 +67,39 @@ interface UnipileListResponse {
   paging?: { cursor?: string };
 }
 
+// A LinkedIn comment as Unipile surfaces it. Field names vary mildly across
+// versions, so the union types accommodate the variants we've seen in the
+// wild. parent_comment_id (or comment_id) signals a reply rather than a
+// top-level comment; the routes layer uses this to group the thread.
+export interface UnipileComment {
+  id?: string;
+  social_id?: string;
+  text?: string;
+  date?: string;
+  created_at?: string;
+  parsed_datetime?: string;
+  parent_comment_id?: string | null;
+  comment_id?: string | null; // some payloads name the parent this way
+  is_reply?: boolean;
+  reaction_counter?: number;
+  reply_counter?: number;
+  author?: {
+    id?: string;
+    public_identifier?: string;
+    name?: string;
+    headline?: string;
+    profile_picture_url?: string;
+    is_company?: boolean;
+  };
+  [key: string]: any;
+}
+
+interface UnipileCommentListResponse {
+  items?: UnipileComment[];
+  cursor?: string;
+  paging?: { cursor?: string };
+}
+
 export class UnipileService {
   private apiKey: string;
   private baseUrl: string;
@@ -526,6 +559,64 @@ export class UnipileService {
   // reclassification stay in sync. Ignores post text fields to avoid false positives.
   private scanMediaSignals(raw: any): { image: boolean; carousel: boolean; video: boolean; document: boolean } {
     return scanMediaSignalsImpl(raw);
+  }
+
+  // Fetch every comment thread on a post (top-level + nested replies).
+  // The Unipile REST endpoint is paginated; we follow the cursor until empty
+  // or until the safety cap to keep wall-time bounded even for posts with
+  // hundreds of comments. Returns raw Unipile comment objects — the caller
+  // is responsible for grouping top-levels with their replies and figuring
+  // out which ones the post author hasn't replied to yet.
+  async getPostComments(
+    postSocialId: string,
+    accountIdOverride?: string
+  ): Promise<UnipileComment[]> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) {
+      console.warn('[Unipile comments] No account_id available, skipping');
+      return [];
+    }
+    const all: UnipileComment[] = [];
+    let cursor: string | undefined;
+    const MAX_PAGES = 10; // 10 × 50 = 500 comments ceiling
+    for (let page = 0; page < MAX_PAGES; page++) {
+      const params = new URLSearchParams({ account_id: accountId, limit: '50' });
+      if (cursor) params.set('cursor', cursor);
+      const res = await this.request<UnipileCommentListResponse>(
+        `/api/v1/posts/${encodeURIComponent(postSocialId)}/comments?${params.toString()}`
+      );
+      const items = res.items || [];
+      if (items.length === 0) break;
+      all.push(...items);
+      cursor = res.cursor || res.paging?.cursor;
+      if (!cursor) break;
+    }
+    return all;
+  }
+
+  // Post a reply under an existing comment. Unipile's API takes the parent
+  // comment_id as part of the body — same endpoint as posting a top-level
+  // comment, just with the extra field. Returns the created comment so the
+  // caller can update local UI optimistically.
+  async replyToComment(
+    postSocialId: string,
+    parentCommentId: string,
+    text: string,
+    accountIdOverride?: string
+  ): Promise<UnipileComment> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for reply');
+    return this.request<UnipileComment>(
+      `/api/v1/posts/${encodeURIComponent(postSocialId)}/comments`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          account_id: accountId,
+          text,
+          comment_id: parentCommentId,
+        }),
+      }
+    );
   }
 }
 
