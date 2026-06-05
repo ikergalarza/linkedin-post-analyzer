@@ -671,6 +671,55 @@ export class UnipileService {
 
     return { counts, sampled, pages };
   }
+
+  // PROBE — tries several candidate URLs for "list followers" because
+  // Unipile's exact path/shape isn't documented in our integration yet.
+  // Returns, for each candidate, whether it 200'd and a small sample of
+  // items so the debug endpoint can show us the real shape + ordering.
+  // This is throwaway scaffolding for Phase 0; once we know the working
+  // path we replace it with a clean getFollowers().
+  async probeFollowers(
+    accountIdOverride: string | undefined,
+    providerId: string | null,
+    pageSize = 10
+  ): Promise<{
+    working_path: string | null;
+    candidates: { path: string; ok: boolean; count: number; error?: string; sample?: any[]; raw_keys?: string[] }[];
+  }> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for followers probe');
+
+    const q = `account_id=${encodeURIComponent(accountId)}&limit=${pageSize}`;
+    const candidatePaths = [
+      `/api/v1/users/followers?${q}`,
+      `/api/v1/users/relations?${q}`,
+      providerId ? `/api/v1/users/${encodeURIComponent(providerId)}/followers?${q}` : null,
+      providerId ? `/api/v1/users/${encodeURIComponent(providerId)}/relations?${q}` : null,
+      `/api/v1/users/me/followers?${q}`,
+    ].filter(Boolean) as string[];
+
+    const candidates: { path: string; ok: boolean; count: number; error?: string; sample?: any[]; raw_keys?: string[] }[] = [];
+    let working: string | null = null;
+
+    for (const path of candidatePaths) {
+      try {
+        const res = await this.request<{ items?: any[]; [k: string]: any }>(path);
+        const items = Array.isArray(res?.items) ? res.items : [];
+        candidates.push({
+          path,
+          ok: true,
+          count: items.length,
+          raw_keys: Object.keys(res || {}),
+          sample: items.slice(0, 3),
+        });
+        if (!working && items.length > 0) working = path;
+      } catch (err: any) {
+        candidates.push({ path, ok: false, count: 0, error: String(err?.message || '').slice(0, 200) });
+      }
+    }
+
+    return { working_path: working, candidates };
+  }
 }
 
 // Shared between live detection and reclassify. LinkedIn CDN URLs lack file
