@@ -456,6 +456,51 @@ const migration = `
   CREATE INDEX IF NOT EXISTS idx_posts_reaction_mix_funny
     ON posts (((reaction_mix->>'FUNNY')::int))
     WHERE reaction_mix IS NOT NULL;
+
+  -- v25: Individual follower roster per managed creator, for organic-growth
+  -- tracking. One row per (creator, follower). first_seen_on is the day WE
+  -- first detected them (the followers endpoint doesn't expose a follow
+  -- date). is_baseline = TRUE for everyone captured in the initial full
+  -- snapshot — those are pre-existing followers we can't retroactively
+  -- classify, so they're excluded from the "new organic followers/day"
+  -- series. classification:
+  --   'pure_follow' → not in the creator's connections when detected:
+  --                   they followed by hitting Follow, i.e. organic pull.
+  --   'connection'  → was in connections when detected: entered via a
+  --                   connection (inbound OR outbound — Phase 2 with sent
+  --                   invitations will split these).
+  --   'unknown'     → couldn't resolve connection membership.
+  CREATE TABLE IF NOT EXISTS creator_followers (
+    creator_id UUID NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
+    follower_provider_id TEXT NOT NULL,
+    name TEXT,
+    headline TEXT,
+    profile_url TEXT,
+    profile_picture_url TEXT,
+    first_seen_on DATE NOT NULL DEFAULT CURRENT_DATE,
+    is_baseline BOOLEAN NOT NULL DEFAULT FALSE,
+    classification TEXT NOT NULL DEFAULT 'unknown'
+      CHECK (classification IN ('pure_follow','connection','unknown')),
+    is_connection BOOLEAN NOT NULL DEFAULT FALSE,
+    connection_created_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (creator_id, follower_provider_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_creator_followers_seen
+    ON creator_followers (creator_id, first_seen_on);
+  CREATE INDEX IF NOT EXISTS idx_creator_followers_class
+    ON creator_followers (creator_id, classification, first_seen_on);
+
+  -- Tracks whether each managed creator has had its one-time baseline
+  -- snapshot taken yet, so the daily sync knows to run the full capture
+  -- first (marking everyone is_baseline) before switching to incremental.
+  CREATE TABLE IF NOT EXISTS creator_follower_sync_state (
+    creator_id UUID PRIMARY KEY REFERENCES creators(id) ON DELETE CASCADE,
+    baseline_done BOOLEAN NOT NULL DEFAULT FALSE,
+    baseline_count INTEGER,
+    last_synced_at TIMESTAMPTZ,
+    last_new_count INTEGER
+  );
 `;
 
 export async function runMigrations() {
