@@ -223,6 +223,7 @@ export default function Inspiration() {
     outliers_with_mix: number;
     outliers_total: number;
     outliers_permanently_failed: number;
+    errors_by_status: Record<string, number>;
     last_error: string | null;
   } | null>(null);
   const [mixStarting, setMixStarting] = useState(false);
@@ -244,6 +245,7 @@ export default function Inspiration() {
           outliers_with_mix: json.summary.outliers_with_mix,
           outliers_total: json.summary.outliers_total,
           outliers_permanently_failed: json.summary.outliers_permanently_failed || 0,
+          errors_by_status: json.progress.errors_by_status || {},
           last_error: json.progress.last_error,
         });
       } catch { /* ignore */ }
@@ -559,11 +561,32 @@ export default function Inspiration() {
               </button>
               <span className="text-xs text-text-muted">
                 {mixStatus.outliers_with_mix.toLocaleString()} / {mixStatus.outliers_total.toLocaleString()} outliers con mix
-                {mixStatus.failed > 0 && <span className="text-red-400"> · {mixStatus.failed} fallos en esta corrida</span>}
                 {mixStatus.outliers_permanently_failed > 0 && (
-                  <span className="text-amber-400/80"> · {mixStatus.outliers_permanently_failed} posts borrados de LinkedIn</span>
+                  <span className="text-amber-400/80"> · {mixStatus.outliers_permanently_failed} borrados de LinkedIn</span>
                 )}
               </span>
+              {Object.keys(mixStatus.errors_by_status).length > 0 && (
+                <span className="text-[10px] text-text-muted flex items-center gap-2 flex-wrap">
+                  {Object.entries(mixStatus.errors_by_status)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([status, count]) => {
+                      const label =
+                        status === '429' ? 'rate-limit (reintentables)' :
+                        status === '404' ? 'not_found (borrados)' :
+                        status === '-1' ? 'network/other' :
+                        `HTTP ${status}`;
+                      const colour =
+                        status === '429' ? 'text-orange-400/80' :
+                        status === '404' ? 'text-amber-400/80' :
+                        'text-red-400/80';
+                      return (
+                        <span key={status} className={colour}>
+                          {count} {label}
+                        </span>
+                      );
+                    })}
+                </span>
+              )}
               {mixStatus.last_error && (
                 <span className="text-[10px] text-red-400/70 truncate max-w-md" title={mixStatus.last_error}>
                   último error: {mixStatus.last_error}
