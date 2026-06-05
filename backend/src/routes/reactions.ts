@@ -28,8 +28,9 @@ router.get('/backfill/status', async (_req: Request, res: Response) => {
     const progress = getBackfillProgress();
     const { rows } = await pool.query(
       `SELECT
-         COUNT(*) FILTER (WHERE is_outlier = TRUE)::int                                   AS outliers_total,
-         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix IS NOT NULL)::int      AS outliers_with_mix
+         COUNT(*) FILTER (WHERE is_outlier = TRUE)::int                                                              AS outliers_total,
+         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix IS NOT NULL)::int                                 AS outliers_with_mix,
+         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix ? '_error')::int                                  AS outliers_permanently_failed
        FROM posts
        WHERE linkedin_post_id <> 'DEMO_LIVE_POST'`
     );

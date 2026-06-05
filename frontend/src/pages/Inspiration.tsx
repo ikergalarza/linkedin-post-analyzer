@@ -222,6 +222,7 @@ export default function Inspiration() {
     total: number;
     outliers_with_mix: number;
     outliers_total: number;
+    outliers_permanently_failed: number;
     last_error: string | null;
   } | null>(null);
   const [mixStarting, setMixStarting] = useState(false);
@@ -242,6 +243,7 @@ export default function Inspiration() {
           total: json.progress.total,
           outliers_with_mix: json.summary.outliers_with_mix,
           outliers_total: json.summary.outliers_total,
+          outliers_permanently_failed: json.summary.outliers_permanently_failed || 0,
           last_error: json.progress.last_error,
         });
       } catch { /* ignore */ }
@@ -557,7 +559,10 @@ export default function Inspiration() {
               </button>
               <span className="text-xs text-text-muted">
                 {mixStatus.outliers_with_mix.toLocaleString()} / {mixStatus.outliers_total.toLocaleString()} outliers con mix
-                {mixStatus.failed > 0 && <span className="text-red-400"> · {mixStatus.failed} fallos</span>}
+                {mixStatus.failed > 0 && <span className="text-red-400"> · {mixStatus.failed} fallos en esta corrida</span>}
+                {mixStatus.outliers_permanently_failed > 0 && (
+                  <span className="text-amber-400/80"> · {mixStatus.outliers_permanently_failed} posts borrados de LinkedIn</span>
+                )}
               </span>
               {mixStatus.last_error && (
                 <span className="text-[10px] text-red-400/70 truncate max-w-md" title={mixStatus.last_error}>
