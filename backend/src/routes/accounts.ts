@@ -2139,7 +2139,27 @@ router.post('/followers/sync', async (req: Request, res: Response) => {
 
 router.get('/followers/sync-status', async (_req: Request, res: Response) => {
   try {
-    res.json(getFollowerSyncProgress());
+    // In-memory progress (current run) + DB facts (what's actually been
+    // captured per creator across runs / restarts). The in-memory side
+    // resets every time the server restarts, so the DB summary is what
+    // tells you whether the baseline ever actually ran.
+    const progress = getFollowerSyncProgress();
+    const { rows: creators } = await pool.query(
+      `SELECT c.id, c.name, c.unipile_account_id IS NOT NULL AS has_account_id,
+              COALESCE(s.baseline_done, FALSE) AS baseline_done,
+              s.baseline_count,
+              s.last_synced_at,
+              s.last_new_count,
+              (SELECT COUNT(*)::int FROM creator_followers f
+                WHERE f.creator_id = c.id) AS followers_in_db,
+              (SELECT COUNT(*)::int FROM creator_followers f
+                WHERE f.creator_id = c.id AND f.is_baseline = FALSE) AS new_since_baseline
+         FROM creators c
+         LEFT JOIN creator_follower_sync_state s ON s.creator_id = c.id
+        WHERE c.is_managed = TRUE
+        ORDER BY c.name`
+    );
+    res.json({ progress, creators });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

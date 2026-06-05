@@ -91,6 +91,48 @@ export default function OrganicFollowersChart({ creatorId, days, reloadSignal }:
     }
   };
 
+  // Per-creator sync status from the DB. Polls every 8s while syncing,
+  // otherwise every 60s — tells us whether the baseline actually ran for
+  // each managed creator even after a server restart wipes the in-memory
+  // progress state.
+  interface SyncCreator {
+    id: string;
+    name: string;
+    has_account_id: boolean;
+    baseline_done: boolean;
+    baseline_count: number | null;
+    last_synced_at: string | null;
+    last_new_count: number | null;
+    followers_in_db: number;
+    new_since_baseline: number;
+  }
+  interface SyncStatus {
+    progress: {
+      running: boolean;
+      phase: string;
+      current_creator: string | null;
+      creators_done: number;
+      creators_total: number;
+      new_followers_this_run: number;
+      last_error: string | null;
+    };
+    creators: SyncCreator[];
+  }
+  const [status, setStatus] = useState<SyncStatus | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const tick = () => {
+      fetch(`${BASE}/api/accounts/followers/sync-status`)
+        .then((r) => r.json())
+        .then((s) => { if (!cancelled) setStatus(s); })
+        .catch(() => {});
+    };
+    tick();
+    const interval = status?.progress.running ? 8000 : 60000;
+    const id = setInterval(tick, interval);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [status?.progress.running, reloadKey]);
+
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),
     [points]
@@ -137,7 +179,40 @@ export default function OrganicFollowersChart({ creatorId, days, reloadSignal }:
           </button>
         </div>
       </div>
-      {syncMsg && <p className="text-[11px] text-text-muted mb-3">{syncMsg}</p>}
+      {syncMsg && <p className="text-[11px] text-text-muted mb-2">{syncMsg}</p>}
+
+      {/* Per-creator sync status — surfaces whether the baseline ran for
+          each managed creator. After a server restart the in-memory progress
+          state resets to idle; this DB-backed summary still shows the truth. */}
+      {status && status.creators.length > 0 && (
+        <div className="text-[11px] text-text-muted mb-3 flex flex-wrap gap-x-4 gap-y-1">
+          {status.progress.running && (
+            <span className="text-accent font-medium">
+              ↻ {status.progress.phase} · {status.progress.current_creator || ''} ({status.progress.creators_done}/{status.progress.creators_total})
+            </span>
+          )}
+          {status.creators.map((c) => (
+            <span key={c.id} className={c.baseline_done ? '' : 'text-amber-400/80'}>
+              <strong className="text-text-secondary">{c.name}:</strong>{' '}
+              {c.baseline_done
+                ? `${c.followers_in_db.toLocaleString()} en DB${c.new_since_baseline > 0 ? ` (${c.new_since_baseline} nuevos)` : ''}`
+                : c.has_account_id
+                  ? 'sin sync'
+                  : 'sin unipile_account_id'}
+              {c.last_synced_at && (
+                <span className="text-text-muted ml-1">
+                  · {new Date(c.last_synced_at).toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
+                </span>
+              )}
+            </span>
+          ))}
+          {status.progress.last_error && (
+            <span className="text-red-400 w-full" title={status.progress.last_error}>
+              ✗ {status.progress.last_error.slice(0, 200)}
+            </span>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <p className="text-center text-text-muted text-sm py-12">Cargando…</p>
