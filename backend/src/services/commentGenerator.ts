@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { trackedCreate } from './claudeClient';
 import { stripLoneSurrogates } from '../utils/sanitizeText';
 
 export interface CommentGenerationInput {
@@ -161,8 +162,6 @@ export async function generateComments(input: CommentGenerationInput): Promise<G
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not configured');
 
-  const client = new Anthropic({ apiKey });
-
   const voiceLines: string[] = [];
   if (input.profile.headline) voiceLines.push(`IDENTITY: ${input.profile.headline}`);
   if (input.profile.voice_style) voiceLines.push(`WRITING STYLE (must match exactly): ${input.profile.voice_style}`);
@@ -203,7 +202,7 @@ CRITICAL REMINDERS:
 
 Return ONLY the JSON object with keys: ${COMMENT_KEYS.map(k => `"${k}"`).join(', ')}. No markdown fences.`;
 
-  const response = await client.messages.create({
+  const response = await trackedCreate('comment_generator_9angles', {
     model: 'claude-sonnet-4-6',
     max_tokens: 2048,
     system: SYSTEM_PROMPT,
@@ -245,8 +244,6 @@ export async function generateSupportiveComments(
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not configured');
   const n = Math.max(3, Math.min(5, Math.round(count)));
-
-  const client = new Anthropic({ apiKey });
 
   const voiceLines: string[] = [];
   if (input.profile.headline) voiceLines.push(`IDENTITY: ${input.profile.headline}`);
@@ -294,7 +291,7 @@ TASK: Write exactly ${n} supportive comments (mix of reinforce + warm), each ≤
 
 Return JSON only: { "comments": ["...", "..."] }`;
 
-  const response = await client.messages.create({
+  const response = await trackedCreate('comment_generator_supportive', {
     model: 'claude-sonnet-4-6',
     max_tokens: 1024,
     system,

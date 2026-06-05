@@ -1,6 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+import { trackedCreate } from './claudeClient';
 
 /**
  * Uses Claude to assign 2-4 concise topic tags to a LinkedIn creator
@@ -26,7 +24,7 @@ Rules:
 Example output: ["B2B Sales", "Cold Outreach", "SaaS"]`;
 
   try {
-    const response = await client.messages.create({
+    const response = await trackedCreate('niche_tagging', {
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 128,
       messages: [{ role: 'user', content: prompt }],

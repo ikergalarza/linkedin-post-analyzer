@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { trackedCreate } from './claudeClient';
 import { stripLoneSurrogates } from '../utils/sanitizeText';
 
 // Generates a single reply that the post author writes back to a commenter.
@@ -85,8 +85,7 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not set');
   }
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const message = await client.messages.create({
+  const message = await trackedCreate('reply_generator', {
     model: 'claude-sonnet-4-6',
     max_tokens: 400,
     system: SYSTEM_PROMPT,

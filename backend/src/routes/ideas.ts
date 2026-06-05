@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import Anthropic from '@anthropic-ai/sdk';
+import { trackedCreate } from '../services/claudeClient';
 import { PostIdeaModel } from '../models/postIdea';
 import pool from '../db';
 import { ensureSingleLineHook } from '../utils/sanitizeText';
@@ -20,7 +20,6 @@ import {
 } from '../services/postPrompt';
 
 const router = Router();
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 function paramId(req: Request): string {
   return req.params.id as string;
@@ -110,7 +109,7 @@ async function selectArchetypesForIdea(
     })
     .join('\n');
 
-  const response = await client.messages.create({
+  const response = await trackedCreate('ideas_archetype_selector', {
     model: 'claude-sonnet-4-6',
     max_tokens: 400,
     messages: [{
@@ -294,7 +293,7 @@ Rules for the image block:
 - If a visual would NOT clearly help this post, OMIT the marker and the whole block entirely. Do not pad with a weak image. A missing image block is the correct answer for most posts.
 - Never put the marker or image text inside the post body — it goes strictly AFTER the post, after the marker.`}`;
 
-  const response = await client.messages.create({
+  const response = await trackedCreate('ideas_variant_generation', {
     model: 'claude-opus-4-8',
     max_tokens: 1024,
     messages: [{
@@ -623,7 +622,7 @@ router.post('/inspiration/classify', async (_req: Request, res: Response) => {
           return `${i + 1}. [ID:${p.id}]${typeHint} ${cleanText(p.content_text)}`;
         }).join('\n\n');
 
-        const response = await client.messages.create({
+        const response = await trackedCreate('ideas_outlier_classifier', {
           model: 'claude-sonnet-4-6',
           max_tokens: 2048,
           messages: [{
@@ -1026,7 +1025,7 @@ router.post('/inspiration/brainstorm', async (req: Request, res: Response) => {
     // Higher max_tokens for larger counts (each idea ≈ 250 tokens worst case)
     const maxTokens = Math.min(8192, 1024 + n * 320);
 
-    const response = await client.messages.create({
+    const response = await trackedCreate('ideas_brainstorm', {
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
       system,

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import Anthropic from '@anthropic-ai/sdk';
+import { trackedStream } from '../services/claudeClient';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { getCrossCreatorPatterns } from '../services/patterns';
@@ -879,7 +879,6 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured. Add it to your .env file.' });
     }
 
-    const client = new Anthropic({ apiKey });
     // Detect video intent on the latest user turn. When true, the system
     // prompt is rebuilt from a video-only stack — minimal VIDEO_SYSTEM_PROMPT
     // plus BRAND_RULES + VIDEO_SCRIPT + SHORT_FORM_VIDEO_PLAYBOOK, with the
@@ -971,7 +970,7 @@ ${analysisContext}${profileContext}${voiceContext}`;
         ]
       : messages;
 
-    const stream = await client.messages.stream({
+    const stream = trackedStream('post_creator_chat', {
       model: 'claude-opus-4-8',
       // 16K output tokens (~12K words). Was 4096 (~3000 words), which
       // capped exhaustive analyses mid-word — the user reported a reply

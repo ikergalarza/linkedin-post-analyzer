@@ -22,6 +22,7 @@ import networkRouter from './routes/network';
 import discoverRouter from './routes/discover';
 import ideasRouter from './routes/ideas';
 import accountsRouter from './routes/accounts';
+import usageRouter from './routes/usage';
 import { startPostMonitor } from './services/postMonitor';
 import { basicAuthMiddleware } from './middleware/basicAuth';
 
@@ -57,6 +58,7 @@ app.use('/api/network', networkRouter);
 app.use('/api/discover', discoverRouter);
 app.use('/api/ideas', ideasRouter);
 app.use('/api/accounts', accountsRouter);
+app.use('/api/usage', usageRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {
