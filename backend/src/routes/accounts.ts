@@ -2116,4 +2116,46 @@ router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res
   }
 });
 
+// GET /api/accounts/followers-probe?creator_id=xxx
+// Phase 0 validation for the organic-followers feature. Hits several
+// candidate Unipile "list followers" URLs for the given managed creator
+// (or the first managed creator if omitted) and reports which one works,
+// how many items it returned, the response keys, and a 3-item sample so
+// we can see the actual field names + whether items look reverse-chrono.
+// Uses the dedicated scraper account if UNIPILE_SCRAPER_ACCOUNT_ID is set,
+// else the creator's own account_id.
+router.get('/followers-probe', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || null;
+    const { rows } = creatorId
+      ? await pool.query(
+          `SELECT id, name, linkedin_id, unipile_account_id FROM creators WHERE id = $1`,
+          [creatorId]
+        )
+      : await pool.query(
+          `SELECT id, name, linkedin_id, unipile_account_id
+             FROM creators
+            WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL
+            ORDER BY name LIMIT 1`
+        );
+    if (rows.length === 0) return res.status(404).json({ error: 'No managed creator found' });
+    const c = rows[0];
+
+    // Prefer the dedicated scraper account so this probe doesn't touch the
+    // brand accounts' Voyager budget. Fall back to the creator's own.
+    const accountId = process.env.UNIPILE_SCRAPER_ACCOUNT_ID || c.unipile_account_id;
+    if (!accountId) return res.status(400).json({ error: 'No Unipile account_id available' });
+
+    const result = await unipileService.probeFollowers(accountId, c.linkedin_id);
+    res.json({
+      creator: { id: c.id, name: c.name, linkedin_id: c.linkedin_id },
+      used_account_id_preview: `${String(accountId).slice(0, 6)}…${String(accountId).slice(-4)}`,
+      ...result,
+    });
+  } catch (err: any) {
+    console.error('[accounts/followers-probe]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
