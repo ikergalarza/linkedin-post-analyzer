@@ -23,10 +23,36 @@ interface OutlierPost {
   published_at: string | null;
   post_url: string | null;
   topic: string | null;
+  reaction_mix: Record<string, number> | null;
   creator_name: string;
   creator_headline: string | null;
   creator_image: string | null;
   creator_followers: number;
+}
+
+// Reaction types LinkedIn exposes, with emoji + label for the mini-bar.
+// Order = display order. UNKNOWN/total/sampled keys are filtered out.
+const REACTION_META: { key: string; emoji: string; label: string; color: string }[] = [
+  { key: 'LIKE', emoji: '👍', label: 'Like', color: '#4a90d9' },
+  { key: 'CELEBRATE', emoji: '👏', label: 'Celebrate', color: '#34d399' },
+  { key: 'SUPPORT', emoji: '🤝', label: 'Support', color: '#a78bfa' },
+  { key: 'LOVE', emoji: '❤️', label: 'Love', color: '#f87171' },
+  { key: 'EMPATHY', emoji: '❤️', label: 'Love', color: '#f87171' },
+  { key: 'INSIGHTFUL', emoji: '💡', label: 'Insightful', color: '#fbbf24' },
+  { key: 'INTEREST', emoji: '💡', label: 'Insightful', color: '#fbbf24' },
+  { key: 'FUNNY', emoji: '😂', label: 'Funny', color: '#e8935a' },
+  { key: 'ENTERTAINMENT', emoji: '😂', label: 'Funny', color: '#e8935a' },
+];
+
+// % of reactions that are "funny" (FUNNY + ENTERTAINMENT). The meme signal.
+function funnyPct(mix: Record<string, number> | null): number | null {
+  if (!mix) return null;
+  const total = Number(mix.total) || Object.entries(mix)
+    .filter(([k]) => !['total', 'sampled'].includes(k))
+    .reduce((s, [, v]) => s + (Number(v) || 0), 0);
+  if (!total) return null;
+  const funny = (Number(mix.FUNNY) || 0) + (Number(mix.ENTERTAINMENT) || 0);
+  return funny / total;
 }
 
 interface InspirationData {
@@ -76,6 +102,51 @@ function formatNum(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
   return String(n);
+}
+
+// Horizontal stacked bar of the reaction distribution + a leading "😂 NN%"
+// when the funny share is meaningful. Collapses duplicate reaction families
+// (EMPATHY→Love, INTEREST→Insightful, ENTERTAINMENT→Funny) so the bar reads
+// cleanly. Returns null when there's no usable mix.
+function ReactionMixBar({ mix }: { mix: Record<string, number> | null }) {
+  if (!mix) return null;
+  // Sum into display families, in REACTION_META order.
+  const families = new Map<string, { emoji: string; label: string; color: string; count: number }>();
+  for (const meta of REACTION_META) {
+    const c = Number(mix[meta.key]) || 0;
+    if (c <= 0) continue;
+    const existing = families.get(meta.label);
+    if (existing) existing.count += c;
+    else families.set(meta.label, { emoji: meta.emoji, label: meta.label, color: meta.color, count: c });
+  }
+  const segments = Array.from(families.values());
+  const total = segments.reduce((s, x) => s + x.count, 0);
+  if (total === 0) return null;
+
+  const fp = funnyPct(mix) ?? 0;
+  const isMeme = fp > 0.25;
+
+  return (
+    <div className="mb-3">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] text-text-muted">Reacciones ({total})</span>
+        {fp > 0.05 && (
+          <span className={`text-[10px] font-semibold ${isMeme ? 'text-orange-300' : 'text-text-muted'}`}>
+            😂 {Math.round(fp * 100)}%{isMeme && ' · meme'}
+          </span>
+        )}
+      </div>
+      <div className="flex h-2 rounded-full overflow-hidden bg-bg-secondary">
+        {segments.map((s) => (
+          <div
+            key={s.label}
+            style={{ width: `${(s.count / total) * 100}%`, backgroundColor: s.color }}
+            title={`${s.emoji} ${s.label}: ${s.count} (${Math.round((s.count / total) * 100)}%)`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: OutlierPost) => void }) {
@@ -171,6 +242,12 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
         )}
       </div>
 
+      {/* Reaction mix — how the audience actually reacted. The funny share
+          drives the meme detection; the bar shows the full distribution so
+          you can see at a glance whether a post landed as funny / insightful
+          / celebratory / etc. Only rendered when we have the data. */}
+      <ReactionMixBar mix={post.reaction_mix} />
+
       {!NO_MEDIA_TYPES.has(post.content_type) && (
         <div className="mb-3">
           <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={post.post_url} />
@@ -195,12 +272,16 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
 
 export default function Inspiration() {
   const { data, loading, error, refetch } = useApi<InspirationData>('/api/ideas/inspiration');
-  const [sortBy, setSortBy] = useState<'ratio' | 'likes' | 'comments' | 'recent'>('ratio');
+  const [sortBy, setSortBy] = useState<'ratio' | 'likes' | 'comments' | 'recent' | 'funny'>('ratio');
   const [filterHook, setFilterHook] = useState('');
   const [filterStructure, setFilterStructure] = useState('');
   const [filterCreator, setFilterCreator] = useState('');
   const [filterTopic, setFilterTopic] = useState('');
   const [filterContentType, setFilterContentType] = useState('');
+  // "Solo memes" toggle — posts whose reaction mix is >25% funny. The
+  // audience-driven meme signal, independent of the AI topic classifier.
+  const [onlyMemes, setOnlyMemes] = useState(false);
+  const MEME_FUNNY_THRESHOLD = 0.25;
   // Free-text search across hook + content + creator name. Case-insensitive
   // substring match — supports finding things like "CLAUDE", "outbound", etc.
   // across the whole corpus regardless of how the AI classified the topic.
@@ -311,6 +392,7 @@ export default function Inspiration() {
     if (filterStructure) list = list.filter((p) => p.post_structure === filterStructure);
     if (filterCreator) list = list.filter((p) => p.creator_name === filterCreator);
     if (filterContentType) list = list.filter((p) => (p.content_type || 'text') === filterContentType);
+    if (onlyMemes) list = list.filter((p) => (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD);
 
     // Free-text search: case-insensitive substring across content + hook + creator.
     const q = searchQuery.trim().toLowerCase();
@@ -328,10 +410,17 @@ export default function Inspiration() {
       case 'likes': list.sort((a, b) => b.likes_count - a.likes_count); break;
       case 'comments': list.sort((a, b) => b.comments_count - a.comments_count); break;
       case 'recent': list.sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime()); break;
+      case 'funny': list.sort((a, b) => (funnyPct(b.reaction_mix) ?? -1) - (funnyPct(a.reaction_mix) ?? -1)); break;
       default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
     return list;
-  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, sortBy, searchQuery]);
+  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, onlyMemes, sortBy, searchQuery]);
+
+  // How many outliers cross the meme threshold — drives the toggle label.
+  const memeCount = useMemo(
+    () => outliers.filter((p) => (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD).length,
+    [outliers]
+  );
 
   const handleClassify = async () => {
     setClassifying(true);
@@ -627,6 +716,7 @@ export default function Inspiration() {
                 ['likes', '👍 Likes'],
                 ['comments', '💬 Comments'],
                 ['recent', '🕐 Recent'],
+                ['funny', '😂 Más funny'],
               ] as const).map(([key, label]) => (
                 <button
                   key={key}
@@ -640,6 +730,20 @@ export default function Inspiration() {
                   {label}
                 </button>
               ))}
+              {/* Memes-only toggle — separated visually because it's a
+                  filter, not a sort, but lives in the same row for proximity
+                  to the "Más funny" sort. */}
+              <button
+                onClick={() => setOnlyMemes((v) => !v)}
+                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                  onlyMemes
+                    ? 'border-orange-400/60 bg-orange-400/15 text-orange-300'
+                    : 'border-border bg-bg-secondary text-text-muted hover:border-orange-400/30'
+                }`}
+                title="Filtra a los posts cuya audiencia reaccionó con >25% 😂, según el reaction mix real"
+              >
+                😂 Solo memes ({memeCount})
+              </button>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">

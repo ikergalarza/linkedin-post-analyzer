@@ -508,7 +508,7 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
       SELECT p.id, p.content_text, p.hook_text, p.hook_type, p.post_structure,
              p.text_tone, p.content_type, p.outlier_ratio, p.engagement_score,
              p.likes_count, p.comments_count, p.reposts_count,
-             p.published_at, p.post_url, p.topic,
+             p.published_at, p.post_url, p.topic, p.reaction_mix,
              c.name AS creator_name, c.headline AS creator_headline,
              c.profile_image_url AS creator_image, c.followers_count AS creator_followers
       FROM posts p
