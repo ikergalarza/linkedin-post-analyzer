@@ -26,11 +26,22 @@ router.post('/backfill/start', async (req: Request, res: Response) => {
 router.get('/backfill/status', async (_req: Request, res: Response) => {
   try {
     const progress = getBackfillProgress();
+    // "with_mix" must only count VALID mixes — a row whose mix is the broken
+    // all-UNKNOWN shape (from the pre-`value`-fix backfill) still needs
+    // re-processing, so it counts as pending, not done. Otherwise the UI
+    // button reads "completo" and disables, blocking the re-run that
+    // actually fixes the data.
     const { rows } = await pool.query(
       `SELECT
-         COUNT(*) FILTER (WHERE is_outlier = TRUE)::int                                                              AS outliers_total,
-         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix IS NOT NULL)::int                                 AS outliers_with_mix,
-         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix ? '_error')::int                                  AS outliers_permanently_failed
+         COUNT(*) FILTER (WHERE is_outlier = TRUE)::int AS outliers_total,
+         COUNT(*) FILTER (
+           WHERE is_outlier = TRUE
+             AND reaction_mix IS NOT NULL
+             AND NOT (reaction_mix ? 'UNKNOWN')
+             AND NOT (reaction_mix ? '_error')
+         )::int AS outliers_with_mix,
+         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix ? '_error')::int AS outliers_permanently_failed,
+         COUNT(*) FILTER (WHERE is_outlier = TRUE AND reaction_mix ? 'UNKNOWN')::int AS outliers_unknown
        FROM posts
        WHERE linkedin_post_id <> 'DEMO_LIVE_POST'`
     );
