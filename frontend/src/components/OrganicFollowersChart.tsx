@@ -43,6 +43,9 @@ const TOOLTIP_STYLE = {
 export default function OrganicFollowersChart({ creatorId, days, reloadSignal }: Props) {
   const [points, setPoints] = useState<Point[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,7 +65,31 @@ export default function OrganicFollowersChart({ creatorId, days, reloadSignal }:
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [creatorId, days, reloadSignal]);
+  }, [creatorId, days, reloadSignal, reloadKey]);
+
+  // Kick the follower sync. First run per creator is the heavy baseline
+  // (full follower list + relations); it runs in the background, so we just
+  // fire it and tell the user to come back. Later runs are cheap diffs.
+  const handleSync = async () => {
+    setSyncing(true);
+    setSyncMsg(null);
+    try {
+      const params = new URLSearchParams();
+      if (creatorId) params.set('creator_id', creatorId);
+      const res = await fetch(`${BASE}/api/accounts/followers/sync?${params.toString()}`, { method: 'POST' });
+      const json = await res.json();
+      if (json.started === false) {
+        setSyncMsg(json.reason === 'already running' ? 'Ya está sincronizando…' : `No arrancó: ${json.reason}`);
+      } else {
+        setSyncMsg('Sincronizando en background. Vuelve en unos minutos y recarga.');
+        setTimeout(() => setReloadKey((k) => k + 1), 30000);
+      }
+    } catch (e: any) {
+      setSyncMsg(`Error: ${e.message}`);
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const chartData = useMemo(
     () => (points || []).map((p) => ({ ...p, label: fmtDay(p.day) })),
@@ -100,8 +127,17 @@ export default function OrganicFollowersChart({ creatorId, days, reloadSignal }:
               {totals.connection.toLocaleString()}
             </span>
           </div>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="text-xs px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 transition-colors self-center"
+            title="Captura la lista de seguidores y la clasifica. La primera vez tarda unos minutos (baseline)."
+          >
+            {syncing ? 'Sincronizando…' : '↻ Sync seguidores'}
+          </button>
         </div>
       </div>
+      {syncMsg && <p className="text-[11px] text-text-muted mb-3">{syncMsg}</p>}
 
       {loading ? (
         <p className="text-center text-text-muted text-sm py-12">Cargando…</p>
