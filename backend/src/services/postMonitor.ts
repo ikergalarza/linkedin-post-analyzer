@@ -3,6 +3,7 @@ import { unipileService } from './unipile';
 import { calculateEngagement } from './engagement';
 import { recalcCreatorOutliers } from './outliers';
 import { captureAccountSnapshots } from './accountSnapshots';
+import { runFollowerSync } from './followerSync';
 
 // Phase-based snapshot cadence for LinkedIn posts.
 // The algorithm distributes posts in waves, so we sample densely in the golden hour
@@ -374,4 +375,15 @@ export function startPostMonitor() {
   // follower + WVMP numbers without anyone clicking Refresh.
   setTimeout(accountSnapshotTick, 2 * 60 * 1000);
   setInterval(accountSnapshotTick, ACCOUNT_SNAPSHOT_INTERVAL_MS);
+
+  // Organic-follower sync: first run 5 min after boot (the baseline is the
+  // heavy one and we want the server fully settled), then daily. runFollowerSync
+  // guards against overlap and only baselines once per creator; later runs are
+  // cheap incremental diffs.
+  setTimeout(() => {
+    runFollowerSync(null).catch((e) => console.error('[followerSync] boot run failed:', e?.message));
+  }, 5 * 60 * 1000);
+  setInterval(() => {
+    runFollowerSync(null).catch((e) => console.error('[followerSync] daily run failed:', e?.message));
+  }, 24 * 60 * 60 * 1000);
 }

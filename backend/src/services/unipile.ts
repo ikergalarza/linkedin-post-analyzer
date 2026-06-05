@@ -698,53 +698,95 @@ export class UnipileService {
     };
   }
 
-  // PROBE — tries several candidate URLs for "list followers" because
-  // Unipile's exact path/shape isn't documented in our integration yet.
-  // Returns, for each candidate, whether it 200'd and a small sample of
-  // items so the debug endpoint can show us the real shape + ordering.
-  // This is throwaway scaffolding for Phase 0; once we know the working
-  // path we replace it with a clean getFollowers().
-  async probeFollowers(
+  // List followers via /api/v1/users/followers (confirmed path). Items come
+  // back reverse-chronological (most recent follower first), so callers can
+  // pass `knownIds` for an incremental pull: we stop paginating the moment
+  // we hit a follower we already have. Without knownIds we walk the whole
+  // list up to maxPages (the initial baseline snapshot).
+  //
+  // UserFollower shape: { id, urn, name, headline, profile_url,
+  //                       profile_picture_url, profile_picture_url_large }
+  // Note: no follow date is exposed — first_seen is set by us.
+  async getFollowers(
     accountIdOverride: string | undefined,
-    providerId: string | null,
-    pageSize = 10
-  ): Promise<{
-    working_path: string | null;
-    candidates: { path: string; ok: boolean; count: number; error?: string; sample?: any[]; raw_keys?: string[] }[];
-  }> {
+    opts: { knownIds?: Set<string>; pageSize?: number; maxPages?: number } = {}
+  ): Promise<{ followers: any[]; reachedKnown: boolean; pages: number }> {
     const accountId = accountIdOverride || this.accountId;
-    if (!accountId) throw new Error('No Unipile account_id available for followers probe');
+    if (!accountId) throw new Error('No Unipile account_id available for followers fetch');
+    const pageSize = opts.pageSize ?? 100;
+    const maxPages = opts.maxPages ?? 200; // 200 × 100 = 20k followers ceiling
+    const knownIds = opts.knownIds;
 
-    const q = `account_id=${encodeURIComponent(accountId)}&limit=${pageSize}`;
-    const candidatePaths = [
-      `/api/v1/users/followers?${q}`,
-      `/api/v1/users/relations?${q}`,
-      providerId ? `/api/v1/users/${encodeURIComponent(providerId)}/followers?${q}` : null,
-      providerId ? `/api/v1/users/${encodeURIComponent(providerId)}/relations?${q}` : null,
-      `/api/v1/users/me/followers?${q}`,
-    ].filter(Boolean) as string[];
+    const followers: any[] = [];
+    let cursor: string | undefined;
+    let pages = 0;
+    let reachedKnown = false;
 
-    const candidates: { path: string; ok: boolean; count: number; error?: string; sample?: any[]; raw_keys?: string[] }[] = [];
-    let working: string | null = null;
+    for (let page = 0; page < maxPages; page++) {
+      const params = new URLSearchParams({ account_id: accountId, limit: String(pageSize) });
+      if (cursor) params.set('cursor', cursor);
+      const res = await this.request<{ items?: any[]; cursor?: string; paging?: { cursor?: string } }>(
+        `/api/v1/users/followers?${params.toString()}`
+      );
+      const items = res.items || [];
+      pages = page + 1;
+      if (items.length === 0) break;
 
-    for (const path of candidatePaths) {
-      try {
-        const res = await this.request<{ items?: any[]; [k: string]: any }>(path);
-        const items = Array.isArray(res?.items) ? res.items : [];
-        candidates.push({
-          path,
-          ok: true,
-          count: items.length,
-          raw_keys: Object.keys(res || {}),
-          sample: items.slice(0, 3),
-        });
-        if (!working && items.length > 0) working = path;
-      } catch (err: any) {
-        candidates.push({ path, ok: false, count: 0, error: String(err?.message || '').slice(0, 200) });
+      if (knownIds && knownIds.size > 0) {
+        for (const it of items) {
+          const id = String(it.id || it.urn || '').replace(/^urn:li:[a-z_]+:/, '');
+          if (id && knownIds.has(id)) {
+            reachedKnown = true;
+            break;
+          }
+          followers.push(it);
+        }
+        if (reachedKnown) break;
+      } else {
+        followers.push(...items);
       }
+
+      cursor = res.cursor || res.paging?.cursor;
+      if (!cursor || items.length < pageSize) break;
     }
 
-    return { working_path: working, candidates };
+    return { followers, reachedKnown, pages };
+  }
+
+  // List the account's connections via /api/v1/users/relations. Returns a
+  // Map keyed by bare provider id (member_id, urn-stripped) → connection
+  // created_at (ms). Used to classify a new follower: if their id is in this
+  // map they entered via a connection, otherwise it's a pure Follow (organic).
+  // Reverse-chronological + cursor paginated.
+  async getRelationsMap(
+    accountIdOverride: string | undefined,
+    opts: { pageSize?: number; maxPages?: number } = {}
+  ): Promise<Map<string, number | null>> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for relations fetch');
+    const pageSize = opts.pageSize ?? 100;
+    const maxPages = opts.maxPages ?? 200;
+
+    const map = new Map<string, number | null>();
+    let cursor: string | undefined;
+
+    for (let page = 0; page < maxPages; page++) {
+      const params = new URLSearchParams({ account_id: accountId, limit: String(pageSize) });
+      if (cursor) params.set('cursor', cursor);
+      const res = await this.request<{ items?: any[]; cursor?: string; paging?: { cursor?: string } }>(
+        `/api/v1/users/relations?${params.toString()}`
+      );
+      const items = res.items || [];
+      if (items.length === 0) break;
+      for (const r of items) {
+        const id = String(r.member_id || r.member_urn || '').replace(/^urn:li:[a-z_]+:/, '');
+        if (id) map.set(id, typeof r.created_at === 'number' ? r.created_at : null);
+      }
+      cursor = res.cursor || res.paging?.cursor;
+      if (!cursor || items.length < pageSize) break;
+    }
+
+    return map;
   }
 }
 

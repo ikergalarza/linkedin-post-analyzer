@@ -11,6 +11,7 @@ import { sendToGoogleChat, detectOwner } from '../services/googleChat';
 import { captureAccountSnapshots } from '../services/accountSnapshots';
 import { extractViewerTimestamps } from '../utils/wvmp';
 import { generateReply } from '../services/replyGenerator';
+import { runFollowerSync, getFollowerSyncProgress } from '../services/followerSync';
 
 const router = Router();
 
@@ -2116,44 +2117,72 @@ router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res
   }
 });
 
-// GET /api/accounts/followers-probe?creator_id=xxx
-// Phase 0 validation for the organic-followers feature. Hits several
-// candidate Unipile "list followers" URLs for the given managed creator
-// (or the first managed creator if omitted) and reports which one works,
-// how many items it returned, the response keys, and a 3-item sample so
-// we can see the actual field names + whether items look reverse-chrono.
-// Uses the dedicated scraper account if UNIPILE_SCRAPER_ACCOUNT_ID is set,
-// else the creator's own account_id.
-router.get('/followers-probe', async (req: Request, res: Response) => {
+// ──────────────────────── Organic followers (Phase 1) ────────────────────────
+//
+// POST /api/accounts/followers/sync?creator_id=xxx  — run sync now (one creator
+//   or all managed). First run per creator is a full baseline; later runs are
+//   incremental diffs that classify each NEW follower as pure_follow (organic)
+//   or connection.
+// GET  /api/accounts/followers/sync-status          — progress + per-creator state
+// GET  /api/accounts/followers/organic-history?creator_id=&days=  — daily series.
+
+router.post('/followers/sync', async (req: Request, res: Response) => {
   try {
     const creatorId = (req.query.creator_id as string) || null;
+    const result = await runFollowerSync(creatorId);
+    res.json(result);
+  } catch (err: any) {
+    console.error('[accounts/followers/sync]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/followers/sync-status', async (_req: Request, res: Response) => {
+  try {
+    res.json(getFollowerSyncProgress());
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/followers/organic-history', async (req: Request, res: Response) => {
+  try {
+    const days = Math.min(parseInt(req.query.days as string) || 90, 365);
+    const creatorId = (req.query.creator_id as string) || null;
+
+    // Group new followers (is_baseline = FALSE) by the day we detected them,
+    // split into pure_follow (organic) vs connection. Baseline rows excluded.
     const { rows } = creatorId
       ? await pool.query(
-          `SELECT id, name, linkedin_id, unipile_account_id FROM creators WHERE id = $1`,
-          [creatorId]
+          `SELECT first_seen_on::text AS day,
+                  COUNT(*) FILTER (WHERE classification = 'pure_follow')::int AS organic,
+                  COUNT(*) FILTER (WHERE classification = 'connection')::int  AS connection,
+                  COUNT(*)::int AS total
+             FROM creator_followers
+            WHERE creator_id = $1
+              AND is_baseline = FALSE
+              AND first_seen_on >= CURRENT_DATE - ($2 || ' days')::interval
+            GROUP BY first_seen_on
+            ORDER BY first_seen_on ASC`,
+          [creatorId, days]
         )
       : await pool.query(
-          `SELECT id, name, linkedin_id, unipile_account_id
-             FROM creators
-            WHERE is_managed = TRUE AND unipile_account_id IS NOT NULL
-            ORDER BY name LIMIT 1`
+          `SELECT f.first_seen_on::text AS day,
+                  COUNT(*) FILTER (WHERE f.classification = 'pure_follow')::int AS organic,
+                  COUNT(*) FILTER (WHERE f.classification = 'connection')::int  AS connection,
+                  COUNT(*)::int AS total
+             FROM creator_followers f
+             JOIN creators c ON c.id = f.creator_id
+            WHERE c.is_managed = TRUE
+              AND f.is_baseline = FALSE
+              AND f.first_seen_on >= CURRENT_DATE - ($1 || ' days')::interval
+            GROUP BY f.first_seen_on
+            ORDER BY f.first_seen_on ASC`,
+          [days]
         );
-    if (rows.length === 0) return res.status(404).json({ error: 'No managed creator found' });
-    const c = rows[0];
-
-    // Prefer the dedicated scraper account so this probe doesn't touch the
-    // brand accounts' Voyager budget. Fall back to the creator's own.
-    const accountId = process.env.UNIPILE_SCRAPER_ACCOUNT_ID || c.unipile_account_id;
-    if (!accountId) return res.status(400).json({ error: 'No Unipile account_id available' });
-
-    const result = await unipileService.probeFollowers(accountId, c.linkedin_id);
-    res.json({
-      creator: { id: c.id, name: c.name, linkedin_id: c.linkedin_id },
-      used_account_id_preview: `${String(accountId).slice(0, 6)}…${String(accountId).slice(-4)}`,
-      ...result,
-    });
+    res.json({ points: rows });
   } catch (err: any) {
-    console.error('[accounts/followers-probe]', err);
+    console.error('[accounts/followers/organic-history]', err);
     res.status(500).json({ error: err.message });
   }
 });

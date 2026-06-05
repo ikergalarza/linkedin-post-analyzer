@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import AccountsEngagementChart from '../components/AccountsEngagementChart';
 import FollowerGrowthChart from '../components/FollowerGrowthChart';
+import OrganicFollowersChart from '../components/OrganicFollowersChart';
 import ProfileViewChart from '../components/ProfileViewChart';
 import GoogleChatModal from '../components/accounts/GoogleChatModal';
 import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
@@ -1140,6 +1141,15 @@ export default function Accounts() {
             creatorId={selectedCreator === 'all' ? null : selectedCreator}
             startDate={dateRange.start}
             endDate={dateRange.end}
+            reloadSignal={refreshSignal}
+          />
+
+          {/* Organic followers — new pure-follow vs connection per day. The
+              metric you actually care about: people who followed you for your
+              content, not because you reached out. */}
+          <OrganicFollowersChart
+            creatorId={selectedCreator === 'all' ? null : selectedCreator}
+            days={days}
             reloadSignal={refreshSignal}
           />
 
