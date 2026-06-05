@@ -30,21 +30,26 @@ interface OutlierPost {
   creator_followers: number;
 }
 
-// Reaction types LinkedIn exposes, with emoji + label for the mini-bar.
-// Order = display order. UNKNOWN/total/sampled keys are filtered out.
+// Reaction types as LinkedIn names them internally (confirmed from the live
+// API: the reaction's `value` is LIKE / PRAISE / APPRECIATION / EMPATHY /
+// INTEREST / ENTERTAINMENT / MAYBE). Mapped to display label + emoji + colour.
+// Legacy/alias keys (CELEBRATE, SUPPORT, LOVE, INSIGHTFUL, FUNNY) kept so old
+// data or any renamed variant still renders. UNKNOWN/total/sampled filtered out.
 const REACTION_META: { key: string; emoji: string; label: string; color: string }[] = [
   { key: 'LIKE', emoji: '👍', label: 'Like', color: '#4a90d9' },
+  { key: 'PRAISE', emoji: '👏', label: 'Celebrate', color: '#34d399' },
   { key: 'CELEBRATE', emoji: '👏', label: 'Celebrate', color: '#34d399' },
-  { key: 'SUPPORT', emoji: '🤝', label: 'Support', color: '#a78bfa' },
+  { key: 'APPRECIATION', emoji: '❤️', label: 'Love', color: '#f87171' },
   { key: 'LOVE', emoji: '❤️', label: 'Love', color: '#f87171' },
-  { key: 'EMPATHY', emoji: '❤️', label: 'Love', color: '#f87171' },
-  { key: 'INSIGHTFUL', emoji: '💡', label: 'Insightful', color: '#fbbf24' },
+  { key: 'EMPATHY', emoji: '🫶', label: 'Support', color: '#a78bfa' },
+  { key: 'SUPPORT', emoji: '🫶', label: 'Support', color: '#a78bfa' },
   { key: 'INTEREST', emoji: '💡', label: 'Insightful', color: '#fbbf24' },
-  { key: 'FUNNY', emoji: '😂', label: 'Funny', color: '#e8935a' },
+  { key: 'INSIGHTFUL', emoji: '💡', label: 'Insightful', color: '#fbbf24' },
   { key: 'ENTERTAINMENT', emoji: '😂', label: 'Funny', color: '#e8935a' },
+  { key: 'FUNNY', emoji: '😂', label: 'Funny', color: '#e8935a' },
 ];
 
-// % of reactions that are "funny" (FUNNY + ENTERTAINMENT). The meme signal.
+// % of reactions that are "funny" (ENTERTAINMENT + FUNNY alias). The meme signal.
 function funnyPct(mix: Record<string, number> | null): number | null {
   if (!mix) return null;
   const total = Number(mix.total) || Object.entries(mix)

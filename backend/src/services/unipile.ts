@@ -659,8 +659,13 @@ export class UnipileService {
       const items = res.items || [];
       if (items.length === 0) break;
       for (const r of items) {
-        // Unipile rotates the field name; try the most common variants.
-        const type = String(r.type || r.reaction || r.reaction_type || 'UNKNOWN').toUpperCase();
+        // Unipile's PostReaction carries the type in `value` (confirmed live:
+        // LIKE / ENTERTAINMENT / PRAISE / EMPATHY / APPRECIATION / INTEREST /
+        // MAYBE). The older type/reaction/reaction_type fallbacks never
+        // matched — that's why the first backfill stored everything as UNKNOWN.
+        const type = String(
+          r.value || r.type || r.reaction || r.reaction_type || 'UNKNOWN'
+        ).toUpperCase();
         counts[type] = (counts[type] || 0) + 1;
       }
       sampled += items.length;

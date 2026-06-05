@@ -78,11 +78,16 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
     params.push(limit);
     limitSql = `LIMIT $${params.length}`;
   }
+  // Re-process posts that are either un-backfilled (NULL) OR were stored
+  // with the broken UNKNOWN mix (the first run read the wrong field). The
+  // '_error' sentinel (404s) is preserved by the IS NULL exclusion — those
+  // never get re-attempted. The `? 'UNKNOWN'` clause catches the ~1374
+  // posts that need re-classifying now that we read `value` correctly.
   const { rows: targets } = await pool.query(
     `SELECT id, linkedin_post_id
        FROM posts
       WHERE is_outlier = TRUE
-        AND reaction_mix IS NULL
+        AND (reaction_mix IS NULL OR reaction_mix ? 'UNKNOWN')
         AND linkedin_post_id IS NOT NULL
         AND linkedin_post_id <> 'DEMO_LIVE_POST'
       ORDER BY published_at DESC NULLS LAST
