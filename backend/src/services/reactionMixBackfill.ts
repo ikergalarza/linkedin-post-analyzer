@@ -116,6 +116,31 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
               state.failed++;
               state.last_error = `${t.id}: ${err?.message}`.slice(0, 300);
               console.warn(`[reactionMixBackfill] ${t.id} failed:`, err?.message);
+
+              // 404 = post deleted or hidden on LinkedIn. Mark with a
+              // sentinel so subsequent runs skip it instead of wasting
+              // calls re-checking. Other errors (429, 5xx, network) are
+              // transient — leave reaction_mix NULL so retries pick them
+              // up next run.
+              const msg = String(err?.message || '');
+              const is404 = /Unipile API error 404\b/.test(msg);
+              if (is404) {
+                const sentinel = {
+                  _error: 'not_found',
+                  _attempted_at: new Date().toISOString(),
+                };
+                try {
+                  await pool.query(
+                    `UPDATE posts SET reaction_mix = $1::jsonb WHERE id = $2`,
+                    [JSON.stringify(sentinel), t.id]
+                  );
+                } catch (writeErr: any) {
+                  console.warn(
+                    `[reactionMixBackfill] sentinel write failed for ${t.id}:`,
+                    writeErr?.message
+                  );
+                }
+              }
             }
           })
         );
