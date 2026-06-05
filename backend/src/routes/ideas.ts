@@ -527,6 +527,48 @@ router.get('/inspiration', async (_req: Request, res: Response) => {
   }
 });
 
+// GET /api/ideas/inspiration/reaction-debug
+// Diagnostic: the "Solo memes (0)" count suggests the reaction_mix keys we
+// stored don't match what the frontend looks for (FUNNY/ENTERTAINMENT).
+// This aggregates every distinct key seen across all reaction_mix JSONs and
+// how many posts have each, plus a few full sample objects, so we can map
+// the real LinkedIn reaction-type names (PRAISE, APPRECIATION, EMPATHY, …)
+// to display labels.
+router.get('/inspiration/reaction-debug', async (_req: Request, res: Response) => {
+  try {
+    const summary = await pool.query(`
+      SELECT key, COUNT(*)::int AS posts_with_key
+        FROM posts p, jsonb_object_keys(p.reaction_mix) AS key
+       WHERE p.reaction_mix IS NOT NULL
+       GROUP BY key
+       ORDER BY posts_with_key DESC
+    `);
+    const samples = await pool.query(`
+      SELECT id, reaction_mix
+        FROM posts
+       WHERE reaction_mix IS NOT NULL
+         AND reaction_mix ? 'total'
+       ORDER BY (reaction_mix->>'total')::int DESC NULLS LAST
+       LIMIT 8
+    `);
+    const counts = await pool.query(`
+      SELECT
+        COUNT(*) FILTER (WHERE reaction_mix IS NOT NULL)::int AS with_mix,
+        COUNT(*) FILTER (WHERE reaction_mix ? '_error')::int  AS errored
+      FROM posts
+      WHERE is_outlier = TRUE
+    `);
+    res.json({
+      counts: counts.rows[0],
+      distinct_keys: summary.rows,
+      samples: samples.rows,
+    });
+  } catch (err: any) {
+    console.error('[inspiration/reaction-debug]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/ideas/inspiration/reset-topics — clear topic on outlier posts so
 // they get re-classified next time /classify runs. Optional body filters let
 // the caller target a subset:
