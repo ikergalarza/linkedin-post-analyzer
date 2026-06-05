@@ -418,6 +418,30 @@ const migration = `
   ) AS v(creator_id, captured_on, followers_count)
   WHERE EXISTS (SELECT 1 FROM creators c WHERE c.id = v.creator_id::uuid)
   ON CONFLICT (creator_id, captured_on) DO NOTHING;
+
+  -- v23: Claude API usage log. One row per messages.create / messages.stream
+  -- call. The wrapper in services/claudeClient.ts inserts here so the Usage
+  -- page can show where the Anthropic spend actually goes. cost_usd is
+  -- computed at insert time from the per-model pricing table — the values
+  -- don't change retroactively if Anthropic adjusts pricing, but the raw
+  -- token counts are preserved so we can recompute if needed.
+  CREATE TABLE IF NOT EXISTS claude_usage_logs (
+    id BIGSERIAL PRIMARY KEY,
+    -- High-level label for which feature triggered the call, e.g.
+    -- "post_creator_chat", "reply_generator", "ideas_variant".
+    feature TEXT NOT NULL,
+    model TEXT NOT NULL,
+    input_tokens INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    -- Cache hits cost 10% of normal input; cache writes cost 25% more.
+    -- Tracked separately so the UI can show effective cache savings.
+    cache_read_tokens INTEGER NOT NULL DEFAULT 0,
+    cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+    cost_usd NUMERIC(10,6) NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_claude_usage_created ON claude_usage_logs (created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_claude_usage_feature ON claude_usage_logs (feature, created_at DESC);
 `;
 
 export async function runMigrations() {

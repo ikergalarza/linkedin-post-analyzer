@@ -7,6 +7,7 @@ import StrategicNetwork from './pages/StrategicNetwork'
 import Ideas from './pages/Ideas'
 import Inspiration from './pages/Inspiration'
 import Accounts from './pages/Accounts'
+import Usage from './pages/Usage'
 
 export default function App() {
   const location = useLocation();
@@ -48,6 +49,11 @@ export default function App() {
             <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
               {navLink('/network', '🤝 Network')}
             </div>
+            <span className="text-border mx-1">|</span>
+            {/* Ops */}
+            <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
+              {navLink('/usage', '💸 Usage')}
+            </div>
           </div>
         </div>
       </nav>
@@ -61,6 +67,7 @@ export default function App() {
           <Route path="/inspiration" element={<Inspiration />} />
           <Route path="/network" element={<StrategicNetwork />} />
           <Route path="/create" element={<PostCreator />} />
+          <Route path="/usage" element={<Usage />} />
         </Routes>
       </main>
     </div>
