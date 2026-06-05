@@ -672,6 +672,27 @@ export class UnipileService {
     return { counts, sampled, pages };
   }
 
+  // PROBE — returns the raw first few reaction items for one post so we can
+  // see the actual field name carrying the reaction type. The aggregator
+  // above stored everything as UNKNOWN, which means none of type/reaction/
+  // reaction_type held the value — this shows what does.
+  async probePostReactionsRaw(
+    postSocialId: string,
+    accountIdOverride?: string
+  ): Promise<{ count: number; sample: any[]; raw_keys: string[] }> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for reactions probe');
+    const res = await this.request<{ items?: any[]; [k: string]: any }>(
+      `/api/v1/posts/${encodeURIComponent(postSocialId)}/reactions?account_id=${encodeURIComponent(accountId)}&limit=5`
+    );
+    const items = Array.isArray(res?.items) ? res.items : [];
+    return {
+      count: items.length,
+      sample: items.slice(0, 5),
+      raw_keys: items[0] ? Object.keys(items[0]) : [],
+    };
+  }
+
   // PROBE — tries several candidate URLs for "list followers" because
   // Unipile's exact path/shape isn't documented in our integration yet.
   // Returns, for each candidate, whether it 200'd and a small sample of

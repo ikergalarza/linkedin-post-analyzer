@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { trackedCreate } from '../services/claudeClient';
+import { unipileService } from '../services/unipile';
 import { PostIdeaModel } from '../models/postIdea';
 import pool from '../db';
 import { ensureSingleLineHook } from '../utils/sanitizeText';
@@ -558,10 +559,35 @@ router.get('/inspiration/reaction-debug', async (_req: Request, res: Response) =
       FROM posts
       WHERE is_outlier = TRUE
     `);
+    // Live probe: everything stored as UNKNOWN means none of the field
+    // names we tried held the reaction type. Pull the raw items for one
+    // outlier so we can see the real field. Uses the dedicated scraper
+    // account (same one the backfill used).
+    let liveProbe: any = null;
+    try {
+      const { rows: pr } = await pool.query(
+        `SELECT linkedin_post_id FROM posts
+          WHERE is_outlier = TRUE AND linkedin_post_id IS NOT NULL
+            AND linkedin_post_id <> 'DEMO_LIVE_POST'
+            AND (reaction_mix->>'total')::int > 50
+          ORDER BY (reaction_mix->>'total')::int DESC NULLS LAST
+          LIMIT 1`
+      );
+      const scraperAccount = process.env.UNIPILE_SCRAPER_ACCOUNT_ID;
+      if (pr[0]?.linkedin_post_id && scraperAccount) {
+        liveProbe = await unipileService.probePostReactionsRaw(pr[0].linkedin_post_id, scraperAccount);
+      } else {
+        liveProbe = { note: 'no scraper account or no eligible post' };
+      }
+    } catch (e: any) {
+      liveProbe = { error: e?.message };
+    }
+
     res.json({
       counts: counts.rows[0],
       distinct_keys: summary.rows,
       samples: samples.rows,
+      live_probe: liveProbe,
     });
   } catch (err: any) {
     console.error('[inspiration/reaction-debug]', err);
