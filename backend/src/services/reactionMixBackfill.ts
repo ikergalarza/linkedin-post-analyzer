@@ -20,11 +20,12 @@ interface BackfillProgress {
   total: number;
   current_post_id: string | null;
   last_error: string | null;
+  // Per-HTTP-status counters so the UI can show "138 rate-limit, 5 not-found,
+  // 1 5xx, 2 other" instead of one opaque "fallos" number. -1 = network /
+  // non-HTTP error.
+  errors_by_status: Record<string, number>;
 }
 
-// In-memory progress so the status endpoint stays cheap (no extra DB read
-// just to check). Cleared between server restarts — that's fine, the
-// totals can be recomputed by querying the table.
 const state: BackfillProgress = {
   running: false,
   started_at: null,
@@ -33,36 +34,44 @@ const state: BackfillProgress = {
   total: 0,
   current_post_id: null,
   last_error: null,
+  errors_by_status: {},
 };
 
 export function getBackfillProgress(): BackfillProgress {
-  return { ...state };
+  return { ...state, errors_by_status: { ...state.errors_by_status } };
 }
 
 interface RunOpts {
   // How many posts to process this run. Default null = all unbackfilled
   // outliers. The UI lets the user pick a cap so they can test on 50 first.
   limit?: number | null;
-  // Parallel fetches. 3 is gentle; LinkedIn isn't published but the wisdom
-  // is to stay under ~5 sustained req/s. With 3 concurrent and ~2s avg
-  // latency we sit at ~1.5 req/s which clears 1400 posts in ~15 minutes
-  // comfortably and leaves headroom for retries.
+  // Parallel fetches. Default 1: the dedicated scraper account hits Unipile's
+  // per-account rate limit fast at higher concurrency (we observed sustained
+  // 429s at concurrency 3). 1 + a small spacing keeps us well under it. Cap
+  // is 3 (anything higher is asking for it).
   concurrency?: number;
-  // Min ms between starting batches. Keeps the rate steady even if Unipile
-  // responses come back fast.
+  // Min ms between requests. 1500ms × 1 concurrent ≈ 0.66 req/s, comfortably
+  // below any plausible Unipile per-account ceiling and well under what
+  // LinkedIn's session-level detection cares about.
   pauseMs?: number;
+}
+
+// Extract the HTTP status from our Unipile error message format
+// "Unipile API error <status>: ...". Returns -1 if we can't parse one
+// (network error, json parse error, etc).
+function statusFromError(err: any): number {
+  const m = String(err?.message || '').match(/Unipile API error (\d+)\b/);
+  return m ? parseInt(m[1], 10) : -1;
 }
 
 export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ started: boolean; reason?: string }> {
   if (state.running) return { started: false, reason: 'already running' };
   if (!SCRAPER_ACCOUNT_ID) return { started: false, reason: 'UNIPILE_SCRAPER_ACCOUNT_ID not set' };
 
-  const concurrency = Math.max(1, Math.min(5, opts.concurrency ?? 3));
-  const pauseMs = Math.max(0, opts.pauseMs ?? 250);
+  const concurrency = Math.max(1, Math.min(3, opts.concurrency ?? 1));
+  const pauseMs = Math.max(0, opts.pauseMs ?? 1500);
   const limit = opts.limit ?? null;
 
-  // Snapshot the queue once — new outliers landing mid-run get picked up
-  // on the next invocation, not this one.
   const params: any[] = [];
   let limitSql = '';
   if (limit != null) {
@@ -83,8 +92,6 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
 
   if (targets.length === 0) return { started: false, reason: 'nothing to backfill' };
 
-  // Mark running and kick the worker off without awaiting — the HTTP
-  // handler returns immediately and the UI polls /status.
   state.running = true;
   state.started_at = new Date().toISOString();
   state.processed = 0;
@@ -92,12 +99,18 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
   state.total = targets.length;
   state.current_post_id = null;
   state.last_error = null;
+  state.errors_by_status = {};
+
+  // Circuit breaker: if we hit 5 consecutive 429s, cool down for a minute
+  // before resuming. Lets Unipile's per-account rate window reset cleanly
+  // instead of us burning through retries-of-retries.
+  let consecutive429 = 0;
 
   void (async () => {
     try {
       for (let i = 0; i < targets.length; i += concurrency) {
         const batch = targets.slice(i, i + concurrency);
-        await Promise.all(
+        const results = await Promise.all(
           batch.map(async (t: any) => {
             state.current_post_id = t.id;
             try {
@@ -112,19 +125,16 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
                 [JSON.stringify(mix), t.id]
               );
               state.processed++;
+              return { ok: true, status: 200 };
             } catch (err: any) {
+              const status = statusFromError(err);
+              const key = String(status);
+              state.errors_by_status[key] = (state.errors_by_status[key] || 0) + 1;
               state.failed++;
               state.last_error = `${t.id}: ${err?.message}`.slice(0, 300);
-              console.warn(`[reactionMixBackfill] ${t.id} failed:`, err?.message);
+              console.warn(`[reactionMixBackfill] ${t.id} failed (${status}):`, err?.message);
 
-              // 404 = post deleted or hidden on LinkedIn. Mark with a
-              // sentinel so subsequent runs skip it instead of wasting
-              // calls re-checking. Other errors (429, 5xx, network) are
-              // transient — leave reaction_mix NULL so retries pick them
-              // up next run.
-              const msg = String(err?.message || '');
-              const is404 = /Unipile API error 404\b/.test(msg);
-              if (is404) {
+              if (status === 404) {
                 const sentinel = {
                   _error: 'not_found',
                   _attempted_at: new Date().toISOString(),
@@ -141,9 +151,25 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
                   );
                 }
               }
+              return { ok: false, status };
             }
           })
         );
+
+        // Circuit-breaker: count consecutive batches where every single
+        // call returned 429. If we see 5 in a row, pause 60s.
+        const all429 = results.length > 0 && results.every((r) => !r.ok && r.status === 429);
+        if (all429) {
+          consecutive429++;
+          if (consecutive429 >= 5) {
+            console.warn('[reactionMixBackfill] sustained 429s — pausing 60s to let Unipile cool down');
+            await new Promise((r) => setTimeout(r, 60_000));
+            consecutive429 = 0;
+          }
+        } else if (results.some((r) => r.ok)) {
+          consecutive429 = 0;
+        }
+
         if (pauseMs > 0 && i + concurrency < targets.length) {
           await new Promise((r) => setTimeout(r, pauseMs));
         }
@@ -152,7 +178,7 @@ export async function runReactionMixBackfill(opts: RunOpts = {}): Promise<{ star
       state.running = false;
       state.current_post_id = null;
       console.log(
-        `[reactionMixBackfill] done — processed=${state.processed} failed=${state.failed} total=${state.total}`
+        `[reactionMixBackfill] done — processed=${state.processed} failed=${state.failed} total=${state.total} by_status=${JSON.stringify(state.errors_by_status)}`
       );
     }
   })();
