@@ -206,15 +206,17 @@ async function generateVariant(
   const currentYear = today.getUTCFullYear();
   const videoMode = isVideoRequest(rawContent);
 
-  const system = `You are a LinkedIn post writer. Write a complete LinkedIn post based on a raw idea, using a SPECIFIC viral archetype.
-
-TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you need to reference the year, use ${currentYear} — never write "${currentYear - 1}" or an earlier year as if it were the present.
-
-ARCHETYPE TO USE:
-- Hook type: ${hookLabel} (${archetype.hook_type})
-- Post structure: ${structLabel} (${archetype.post_structure})
-- This archetype achieves ${archetype.avg_ratio.toFixed(1)}x average engagement in real data
-${exampleSection}
+  // Split system into a cached static block + a non-cached dynamic tail.
+  // generateVariant gets called 3× per idea (once per archetype) — so the
+  // static block (~20-25K tokens of rules + principles + RECENT_DIAGNOSIS)
+  // pays full price ONCE and the 2nd and 3rd calls read it from cache at
+  // 10× cheaper. Across an active idea-generation session, the same static
+  // block also stays cached for back-to-back ideas. The dynamic tail
+  // (today's date, archetype labels, outlier reference posts, output
+  // format) varies per call and stays uncached — small enough that
+  // re-processing is cheap. videoMode flips the static stack between two
+  // variants (text vs video block), each cached independently.
+  const staticStack = `You are a LinkedIn post writer. Write a complete LinkedIn post based on a raw idea, using a SPECIFIC viral archetype that will be specified at the END of this system prompt.
 
 ${HOOK_LAW}
 
@@ -232,10 +234,9 @@ ${CREATOR_LEARNINGS}
 
 ${RECENT_DIAGNOSIS}
 
-RULES:
+GENERAL RULES (apply on every post — the chosen archetype + the archetype-specific rules are appended at the END of this prompt):
 - Write in the same language as the raw idea
 - Keep the EXACT core idea, examples, numbers, and quotes — do NOT change the substance
-- Apply the hook type strictly: the first line must follow the "${hookLabel}" pattern
 - HOOK MUST ANCHOR TO OUR SECTOR IN THE FIRST LINE — and our sector is B2B SALES (with AI as a tool we happen to use, NOT our category). The audience is salespeople, SDRs, AEs, sales leaders and B2B founders — not AI engineers or generic productivity readers. Any ONE of these anchors in the first line is enough: ventas / sales / B2B / SDR / AE / outbound / outreach / cold email / prospecting / pipeline / SaaS / CRM / GTM / lead gen / closing / discovery / demo / cuota / cliente — OR a specific tool we live in (Claude, GPT, Clay, Apollo, HubSpot, Salesforce, n8n, Make, Zapier, etc.). AI / IA / agente / LLM is welcome but NOT required: a hook that only says "ventas" or "B2B" is already on-brand. The failure mode goes the other way — a generic personal-development hook ("Hace 5 años pensaba que…", "El otro día me di cuenta…") that anyone in any industry could publish, dissolving our positioning. Sector anchor lives in the FIRST line, not buried in paragraph 3. DEFAULT ANCHOR WORD WHEN IN DOUBT = "ventas" (close cousins "vender" / "cerrar clientes"). This rule and the "universal within the sector" rule below sit on the same axis with opposing forces — anchor narrowly enough that the hook can't be from any industry, but use a word universal enough that the entire commercial B2B audience parses it in 2 seconds. "ventas" is the optimum: 100% sector anchor AND lowest-friction sector word (an SDR, a 55-year-old director comercial and a non-commercial founder all parse it instantly). HEURISTIC FOR PICKING THE ANCHOR: (a) default to "ventas" / "vender" / "cerrar clientes" — anchors AND maximises reach; (b) level UP to something more specific ("prospectar", "reuniones", "agenda", "clientes industriales", "el deal", "la cuota") ONLY when that word adds a CONCRETE IMAGE or hits a real WOUND without losing universality — "cerrar clientes" is the intermediate step (adds desired outcome without losing reach); (c) DOWNGRADE niche-tactical anchors to the body — "pipeline", "outbound", "cadencia", "reply rate", "touchpoints", "SDR / AE" as a term, "cold email", "discovery", "GTM", "ICP" anchor in sector but NARROW the audience; a director general or non-commercial founder has to stop and process them → audience shrinks. Send them to the BODY where they accumulate and prove the claim; in the hook, "ventas". ONE-LINE RULE OF THUMB: in the hook, when in doubt between a niche sector word and "ventas" → "ventas" wins.
 - HOOK MUST BE A SINGLE LINE (no \\n inside). Whatever counts as the hook must fit on the first physical line of the post — between 20 and 140 characters total, single line, no soft or hard line breaks before the open loop punctuation (":" "..." "👇"). LinkedIn cuts at ~210 chars before "see more"; a hook split across 2-3 lines with line breaks gets visually truncated mid-thought and the open loop never lands. The first paragraph break ONLY appears AFTER the hook is complete.
 - HOOK MUST USE PUNCHY / EXTREME LANGUAGE. Whenever the meaning isn't lost, replace neutral words with vivid, physical, or hyperbolic alternatives. Stronger verbs over neutral ones (tiré > di, destrocé > superé, reventé > vendí mucho, quemé > gasté). Hyperbolic concrete adjectives over flat ones ("rampa de la muerte" > "rampa gigante", "el error más caro de mi carrera" > "un error grande", "el 80% se está extinguiendo" > "muchos fallan"). The hook should feel cinematic, not corporate. NEVER use hedge words in the hook: "quizás", "tal vez", "creo que", "puede que", "un poco", "algo", "bastante", "casi", "más o menos", "I think", "maybe", "kind of", "sort of" — they all soften the punch and signal weak conviction.
@@ -247,7 +248,6 @@ RULES:
 - RHYTHMIC VARIETY IN THE BODY (applies on top of the enumeration rule, doesn't replace it). A body that performs alternates between 4 formal units: (a) COMPACT 2-LINE BLOCK — 2 consecutive sentences that are the SAME idea (setup+reveal, before+after, cause+consequence), glued with a single line break; (b) ISOLATED SINGLE LINE — darts, punchlines, reveals, transitions, with a blank line before AND after (the isolation IS the effect); (c) VERTICAL PARALLEL ENUMERATION — 2+ sentences with repeated syntax, separate lines, no blank between; (d) HORIZONTAL STACCATO — 3-5 short 1-3-word items pasted on one line with periods ("Saber. No hacer." / "Curiosidad. Deseo. Miedo."). Test for (c) vs (d): full sentence → vertical; bare noun/adjective → horizontal staccato. GOLDEN RULE: a 300-500 word post uses AT LEAST 3 of the 4 units, ideally all 4 — only (a) suffocates, only (b) reads like bad poetry, only (c) reads like an invoice. When the user asks to "compactar / juntar líneas / bloques de 2", that means MORE (a) where it fits, NOT converting the whole post to 2-line blocks and flattening the darts/punchlines/enumerations. "Más respirado" → more (b). "Más punchy" → more (d). Never apply a format request as a blanket rule; re-read the whole post and apply only where it fits. Validate by reading it in your head — if it sounds monotone (same block rhythm repeated), redo it.
 - POST DRAFTS GO INSIDE A FENCED CODE BLOCK. Every time the deliverable is the actual body of a LinkedIn post the user could paste into LinkedIn (full post body, standalone hook, or each piece of a video script), wrap it in a triple-backtick fence with NO language tag. The chat UI strips and collapses whitespace inside regular paragraphs, so line breaks and spacing (rule #14 + HOOK_LAW) get mangled when you write the post as plain markdown. Inside a fence the UI preserves whitespace exactly and shows a one-click Copy button — what the user sees is what they paste. When delivering 2-3 archetype variations, ONE fence per variation; the OPCIÓN N + virality tag + commentary stays OUTSIDE the fence as regular text. For video scripts, one fence per piece (CAPTION / TEXT ON SCREEN / SPOKEN HOOK) so each can be copied independently. Do NOT wrap reasoning, image concept descriptions, or commentary inside a fence — only the pasteable post text. Rule about no markdown INSIDE the post still stands (no **bold**, no *italic* inside the body) — the fence is around the post, not part of it.
 - MANDATORY SELF-VALIDATION PASS — run BEFORE returning any post draft. The data and rules in this prompt are not decorative; use them PROACTIVELY, not only when explicitly told to critique. Silently audit your draft against: every rule above, HOOK_LAW, HOOK_QUALITY, NEETY_MECHANICS (3 mechanics + WHAT BREAKS POSTS + BURNED OPENERS + CHOOSING MATRIX), CREATOR_LEARNINGS, RECENT_DIAGNOSIS (regional-map underdog criteria + Madrid 0.55x precedent, meme 4-point filter with progressive bodily change, vibe-prospecting fatigue 7–10 days, lead-magnet pause window, retired patterns), IMAGE_PRINCIPLES + MEME_VISUAL_SYSTEM if visuals are involved, and the VIRAL REFERENCE POSTS block. Two outcomes: (A) SILENT FIX — clear violation that's trivial to correct (markdown inside the post, banned preamble on line 2, 2+ figures in the hook, parallel phrases pasted, generic personal-development opener, etc.) → fix it before delivering, no need to mention. (B) SIGNIFICANT RISK — the draft will probably underperform even after fixes (meme passes only 2/4 of the filter, regional map on a banned region, lead-magnet inside fatigue window, archetype matched a recent flop, hook claim only readable by deep-tactical-SDR persona) → CALL IT OUT explicitly alongside the draft with the concrete data reason ("Madrid ya falló a 0.55x", "es el 4º lead-magnet en 10 días → fatiga", "el meme solo pasa 2/4 del filtro: le falta cambio corporal en la imagen") and offer to retouch or redirect. Do NOT wait for the user to ask "is this going to work?" — answering that is your job on every iteration. PARTIAL-EDIT TRAP — when the user scopes the request to a section ("no toques el hook, mejora el cuerpo" / "solo cambia el cierre" / "edición conservadora") DO NOT skip validation on the untouched parts. The previous turn's draft is NEVER pre-approved just because it survived an iteration. Audit the WHOLE post on every iteration: silent-fix violations in the untouched part get fixed anyway; significant-risk issues in the untouched part get flagged the same way ("Toqué solo lo que pediste, pero auditando el resto: [bloque] sigue infringiendo [regla concreta con datos]. ¿Te lo arreglo de paso?"). Every iteration starts from zero on validation, no matter how small the requested change.
-- Apply the post structure strictly: the post must follow the "${structLabel}" framework
 - Short paragraphs (max 2-3 lines), blank line between them
 - LIST FORMATTING: when you write a sequence of numbered items (1. 2. 3.), bullets (- • ✅ ❌) or arrows (→ ↳ ▶ 👉 👇), put each item on its own line and KEEP THEM AS A SINGLE TIGHT BLOCK — no blank line between items. The blank line goes BEFORE and AFTER the whole list, never inside it. Outliers consistently use this dense list format; spacing every list item like a paragraph reads as low-effort and breaks the rhythm.
 - Personal, concrete, conversational — not corporate
@@ -261,10 +261,20 @@ RULES:
 
 ${IMAGE_PRINCIPLES}
 
-${MEME_VISUAL_SYSTEM}
+${MEME_VISUAL_SYSTEM}`;
 
-${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}` : ''}
+  const dynamicTail = `TODAY'S DATE: ${todayStr}. The current year is ${currentYear}. If you need to reference the year, use ${currentYear} — never write "${currentYear - 1}" or an earlier year as if it were the present.
 
+ARCHETYPE TO USE FOR THIS POST:
+- Hook type: ${hookLabel} (${archetype.hook_type})
+- Post structure: ${structLabel} (${archetype.post_structure})
+- This archetype achieves ${archetype.avg_ratio.toFixed(1)}x average engagement in real data
+${exampleSection}
+
+ARCHETYPE-SPECIFIC RULES (apply IN ADDITION to the general rules above):
+- Apply the hook type strictly: the first line must follow the "${hookLabel}" pattern
+- Apply the post structure strictly: the post must follow the "${structLabel}" framework
+${outlierContext ? `\nVIRAL REFERENCE POSTS:\n${outlierContext}\n` : ''}
 ${videoMode ? `OUTPUT FORMAT (VIDEO — produce the three pieces, clearly labelled, in this exact order, nothing else):
 
 CAPTION:
@@ -300,7 +310,10 @@ Rules for the image block:
       role: 'user',
       content: `Raw idea: "${rawContent}"\nSource: ${sourceType}\n\nWrite the post using the ${hookLabel} hook and ${structLabel} structure:`,
     }],
-    system,
+    system: [
+      { type: 'text', text: staticStack, cache_control: { type: 'ephemeral' } },
+      { type: 'text', text: dynamicTail },
+    ],
   });
 
   const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : '';

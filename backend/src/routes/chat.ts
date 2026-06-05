@@ -915,25 +915,48 @@ router.post('/', async (req: Request, res: Response) => {
 
     const voiceContext = await buildVoiceContext(messages);
 
-    let systemPrompt: string;
+    // Anthropic prompt caching — single biggest cost lever for this endpoint.
+    // Pre-caching audit: each turn re-paid full Opus-4.8 input price
+    // ($15/M) for ~80-120K tokens of system prompt that hadn't changed
+    // since the previous turn. Caching cuts that to $1.50/M on reads
+    // (10× cheaper) at a one-time 25% write premium ($18.75/M), and the
+    // 5-min ephemeral TTL auto-refreshes on every cache hit — so an active
+    // conversation keeps reading the same cached prefix indefinitely.
+    //
+    // We use 3 cache breakpoints (Anthropic allows up to 4):
+    //   1. Static prompt stack (rules + principles + RECENT_DIAGNOSIS) — only
+    //      invalidates on deploy.
+    //   2. Data context (analysis + profile + recent timeline) — invalidates
+    //      every 10 min (the existing server-side cache window).
+    //   3. The image-prefix message turn (~30-40K tokens of visual references).
+    // The voice-context block (Iker/Unai persona) is left UNCACHED at the
+    // tail of system, because it flips per turn based on who the user
+    // names — caching it would mean a write on every persona switch.
+    //
+    // Behaviour is byte-identical to the previous single-string assembly;
+    // only the billing changes.
+    let systemBlocks: Array<{ type: 'text'; text: string; cache_control?: { type: 'ephemeral' } }>;
     if (videoMode) {
       const videoAnalysisContext = await getVideoAnalysisContext();
       const videoProfileContext = await buildVideoProfileContext();
-      systemPrompt = `${VIDEO_SYSTEM_PROMPT}
+      const videoStaticStack = `${VIDEO_SYSTEM_PROMPT}
 
 ${BRAND_RULES}
 
 ${VIDEO_SCRIPT}
 
-${SHORT_FORM_VIDEO_PLAYBOOK}
+${SHORT_FORM_VIDEO_PLAYBOOK}`;
+      const videoDataContext = `Here is the real text+video data from the LinkedIn posts database (the only relevant subset for a video request):
 
-Here is the real text+video data from the LinkedIn posts database (the only relevant subset for a video request):
-
-${videoAnalysisContext}${videoProfileContext}${voiceContext}`;
+${videoAnalysisContext}${videoProfileContext}`;
+      systemBlocks = [
+        { type: 'text', text: videoStaticStack, cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: videoDataContext, cache_control: { type: 'ephemeral' } },
+      ];
     } else {
       const analysisContext = await getAnalysisContext();
       const profileContext = await buildProfileContext();
-      systemPrompt = `${SYSTEM_PROMPT}
+      const staticStack = `${SYSTEM_PROMPT}
 
 ${HOOK_LAW}
 
@@ -953,11 +976,20 @@ ${MEME_VISUAL_SYSTEM}
 
 ${REMIX_PRINCIPLES}
 
-${RECENT_DIAGNOSIS}
+${RECENT_DIAGNOSIS}`;
+      const dataContext = `Here is the real analysis data from the LinkedIn posts database:
 
-Here is the real analysis data from the LinkedIn posts database:
-
-${analysisContext}${profileContext}${voiceContext}`;
+${analysisContext}${profileContext}`;
+      systemBlocks = [
+        { type: 'text', text: staticStack, cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: dataContext, cache_control: { type: 'ephemeral' } },
+      ];
+    }
+    // Voice context is dynamic per turn (Iker/Unai persona detected from
+    // the latest user message) — append it WITHOUT cache_control so the
+    // two cached prefixes above stay valid across persona switches.
+    if (voiceContext) {
+      systemBlocks.push({ type: 'text', text: voiceContext });
     }
 
     // Stream the response
@@ -977,7 +1009,17 @@ ${analysisContext}${profileContext}${voiceContext}`;
           { role: 'user' as const, content: imageBlocks },
           {
             role: 'assistant' as const,
-            content: "Got it — I'm holding your recent post images as visual reference alongside the text data above. Ready when you are.",
+            // cache_control on this assistant turn marks the end of the
+            // image-prefix cacheable prefix: ~30-40K tokens (20 images +
+            // inventory + this ack) get cached together and only re-paid
+            // at the cache-read rate ($1.50/M) on every subsequent turn,
+            // instead of full Opus-4.8 input ($15/M). Same 5-min ephemeral
+            // TTL refresh-on-read as the system blocks above.
+            content: [{
+              type: 'text' as const,
+              text: "Got it — I'm holding your recent post images as visual reference alongside the text data above. Ready when you are.",
+              cache_control: { type: 'ephemeral' as const },
+            }],
           },
           ...messages,
         ]
@@ -994,7 +1036,7 @@ ${analysisContext}${profileContext}${voiceContext}`;
       // Claude Opus 4.7 supports up to ~32K output tokens; this stays
       // well below that with room to grow.
       max_tokens: 16384,
-      system: systemPrompt,
+      system: systemBlocks,
       messages: augmentedMessages.map((m: any) => ({
         role: m.role,
         content: m.content,
