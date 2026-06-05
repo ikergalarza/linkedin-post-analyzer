@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useApi } from '../hooks/useApi';
 import GenerateTab from '../components/inspiration/GenerateTab';
 import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
@@ -210,6 +210,62 @@ export default function Inspiration() {
   const [classifying, setClassifying] = useState(false);
   const [classifyResult, setClassifyResult] = useState<string | null>(null);
   const [reclassifyScope, setReclassifyScope] = useState<'images' | 'all'>('images');
+
+  // Reaction-mix backfill — separate flow from the Claude-based topic
+  // classifier. Pulls reactions per outlier from the dedicated Unipile
+  // scraper account, computes the type distribution, and lets us detect
+  // memes via funny_pct instead of asking Sonnet to read the text.
+  const [mixStatus, setMixStatus] = useState<{
+    running: boolean;
+    processed: number;
+    failed: number;
+    total: number;
+    outliers_with_mix: number;
+    outliers_total: number;
+    last_error: string | null;
+  } | null>(null);
+  const [mixStarting, setMixStarting] = useState(false);
+
+  // Poll the backfill status every 3s while a run is in flight, otherwise
+  // every 30s just to keep the summary fresh.
+  useEffect(() => {
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const res = await fetch(`${BASE}/api/reactions/backfill/status`);
+        const json = await res.json();
+        if (cancelled) return;
+        setMixStatus({
+          running: json.progress.running,
+          processed: json.progress.processed,
+          failed: json.progress.failed,
+          total: json.progress.total,
+          outliers_with_mix: json.summary.outliers_with_mix,
+          outliers_total: json.summary.outliers_total,
+          last_error: json.progress.last_error,
+        });
+      } catch { /* ignore */ }
+    };
+    tick();
+    const interval = mixStatus?.running ? 3000 : 30000;
+    const id = setInterval(tick, interval);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [mixStatus?.running]);
+
+  const handleStartMixBackfill = async () => {
+    setMixStarting(true);
+    try {
+      const res = await fetch(`${BASE}/api/reactions/backfill/start`, { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || json.started === false) {
+        alert(`No se pudo arrancar: ${json.reason || json.error || 'desconocido'}`);
+      }
+    } catch (e: any) {
+      alert(`Error: ${e.message}`);
+    } finally {
+      setMixStarting(false);
+    }
+  };
 
   const outliers = data?.outliers || [];
   const unclassifiedCount = outliers.filter((p) => !p.topic).length;
@@ -481,6 +537,35 @@ export default function Inspiration() {
 
             {classifyResult && <span className="text-xs text-text-muted">{classifyResult}</span>}
           </div>
+
+          {/* Reaction-mix backfill — pulls per-type reaction counts via the
+              dedicated scraper Unipile account. Used to detect memes
+              (funny_pct) without spending Sonnet tokens on the classifier. */}
+          {mixStatus && (
+            <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border/40">
+              <button
+                onClick={handleStartMixBackfill}
+                disabled={mixStarting || mixStatus.running || mixStatus.outliers_with_mix >= mixStatus.outliers_total}
+                className="px-4 py-2 bg-purple-400/15 text-purple-300 rounded-lg text-xs font-medium hover:bg-purple-400/25 disabled:opacity-50 transition-colors"
+                title="Pide a Unipile el mix de reacciones (LIKE/FUNNY/CELEBRATE/...) de cada outlier. Background, usa la cuenta de scrapeo dedicada."
+              >
+                {mixStatus.running
+                  ? `🎭 Procesando ${mixStatus.processed}/${mixStatus.total}…`
+                  : mixStatus.outliers_with_mix >= mixStatus.outliers_total
+                    ? '🎭 Reaction mix completo'
+                    : `🎭 Backfill reaction mix (${mixStatus.outliers_total - mixStatus.outliers_with_mix} pendientes)`}
+              </button>
+              <span className="text-xs text-text-muted">
+                {mixStatus.outliers_with_mix.toLocaleString()} / {mixStatus.outliers_total.toLocaleString()} outliers con mix
+                {mixStatus.failed > 0 && <span className="text-red-400"> · {mixStatus.failed} fallos</span>}
+              </span>
+              {mixStatus.last_error && (
+                <span className="text-[10px] text-red-400/70 truncate max-w-md" title={mixStatus.last_error}>
+                  último error: {mixStatus.last_error}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Filters & sort */}
           <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">

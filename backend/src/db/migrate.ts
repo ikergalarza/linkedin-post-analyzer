@@ -442,6 +442,20 @@ const migration = `
   );
   CREATE INDEX IF NOT EXISTS idx_claude_usage_created ON claude_usage_logs (created_at DESC);
   CREATE INDEX IF NOT EXISTS idx_claude_usage_feature ON claude_usage_logs (feature, created_at DESC);
+
+  -- v24: Per-post LinkedIn reaction breakdown. Populated only for outliers
+  -- via the reactionMixBackfill job (which uses a dedicated Unipile account
+  -- to keep the load off Iker/Unai's profiles). Shape is
+  -- { LIKE: n, FUNNY: n, CELEBRATE: n, INSIGHTFUL: n, SUPPORT: n,
+  --   EMPATHY: n, INTEREST: n, total: n, sampled: n }. "total" is the
+  --   reaction_counter the post object exposes; "sampled" is how many we
+  --   actually saw on the reactions endpoint (sometimes we cap pagination).
+  -- The funny_pct heuristic (FUNNY/total > 0.25) is what flags memes
+  -- without needing Claude to read the text.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS reaction_mix JSONB;
+  CREATE INDEX IF NOT EXISTS idx_posts_reaction_mix_funny
+    ON posts (((reaction_mix->>'FUNNY')::int))
+    WHERE reaction_mix IS NOT NULL;
 `;
 
 export async function runMigrations() {

@@ -626,6 +626,51 @@ export class UnipileService {
       }
     );
   }
+
+  // Fetch the per-reaction-type breakdown for a post (LIKE / FUNNY /
+  // CELEBRATE / INSIGHTFUL / SUPPORT / EMPATHY / INTEREST). Walks the
+  // /reactions endpoint until pagination ends or we hit maxPages.
+  //
+  // We aggregate into a compact count map — the caller doesn't need each
+  // individual reaction, only "how many of each type". Used by the meme
+  // detector: a post with funny_pct > 0.25 is virtually always a meme,
+  // and computing that needs only the totals.
+  async getPostReactions(
+    postSocialId: string,
+    accountIdOverride?: string,
+    opts: { maxPages?: number; pageSize?: number } = {}
+  ): Promise<{ counts: Record<string, number>; sampled: number; pages: number }> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for reactions fetch');
+    const pageSize = opts.pageSize ?? 100;
+    const maxPages = opts.maxPages ?? 20; // 20 × 100 = 2000 reactions cap
+
+    const counts: Record<string, number> = {};
+    let sampled = 0;
+    let cursor: string | undefined;
+    let pages = 0;
+
+    for (let page = 0; page < maxPages; page++) {
+      const params = new URLSearchParams({ account_id: accountId, limit: String(pageSize) });
+      if (cursor) params.set('cursor', cursor);
+      const res = await this.request<{ items?: any[]; cursor?: string; paging?: { cursor?: string } }>(
+        `/api/v1/posts/${encodeURIComponent(postSocialId)}/reactions?${params.toString()}`
+      );
+      const items = res.items || [];
+      if (items.length === 0) break;
+      for (const r of items) {
+        // Unipile rotates the field name; try the most common variants.
+        const type = String(r.type || r.reaction || r.reaction_type || 'UNKNOWN').toUpperCase();
+        counts[type] = (counts[type] || 0) + 1;
+      }
+      sampled += items.length;
+      pages = page + 1;
+      cursor = res.cursor || res.paging?.cursor;
+      if (!cursor || items.length < pageSize) break;
+    }
+
+    return { counts, sampled, pages };
+  }
 }
 
 // Shared between live detection and reclassify. LinkedIn CDN URLs lack file
