@@ -1419,6 +1419,26 @@ function fmtAge(iso: string): string {
   return `${Math.round(h / 24)}d ago`;
 }
 
+// Absolute date+time for the post's PUBLICATION timestamp — the user
+// asked for the exact moment a post went up instead of the previous
+// "7d ago" relative format, which was useless for any planning or
+// "when exactly did we publish that" recall. Snapshot ages keep the
+// relative `fmtAge` formatting (there "2h ago" is more useful than a
+// raw timestamp for spotting fresh / stale captures). Compact format:
+// day + abbreviated month + HH:mm; year is added only when the post
+// isn't from the current year so recent posts stay short and readable.
+function fmtPublishedAt(iso: string): string {
+  const d = new Date(iso);
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleString('es-ES', {
+    day: 'numeric',
+    month: 'short',
+    ...(sameYear ? {} : { year: 'numeric' }),
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 // Shared snapshot chart — works for any post with captured data (live or historical).
 // Fetches `/api/accounts/posts/:id/snapshots` lazily; auto-refreshes every 2 min while live.
 function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; publishedAt: string; autoRefresh?: boolean }) {
@@ -1826,7 +1846,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
           <div className="flex items-center gap-2 text-xs text-text-muted mb-1 flex-wrap">
             <span className="text-text-secondary font-medium">{post.creator_name}</span>
             <span>·</span>
-            <span>{fmtAge(post.published_at)}</span>
+            <span title={new Date(post.published_at).toLocaleString()}>{fmtPublishedAt(post.published_at)}</span>
             {(() => {
               const meta = PHASE_META[post.phase] || PHASE_META.closed;
               return (
@@ -1948,7 +1968,7 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
             <div className="flex items-center gap-2 text-xs text-text-muted flex-wrap min-w-0">
               <span className="text-text-secondary font-medium">{post.creator_name}</span>
               <span>·</span>
-              <span>{post.published_at ? new Date(post.published_at).toLocaleDateString() : '—'}</span>
+              <span title={post.published_at ? new Date(post.published_at).toLocaleString() : ''}>{post.published_at ? fmtPublishedAt(post.published_at) : '—'}</span>
               <span>·</span>
               <span>{FORMAT_LABELS[post.content_type] || post.content_type}</span>
             </div>
