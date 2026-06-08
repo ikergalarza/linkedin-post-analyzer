@@ -397,6 +397,15 @@ export default function Accounts() {
   // Live-posts list grows long fast; reveal in pages of LIVE_PAGE.
   const LIVE_PAGE = 12;
   const [visibleLive, setVisibleLive] = useState(LIVE_PAGE);
+  // Same idea for the Top Posts list (sorted by outlier ratio) — show
+  // the head of the ranking by default, let the user expand to dig deeper.
+  const TOP_PAGE = 8;
+  const [visibleTop, setVisibleTop] = useState(TOP_PAGE);
+  // Reset visibility when the content-type filter changes so we never
+  // show a "ver más" with a stale count from the previous filter.
+  useEffect(() => {
+    setVisibleTop(TOP_PAGE);
+  }, [topPostsTypeFilter]);
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
@@ -1330,7 +1339,7 @@ export default function Accounts() {
                       ({filteredTopPosts.length}{topPostsTypeFilter !== 'all' ? ` of ${analytics.top_posts.length}` : ''})
                     </span>
                   </h3>
-                  <p className="text-xs text-text-muted">Highest-engagement posts in this range</p>
+                  <p className="text-xs text-text-muted">Sorted by outlier ratio (highest multiplier vs. each creator's baseline)</p>
                 </div>
                 {topPostsTypeCounts.size > 1 && (
                   <div className="flex items-center gap-2 flex-wrap">
@@ -1359,9 +1368,25 @@ export default function Accounts() {
                 <p className="text-text-muted text-sm">No posts match this filter.</p>
               ) : (
                 <div className="space-y-2">
-                  {filteredTopPosts.map((p) => (
+                  {filteredTopPosts.slice(0, visibleTop).map((p) => (
                     <TopPostRow key={p.id} post={p} onOpenChat={() => setChatPostId(p.id)} />
                   ))}
+                  {filteredTopPosts.length > visibleTop && (
+                    <button
+                      onClick={() => setVisibleTop((v) => v + TOP_PAGE)}
+                      className="w-full py-2.5 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+                    >
+                      Ver más ({filteredTopPosts.length - visibleTop} restantes) ↓
+                    </button>
+                  )}
+                  {visibleTop > TOP_PAGE && filteredTopPosts.length <= visibleTop && (
+                    <button
+                      onClick={() => setVisibleTop(TOP_PAGE)}
+                      className="w-full py-2 text-[11px] text-text-muted hover:text-text-secondary transition-colors"
+                    >
+                      Ver menos ↑
+                    </button>
+                  )}
                 </div>
               )}
             </div>

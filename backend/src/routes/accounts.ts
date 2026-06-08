@@ -1081,7 +1081,12 @@ router.get('/analytics', async (req: Request, res: Response) => {
       [currentStartIso, currentEndIso, ...formatScope.params]
     );
 
-    // Top posts
+    // Top posts — sorted by outlier_ratio DESC (the multiplier vs. each
+    // creator's own baseline), engagement_score as a tiebreaker for posts
+    // without a ratio yet. The frontend paginates this list with a
+    // "ver más" button, so we serve a generous LIMIT instead of the
+    // previous 10 — keeps the payload bounded but lets the user dig
+    // beyond the very top of the ranking when the range is wide.
     const topScope = scope(3);
     const topPostsQ = await pool.query(
       `SELECT
@@ -1093,8 +1098,8 @@ router.get('/analytics', async (req: Request, res: Response) => {
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
        WHERE p.published_at >= $1 AND p.published_at <= $2 AND ${topScope.sql}
-       ORDER BY p.engagement_score DESC
-       LIMIT 10`,
+       ORDER BY p.outlier_ratio DESC NULLS LAST, p.engagement_score DESC
+       LIMIT 50`,
       [currentStartIso, currentEndIso, ...topScope.params]
     );
 
