@@ -389,6 +389,11 @@ export default function Accounts() {
   // notice that the backend just captured fresh snapshots.
   const [refreshSignal, setRefreshSignal] = useState(0);
   const [topPostsTypeFilter, setTopPostsTypeFilter] = useState<string>('all');
+  // Sort key for the Top posts list. Defaults to outlier ratio (the headline
+  // signal) but the user can re-rank by raw engagement metrics to see e.g.
+  // "highest impressions regardless of multiplier".
+  type TopPostsSortKey = 'outlier_ratio' | 'impressions' | 'likes' | 'comments' | 'reposts' | 'engagement' | 'recent';
+  const [topPostsSort, setTopPostsSort] = useState<TopPostsSortKey>('outlier_ratio');
   const [chatPostId, setChatPostId] = useState<string | null>(null);
   // Top-level tab — the BI view is the original Accounts BI dashboard; the
   // Replies view is the new sub-section where the user picks one of their
@@ -537,9 +542,37 @@ export default function Accounts() {
 
   const filteredTopPosts = useMemo(() => {
     if (!analytics) return [];
-    if (topPostsTypeFilter === 'all') return analytics.top_posts;
-    return analytics.top_posts.filter((p) => (p.content_type || 'text') === topPostsTypeFilter);
-  }, [analytics, topPostsTypeFilter]);
+    const base = topPostsTypeFilter === 'all'
+      ? analytics.top_posts
+      : analytics.top_posts.filter((p) => (p.content_type || 'text') === topPostsTypeFilter);
+    // Copy before sorting — analytics.top_posts is consumed elsewhere
+    // (e.g. type-count chips) and we don't want to mutate it.
+    const list = [...base];
+    const num = (v: number | null | undefined) => (typeof v === 'number' ? v : -Infinity);
+    switch (topPostsSort) {
+      case 'impressions':
+        list.sort((a, b) => num(b.impressions_count) - num(a.impressions_count));
+        break;
+      case 'likes':
+        list.sort((a, b) => b.likes_count - a.likes_count);
+        break;
+      case 'comments':
+        list.sort((a, b) => b.comments_count - a.comments_count);
+        break;
+      case 'reposts':
+        list.sort((a, b) => b.reposts_count - a.reposts_count);
+        break;
+      case 'engagement':
+        list.sort((a, b) => b.engagement_score - a.engagement_score);
+        break;
+      case 'recent':
+        list.sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime());
+        break;
+      default:
+        list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
+    }
+    return list;
+  }, [analytics, topPostsTypeFilter, topPostsSort]);
 
   return (
     <div className="space-y-6">
@@ -1339,7 +1372,41 @@ export default function Accounts() {
                       ({filteredTopPosts.length}{topPostsTypeFilter !== 'all' ? ` of ${analytics.top_posts.length}` : ''})
                     </span>
                   </h3>
-                  <p className="text-xs text-text-muted">Sorted by outlier ratio (highest multiplier vs. each creator's baseline)</p>
+                  <p className="text-xs text-text-muted">
+                    {{
+                      outlier_ratio: "Sorted by outlier ratio (highest multiplier vs. each creator's baseline)",
+                      impressions: 'Sorted by impressions (highest reach first)',
+                      likes: 'Sorted by likes',
+                      comments: 'Sorted by comments',
+                      reposts: 'Sorted by reposts',
+                      engagement: 'Sorted by engagement score',
+                      recent: 'Sorted by most recent',
+                    }[topPostsSort]}
+                  </p>
+                  <div className="flex items-center gap-2 flex-wrap mt-2">
+                    <span className="text-xs text-text-muted">Sort:</span>
+                    {([
+                      ['outlier_ratio', '🔥 Outlier'],
+                      ['impressions', '👁 Impressions'],
+                      ['likes', '👍 Likes'],
+                      ['comments', '💬 Comments'],
+                      ['reposts', '🔁 Reposts'],
+                      ['engagement', '⚡ Engagement'],
+                      ['recent', '🕐 Recent'],
+                    ] as const).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setTopPostsSort(key)}
+                        className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                          topPostsSort === key
+                            ? 'bg-accent/20 text-accent border border-accent/30'
+                            : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 {topPostsTypeCounts.size > 1 && (
                   <div className="flex items-center gap-2 flex-wrap">
