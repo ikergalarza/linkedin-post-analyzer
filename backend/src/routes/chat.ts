@@ -1025,27 +1025,74 @@ ${analysisContext}${profileContext}`;
         ]
       : messages;
 
-    const stream = trackedStream('post_creator_chat', {
-      model: 'claude-opus-4-8',
-      // 16K output tokens (~12K words). Was 4096 (~3000 words), which
-      // capped exhaustive analyses mid-word — the user reported a reply
-      // ending in "- PROBL" with Copy-all visible (i.e. stream closed
-      // cleanly), the classic signature of an output-tokens cap, not
-      // any UI truncation. 16K comfortably covers weekly diagnoses,
-      // multi-post audits, 3-archetype variations with commentary, etc.
-      // Claude Opus 4.7 supports up to ~32K output tokens; this stays
-      // well below that with room to grow.
-      max_tokens: 16384,
-      system: systemBlocks,
-      messages: augmentedMessages.map((m: any) => ({
-        role: m.role,
-        content: m.content,
-      })),
-    });
+    // Streaming closure so we can retry from the start without
+    // duplicating the boilerplate. Anthropic rejects the WHOLE request
+    // (400 invalid_request_error) when any URL-sourced image can't be
+    // downloaded — not just the broken one. Our pre-prepended account-
+    // image turn ships up to 20 LinkedIn CDN URLs that rotate after a
+    // few weeks, so one of them going dead poisons the entire turn.
+    // The catch block below detects that specific error and retries
+    // WITHOUT the image prefix; the user's own attached image (which
+    // lives in their last message, not in the prefix) survives.
+    const runStream = async (streamMessages: any[]) => {
+      const stream = trackedStream('post_creator_chat', {
+        model: 'claude-opus-4-8',
+        // 16K output tokens (~12K words). Was 4096 (~3000 words), which
+        // capped exhaustive analyses mid-word — the user reported a reply
+        // ending in "- PROBL" with Copy-all visible (i.e. stream closed
+        // cleanly), the classic signature of an output-tokens cap, not
+        // any UI truncation. 16K comfortably covers weekly diagnoses,
+        // multi-post audits, 3-archetype variations with commentary, etc.
+        // Claude Opus 4.7 supports up to ~32K output tokens; this stays
+        // well below that with room to grow.
+        max_tokens: 16384,
+        system: systemBlocks,
+        messages: streamMessages.map((m: any) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      });
+      for await (const event of stream) {
+        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+          res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+        }
+      }
+    };
 
-    for await (const event of stream) {
-      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-        res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+    try {
+      await runStream(augmentedMessages);
+    } catch (err: any) {
+      // Anthropic SDK errors carry both a `status` and a parsed `error`
+      // body — match on both since SDK versions surface the structure
+      // slightly differently. Message has the same string in either case.
+      const errMsg = err?.message || err?.error?.error?.message || '';
+      const errType = err?.error?.error?.type || '';
+      const isImageDownloadError =
+        (err?.status === 400 || errType === 'invalid_request_error') &&
+        /unable to download/i.test(errMsg);
+      if (isImageDownloadError && imageBlocks.length > 0) {
+        console.warn(
+          '[chat] Anthropic 400 "unable to download" — retrying without pre-prepended account-image prefix. URLs in the prefix have likely expired at the LinkedIn CDN.',
+          errMsg
+        );
+        // Surface the recovery to the user inline so they understand
+        // why an image-heavy meme/visual request might come back with
+        // slightly weaker visual context. The italics render as a
+        // system-note styling in the MarkdownMessage component without
+        // looking like part of the model's actual answer.
+        res.write(
+          `data: ${JSON.stringify({
+            text:
+              "_(Nota: una de las imágenes pre-cargadas de tu cuenta no se pudo descargar — LinkedIn rota las URLs de su CDN cada pocas semanas y alguna del histórico ya ha expirado. Sigo respondiendo con el resto del contexto y con la imagen que tú me has adjuntado intacta.)_\n\n",
+          })}\n\n`
+        );
+        // `messages` is the raw user-side conversation, which already
+        // contains the user's freshly-uploaded image (base64 from the
+        // UI) — only the pre-prepended visual-reference block from
+        // buildAccountImageBlocks gets dropped.
+        await runStream(messages);
+      } else {
+        throw err;
       }
     }
 
