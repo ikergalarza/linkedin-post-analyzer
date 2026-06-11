@@ -6,6 +6,7 @@ import { getCrossCreatorPatterns } from '../services/patterns';
 import { CreatorProfileModel } from '../models/creatorProfile';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import pool from '../db';
+import { unipileService } from '../services/unipile';
 import { ensureSingleLineHook } from '../utils/sanitizeText';
 import {
   BRAND_RULES,
@@ -468,6 +469,70 @@ async function validateImageUrl(url: string): Promise<boolean> {
   return valid;
 }
 
+// Per-creator raw_data refresh cache. When several LinkedIn CDN URLs in
+// a creator's recent posts are HEAD-validated as dead, ONE bulk
+// getPosts call to Unipile returns the entire window with fresh CDN
+// URLs, and we UPDATE every affected post's raw_data in the DB. Cached
+// 1h per creator — fresh CDN URLs survive several weeks at LinkedIn,
+// so one successful refresh covers many turns / sessions without
+// re-paying the Unipile cost. We mark the cache OPTIMISTICALLY at the
+// start of the refresh so concurrent chat turns don't all kick off
+// parallel refreshes for the same creator.
+const CREATOR_RAW_REFRESH_TTL = 60 * 60 * 1000;
+const DEAD_URLS_REFRESH_THRESHOLD = 1; // 1+ dead URL triggers refresh
+const creatorRawRefreshCache = new Map<string, number>();
+
+async function refreshCreatorRawData(creatorId: string): Promise<boolean> {
+  const cached = creatorRawRefreshCache.get(creatorId);
+  if (cached && Date.now() - cached < CREATOR_RAW_REFRESH_TTL) return false;
+  // Mark optimistically so a second turn arriving 100ms later doesn't
+  // launch a parallel duplicate Unipile fetch. If the refresh throws we
+  // intentionally KEEP the cache marker so we don't retry-storm Unipile
+  // when their endpoint is down; the next attempt will be in 1h.
+  creatorRawRefreshCache.set(creatorId, Date.now());
+
+  const { rows: cRows } = await pool.query(
+    `SELECT id, name, linkedin_id, unipile_account_id FROM creators WHERE id = $1 LIMIT 1`,
+    [creatorId]
+  );
+  const creator = cRows[0];
+  if (!creator?.linkedin_id || !creator?.unipile_account_id) {
+    console.warn(
+      `[refreshCreatorRawData] creator ${creatorId} missing linkedin_id/unipile_account_id — cannot refresh.`
+    );
+    return false;
+  }
+
+  try {
+    const t0 = Date.now();
+    const since = new Date(Date.now() - IMAGES_LOOKBACK_DAYS * 86400000);
+    // No knownIds → returns ALL posts in the window (not just new ones)
+    // with fresh raw_data including fresh CDN URLs.
+    const rawPosts = await unipileService.getPosts(
+      creator.linkedin_id,
+      since,
+      creator.unipile_account_id
+    );
+    let updated = 0;
+    for (const raw of rawPosts) {
+      const linkedinPostId = String(raw.social_id || raw.id || '');
+      if (!linkedinPostId) continue;
+      const result = await pool.query(
+        `UPDATE posts SET raw_data = $1 WHERE creator_id = $2 AND linkedin_post_id = $3`,
+        [raw, creatorId, linkedinPostId]
+      );
+      if (result.rowCount && result.rowCount > 0) updated++;
+    }
+    console.log(
+      `[refreshCreatorRawData] ${creator.name}: refreshed raw_data for ${updated}/${rawPosts.length} posts in ${Date.now() - t0}ms`
+    );
+    return updated > 0;
+  } catch (err: any) {
+    console.warn(`[refreshCreatorRawData] ${creator.name} failed: ${err.message}`);
+    return false;
+  }
+}
+
 // Build the visual reference block: a content-block array with the
 // user's recent meme / text+image / carousel posts as real images that
 // the model can SEE, plus an INVENTORY of every such post in the
@@ -487,73 +552,118 @@ const VISUAL_CONTENT_TYPES = ['text_image', 'image', 'text_carousel', 'carousel'
 const MAX_IMAGES = 20;
 const IMAGES_LOOKBACK_DAYS = 56;
 
+// Fetch the rows + run extraction + HEAD-validation. Split into its own
+// function so we can re-run it after a Unipile refresh has freshened
+// raw_data with new CDN URLs, without duplicating the SQL/extraction code.
+async function fetchAndValidateVisualPosts(): Promise<{
+  rows: any[];
+  candidates: Array<{ post: any; url: string | null; attemptedAttach: boolean }>;
+  validations: boolean[];
+}> {
+  const sinceIso = new Date(Date.now() - IMAGES_LOOKBACK_DAYS * 86400000).toISOString();
+  const { rows } = await pool.query(
+    `SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
+            p.content_type, p.outlier_ratio, p.is_outlier,
+            p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+            p.raw_data, p.post_url, p.creator_id,
+            c.name AS creator_name
+       FROM posts p
+       JOIN creators c ON c.id = p.creator_id
+      WHERE c.is_managed = TRUE
+        AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+        AND p.content_type = ANY($1::text[])
+        AND p.published_at >= $2
+      ORDER BY p.published_at DESC
+      LIMIT 60`,
+    [VISUAL_CONTENT_TYPES, sinceIso]
+  );
+
+  type Candidate = {
+    post: any;
+    url: string | null;
+    attemptedAttach: boolean;
+  };
+  const candidates: Candidate[] = [];
+  let urlsConsidered = 0;
+  for (const post of rows) {
+    const url = post.raw_data ? extractFirstImageUrl(post.raw_data) : null;
+    const hasLoadableShape = !!(url && /^https?:\/\//i.test(url));
+    // Diagnostic: if a post is supposedly an image post but we couldn't
+    // pull any URL out of raw_data, log it so a Unipile schema change
+    // surfaces in Railway logs instead of as model confabulation.
+    if (!hasLoadableShape && post.raw_data) {
+      const attTypes = Array.isArray(post.raw_data.attachments)
+        ? post.raw_data.attachments.map((a: any) => String(a?.type ?? 'undef')).join(',')
+        : 'no-attachments';
+      const topKeys = Object.keys(post.raw_data).slice(0, 8).join(',');
+      console.warn(
+        `[buildAccountImageBlocks] no image URL for post ${post.linkedin_post_id} (${post.content_type}, ${post.published_at}) — att types: [${attTypes}] · top raw_data keys: [${topKeys}]`
+      );
+    }
+    const willTryAttach = hasLoadableShape && urlsConsidered < MAX_IMAGES;
+    if (willTryAttach) urlsConsidered++;
+    candidates.push({
+      post,
+      url: hasLoadableShape ? (url as string) : null,
+      attemptedAttach: willTryAttach,
+    });
+  }
+
+  // HEAD-validate every candidate URL we'd attach IN PARALLEL. Cached
+  // results (10-min TTL) make this cost ~0ms within the cache window;
+  // a cold call costs ~500-1000ms for ~20 URLs against LinkedIn's CDN.
+  // Anything that fails HEAD gets dropped from the attach set — that's
+  // exactly what stops the 400 "Unable to download the file" from
+  // Anthropic, because we never hand it a dead URL in the first place.
+  const validations = await Promise.all(
+    candidates.map(c =>
+      c.attemptedAttach && c.url ? validateImageUrl(c.url) : Promise.resolve(false)
+    )
+  );
+  return { rows, candidates, validations };
+}
+
 async function buildAccountImageBlocks(): Promise<any[]> {
   try {
-    const sinceIso = new Date(Date.now() - IMAGES_LOOKBACK_DAYS * 86400000).toISOString();
-    const { rows } = await pool.query(
-      `SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
-              p.content_type, p.outlier_ratio, p.is_outlier,
-              p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
-              p.raw_data, p.post_url,
-              c.name AS creator_name
-         FROM posts p
-         JOIN creators c ON c.id = p.creator_id
-        WHERE c.is_managed = TRUE
-          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-          AND p.content_type = ANY($1::text[])
-          AND p.published_at >= $2
-        ORDER BY p.published_at DESC
-        LIMIT 60`,
-      [VISUAL_CONTENT_TYPES, sinceIso]
-    );
-
+    let { rows, candidates, validations } = await fetchAndValidateVisualPosts();
     if (rows.length === 0) return [];
 
-    // Pass 1: extract URL candidates from each row. We don't decide yet
-    // which ones become attachments — that comes after parallel HEAD
-    // validation in pass 2 — but we collect every loadable-looking URL
-    // up to the visual-attach cap so we don't waste validation HEADs on
-    // posts past the cap.
-    type Candidate = {
-      post: any;
-      url: string | null;
-      attemptedAttach: boolean;
-    };
-    const candidates: Candidate[] = [];
-    let urlsConsidered = 0;
-    for (const post of rows) {
-      const url = post.raw_data ? extractFirstImageUrl(post.raw_data) : null;
-      const hasLoadableShape = !!(url && /^https?:\/\//i.test(url));
-      // Diagnostic: if a post is supposedly an image post but we couldn't
-      // pull any URL out of raw_data, log it so a Unipile schema change
-      // surfaces in Railway logs instead of as model confabulation.
-      if (!hasLoadableShape && post.raw_data) {
-        const attTypes = Array.isArray(post.raw_data.attachments)
-          ? post.raw_data.attachments.map((a: any) => String(a?.type ?? 'undef')).join(',')
-          : 'no-attachments';
-        const topKeys = Object.keys(post.raw_data).slice(0, 8).join(',');
-        console.warn(
-          `[buildAccountImageBlocks] no image URL for post ${post.linkedin_post_id} (${post.content_type}, ${post.published_at}) — att types: [${attTypes}] · top raw_data keys: [${topKeys}]`
-        );
+    // If a creator has any dead CDN URLs in the attach set, refresh that
+    // creator's raw_data via Unipile (one bulk call returns the entire
+    // 56-day window with fresh CDN URLs) and re-run the extraction +
+    // validation. Cached 1h per creator so this big cost only happens
+    // when URLs have actually rotated since the last refresh.
+    //
+    // Threshold = 1: refresh aggressively. The 1h cache means we won't
+    // hammer Unipile, and the user-facing benefit of having the visual
+    // available NOW is worth the one-shot ~5-10s latency.
+    const deadByCreator = new Map<string, number>();
+    for (let i = 0; i < candidates.length; i++) {
+      const c = candidates[i];
+      if (c.attemptedAttach && c.url && !validations[i]) {
+        const cid = String(c.post.creator_id);
+        deadByCreator.set(cid, (deadByCreator.get(cid) || 0) + 1);
       }
-      const willTryAttach = hasLoadableShape && urlsConsidered < MAX_IMAGES;
-      if (willTryAttach) urlsConsidered++;
-      candidates.push({
-        post,
-        url: hasLoadableShape ? (url as string) : null,
-        attemptedAttach: willTryAttach,
-      });
     }
-
-    // HEAD-validate every candidate URL we'd attach IN PARALLEL. Cached
-    // results (10-min TTL) make this cost ~0ms within the cache window;
-    // a cold call costs ~500-1000ms for ~20 URLs against LinkedIn's CDN.
-    // Anything that fails HEAD gets dropped from the attach set — that's
-    // exactly what stops the 400 "Unable to download the file" from
-    // Anthropic, because we never hand it a dead URL in the first place.
-    const validationResults = await Promise.all(
-      candidates.map(c => (c.attemptedAttach && c.url ? validateImageUrl(c.url) : Promise.resolve(false)))
-    );
+    const creatorsToRefresh = [...deadByCreator.entries()]
+      .filter(([, n]) => n >= DEAD_URLS_REFRESH_THRESHOLD)
+      .map(([cid]) => cid);
+    let refreshHappened = false;
+    if (creatorsToRefresh.length > 0) {
+      // Refresh all affected creators in parallel — each Unipile call is
+      // independent, and the SDK already handles 429 backoff.
+      const refreshResults = await Promise.all(
+        creatorsToRefresh.map(cid => refreshCreatorRawData(cid).catch(() => false))
+      );
+      refreshHappened = refreshResults.some(Boolean);
+    }
+    if (refreshHappened) {
+      console.log(
+        `[buildAccountImageBlocks] refresh happened — re-extracting URLs and re-validating after raw_data update.`
+      );
+      ({ rows, candidates, validations } = await fetchAndValidateVisualPosts());
+    }
+    const validationResults = validations;
 
     // Pass 2: build inventory + image-target list using validation results.
     // Inventory flag per post:
