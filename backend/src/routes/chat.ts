@@ -430,6 +430,44 @@ function extractFirstImageUrl(raw: any): string | null {
   return raw?.image_url || raw?.image || raw?.thumbnail_url || raw?.thumbnail || null;
 }
 
+// URL-validation cache for LinkedIn CDN media URLs. Anthropic refuses
+// the WHOLE request (400 invalid_request_error "Unable to download the
+// file") when any URL-sourced image in the prefix can't be fetched.
+// LinkedIn rotates CDN URLs every few weeks, so a meaningful fraction
+// of the 56-day window has dead URLs at any moment. Pre-validating
+// with HEAD requests catches the dead ones before Anthropic ever sees
+// them; caching the result for 10 min (matches the analysis-context
+// cache TTL) means consecutive turns within the same window only pay
+// the validation latency once.
+const URL_VALIDATION_TTL = 10 * 60 * 1000;
+const URL_VALIDATION_TIMEOUT_MS = 3000;
+const urlValidationCache = new Map<string, { valid: boolean; checkedAt: number }>();
+
+async function validateImageUrl(url: string): Promise<boolean> {
+  const cached = urlValidationCache.get(url);
+  if (cached && Date.now() - cached.checkedAt < URL_VALIDATION_TTL) {
+    return cached.valid;
+  }
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), URL_VALIDATION_TIMEOUT_MS);
+  let valid = false;
+  try {
+    // HEAD is enough — LinkedIn CDN responds with 200 / 302 (followed
+    // by fetch by default) for live media, 403 / 404 for expired URLs.
+    // Body never gets downloaded so this is bandwidth-cheap.
+    const res = await fetch(url, { method: 'HEAD', signal: ctrl.signal });
+    valid = res.ok;
+  } catch {
+    // Network error, DNS failure, abort timeout — treat as invalid.
+    // Better to under-show images than crash the chat with a 400.
+    valid = false;
+  } finally {
+    clearTimeout(timeout);
+  }
+  urlValidationCache.set(url, { valid, checkedAt: Date.now() });
+  return valid;
+}
+
 // Build the visual reference block: a content-block array with the
 // user's recent meme / text+image / carousel posts as real images that
 // the model can SEE, plus an INVENTORY of every such post in the
@@ -471,19 +509,25 @@ async function buildAccountImageBlocks(): Promise<any[]> {
 
     if (rows.length === 0) return [];
 
-    // First pass: build the INVENTORY of every visual post in the
-    // window. Every row gets a line — even ones whose CDN URL has
-    // expired or whose raw_data we couldn't extract — so the model
-    // always knows the post existed and was image-bearing.
-    const inventoryLines: string[] = [];
-    const imageTargets: Array<{ post: any; url: string }> = [];
+    // Pass 1: extract URL candidates from each row. We don't decide yet
+    // which ones become attachments — that comes after parallel HEAD
+    // validation in pass 2 — but we collect every loadable-looking URL
+    // up to the visual-attach cap so we don't waste validation HEADs on
+    // posts past the cap.
+    type Candidate = {
+      post: any;
+      url: string | null;
+      attemptedAttach: boolean;
+    };
+    const candidates: Candidate[] = [];
+    let urlsConsidered = 0;
     for (const post of rows) {
       const url = post.raw_data ? extractFirstImageUrl(post.raw_data) : null;
-      const hasLoadableUrl = !!(url && /^https?:\/\//i.test(url));
+      const hasLoadableShape = !!(url && /^https?:\/\//i.test(url));
       // Diagnostic: if a post is supposedly an image post but we couldn't
       // pull any URL out of raw_data, log it so a Unipile schema change
       // surfaces in Railway logs instead of as model confabulation.
-      if (!hasLoadableUrl && post.raw_data) {
+      if (!hasLoadableShape && post.raw_data) {
         const attTypes = Array.isArray(post.raw_data.attachments)
           ? post.raw_data.attachments.map((a: any) => String(a?.type ?? 'undef')).join(',')
           : 'no-attachments';
@@ -492,9 +536,41 @@ async function buildAccountImageBlocks(): Promise<any[]> {
           `[buildAccountImageBlocks] no image URL for post ${post.linkedin_post_id} (${post.content_type}, ${post.published_at}) — att types: [${attTypes}] · top raw_data keys: [${topKeys}]`
         );
       }
-      if (hasLoadableUrl && imageTargets.length < MAX_IMAGES) {
-        imageTargets.push({ post, url: url as string });
-      }
+      const willTryAttach = hasLoadableShape && urlsConsidered < MAX_IMAGES;
+      if (willTryAttach) urlsConsidered++;
+      candidates.push({
+        post,
+        url: hasLoadableShape ? (url as string) : null,
+        attemptedAttach: willTryAttach,
+      });
+    }
+
+    // HEAD-validate every candidate URL we'd attach IN PARALLEL. Cached
+    // results (10-min TTL) make this cost ~0ms within the cache window;
+    // a cold call costs ~500-1000ms for ~20 URLs against LinkedIn's CDN.
+    // Anything that fails HEAD gets dropped from the attach set — that's
+    // exactly what stops the 400 "Unable to download the file" from
+    // Anthropic, because we never hand it a dead URL in the first place.
+    const validationResults = await Promise.all(
+      candidates.map(c => (c.attemptedAttach && c.url ? validateImageUrl(c.url) : Promise.resolve(false)))
+    );
+
+    // Pass 2: build inventory + image-target list using validation results.
+    // Inventory flag per post:
+    //   - attempted + URL valid  → "image attached below"
+    //   - had URL but HEAD failed → "image expired (validated server-side)"
+    //   - no URL extractable     → "image expired or not extractable"
+    //   - past attach cap         → "exists, not attached (over the cap)"
+    const inventoryLines: string[] = [];
+    const imageTargets: Array<{ post: any; url: string }> = [];
+    let expiredCount = 0;
+    for (let i = 0; i < candidates.length; i++) {
+      const { post, url, attemptedAttach } = candidates[i];
+      const headValid = validationResults[i];
+      const willAttach = attemptedAttach && headValid;
+      if (willAttach) imageTargets.push({ post, url: url as string });
+      else if (attemptedAttach && url && !headValid) expiredCount++;
+
       const date = post.published_at
         ? new Date(post.published_at).toISOString().slice(0, 10)
         : '?';
@@ -513,11 +589,21 @@ async function buildAccountImageBlocks(): Promise<any[]> {
         post.reposts_count != null ? `${post.reposts_count}🔁` : null,
         post.impressions_count != null ? `${post.impressions_count}👁` : null,
       ].filter(Boolean).join(' ');
-      const loaded = hasLoadableUrl
-        ? (imageTargets.length <= MAX_IMAGES ? '🖼️ image attached below' : '🖼️ image exists, not attached (over the visual-attach cap)')
-        : '🖼️ image exists, CDN URL expired or not extractable';
+      const loaded = willAttach
+        ? '🖼️ image attached below'
+        : attemptedAttach && url && !headValid
+          ? '🖼️ image NOT loaded — LinkedIn CDN URL expired (HEAD-validated, dead)'
+          : !attemptedAttach && url
+            ? '🖼️ image exists, not attached (over the visual-attach cap)'
+            : '🖼️ image NOT loaded — no URL extractable from raw_data';
       inventoryLines.push(
         `- [${date} · ${post.creator_name} · ${post.content_type} · ${ratio}${outlierMarker}] ${stats} — ${loaded}\n  hook: "${hook}"`
+      );
+    }
+
+    if (expiredCount > 0) {
+      console.warn(
+        `[buildAccountImageBlocks] ${expiredCount} LinkedIn CDN URL(s) HEAD-validated as expired — dropped from attach set (cache TTL ${URL_VALIDATION_TTL / 60000}m).`
       );
     }
 
@@ -527,13 +613,22 @@ async function buildAccountImageBlocks(): Promise<any[]> {
       text: `═══ ACCOUNTS — VISUAL POSTS INVENTORY (last ${IMAGES_LOOKBACK_DAYS} days, newest first) ═══
 The list below is EVERY post you've published in this window with content_type ∈ {text_image, image, text_carousel, carousel}. EVERY row in this list IS an image post by definition — the underlying LinkedIn post has an image attached, no exception. The flag at the end tells you whether the actual image file is attached below in this message:
   - "🖼️ image attached below" → you can SEE the image in the message after the inventory.
-  - "🖼️ image exists, CDN URL expired or not extractable" → the post still has an image on LinkedIn, but LinkedIn's CDN URL has rotated (it does this after a few weeks) or our scrape couldn't extract a clean URL. You do NOT see the visual, but the post IS an image post. DO NOT tell the user the post has no image — say the visual isn't loadable right now and reason from the hook/metadata.
+  - "🖼️ image NOT loaded — LinkedIn CDN URL expired (HEAD-validated, dead)" → the post still has an image on LinkedIn but LinkedIn's CDN URL has rotated since we scraped it (they rotate every few weeks). We pre-validated the URL with a HEAD request and confirmed it's dead, so we did NOT ship it to you — to avoid breaking the whole turn. You do NOT see the visual.
+  - "🖼️ image NOT loaded — no URL extractable from raw_data" → our scrape didn't capture a usable URL for this post. Same outcome: post exists and IS image-bearing, image not visible to you.
   - "🖼️ image exists, not attached (over the visual-attach cap)" → we capped visual attachments at ${MAX_IMAGES} per turn to keep tokens reasonable. The image exists on LinkedIn; you just don't see it here.
+
+REQUIRED BEHAVIOUR FOR POSTS WHOSE IMAGE IS NOT LOADED:
+  1. NEVER tell the user the post has no image — every post in this inventory IS image-bearing by definition.
+  2. NEVER confabulate the visual from the hook alone (don't say "the meme shows X", "the image is a Y", etc. for a post whose image you can't see).
+  3. If the user asks you to USE one of those posts as a visual reference — riff on it, iterate on it, copy its layout, propose a meme in the same style, judge whether it passes the meme 4-point filter, etc. — ASK THEM TO ATTACH THE IMAGE in the next message. Suggested phrasing: "Para ese post no tengo cargada la imagen (URL del CDN de LinkedIn expirada). Pásamela y sigo." Be brief, specific to which post, and don't apologise.
+  4. For analysis that doesn't depend on the visual (hook analysis, archetype reasoning, performance commentary based on the metrics in the inventory line) → proceed normally using the hook + metadata.
 
 Inventory (${rows.length} posts):
 ${inventoryLines.join('\n')}
 
-The actual image files for ${imageTargets.length} of these posts follow. Each is preceded by a header line identifying which post it belongs to, in the same order as the inventory above (oldest of the loadable ones first → newest visual just before the chat starts isn't guaranteed; treat the header text as the source of truth for which post each image is).`,
+${imageTargets.length === 0
+  ? 'NO image files are attached in this turn — every visual post is either CDN-expired (HEAD-validated), unextractable, or past the cap. The inventory above is the only signal you have for these posts; for any visual reasoning ASK THE USER TO ATTACH THE IMAGE per the rule above.'
+  : `The actual image files for ${imageTargets.length} of these posts follow. Each is preceded by a header line identifying which post it belongs to, in the same order as the inventory above (oldest of the loadable ones first → newest visual just before the chat starts isn't guaranteed; treat the header text as the source of truth for which post each image is).`}`,
     });
 
     for (const { post, url } of imageTargets) {
@@ -1071,20 +1166,19 @@ ${analysisContext}${profileContext}`;
         (err?.status === 400 || errType === 'invalid_request_error') &&
         /unable to download/i.test(errMsg);
       if (isImageDownloadError && imageBlocks.length > 0) {
+        // Defense-in-depth: HEAD-validation already drops dead URLs
+        // before they reach Anthropic, so this branch should fire
+        // extremely rarely now (only if HEAD says 200/302 but the
+        // image download still fails server-side at Anthropic — race
+        // conditions, HEAD-vs-GET semantics on edge CDN nodes, etc.).
+        // When it does fire we silently retry without the image prefix
+        // — no user-facing banner, the model still has the inventory
+        // text so it knows what posts exist and can ask for attachments
+        // per the REQUIRED BEHAVIOUR section if any visual reference
+        // is needed.
         console.warn(
-          '[chat] Anthropic 400 "unable to download" — retrying without pre-prepended account-image prefix. URLs in the prefix have likely expired at the LinkedIn CDN.',
+          '[chat] Anthropic 400 "unable to download" despite HEAD-validation — retrying without pre-prepended account-image prefix.',
           errMsg
-        );
-        // Surface the recovery to the user inline so they understand
-        // why an image-heavy meme/visual request might come back with
-        // slightly weaker visual context. The italics render as a
-        // system-note styling in the MarkdownMessage component without
-        // looking like part of the model's actual answer.
-        res.write(
-          `data: ${JSON.stringify({
-            text:
-              "_(Nota: una de las imágenes pre-cargadas de tu cuenta no se pudo descargar — LinkedIn rota las URLs de su CDN cada pocas semanas y alguna del histórico ya ha expirado. Sigo respondiendo con el resto del contexto y con la imagen que tú me has adjuntado intacta.)_\n\n",
-          })}\n\n`
         );
         // `messages` is the raw user-side conversation, which already
         // contains the user's freshly-uploaded image (base64 from the
