@@ -1394,7 +1394,63 @@ ${analysisContext}${profileContext}`;
     // The catch block below detects that specific error and retries
     // WITHOUT the image prefix; the user's own attached image (which
     // lives in their last message, not in the prefix) survives.
+    // Conversation-prefix cache. After the system-prompt + image-prefix
+    // caching we already deploy, the conversation history is the only
+    // piece that grows unbounded per turn and isn't cached. For a long
+    // iterative session (user refining a draft across 20+ turns) the
+    // unbounded growth is the dominant cost — every turn re-reads the
+    // whole history at full Opus input price ($15/M). Solution: mark
+    // the LATEST assistant message in the conversation with
+    // cache_control so Anthropic caches everything up to (and including)
+    // that point. The next turn reads the cached prefix at $1.50/M —
+    // 10× cheaper. Cache writes happen for the incremental new exchange
+    // only (~5K tokens / turn = ~$0.09 write per turn), and the savings
+    // on reads dwarf that after turn 2. 100% lossless — the model reads
+    // exactly the same content; only the billing changes.
+    //
+    // This uses our 4th cache breakpoint (3 already in system + image
+    // prefix). Anthropic's longest-matching-prefix rule means we always
+    // hit the most useful breakpoint without paying extra reads.
+    const applyConversationPrefixCache = (msgs: any[]): any[] => {
+      let lastAssistantIdx = -1;
+      for (let i = msgs.length - 1; i >= 0; i--) {
+        if (msgs[i]?.role === 'assistant') {
+          lastAssistantIdx = i;
+          break;
+        }
+      }
+      if (lastAssistantIdx < 0) return msgs;
+      return msgs.map((m, i) => {
+        if (i !== lastAssistantIdx) return m;
+        const content = m.content;
+        if (typeof content === 'string') {
+          return {
+            ...m,
+            content: [{
+              type: 'text' as const,
+              text: content,
+              cache_control: { type: 'ephemeral' as const },
+            }],
+          };
+        }
+        if (Array.isArray(content) && content.length > 0) {
+          // Add cache_control to the LAST block. If it already has one
+          // (the image-prefix ack on the very first turn — same
+          // assistant message), the overwrite is a no-op same marker.
+          const newContent = [...content];
+          const last = newContent[newContent.length - 1];
+          newContent[newContent.length - 1] = {
+            ...last,
+            cache_control: { type: 'ephemeral' as const },
+          };
+          return { ...m, content: newContent };
+        }
+        return m;
+      });
+    };
+
     const runStream = async (streamMessages: any[]) => {
+      const cached = applyConversationPrefixCache(streamMessages);
       const stream = trackedStream('post_creator_chat', {
         model: 'claude-opus-4-8',
         // 16K output tokens (~12K words). Was 4096 (~3000 words), which
@@ -1407,7 +1463,7 @@ ${analysisContext}${profileContext}`;
         // well below that with room to grow.
         max_tokens: 16384,
         system: systemBlocks,
-        messages: streamMessages.map((m: any) => ({
+        messages: cached.map((m: any) => ({
           role: m.role,
           content: m.content,
         })),
