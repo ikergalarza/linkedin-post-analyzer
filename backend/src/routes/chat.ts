@@ -469,6 +469,63 @@ async function validateImageUrl(url: string): Promise<boolean> {
   return valid;
 }
 
+// Fetch image bytes, store them base64-encoded in posts.cached_image_b64
+// + remember the source URL + media type, return what we cached. After
+// this runs once per post, the image is OURS forever — LinkedIn can
+// rotate the CDN URL or delete the post and we still have the bytes.
+// This is the permanent layer that finally kills the "Unable to
+// download the file" failure mode at its source: posts already cached
+// don't need URL validation, refresh, or Anthropic-side downloads.
+// Capped at 10s per fetch + 5MB per image (LinkedIn images are
+// typically 50-200KB, so the cap is just a guard against pathological
+// payloads that could blow memory). Returns null on any failure —
+// caller falls back to the URL path / model-asks-for-attachment.
+const IMAGE_FETCH_TIMEOUT_MS = 10000;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+async function fetchAndCacheImageBytes(
+  postId: string,
+  url: string
+): Promise<{ b64: string; mediaType: string } | null> {
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), IMAGE_FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { signal: ctrl.signal });
+    if (!res.ok) return null;
+    const ct = res.headers.get('content-type') || '';
+    // Anthropic accepts image/jpeg, image/png, image/gif, image/webp.
+    // Default to image/jpeg if the CDN omits the header.
+    const mediaType =
+      /^image\/(jpe?g|png|gif|webp)/i.test(ct.split(';')[0])
+        ? ct.split(';')[0].toLowerCase().replace('jpg', 'jpeg')
+        : 'image/jpeg';
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.byteLength > MAX_IMAGE_BYTES) {
+      console.warn(
+        `[fetchAndCacheImageBytes] post ${postId}: image is ${buf.byteLength} bytes, over the ${MAX_IMAGE_BYTES} cap — skipped cache.`
+      );
+      return null;
+    }
+    const b64 = buf.toString('base64');
+    await pool.query(
+      `UPDATE posts SET
+         cached_image_b64 = $1,
+         cached_image_media_type = $2,
+         cached_image_source_url = $3,
+         cached_image_cached_at = NOW()
+       WHERE id = $4`,
+      [b64, mediaType, url, postId]
+    );
+    return { b64, mediaType };
+  } catch (err: any) {
+    console.warn(
+      `[fetchAndCacheImageBytes] post ${postId}: ${err?.message || 'unknown error'} — falling back without cached bytes.`
+    );
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // Per-creator raw_data refresh cache. When several LinkedIn CDN URLs in
 // a creator's recent posts are HEAD-validated as dead, ONE bulk
 // getPosts call to Unipile returns the entire window with fresh CDN
@@ -517,9 +574,33 @@ async function refreshCreatorRawData(creatorId: string): Promise<boolean> {
     for (const raw of rawPosts) {
       const linkedinPostId = String(raw.social_id || raw.id || '');
       if (!linkedinPostId) continue;
+      // If the freshly-fetched URL is DIFFERENT from the URL we cached
+      // from, that's a strong signal the creator edited the post (e.g.
+      // replaced the meme image with a new version on LinkedIn). Wipe
+      // cached_image_b64 so the next chat turn fetches the new bytes.
+      // If the URL is the same (or we've never cached) leave the bytes
+      // cache alone — we already have them and they're permanent.
+      const newUrl = extractFirstImageUrl(raw);
       const result = await pool.query(
-        `UPDATE posts SET raw_data = $1 WHERE creator_id = $2 AND linkedin_post_id = $3`,
-        [raw, creatorId, linkedinPostId]
+        `UPDATE posts SET
+           raw_data = $1,
+           cached_image_b64 = CASE
+             WHEN cached_image_source_url IS NOT NULL
+              AND $4::text IS NOT NULL
+              AND cached_image_source_url <> $4::text
+             THEN NULL ELSE cached_image_b64 END,
+           cached_image_media_type = CASE
+             WHEN cached_image_source_url IS NOT NULL
+              AND $4::text IS NOT NULL
+              AND cached_image_source_url <> $4::text
+             THEN NULL ELSE cached_image_media_type END,
+           cached_image_source_url = CASE
+             WHEN cached_image_source_url IS NOT NULL
+              AND $4::text IS NOT NULL
+              AND cached_image_source_url <> $4::text
+             THEN NULL ELSE cached_image_source_url END
+         WHERE creator_id = $2 AND linkedin_post_id = $3`,
+        [raw, creatorId, linkedinPostId, newUrl]
       );
       if (result.rowCount && result.rowCount > 0) updated++;
     }
@@ -555,9 +636,22 @@ const IMAGES_LOOKBACK_DAYS = 56;
 // Fetch the rows + run extraction + HEAD-validation. Split into its own
 // function so we can re-run it after a Unipile refresh has freshened
 // raw_data with new CDN URLs, without duplicating the SQL/extraction code.
+//
+// Per-post resolution order (most-to-least preferred):
+//   1. cached_image_b64 in DB        → use it directly, no URL, no HEAD, no fetch
+//   2. fresh URL extracted from raw_data → HEAD-validate, if alive download+cache,
+//                                          then use the just-cached bytes
+//   3. nothing                       → flag the post, model asks user to attach
 async function fetchAndValidateVisualPosts(): Promise<{
   rows: any[];
-  candidates: Array<{ post: any; url: string | null; attemptedAttach: boolean }>;
+  candidates: Array<{
+    post: any;
+    url: string | null;
+    cachedB64: string | null;
+    cachedMediaType: string | null;
+    cachedSourceUrl: string | null;
+    attemptedAttach: boolean;
+  }>;
   validations: boolean[];
 }> {
   const sinceIso = new Date(Date.now() - IMAGES_LOOKBACK_DAYS * 86400000).toISOString();
@@ -566,6 +660,7 @@ async function fetchAndValidateVisualPosts(): Promise<{
             p.content_type, p.outlier_ratio, p.is_outlier,
             p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
             p.raw_data, p.post_url, p.creator_id,
+            p.cached_image_b64, p.cached_image_media_type, p.cached_image_source_url,
             c.name AS creator_name
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
@@ -581,6 +676,9 @@ async function fetchAndValidateVisualPosts(): Promise<{
   type Candidate = {
     post: any;
     url: string | null;
+    cachedB64: string | null;
+    cachedMediaType: string | null;
+    cachedSourceUrl: string | null;
     attemptedAttach: boolean;
   };
   const candidates: Candidate[] = [];
@@ -588,10 +686,11 @@ async function fetchAndValidateVisualPosts(): Promise<{
   for (const post of rows) {
     const url = post.raw_data ? extractFirstImageUrl(post.raw_data) : null;
     const hasLoadableShape = !!(url && /^https?:\/\//i.test(url));
+    const hasCachedBytes = !!post.cached_image_b64;
     // Diagnostic: if a post is supposedly an image post but we couldn't
     // pull any URL out of raw_data, log it so a Unipile schema change
     // surfaces in Railway logs instead of as model confabulation.
-    if (!hasLoadableShape && post.raw_data) {
+    if (!hasLoadableShape && !hasCachedBytes && post.raw_data) {
       const attTypes = Array.isArray(post.raw_data.attachments)
         ? post.raw_data.attachments.map((a: any) => String(a?.type ?? 'undef')).join(',')
         : 'no-attachments';
@@ -600,25 +699,32 @@ async function fetchAndValidateVisualPosts(): Promise<{
         `[buildAccountImageBlocks] no image URL for post ${post.linkedin_post_id} (${post.content_type}, ${post.published_at}) — att types: [${attTypes}] · top raw_data keys: [${topKeys}]`
       );
     }
-    const willTryAttach = hasLoadableShape && urlsConsidered < MAX_IMAGES;
+    const canAttempt = hasCachedBytes || hasLoadableShape;
+    const willTryAttach = canAttempt && urlsConsidered < MAX_IMAGES;
     if (willTryAttach) urlsConsidered++;
     candidates.push({
       post,
       url: hasLoadableShape ? (url as string) : null,
+      cachedB64: post.cached_image_b64 || null,
+      cachedMediaType: post.cached_image_media_type || null,
+      cachedSourceUrl: post.cached_image_source_url || null,
       attemptedAttach: willTryAttach,
     });
   }
 
-  // HEAD-validate every candidate URL we'd attach IN PARALLEL. Cached
-  // results (10-min TTL) make this cost ~0ms within the cache window;
-  // a cold call costs ~500-1000ms for ~20 URLs against LinkedIn's CDN.
-  // Anything that fails HEAD gets dropped from the attach set — that's
-  // exactly what stops the 400 "Unable to download the file" from
-  // Anthropic, because we never hand it a dead URL in the first place.
+  // HEAD-validate ONLY the candidates that don't already have cached
+  // bytes. Cached posts skip validation entirely — the bytes are ours,
+  // can't expire, can't 404. The remaining unvalidated set is just the
+  // posts that haven't been cached yet (first time we see them).
+  // Cached-bytes posts are recorded as "valid: true" so the downstream
+  // attach loop treats them as good without distinguishing the source.
   const validations = await Promise.all(
-    candidates.map(c =>
-      c.attemptedAttach && c.url ? validateImageUrl(c.url) : Promise.resolve(false)
-    )
+    candidates.map(c => {
+      if (!c.attemptedAttach) return Promise.resolve(false);
+      if (c.cachedB64) return Promise.resolve(true);
+      if (c.url) return validateImageUrl(c.url);
+      return Promise.resolve(false);
+    })
   );
   return { rows, candidates, validations };
 }
@@ -628,19 +734,23 @@ async function buildAccountImageBlocks(): Promise<any[]> {
     let { rows, candidates, validations } = await fetchAndValidateVisualPosts();
     if (rows.length === 0) return [];
 
-    // If a creator has any dead CDN URLs in the attach set, refresh that
-    // creator's raw_data via Unipile (one bulk call returns the entire
-    // 56-day window with fresh CDN URLs) and re-run the extraction +
-    // validation. Cached 1h per creator so this big cost only happens
-    // when URLs have actually rotated since the last refresh.
+    // With the permanent base64 cache, the Unipile refresh only fires
+    // for posts that have NEITHER cached bytes NOR a working URL. That's
+    // typically a tiny set (brand-new posts whose URL went dead before
+    // we got to cache them, or first-time scrapes after the bytes-cache
+    // migration). Once a post is cached it never needs refresh again —
+    // we hold the image forever in the DB.
     //
-    // Threshold = 1: refresh aggressively. The 1h cache means we won't
-    // hammer Unipile, and the user-facing benefit of having the visual
-    // available NOW is worth the one-shot ~5-10s latency.
+    // Cached 1h per creator → at most one Unipile call per creator per
+    // hour, AND only when at least one of THEIR posts is in the "no
+    // bytes, dead URL" state. With normal usage the refresh fires <1×
+    // per week per creator after the initial cache fills up.
     const deadByCreator = new Map<string, number>();
     for (let i = 0; i < candidates.length; i++) {
       const c = candidates[i];
-      if (c.attemptedAttach && c.url && !validations[i]) {
+      const noCache = !c.cachedB64;
+      const hadUrlThatFailed = !!c.url && !validations[i];
+      if (c.attemptedAttach && noCache && hadUrlThatFailed) {
         const cid = String(c.post.creator_id);
         deadByCreator.set(cid, (deadByCreator.get(cid) || 0) + 1);
       }
@@ -667,18 +777,54 @@ async function buildAccountImageBlocks(): Promise<any[]> {
 
     // Pass 2: build inventory + image-target list using validation results.
     // Inventory flag per post:
-    //   - attempted + URL valid  → "image attached below"
-    //   - had URL but HEAD failed → "image expired (validated server-side)"
-    //   - no URL extractable     → "image expired or not extractable"
-    //   - past attach cap         → "exists, not attached (over the cap)"
+    //   - has cached bytes               → "image attached below (cached, permanent)"
+    //   - URL valid, fetch+cache now      → "image attached below (just cached)"
+    //   - URL valid, fetch failed         → "image expired" (rare race)
+    //   - had URL but HEAD failed         → "image expired (validated dead)"
+    //   - no URL + no cache               → "image expired or not extractable"
+    //   - past attach cap                 → "exists, not attached (over the cap)"
+    //
+    // When the URL is valid but bytes aren't cached yet, we fetch + cache
+    // them inline. Cost: one GET per uncached post on the first turn that
+    // references it. After that the bytes live in the DB forever and we
+    // never touch the CDN URL for that post again — no HEAD, no GET, no
+    // Unipile refresh. The CDN can rotate / die freely without us caring.
     const inventoryLines: string[] = [];
-    const imageTargets: Array<{ post: any; url: string }> = [];
+    const imageTargets: Array<{ post: any; b64: string; mediaType: string; sourceTag: 'cached' | 'just-cached' }> = [];
     let expiredCount = 0;
+    let justCachedCount = 0;
     for (let i = 0; i < candidates.length; i++) {
-      const { post, url, attemptedAttach } = candidates[i];
+      const { post, url, attemptedAttach, cachedB64, cachedMediaType } = candidates[i];
       const headValid = validationResults[i];
-      const willAttach = attemptedAttach && headValid;
-      if (willAttach) imageTargets.push({ post, url: url as string });
+
+      // Decide if we attach + how the bytes are sourced.
+      let attachB64: string | null = null;
+      let attachMediaType: string | null = null;
+      let attachSource: 'cached' | 'just-cached' | null = null;
+      if (attemptedAttach && cachedB64) {
+        // Already in our DB cache — fastest, permanent path.
+        attachB64 = cachedB64;
+        attachMediaType = cachedMediaType || 'image/jpeg';
+        attachSource = 'cached';
+      } else if (attemptedAttach && headValid && url) {
+        // URL is alive but we haven't cached the bytes yet. Do it now
+        // so future turns (and future sessions, after redeploys) skip
+        // the network entirely.
+        const fetched = await fetchAndCacheImageBytes(post.id, url);
+        if (fetched) {
+          attachB64 = fetched.b64;
+          attachMediaType = fetched.mediaType;
+          attachSource = 'just-cached';
+          justCachedCount++;
+        }
+      }
+      const willAttach = !!attachB64;
+      if (willAttach) imageTargets.push({
+        post,
+        b64: attachB64!,
+        mediaType: attachMediaType!,
+        sourceTag: attachSource!,
+      });
       else if (attemptedAttach && url && !headValid) expiredCount++;
 
       const date = post.published_at
@@ -716,6 +862,11 @@ async function buildAccountImageBlocks(): Promise<any[]> {
         `[buildAccountImageBlocks] ${expiredCount} LinkedIn CDN URL(s) HEAD-validated as expired — dropped from attach set (cache TTL ${URL_VALIDATION_TTL / 60000}m).`
       );
     }
+    if (justCachedCount > 0) {
+      console.log(
+        `[buildAccountImageBlocks] ${justCachedCount} image(s) fetched + cached for the first time this turn → permanent from now on.`
+      );
+    }
 
     const blocks: any[] = [];
     blocks.push({
@@ -741,7 +892,7 @@ ${imageTargets.length === 0
   : `The actual image files for ${imageTargets.length} of these posts follow. Each is preceded by a header line identifying which post it belongs to, in the same order as the inventory above (oldest of the loadable ones first → newest visual just before the chat starts isn't guaranteed; treat the header text as the source of truth for which post each image is).`}`,
     });
 
-    for (const { post, url } of imageTargets) {
+    for (const { post, b64, mediaType } of imageTargets) {
       const date = post.published_at
         ? new Date(post.published_at).toISOString().slice(0, 10)
         : '?';
@@ -757,9 +908,13 @@ ${imageTargets.length === 0
         type: 'text',
         text: `\n[${date} · ${post.creator_name} · ${ratio} · ${post.content_type}] ${hook}`,
       });
+      // Always ship as base64 from our DB cache — never as URL. This
+      // eliminates the "Unable to download" 400 entirely (Anthropic
+      // doesn't have to fetch anything) AND removes the dependency on
+      // LinkedIn's CDN rotation cadence.
       blocks.push({
         type: 'image',
-        source: { type: 'url', url },
+        source: { type: 'base64', media_type: mediaType, data: b64 },
       });
     }
 

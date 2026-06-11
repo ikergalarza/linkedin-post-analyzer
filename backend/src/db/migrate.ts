@@ -501,6 +501,25 @@ const migration = `
     last_synced_at TIMESTAMPTZ,
     last_new_count INTEGER
   );
+
+  -- v19: Permanent image-bytes cache for visual posts.
+  -- LinkedIn CDN URLs rotate every few weeks. Storing the actual image
+  -- bytes once means we keep visual context forever (even after the URL
+  -- dies, even if the post is deleted, even across server redeploys).
+  -- The Post Creator chat reads from this cache directly and ships the
+  -- image to Anthropic as base64 instead of a URL, removing the entire
+  -- "Unable to download" failure mode at the source.
+  --
+  -- Size budget: ~100KB avg per image, ~500 posts in the rolling
+  -- window → ~50MB max. Negligible for Railway Postgres.
+  --
+  -- cached_image_source_url remembers WHICH URL we cached from, so if a
+  -- later raw_data refresh surfaces a DIFFERENT URL (creator edited the
+  -- post / replaced the image), we know to re-fetch.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_b64 TEXT;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_media_type TEXT;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_source_url TEXT;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_cached_at TIMESTAMPTZ;
 `;
 
 export async function runMigrations() {
