@@ -5,6 +5,7 @@ import OutlierExplorer from './pages/OutlierExplorer'
 import PostCreator from './pages/PostCreator'
 import StrategicNetwork from './pages/StrategicNetwork'
 import Ideas from './pages/Ideas'
+import Swipe from './pages/Swipe'
 import Inspiration from './pages/Inspiration'
 import Accounts from './pages/Accounts'
 import Usage from './pages/Usage'
@@ -40,6 +41,7 @@ export default function App() {
             <span className="text-border mx-1">|</span>
             {/* Create */}
             <div className="flex gap-1 px-2 py-1 rounded-lg bg-bg-secondary/50">
+              {navLink('/swipe', '🔥 Swipe')}
               {navLink('/ideas', '💡 Ideas')}
               {navLink('/inspiration', '✨ Inspiration')}
               {navLink('/create', '✍️ Post Creator')}
@@ -63,6 +65,7 @@ export default function App() {
           <Route path="/accounts" element={<Accounts />} />
           <Route path="/creator/:id" element={<CreatorDetail />} />
           <Route path="/explore" element={<OutlierExplorer />} />
+          <Route path="/swipe" element={<Swipe />} />
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/inspiration" element={<Inspiration />} />
           <Route path="/network" element={<StrategicNetwork />} />

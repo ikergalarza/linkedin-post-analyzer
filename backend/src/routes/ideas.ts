@@ -1135,4 +1135,144 @@ router.post('/inspiration/brainstorm', async (req: Request, res: Response) => {
   }
 });
 
+// ─────────── Tinder-style outlier swipe deck + kanban support ───────────
+//
+// GET  /api/ideas/swipe/deck?limit=20      next outliers to swipe on
+// POST /api/ideas/swipe                    body: { post_id, action: 'like'|'skip' }
+//   On 'like' creates a post_idea from the outlier and returns the new idea
+//   id. On 'skip' just records the swipe so the deck doesn't show it again.
+// GET  /api/ideas/kanban                    all post_ideas grouped by pipeline_status
+// PATCH /api/ideas/:id/pipeline             body: { pipeline_status } — move card
+
+// Pull the next batch of un-swiped outliers, highest outlier_ratio first so
+// the user always sees the strongest signals first. Pre-fetches a small page
+// so the swipe UI can preload the next card while the current one animates.
+router.get('/swipe/deck', async (req: Request, res: Response) => {
+  try {
+    const limit = Math.max(1, Math.min(50, parseInt(req.query.limit as string) || 20));
+    const { rows } = await pool.query(
+      `SELECT p.id, p.content_text, p.hook_text, p.hook_type, p.post_structure,
+              p.content_type, p.outlier_ratio, p.engagement_score,
+              p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+              p.published_at, p.post_url, p.topic, p.reaction_mix,
+              c.name AS creator_name,
+              c.headline AS creator_headline,
+              c.profile_image_url AS creator_image,
+              c.followers_count AS creator_followers
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.is_outlier = TRUE
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.content_text IS NOT NULL
+          AND LENGTH(p.content_text) > 80
+          AND NOT EXISTS (SELECT 1 FROM outlier_swipes s WHERE s.post_id = p.id)
+        ORDER BY p.outlier_ratio DESC
+        LIMIT $1`,
+      [limit]
+    );
+    const totalLeft = await pool.query(
+      `SELECT COUNT(*)::int AS n
+         FROM posts p
+        WHERE p.is_outlier = TRUE
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.content_text IS NOT NULL
+          AND LENGTH(p.content_text) > 80
+          AND NOT EXISTS (SELECT 1 FROM outlier_swipes s WHERE s.post_id = p.id)`
+    );
+    res.json({ cards: rows, remaining: totalLeft.rows[0].n });
+  } catch (err: any) {
+    console.error('[ideas/swipe/deck]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/swipe', async (req: Request, res: Response) => {
+  try {
+    const { post_id, action } = req.body || {};
+    if (!post_id || !['like', 'skip'].includes(action)) {
+      return res.status(400).json({ error: 'post_id + action (like|skip) required' });
+    }
+    let ideaId: string | null = null;
+    if (action === 'like') {
+      // Copy the outlier's text into the new idea as raw_content. The user
+      // edits/generates later; we just want it in the kanban "Propuesta"
+      // column with a back-link to the outlier so the source is visible.
+      const { rows } = await pool.query(
+        `SELECT content_text, hook_text FROM posts WHERE id = $1`,
+        [post_id]
+      );
+      if (rows.length === 0) return res.status(404).json({ error: 'post not found' });
+      const seed = String(rows[0].hook_text || '').trim() || String(rows[0].content_text || '').slice(0, 280);
+      const idea = await PostIdeaModel.create({
+        raw_content: seed,
+        source_type: 'observation',
+        pipeline_status: 'proposed',
+        source_outlier_post_id: post_id,
+      });
+      ideaId = idea.id;
+    }
+    await pool.query(
+      `INSERT INTO outlier_swipes (post_id, action, idea_id, swiped_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (post_id) DO UPDATE
+         SET action = EXCLUDED.action,
+             idea_id = EXCLUDED.idea_id,
+             swiped_at = EXCLUDED.swiped_at`,
+      [post_id, action, ideaId]
+    );
+    res.json({ ok: true, action, idea_id: ideaId });
+  } catch (err: any) {
+    console.error('[ideas/swipe]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Group all ideas by their pipeline column. Includes the outlier excerpt
+// (text + creator) when the idea came from a swipe so the card has context.
+router.get('/kanban', async (_req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT i.id, i.raw_content, i.source_type, i.tags, i.status,
+              i.pipeline_status, i.source_outlier_post_id,
+              i.generated_post, i.created_at, i.updated_at,
+              p.content_text AS outlier_text,
+              p.hook_text AS outlier_hook,
+              p.outlier_ratio AS outlier_ratio,
+              p.post_url AS outlier_url,
+              c.name AS outlier_creator_name,
+              c.profile_image_url AS outlier_creator_image
+         FROM post_ideas i
+         LEFT JOIN posts p ON p.id = i.source_outlier_post_id
+         LEFT JOIN creators c ON c.id = p.creator_id
+        ORDER BY i.updated_at DESC`
+    );
+    const columns: Record<string, any[]> = {
+      proposed: [], in_progress: [], scheduled: [], published: [],
+    };
+    for (const r of rows) {
+      const k = r.pipeline_status as keyof typeof columns;
+      if (columns[k]) columns[k].push(r);
+    }
+    res.json({ columns, total: rows.length });
+  } catch (err: any) {
+    console.error('[ideas/kanban]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch('/:id/pipeline', async (req: Request, res: Response) => {
+  try {
+    const valid = ['proposed', 'in_progress', 'scheduled', 'published'];
+    const { pipeline_status } = req.body || {};
+    if (!valid.includes(pipeline_status)) {
+      return res.status(400).json({ error: `pipeline_status must be one of ${valid.join(', ')}` });
+    }
+    const idea = await PostIdeaModel.update(req.params.id as string, { pipeline_status });
+    res.json(idea);
+  } catch (err: any) {
+    console.error('[ideas/pipeline]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
