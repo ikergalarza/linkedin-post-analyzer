@@ -481,8 +481,7 @@ export default function PostCreator() {
                   <p className="text-text-muted text-sm mb-5">Based on your outlier data.</p>
                   <div className="max-w-md text-left text-xs text-text-muted space-y-2">
                     <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
-                    <p>📎 Paste or attach images to use a real post as visual reference.</p>
-                    <p>🎬 For video scripts, just say <span className="text-accent">"video"</span> in your request.</p>
+                    <p>🎬 Type <span className="text-accent">"modo texto"</span> for LinkedIn posts or <span className="text-accent">"modo video"</span> for video scripts — sticks across the whole conversation.</p>
                     <p>🧑 Say <span className="text-accent">"Iker"</span> or <span className="text-accent">"Unai"</span> to write in that person's voice.</p>
                   </div>
                 </div>
