@@ -737,10 +737,37 @@ function KanbanView({ refreshKey }: { refreshKey: string }) {
     }
   };
 
+  const clearAll = async () => {
+    const total = data ? Object.values(data.columns).reduce((s, arr) => s + arr.length, 0) : 0;
+    if (!confirm(`Borrar las ${total} idea${total === 1 ? '' : 's'} y reiniciar el deck del Swipe? No se puede deshacer.`)) return;
+    try {
+      const res = await fetch(`${BASE}/api/ideas/kanban/clear`, { method: 'DELETE' });
+      const json = await res.json();
+      if (!res.ok) { alert(`Error: ${json.error || res.status}`); return; }
+      setReloadCounter((c) => c + 1);
+    } catch (e: any) {
+      alert(`Error: ${e.message}`);
+    }
+  };
+
   if (loading && !data) return <p className="text-text-muted">Cargando kanban…</p>;
   if (!data) return null;
 
+  const totalCards = Object.values(data.columns).reduce((s, arr) => s + arr.length, 0);
+
   return (
+    <div className="space-y-3">
+      {totalCards > 0 && (
+        <div className="flex justify-end">
+          <button
+            onClick={clearAll}
+            className="text-xs px-2.5 py-1 rounded border border-red-400/40 text-red-400 hover:bg-red-400/10 transition-colors"
+            title="Borra todas las ideas y reinicia el deck del Swipe"
+          >
+            🗑️ Vaciar todo
+          </button>
+        </div>
+      )}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
       {COLUMN_META.map((col) => {
         const cards = data.columns[col.key] || [];
@@ -773,6 +800,7 @@ function KanbanView({ refreshKey }: { refreshKey: string }) {
           </div>
         );
       })}
+    </div>
     </div>
   );
 }

@@ -1275,4 +1275,37 @@ router.patch('/:id/pipeline', async (req: Request, res: Response) => {
   }
 });
 
+// DELETE /api/ideas/kanban/clear — wipes every post_idea AND every recorded
+// outlier swipe, so the kanban resets to empty and the /swipe deck restarts
+// from the full outlier pool. Destructive and unrecoverable; the UI gates it
+// behind a confirm prompt.
+router.delete('/kanban/clear', async (_req: Request, res: Response) => {
+  try {
+    // outlier_swipes references post_ideas via idea_id ON DELETE SET NULL,
+    // so order doesn't matter for FK reasons — but we delete swipes first
+    // for clarity. Both wipes happen in one TX so a partial failure leaves
+    // the kanban consistent with the swipe history.
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const swipes = await client.query('DELETE FROM outlier_swipes');
+      const ideas = await client.query('DELETE FROM post_ideas');
+      await client.query('COMMIT');
+      res.json({
+        ok: true,
+        ideas_deleted: ideas.rowCount ?? 0,
+        swipes_deleted: swipes.rowCount ?? 0,
+      });
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  } catch (err: any) {
+    console.error('[ideas/kanban/clear]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
