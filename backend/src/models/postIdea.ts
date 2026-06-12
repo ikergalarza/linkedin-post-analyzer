@@ -10,7 +10,7 @@ export interface ArchetypeVariant {
   text: string;
 }
 
-export type PipelineStatus = 'proposed' | 'in_progress' | 'scheduled' | 'published';
+export type PipelineStatus = 'proposed' | 'in_progress' | 'scheduled' | 'published' | 'discarded';
 
 export interface PostIdea {
   id: string;
