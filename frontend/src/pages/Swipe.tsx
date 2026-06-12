@@ -271,7 +271,11 @@ function SwipeCardView({
       {/* Media */}
       {!NO_MEDIA_TYPES.has(card.content_type) && (
         <div className="mb-3">
-          <MediaViewer postId={card.id} contentType={card.content_type} linkedinUrl={card.post_url} />
+          {/* key={card.id} forces a remount when the deck advances so the
+              "Ver creatividad" button comes back fresh on every card —
+              otherwise MediaViewer's internal "shown" state leaks across
+              swipes and the previous card's image stays expanded. */}
+          <MediaViewer key={card.id} postId={card.id} contentType={card.content_type} linkedinUrl={card.post_url} />
         </div>
       )}
 
