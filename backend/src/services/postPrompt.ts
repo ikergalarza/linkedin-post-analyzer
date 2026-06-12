@@ -1008,3 +1008,52 @@ export function isVideoRequest(raw: string): boolean {
     .replace(/[̀-ͯ]/g, ''); // strip accents: vídeo→video, guión→guion
   return /\b(video|videos|guion|guiones|script|scripts|reel|reels|grabar|grabacion|rodar|rodaje|filmar|tiktok|short|shorts)\b/.test(s);
 }
+
+// Explicit user-typed mode override: lets the user force the chat into
+// text or video mode regardless of what isVideoRequest auto-detects on
+// the last message. STICKY: scans the whole conversation history
+// newest-first, returns the most recent explicit command found. Once
+// you say "modo texto" it stays in text mode forever (or until you
+// say "modo video"), so a later tangential mention of "video" (e.g.
+// "hablemos del último video que publicamos") doesn't accidentally
+// flip the mode back. Returns null when the user has never given an
+// explicit command — caller then falls back to auto-detection on the
+// last message.
+//
+// Supported phrasings (case- and accent-insensitive, Spanish + English):
+//   TEXT  → "modo texto" · "modo de texto" · "modo normal" ·
+//           "cambia a texto" · "vuelve a modo texto" · "text mode"
+//   VIDEO → "modo video" / "modo vídeo" · "modo reel" ·
+//           "cambia a video" · "vuelve a modo video" · "video mode"
+//
+// Designed to require the explicit "modo X" / "switch to X" pattern so
+// passing mentions of the word "video" in normal conversation don't
+// false-trigger an override.
+export function detectExplicitModeOverride(messages: any[]): 'text' | 'video' | null {
+  if (!Array.isArray(messages) || messages.length === 0) return null;
+  const TEXT_RX = /\b(modo\s+(?:de\s+)?(?:texto|normal|tradicional)|(?:vuelve|cambia|pasa|switch|change|go)\s+(?:a|to|back\s+to)?\s*(?:modo\s+)?(?:texto|tradicional|text)|text\s+mode)\b/;
+  const VIDEO_RX = /\b(modo\s+(?:de\s+)?(?:video|reel|short|guion)|(?:vuelve|cambia|pasa|switch|change|go)\s+(?:a|to|back\s+to)?\s*(?:modo\s+)?(?:video|reel|short|guion)|video\s+mode)\b/;
+
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (m?.role !== 'user') continue;
+    const text = typeof m.content === 'string'
+      ? m.content
+      : Array.isArray(m.content)
+        ? m.content
+            .filter((b: any) => b?.type === 'text' && typeof b.text === 'string')
+            .map((b: any) => b.text)
+            .join(' ')
+        : '';
+    if (!text) continue;
+    const norm = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const textIdx = norm.search(TEXT_RX);
+    const videoIdx = norm.search(VIDEO_RX);
+    if (textIdx < 0 && videoIdx < 0) continue;
+    // Both patterns in the same message: pick whichever appears LAST
+    // in the string (the user's most recent intent within that turn).
+    if (textIdx >= 0 && videoIdx >= 0) return textIdx > videoIdx ? 'text' : 'video';
+    return textIdx >= 0 ? 'text' : 'video';
+  }
+  return null;
+}

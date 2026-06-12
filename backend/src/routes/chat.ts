@@ -23,6 +23,7 @@ import {
   REMIX_PRINCIPLES,
   RECENT_DIAGNOSIS,
   isVideoRequest,
+  detectExplicitModeOverride,
 } from '../services/postPrompt';
 
 // Set of content_type values that correspond to "video on LinkedIn".
@@ -1271,7 +1272,24 @@ router.post('/', async (req: Request, res: Response) => {
       }
       return '';
     })();
-    const videoMode = isVideoRequest(lastUserText);
+    // Mode resolution order:
+    //   1. Explicit user-typed override anywhere in the conversation
+    //      ("modo texto" / "modo video" / "switch to text" / etc.) wins
+    //      — STICKY across all subsequent turns until the user types
+    //      another explicit override of the opposite kind.
+    //   2. Otherwise auto-detect from the last user message (the
+    //      pre-existing isVideoRequest behaviour).
+    // Logged so we can verify in Railway why a given turn went into
+    // text or video mode if the user reports a misfire.
+    const explicitMode = detectExplicitModeOverride(messages);
+    const videoMode = explicitMode === 'video'
+      ? true
+      : explicitMode === 'text'
+        ? false
+        : isVideoRequest(lastUserText);
+    if (explicitMode) {
+      console.log(`[chat] mode locked to "${explicitMode}" by explicit user override (sticky across turns).`);
+    }
 
     const voiceContext = await buildVoiceContext(messages);
 
