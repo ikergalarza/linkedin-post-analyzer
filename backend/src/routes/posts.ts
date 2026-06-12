@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
+import { unipileService } from '../services/unipile';
 import pool from '../db';
 
 function paramId(req: Request): string {
@@ -109,6 +110,61 @@ router.get('/post/:id/media', async (req: Request, res: Response) => {
 
     res.json({ content_type: contentType, items, linkedin_url: linkedinUrl });
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/posts/post/:id/refresh-media — re-fetch this single post from
+// Unipile to refresh its media URLs (LinkedIn CDN URLs are time-signed and
+// expire after ~weeks-month). Updates posts.raw_data so the next GET to
+// /media extracts fresh, working URLs.
+//
+// Account resolution:
+//   1. The post's creator's own unipile_account_id (managed creators)
+//   2. UNIPILE_SCRAPER_ACCOUNT_ID env (fallback for discovered creators we
+//      scrape to learn from but don't manage)
+router.post('/post/:id/refresh-media', async (req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT p.id, p.linkedin_post_id, p.creator_id,
+              c.linkedin_id, c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1
+        LIMIT 1`,
+      [req.params.id as string]
+    );
+    const post = rows[0];
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+    if (!post.linkedin_id) return res.status(400).json({ error: 'Creator has no linkedin_id' });
+    if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no linkedin_post_id' });
+
+    const accountId = post.unipile_account_id || process.env.UNIPILE_SCRAPER_ACCOUNT_ID;
+    if (!accountId) {
+      return res.status(400).json({
+        error: 'No Unipile account available (creator has no unipile_account_id and UNIPILE_SCRAPER_ACCOUNT_ID is not set)',
+      });
+    }
+
+    // Pull the creator's recent posts and find ours by linkedin_post_id. Same
+    // pattern capturePostSnapshot uses; we just persist raw_data instead of
+    // engagement counters because that's what /media reads.
+    const since = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000); // 1y, generous
+    const raws = await unipileService.getPosts(post.linkedin_id, since, accountId);
+    const fresh = raws.find((r: any) => String(r.social_id || r.id) === String(post.linkedin_post_id));
+    if (!fresh) {
+      return res.status(404).json({
+        error: 'Post not in current feed (may be older than 1y or deleted)',
+      });
+    }
+
+    await pool.query(
+      `UPDATE posts SET raw_data = $1::jsonb WHERE id = $2`,
+      [JSON.stringify(fresh), post.id]
+    );
+    res.json({ ok: true });
+  } catch (err: any) {
+    console.error('[posts/refresh-media]', err);
     res.status(500).json({ error: err.message });
   }
 });
