@@ -146,15 +146,22 @@ router.post('/post/:id/refresh-media', async (req: Request, res: Response) => {
       });
     }
 
-    // Pull the creator's recent posts and find ours by linkedin_post_id. Same
-    // pattern capturePostSnapshot uses; we just persist raw_data instead of
-    // engagement counters because that's what /media reads.
-    const since = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000); // 1y, generous
-    const raws = await unipileService.getPosts(post.linkedin_id, since, accountId);
-    const fresh = raws.find((r: any) => String(r.social_id || r.id) === String(post.linkedin_post_id));
+    // Try direct single-post fetch first — works regardless of how old the
+    // post is or how busy the creator's feed has been since. Falls back to
+    // the feed walk only if Unipile doesn't expose a per-post endpoint for
+    // this account.
+    let fresh: any = null;
+    try {
+      fresh = await unipileService.getPostById(post.linkedin_post_id, accountId);
+    } catch (directErr: any) {
+      console.warn('[posts/refresh-media] getPostById failed, falling back to feed walk:', directErr?.message);
+      const since = new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000); // 5y
+      const raws = await unipileService.getPosts(post.linkedin_id, since, accountId);
+      fresh = raws.find((r: any) => String(r.social_id || r.id) === String(post.linkedin_post_id));
+    }
     if (!fresh) {
       return res.status(404).json({
-        error: 'Post not in current feed (may be older than 1y or deleted)',
+        error: 'Post not found in Unipile (deleted or no longer accessible)',
       });
     }
 

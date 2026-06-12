@@ -635,6 +635,18 @@ export class UnipileService {
   // individual reaction, only "how many of each type". Used by the meme
   // detector: a post with funny_pct > 0.25 is virtually always a meme,
   // and computing that needs only the totals.
+  // Fetch ONE post by its LinkedIn social id. Much faster than walking the
+  // creator's feed and works for posts older than getPosts's window or
+  // beyond its page cap. Used by the media-refresh flow (LinkedIn CDN URLs
+  // expire after weeks; this gets fresh signed URLs without a full scrape).
+  async getPostById(postSocialId: string, accountIdOverride?: string): Promise<any> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for post fetch');
+    return this.request<any>(
+      `/api/v1/posts/${encodeURIComponent(postSocialId)}?account_id=${encodeURIComponent(accountId)}`
+    );
+  }
+
   async getPostReactions(
     postSocialId: string,
     accountIdOverride?: string,
