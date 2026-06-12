@@ -1247,7 +1247,7 @@ router.get('/kanban', async (_req: Request, res: Response) => {
         ORDER BY i.updated_at DESC`
     );
     const columns: Record<string, any[]> = {
-      proposed: [], in_progress: [], scheduled: [], published: [],
+      proposed: [], in_progress: [], scheduled: [], published: [], discarded: [],
     };
     for (const r of rows) {
       const k = r.pipeline_status as keyof typeof columns;
@@ -1262,7 +1262,7 @@ router.get('/kanban', async (_req: Request, res: Response) => {
 
 router.patch('/:id/pipeline', async (req: Request, res: Response) => {
   try {
-    const valid = ['proposed', 'in_progress', 'scheduled', 'published'];
+    const valid = ['proposed', 'in_progress', 'scheduled', 'published', 'discarded'];
     const { pipeline_status } = req.body || {};
     if (!valid.includes(pipeline_status)) {
       return res.status(400).json({ error: `pipeline_status must be one of ${valid.join(', ')}` });

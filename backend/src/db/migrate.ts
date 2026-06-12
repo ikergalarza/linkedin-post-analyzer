@@ -532,7 +532,7 @@ const migration = `
   ALTER TABLE post_ideas ADD COLUMN IF NOT EXISTS pipeline_status TEXT NOT NULL DEFAULT 'proposed';
   ALTER TABLE post_ideas DROP CONSTRAINT IF EXISTS post_ideas_pipeline_status_check;
   ALTER TABLE post_ideas ADD CONSTRAINT post_ideas_pipeline_status_check
-    CHECK (pipeline_status IN ('proposed','in_progress','scheduled','published'));
+    CHECK (pipeline_status IN ('proposed','in_progress','scheduled','published','discarded'));
   CREATE INDEX IF NOT EXISTS idx_post_ideas_pipeline ON post_ideas(pipeline_status);
 
   ALTER TABLE post_ideas ADD COLUMN IF NOT EXISTS source_outlier_post_id UUID

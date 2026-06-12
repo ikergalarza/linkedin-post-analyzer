@@ -668,7 +668,7 @@ interface KanbanIdea {
   source_type: string;
   tags: string[];
   status: string;
-  pipeline_status: 'proposed' | 'in_progress' | 'scheduled' | 'published';
+  pipeline_status: 'proposed' | 'in_progress' | 'scheduled' | 'published' | 'discarded';
   source_outlier_post_id: string | null;
   generated_post: string | null;
   created_at: string;
@@ -681,7 +681,7 @@ interface KanbanIdea {
   outlier_creator_image: string | null;
 }
 interface KanbanResponse {
-  columns: Record<'proposed' | 'in_progress' | 'scheduled' | 'published', KanbanIdea[]>;
+  columns: Record<'proposed' | 'in_progress' | 'scheduled' | 'published' | 'discarded', KanbanIdea[]>;
   total: number;
 }
 
@@ -690,6 +690,7 @@ const COLUMN_META: { key: KanbanIdea['pipeline_status']; label: string; emoji: s
   { key: 'in_progress', label: 'En proceso', emoji: '🛠', tint: 'border-blue-400/30' },
   { key: 'scheduled', label: 'Programado', emoji: '⏰', tint: 'border-purple-400/30' },
   { key: 'published', label: 'Publicado', emoji: '✅', tint: 'border-green-400/30' },
+  { key: 'discarded', label: 'Descartado', emoji: '🗑️', tint: 'border-red-400/30' },
 ];
 
 function KanbanView({ refreshKey }: { refreshKey: string }) {
@@ -740,7 +741,7 @@ function KanbanView({ refreshKey }: { refreshKey: string }) {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
       {COLUMN_META.map((col) => {
         const cards = data.columns[col.key] || [];
         return (
