@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useApi } from '../hooks/useApi';
 
 const BASE = import.meta.env.VITE_API_URL || '';
@@ -538,6 +538,11 @@ export default function Ideas() {
   const [localIdeas, setLocalIdeas] = useState<PostIdea[] | null>(null);
   const [filterSource, setFilterSource] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  // Top-level view switch. Kanban is the default — it's the new editorial
+  // workflow (Propuesta → En proceso → Programado → Publicado). The legacy
+  // list view stays one click away because the AI-variant generation flow
+  // lives there.
+  const [view, setView] = useState<'kanban' | 'list'>('kanban');
 
   const displayIdeas = localIdeas || ideas;
 
@@ -564,11 +569,37 @@ export default function Ideas() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Ideas</h1>
-        <p className="text-text-secondary">Capture ideas on the spot. AI generates 3 viral variants to choose from.</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Ideas</h1>
+          <p className="text-text-secondary">
+            {view === 'kanban'
+              ? 'Workflow editorial: arrastra ideas de Propuesta → En proceso → Programado → Publicado.'
+              : 'Captura ideas en el momento. La IA genera 3 variantes virales para elegir.'}
+          </p>
+        </div>
+        <div className="flex items-center gap-1 p-1 rounded-lg border border-border bg-bg-secondary/50">
+          <button
+            onClick={() => setView('kanban')}
+            className={`text-xs px-3 py-1.5 rounded ${view === 'kanban' ? 'bg-accent/15 text-accent' : 'text-text-muted hover:text-text-secondary'}`}
+          >
+            🧩 Kanban
+          </button>
+          <button
+            onClick={() => setView('list')}
+            className={`text-xs px-3 py-1.5 rounded ${view === 'list' ? 'bg-accent/15 text-accent' : 'text-text-muted hover:text-text-secondary'}`}
+          >
+            📝 Lista (generar)
+          </button>
+        </div>
       </div>
 
+      {view === 'kanban' ? (
+        <KanbanView
+          refreshKey={localIdeas ? 'l' + localIdeas.length : 'r' + (ideas?.length ?? 0)}
+        />
+      ) : (
+      <>
       <CaptureForm onCreated={() => { refetch(); setLocalIdeas(null); }} />
 
       {displayIdeas && displayIdeas.length > 0 && (
@@ -623,6 +654,178 @@ export default function Ideas() {
       {!loading && displayIdeas && displayIdeas.length > 0 && filtered.length === 0 && (
         <p className="text-center text-text-muted py-8">No ideas match this filter.</p>
       )}
+      </>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────── Kanban view ───────────────────────────────
+
+interface KanbanIdea {
+  id: string;
+  raw_content: string;
+  source_type: string;
+  tags: string[];
+  status: string;
+  pipeline_status: 'proposed' | 'in_progress' | 'scheduled' | 'published';
+  source_outlier_post_id: string | null;
+  generated_post: string | null;
+  created_at: string;
+  updated_at: string;
+  outlier_text: string | null;
+  outlier_hook: string | null;
+  outlier_ratio: number | null;
+  outlier_url: string | null;
+  outlier_creator_name: string | null;
+  outlier_creator_image: string | null;
+}
+interface KanbanResponse {
+  columns: Record<'proposed' | 'in_progress' | 'scheduled' | 'published', KanbanIdea[]>;
+  total: number;
+}
+
+const COLUMN_META: { key: KanbanIdea['pipeline_status']; label: string; emoji: string; tint: string }[] = [
+  { key: 'proposed', label: 'Propuesta', emoji: '💡', tint: 'border-amber-400/30' },
+  { key: 'in_progress', label: 'En proceso', emoji: '🛠', tint: 'border-blue-400/30' },
+  { key: 'scheduled', label: 'Programado', emoji: '⏰', tint: 'border-purple-400/30' },
+  { key: 'published', label: 'Publicado', emoji: '✅', tint: 'border-green-400/30' },
+];
+
+function KanbanView({ refreshKey }: { refreshKey: string }) {
+  const [data, setData] = useState<KanbanResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [reloadCounter, setReloadCounter] = useState(0);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE}/api/ideas/kanban`);
+      const json = await res.json();
+      setData(json);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load, refreshKey, reloadCounter]);
+
+  const move = async (id: string, to: KanbanIdea['pipeline_status']) => {
+    // Optimistic: update local state first, then PATCH.
+    setData((d) => {
+      if (!d) return d;
+      const cols = { ...d.columns };
+      let card: KanbanIdea | undefined;
+      for (const k of Object.keys(cols) as KanbanIdea['pipeline_status'][]) {
+        const idx = cols[k].findIndex((c) => c.id === id);
+        if (idx >= 0) { card = { ...cols[k][idx], pipeline_status: to }; cols[k] = cols[k].filter((c) => c.id !== id); break; }
+      }
+      if (!card) return d;
+      cols[to] = [card, ...cols[to]];
+      return { ...d, columns: cols };
+    });
+    try {
+      await fetch(`${BASE}/api/ideas/${id}/pipeline`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pipeline_status: to }),
+      });
+    } catch {
+      setReloadCounter((c) => c + 1);
+    }
+  };
+
+  if (loading && !data) return <p className="text-text-muted">Cargando kanban…</p>;
+  if (!data) return null;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      {COLUMN_META.map((col) => {
+        const cards = data.columns[col.key] || [];
+        return (
+          <div
+            key={col.key}
+            className={`bg-bg-card border ${col.tint} rounded-xl p-3 flex flex-col gap-2 min-h-[300px]`}
+            onDragOver={(e) => { e.preventDefault(); }}
+            onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); if (id) move(id, col.key); setDragId(null); }}
+          >
+            <div className="flex items-center justify-between mb-1 px-1">
+              <span className="text-sm font-semibold">
+                {col.emoji} {col.label}
+              </span>
+              <span className="text-[10px] text-text-muted tabular-nums">{cards.length}</span>
+            </div>
+            {cards.length === 0 && (
+              <p className="text-[11px] text-text-muted text-center py-6">—</p>
+            )}
+            {cards.map((c) => (
+              <KanbanCard
+                key={c.id}
+                card={c}
+                isDragging={dragId === c.id}
+                onDragStart={(id) => setDragId(id)}
+                onDragEnd={() => setDragId(null)}
+                onMove={move}
+              />
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function KanbanCard({
+  card,
+  isDragging,
+  onDragStart,
+  onDragEnd,
+  onMove,
+}: {
+  card: KanbanIdea;
+  isDragging: boolean;
+  onDragStart: (id: string) => void;
+  onDragEnd: () => void;
+  onMove: (id: string, to: KanbanIdea['pipeline_status']) => void;
+}) {
+  return (
+    <div
+      draggable
+      onDragStart={(e) => { e.dataTransfer.setData('text/plain', card.id); onDragStart(card.id); }}
+      onDragEnd={onDragEnd}
+      className={`bg-bg-primary border border-border rounded-lg p-2.5 cursor-grab active:cursor-grabbing transition-opacity ${isDragging ? 'opacity-40' : ''}`}
+    >
+      {/* Outlier source chip when applicable */}
+      {card.source_outlier_post_id && card.outlier_creator_name && (
+        <div className="flex items-center gap-1.5 mb-1.5 text-[10px] text-text-muted">
+          {card.outlier_creator_image ? (
+            <img src={card.outlier_creator_image} alt="" className="w-4 h-4 rounded-full object-cover" />
+          ) : null}
+          <span className="truncate">{card.outlier_creator_name}</span>
+          {card.outlier_ratio && (
+            <span className="text-accent tabular-nums ml-auto">{card.outlier_ratio.toFixed(1)}x</span>
+          )}
+        </div>
+      )}
+      <p className="text-xs text-text-primary leading-snug line-clamp-4 whitespace-pre-wrap">
+        {card.raw_content}
+      </p>
+      {/* Quick move arrows on small screens / accessibility */}
+      <div className="flex items-center justify-between mt-2 text-[10px]">
+        <select
+          value={card.pipeline_status}
+          onChange={(e) => onMove(card.id, e.target.value as KanbanIdea['pipeline_status'])}
+          className="bg-bg-secondary border border-border rounded px-1.5 py-0.5 text-text-secondary text-[10px]"
+        >
+          {COLUMN_META.map((c) => (
+            <option key={c.key} value={c.key}>{c.emoji} {c.label}</option>
+          ))}
+        </select>
+        <span className="text-text-muted">
+          {new Date(card.updated_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+        </span>
+      </div>
     </div>
   );
 }

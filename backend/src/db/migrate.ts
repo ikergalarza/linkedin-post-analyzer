@@ -520,6 +520,36 @@ const migration = `
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_media_type TEXT;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_source_url TEXT;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_cached_at TIMESTAMPTZ;
+
+  -- v26: Kanban pipeline for post_ideas + outlier-origin trace. The existing
+  -- \`status\` column tracks the generation lifecycle (draft → generating →
+  -- ready) and stays untouched. \`pipeline_status\` is the editorial workflow
+  -- the user moves cards through: proposed → in_progress → scheduled →
+  -- published. Defaults to 'proposed' so new ideas land in the first column.
+  --
+  -- source_outlier_post_id traces ideas that came from the Tinder-style
+  -- outlier swipe so the kanban card can show the original outlier.
+  ALTER TABLE post_ideas ADD COLUMN IF NOT EXISTS pipeline_status TEXT NOT NULL DEFAULT 'proposed';
+  ALTER TABLE post_ideas DROP CONSTRAINT IF EXISTS post_ideas_pipeline_status_check;
+  ALTER TABLE post_ideas ADD CONSTRAINT post_ideas_pipeline_status_check
+    CHECK (pipeline_status IN ('proposed','in_progress','scheduled','published'));
+  CREATE INDEX IF NOT EXISTS idx_post_ideas_pipeline ON post_ideas(pipeline_status);
+
+  ALTER TABLE post_ideas ADD COLUMN IF NOT EXISTS source_outlier_post_id UUID
+    REFERENCES posts(id) ON DELETE SET NULL;
+  CREATE INDEX IF NOT EXISTS idx_post_ideas_source_outlier ON post_ideas(source_outlier_post_id);
+
+  -- One swipe per (user-ish) per outlier so the deck never repeats. We don't
+  -- have a real user model, so the swipe roster is global — fine for a 2-user
+  -- internal tool. \`action\` is 'like' (saved as idea) or 'skip' (filtered out
+  -- of the deck next time).
+  CREATE TABLE IF NOT EXISTS outlier_swipes (
+    post_id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+    action TEXT NOT NULL CHECK (action IN ('like','skip')),
+    idea_id UUID REFERENCES post_ideas(id) ON DELETE SET NULL,
+    swiped_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_outlier_swipes_action ON outlier_swipes(action);
 `;
 
 export async function runMigrations() {
