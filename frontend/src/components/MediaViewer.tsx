@@ -58,6 +58,8 @@ export default function MediaViewer({
   const [media, setMedia] = useState<MediaResult | null>(null);
   const [active, setActive] = useState(0);
   const [imgError, setImgError] = useState<Record<number, boolean>>({});
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
 
   const load = async () => {
     setState('loading');
@@ -66,9 +68,33 @@ export default function MediaViewer({
       if (!res.ok) throw new Error(`${res.status}`);
       const data: MediaResult = await res.json();
       setMedia(data);
+      setActive(0);
+      setImgError({});
       setState(data.items.length > 0 ? 'loaded' : 'error');
     } catch {
       setState('error');
+    }
+  };
+
+  // Re-pull the post from Unipile so its raw_data + media URLs get refreshed.
+  // LinkedIn CDN URLs expire after a few weeks; this is the recovery flow when
+  // an <img> fails to render. After a successful refresh we reload the media
+  // payload so the new URLs render in place.
+  const refreshFromLinkedIn = async () => {
+    setRefreshing(true);
+    setRefreshMsg(null);
+    try {
+      const res = await fetch(`${BASE}/api/posts/post/${postId}/refresh-media`, { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok) {
+        setRefreshMsg(`✗ ${json.error || res.status}`);
+        return;
+      }
+      await load();
+    } catch (e: any) {
+      setRefreshMsg(`✗ ${e.message}`);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -90,14 +116,22 @@ export default function MediaViewer({
 
   if (state === 'error' || !media || media.items.length === 0) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[11px] text-text-muted">No saved media</span>
+        <button
+          onClick={refreshFromLinkedIn}
+          disabled={refreshing}
+          className="text-[11px] px-2 py-0.5 rounded border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 transition-colors"
+        >
+          {refreshing ? 'Refrescando…' : '↻ Refrescar'}
+        </button>
         {linkedinUrl && (
           <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-accent hover:text-accent-light">
-            — view on LinkedIn ↗
+            view on LinkedIn ↗
           </a>
         )}
         <button onClick={() => setState('idle')} className="text-[10px] text-text-muted hover:text-text-secondary ml-1">✕</button>
+        {refreshMsg && <span className="text-[10px] text-red-400 w-full">{refreshMsg}</span>}
       </div>
     );
   }
@@ -133,13 +167,21 @@ export default function MediaViewer({
           📄 Open document ↗
         </a>
       ) : (
-        <div className="text-[11px] text-text-muted">
-          Media URL expired.{' '}
+        <div className="text-[11px] text-text-muted flex items-center gap-2 flex-wrap">
+          <span>Media URL expired.</span>
+          <button
+            onClick={refreshFromLinkedIn}
+            disabled={refreshing}
+            className="px-2 py-0.5 rounded border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 transition-colors"
+          >
+            {refreshing ? 'Refrescando…' : '↻ Refrescar desde LinkedIn'}
+          </button>
           {linkedinUrl && (
             <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
-              View on LinkedIn ↗
+              o ver en LinkedIn ↗
             </a>
           )}
+          {refreshMsg && <span className="text-red-400 w-full">{refreshMsg}</span>}
         </div>
       )}
 
