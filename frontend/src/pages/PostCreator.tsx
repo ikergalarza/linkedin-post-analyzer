@@ -480,9 +480,9 @@ export default function PostCreator() {
                   <h2 className="text-xl font-semibold text-text-primary mb-1">Create viral LinkedIn posts</h2>
                   <p className="text-text-muted text-sm mb-5">Based on your outlier data.</p>
                   <div className="max-w-md text-left text-xs text-text-muted space-y-2">
-                    <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
-                    <p>🎬 Type <span className="text-accent">"modo texto"</span> for LinkedIn posts or <span className="text-accent">"modo video"</span> for video scripts — sticks across the whole conversation.</p>
+                    <p>🎬 Type <span className="text-accent">"modo texto"</span> for LinkedIn posts or <span className="text-accent">"modo video"</span> for video scripts.</p>
                     <p>🧑 Say <span className="text-accent">"Iker"</span> or <span className="text-accent">"Unai"</span> to write in that person's voice.</p>
+                    <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
                   </div>
                 </div>
               )}
