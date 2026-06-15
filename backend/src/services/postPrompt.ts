@@ -218,36 +218,33 @@ If any box fails, the hook is not ready — rewrite the IDEA, not just the wordi
 // reality baked in: once a photo is attached to a published post it
 // CANNOT be swapped, so there is no post-publish A/B — it has to be right
 // the first time and prepared WITH the post, never as an afterthought.
-export const IMAGE_PRINCIPLES = `IMAGE SUGGESTION PRINCIPLES (when a visual will amplify the post):
+export const IMAGE_PRINCIPLES = `IMAGE SUGGESTION (only when a visual will materially amplify the post):
 
-LINKEDIN REALITY: once you publish a post with a photo you cannot change the photo (you'd have to delete and repost, losing all reach). So there is NO post-publish A/B test. The image must be decided and nailed BEFORE publishing, treated as part of the post — never an afterthought. If the idea can't be represented by a strong single image, that's a signal the visual angle is weak; say so instead of forcing a mediocre image.
+═══ OUTPUT FORMAT — A SINGLE SIMPLE PARAGRAPH ═══
+Deliver the proposal as ONE simple paragraph the user can paste straight into an image-generation tool. Plain prose, no bullets, no headers, no multi-section breakdowns, no "alternative concept" unless the user explicitly asks for one. The paragraph must name (in this order, woven naturally): main subject, action / expression, key prop, any text overlay (with the EXACT word that goes in Persian Orange called out), layout / composition, and the colour role mapping. Avoid vague adjectives — every detail concrete and shootable.
 
-THE IMAGE EXISTS TO DO ONE JOB: open a curiosity gap that only a click/read can close. Start from the psychology of the scroll-stop, not from "what looks nice".
+═══ LINKEDIN REALITY ═══
+Once a post is published with a photo, the photo CANNOT be swapped (you'd have to delete and repost, losing all reach). NO post-publish A/B. Nail it before publishing. If the raw idea can't be carried by a strong single image, say so instead of forcing a mediocre one.
 
-1. CURIOSITY GAP — the image must make the viewer ask a question so strong the only way to resolve it is to stop and read. Types that work: the moment right before a big reaction; a tension/story mid-beat; a desired result ("how did they get that?"); a before→after transformation (the more relatable the "before", the better); something genuinely unexpected (familiar thing + a twist).
+═══ PRINCIPLES (compress mentally before writing the paragraph) ═══
+- Curiosity gap the image opens and only the post can close.
+- 1–2 scroll-stoppers max (face with strong emotion · a big round number · money · a recognisable interface/tool/logo our ICP knows · something genuinely unexpected). More than two = noise.
+- Clarity in under 2 seconds. One main subject. Everything else supports it or is deleted.
+- Text only when it adds (≤ 5 words, never repeats the hook). Big, legible, high-contrast.
+- Thumbnail-readable. Interrupts the LinkedIn feed pattern.
 
-2. 1–2 SCROLL STOPPERS, NOT TEN — pick at most two of: a human face with a strong emotion; a big round number; money; danger; motion/action; a bright colour; a recognisable interface/tool/logo our ICP knows; something absurd or unexpected. More than two and it reads as noise.
+═══ ALWAYS-ON BRAND CONSTRAINTS (both variants below) ═══
+- Palette (only these three): Dark Blue #0c202e (background / dominant) · Persian Orange #ee9363 (highlight / scroll-stop accent — what should pop) · Alabastro #f9f3ef (light surface / breathing space).
+- Typography (only when the image carries text): Bricolage Grotesque for titles (bold, display) · Switzer for body / supporting text. NO other fonts under any circumstance.
+- ORANGE WORD RULE: when text appears, the SINGLE most important word goes in Persian Orange; everything else stays Alabastro on Dark Blue. Pick that word deliberately — it's the scroll-stop — and name it explicitly in the paragraph.
 
-3. CLARITY IN UNDER 2 SECONDS — one main subject that carries the curiosity; everything else supports it or is deleted. If it needs explaining, it fails.
+═══ TWO VARIANTS — PICK ONE BASED ON CONTEXT ═══
 
-4. COMPOSITION & HIERARCHY — centre + symmetry if the subject is central; rule of thirds if it's off to one side. Make the main subject dominate via scale (bigger), focus (sharp vs blurred background), depth (closer to camera) or position. Guide the eye with lines/arrows/contrast.
+(A) NORMAL POST (data shock, infographic, before / after, product, founder photo, regular content) → MINIMALIST + BRANDED. One main subject, one scroll-stopper, clean composition, brand palette. The principles above apply straight. This is the existing minimalist branded approach.
 
-5. TEXT ONLY IF IT ADDS — max ~5 words, never repeats the hook, used only for scale ("Día 7", "230K"), context, or extra curiosity. Big, legible, high-contrast. It must never compete with the main subject.
+(B) MEME POST WITH A REFERENCE IMAGE passed by the user → CALCAR THE REFERENCE. The user's reference dictates layout, panel count, scene, character expressions, body language, the comedic mechanic, the joke. Copy it as faithfully as possible — IGNORE the minimalist rule from variant (A) here. Whatever shape the reference has (one panel, three panels, a sketch, a comic strip, a screenshot, a candid photo, even a non-Neety meme) → match it. Override only TWO things on top of the reference: (1) remap the colours to the Neety palette above; (2) if there is text, render it in Bricolage Grotesque (titles) and Switzer (body) with the orange word rule. Everything else from the reference — preserve it.
 
-6. CONTRAST — make it pop off the LinkedIn feed: light vs dark, one saturated element on a muted/greyscale background, complementary colours (blue/orange, red/green), and deliberately different from what everyone else in our niche posts (if the feed is busy, go clean; if it's all blue corporate, go warm).
-
-7. THREE QUICK TESTS before recommending it: (a) still readable as a tiny thumbnail; (b) interrupts the pattern when mentally placed next to other feed posts; (c) a person who hasn't seen the post gets the idea in a 2-second glance.
-
-When you propose an image, give a CONCRETE, shootable concept (subject, expression/action, key prop, text overlay if any, colour/contrast direction) — not vague adjectives. Offer the single strongest concept plus one genuinely different alternative concept (different curiosity gap, not just a recolour).
-
-NEETY BRAND SYSTEM (always reference these — every image concept must be on-brand):
-- Palette (use these three, nothing else as base):
-  · Dark Blue   #0c202e   (background / dominant)
-  · Persian Orange #ee9363  (highlight / accent — the eye-magnet)
-  · Alabastro   #f9f3ef    (light surface / breathing space)
-- Typography: titles in "Bricolage Grotesque" (bold, display); body / supporting text in "Switzer". Never propose other fonts.
-- ORANGE WORD RULE: when the image carries a title or any text overlay, the SINGLE most important word of that text MUST be coloured in Persian Orange (#ee9363); the rest stays Alabastro (#f9f3ef) on the Dark Blue background. That orange word is the scroll-stop — pick it deliberately (the word that holds the whole curiosity gap).
-- Every image suggestion you give MUST explicitly name: the colour roles (which hex goes where), the typography (which font is used for which text), and which exact word is rendered in Persian Orange. Don't leave it implicit.`;
+(B-fallback) MEME WITHOUT A REFERENCE → fall back to the four-point meme filter (RECENT_DIAGNOSIS § 2: hierarchy of B2B sales roles + bodily change that HURTS and is LEGIBLE at thumbnail + citable typographic punchline + reader laughs WITH us) and the brand constraints above. Invent the scene from scratch using MEME_VISUAL_SYSTEM as the default visual identity. Don't apply MEME_VISUAL_SYSTEM when (B) with a reference applies — the reference wins.`;
 
 // MEME-ONLY visual system. Observed pattern across the meme images
 // that actually pulled outliers on this account (3.7x baldness gradient
@@ -260,6 +257,11 @@ NEETY BRAND SYSTEM (always reference these — every image concept must be on-br
 // data shocks, infographics, regular product visuals) — those follow
 // IMAGE_PRINCIPLES as written.
 export const MEME_VISUAL_SYSTEM = `MEME VISUAL SYSTEM (apply ONLY when proposing an image concept for a MEME post — NOT for any other image. Memes are a deliberate inversion of the base brand palette so they have their own personality inside the feed. Observed across the validated outlier memes on this account):
+
+═══ PRECEDENCE — READ FIRST ═══
+When the user passes a REFERENCE IMAGE for the meme (the common case in this chat: they attach an existing meme they want to riff on, copy the layout from, or update with our message), DO NOT apply this rigid Neety meme system. The reference wins. Switch to IMAGE_PRINCIPLES variant (B): copy the reference's layout, panel count, scene, body language, joke and comedic mechanic as faithfully as possible — only swap the palette to ours (Dark Blue / Persian Orange / Alabastro) and, if there is any text, set it in Bricolage Grotesque (titles) + Switzer (body) with the orange word rule. Do NOT force the white-shirt + orange-tie uniform, the symmetric grid, or any of the conventions below if the reference doesn't have them.
+
+The system below applies ONLY when designing a meme FROM SCRATCH with NO reference image attached.
 
 ─── COLOUR + BACKGROUND ───
 - Background: Alabastro #f9f3ef ALWAYS (NOT Dark Blue — this is the deliberate inversion of the base brand system for memes only).
