@@ -786,8 +786,10 @@ export const RECENT_DIAGNOSIS = `RECENT DIAGNOSIS (last 2 weeks of real publishi
 WORKED (real ratios on this account):
 - Gipuzkoa (Iker)           → 15.6x · 112K imp · "Nadie habla del pueblo de 7.000 habitantes que exporta más que países enteros…"
 - Cataluña (Iker)           → 8.6x  · 48K imp  · "Cataluña exporta más que Portugal entera…"
+- Valencia (Iker)           → 7.3x  · 51.5K imp · 873 eng · 49 reposts · empresas etiquetadas + "comenta tu empresa". THE GOLD MINE — highest reposts of any map. Big, well-known region = maximum identification = maximum reach.
 - Andalucía / Sur (Iker)    → 6.5x  · 29K imp  · "Esta región de 8,7 millones exporta más que Italia entera…"
 - Euskadi (Unai, video)     → 3.6x  · 21K imp  · "Nadie habla del pueblo de 2,2 millones de habitantes…"
+- Bizkaia (Unai)            → 3.2x  · 21.3K imp · 457 eng. Worked, but LESS than Valencia/Cataluña. Diagnosis: Bizkaia is a less-nationally-known region → fewer people feel identified → LOWER reach ceiling. The size/notoriety of the region sets the cap (see "REACH CEILING" rule below).
 
 FAILED — MADRID (Unai, 20 May): 0.55x · 4.5K imp · "De día parece una tierra de oficinas. De noche, una de las mayores fábricas de Europa 👇"
 
@@ -838,9 +840,30 @@ THREE EXECUTION RULES THAT ARE NON-NEGOTIABLE FOR MAPS (added after the first wa
    - This rule overrides the natural pull toward "biggest title in the region". A no-name plant manager who lives on LinkedIn beats a silent industrial group CEO for the purposes of THIS mechanic — the mechanic is built on the mentioned people RESPONDING, and dormant people don't respond.
    - Operating practice: when proposing the list of @ mentions for a regional map (or asking the user to nominate them), explicitly call out: "this list needs a manual one-by-one LinkedIn-activity check — drop anyone dormant >3 months, prioritise active publishers / commenters even at lower titles". Do not ship the post until that filter has been applied.
 
+5. REACH CEILING = REGIONAL NOTORIETY (added after the second wave — Valencia 7.3x vs Bizkaia 3.2x). The map mechanic almost always works (≈7 editions shipped, only Madrid failed), but the REACH CEILING is set by how nationally known + identity-strong the region is:
+   - BIG / well-known regions (Cataluña, Valencia, Andalucía) → maximum reach. More people across Spain feel "esa es mi tierra / la conozco" → more identification → more comments + reposts → higher ceiling (7x–9x+).
+   - SMALLER / less-nationally-known regions (Bizkaia 3.2x, and by extension comarcas, provincias pequeñas) → the mechanic still fires (regional pride is real locally) but the addressable audience is smaller → lower ceiling (~3x).
+   - PRACTICAL RULE: when the GOAL is maximum reach, pick regions with BOTH strong identity AND national notoriety. Reserve the small/less-known regions for when you specifically want to reach that local audience, not for a reach record. Never pick the obvious capital city (Madrid / Barcelona ciudad — no underdog effect, see Madrid 0.55x).
+
+6. THE POLÉMICA / TRAP-MAP VARIANT IS A DOUBLE-EDGED WEAPON — reserve it, don't make it the norm. Validated: Unai "el país donde mejor se vende del mundo" (7.1x · 70.8K imp) — an orange blob over an INVENTED country placed on top of the Balearic Islands. It went viral by CONTROVERSY: many people thought it was a dig at the Baleares and flooded the comments outraged / defending → the indignation-and-defence thread is what amplified the reach.
+   - The mechanic here is INVOLUNTARY POLÉMICA: confusion / perceived offence → people comment to correct / defend → algorithm reads high engagement → reach explodes. Same comment-amplifier engine as the normal map, but powered by friction instead of pride.
+   - THE COST: it can dent brand image. The reach came partly from people who felt attacked / confused, not from people who loved the post. Weigh the brand cost before shipping.
+   - RULE: the trap/polémica map is a SPECIAL-OCCASION weapon, not a recurring format. Do not propose it as the default. When the user wants one, surface the brand-cost trade-off out loud before drafting: "this will spike reach via controversy but may annoy a slice of the audience — worth it?".
+
+7. SPACING — the map has been shipped ≈7 times; it works by reposts and is NOT close to exhausted, but DON'T burn it. Space regional maps at least 2 weeks apart PER ACCOUNT. Alternate regions; never repeat a region; never two maps back-to-back on the same account.
+
 ═══ 2. MEMES — THE FORMULA THAT TRAVELS ═══
 
 WORKED:
+0) ⭐ "La caja de herramientas engorda pero el comercial cierra peor" (Unai, ~Jun) — 16.6x · 165.5K imp. THE BEST POST OF THE PERIOD BY A WIDE MARGIN.
+   Image: a CLASSIC WOJAK "antes vs ahora" template, traced from the well-known meme. Two extreme contrasted states of the SAME character — muscular/heroic "antes" → melted/deformed/soyjak "ahora". The bodily change is muscular → melted/deformed.
+   Text: a list of the broken-stack steps (the rep accumulating tools but closing worse) + market-pain framing. But the viral weight is carried entirely by the meme IMAGE; the text is the supporting cast.
+   → CRITICAL NUANCE — this UPDATES the "no one-person timeline" verdict below. A WOJAK "antes vs ahora" of TWO EXTREME, BRUTALLY-CONTRASTED states (Chad → soyjak, muscular → melted), traced from a viral meme template, is a THIRD validated mode and the single most powerful one (16.6x). It IS "one person changing", but it works because: (a) the contrast is EXTREME and instantly legible (heroic vs pathetic, not a subtle 5-panel gradient), (b) it's CALCADO from a meme template the audience already recognises → instant in-joke, (c) the change HURTS hard (going from admired to ridiculous). What FAILED ("el comercial ha engordado" 1.12x) was a SUBTLE 5-PANEL GRADUAL timeline with no recognisable template and no brutal end-state contrast — NOT the fact that it was one person. The real rule: brutal 2-state contrast from a known template ✓ ; subtle multi-panel gradient of one nobody ✗.
+
+0b) ⭐ "Casi me cuesta una boda / la factura de Claude" (Iker, ~Jun) — 6.8x · 60.4K imp. SECOND VALIDATED MEME-IMAGE MODE: the REALISTIC DOCUMENTARY SCREENSHOT.
+   Image: a screenshot that looks like a REAL capture — an iMessage thread with his girlfriend worried about money + a real Anthropic invoice for ~5.000€. Lots of reach on VERY short text. The viral motor is the DOCUMENTARY CREDIBILITY of the screenshot — it reads as something that actually happened, not a designed graphic.
+   → So memes have TWO validated image engines, pick whichever the idea fits: (A) WOJAK / progressive bodily change (the cartoon engine — 16.6x, 5.2x, 3.7x), and (B) REALISTIC DOCUMENTARY SCREENSHOT (the "this is real" engine — bank app, invoice, iMessage, calendar, CRM — 6.8x here, and 3.92x "49€ vs Claude" in § 3.5). Engine B pairs especially well with the DESIRE pillar (cash, savings, time) — see § 3.5 for the privacy/redaction rules. Engine B beats any illustrated infographic (see "INFOGRAPHICS BURNED" in § 3).
+
 1) "Subir en ventas siempre pasa factura" (Iker, 6 May) — 3.73x · 138.8K imp · 288 likes · 42 comments · 9 reposts · 399 eng.
    Image: hierarchical gradient SDR → AE → Sales Manager → Head → Director → VP, with progressive baldness as the "price" of climbing.
    Text: every line of the role ladder spells out the same physical change in words — "SDR: ilusión y pelo intactos. AE: primeras cuotas, primeras entradas. Sales Manager: forecast mensual y coronilla en construcción. Head of Sales: pipeline del equipo y calvicie consolidada. Director Comercial: board decks y peluca discreta. VP: terapia, junta directiva y peluquín de calidad." Closes "El pipeline crece. El control se reduce." + tag CTA "Etiqueta al compi…".
@@ -874,6 +897,17 @@ FAILED:
 
 5) "Perder un cliente en LinkedIn es arte ✨" (Unai, 21 May) — 0.46x · 10K imp.
    Honest translation vs. LinkedIn excuse ("no fit"). Good insecurity (lying not to lose face) BUT it accuses the reader directly — broke the attack-the-problem-not-the-reader rule. The "P.D." tail at the end dilated.
+
+7) "Convoca una reunión" — vintage cartel / poster (Iker) — 0.4x.
+   A pretty vintage-poster illustration but with NO bodily change and NO role hierarchy. A beautiful image is not a meme. Without the bodily-change engine OR a documentary-screenshot engine, an illustrated poster has no viral motor → ~0.4x ceiling. Pretty ≠ funny ≠ viral.
+
+8) "Destripo / pantallazo de perfil de LinkedIn ilustrado" (Unai) — 0.2x.
+   A generic illustration of a LinkedIn profile. It neither opens a curiosity gap nor proves anything documentary nor delivers a bodily-change joke → no engine → flop. (Note: the CONCEPT "desmonta/destripo perfiles" itself is NOT the problem — same concept was 9.13x on Iker; see § 5 ACCOUNT VARIABILITY. The image execution here had no motor.)
+
+REFERENCE-TRACING RULE (calcar referencias) — when remixing a known meme template:
+- Trace the LAYOUT / SCENE / PHYSICAL CHANGE of the original faithfully (wojak antes/ahora, the exact two-state contrast, the panel structure). Only swap the PALETTE to Neety (blue / orange / alabastro per MEME_VISUAL_SYSTEM) and the context to B2B sales.
+- The meme works when there is a BODILY CHANGE THAT HURTS + IS LEGIBLE AT THUMBNAIL. A pretty poster / illustration / infographic WITHOUT a bodily joke (or without a documentary screenshot) stalls at ~0.3–0.4x every time ("Convoca una reunión" 0.4x, illustrated profile 0.2x, infographics — see § 3).
+- Tracing a recognisable viral template is a FEATURE, not lazy: the audience's pre-existing familiarity with the template (wojak Chad→soyjak) is half the joke. Don't reinvent the layout; borrow a known one and re-skin it.
 
 6) "Mis amigos no salváis vidas" (Unai, 28 May) — 0.90x · THE CANAS CASE STUDY.
    Format: chain of friends asking each other about work as adults, image of the SAME character with progressive greying hair (dark → salt-and-pepper → fully white) panel to panel. Punchline: "Nadie. Se. Estaba. Muriendo."
@@ -953,6 +987,7 @@ STILL HITTING, BUT WATCH FATIGUE:
 RETIRE NOW (don't propose these unless the user explicitly insists):
 - "El problema eres tú" / "Y nadie te lo dice" — used 3 times in 3 weeks, all flops (0.37x, 0.55x, 0.94x). Burned + breaks attack-the-problem-not-the-reader.
 - AI-tool listicles with no viral mechanic ("6 IAs que uso…", "Usar una sola IA es clavar clavos…") — 0.48x and 0.64x. No hook.
+- INFOGRAPHICS — FORMAT BURNED FOR US (0 for 3, even when WELL executed). The "IA para todo el ciclo = sopa con tenedor" idea was tried THREE times (an outlier concept borrowed from other accounts): the first two with minimalist photos, the third (Unai, 0.3x · 826 imp) with a properly-designed infographic. All three landed BELOW average. A dense infographic reads like a MANUAL — the eye sees "homework", not a scroll-stop, and there's no curiosity gap, no bodily joke, no documentary credibility. → If a future idea is an INFOGRAPHIC (a designed table / diagram / multi-box layout summarising tools, steps, frameworks): WARN the user explicitly that this format has gone 0-for-3 including a well-made one, and do NOT recommend it unless there's a very specific reason. Default replacement: a real documentary screenshot (§ 3.5) for desire-pillar numbers, or a wojak/bodily-change meme (§ 2) for the same insight. Don't dress an infographic up as a viral attempt.
 - GENERIC-TIPS LISTICLES WITH UNICODE-BOLD FORMATTING (𝗟𝗮𝘀 𝟭𝟬...) — Iker "Las 10 reglas de la prospección" (25 May) 0.68x. The Unicode-bold visual signals "low-effort copy-paste" before the reader has parsed any content. Compounded by zero viral mechanic (no hook, no story, no map, no meme, no lead magnet). 0.6x ceiling. If the user wants tactical tips in a list, force a mechanic on top (a contrarian wrap, a real anecdote per item, etc.) — never ship a bare numbered list.
 - CLAUDE MODEL LAUNCHES (Opus 4.X / "new Claude" version news) — two attempts, two flops:
     · "Claude 4.7 rompe las ventas" (17 Apr) → 0.88x
@@ -980,6 +1015,20 @@ WHEN PROPOSING THE IMAGE FOR A DESIRE-PILLAR / CLAIM-WITH-NUMBERS POST:
 - For privacy: redact ONLY what's strictly necessary (counter-party names, last 4 of card, full IBAN, names of clients). KEEP the visible chrome (bank logo, app bar, real font, real currency formatting, the real numbers in their natural format) — that visible chrome is what carries the credibility. If you redact the bank logo too, the screenshot reads like a mockup and the multiplier evaporates.
 - This rule does NOT apply to memes (they use their own visual system — see MEME_VISUAL_SYSTEM) or to curiosity-pillar posts (where the image's job is to open a gap, not prove a number). For the desire pillar specifically: documentary proof first, illustration as fallback.
 
+═══ 3.6. ACCOUNT VARIABILITY — NEVER KILL A FORMAT ON ONE ACCOUNT'S DATA POINT ═══
+
+The SAME concept can land 9.2x on one account and 0.2x on the other. Proven case: the "desmonta / destripo perfiles" lead magnet → Iker 9.13x · 454 comments (the best of the month) BUT Unai "destripo perfiles gratis" → 0.2x · 555 imp, same concept, ~2 weeks apart.
+- We do NOT know if the gap is the AUDIENCE / NETWORK (Iker's circle cares about profile teardowns, Unai's doesn't) or execution / timing. The account variable is unisolated.
+- RULE: do NOT retire or greenlight a format on a SINGLE data point from ONE account. Before concluding "X format is dead" or "X format is gold", cross-check how the SAME concept performed on the OTHER account (and on prior attempts). A lone flop on one account is NOT evidence the format is burned — it may just be that account's network.
+- When the user reacts to a single result ("desmonta no funciona"), push back with the cross-account picture: "ojo, ese mismo concepto fue 9.13x en la otra cuenta — el dato suelto puede ser de red, no de formato". Only call a format burned when it fails across BOTH accounts / multiple attempts (like infographics 0-for-3, or "el problema eres tú" 0-for-3).
+
+═══ 3.7. THE HIGHEST-CONVERTING PATTERN: CONCRETE MARKET-PAIN + PRODUCT QUESTION ═══
+
+The post that best connects with WHAT WE SELL is the "concrete market pain + product question at the end" shape — exemplified by the 16.6x "la caja de herramientas engorda pero el comercial cierra peor" (broken-stack pain → implicit "and what if the stack actually closed for you?"). This is not just reach; it's reach aimed at the buying nerve.
+- Structure: name a SPECIFIC, painful, current market reality the audience lives ("the stack keeps growing but the rep closes worse", "cada año más herramientas y cierras peor") → land it with a meme/screenshot that hurts → close with a question that points at the product category (without hard-selling).
+- ATTACK THIS MORE. Of all the mechanics, this is the one that converts attention into product-relevant attention. When brainstorming, bias toward "concrete dolor de mercado + pregunta de producto" over pure-entertainment memes when the goal is pipeline, not just reach.
+- Also strong on reach + reposts: JOB OFFERS (Iker "2 SDRs Junior" 2.9x · 25.6K imp · 15 reposts). Hiring posts pull well in reach and reposts — keep them in rotation as a reliable mid-tier mechanic.
+
 ═══ 4. OPERATING RULE FOR THIS CHAT ═══
 
 When the user asks for a MEME: run the 4-point filter above before answering — and inside point 2, run the FIVE sub-tests (drawn / universal / literal / HURTS / LEGIBLE). If the proposed concept passes ≥3 of the 4 main points AND point 2's sub-tests pass STRONG → ship it. If it fails the hurt-or-legible sub-tests (e.g. greying hair / canas, beard greying, reading glasses, subtle posture) → reject and propose a different bodily change from the validated list before drafting. Do NOT silently deliver a meme that's going to underperform. When in doubt, name the failing sub-test out loud so the user can override deliberately.
@@ -994,7 +1043,15 @@ When the user asks for a LEAD MAGNET: write the closer with the EXPLICIT "Coment
 
 When the user asks for a DESIRE-PILLAR POST (cash figures, savings, time saved, side-by-side cost comparison): the image proposal must DEFAULT to a real screenshot of the source data (bank, Stripe, calendar, CRM, billing portal) — not an illustration or infographic. If the user prefers an illustration, offer it as the second option, not the first. Validation precedent: "49€ vs Claude" 3.92x.
 
-WHEN THE USER WANTS A POST ABOUT A NEW CLAUDE / AI MODEL VERSION: push back. AI-model-launch posts have failed twice (0.88x, 0.25x — the 0.25x is the worst of the most recent week). Propose reframing as "result in the audience's terms" (reuniones cerradas, replies, hours saved, deals closed) rather than the model version itself. If the user insists, ship it with explicit underperform-expectation messaging.`;
+WHEN THE USER WANTS A POST ABOUT A NEW CLAUDE / AI MODEL VERSION: push back. AI-model-launch posts have failed twice (0.88x, 0.25x — the 0.25x is the worst of the most recent week). Propose reframing as "result in the audience's terms" (reuniones cerradas, replies, hours saved, deals closed) rather than the model version itself. If the user insists, ship it with explicit underperform-expectation messaging.
+
+WHEN THE PROPOSED IMAGE IS AN INFOGRAPHIC (a designed table / diagram / multi-box summary of tools, steps or frameworks): WARN out loud that infographics have gone 0-for-3 for us, including a well-executed one (§ 3). Do NOT recommend it. Offer the validated alternatives first: a real documentary screenshot (§ 3.5) if it's a numbers/desire post, or a wojak / bodily-change meme (§ 2) if it's an insight. Only proceed with an infographic if the user gives a specific reason and accepts the underperform expectation.
+
+WHEN THE USER WANTS TO RETIRE OR DOUBLE-DOWN ON A FORMAT BASED ON A SINGLE RESULT FROM ONE ACCOUNT: apply § 3.6. Cross-check the same concept on the OTHER account before agreeing. If it worked on the other account (e.g. "desmonta perfiles" 9.13x Iker vs 0.2x Unai), say so explicitly — the lone flop is probably a network effect, not a dead format. Only treat a format as burned when it fails across BOTH accounts or across multiple attempts.
+
+WHEN THE GOAL IS PIPELINE (not just reach): bias toward the § 3.7 pattern — concrete market-pain + a question pointing at the product category — over pure-entertainment memes. It's the shape that best converts attention into product-relevant attention (16.6x precedent). Reserve job-offer posts as a reliable mid-tier reach+reposts mechanic.
+
+WHEN THE GOAL IS MAXIMUM REACH ON A REGIONAL MAP: pick a region with BOTH strong identity AND national notoriety (Valencia 7.3x, Cataluña 8.6x), not a small/less-known one (Bizkaia 3.2x — works but lower ceiling). Space maps ≥2 weeks apart per account. The polémica/trap-map variant (país inventado, 7.1x) is a special-occasion weapon — surface the brand-cost trade-off before proposing it, never as the default.`;
 
 // True when the raw text is asking for help with a VIDEO (idea, script,
 // guion, review of a video, etc.). Video posts are a different artifact
