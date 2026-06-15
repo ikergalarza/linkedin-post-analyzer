@@ -550,6 +550,22 @@ const migration = `
     swiped_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
   CREATE INDEX IF NOT EXISTS idx_outlier_swipes_action ON outlier_swipes(action);
+
+  -- v27: reactions we've sent to comments on our own posts (Comentarios tab).
+  -- LinkedIn allows one reaction per comment, and Unipile's comment object
+  -- doesn't reliably expose the viewer's own reaction back — so we persist
+  -- every reaction we successfully send here. The comments endpoint joins
+  -- this table to tell the UI which comments are already reacted (and with
+  -- which type), so the state survives reloads and the reaction bar can
+  -- lock once set. Keyed by the comment's LinkedIn social id (unique across
+  -- LinkedIn), with post_id kept for scoping / cleanup on post deletion.
+  CREATE TABLE IF NOT EXISTS comment_reactions (
+    comment_social_id TEXT PRIMARY KEY,
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+    reaction_type TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_comment_reactions_post ON comment_reactions(post_id);
 `;
 
 export async function runMigrations() {

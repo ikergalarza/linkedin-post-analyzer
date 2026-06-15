@@ -1756,6 +1756,11 @@ interface ThreadedComment {
   // comments only — nested replies are siblings of each other inside the
   // same thread.
   answered_by_author?: boolean;
+  // The reaction WE'VE placed on this comment (like / celebrate / support /
+  // love / insightful / funny), or null if none. Sourced from the
+  // comment_reactions table (what we sent from the app) so it survives
+  // reloads and the UI can show + lock the reaction state.
+  my_reaction?: string | null;
 }
 
 function shapeComment(c: any): ThreadedComment {
@@ -1987,6 +1992,24 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
         : false;
     }
 
+    // Attach the reaction we've already placed on each top-level comment
+    // (from comment_reactions). One query for the whole post, mapped by
+    // the comment's social id. Threads with no row stay my_reaction: null.
+    if (topLevel.length > 0) {
+      const ids = topLevel.map((t) => t.id).filter(Boolean);
+      if (ids.length > 0) {
+        const { rows: reactRows } = await pool.query(
+          `SELECT comment_social_id, reaction_type
+             FROM comment_reactions
+            WHERE comment_social_id = ANY($1::text[])`,
+          [ids]
+        );
+        const reactionBySocialId = new Map<string, string>();
+        for (const r of reactRows) reactionBySocialId.set(String(r.comment_social_id), r.reaction_type);
+        for (const t of topLevel) t.my_reaction = reactionBySocialId.get(t.id) || null;
+      }
+    }
+
     // If none of the threads have an author name, surface the raw first
     // comment in the response so we can read it from the browser and fix
     // the shape mapping without round-tripping to Railway logs. Also
@@ -2172,6 +2195,24 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
       reactionType as LinkedinReactionType,
       post.unipile_account_id
     );
+
+    // Persist so the Comentarios tab can show the reaction state on reload
+    // and lock the bar. Upsert: if LinkedIn lets the user change a reaction
+    // later via a second click, the latest one wins. Best-effort — a
+    // storage hiccup shouldn't fail a reaction that already landed on
+    // LinkedIn.
+    try {
+      await pool.query(
+        `INSERT INTO comment_reactions (comment_social_id, post_id, reaction_type)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (comment_social_id)
+         DO UPDATE SET reaction_type = EXCLUDED.reaction_type, created_at = NOW()`,
+        [commentId, postId, reactionType]
+      );
+    } catch (storeErr: any) {
+      console.warn('[accounts/comments/react] reaction stored on LinkedIn but DB persist failed:', storeErr?.message);
+    }
+
     res.json({ ok: true, reaction_type: reactionType, result });
   } catch (err: any) {
     console.error('[accounts/comments/react]', err);

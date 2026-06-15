@@ -40,6 +40,10 @@ interface Thread {
   author: CommentAuthor;
   replies: Thread[];
   answered_by_author?: boolean;
+  // The reaction we've already placed on this comment, or null. Sourced
+  // from the backend (comment_reactions table) so it persists across
+  // reloads.
+  my_reaction?: string | null;
 }
 
 interface CommentsResponse {
@@ -399,11 +403,12 @@ function ThreadCard({
   const [sending, setSending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  // Reaction state: which type is mid-flight, which one we successfully
-  // sent (highlighted), and a small status line. LinkedIn allows one
-  // reaction per user per comment, so reactedType is single-valued.
+  // Reaction state: which type is mid-flight, which one is currently set
+  // (highlighted + locks the bar), and a small status line. LinkedIn
+  // allows one reaction per comment, so reactedType is single-valued and
+  // initialised from the persisted backend value so it survives reloads.
   const [reacting, setReacting] = useState<string | null>(null);
-  const [reactedType, setReactedType] = useState<string | null>(null);
+  const [reactedType, setReactedType] = useState<string | null>(thread.my_reaction || null);
   const [reactMsg, setReactMsg] = useState<string | null>(null);
 
   const mention = thread.author.name && thread.author.profile_id
@@ -458,7 +463,8 @@ function ThreadCard({
   };
 
   const handleReact = async (reactionType: string) => {
-    if (reacting) return;
+    // One reaction per comment — once set, the bar is locked.
+    if (reacting || reactedType) return;
     setReacting(reactionType);
     setReactMsg(null);
     try {
@@ -515,31 +521,44 @@ function ThreadCard({
           </div>
           <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
 
-          {/* Reaction bar — react to the commenter directly via Unipile */}
-          <div className="mt-2 flex items-center gap-1 flex-wrap">
-            {REACTIONS.map((r) => {
-              const isSelected = reactedType === r.type;
-              const isLoading = reacting === r.type;
+          {/* Reaction bar — react to the commenter directly via Unipile.
+              Once a reaction is set (this session or persisted from a
+              previous one), the bar locks: only the chosen reaction stays
+              shown, highlighted, with its label, so it's clear at a glance
+              whether this comment is already reacted and with which one. */}
+          {reactedType ? (
+            (() => {
+              const r = REACTIONS.find((x) => x.type === reactedType);
               return (
-                <button
-                  key={r.type}
-                  onClick={() => handleReact(r.type)}
-                  disabled={!!reacting}
-                  title={r.label}
-                  className={`text-base leading-none px-1.5 py-1 rounded-md border transition-all disabled:cursor-not-allowed ${
-                    isSelected
-                      ? 'border-accent/60 bg-accent/15 scale-110'
-                      : 'border-transparent hover:border-border hover:bg-bg-primary opacity-70 hover:opacity-100'
-                  } ${isLoading ? 'animate-pulse' : ''}`}
-                >
-                  {r.emoji}
-                </button>
+                <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-text-secondary bg-accent/10 border border-accent/30 rounded-md px-2 py-1">
+                  <span className="text-sm leading-none">{r?.emoji}</span>
+                  <span>Ya reaccionaste · <span className="text-accent font-medium">{r?.label}</span></span>
+                </div>
               );
-            })}
-            {reactMsg && (
-              <span className="text-[10px] text-text-muted ml-1">{reactMsg}</span>
-            )}
-          </div>
+            })()
+          ) : (
+            <div className="mt-2 flex items-center gap-1 flex-wrap">
+              {REACTIONS.map((r) => {
+                const isLoading = reacting === r.type;
+                return (
+                  <button
+                    key={r.type}
+                    onClick={() => handleReact(r.type)}
+                    disabled={!!reacting}
+                    title={r.label}
+                    className={`text-base leading-none px-1.5 py-1 rounded-md border transition-all disabled:cursor-not-allowed border-transparent hover:border-border hover:bg-bg-primary opacity-70 hover:opacity-100 ${
+                      isLoading ? 'animate-pulse opacity-100' : ''
+                    }`}
+                  >
+                    {r.emoji}
+                  </button>
+                );
+              })}
+              {reactMsg && (
+                <span className="text-[10px] text-text-muted ml-1">{reactMsg}</span>
+              )}
+            </div>
+          )}
 
           {/* Existing replies, if any */}
           {thread.replies.length > 0 && (
