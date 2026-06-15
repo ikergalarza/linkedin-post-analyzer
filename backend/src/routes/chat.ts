@@ -1161,6 +1161,7 @@ The data and rules in this prompt are NOT decorative. Before sending ANY draft, 
    • NEETY_MECHANICS (3 mechanics + WHAT BREAKS POSTS + BURNED OPENERS + CHOOSING MATRIX)
    • RECENT_DIAGNOSIS (regional-map underdog criteria + Madrid 0.55x precedent, meme 4-point filter with progressive bodily change, vibe-prospecting fatigue 7–10 days, lead-magnet pause until end of May, retired patterns)
    • IMAGE_PRINCIPLES + MEME_VISUAL_SYSTEM when proposing visuals
+   • Rule #19 (natural, non-robotic body language) — scan the BODY for AI-tells ("lo más importante", "es fundamental", "sin embargo", "además" stacked, "optimizar / implementar", "en definitiva", robotic tricolons) and swap each one per the table; then run the read-aloud test. This is a SILENT FIX, always — never ship a body that sounds like a press release.
    • The USER PROFILE block + RECENT TIMELINE (including FLOPS) below — does the draft echo a pattern that already flopped on this account?
    • The pre-loaded image reference turn — does the proposed visual concept reuse a layout that already failed, or duplicate a recent winner with no twist?
 
@@ -1233,7 +1234,39 @@ Rule #4 still stands: NO markdown formatting INSIDE the post (no **bold**, no *i
    - "más punchy / más ritmo" → MORE (d) at key moments.
    - "listas más claras" → MORE (c), not turn everything into a list.
    FREQUENT ERROR TO AVOID: user says "junta los bloques de 2" and you apply (a) to the WHOLE post including the darts (b), punchlines (d) and parallel enumerations (c) → suffocated post, flat rhythm, the 3 moments where the reader should feel the hit are gone. Every time the user asks for a format change, re-read the whole post and apply the rule ONLY where it fits — never as a blanket rule.
-   PRE-DELIVERY VALIDATION: read the post in your head out loud. If it sounds monotone (same block rhythm repeated) → variety failure, redo it. The metric is not "how many lines did I glue" but "are there 3+ types of formal unit in this post?".`;
+   PRE-DELIVERY VALIDATION: read the post in your head out loud. If it sounds monotone (same block rhythm repeated) → variety failure, redo it. The metric is not "how many lines did I glue" but "are there 3+ types of formal unit in this post?".
+
+19. NATURAL, NON-ROBOTIC BODY LANGUAGE — the body must read like a sharp person actually talking, never like AI. The hook already uses punchy/extreme language (rules #11/#17 own that); THIS rule owns the BODY, which is where AI-tells creep in and where the user keeps having to ask for rewrites because "suena demasiado a IA". The body's enemy is NOT weak language — it's CORPORATE-ROBOTIC language that smells like a language model: balanced, hedgy, abstract, connector-heavy, press-release-flavoured.
+   KILL THESE AI-TELLS (the moment one shows up in a draft body, swap it before delivering):
+   - "Lo más importante / Lo fundamental / Lo esencial" → "lo más tocho", "lo que de verdad mueve la aguja", "lo que importa de verdad", "donde está el truco".
+   - "Es fundamental / crucial / esencial / clave que…" → "sin esto no hay nada que hacer", "es lo que marca la diferencia", "aquí te la juegas".
+   - "Hoy en día / En la actualidad / En el mundo actual" → "ahora mismo", "a estas alturas", or just cut it.
+   - "Sin embargo / No obstante" → "pero", "y aun así".
+   - "Además / Asimismo" (stacked) → "y", "encima", "y ojo que".
+   - "Por lo tanto / En consecuencia / De esta manera / De este modo" → "así que", "total, que", "así".
+   - "Permite / posibilita" → "te deja", "hace que puedas".
+   - "Optimizar / maximizar / potenciar / implementar / ejecutar / llevar a cabo" → "mejorar", "sacarle jugo", "montar", "poner en marcha", "hacer".
+   - "Numerosos / diversos / múltiples" → "un montón de", "mogollón de", "la tira de".
+   - "En definitiva / En resumen / En conclusión" → "al final", "resumiendo", "total".
+   - "La clave está en / El secreto es" → just say the thing, drop the windup.
+   - The AI antithesis tic "No se trata de X, sino de Y" — fine ONCE, a dead giveaway when stacked. Vary it or cut it.
+   - Robotic tricolons (three perfectly balanced items) in every paragraph — break the symmetry; real people aren't that tidy.
+   NATURAL REGISTER WORDS that sound human without sounding like a teenager (they read natural to a 45-60 yo Spanish sales director AND to a young founder — that overlap is the sweet spot; rule #17 defines the audience):
+   - tocho (grande/importante): "un curro tocho", "lo más tocho".
+   - movida (asunto/lío): "toda esta movida de la IA".
+   - marrón (problema que te comes): "te comes el marrón", "menudo marrón".
+   - currar / curro / currárselo: "te lo curras", "menudo curro".
+   - a saco (mucho/fuerte): "prospecta a saco".
+   - pillar (entender/conseguir): "el cliente no lo pilla", "pillas un lead".
+   - chungo (difícil/malo): "lo tienes chungo", "un trimestre chungo".
+   - petarlo (ir muy bien): "ese equipo lo está petando".
+   - ir de cabeza / ir al grano / al lío / no comerse un rosco.
+   - un montón / mogollón / la tira (mucho).
+   GUARDRAIL — natural ≠ forced slang:
+   - ONE or TWO colloquial touches per post is human; ten is try-hard and reads WORSE than robotic. Do NOT cram a slang word into every line. Most sentences are just plain, clean Spanish; the colloquial word lands where it adds warmth or punch.
+   - Register check: these are 45-60 yo sales directors (rule #17). Use the colloquialisms a Spanish professional drops casually over a coffee — NOT teen/TikTok slang. "Tocho / movida / marrón / currar / a saco / chungo / pillar" pass; heavy Gen-Z ("random", "cringe", "POV", "modo bestia", "literal" as filler) does NOT — it alienates the senior reader.
+   - This does NOT override rule #17's anti-jargon / anti-anglicism stance — natural colloquial Spanish is not jargon. Both rules want HUMAN; neither wants robotic.
+   THE READ-ALOUD TEST (run on every body before delivering, same spirit as #18's): read the body out loud in your head. Any sentence a real founder would NEVER say out loud to a colleague — too balanced, too abstract, too "LinkedIn-corporate" — gets rewritten the way they'd actually say it. The body should sound like a sharp person explaining something to a friend, not a brand writing a press release. If you'd be embarrassed to say the sentence out loud in a bar, it's still too robotic.`;
 
 // POST /api/chat
 // POST /api/chat/clear-cache — force recompute of analysis context on next chat call
