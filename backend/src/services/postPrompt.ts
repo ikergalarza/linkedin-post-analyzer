@@ -234,9 +234,9 @@ Once a post is published with a photo, the photo CANNOT be swapped (you'd have t
 - Thumbnail-readable. Interrupts the LinkedIn feed pattern.
 
 ═══ ALWAYS-ON BRAND CONSTRAINTS (both variants below) ═══
-- Palette (only these three): Dark Blue #0c202e (background / dominant) · Persian Orange #ee9363 (highlight / scroll-stop accent — what should pop) · Alabastro #f9f3ef (light surface / breathing space).
+- Palette (only these three): Alabastro #f9f3ef (background / dominant — the light surface every image sits on) · Dark Blue #0c202e (titles, body text, linework — the "ink") · Persian Orange #ee9363 (highlight / scroll-stop — what should pop, applied sparingly to the one most important word or element).
 - Typography (only when the image carries text): Bricolage Grotesque for titles (bold, display) · Switzer for body / supporting text. NO other fonts under any circumstance.
-- ORANGE WORD RULE: when text appears, the SINGLE most important word goes in Persian Orange; everything else stays Alabastro on Dark Blue. Pick that word deliberately — it's the scroll-stop — and name it explicitly in the paragraph.
+- ORANGE WORD RULE: when text appears, the SINGLE most important word goes in Persian Orange; everything else stays Dark Blue on the Alabastro background. Pick that word deliberately — it's the scroll-stop — and name it explicitly in the paragraph.
 
 ═══ TWO VARIANTS — PICK ONE BASED ON CONTEXT ═══
 
@@ -249,14 +249,15 @@ Once a post is published with a photo, the photo CANNOT be swapped (you'd have t
 // MEME-ONLY visual system. Observed pattern across the meme images
 // that actually pulled outliers on this account (3.7x baldness gradient
 // SDR→VP, 5.2x manager balding mid-shout, plus an "IA roba el sueño"
-// concept in production). This block OVERRIDES IMAGE_PRINCIPLES'
-// "Neety brand system" defaults specifically for MEMES — memes use an
-// inverted version of the brand palette (light background instead of
-// dark) on purpose, so they have their own personality inside the feed.
-// DO NOT apply this block to non-meme image suggestions (text+image
-// data shocks, infographics, regular product visuals) — those follow
-// IMAGE_PRINCIPLES as written.
-export const MEME_VISUAL_SYSTEM = `MEME VISUAL SYSTEM (apply ONLY when proposing an image concept for a MEME post — NOT for any other image. Memes are a deliberate inversion of the base brand palette so they have their own personality inside the feed. Observed across the validated outlier memes on this account):
+// concept in production). This block adds meme-specific composition
+// rules ON TOP of the shared NEETY palette + typography defined in
+// IMAGE_PRINCIPLES — the palette is the same as every other image
+// (Alabastro background, Dark Blue text/linework, Persian Orange
+// highlight). What this block adds is the meme-only layout (grid),
+// the character uniform (white shirt + orange tie), and the narrative
+// engine (bodily change + contrast character). DO NOT apply this
+// block to non-meme image suggestions.
+export const MEME_VISUAL_SYSTEM = `MEME VISUAL SYSTEM (apply ONLY when proposing an image concept for a MEME post — NOT for any other image. Adds meme-specific composition rules on top of the shared Neety palette + typography from IMAGE_PRINCIPLES. Observed across the validated outlier memes on this account):
 
 ═══ PRECEDENCE — READ FIRST ═══
 When the user passes a REFERENCE IMAGE for the meme (the common case in this chat: they attach an existing meme they want to riff on, copy the layout from, or update with our message), DO NOT apply this rigid Neety meme system. The reference wins. Switch to IMAGE_PRINCIPLES variant (B): copy the reference's layout, panel count, scene, body language, joke and comedic mechanic as faithfully as possible — only swap the palette to ours (Dark Blue / Persian Orange / Alabastro) and, if there is any text, set it in Bricolage Grotesque (titles) + Switzer (body) with the orange word rule. Do NOT force the white-shirt + orange-tie uniform, the symmetric grid, or any of the conventions below if the reference doesn't have them.
@@ -264,7 +265,7 @@ When the user passes a REFERENCE IMAGE for the meme (the common case in this cha
 The system below applies ONLY when designing a meme FROM SCRATCH with NO reference image attached.
 
 ─── COLOUR + BACKGROUND ───
-- Background: Alabastro #f9f3ef ALWAYS (NOT Dark Blue — this is the deliberate inversion of the base brand system for memes only).
+- Background: Alabastro #f9f3ef ALWAYS (same as the base brand system — all Neety images sit on the light Alabastro surface).
 - Linework / outlines: Dark Blue #0c202e for everything — faces, clothing, panel borders, title typography except the orange scroll-stop word.
 - Persian Orange #ee9363 is RESERVED for exactly 3 slots:
   (a) The character's tie — every Neety meme character wears it, it's the signature visual.
@@ -309,7 +310,7 @@ Always state explicitly:
 8. Orange accents: list every place orange appears (ties, shout rays, prop).
 
 DO NOT PROPOSE:
-- Dark backgrounds for memes (Dark Blue is for non-meme posts only).
+- Dark backgrounds (Alabastro is the canonical background for every Neety image — never invert to Dark Blue).
 - Characters wearing anything other than the white-shirt + orange-tie uniform.
 - More than ONE orange word in the title.
 - Comic-book panels with complex scenery / speech bubbles instead of clean grid layout.
