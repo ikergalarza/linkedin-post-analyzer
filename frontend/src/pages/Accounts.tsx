@@ -414,7 +414,12 @@ export default function Accounts() {
 
   const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
   const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
-  const livePostsPath = `/api/accounts/live-posts${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`;
+  // Live posts now respect the same top-of-page date range as the analytics
+  // charts — the backend STRICTLY filters by published_at within the range
+  // when start_date/end_date are present (no 7-day fallback). When the user
+  // changes the date filter, useApi re-fetches automatically because the URL
+  // changes.
+  const livePostsPath = `/api/accounts/live-posts?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
   const { data: livePosts, refetch: refetchLive } = useApi<LivePost[]>(livePostsPath);
 
   // Auto-refresh live posts every 2 minutes so new snapshots appear without a page reload

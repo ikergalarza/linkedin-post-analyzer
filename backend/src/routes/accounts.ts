@@ -1245,11 +1245,29 @@ router.get('/live-posts', async (req: Request, res: Response) => {
     // which keeps snapshot cadence alive even if Railway recycles the background setInterval.
     maybeTick();
     const creatorId = (req.query.creator_id as string) || null;
+    // Optional date range — when provided (passed by the Accounts page so
+    // the same top-of-page date filter affects both analytics AND the live
+    // posts list), we use a STRICT published_at filter and drop the
+    // "snapshot_count > 0" fallback. Without it, the default 7-day window
+    // OR posts with snapshots stays in place (backward compat for any
+    // caller that hits this endpoint without dates).
+    const startDate = (req.query.start_date as string) || null;
+    const endDate = (req.query.end_date as string) || null;
     const params: any[] = [];
     let creatorFilter = '';
     if (creatorId) {
       params.push(creatorId);
       creatorFilter = `AND c.id = $${params.length}`;
+    }
+    let dateFilter: string;
+    if (startDate && endDate) {
+      params.push(`${startDate} 00:00:00`);
+      const startIdx = params.length;
+      params.push(`${endDate} 23:59:59`);
+      const endIdx = params.length;
+      dateFilter = `p.published_at >= $${startIdx} AND p.published_at <= $${endIdx}`;
+    } else {
+      dateFilter = `(p.published_at > NOW() - INTERVAL '7 days' OR p.snapshot_count > 0)`;
     }
     const { rows } = await pool.query(
       `WITH candidate_posts AS (
@@ -1281,8 +1299,7 @@ router.get('/live-posts', async (req: Request, res: Response) => {
          END AS phase
        FROM candidate_posts p
        JOIN creators c ON c.id = p.creator_id
-       WHERE p.published_at > NOW() - INTERVAL '7 days'
-          OR p.snapshot_count > 0
+       WHERE ${dateFilter}
        ORDER BY p.published_at DESC
        LIMIT 50`,
       params
