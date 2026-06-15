@@ -116,6 +116,36 @@ export const LINKEDIN_REACTION_TYPES = [
 ] as const;
 export type LinkedinReactionType = (typeof LINKEDIN_REACTION_TYPES)[number];
 
+// Maps Unipile/LinkedIn's internal reaction VALUE (as returned on the
+// comment object's `user_reacted` field, and on the GET /reactions
+// items' `value` field) to our lowercase frontend type. Confirmed live
+// from a comments dump: comments carry user_reacted ∈ {LIKE, PRAISE,
+// APPRECIATION, EMPATHY, INTEREST, ENTERTAINMENT} (absent when the
+// viewer hasn't reacted). The lowercase friendly names are accepted too,
+// defensively. MAYBE (the deprecated "Curious") has no UI slot → null.
+const LINKEDIN_REACTION_VALUE_MAP: Record<string, LinkedinReactionType | null> = {
+  LIKE: 'like',
+  PRAISE: 'celebrate',
+  CELEBRATE: 'celebrate',
+  APPRECIATION: 'support',
+  SUPPORT: 'support',
+  EMPATHY: 'love',
+  LOVE: 'love',
+  INTEREST: 'insightful',
+  INSIGHTFUL: 'insightful',
+  ENTERTAINMENT: 'funny',
+  FUNNY: 'funny',
+  MAYBE: null,
+};
+
+// Normalise a raw Unipile reaction value (e.g. "EMPATHY", or already
+// "love") into our lowercase frontend type, or null if absent/unknown.
+export function normalizeReactionValue(raw: unknown): LinkedinReactionType | null {
+  if (!raw || typeof raw !== 'string') return null;
+  const key = raw.trim().toUpperCase();
+  return LINKEDIN_REACTION_VALUE_MAP[key] ?? null;
+}
+
 export class UnipileService {
   private apiKey: string;
   private baseUrl: string;

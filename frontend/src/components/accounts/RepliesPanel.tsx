@@ -295,17 +295,6 @@ function PostThreadView({ post }: { post: LivePost }) {
                 Ver en LinkedIn →
               </a>
             )}
-            {/* TEMP diagnostic — opens the raw Unipile reaction shape so we
-                can wire existing-reaction detection. Remove once done. */}
-            <a
-              href={`${import.meta.env.VITE_API_URL || ''}/api/accounts/posts/${post.id}/comments/debug-reactions`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[10px] text-text-muted hover:text-accent"
-              title="Diagnóstico: vuelca la forma cruda de Unipile para arreglar la detección de reacciones"
-            >
-              🐛 debug reacciones
-            </a>
           </div>
         </div>
         <p className="text-sm text-text-secondary whitespace-pre-wrap line-clamp-4">
@@ -421,6 +410,14 @@ function ThreadCard({
   const [reacting, setReacting] = useState<string | null>(null);
   const [reactedType, setReactedType] = useState<string | null>(thread.my_reaction || null);
   const [reactMsg, setReactMsg] = useState<string | null>(null);
+  // The card persists across comment refetches (stable key), so the
+  // mount-only initial state above won't pick up a reaction that appears
+  // on a later refetch. Upgrade null→value when the backend reports one;
+  // never downgrade (avoids flicker if Unipile is briefly stale right
+  // after we send a reaction — the DB fallback covers that gap).
+  useEffect(() => {
+    if (thread.my_reaction && !reactedType) setReactedType(thread.my_reaction);
+  }, [thread.my_reaction]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mention = thread.author.name && thread.author.profile_id
     ? { name: thread.author.name, profile_id: thread.author.profile_id }
