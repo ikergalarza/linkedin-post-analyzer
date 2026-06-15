@@ -295,6 +295,17 @@ function PostThreadView({ post }: { post: LivePost }) {
                 Ver en LinkedIn →
               </a>
             )}
+            {/* TEMP diagnostic — opens the raw Unipile reaction shape so we
+                can wire existing-reaction detection. Remove once done. */}
+            <a
+              href={`${import.meta.env.VITE_API_URL || ''}/api/accounts/posts/${post.id}/comments/debug-reactions`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-text-muted hover:text-accent"
+              title="Diagnóstico: vuelca la forma cruda de Unipile para arreglar la detección de reacciones"
+            >
+              🐛 debug reacciones
+            </a>
           </div>
         </div>
         <p className="text-sm text-text-secondary whitespace-pre-wrap line-clamp-4">

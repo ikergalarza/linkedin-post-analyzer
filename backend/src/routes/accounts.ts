@@ -2220,6 +2220,78 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
   }
 });
 
+// GET /posts/:postId/comments/debug-reactions — DIAGNOSTIC ONLY.
+// Dumps, for the first handful of top-level comments on a post:
+//   - the FULL raw Unipile comment object (so we can spot any field that
+//     carries the viewer's own reaction — my_reaction / reaction /
+//     viewer_reaction / reaction_counter / etc.)
+//   - a probe of the reactions endpoint called WITH THE COMMENT ID (to
+//     learn whether /posts/{id}/reactions works on comments and what the
+//     author + value shape looks like, so we can match our own account).
+// Used once to design the "detect existing reaction" logic, then can be
+// removed. Open in the browser:
+//   /api/accounts/posts/<POST_UUID>/comments/debug-reactions
+// (the POST_UUID is the same id used by the /comments call the UI fires).
+router.get('/posts/:postId/comments/debug-reactions', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId as string;
+    const postQ = await pool.query(
+      `SELECT p.linkedin_post_id, c.unipile_account_id,
+              c.linkedin_id AS creator_linkedin_id, c.name AS creator_name
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1`,
+      [postId]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = postQ.rows[0];
+    if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no LinkedIn id' });
+    if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
+    const topLevel = raw.filter((c: any) => !(c.parent_comment_id || c.comment_id));
+    const sample = topLevel.slice(0, 8);
+
+    const our_provider_id = post.creator_linkedin_id
+      ? String(post.creator_linkedin_id).replace(/^urn:li:[a-z_]+:/, '')
+      : null;
+
+    const comments = [];
+    for (const c of sample) {
+      const id = String(c.id || c.social_id || '');
+      let reactionProbe: any = { skipped: 'no reaction_counter' };
+      if (Number(c.reaction_counter) > 0) {
+        try {
+          reactionProbe = await unipileService.probePostReactionsRaw(id, post.unipile_account_id);
+        } catch (e: any) {
+          reactionProbe = { error: e?.message };
+        }
+      }
+      comments.push({
+        id,
+        author_name: c.author?.name || c.author_details?.name || c.author || null,
+        text_preview: String(c.text || c.body || '').slice(0, 60),
+        reaction_counter: c.reaction_counter ?? null,
+        raw_comment_keys: Object.keys(c),
+        raw_comment: c,
+        reaction_probe: reactionProbe,
+      });
+    }
+
+    res.json({
+      note: 'DIAGNOSTIC — paste this whole JSON back so the existing-reaction detection can be wired to the real Unipile shape.',
+      post_linkedin_id: post.linkedin_post_id,
+      creator_name: post.creator_name,
+      our_provider_id,
+      total_raw_comments: raw.length,
+      comments,
+    });
+  } catch (err: any) {
+    console.error('[accounts/comments/debug-reactions]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ──────────────────────── Organic followers (Phase 1) ────────────────────────
 //
 // POST /api/accounts/followers/sync?creator_id=xxx  — run sync now (one creator
