@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db';
-import { unipileService } from '../services/unipile';
+import { unipileService, LINKEDIN_REACTION_TYPES, LinkedinReactionType } from '../services/unipile';
 import { enrichPost } from '../services/engagement';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
@@ -2135,6 +2135,46 @@ router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res
     res.json({ ok: true, mentioned: !!mentions, created });
   } catch (err: any) {
     console.error('[accounts/comments/reply]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /posts/:postId/comments/:commentId/react — send a LinkedIn reaction
+// (like / celebrate / support / love / insightful / funny) to a specific
+// comment on one of our posts, via Unipile. The commentId in the route is
+// the comment's LinkedIn social id, which is what Unipile's reaction
+// endpoint takes as post_id (LinkedIn addresses posts and comments the
+// same way).
+router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.postId as string;
+    const commentId = req.params.commentId as string;
+    const reactionType = String(req.body?.reaction_type || '').toLowerCase();
+    if (!LINKEDIN_REACTION_TYPES.includes(reactionType as LinkedinReactionType)) {
+      return res.status(400).json({
+        error: `reaction_type must be one of: ${LINKEDIN_REACTION_TYPES.join(', ')}`,
+      });
+    }
+
+    const postQ = await pool.query(
+      `SELECT c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1`,
+      [postId]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = postQ.rows[0];
+    if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const result = await unipileService.addReaction(
+      commentId,
+      reactionType as LinkedinReactionType,
+      post.unipile_account_id
+    );
+    res.json({ ok: true, reaction_type: reactionType, result });
+  } catch (err: any) {
+    console.error('[accounts/comments/react]', err);
     res.status(500).json({ error: err.message });
   }
 });

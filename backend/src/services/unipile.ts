@@ -100,6 +100,22 @@ interface UnipileCommentListResponse {
   paging?: { cursor?: string };
 }
 
+// The 6 reactions LinkedIn exposes, keyed by the simple lowercase name
+// the frontend sends and Unipile's reaction endpoint expects. Cross-
+// reference (how the GET /reactions side reports each one): like→LIKE,
+// celebrate→PRAISE, support→APPRECIATION, love→EMPATHY,
+// insightful→INTEREST, funny→ENTERTAINMENT. If Unipile rejects a value
+// with a 400, this list is the thing to adjust.
+export const LINKEDIN_REACTION_TYPES = [
+  'like',
+  'celebrate',
+  'support',
+  'love',
+  'insightful',
+  'funny',
+] as const;
+export type LinkedinReactionType = (typeof LINKEDIN_REACTION_TYPES)[number];
+
 export class UnipileService {
   private apiKey: string;
   private baseUrl: string;
@@ -708,6 +724,35 @@ export class UnipileService {
       sample: items.slice(0, 5),
       raw_keys: items[0] ? Object.keys(items[0]) : [],
     };
+  }
+
+  // Add a reaction to a post OR a comment (LinkedIn addresses both by their
+  // social id, and Unipile's reaction endpoint takes either as post_id).
+  // Used by the Comentarios tab so the user can react to a commenter
+  // straight from the app instead of opening LinkedIn.
+  //
+  // Endpoint: POST /api/v1/posts/reaction  (body-based — note the GET side
+  // is path-based at /api/v1/posts/{id}/reactions; Unipile's send + read
+  // paths are deliberately asymmetric).
+  // Body: { account_id, post_id, reaction_type }.
+  // reaction_type is one of the 6 LinkedIn reactions in lowercase
+  // (see LINKEDIN_REACTION_TYPES). The request + raw response are logged
+  // so a rejected reaction type surfaces in Railway logs for a quick fix.
+  async addReaction(
+    targetSocialId: string,
+    reactionType: LinkedinReactionType,
+    accountIdOverride?: string
+  ): Promise<any> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for reaction');
+    return this.request<any>(`/api/v1/posts/reaction`, {
+      method: 'POST',
+      body: JSON.stringify({
+        account_id: accountId,
+        post_id: targetSocialId,
+        reaction_type: reactionType,
+      }),
+    });
   }
 
   // List followers via /api/v1/users/followers (confirmed path). Items come

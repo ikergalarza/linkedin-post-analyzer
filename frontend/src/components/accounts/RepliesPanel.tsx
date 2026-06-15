@@ -59,6 +59,19 @@ interface Props {
   onSelectCreator: (id: string) => void;
 }
 
+// The 6 LinkedIn reactions, in the order LinkedIn shows them on hover.
+// `type` is the lowercase key the backend + Unipile expect; emoji + label
+// are for the UI. Reacting to a comment is a one-click action via Unipile
+// (the account is connected), so the user doesn't have to open LinkedIn.
+const REACTIONS: { type: string; emoji: string; label: string }[] = [
+  { type: 'like', emoji: '👍', label: 'Recomendar' },
+  { type: 'celebrate', emoji: '👏', label: 'Celebrar' },
+  { type: 'support', emoji: '🫶', label: 'Apoyar' },
+  { type: 'love', emoji: '❤️', label: 'Me encanta' },
+  { type: 'insightful', emoji: '💡', label: 'Interesante' },
+  { type: 'funny', emoji: '😄', label: 'Divertido' },
+];
+
 function fmtDate(iso: string | null): string {
   if (!iso) return '';
   const d = new Date(iso);
@@ -130,7 +143,7 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,360px)_1fr] gap-4">
       {/* LEFT — post list */}
-      <div className="bg-bg-card border border-border rounded-xl p-3 space-y-3">
+      <div className="bg-bg-card border border-border rounded-xl p-3 space-y-3 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-xs text-text-muted">Cuenta:</span>
           <select
@@ -184,8 +197,12 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
         )}
       </div>
 
-      {/* RIGHT — thread view */}
-      <div className="bg-bg-card border border-border rounded-xl p-5 min-h-[400px]">
+      {/* RIGHT — thread view. min-w-0 is load-bearing: without it the 1fr
+          grid track keeps its default min-width:auto and a long commenter
+          headline (which can't break) blows the track past the viewport,
+          adding a page-wide horizontal scrollbar. min-w-0 lets the track
+          shrink so the headline's `truncate` actually kicks in. */}
+      <div className="bg-bg-card border border-border rounded-xl p-5 min-h-[400px] min-w-0">
         {!activePost ? (
           <p className="text-sm text-text-muted text-center py-20">
             Elige una publicación de la izquierda para ver sus comentarios.
@@ -382,6 +399,12 @@ function ThreadCard({
   const [sending, setSending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  // Reaction state: which type is mid-flight, which one we successfully
+  // sent (highlighted), and a small status line. LinkedIn allows one
+  // reaction per user per comment, so reactedType is single-valued.
+  const [reacting, setReacting] = useState<string | null>(null);
+  const [reactedType, setReactedType] = useState<string | null>(null);
+  const [reactMsg, setReactMsg] = useState<string | null>(null);
 
   const mention = thread.author.name && thread.author.profile_id
     ? { name: thread.author.name, profile_id: thread.author.profile_id }
@@ -434,6 +457,25 @@ function ThreadCard({
     }
   };
 
+  const handleReact = async (reactionType: string) => {
+    if (reacting) return;
+    setReacting(reactionType);
+    setReactMsg(null);
+    try {
+      await apiPost(
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/react`,
+        { reaction_type: reactionType }
+      );
+      setReactedType(reactionType);
+      const r = REACTIONS.find((x) => x.type === reactionType);
+      setReactMsg(`✓ ${r?.emoji} ${r?.label} enviado`);
+    } catch (e: any) {
+      setReactMsg(`✗ ${e.message}`);
+    } finally {
+      setReacting(null);
+    }
+  };
+
   // Expose generateIfEmpty so the parent's "Generar todas" loop can drive
   // us. We mirror state into refs so the closure inside the handle always
   // reads the latest values (the handle is registered once on mount).
@@ -462,16 +504,42 @@ function ThreadCard({
       <div className="flex items-start gap-3">
         <Avatar src={thread.author.profile_picture_url} name={thread.author.name} size={32} />
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-medium">{thread.author.name || 'Anónimo'}</span>
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <span className="text-sm font-medium whitespace-nowrap">{thread.author.name || 'Anónimo'}</span>
             {thread.author.headline && (
-              <span className="text-[11px] text-text-muted truncate">· {thread.author.headline}</span>
+              <span className="text-[11px] text-text-muted truncate min-w-0">· {thread.author.headline}</span>
             )}
-            <span className="text-[10px] text-text-muted ml-auto whitespace-nowrap">
+            <span className="text-[10px] text-text-muted ml-auto whitespace-nowrap flex-shrink-0">
               {fmtRelative(thread.date)}
             </span>
           </div>
           <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
+
+          {/* Reaction bar — react to the commenter directly via Unipile */}
+          <div className="mt-2 flex items-center gap-1 flex-wrap">
+            {REACTIONS.map((r) => {
+              const isSelected = reactedType === r.type;
+              const isLoading = reacting === r.type;
+              return (
+                <button
+                  key={r.type}
+                  onClick={() => handleReact(r.type)}
+                  disabled={!!reacting}
+                  title={r.label}
+                  className={`text-base leading-none px-1.5 py-1 rounded-md border transition-all disabled:cursor-not-allowed ${
+                    isSelected
+                      ? 'border-accent/60 bg-accent/15 scale-110'
+                      : 'border-transparent hover:border-border hover:bg-bg-primary opacity-70 hover:opacity-100'
+                  } ${isLoading ? 'animate-pulse' : ''}`}
+                >
+                  {r.emoji}
+                </button>
+              );
+            })}
+            {reactMsg && (
+              <span className="text-[10px] text-text-muted ml-1">{reactMsg}</span>
+            )}
+          </div>
 
           {/* Existing replies, if any */}
           {thread.replies.length > 0 && (
