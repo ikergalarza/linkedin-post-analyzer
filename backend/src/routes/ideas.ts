@@ -1167,7 +1167,7 @@ router.get('/swipe/deck', async (req: Request, res: Response) => {
           AND p.content_text IS NOT NULL
           AND LENGTH(p.content_text) > 80
           AND NOT EXISTS (SELECT 1 FROM outlier_swipes s WHERE s.post_id = p.id)
-        ORDER BY p.outlier_ratio DESC
+        ORDER BY RANDOM()
         LIMIT $1`,
       [limit]
     );
