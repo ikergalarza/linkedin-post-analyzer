@@ -339,7 +339,7 @@ export default function OutlierTable({ posts, title = 'Outlier Posts', creatorNa
                     onClick={() => setExpandedId(expandedId === post.id ? null : post.id)}
                   >
                     <td className="py-3 whitespace-nowrap text-text-secondary">
-                      {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '--'}
+                      {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '--'}
                     </td>
                     <td className="py-3 max-w-[250px] truncate" title={post.hook_text || ''}>
                       {post.hook_text || '--'}
