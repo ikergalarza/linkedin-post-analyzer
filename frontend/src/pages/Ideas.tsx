@@ -818,6 +818,8 @@ function KanbanCard({
   onDragEnd: () => void;
   onMove: (id: string, to: KanbanIdea['pipeline_status']) => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = (card.raw_content || '').length > 300 || (card.raw_content || '').split('\n').length > 4;
   return (
     <div
       draggable
@@ -837,9 +839,22 @@ function KanbanCard({
           )}
         </div>
       )}
-      <p className="text-xs text-text-primary leading-snug line-clamp-4 whitespace-pre-wrap">
+      <p
+        className={`text-xs text-text-primary leading-snug whitespace-pre-wrap ${expanded ? '' : 'line-clamp-4'}`}
+        onClick={(e) => { e.stopPropagation(); if (isLong) setExpanded((v) => !v); }}
+        style={isLong ? { cursor: 'pointer' } : undefined}
+        title={isLong ? (expanded ? 'Click para colapsar' : 'Click para ver entero') : undefined}
+      >
         {card.raw_content}
       </p>
+      {isLong && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setExpanded((v) => !v); }}
+          className="text-[10px] text-accent hover:text-accent-light mt-1"
+        >
+          {expanded ? 'Ver menos ↑' : 'Ver más ↓'}
+        </button>
+      )}
       {/* Quick move arrows on small screens / accessibility */}
       <div className="flex items-center justify-between mt-2 text-[10px]">
         <select
