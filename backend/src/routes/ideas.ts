@@ -1195,15 +1195,18 @@ router.post('/swipe', async (req: Request, res: Response) => {
     }
     let ideaId: string | null = null;
     if (action === 'like') {
-      // Copy the outlier's text into the new idea as raw_content. The user
-      // edits/generates later; we just want it in the kanban "Propuesta"
-      // column with a back-link to the outlier so the source is visible.
+      // Copy the outlier's FULL content into raw_content so the kanban card
+      // (and any later edit) has the entire post to work with — not just the
+      // hook. Prepends the hook on its own line when present so it stays
+      // recognisable as the opening line.
       const { rows } = await pool.query(
         `SELECT content_text, hook_text FROM posts WHERE id = $1`,
         [post_id]
       );
       if (rows.length === 0) return res.status(404).json({ error: 'post not found' });
-      const seed = String(rows[0].hook_text || '').trim() || String(rows[0].content_text || '').slice(0, 280);
+      const body = String(rows[0].content_text || '').trim();
+      const hook = String(rows[0].hook_text || '').trim();
+      const seed = body || hook || '(post sin texto)';
       const idea = await PostIdeaModel.create({
         raw_content: seed,
         source_type: 'observation',
