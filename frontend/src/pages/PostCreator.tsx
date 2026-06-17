@@ -574,7 +574,13 @@ export default function PostCreator() {
                   >
                     {msg.role === 'assistant' ? (
                       <div>
-                        <MarkdownMessage content={msg.content} />
+                        <MarkdownMessage
+                          content={msg.content}
+                          onPreview={(text) => {
+                            setManualPreview(cleanBlockForPreview(text));
+                            setPreviewTab('preview');
+                          }}
+                        />
 
                         {msg.content && !streaming && (() => {
                           // Strict: only show preview buttons when the message

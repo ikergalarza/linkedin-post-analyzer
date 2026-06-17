@@ -9,8 +9,9 @@ import remarkGfm from 'remark-gfm';
 // block (or focus it) to reveal Copy; clicking flips to ✓ Copied for
 // 1.5s then back. Uses preRef.innerText so the copied text matches
 // what's visually rendered — not the raw markdown source.
-function CopyablePre({ children }: { children: any }) {
+function CopyablePre({ children, onPreview }: { children: any; onPreview?: (text: string) => void }) {
   const [copied, setCopied] = useState(false);
+  const [previewed, setPreviewed] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
 
   const handleCopy = async () => {
@@ -22,11 +23,24 @@ function CopyablePre({ children }: { children: any }) {
     } catch {}
   };
 
+  // Send this exact fenced post to the LinkedIn preview panel. Uses the
+  // same preRef.innerText as Copy so the previewed text matches what's
+  // rendered. Lets the user re-load a specific draft into the preview if
+  // they cleared it or want to compare options — without scrolling to
+  // the per-message buttons below the bubble.
+  const handlePreview = () => {
+    const text = preRef.current?.innerText ?? '';
+    if (!text.trim()) return;
+    onPreview?.(text);
+    setPreviewed(true);
+    setTimeout(() => setPreviewed(false), 1500);
+  };
+
   return (
     <div className="relative my-2 group">
       <pre
         ref={preRef}
-        className="bg-bg-primary border border-border rounded-md px-3 py-2 pr-16 text-[12px] font-mono text-text-primary whitespace-pre-wrap break-words [&_code]:bg-transparent [&_code]:border-0 [&_code]:p-0 [&_code]:text-text-primary"
+        className={`bg-bg-primary border border-border rounded-md px-3 py-2 pr-16 text-[12px] font-mono text-text-primary whitespace-pre-wrap break-words [&_code]:bg-transparent [&_code]:border-0 [&_code]:p-0 [&_code]:text-text-primary ${onPreview ? 'pb-7' : ''}`}
       >
         {children}
       </pre>
@@ -41,6 +55,18 @@ function CopyablePre({ children }: { children: any }) {
       >
         {copied ? '✓ Copied' : '📋 Copy'}
       </button>
+      {onPreview && (
+        <button
+          onClick={handlePreview}
+          className={`absolute bottom-1.5 right-2 text-[10px] font-medium transition-colors ${
+            previewed ? 'text-green-400' : 'text-text-muted hover:text-accent'
+          }`}
+          aria-label="Poner este post en la vista previa de LinkedIn"
+          title="Poner este post en la vista previa de LinkedIn (por si la cerraste o quieres recuperarlo)"
+        >
+          {previewed ? '✓ en preview' : '👁 preview'}
+        </button>
+      )}
     </div>
   );
 }
@@ -53,7 +79,15 @@ function CopyablePre({ children }: { children: any }) {
  * (`text-text-*`, `border-border`, `bg-bg-*`, `text-accent`) so the chat
  * still feels like part of the app instead of a generic markdown widget.
  */
-export default function MarkdownMessage({ content }: { content: string }) {
+export default function MarkdownMessage({
+  content,
+  onPreview,
+}: {
+  content: string;
+  // When provided, each fenced post block gets a bottom-right "preview"
+  // link that pushes that block's text to the LinkedIn preview panel.
+  onPreview?: (text: string) => void;
+}) {
   return (
     <div className="text-sm leading-relaxed text-text-secondary [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
       <ReactMarkdown
@@ -113,7 +147,7 @@ export default function MarkdownMessage({ content }: { content: string }) {
               {children}
             </code>
           ),
-          pre: ({ children }) => <CopyablePre>{children}</CopyablePre>,
+          pre: ({ children }) => <CopyablePre onPreview={onPreview}>{children}</CopyablePre>,
           a: ({ children, href }) => (
             <a
               href={href}
