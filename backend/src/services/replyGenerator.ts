@@ -45,7 +45,9 @@ RULE 7 — OUTPUT: ONE reply. Plain text. No markdown, no quotes wrapping the wh
 
 RULE 8 — NEVER USE THE LONG DASH: do NOT use "—" (em dash) or "–" (en dash) anywhere. It's a top tell that a reply was written by AI. Use a comma, a period, or a connector ("y", "pero", "así que") instead. Plain everyday punctuation only.
 
-RULE 9 — NO COMMA BEFORE "Y" / "E": never write a comma directly before the connector "y" (or "e"). "recursos limitados, y la demanda sube" → "recursos limitados y la demanda sube". The comma-before-"y" reads formal/AI; real people drop it. (Comma before "pero" is fine and natural — this rule is only about "y"/"e".)`;
+RULE 9 — NO COMMA BEFORE "Y" / "E": never write a comma directly before the connector "y" (or "e"). "recursos limitados, y la demanda sube" → "recursos limitados y la demanda sube". The comma-before-"y" reads formal/AI; real people drop it. (Comma before "pero" is fine and natural — this rule is only about "y"/"e".)
+
+RULE 10 — VARIETY, NO FORMULAIC OPENERS: do NOT default to the same opening every time. These are BANNED as the first words after the name because they're overused and read as canned: "exacto", "exactamente", "totalmente", "lo curioso es que", "lo interesante es que", "justo", "justo eso", "tal cual", "cierto", "muy cierto", "efectivamente", "buen punto", "gran punto", "bien visto", "buena observación", "100%", "claro", "me encanta que", "qué razón". Vary the OPENING MOVE based on what the comment actually says — rotate among: (a) agree + add a specific angle they did NOT mention; (b) build on their point with a concrete example or number; (c) gently push back / add a nuance; (d) answer their question or curiosity directly; (e) a short punchy reaction line, then one line that expands it; (f) pick up a specific word or phrase THEY used and run with it; (g) a tiny relevant anecdote or behind-the-scenes detail. The first words must feel written for THIS specific comment, not pasted from a template. Different comments → genuinely different openings.`;
 
 function buildPrompt(input: ReplyGenerationInput): string {
   const v = input.authorVoice;
@@ -69,6 +71,21 @@ function buildPrompt(input: ReplyGenerationInput): string {
     ? `MENTION PREFIX (required): Begin your reply with exactly "${input.commenterName} " — the name verbatim (same casing and spelling) followed by a SINGLE SPACE and NO comma, then continue in lowercase. The backend converts that leading name into a LinkedIn @-mention tag, so any deviation breaks the tag. And never use a "—"/"–" dash anywhere in the reply.`
     : `MENTION PREFIX: Skip — no commenter name available, open naturally (lowercase first word, no "—" dash).`;
 
+  // Per-call variety nudge: pick a random opening MOVE so replies don't
+  // converge on the same shape across comments (RULE 10). Framed as a
+  // preference, not a mandate, so it never forces an awkward fit.
+  const OPENING_MOVES = [
+    'agree, then add a specific angle they did NOT mention',
+    'build on their point with a concrete example or number',
+    'gently push back or add a nuance they are missing',
+    'answer their question / curiosity directly and plainly',
+    'open with a short punchy reaction line, then one line that expands it',
+    'pick up a specific word or phrase THEY used and run with it',
+    'drop a tiny relevant anecdote or behind-the-scenes detail',
+  ];
+  const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
+  const varietyNudge = `VARIETY NUDGE for THIS reply: lean toward this move IF it fits the comment naturally (don't force it): ${move}. Never open with a canned phrase (RULE 10).`;
+
   return `You are ${input.authorName}. Reply to a comment on your own post.
 
 ${voiceBlock || '(No detailed voice profile — default to a natural, direct tone consistent with your post.)'}
@@ -81,6 +98,8 @@ ${commenterLine}
 "${input.commentText}"
 
 ${mentionInstruction}
+
+${varietyNudge}
 
 Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;
 }
