@@ -37,11 +37,13 @@ RULE 3 — LENGTH: 1–3 short sentences. A reply, not an essay. If a single tig
 
 RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, gently push back, or ask a sharpening question). NO generic "Thanks for sharing!" / "Great point!" filler. NO emoji unless your signature_moves explicitly include them.
 
-RULE 5 — START WITH THE NAME: Begin the reply with the commenter's full display name followed by a comma. Example: "Basilio García, ...". This is non-negotiable — the backend uses this prefix to insert a real LinkedIn @-mention tag, so the name must appear VERBATIM as given (exact casing, exact spelling) at position 0. If a name was not provided, skip this rule and open naturally instead.
+RULE 5 — START WITH THE NAME, THEN A SPACE, THEN LOWERCASE: Begin the reply with the commenter's full display name VERBATIM (exact casing, exact spelling) at position 0, followed by a SINGLE SPACE — NO comma, no colon, no punctuation after the name. Then continue the reply in LOWERCASE. Example: "Basilio García y lo peor es que…" / "Joan Bisquert totalmente, además…" — NOT "Basilio García, ..." and NOT "Basilio García. Lo peor…". The space + lowercase continuation reads closer and more human (the name becomes a blue @-mention chip on LinkedIn, so it flows straight into the sentence). The backend turns this leading name into a real @-mention tag, so it must be verbatim at position 0. If a name was not provided, skip this rule and open naturally — still lowercase first word.
 
 RULE 6 — NO META: Don't reference that this is LinkedIn. Don't talk about "the algorithm".
 
-RULE 7 — OUTPUT: ONE reply. Plain text. No markdown, no quotes wrapping the whole thing, no preamble like "Here's the reply:". Just the reply.`;
+RULE 7 — OUTPUT: ONE reply. Plain text. No markdown, no quotes wrapping the whole thing, no preamble like "Here's the reply:". Just the reply.
+
+RULE 8 — NEVER USE THE LONG DASH: do NOT use "—" (em dash) or "–" (en dash) anywhere — it's the #1 tell that a reply was written by AI. Use a comma, a period, or a connector ("y", "pero", "así que") instead. Plain everyday punctuation only.`;
 
 function buildPrompt(input: ReplyGenerationInput): string {
   const v = input.authorVoice;
@@ -62,8 +64,8 @@ function buildPrompt(input: ReplyGenerationInput): string {
   // the post/voice context above. Keeps RULE 5 (mention prefix) front and
   // centre right before the model writes.
   const mentionInstruction = input.commenterName
-    ? `MENTION PREFIX (required): Begin your reply with exactly "${input.commenterName}, " — same casing and spelling, immediately followed by a comma and a space. The backend converts that prefix into a LinkedIn @-mention tag, so any deviation breaks the tag.`
-    : `MENTION PREFIX: Skip — no commenter name available, open naturally.`;
+    ? `MENTION PREFIX (required): Begin your reply with exactly "${input.commenterName} " — the name verbatim (same casing and spelling) followed by a SINGLE SPACE and NO comma, then continue in lowercase. The backend converts that leading name into a LinkedIn @-mention tag, so any deviation breaks the tag. And never use a "—"/"–" dash anywhere in the reply.`
+    : `MENTION PREFIX: Skip — no commenter name available, open naturally (lowercase first word, no "—" dash).`;
 
   return `You are ${input.authorName}. Reply to a comment on your own post.
 
@@ -92,8 +94,22 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
     messages: [{ role: 'user', content: buildPrompt(input) }],
   });
   const block = message.content.find((b) => b.type === 'text') as { type: 'text'; text: string } | undefined;
-  const text = stripLoneSurrogates(block?.text ?? '').trim();
+  let text = stripLoneSurrogates(block?.text ?? '').trim();
   if (!text) throw new Error('Empty reply from model');
   // Drop wrapping quotes if the model added them despite the system rule.
-  return text.replace(/^["“”']+|["“”']+$/g, '').trim();
+  text = text.replace(/^["“”']+|["“”']+$/g, '').trim();
+  // Defensive cleanups so a model slip never reaches LinkedIn (RULE 5 + 8):
+  // 1. Replace any em/en dash with a comma — it's the AI tell we ban.
+  text = text.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',');
+  // 2. Strip a stray comma right after the leading mention name so the
+  //    reply reads "Name y…" not "Name, y…" (the backend keeps whatever
+  //    follows the name verbatim, so the comma must be gone here).
+  if (input.commenterName) {
+    const n = input.commenterName;
+    if (text.slice(0, n.length).toLowerCase() === n.toLowerCase()) {
+      const rest = text.slice(n.length).replace(/^\s*,\s*/, ' ');
+      text = (n + rest).trim();
+    }
+  }
+  return text.trim();
 }
