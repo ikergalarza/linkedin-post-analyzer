@@ -146,20 +146,14 @@ export function normalizeReactionValue(raw: unknown): LinkedinReactionType | nul
   return LINKEDIN_REACTION_VALUE_MAP[key] ?? null;
 }
 
-// Reverse of normalizeReactionValue: our lowercase type → LinkedIn's
-// INTERNAL uppercase value. Unipile returns these exact values on the
-// read side (comment.user_reacted = "EMPATHY" / "PRAISE" / …), so the
-// send endpoint almost certainly expects them too — sending lowercase
-// "love" got a silent 2xx no-op (accepted but ignored). This maps back
-// to the value LinkedIn actually understands.
-const REACTION_TYPE_TO_LINKEDIN_VALUE: Record<LinkedinReactionType, string> = {
-  like: 'LIKE',
-  celebrate: 'PRAISE',
-  support: 'APPRECIATION',
-  love: 'EMPATHY',
-  insightful: 'INTEREST',
-  funny: 'ENTERTAINMENT',
-};
+// NOTE on the read/write asymmetry (confirmed live from a 400 error):
+// Unipile's SEND endpoint validates reaction_type against the LOWERCASE
+// enum ["like","celebrate","support","love","insightful","funny"] — the
+// same lowercase names we already use. The READ side, however, reports
+// reactions as LinkedIn's INTERNAL UPPERCASE values ("EMPATHY","PRAISE",
+// …) on comment.user_reacted. So: send lowercase (our type as-is),
+// normalise uppercase→lowercase on read (normalizeReactionValue). Do NOT
+// uppercase on send — it 400s ("Expected kind 'StringEnum'").
 
 export class UnipileService {
   private apiKey: string;
@@ -780,14 +774,12 @@ export class UnipileService {
   // is path-based at /api/v1/posts/{id}/reactions; Unipile's send + read
   // paths are deliberately asymmetric).
   // Body: { account_id, post_id, reaction_type }.
-  // reaction_type is sent as LinkedIn's INTERNAL uppercase value
-  // (LIKE / PRAISE / APPRECIATION / EMPATHY / INTEREST / ENTERTAINMENT) —
-  // the same values Unipile returns on read. Sending lowercase "love"
-  // got a silent 2xx no-op (the reaction never landed on LinkedIn), so
-  // we now send the value the API self-documents on the read side.
-  // Request + raw response are logged so we can confirm the contract
-  // (and tell apart "rejected value" from "comments-reactions
-  // unsupported") from Railway logs.
+  // reaction_type is sent as our LOWERCASE value (like / celebrate /
+  // support / love / insightful / funny) — confirmed live against
+  // Unipile's enum (sending the uppercase internal value 400s with
+  // "Expected kind 'StringEnum'"). Request + raw response are logged so
+  // we can confirm the reaction actually lands (vs. a silent 2xx no-op)
+  // from Railway.
   async addReaction(
     targetSocialId: string,
     reactionType: LinkedinReactionType,
@@ -795,8 +787,7 @@ export class UnipileService {
   ): Promise<any> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) throw new Error('No Unipile account_id available for reaction');
-    const linkedinValue = REACTION_TYPE_TO_LINKEDIN_VALUE[reactionType] || reactionType.toUpperCase();
-    const body = { account_id: accountId, post_id: targetSocialId, reaction_type: linkedinValue };
+    const body = { account_id: accountId, post_id: targetSocialId, reaction_type: reactionType };
     console.log(`[Unipile addReaction] → POST /api/v1/posts/reaction ${JSON.stringify(body)}`);
     const res = await this.request<any>(`/api/v1/posts/reaction`, {
       method: 'POST',
