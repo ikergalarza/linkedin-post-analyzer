@@ -1998,27 +1998,15 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
         : false;
     }
 
-    // my_reaction is primarily set in shapeComment from Unipile's
-    // `user_reacted` (LinkedIn ground truth, covers reactions made
-    // directly on LinkedIn). The DB (comment_reactions) is only a
-    // FALLBACK for threads where Unipile didn't report a reaction —
-    // e.g. a reaction we just sent via the app that hasn't propagated
-    // into Unipile's comment payload yet. So we only fill in where
-    // my_reaction is still null.
-    const needFallback = topLevel.filter((t) => !t.my_reaction).map((t) => t.id).filter(Boolean);
-    if (needFallback.length > 0) {
-      const { rows: reactRows } = await pool.query(
-        `SELECT comment_social_id, reaction_type
-           FROM comment_reactions
-          WHERE comment_social_id = ANY($1::text[])`,
-        [needFallback]
-      );
-      const reactionBySocialId = new Map<string, string>();
-      for (const r of reactRows) reactionBySocialId.set(String(r.comment_social_id), r.reaction_type);
-      for (const t of topLevel) {
-        if (!t.my_reaction) t.my_reaction = reactionBySocialId.get(t.id) || null;
-      }
-    }
+    // my_reaction comes SOLELY from Unipile's `user_reacted` (set in
+    // shapeComment) — the LinkedIn ground truth. We deliberately do NOT
+    // fall back to the comment_reactions DB table for display: a row
+    // there only means we ATTEMPTED to send a reaction, not that it
+    // landed. While the send path was buggy (silent 2xx no-op), the DB
+    // held reactions that never reached LinkedIn — reading them back
+    // would falsely lock the bar on un-reacted comments. user_reacted is
+    // the only honest signal: if LinkedIn shows our reaction, the chip
+    // shows; if not, the bar stays open so the user can (re)react.
 
     // If none of the threads have an author name, surface the raw first
     // comment in the response so we can read it from the browser and fix
@@ -2206,11 +2194,11 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
       post.unipile_account_id
     );
 
-    // Persist so the Comentarios tab can show the reaction state on reload
-    // and lock the bar. Upsert: if LinkedIn lets the user change a reaction
-    // later via a second click, the latest one wins. Best-effort — a
-    // storage hiccup shouldn't fail a reaction that already landed on
-    // LinkedIn.
+    // Record the attempt (audit / future use). NOTE: this is NOT the
+    // display source anymore — the Comentarios tab reads the reaction
+    // state from Unipile's user_reacted (LinkedIn ground truth), so a
+    // recorded-but-never-landed reaction can't falsely lock the bar.
+    // Best-effort: a storage hiccup must not fail a reaction.
     try {
       await pool.query(
         `INSERT INTO comment_reactions (comment_social_id, post_id, reaction_type)
