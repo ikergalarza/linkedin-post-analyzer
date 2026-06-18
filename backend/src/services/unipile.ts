@@ -773,21 +773,32 @@ export class UnipileService {
   // Endpoint: POST /api/v1/posts/reaction  (body-based — note the GET side
   // is path-based at /api/v1/posts/{id}/reactions; Unipile's send + read
   // paths are deliberately asymmetric).
-  // Body: { account_id, post_id, reaction_type }.
-  // reaction_type is sent as our LOWERCASE value (like / celebrate /
-  // support / love / insightful / funny) — confirmed live against
-  // Unipile's enum (sending the uppercase internal value 400s with
-  // "Expected kind 'StringEnum'"). Request + raw response are logged so
-  // we can confirm the reaction actually lands (vs. a silent 2xx no-op)
-  // from Railway.
+  // Body: { account_id, post_id, reaction_type, comment_id? }.
+  // - post_id: the PARENT POST's social id (always).
+  // - comment_id: set when reacting to a COMMENT (a LinkedIn comment is
+  //   addressed as comment(activity:POST_ID, COMMENT_ID), so the reaction
+  //   needs BOTH ids — passing the comment id as post_id returned
+  //   {object:"ReactionAdded"} but never landed). Same shape as
+  //   replyToComment, which carries the comment_id in the body.
+  // - reaction_type: LOWERCASE value (like / celebrate / support / love /
+  //   insightful / funny) — confirmed against Unipile's enum (uppercase
+  //   400s with "Expected kind 'StringEnum'").
+  // Request + raw response are logged so we can confirm landing from
+  // Railway, and Unipile's 400s dump the schema if a param name is off.
   async addReaction(
-    targetSocialId: string,
+    postSocialId: string,
     reactionType: LinkedinReactionType,
-    accountIdOverride?: string
+    accountIdOverride?: string,
+    commentId?: string
   ): Promise<any> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) throw new Error('No Unipile account_id available for reaction');
-    const body = { account_id: accountId, post_id: targetSocialId, reaction_type: reactionType };
+    const body: Record<string, unknown> = {
+      account_id: accountId,
+      post_id: postSocialId,
+      reaction_type: reactionType,
+    };
+    if (commentId) body.comment_id = commentId;
     console.log(`[Unipile addReaction] → POST /api/v1/posts/reaction ${JSON.stringify(body)}`);
     const res = await this.request<any>(`/api/v1/posts/reaction`, {
       method: 'POST',

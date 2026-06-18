@@ -2178,7 +2178,7 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
     }
 
     const postQ = await pool.query(
-      `SELECT c.unipile_account_id
+      `SELECT p.linkedin_post_id, c.unipile_account_id
          FROM posts p
          JOIN creators c ON c.id = p.creator_id
         WHERE p.id = $1`,
@@ -2186,12 +2186,21 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
     );
     if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
     const post = postQ.rows[0];
+    if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no LinkedIn id' });
     if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
 
+    // Reacting to a COMMENT: pass the real POST id as post_id and the
+    // comment id as comment_id. Previously we sent the comment id AS the
+    // post_id with no comment_id — Unipile returned {object:"ReactionAdded"}
+    // but the reaction never appeared on LinkedIn (it "added" it in the
+    // post namespace against an id that isn't a real post). A LinkedIn
+    // comment is addressed as comment(activity:POST_ID, COMMENT_ID), so
+    // both ids are required — same shape replyToComment already uses.
     const result = await unipileService.addReaction(
-      commentId,
+      post.linkedin_post_id,
       reactionType as LinkedinReactionType,
-      post.unipile_account_id
+      post.unipile_account_id,
+      commentId
     );
 
     // Record the attempt (audit / future use). NOTE: this is NOT the
