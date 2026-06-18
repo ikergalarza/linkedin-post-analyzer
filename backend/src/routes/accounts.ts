@@ -2146,14 +2146,40 @@ router.post('/posts/:postId/comments/:commentId/reply', async (req: Request, res
         : null
     );
 
-    const created = await unipileService.replyToComment(
-      post.linkedin_post_id,
-      commentId,
-      finalText,
-      mentions,
-      post.unipile_account_id
-    );
-    res.json({ ok: true, mentioned: !!mentions, created });
+    let created: any;
+    let mentioned = !!mentions;
+    try {
+      created = await unipileService.replyToComment(
+        post.linkedin_post_id,
+        commentId,
+        finalText,
+        mentions,
+        post.unipile_account_id
+      );
+    } catch (err: any) {
+      // COMPANY-PAGE commenters (and some other authors) aren't
+      // mentionable the way personal profiles are — Unipile 422s on the
+      // {{0}} @-mention template ("unable to process the instructions").
+      // Retry as a PLAIN-TEXT reply (the name stays as plain text, no
+      // @-tag) so the user can still reply to company commenters instead
+      // of hitting a dead end. Reactions never had this problem because
+      // they carry no mention.
+      const is422 = /error 422|unprocessable/i.test(err?.message || '');
+      if (is422 && mentions && mentions.length > 0) {
+        console.warn('[accounts/comments/reply] 422 with mention — retrying without mention (likely a company / unmentionable author).');
+        created = await unipileService.replyToComment(
+          post.linkedin_post_id,
+          commentId,
+          text.trim(), // original text, name as plain text (no {{0}} template)
+          undefined,
+          post.unipile_account_id
+        );
+        mentioned = false;
+      } else {
+        throw err;
+      }
+    }
+    res.json({ ok: true, mentioned, created });
   } catch (err: any) {
     console.error('[accounts/comments/reply]', err);
     res.status(500).json({ error: err.message });
