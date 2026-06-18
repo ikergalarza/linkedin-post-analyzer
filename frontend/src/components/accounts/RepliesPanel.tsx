@@ -382,6 +382,86 @@ function PostThreadView({ post }: { post: LivePost }) {
   );
 }
 
+// Reusable reaction bar for ANY comment — top-level OR a reply. Reacting
+// to a comment goes through the same endpoint regardless of nesting
+// (post_id + comment_id), so this component just needs the post id + the
+// specific comment's social id + the reaction already on it (my_reaction).
+// `compact` shrinks it slightly for the nested reply rows.
+function ReactionBar({
+  postId,
+  commentId,
+  initialReaction,
+  compact = false,
+}: {
+  postId: string;
+  commentId: string;
+  initialReaction?: string | null;
+  compact?: boolean;
+}) {
+  const [reacting, setReacting] = useState<string | null>(null);
+  const [reactedType, setReactedType] = useState<string | null>(initialReaction || null);
+  const [reactMsg, setReactMsg] = useState<string | null>(null);
+
+  // The component persists across comment refetches (stable key on the
+  // row), so the mount-only initial state won't pick up a reaction that
+  // appears on a later refetch. Upgrade null→value when the backend
+  // reports one; never downgrade.
+  useEffect(() => {
+    if (initialReaction && !reactedType) setReactedType(initialReaction);
+  }, [initialReaction]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleReact = async (reactionType: string) => {
+    // One reaction per comment — once set, the bar is locked.
+    if (reacting || reactedType) return;
+    setReacting(reactionType);
+    setReactMsg(null);
+    try {
+      await apiPost(
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(commentId)}/react`,
+        { reaction_type: reactionType }
+      );
+      setReactedType(reactionType);
+      const r = REACTIONS.find((x) => x.type === reactionType);
+      setReactMsg(`✓ ${r?.emoji} ${r?.label} enviado`);
+    } catch (e: any) {
+      setReactMsg(`✗ ${e.message}`);
+    } finally {
+      setReacting(null);
+    }
+  };
+
+  if (reactedType) {
+    const r = REACTIONS.find((x) => x.type === reactedType);
+    return (
+      <div className={`mt-1.5 inline-flex items-center gap-1.5 ${compact ? 'text-[10px]' : 'text-[11px]'} text-text-secondary bg-accent/10 border border-accent/30 rounded-md px-2 py-0.5`}>
+        <span className="leading-none">{r?.emoji}</span>
+        <span>Ya reaccionaste · <span className="text-accent font-medium">{r?.label}</span></span>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+      {REACTIONS.map((r) => {
+        const isLoading = reacting === r.type;
+        return (
+          <button
+            key={r.type}
+            onClick={() => handleReact(r.type)}
+            disabled={!!reacting}
+            title={r.label}
+            className={`${compact ? 'text-sm' : 'text-base'} leading-none px-1.5 py-1 rounded-md border transition-all disabled:cursor-not-allowed border-transparent hover:border-border hover:bg-bg-primary opacity-70 hover:opacity-100 ${
+              isLoading ? 'animate-pulse opacity-100' : ''
+            }`}
+          >
+            {r.emoji}
+          </button>
+        );
+      })}
+      {reactMsg && <span className="text-[10px] text-text-muted ml-1">{reactMsg}</span>}
+    </div>
+  );
+}
+
 // Single top-level comment + its replies + the draft-reply box.
 function ThreadCard({
   thread,
@@ -403,21 +483,6 @@ function ThreadCard({
   const [sending, setSending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  // Reaction state: which type is mid-flight, which one is currently set
-  // (highlighted + locks the bar), and a small status line. LinkedIn
-  // allows one reaction per comment, so reactedType is single-valued and
-  // initialised from the persisted backend value so it survives reloads.
-  const [reacting, setReacting] = useState<string | null>(null);
-  const [reactedType, setReactedType] = useState<string | null>(thread.my_reaction || null);
-  const [reactMsg, setReactMsg] = useState<string | null>(null);
-  // The card persists across comment refetches (stable key), so the
-  // mount-only initial state above won't pick up a reaction that appears
-  // on a later refetch. Upgrade null→value when the backend reports one;
-  // never downgrade (avoids flicker if Unipile is briefly stale right
-  // after we send a reaction — the DB fallback covers that gap).
-  useEffect(() => {
-    if (thread.my_reaction && !reactedType) setReactedType(thread.my_reaction);
-  }, [thread.my_reaction]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mention = thread.author.name && thread.author.profile_id
     ? { name: thread.author.name, profile_id: thread.author.profile_id }
@@ -470,26 +535,6 @@ function ThreadCard({
     }
   };
 
-  const handleReact = async (reactionType: string) => {
-    // One reaction per comment — once set, the bar is locked.
-    if (reacting || reactedType) return;
-    setReacting(reactionType);
-    setReactMsg(null);
-    try {
-      await apiPost(
-        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/react`,
-        { reaction_type: reactionType }
-      );
-      setReactedType(reactionType);
-      const r = REACTIONS.find((x) => x.type === reactionType);
-      setReactMsg(`✓ ${r?.emoji} ${r?.label} enviado`);
-    } catch (e: any) {
-      setReactMsg(`✗ ${e.message}`);
-    } finally {
-      setReacting(null);
-    }
-  };
-
   // Expose generateIfEmpty so the parent's "Generar todas" loop can drive
   // us. We mirror state into refs so the closure inside the handle always
   // reads the latest values (the handle is registered once on mount).
@@ -529,46 +574,14 @@ function ThreadCard({
           </div>
           <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
 
-          {/* Reaction bar — react to the commenter directly via Unipile.
-              Once a reaction is set (this session or persisted from a
-              previous one), the bar locks: only the chosen reaction stays
-              shown, highlighted, with its label, so it's clear at a glance
-              whether this comment is already reacted and with which one. */}
-          {reactedType ? (
-            (() => {
-              const r = REACTIONS.find((x) => x.type === reactedType);
-              return (
-                <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-text-secondary bg-accent/10 border border-accent/30 rounded-md px-2 py-1">
-                  <span className="text-sm leading-none">{r?.emoji}</span>
-                  <span>Ya reaccionaste · <span className="text-accent font-medium">{r?.label}</span></span>
-                </div>
-              );
-            })()
-          ) : (
-            <div className="mt-2 flex items-center gap-1 flex-wrap">
-              {REACTIONS.map((r) => {
-                const isLoading = reacting === r.type;
-                return (
-                  <button
-                    key={r.type}
-                    onClick={() => handleReact(r.type)}
-                    disabled={!!reacting}
-                    title={r.label}
-                    className={`text-base leading-none px-1.5 py-1 rounded-md border transition-all disabled:cursor-not-allowed border-transparent hover:border-border hover:bg-bg-primary opacity-70 hover:opacity-100 ${
-                      isLoading ? 'animate-pulse opacity-100' : ''
-                    }`}
-                  >
-                    {r.emoji}
-                  </button>
-                );
-              })}
-              {reactMsg && (
-                <span className="text-[10px] text-text-muted ml-1">{reactMsg}</span>
-              )}
-            </div>
-          )}
+          {/* Reaction bar for the top-level comment. Once a reaction is
+              set (this session or read back from LinkedIn) the bar locks
+              and shows the chosen reaction. */}
+          <ReactionBar postId={postId} commentId={thread.id} initialReaction={thread.my_reaction} />
 
-          {/* Existing replies, if any */}
+          {/* Existing replies, if any — each gets its own reaction bar so
+              you can react to a reply-to-a-comment too, not just the
+              top-level comment. Same fixed logic via the shared component. */}
           {thread.replies.length > 0 && (
             <div className="mt-3 space-y-2 pl-3 border-l border-border">
               {thread.replies.map((r) => (
@@ -580,6 +593,7 @@ function ThreadCard({
                       <span className="text-[10px] text-text-muted">{fmtRelative(r.date)}</span>
                     </div>
                     <p className="text-xs text-text-secondary whitespace-pre-wrap">{r.text}</p>
+                    <ReactionBar postId={postId} commentId={r.id} initialReaction={r.my_reaction} compact />
                   </div>
                 </div>
               ))}
