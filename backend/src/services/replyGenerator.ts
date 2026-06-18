@@ -37,7 +37,7 @@ RULE 3 — LENGTH: 1–3 short sentences. A reply, not an essay. If a single tig
 
 RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, gently push back, or ask a sharpening question). NO generic "Thanks for sharing!" / "Great point!" filler. NO emoji unless your signature_moves explicitly include them.
 
-RULE 5 — START WITH THE NAME, THEN A SPACE, THEN LOWERCASE: Begin the reply with the commenter's full display name VERBATIM (exact casing, exact spelling) at position 0, followed by a SINGLE SPACE — NO comma, no colon, no punctuation after the name. Then continue the reply in LOWERCASE. Example: "Basilio García y lo peor es que…" / "Joan Bisquert totalmente, además…" — NOT "Basilio García, ..." and NOT "Basilio García. Lo peor…". The space + lowercase continuation reads closer and more human (the name becomes a blue @-mention chip on LinkedIn, so it flows straight into the sentence). The backend turns this leading name into a real @-mention tag, so it must be verbatim at position 0. If a name was not provided, skip this rule and open naturally — still lowercase first word.
+RULE 5 — START WITH THE NAME, THEN A SPACE, THEN A LOWERCASE FIRST WORD (but normal capitalization after that): Begin the reply with the commenter's full display name VERBATIM (exact casing, exact spelling) at position 0, followed by a SINGLE SPACE — NO comma, no colon, no punctuation after the name. The FIRST word after the name is lowercase (close/casual). Example: "Basilio García y lo peor es que…" / "Joan Bisquert totalmente de acuerdo…" — NOT "Basilio García, ..." and NOT "Basilio García. Lo peor…". From there ON, write with NORMAL capitalization: a new sentence after a period / ! / ? starts with a CAPITAL letter, as in any text. ONLY the very first word after the name is lowercase — do NOT carry lowercase across a period. Wrong: "exacto eso es. y lo que más caro…". Right: "exacto eso es. Y lo que más caro…". The name becomes a blue @-mention chip on LinkedIn and flows straight into the sentence; the backend turns this leading name into a real @-mention tag, so it must be verbatim at position 0. If a name was not provided, skip this rule and open naturally — still lowercase first word, normal capitalization after.
 
 RULE 6 — NO META: Don't reference that this is LinkedIn. Don't talk about "the algorithm".
 
@@ -126,6 +126,13 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
   //     Runs AFTER the dash→comma step so a "word — y algo" rewrite
   //     ("word, y algo") also gets cleaned to "word y algo".
   text = text.replace(/,\s*\b([ye])\b/gi, ' $1');
+  // 1c. Capitalize the first letter of a new sentence (after . ! ?) —
+  //     the model is told to open lowercase (RULE 5) but sometimes carries
+  //     that lowercase across a period ("eso es. y lo que…" → "eso es. Y
+  //     lo que…"). Only touches letters AFTER sentence punctuation, so the
+  //     intentional lowercase opening word is preserved. \p{Ll} + /u keeps
+  //     accented letters working (á→Á).
+  text = text.replace(/([.!?])(\s+)(\p{Ll})/gu, (_m, p, sp, ch) => `${p}${sp}${ch.toUpperCase()}`);
   // 2. Strip a stray comma right after the leading mention name so the
   //    reply reads "Name y…" not "Name, y…" (the backend keeps whatever
   //    follows the name verbatim, so the comma must be gone here).
