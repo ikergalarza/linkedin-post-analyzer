@@ -382,6 +382,56 @@ function PostThreadView({ post }: { post: LivePost }) {
   );
 }
 
+// Curated emoji set for the reply box — common, comment-appropriate ones.
+const REPLY_EMOJIS = [
+  '😊', '😅', '😂', '🤣', '😉', '😍', '🤩', '😎', '🤔', '🫡',
+  '👀', '🙌', '👏', '👍', '🙏', '🔥', '💪', '🚀', '💯', '✅',
+  '🎯', '💡', '⚡', '📈', '🤝', '❤️', '🥳', '😮',
+];
+
+// Small emoji picker: a 😊 button that toggles a popover grid. Clicking
+// an emoji calls onPick (the parent inserts it at the textarea cursor).
+// Closes on pick or on click-outside.
+function EmojiPicker({ onPick, disabled }: { onPick: (e: string) => void; disabled?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={disabled}
+        title="Añadir emoji"
+        className="text-sm px-2 py-1 rounded-md border border-border text-text-secondary hover:border-accent/40 disabled:opacity-50 transition-colors"
+      >
+        😊
+      </button>
+      {open && (
+        <div className="absolute z-20 bottom-full mb-1 left-0 w-56 max-h-40 overflow-y-auto p-2 rounded-md border border-border bg-bg-card shadow-lg grid grid-cols-7 gap-1">
+          {REPLY_EMOJIS.map((e) => (
+            <button
+              key={e}
+              type="button"
+              onClick={() => { onPick(e); setOpen(false); }}
+              className="text-lg leading-none p-1 rounded hover:bg-bg-primary"
+            >
+              {e}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Reusable reaction bar for ANY comment — top-level OR a reply. Reacting
 // to a comment goes through the same endpoint regardless of nesting
 // (post_id + comment_id), so this component just needs the post id + the
@@ -483,6 +533,25 @@ function ThreadCard({
   const [sending, setSending] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Insert an emoji at the textarea cursor (or append if it's not
+  // focused), then restore the caret right after the inserted emoji.
+  const insertEmoji = (emoji: string) => {
+    const ta = textareaRef.current;
+    if (!ta) {
+      setDraft((d) => d + emoji);
+      return;
+    }
+    const start = ta.selectionStart ?? draft.length;
+    const end = ta.selectionEnd ?? draft.length;
+    setDraft(draft.slice(0, start) + emoji + draft.slice(end));
+    requestAnimationFrame(() => {
+      ta.focus();
+      const pos = start + emoji.length;
+      ta.setSelectionRange(pos, pos);
+    });
+  };
 
   const mention = thread.author.name && thread.author.profile_id
     ? { name: thread.author.name, profile_id: thread.author.profile_id }
@@ -617,6 +686,7 @@ function ThreadCard({
               {(draft || generating) && (
                 <>
                   <textarea
+                    ref={textareaRef}
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     placeholder="Tu respuesta…"
@@ -631,6 +701,7 @@ function ThreadCard({
                     >
                       {sending ? 'Enviando…' : 'Enviar a LinkedIn'}
                     </button>
+                    <EmojiPicker onPick={insertEmoji} disabled={generating || sending} />
                     <button
                       onClick={handleGenerate}
                       disabled={generating || sending}

@@ -43,7 +43,9 @@ RULE 6 — NO META: Don't reference that this is LinkedIn. Don't talk about "the
 
 RULE 7 — OUTPUT: ONE reply. Plain text. No markdown, no quotes wrapping the whole thing, no preamble like "Here's the reply:". Just the reply.
 
-RULE 8 — NEVER USE THE LONG DASH: do NOT use "—" (em dash) or "–" (en dash) anywhere — it's the #1 tell that a reply was written by AI. Use a comma, a period, or a connector ("y", "pero", "así que") instead. Plain everyday punctuation only.`;
+RULE 8 — NEVER USE THE LONG DASH: do NOT use "—" (em dash) or "–" (en dash) anywhere. It's a top tell that a reply was written by AI. Use a comma, a period, or a connector ("y", "pero", "así que") instead. Plain everyday punctuation only.
+
+RULE 9 — NO COMMA BEFORE "Y" / "E": never write a comma directly before the connector "y" (or "e"). "recursos limitados, y la demanda sube" → "recursos limitados y la demanda sube". The comma-before-"y" reads formal/AI; real people drop it. (Comma before "pero" is fine and natural — this rule is only about "y"/"e".)`;
 
 function buildPrompt(input: ReplyGenerationInput): string {
   const v = input.authorVoice;
@@ -98,9 +100,13 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
   if (!text) throw new Error('Empty reply from model');
   // Drop wrapping quotes if the model added them despite the system rule.
   text = text.replace(/^["“”']+|["“”']+$/g, '').trim();
-  // Defensive cleanups so a model slip never reaches LinkedIn (RULE 5 + 8):
+  // Defensive cleanups so a model slip never reaches LinkedIn (RULE 5/8/9):
   // 1. Replace any em/en dash with a comma — it's the AI tell we ban.
   text = text.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',');
+  // 1b. Drop a comma placed directly before "y"/"e" (AI tell, RULE 9).
+  //     Runs AFTER the dash→comma step so a "word — y algo" rewrite
+  //     ("word, y algo") also gets cleaned to "word y algo".
+  text = text.replace(/,\s*\b([ye])\b/gi, ' $1');
   // 2. Strip a stray comma right after the leading mention name so the
   //    reply reads "Name y…" not "Name, y…" (the backend keeps whatever
   //    follows the name verbatim, so the comma must be gone here).
