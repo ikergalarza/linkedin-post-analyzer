@@ -47,7 +47,7 @@ RULE 8 — NEVER USE THE LONG DASH: do NOT use "—" (em dash) or "–" (en dash
 
 RULE 9 — NO COMMA BEFORE "Y" / "E": never write a comma directly before the connector "y" (or "e"). "recursos limitados, y la demanda sube" → "recursos limitados y la demanda sube". The comma-before-"y" reads formal/AI; real people drop it. (Comma before "pero" is fine and natural — this rule is only about "y"/"e".)
 
-RULE 10 — VARIETY, NO FORMULAIC OPENERS: do NOT default to the same opening every time. These are BANNED as the first words after the name because they're overused and read as canned: "exacto", "exactamente", "totalmente", "lo curioso es que", "lo interesante es que", "justo", "justo eso", "tal cual", "cierto", "muy cierto", "efectivamente", "buen punto", "gran punto", "bien visto", "buena observación", "100%", "claro", "me encanta que", "qué razón". Vary the OPENING MOVE based on what the comment actually says — rotate among: (a) agree + add a specific angle they did NOT mention; (b) build on their point with a concrete example or number; (c) gently push back / add a nuance; (d) answer their question or curiosity directly; (e) a short punchy reaction line, then one line that expands it; (f) pick up a specific word or phrase THEY used and run with it; (g) a tiny relevant anecdote or behind-the-scenes detail. The first words must feel written for THIS specific comment, not pasted from a template. Different comments → genuinely different openings.`;
+RULE 10 — VARIETY (don't ban, just don't default): openers like "exacto", "totalmente", "justo", "tal cual", "cierto", "lo curioso es que", "buen punto", "me encanta que", "claro" are perfectly natural and FINE TO USE sometimes — the problem is using one of them on EVERY reply, which is what reads as canned/AI. So don't make any single opener your reflex; aim for genuine variety across replies. Sometimes one of those is exactly right — use it. Other times open a different way entirely. Vary the OPENING MOVE based on what the comment actually says — rotate among: (a) agree + add a specific angle they did NOT mention; (b) build on their point with a concrete example or number; (c) gently push back / add a nuance; (d) answer their question or curiosity directly; (e) a short punchy reaction line, then one line that expands it; (f) pick up a specific word or phrase THEY used and run with it; (g) a tiny relevant anecdote or behind-the-scenes detail. The first words should feel written for THIS specific comment, not pasted from the same template every time.`;
 
 function buildPrompt(input: ReplyGenerationInput): string {
   const v = input.authorVoice;
@@ -84,7 +84,7 @@ function buildPrompt(input: ReplyGenerationInput): string {
     'drop a tiny relevant anecdote or behind-the-scenes detail',
   ];
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
-  const varietyNudge = `VARIETY NUDGE for THIS reply: lean toward this move IF it fits the comment naturally (don't force it): ${move}. Never open with a canned phrase (RULE 10).`;
+  const varietyNudge = `VARIETY NUDGE for THIS reply: lean toward this move IF it fits the comment naturally (don't force it): ${move}. The point is variety across replies (RULE 10) — a common opener like "exacto/totalmente" is fine now and then, just not as the default every time.`;
 
   return `You are ${input.authorName}. Reply to a comment on your own post.
 
