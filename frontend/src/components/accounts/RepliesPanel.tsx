@@ -31,6 +31,8 @@ interface CommentAuthor {
   profile_picture_url: string | null;
   public_identifier: string | null;
   profile_id: string | null;
+  // Company page → not mentionable, so we skip the @-mention on replies.
+  is_company?: boolean;
 }
 
 interface Thread {
@@ -553,7 +555,10 @@ function ThreadCard({
     });
   };
 
-  const mention = thread.author.name && thread.author.profile_id
+  // No mention for company pages — they aren't mentionable (Unipile 422s
+  // on the @-mention template), so we reply to them as plain text from
+  // the start instead of relying on the backend's 422 retry.
+  const mention = thread.author.name && thread.author.profile_id && !thread.author.is_company
     ? { name: thread.author.name, profile_id: thread.author.profile_id }
     : null;
 

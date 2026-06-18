@@ -1749,6 +1749,10 @@ interface ThreadedComment {
     // expects this exact form. Sourced from comment.author.id; may be null
     // for anonymised or company actors.
     profile_id: string | null;
+    // True when the commenter is a COMPANY page (not a personal profile).
+    // Companies aren't mentionable via the @-mention template, so the
+    // reply is sent without a mention for them.
+    is_company?: boolean;
   };
   replies: ThreadedComment[];
   // True iff at least one reply in this thread is from the post author
@@ -1875,6 +1879,10 @@ function shapeComment(c: any): ThreadedComment {
       profile_picture_url: picture,
       public_identifier: publicIdentifier,
       profile_id: profileId,
+      // Company pages aren't mentionable the way personal profiles are
+      // (Unipile 422s on the @-mention template), so the frontend skips
+      // the mention when this is true. Sourced from author_details.is_company.
+      is_company: details.is_company === true || sub.is_company === true,
     },
     replies: [],
     // The viewer's own reaction on this comment, straight from Unipile's
