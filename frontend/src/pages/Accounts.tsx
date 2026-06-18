@@ -584,7 +584,7 @@ export default function Accounts() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Accounts BI</h1>
+          <h1 className="text-3xl font-bold mb-2">Accounts</h1>
           <p className="text-text-secondary">Track the performance of the LinkedIn accounts you manage.</p>
         </div>
         <button
@@ -703,8 +703,8 @@ export default function Accounts() {
       {hasAccounts && (
         <div className="flex items-center gap-1 border-b border-border">
           {([
-            { key: 'bi', label: 'BI' },
-            { key: 'replies', label: 'Comentarios' },
+            { key: 'bi', label: 'Accounts' },
+            { key: 'replies', label: 'Comments' },
           ] as const).map((t) => (
             <button
               key={t.key}
