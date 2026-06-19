@@ -837,10 +837,12 @@ async function fetchAndValidateVisualPosts(): Promise<{
   return { rows, candidates, validations };
 }
 
-async function buildAccountImageBlocks(): Promise<any[]> {
+interface ImageDiag { sharp: boolean; count: number; approxKB: number }
+
+async function buildAccountImageBlocks(): Promise<{ blocks: any[]; diag: ImageDiag | null }> {
   try {
     let { rows, candidates, validations } = await fetchAndValidateVisualPosts();
-    if (rows.length === 0) return [];
+    if (rows.length === 0) return { blocks: [], diag: null };
 
     // With the permanent base64 cache, the Unipile refresh only fires
     // for posts that have NEITHER cached bytes NOR a working URL. That's
@@ -1029,10 +1031,20 @@ ${imageTargets.length === 0
       });
     }
 
-    return blocks;
+    // Diagnostic surfaced to the browser console: is sharp compressing,
+    // how many images attached, and their total payload size. base64 is
+    // ~4/3 the raw bytes, so raw ≈ b64len * 0.75.
+    const approxKB = Math.round(
+      imageTargets.reduce((n, t) => n + t.b64.length * 0.75, 0) / 1024
+    );
+    const diag: ImageDiag = { sharp: getSharp() != null, count: imageTargets.length, approxKB };
+    console.log(
+      `[buildAccountImageBlocks] sharp=${diag.sharp ? 'ON' : 'OFF'} · ${diag.count} image(s) attached · ~${diag.approxKB}KB total`
+    );
+    return { blocks, diag };
   } catch (err) {
     console.warn('[buildAccountImageBlocks] failed:', (err as Error).message);
-    return [];
+    return { blocks: [], diag: null };
   }
 }
 
@@ -1533,7 +1545,20 @@ ${analysisContext}${profileContext}`;
     // meme pixels, and the references reload the instant the user mentions
     // a meme/imagen/etc. or attaches an image (see conversationHasVisualIntent).
     const wantImages = !videoMode && conversationHasVisualIntent(messages);
-    const imageBlocks = wantImages ? await buildAccountImageBlocks() : [];
+    const imgResult = wantImages
+      ? await buildAccountImageBlocks()
+      : { blocks: [] as any[], diag: null };
+    const imageBlocks = imgResult.blocks;
+
+    // Surface the image/compression diagnostic to the browser console
+    // (so the user can SEE sharp working without digging into Railway
+    // logs). Emitted as a `diag` SSE event the frontend console.logs and
+    // does NOT render as message text.
+    if (imgResult.diag) {
+      res.write(`data: ${JSON.stringify({ diag: { images: imgResult.diag } })}\n\n`);
+    } else if (!videoMode && !wantImages) {
+      res.write(`data: ${JSON.stringify({ diag: { images: { skipped: 'no-visual-intent' } } })}\n\n`);
+    }
     const augmentedMessages = imageBlocks.length > 0
       ? [
           { role: 'user' as const, content: imageBlocks },

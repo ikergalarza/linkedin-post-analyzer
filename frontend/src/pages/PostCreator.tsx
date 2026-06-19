@@ -353,6 +353,21 @@ export default function PostCreator() {
           try {
             const parsed = JSON.parse(data);
             if (parsed.error) throw new Error(parsed.error);
+            // Diagnostic event (not message text) — surface the
+            // image/compression status in the browser console so it's
+            // visible without digging into Railway logs.
+            if (parsed.diag?.images) {
+              const im = parsed.diag.images;
+              if (im.skipped) {
+                console.log('%c[Post Creator] imágenes: no cargadas (turno de texto, sin intención visual) → 0 tokens de imagen', 'color:#888');
+              } else {
+                console.log(
+                  `%c[Post Creator] imágenes: compresión ${im.sharp ? 'ON ✅' : 'OFF ⚠️'} · ${im.count} adjuntas · ~${im.approxKB}KB total`,
+                  `color:${im.sharp ? '#22c55e' : '#f59e0b'};font-weight:bold`
+                );
+              }
+              continue;
+            }
             if (parsed.text) {
               assistantContent += parsed.text;
               setMessages((prev) => {
