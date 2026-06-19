@@ -103,6 +103,7 @@ interface PendingGroup {
     content_type: string | null;
     published_at: string | null;
     post_url: string | null;
+    creator_id: string;
     creator_name: string | null;
     creator_image: string | null;
   };
@@ -115,13 +116,16 @@ interface PendingResponse {
   posts_scanned: number;
 }
 
-// Unified "pending comments inbox": pick an account and see EVERY
-// unanswered comment across its recent posts in one place, grouped by
-// post. Each post shows its first few pending comments with a per-post
+// Unified "pending comments inbox": EVERY unanswered comment across recent
+// posts, grouped by post. We fetch the combined inbox (all accounts) ONCE
+// and filter by account CLIENT-SIDE — so switching accounts is instant (no
+// re-scan). Each post shows its first few pending comments with a per-post
 // "ver más", and the whole list paginates with an overall "ver más".
 export default function RepliesPanel({ accounts, selectedCreator, onSelectCreator }: Props) {
-  const path = `/api/accounts/comments/pending${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`;
-  const { data, loading, error, refetch } = useApi<PendingResponse>(path);
+  // No creator_id in the path → fetched once, never re-fetched on account
+  // switch (the backend returns all accounts' groups, each tagged with
+  // creator_id for the client-side filter below).
+  const { data, loading, error, refetch } = useApi<PendingResponse>('/api/accounts/comments/pending');
 
   const GROUPS_PAGE = 5;
   const [visibleGroups, setVisibleGroups] = useState(GROUPS_PAGE);
@@ -129,7 +133,16 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
     setVisibleGroups(GROUPS_PAGE);
   }, [selectedCreator]);
 
-  const groups = data?.groups ?? [];
+  const allGroups = data?.groups ?? [];
+  // Client-side account filter — instant, no network.
+  const groups = selectedCreator === 'all'
+    ? allGroups
+    : allGroups.filter((g) => g.post.creator_id === selectedCreator);
+  const totalPending = groups.reduce((n, g) => n + g.pending_count, 0);
+  // Only show the creator on each post header when viewing ALL accounts;
+  // with a single account selected it's redundant (the selector already
+  // names it), so we drop it per the user's note.
+  const showCreator = selectedCreator === 'all';
 
   return (
     <div className="space-y-4 min-w-0">
@@ -150,8 +163,8 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
         </div>
         {data && (
           <span className="text-xs text-text-secondary">
-            <span className="font-semibold text-text-primary">{data.total_pending}</span> comentario
-            {data.total_pending === 1 ? '' : 's'} sin responder en {groups.length} post{groups.length === 1 ? '' : 's'}
+            <span className="font-semibold text-text-primary">{totalPending}</span> comentario
+            {totalPending === 1 ? '' : 's'} sin responder en {groups.length} post{groups.length === 1 ? '' : 's'}
           </span>
         )}
         <button
@@ -179,7 +192,7 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
       )}
 
       {groups.slice(0, visibleGroups).map((g) => (
-        <PostGroup key={g.post.id} group={g} onRefresh={refetch} />
+        <PostGroup key={g.post.id} group={g} showCreator={showCreator} />
       ))}
 
       {groups.length > visibleGroups && (
@@ -199,7 +212,7 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
 // disappears + the count drops) without a full re-scan; the header's
 // "Actualizar" does the real refetch. When every comment is handled, the
 // whole group collapses.
-function PostGroup({ group, onRefresh }: { group: PendingGroup; onRefresh: () => void }) {
+function PostGroup({ group, showCreator }: { group: PendingGroup; showCreator: boolean }) {
   const PER_POST = 3;
   const [visible, setVisible] = useState(PER_POST);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -212,12 +225,18 @@ function PostGroup({ group, onRefresh }: { group: PendingGroup; onRefresh: () =>
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-4 min-w-0">
-      {/* Post header */}
+      {/* Post header. The creator avatar+name only show when viewing ALL
+          accounts; with one account selected they'd repeat on every group. */}
       <div className="mb-3 pb-3 border-b border-border">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
-          <Avatar src={post.creator_image} name={post.creator_name} size={24} />
-          <span className="text-sm font-medium whitespace-nowrap">{post.creator_name}</span>
-          <span className="text-[10px] text-text-muted whitespace-nowrap">· {fmtRelative(post.published_at)}</span>
+          {showCreator && (
+            <>
+              <Avatar src={post.creator_image} name={post.creator_name} size={24} />
+              <span className="text-sm font-medium whitespace-nowrap">{post.creator_name}</span>
+              <span className="text-[10px] text-text-muted whitespace-nowrap">·</span>
+            </>
+          )}
+          <span className="text-[11px] text-text-muted whitespace-nowrap">{fmtRelative(post.published_at)}</span>
           <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
             {threads.length} pendiente{threads.length === 1 ? '' : 's'}
           </span>
@@ -232,7 +251,7 @@ function PostGroup({ group, onRefresh }: { group: PendingGroup; onRefresh: () =>
             </a>
           )}
         </div>
-        {headline && <p className="text-xs text-text-secondary line-clamp-2 mt-1.5">{headline}</p>}
+        {headline && <p className="text-xs text-text-primary line-clamp-2 mt-1.5">{headline}</p>}
       </div>
 
       {/* Pending comments */}

@@ -2012,17 +2012,19 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/accounts/comments/pending?creator_id= — the unified inbox:
-// every UNANSWERED top-level comment across an account's recent posts,
-// grouped by post. Lets the user triage all pending comments in one
-// place instead of clicking each post. Bounded to the most recent
-// MAX_POSTS posts (where pending comments actually live) and runs the
-// per-post fetches with a small concurrency cap so Unipile isn't
-// hammered. Posts with zero pending comments are omitted.
+// GET /api/accounts/comments/pending — the unified inbox: every UNANSWERED
+// top-level comment across recent posts, grouped by post, for ALL managed
+// accounts. The frontend fetches this ONCE and filters by account
+// client-side (instant switching, no re-scan). We scan the most recent
+// MAX_POSTS_PER_CREATOR posts of EACH creator (ROW_NUMBER per creator) so
+// a client-side single-account filter still has full coverage — not just
+// whichever creator happened to dominate a global top-N. Each group
+// carries creator_id for that filtering. Posts with zero pending omitted.
+// (creator_id query param still supported for any server-side caller.)
 router.get('/comments/pending', async (req: Request, res: Response) => {
   try {
     const creatorId = (req.query.creator_id as string) || null;
-    const MAX_POSTS = 15; // recent window where pending comments live
+    const MAX_POSTS_PER_CREATOR = 10; // recent window per account
     const params: any[] = [];
     let creatorFilter = '';
     if (creatorId && creatorId !== 'all') {
@@ -2030,25 +2032,28 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
       creatorFilter = `AND c.id = $${params.length}`;
     }
     const { rows: posts } = await pool.query(
-      `SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
-              p.content_type, p.post_url,
-              c.name AS creator_name, c.linkedin_id AS creator_linkedin_id,
-              c.profile_image_url AS creator_image, c.unipile_account_id
-         FROM posts p
-         JOIN creators c ON c.id = p.creator_id
-        WHERE c.is_managed = TRUE
-          AND c.unipile_account_id IS NOT NULL
-          AND p.linkedin_post_id IS NOT NULL
-          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-          AND p.published_at IS NOT NULL
-          ${creatorFilter}
-        ORDER BY p.published_at DESC
-        LIMIT ${MAX_POSTS}`,
+      `WITH ranked AS (
+         SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
+                p.content_type, p.post_url, p.creator_id,
+                c.name AS creator_name, c.linkedin_id AS creator_linkedin_id,
+                c.profile_image_url AS creator_image, c.unipile_account_id,
+                ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY p.published_at DESC) AS rn
+           FROM posts p
+           JOIN creators c ON c.id = p.creator_id
+          WHERE c.is_managed = TRUE
+            AND c.unipile_account_id IS NOT NULL
+            AND p.linkedin_post_id IS NOT NULL
+            AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+            AND p.published_at IS NOT NULL
+            ${creatorFilter}
+       )
+       SELECT * FROM ranked WHERE rn <= ${MAX_POSTS_PER_CREATOR}
+       ORDER BY published_at DESC`,
       params
     );
 
     // Fetch threads for each post in parallel, small concurrency cap.
-    const POST_CONCURRENCY = 4;
+    const POST_CONCURRENCY = 6;
     const groups: any[] = [];
     for (let i = 0; i < posts.length; i += POST_CONCURRENCY) {
       const batch = posts.slice(i, i + POST_CONCURRENCY);
@@ -2066,6 +2071,7 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
                 content_type: post.content_type,
                 published_at: post.published_at,
                 post_url: post.post_url,
+                creator_id: post.creator_id,
                 creator_name: post.creator_name,
                 creator_image: post.creator_image,
               },
