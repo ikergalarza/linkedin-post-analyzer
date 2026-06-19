@@ -1894,6 +1894,84 @@ function shapeComment(c: any): ThreadedComment {
   };
 }
 
+// Core comment-threading for ONE post: fetch raw comments from Unipile,
+// group into top-level threads + replies, fetch nested replies, mark
+// answered_by_author, and return the threads. Extracted so both the
+// single-post endpoint AND the cross-post "pending" aggregator reuse the
+// exact same logic. `post` must carry linkedin_post_id, unipile_account_id
+// and creator_linkedin_id.
+async function buildThreadsForPost(post: any): Promise<{ threads: ThreadedComment[]; rawSample: any }> {
+  const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
+
+  // Two-pass grouping: collect top-levels first, then attach inline
+  // replies by parent_comment_id (safety net; Unipile currently returns
+  // top-level only on the first call).
+  const byId = new Map<string, ThreadedComment>();
+  const topLevel: ThreadedComment[] = [];
+  const rawById = new Map<string, any>();
+  for (const c of raw) {
+    const id = String(c.id || c.social_id || '');
+    if (!id) continue;
+    rawById.set(id, c);
+    const parentId = c.parent_comment_id || c.comment_id || null;
+    if (!parentId) {
+      const t = shapeComment(c);
+      byId.set(id, t);
+      topLevel.push(t);
+    }
+  }
+  for (const c of raw) {
+    const parentId = c.parent_comment_id || c.comment_id || null;
+    if (!parentId) continue;
+    const parent = byId.get(String(parentId));
+    if (parent) parent.replies.push(shapeComment(c));
+  }
+
+  // Fetch nested replies for threads with reply_counter > 0 (Unipile
+  // needs a per-parent follow-up). Parallel, concurrency-capped.
+  const CONCURRENCY = 6;
+  const queue = topLevel.filter((t) => {
+    const r = rawById.get(t.id);
+    return r && Number(r.reply_counter) > 0 && t.replies.length === 0;
+  });
+  for (let i = 0; i < queue.length; i += CONCURRENCY) {
+    const batch = queue.slice(i, i + CONCURRENCY);
+    await Promise.all(
+      batch.map(async (t) => {
+        try {
+          const replyRaw = await unipileService.getPostComments(
+            post.linkedin_post_id,
+            post.unipile_account_id,
+            { parentCommentId: t.id }
+          );
+          t.replies = replyRaw.map(shapeComment);
+        } catch (err: any) {
+          console.warn(`[comments] reply fetch failed for ${t.id}:`, err?.message);
+        }
+      })
+    );
+  }
+
+  const tsOf = (d: string | null) => (d ? new Date(d).getTime() : 0);
+  for (const t of topLevel) t.replies.sort((a, b) => tsOf(a.date) - tsOf(b.date));
+  topLevel.sort((a, b) => tsOf(b.date) - tsOf(a.date));
+
+  const authorLinkedInId: string | null = post.creator_linkedin_id
+    ? String(post.creator_linkedin_id).replace(/^urn:li:[a-z_]+:/, '')
+    : null;
+  for (const t of topLevel) {
+    if (authorLinkedInId && t.author.profile_id === authorLinkedInId) {
+      t.answered_by_author = true;
+      continue;
+    }
+    t.answered_by_author = authorLinkedInId
+      ? t.replies.some((r) => r.author.profile_id === authorLinkedInId)
+      : false;
+  }
+
+  return { threads: topLevel, rawSample: raw[0] };
+}
+
 router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId as string;
@@ -1911,115 +1989,8 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
     if (!post.linkedin_post_id) return res.status(400).json({ error: 'Post has no LinkedIn id' });
     if (!post.unipile_account_id) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
 
-    const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
+    const { threads: topLevel, rawSample } = await buildThreadsForPost(post);
 
-    // Diagnostic: dump the full first comment shape on every request — we
-    // keep hitting "Anónimo" because Unipile rotates author field names
-    // and the only way to lock down the right path is to see the actual
-    // payload. Heavy logging but the response is small and this only fires
-    // on user-initiated thread opens.
-    if (raw.length > 0) {
-      const sample = raw[0];
-      const json = JSON.stringify(sample).slice(0, 2000);
-      console.log(`[comments/raw-sample] post=${postId} | ${json}`);
-    }
-
-    // Two-pass grouping: collect top-levels first, then attach inline
-    // replies by parent_comment_id (in case Unipile ever returns them
-    // mixed in the same list — which currently it does NOT, but keeping
-    // the safety net is cheap).
-    const byId = new Map<string, ThreadedComment>();
-    const topLevel: ThreadedComment[] = [];
-    const rawById = new Map<string, any>();
-    for (const c of raw) {
-      const id = String(c.id || c.social_id || '');
-      if (!id) continue;
-      rawById.set(id, c);
-      const parentId = c.parent_comment_id || c.comment_id || null;
-      if (!parentId) {
-        const t = shapeComment(c);
-        byId.set(id, t);
-        topLevel.push(t);
-      }
-    }
-    for (const c of raw) {
-      const parentId = c.parent_comment_id || c.comment_id || null;
-      if (!parentId) continue;
-      const parent = byId.get(String(parentId));
-      if (parent) parent.replies.push(shapeComment(c));
-    }
-
-    // Unipile's /comments endpoint returns only top-level by default —
-    // each comment with reply_counter > 0 needs a follow-up fetch with
-    // ?comment_id=<parent>. Without these, "answered by author" looks
-    // unanswered even when the author already replied. Parallel fetch
-    // bounded by a small concurrency cap so we don't blow Unipile's rate
-    // limit on posts with dozens of threads.
-    const CONCURRENCY = 6;
-    const queue = topLevel.filter((t) => {
-      const r = rawById.get(t.id);
-      return r && Number(r.reply_counter) > 0 && t.replies.length === 0;
-    });
-    for (let i = 0; i < queue.length; i += CONCURRENCY) {
-      const batch = queue.slice(i, i + CONCURRENCY);
-      await Promise.all(
-        batch.map(async (t) => {
-          try {
-            const replyRaw = await unipileService.getPostComments(
-              post.linkedin_post_id,
-              post.unipile_account_id,
-              { parentCommentId: t.id }
-            );
-            t.replies = replyRaw.map(shapeComment);
-          } catch (err: any) {
-            console.warn(`[comments] reply fetch failed for ${t.id}:`, err?.message);
-          }
-        })
-      );
-    }
-
-    // Sort: replies oldest-first inside each thread (chronological feels
-    // natural in a thread view); top-levels newest-first because that's
-    // what the user wants to triage.
-    const tsOf = (d: string | null) => (d ? new Date(d).getTime() : 0);
-    for (const t of topLevel) t.replies.sort((a, b) => tsOf(a.date) - tsOf(b.date));
-    topLevel.sort((a, b) => tsOf(b.date) - tsOf(a.date));
-
-    // Strip Voyager URN prefixes off the post author's linkedin_id so it
-    // matches what shapeComment normalised on the comment side (both end
-    // up as bare provider_id ACoXXX). Without this, threads where the
-    // author replied still showed as unanswered.
-    const authorLinkedInId: string | null = post.creator_linkedin_id
-      ? String(post.creator_linkedin_id).replace(/^urn:li:[a-z_]+:/, '')
-      : null;
-    for (const t of topLevel) {
-      // Author may have replied directly (top-level author === author) — skip
-      // their own top-level comments as "answered" so they don't appear as
-      // pending. Most threads we care about: someone-else top-level + has
-      // (or hasn't) an author reply underneath.
-      if (authorLinkedInId && t.author.profile_id === authorLinkedInId) {
-        t.answered_by_author = true;
-        continue;
-      }
-      t.answered_by_author = authorLinkedInId
-        ? t.replies.some((r) => r.author.profile_id === authorLinkedInId)
-        : false;
-    }
-
-    // my_reaction comes SOLELY from Unipile's `user_reacted` (set in
-    // shapeComment) — the LinkedIn ground truth. We deliberately do NOT
-    // fall back to the comment_reactions DB table for display: a row
-    // there only means we ATTEMPTED to send a reaction, not that it
-    // landed. While the send path was buggy (silent 2xx no-op), the DB
-    // held reactions that never reached LinkedIn — reading them back
-    // would falsely lock the bar on un-reacted comments. user_reacted is
-    // the only honest signal: if LinkedIn shows our reaction, the chip
-    // shows; if not, the bar stays open so the user can (re)react.
-
-    // If none of the threads have an author name, surface the raw first
-    // comment in the response so we can read it from the browser and fix
-    // the shape mapping without round-tripping to Railway logs. Also
-    // available unconditionally via ?debug=1.
     const noNamesParsed = topLevel.length > 0 && topLevel.every((t) => !t.author.name);
     const response: any = {
       post: {
@@ -2031,12 +2002,92 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
       total_threads: topLevel.length,
       unanswered_threads: topLevel.filter((t) => !t.answered_by_author).length,
     };
-    if (raw.length > 0 && (req.query.debug === '1' || noNamesParsed)) {
-      response._debug_sample = raw[0];
+    if (rawSample && (req.query.debug === '1' || noNamesParsed)) {
+      response._debug_sample = rawSample;
     }
     res.json(response);
   } catch (err: any) {
     console.error('[accounts/comments]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/comments/pending?creator_id= — the unified inbox:
+// every UNANSWERED top-level comment across an account's recent posts,
+// grouped by post. Lets the user triage all pending comments in one
+// place instead of clicking each post. Bounded to the most recent
+// MAX_POSTS posts (where pending comments actually live) and runs the
+// per-post fetches with a small concurrency cap so Unipile isn't
+// hammered. Posts with zero pending comments are omitted.
+router.get('/comments/pending', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || null;
+    const MAX_POSTS = 15; // recent window where pending comments live
+    const params: any[] = [];
+    let creatorFilter = '';
+    if (creatorId && creatorId !== 'all') {
+      params.push(creatorId);
+      creatorFilter = `AND c.id = $${params.length}`;
+    }
+    const { rows: posts } = await pool.query(
+      `SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
+              p.content_type, p.post_url,
+              c.name AS creator_name, c.linkedin_id AS creator_linkedin_id,
+              c.profile_image_url AS creator_image, c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND c.unipile_account_id IS NOT NULL
+          AND p.linkedin_post_id IS NOT NULL
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.published_at IS NOT NULL
+          ${creatorFilter}
+        ORDER BY p.published_at DESC
+        LIMIT ${MAX_POSTS}`,
+      params
+    );
+
+    // Fetch threads for each post in parallel, small concurrency cap.
+    const POST_CONCURRENCY = 4;
+    const groups: any[] = [];
+    for (let i = 0; i < posts.length; i += POST_CONCURRENCY) {
+      const batch = posts.slice(i, i + POST_CONCURRENCY);
+      const results = await Promise.all(
+        batch.map(async (post) => {
+          try {
+            const { threads } = await buildThreadsForPost(post);
+            const pending = threads.filter((t) => !t.answered_by_author);
+            if (pending.length === 0) return null;
+            return {
+              post: {
+                id: post.id,
+                hook_text: post.hook_text,
+                content_text: post.content_text,
+                content_type: post.content_type,
+                published_at: post.published_at,
+                post_url: post.post_url,
+                creator_name: post.creator_name,
+                creator_image: post.creator_image,
+              },
+              pending_threads: pending,
+              pending_count: pending.length,
+            };
+          } catch (err: any) {
+            console.warn(`[comments/pending] post ${post.id} failed:`, err?.message);
+            return null;
+          }
+        })
+      );
+      for (const r of results) if (r) groups.push(r);
+    }
+
+    res.json({
+      groups,
+      total_pending: groups.reduce((n, g) => n + g.pending_count, 0),
+      posts_scanned: posts.length,
+    });
+  } catch (err: any) {
+    console.error('[accounts/comments/pending]', err);
     res.status(500).json({ error: err.message });
   }
 });

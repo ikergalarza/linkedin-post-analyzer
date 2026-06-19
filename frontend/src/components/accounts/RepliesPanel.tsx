@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApi, apiPost } from '../../hooks/useApi';
 
 // RepliesPanel — the "Comentarios" sub-tab. Pick one of the managed posts
@@ -13,17 +13,6 @@ interface ManagedAccount {
   profile_image_url?: string | null;
 }
 
-interface LivePost {
-  id: string;
-  content_text: string;
-  hook_text?: string | null;
-  published_at: string;
-  comments_count: number;
-  creator_id: string;
-  creator_name: string | null;
-  creator_image?: string | null;
-  post_url?: string | null;
-}
 
 interface CommentAuthor {
   name: string | null;
@@ -48,17 +37,6 @@ interface Thread {
   my_reaction?: string | null;
 }
 
-interface CommentsResponse {
-  post: { id: string; content_text: string; creator_name: string | null };
-  threads: Thread[];
-  total_threads: number;
-  unanswered_threads: number;
-  // Present when the backend couldn't parse an author name on any thread
-  // (Unipile rotated a field) — we render it inline so the shape can be
-  // diagnosed without leaving the browser.
-  _debug_sample?: unknown;
-}
-
 interface Props {
   accounts: ManagedAccount[];
   selectedCreator: string; // 'all' or creator id — shared with the BI tab
@@ -77,13 +55,6 @@ const REACTIONS: { type: string; emoji: string; label: string }[] = [
   { type: 'insightful', emoji: '💡', label: 'Interesante' },
   { type: 'funny', emoji: '😄', label: 'Divertido' },
 ];
-
-function fmtDate(iso: string | null): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
 
 function fmtRelative(iso: string | null): string {
   if (!iso) return '';
@@ -123,39 +94,53 @@ function Avatar({ src, name, size = 32 }: { src: string | null | undefined; name
   );
 }
 
+// Shape returned by GET /api/accounts/comments/pending.
+interface PendingGroup {
+  post: {
+    id: string;
+    hook_text: string | null;
+    content_text: string | null;
+    content_type: string | null;
+    published_at: string | null;
+    post_url: string | null;
+    creator_name: string | null;
+    creator_image: string | null;
+  };
+  pending_threads: Thread[];
+  pending_count: number;
+}
+interface PendingResponse {
+  groups: PendingGroup[];
+  total_pending: number;
+  posts_scanned: number;
+}
+
+// Unified "pending comments inbox": pick an account and see EVERY
+// unanswered comment across its recent posts in one place, grouped by
+// post. Each post shows its first few pending comments with a per-post
+// "ver más", and the whole list paginates with an overall "ver más".
 export default function RepliesPanel({ accounts, selectedCreator, onSelectCreator }: Props) {
-  const [activePostId, setActivePostId] = useState<string | null>(null);
+  const path = `/api/accounts/comments/pending${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`;
+  const { data, loading, error, refetch } = useApi<PendingResponse>(path);
 
-  // Posts list — reuses /live-posts since it already filters to managed
-  // creators with a Unipile id. That endpoint returns last 7 days + any
-  // older post with snapshots, which is what we want for triage anyway.
-  const postsPath = `/api/accounts/live-posts${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`;
-  const { data: postsRaw, loading: postsLoading } = useApi<LivePost[]>(postsPath);
-  const posts = useMemo(() => {
-    if (!postsRaw) return [];
-    return [...postsRaw].sort(
-      (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-    );
-  }, [postsRaw]);
-
-  // Clear the open post whenever the user changes the account filter — the
-  // post they had selected may not even be in the new list.
+  const GROUPS_PAGE = 5;
+  const [visibleGroups, setVisibleGroups] = useState(GROUPS_PAGE);
   useEffect(() => {
-    setActivePostId(null);
+    setVisibleGroups(GROUPS_PAGE);
   }, [selectedCreator]);
 
-  const activePost = posts.find((p) => p.id === activePostId) || null;
+  const groups = data?.groups ?? [];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,360px)_1fr] gap-4">
-      {/* LEFT — post list */}
-      <div className="bg-bg-card border border-border rounded-xl p-3 space-y-3 min-w-0">
+    <div className="space-y-4 min-w-0">
+      {/* Header: account selector + total + refresh */}
+      <div className="bg-bg-card border border-border rounded-xl p-4 flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="text-xs text-text-muted">Cuenta:</span>
           <select
             value={selectedCreator}
             onChange={(e) => onSelectCreator(e.target.value)}
-            className="flex-1 bg-bg-primary border border-border rounded-md px-2 py-1 text-xs"
+            className="bg-bg-primary border border-border rounded-md px-2 py-1 text-xs"
           >
             <option value="all">Todas</option>
             {accounts.map((a) => (
@@ -163,60 +148,113 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
             ))}
           </select>
         </div>
-        <div className="text-[10px] uppercase tracking-wide text-text-muted px-1">
-          Publicaciones (más recientes primero)
-        </div>
-        {postsLoading ? (
-          <p className="text-xs text-text-muted text-center py-6">Cargando…</p>
-        ) : posts.length === 0 ? (
-          <p className="text-xs text-text-muted text-center py-6">No hay publicaciones.</p>
-        ) : (
-          <div className="space-y-1 max-h-[70vh] overflow-y-auto pr-1">
-            {posts.map((p) => {
-              const isActive = p.id === activePostId;
-              const headline = (p.hook_text || p.content_text || '').slice(0, 110);
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setActivePostId(p.id)}
-                  className={`w-full text-left p-2 rounded-md border transition-colors ${
-                    isActive
-                      ? 'border-accent/60 bg-accent/10'
-                      : 'border-transparent hover:border-border hover:bg-bg-primary'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <Avatar src={p.creator_image} name={p.creator_name} size={20} />
-                    <span className="text-[11px] text-text-secondary truncate">{p.creator_name}</span>
-                    <span className="text-[10px] text-text-muted ml-auto whitespace-nowrap">
-                      {fmtRelative(p.published_at)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-text-primary line-clamp-2">{headline}</p>
-                  <div className="text-[10px] text-text-muted mt-1">
-                    {p.comments_count} comentario{p.comments_count === 1 ? '' : 's'}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+        {data && (
+          <span className="text-xs text-text-secondary">
+            <span className="font-semibold text-text-primary">{data.total_pending}</span> comentario
+            {data.total_pending === 1 ? '' : 's'} sin responder en {groups.length} post{groups.length === 1 ? '' : 's'}
+          </span>
         )}
+        <button
+          onClick={refetch}
+          disabled={loading}
+          className="ml-auto text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
+          title="Vuelve a buscar comentarios pendientes en tus posts recientes"
+        >
+          {loading ? '↻ Buscando…' : '↻ Actualizar'}
+        </button>
       </div>
 
-      {/* RIGHT — thread view. min-w-0 is load-bearing: without it the 1fr
-          grid track keeps its default min-width:auto and a long commenter
-          headline (which can't break) blows the track past the viewport,
-          adding a page-wide horizontal scrollbar. min-w-0 lets the track
-          shrink so the headline's `truncate` actually kicks in. */}
-      <div className="bg-bg-card border border-border rounded-xl p-5 min-h-[400px] min-w-0">
-        {!activePost ? (
-          <p className="text-sm text-text-muted text-center py-20">
-            Elige una publicación de la izquierda para ver sus comentarios.
-          </p>
-        ) : (
-          <PostThreadView post={activePost} />
-        )}
+      {loading && !data && (
+        <p className="text-center text-text-muted text-sm py-10">
+          Buscando comentarios pendientes en tus posts recientes… (puede tardar unos segundos)
+        </p>
+      )}
+      {error && (
+        <p className="text-center text-red-400 text-sm py-6">
+          {error} <button onClick={refetch} className="underline">Reintentar</button>
+        </p>
+      )}
+      {data && groups.length === 0 && (
+        <p className="text-center text-text-muted text-sm py-10">🎉 No hay comentarios pendientes.</p>
+      )}
+
+      {groups.slice(0, visibleGroups).map((g) => (
+        <PostGroup key={g.post.id} group={g} onRefresh={refetch} />
+      ))}
+
+      {groups.length > visibleGroups && (
+        <button
+          onClick={() => setVisibleGroups((v) => v + GROUPS_PAGE)}
+          className="w-full py-2.5 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+        >
+          Ver más posts ({groups.length - visibleGroups} restantes) ↓
+        </button>
+      )}
+    </div>
+  );
+}
+
+// One post + its pending comments. Shows the first PER_POST comments with
+// a per-post "ver más". Replying to a comment dismisses it locally (so it
+// disappears + the count drops) without a full re-scan; the header's
+// "Actualizar" does the real refetch. When every comment is handled, the
+// whole group collapses.
+function PostGroup({ group, onRefresh }: { group: PendingGroup; onRefresh: () => void }) {
+  const PER_POST = 3;
+  const [visible, setVisible] = useState(PER_POST);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  const { post } = group;
+  const threads = group.pending_threads.filter((t) => !dismissed.has(t.id));
+  if (threads.length === 0) return null; // all handled → collapse
+
+  const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+
+  return (
+    <div className="bg-bg-card border border-border rounded-xl p-4 min-w-0">
+      {/* Post header */}
+      <div className="mb-3 pb-3 border-b border-border">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <Avatar src={post.creator_image} name={post.creator_name} size={24} />
+          <span className="text-sm font-medium whitespace-nowrap">{post.creator_name}</span>
+          <span className="text-[10px] text-text-muted whitespace-nowrap">· {fmtRelative(post.published_at)}</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
+            {threads.length} pendiente{threads.length === 1 ? '' : 's'}
+          </span>
+          {post.post_url && (
+            <a
+              href={post.post_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-accent hover:text-accent-light ml-auto whitespace-nowrap"
+            >
+              Ver en LinkedIn →
+            </a>
+          )}
+        </div>
+        {headline && <p className="text-xs text-text-secondary line-clamp-2 mt-1.5">{headline}</p>}
       </div>
+
+      {/* Pending comments */}
+      <div className="space-y-3">
+        {threads.slice(0, visible).map((t) => (
+          <ThreadCard
+            key={t.id}
+            thread={t}
+            postId={post.id}
+            onReplied={() => setDismissed((s) => new Set(s).add(t.id))}
+          />
+        ))}
+      </div>
+
+      {threads.length > visible && (
+        <button
+          onClick={() => setVisible((v) => v + PER_POST)}
+          className="w-full mt-3 py-2 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+        >
+          Ver más comentarios de este post ({threads.length - visible} restantes) ↓
+        </button>
+      )}
     </div>
   );
 }
@@ -227,161 +265,6 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
 // progress UX and to avoid hammering Anthropic / hitting per-key rate limits.
 interface ThreadCardHandle {
   generateIfEmpty: () => Promise<void>;
-}
-
-// Thread view — fetches the comments for one post, shows the post excerpt
-// on top, then a list of top-level threads. By default we hide the ones
-// the author already replied to (toggleable) so the user only sees the
-// pile they actually have to work through.
-function PostThreadView({ post }: { post: LivePost }) {
-  const [showAnswered, setShowAnswered] = useState(false);
-  const { data, loading, error, refetch } = useApi<CommentsResponse>(
-    `/api/accounts/posts/${post.id}/comments`
-  );
-
-  const threads = useMemo(() => {
-    if (!data) return [];
-    return showAnswered ? data.threads : data.threads.filter((t) => !t.answered_by_author);
-  }, [data, showAnswered]);
-
-  // Refs keyed by thread id so they survive ordering changes (showAnswered
-  // toggle, refetch) without losing the slot that holds each card's handle.
-  const cardRefs = useRef<Map<string, ThreadCardHandle | null>>(new Map());
-  const [bulkRunning, setBulkRunning] = useState(false);
-  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
-
-  const handleBulkGenerate = async () => {
-    if (bulkRunning) return;
-    // Snapshot the visible threads so refetches mid-run don't change the
-    // queue length under our feet.
-    const targets = threads.map((t) => t.id);
-    setBulkRunning(true);
-    setBulkProgress({ done: 0, total: targets.length });
-    for (let i = 0; i < targets.length; i++) {
-      const handle = cardRefs.current.get(targets[i]);
-      try {
-        if (handle) await handle.generateIfEmpty();
-      } catch {
-        // Per-card errors are surfaced inside the card itself — keep the
-        // bulk loop going so one failure doesn't block the rest.
-      }
-      setBulkProgress({ done: i + 1, total: targets.length });
-    }
-    setBulkRunning(false);
-  };
-
-  return (
-    <div className="space-y-4">
-      {/* Post header */}
-      <div className="border-b border-border pb-3">
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <Avatar src={post.creator_image} name={post.creator_name} size={28} />
-          <span className="text-sm font-medium">{post.creator_name}</span>
-          <span className="text-xs text-text-muted">· {fmtDate(post.published_at)}</span>
-          <div className="ml-auto flex items-center gap-3">
-            <button
-              onClick={refetch}
-              disabled={loading}
-              className="text-xs text-text-muted hover:text-text-primary disabled:opacity-50 transition-colors"
-              title="Vuelve a pedir los comentarios a LinkedIn por si hay nuevos"
-            >
-              {loading ? '↻ Cargando…' : '↻ Actualizar comentarios'}
-            </button>
-            {post.post_url && (
-              <a
-                href={post.post_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-accent hover:text-accent-light"
-              >
-                Ver en LinkedIn →
-              </a>
-            )}
-          </div>
-        </div>
-        <p className="text-sm text-text-secondary whitespace-pre-wrap line-clamp-4">
-          {post.content_text}
-        </p>
-      </div>
-
-      {/* Inline debug — auto-shown when the backend couldn't parse author
-          names on any thread, so we can read the actual Unipile shape and
-          extend shapeComment's fallbacks. */}
-      {data?._debug_sample !== undefined && (
-        <details className="text-[11px] border border-red-400/30 bg-red-400/5 rounded p-2">
-          <summary className="cursor-pointer text-red-400 font-medium">
-            ⚠ Autor no detectado — pulsa para ver la respuesta cruda de Unipile (cópiamela)
-          </summary>
-          <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-all text-text-secondary">
-            {JSON.stringify(data._debug_sample, null, 2)}
-          </pre>
-        </details>
-      )}
-
-      {/* Counts + toggle + bulk action */}
-      {data && (
-        <div className="flex items-center justify-between text-xs gap-3 flex-wrap">
-          <div className="text-text-secondary">
-            <span className="font-medium text-text-primary">{data.unanswered_threads}</span>{' '}
-            sin responder
-            <span className="text-text-muted"> · {data.total_threads} totales</span>
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            {threads.length > 0 && (
-              <button
-                onClick={handleBulkGenerate}
-                disabled={bulkRunning}
-                className="text-xs px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                title="Genera un borrador por cada hilo visible (sólo los que no tengan ya draft)"
-              >
-                {bulkRunning && bulkProgress
-                  ? `Generando ${bulkProgress.done}/${bulkProgress.total}…`
-                  : `✨ Generar todas (${threads.length})`}
-              </button>
-            )}
-            <label className="flex items-center gap-2 text-text-muted cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showAnswered}
-                onChange={(e) => setShowAnswered(e.target.checked)}
-                className="accent-accent"
-              />
-              Mostrar también respondidos
-            </label>
-          </div>
-        </div>
-      )}
-
-      {loading && <p className="text-sm text-text-muted text-center py-8">Cargando comentarios…</p>}
-      {error && (
-        <p className="text-sm text-red-400 text-center py-4">
-          {error}{' '}
-          <button onClick={refetch} className="underline">Reintentar</button>
-        </p>
-      )}
-
-      {data && threads.length === 0 && (
-        <p className="text-sm text-text-muted text-center py-8">
-          {showAnswered ? 'No hay comentarios.' : '🎉 Todos respondidos.'}
-        </p>
-      )}
-
-      <div className="space-y-3">
-        {threads.map((t) => (
-          <ThreadCard
-            key={t.id}
-            thread={t}
-            postId={post.id}
-            onReplied={refetch}
-            handleRef={(h) => {
-              if (h) cardRefs.current.set(t.id, h);
-              else cardRefs.current.delete(t.id);
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 // Curated emoji set for the reply box — common, comment-appropriate ones.
