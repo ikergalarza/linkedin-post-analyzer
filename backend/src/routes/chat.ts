@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import sharp from 'sharp';
 import { trackedStream } from '../services/claudeClient';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
@@ -493,6 +492,28 @@ const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 // hierarchy, the bodily change, the layout, the title text. We normalise
 // to JPEG q82 for a small, consistent payload. Done ONCE at cache time
 // (and lazily on any pre-existing full-res cache, see DOWNSCALED_MARKER).
+// Lazy, DEFENSIVE sharp loader. sharp ships a native binary that can fail
+// to load in some deploy environments (e.g. Nixpacks/Railway library-path
+// quirks). A top-level `import sharp` would then throw at server BOOT and
+// crash the whole app — turning a cost optimisation into a downed
+// deployment. So we require() it lazily inside a try/catch: if it loads,
+// we downscale; if it doesn't, we log once and ship the original (still
+// cached) bytes — full-res costs a bit more but the app stays up and the
+// other cost layers (caching, conditional image loading) keep working.
+let _sharp: any;
+let _sharpTried = false;
+function getSharp(): any | null {
+  if (_sharpTried) return _sharp || null;
+  _sharpTried = true;
+  try {
+    _sharp = require('sharp');
+  } catch (err: any) {
+    console.warn('[chat] sharp unavailable — image downscaling disabled, shipping full-res:', err?.message);
+    _sharp = null;
+  }
+  return _sharp;
+}
+
 const IMG_MAX_DIM = 768;
 // A cached b64 longer than this (~80KB decoded) is almost certainly a
 // full-res image cached before downscaling existed → resize it lazily on
@@ -500,6 +521,8 @@ const IMG_MAX_DIM = 768;
 const DOWNSCALE_B64_THRESHOLD = 110_000;
 
 async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; mediaType: string } | null> {
+  const sharp = getSharp();
+  if (!sharp) return null; // sharp unavailable → caller keeps original bytes
   try {
     const out = await sharp(input)
       .resize({ width: IMG_MAX_DIM, height: IMG_MAX_DIM, fit: 'inside', withoutEnlargement: true })
