@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import LinkedInPostPreview from '../components/postcreator/LinkedInPostPreview';
 import MarkdownMessage from '../components/postcreator/MarkdownMessage';
+import Usage from './Usage';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -160,6 +161,9 @@ export default function PostCreator() {
   // on empty, so without the sentinel the textarea snaps back to the
   // pre-edit text the moment the user selects-all and deletes.
   const [manualPreview, setManualPreview] = useState<string | null>(null);
+  // Usage (API spend) opens as a modal from a button here instead of being
+  // its own header section — one fewer top-level tab.
+  const [showUsage, setShowUsage] = useState(false);
   // The right column just renders the LinkedIn preview + an editable
   // textarea. The image and carousel generators were removed — the team
   // prefers producing those assets directly in ChatGPT's web app.
@@ -479,6 +483,13 @@ export default function PostCreator() {
           and the preview identity is chosen per-post below. */}
       <div className="flex items-center border-b border-border mb-3 pr-1">
         <h1 className="text-lg font-semibold text-text-primary leading-none py-2">Post Creator</h1>
+        <button
+          onClick={() => setShowUsage(true)}
+          className="ml-auto text-xs px-2.5 py-1 rounded-md border border-border text-text-secondary hover:text-accent hover:border-accent/40 transition-colors"
+          title="Ver el gasto de la API (Usage)"
+        >
+          💸 Usage
+        </button>
       </div>
 
       {(
@@ -881,6 +892,33 @@ export default function PostCreator() {
 
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Usage modal — opens from the 💸 Usage button above the preview.
+          Click the backdrop or "Cerrar" to return to the Post Creator. */}
+      {showUsage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center p-4 sm:p-8 overflow-y-auto"
+          onClick={() => setShowUsage(false)}
+        >
+          <div
+            className="bg-bg-primary border border-border rounded-xl w-full max-w-5xl my-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-end px-4 py-2.5 border-b border-border sticky top-0 bg-bg-primary rounded-t-xl z-10">
+              <button
+                onClick={() => setShowUsage(false)}
+                className="text-xs text-text-muted hover:text-text-primary px-2.5 py-1 rounded-md hover:bg-bg-hover transition-colors"
+                aria-label="Cerrar Usage"
+              >
+                ✕ Cerrar
+              </button>
+            </div>
+            <div className="p-5 max-h-[80vh] overflow-y-auto">
+              <Usage />
             </div>
           </div>
         </div>
