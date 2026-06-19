@@ -634,6 +634,35 @@ const VISUAL_CONTENT_TYPES = ['text_image', 'image', 'text_carousel', 'carousel'
 const MAX_IMAGES = 20;
 const IMAGES_LOOKBACK_DAYS = 56;
 
+// True when the conversation is actually about VISUALS — memes, images,
+// design, carousels, screenshots, or the user has attached an image. The
+// 20 account reference images are ~38K tokens; loading them on EVERY turn
+// of a PURE TEXT-POST conversation (where the model never needs to see a
+// meme) is dead weight that gets re-read from cache every turn. Gating
+// the image payload on visual intent saves that ~38K/turn on text
+// sessions with ZERO quality cost (a text hook doesn't need meme pixels),
+// and the moment the user says "meme"/"imagen"/etc. — or attaches an
+// image — the references load again. Accent-insensitive, scans the WHOLE
+// conversation so a meme thread keeps its images across follow-ups.
+function conversationHasVisualIntent(messages: any[]): boolean {
+  if (!Array.isArray(messages)) return false;
+  const RX = /\b(meme|memes|imagen|imagenes|foto|fotos|visual|visuales|carrusel|carousel|diseno|creatividad|ilustracion|pantallazo|screenshot|grafico|infografia|portada|miniatura|thumbnail|wojak|mockup|imagina|dibuj|paleta|mockear|render)\b/;
+  for (const m of messages) {
+    // An attached image (content array with an image block) means the user
+    // is working visually → always load references.
+    if (Array.isArray(m?.content) && m.content.some((b: any) => b?.type === 'image')) return true;
+    const text = typeof m?.content === 'string'
+      ? m.content
+      : Array.isArray(m?.content)
+        ? m.content.filter((b: any) => b?.type === 'text' && typeof b.text === 'string').map((b: any) => b.text).join(' ')
+        : '';
+    if (!text) continue;
+    const s = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    if (RX.test(s)) return true;
+  }
+  return false;
+}
+
 // Fetch the rows + run extraction + HEAD-validation. Split into its own
 // function so we can re-run it after a Unipile refresh has freshened
 // raw_data with new CDN URLs, without duplicating the SQL/extraction code.
@@ -1414,10 +1443,15 @@ ${analysisContext}${profileContext}`;
     // Visual reference: prepend a (user, assistant) turn carrying the
     // user's recent post images so the model can SEE what they've
     // published — not just read text summaries. Skipped in video mode
-    // (that path is already focused on text+video posts and pulls its
-    // own data context). LinkedIn CDN image URLs are temporary (~few
-    // weeks) but the lookback window is set to match.
-    const imageBlocks = videoMode ? [] : await buildAccountImageBlocks();
+    // (that path pulls its own data). ALSO skipped when the conversation
+    // has no visual intent (pure text-post work): the 20 reference images
+    // are ~38K tokens and re-read from cache every turn for nothing when
+    // the user is just writing/iterating a text post. Gating on visual
+    // intent is a lossless cost cut — text-post quality doesn't depend on
+    // meme pixels, and the references reload the instant the user mentions
+    // a meme/imagen/etc. or attaches an image (see conversationHasVisualIntent).
+    const wantImages = !videoMode && conversationHasVisualIntent(messages);
+    const imageBlocks = wantImages ? await buildAccountImageBlocks() : [];
     const augmentedMessages = imageBlocks.length > 0
       ? [
           { role: 'user' as const, content: imageBlocks },
