@@ -139,10 +139,6 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
     ? allGroups
     : allGroups.filter((g) => g.post.creator_id === selectedCreator);
   const totalPending = groups.reduce((n, g) => n + g.pending_count, 0);
-  // Only show the creator on each post header when viewing ALL accounts;
-  // with a single account selected it's redundant (the selector already
-  // names it), so we drop it per the user's note.
-  const showCreator = selectedCreator === 'all';
 
   return (
     <div className="space-y-4 min-w-0">
@@ -192,7 +188,7 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
       )}
 
       {groups.slice(0, visibleGroups).map((g) => (
-        <PostGroup key={g.post.id} group={g} showCreator={showCreator} />
+        <PostGroup key={g.post.id} group={g} />
       ))}
 
       {groups.length > visibleGroups && (
@@ -212,7 +208,7 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
 // disappears + the count drops) without a full re-scan; the header's
 // "Actualizar" does the real refetch. When every comment is handled, the
 // whole group collapses.
-function PostGroup({ group, showCreator }: { group: PendingGroup; showCreator: boolean }) {
+function PostGroup({ group }: { group: PendingGroup }) {
   const PER_POST = 3;
   const [visible, setVisible] = useState(PER_POST);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
@@ -225,17 +221,14 @@ function PostGroup({ group, showCreator }: { group: PendingGroup; showCreator: b
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-4 min-w-0">
-      {/* Post header. The creator avatar+name only show when viewing ALL
-          accounts; with one account selected they'd repeat on every group. */}
+      {/* Post header — always shows the creator avatar+name (even with a
+          single account selected): the small repetition is preferred over
+          any ambiguity about whose post each group is. */}
       <div className="mb-3 pb-3 border-b border-border">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
-          {showCreator && (
-            <>
-              <Avatar src={post.creator_image} name={post.creator_name} size={24} />
-              <span className="text-sm font-medium whitespace-nowrap">{post.creator_name}</span>
-              <span className="text-[10px] text-text-muted whitespace-nowrap">·</span>
-            </>
-          )}
+          <Avatar src={post.creator_image} name={post.creator_name} size={24} />
+          <span className="text-sm font-medium whitespace-nowrap">{post.creator_name}</span>
+          <span className="text-[10px] text-text-muted whitespace-nowrap">·</span>
           <span className="text-[11px] text-text-muted whitespace-nowrap">{fmtRelative(post.published_at)}</span>
           <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
             {threads.length} pendiente{threads.length === 1 ? '' : 's'}
