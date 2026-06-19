@@ -366,8 +366,8 @@ export default function PostCreator() {
                 console.log('%c[Post Creator] imágenes: no cargadas (turno de texto, sin intención visual) → 0 tokens de imagen', 'color:#888');
               } else {
                 console.log(
-                  `%c[Post Creator] imágenes: compresión ${im.sharp ? 'ON ✅' : 'OFF ⚠️'} · ${im.count} adjuntas · ~${im.approxKB}KB total`,
-                  `color:${im.sharp ? '#22c55e' : '#f59e0b'};font-weight:bold`
+                  `%c[Post Creator] imágenes: compresión ${im.compressed ? 'ON ✅' : 'OFF ⚠️'} · ${im.count} adjuntas · ~${im.approxKB}KB total`,
+                  `color:${im.compressed ? '#22c55e' : '#f59e0b'};font-weight:bold`
                 );
               }
               continue;

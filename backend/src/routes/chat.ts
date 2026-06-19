@@ -492,26 +492,25 @@ const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 // hierarchy, the bodily change, the layout, the title text. We normalise
 // to JPEG q82 for a small, consistent payload. Done ONCE at cache time
 // (and lazily on any pre-existing full-res cache, see DOWNSCALED_MARKER).
-// Lazy, DEFENSIVE sharp loader. sharp ships a native binary that can fail
-// to load in some deploy environments (e.g. Nixpacks/Railway library-path
-// quirks). A top-level `import sharp` would then throw at server BOOT and
-// crash the whole app — turning a cost optimisation into a downed
-// deployment. So we require() it lazily inside a try/catch: if it loads,
-// we downscale; if it doesn't, we log once and ship the original (still
-// cached) bytes — full-res costs a bit more but the app stays up and the
-// other cost layers (caching, conditional image loading) keep working.
-let _sharp: any;
-let _sharpTried = false;
-function getSharp(): any | null {
-  if (_sharpTried) return _sharp || null;
-  _sharpTried = true;
+// Image downscaler uses JIMP — a PURE-JAVASCRIPT image library (no native
+// binary). We tried sharp first but its prebuilt native binary failed to
+// load on Railway/Nixpacks (downscaling silently disabled, images shipped
+// full-res). jimp has no native dependency so it works in any environment.
+// Lazy require + try/catch out of pure caution; in practice it always
+// loads. Slower than sharp, but downscaling runs once per image at cache
+// time (not every turn), so the cost is amortised.
+let _jimp: any;
+let _jimpTried = false;
+function getJimp(): any | null {
+  if (_jimpTried) return _jimp || null;
+  _jimpTried = true;
   try {
-    _sharp = require('sharp');
+    _jimp = require('jimp').Jimp;
   } catch (err: any) {
-    console.warn('[chat] sharp unavailable — image downscaling disabled, shipping full-res:', err?.message);
-    _sharp = null;
+    console.warn('[chat] jimp unavailable — image downscaling disabled:', err?.message);
+    _jimp = null;
   }
-  return _sharp;
+  return _jimp;
 }
 
 const IMG_MAX_DIM = 768;
@@ -521,16 +520,19 @@ const IMG_MAX_DIM = 768;
 const DOWNSCALE_B64_THRESHOLD = 110_000;
 
 async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; mediaType: string } | null> {
-  const sharp = getSharp();
-  if (!sharp) return null; // sharp unavailable → caller keeps original bytes
+  const Jimp = getJimp();
+  if (!Jimp) return null; // jimp unavailable → caller keeps original bytes
   try {
-    const out = await sharp(input)
-      .resize({ width: IMG_MAX_DIM, height: IMG_MAX_DIM, fit: 'inside', withoutEnlargement: true })
-      .jpeg({ quality: 82 })
-      .toBuffer();
+    const img = await Jimp.read(input);
+    // Only SHRINK (never enlarge): scaleToFit would scale a small image UP
+    // to fill the box, so we guard on the current dimensions.
+    if (img.bitmap.width > IMG_MAX_DIM || img.bitmap.height > IMG_MAX_DIM) {
+      img.scaleToFit({ w: IMG_MAX_DIM, h: IMG_MAX_DIM });
+    }
+    const out: Buffer = await img.getBuffer('image/jpeg', { quality: 82 });
     return { b64: out.toString('base64'), mediaType: 'image/jpeg' };
   } catch (err: any) {
-    console.warn('[downscaleImageBuffer] failed:', err?.message);
+    console.warn('[downscaleImageBuffer] jimp failed:', err?.message);
     return null;
   }
 }
@@ -837,7 +839,7 @@ async function fetchAndValidateVisualPosts(): Promise<{
   return { rows, candidates, validations };
 }
 
-interface ImageDiag { sharp: boolean; count: number; approxKB: number }
+interface ImageDiag { compressed: boolean; count: number; approxKB: number }
 
 async function buildAccountImageBlocks(): Promise<{ blocks: any[]; diag: ImageDiag | null }> {
   try {
@@ -1037,9 +1039,9 @@ ${imageTargets.length === 0
     const approxKB = Math.round(
       imageTargets.reduce((n, t) => n + t.b64.length * 0.75, 0) / 1024
     );
-    const diag: ImageDiag = { sharp: getSharp() != null, count: imageTargets.length, approxKB };
+    const diag: ImageDiag = { compressed: getJimp() != null, count: imageTargets.length, approxKB };
     console.log(
-      `[buildAccountImageBlocks] sharp=${diag.sharp ? 'ON' : 'OFF'} · ${diag.count} image(s) attached · ~${diag.approxKB}KB total`
+      `[buildAccountImageBlocks] compression=${diag.compressed ? 'ON' : 'OFF'} · ${diag.count} image(s) attached · ~${diag.approxKB}KB total`
     );
     return { blocks, diag };
   } catch (err) {
