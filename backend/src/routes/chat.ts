@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import sharp from 'sharp';
 import { trackedStream } from '../services/claudeClient';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
@@ -483,6 +484,34 @@ async function validateImageUrl(url: string): Promise<boolean> {
 // caller falls back to the URL path / model-asks-for-attachment.
 const IMAGE_FETCH_TIMEOUT_MS = 10000;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+// Anthropic bills image input by resolution (~tokens = w*h/750). LinkedIn
+// images are large (~1200px, ~1.5-2K tokens each); at 20 images that's
+// ~38K tokens re-read from cache every visual turn. Downscaling to 768px
+// longest side cuts each to ~300-450 tokens (~80% off) while staying
+// perfectly legible for what the model needs from a meme — the role
+// hierarchy, the bodily change, the layout, the title text. We normalise
+// to JPEG q82 for a small, consistent payload. Done ONCE at cache time
+// (and lazily on any pre-existing full-res cache, see DOWNSCALED_MARKER).
+const IMG_MAX_DIM = 768;
+// A cached b64 longer than this (~80KB decoded) is almost certainly a
+// full-res image cached before downscaling existed → resize it lazily on
+// next use. A 768px JPEG q82 is typically 25-60KB (~33-80K b64 chars).
+const DOWNSCALE_B64_THRESHOLD = 110_000;
+
+async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; mediaType: string } | null> {
+  try {
+    const out = await sharp(input)
+      .resize({ width: IMG_MAX_DIM, height: IMG_MAX_DIM, fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 82 })
+      .toBuffer();
+    return { b64: out.toString('base64'), mediaType: 'image/jpeg' };
+  } catch (err: any) {
+    console.warn('[downscaleImageBuffer] failed:', err?.message);
+    return null;
+  }
+}
+
 async function fetchAndCacheImageBytes(
   postId: string,
   url: string
@@ -492,13 +521,6 @@ async function fetchAndCacheImageBytes(
   try {
     const res = await fetch(url, { signal: ctrl.signal });
     if (!res.ok) return null;
-    const ct = res.headers.get('content-type') || '';
-    // Anthropic accepts image/jpeg, image/png, image/gif, image/webp.
-    // Default to image/jpeg if the CDN omits the header.
-    const mediaType =
-      /^image\/(jpe?g|png|gif|webp)/i.test(ct.split(';')[0])
-        ? ct.split(';')[0].toLowerCase().replace('jpg', 'jpeg')
-        : 'image/jpeg';
     const buf = Buffer.from(await res.arrayBuffer());
     if (buf.byteLength > MAX_IMAGE_BYTES) {
       console.warn(
@@ -506,7 +528,18 @@ async function fetchAndCacheImageBytes(
       );
       return null;
     }
-    const b64 = buf.toString('base64');
+    // Downscale before caching — the stored bytes are what we ship to
+    // Anthropic, so caching the small version means we never pay full-res
+    // image tokens. Falls back to the original bytes if sharp can't
+    // process it (e.g. an exotic format).
+    const ct = res.headers.get('content-type') || '';
+    const small = await downscaleImageBuffer(buf);
+    const b64 = small ? small.b64 : buf.toString('base64');
+    const mediaType = small
+      ? small.mediaType
+      : (/^image\/(jpe?g|png|gif|webp)/i.test(ct.split(';')[0])
+          ? ct.split(';')[0].toLowerCase().replace('jpg', 'jpeg')
+          : 'image/jpeg');
     await pool.query(
       `UPDATE posts SET
          cached_image_b64 = $1,
@@ -525,6 +558,28 @@ async function fetchAndCacheImageBytes(
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// Lazy downscale for images cached BEFORE downscaling existed: if a
+// cached b64 is large, resize it once, persist the small version, and
+// return it. Keeps full-res caches from costing full-res tokens forever.
+async function ensureDownscaledCached(
+  postId: string,
+  b64: string,
+  mediaType: string
+): Promise<{ b64: string; mediaType: string }> {
+  if (b64.length <= DOWNSCALE_B64_THRESHOLD) return { b64, mediaType };
+  const small = await downscaleImageBuffer(Buffer.from(b64, 'base64'));
+  if (!small) return { b64, mediaType };
+  try {
+    await pool.query(
+      `UPDATE posts SET cached_image_b64 = $1, cached_image_media_type = $2 WHERE id = $3`,
+      [small.b64, small.mediaType, postId]
+    );
+  } catch (err: any) {
+    console.warn(`[ensureDownscaledCached] post ${postId} persist failed:`, err?.message);
+  }
+  return small;
 }
 
 // Per-creator raw_data refresh cache. When several LinkedIn CDN URLs in
@@ -832,9 +887,12 @@ async function buildAccountImageBlocks(): Promise<any[]> {
       let attachMediaType: string | null = null;
       let attachSource: 'cached' | 'just-cached' | null = null;
       if (attemptedAttach && cachedB64) {
-        // Already in our DB cache — fastest, permanent path.
-        attachB64 = cachedB64;
-        attachMediaType = cachedMediaType || 'image/jpeg';
+        // Already in our DB cache — fastest, permanent path. Lazily
+        // downscale if this entry was cached full-res before downscaling
+        // existed (one-time resize + persist), so we never ship full-res.
+        const small = await ensureDownscaledCached(post.id, cachedB64, cachedMediaType || 'image/jpeg');
+        attachB64 = small.b64;
+        attachMediaType = small.mediaType;
         attachSource = 'cached';
       } else if (attemptedAttach && headValid && url) {
         // URL is alive but we haven't cached the bytes yet. Do it now
