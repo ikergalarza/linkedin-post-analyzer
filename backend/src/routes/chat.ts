@@ -514,12 +514,15 @@ function getJimp(): any | null {
 }
 
 const IMG_MAX_DIM = 768;
-// A cached b64 longer than this (~80KB decoded) is almost certainly a
-// full-res image cached before downscaling existed → resize it lazily on
-// next use. A 768px JPEG q82 is typically 25-60KB (~33-80K b64 chars).
-const DOWNSCALE_B64_THRESHOLD = 110_000;
+// Anthropic image tokens ≈ (w × h) / 750. This estimates the token cost
+// of one cached image from its pixel dimensions — the ACTUAL billing
+// driver (file size / KB is irrelevant to token cost).
+function estImageTokens(w: number | null | undefined, h: number | null | undefined): number {
+  if (!w || !h) return 0;
+  return Math.round((w * h) / 750);
+}
 
-async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; mediaType: string } | null> {
+async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; mediaType: string; w: number; h: number } | null> {
   const Jimp = getJimp();
   if (!Jimp) return null; // jimp unavailable → caller keeps original bytes
   try {
@@ -529,8 +532,8 @@ async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; media
     if (img.bitmap.width > IMG_MAX_DIM || img.bitmap.height > IMG_MAX_DIM) {
       img.scaleToFit({ w: IMG_MAX_DIM, h: IMG_MAX_DIM });
     }
-    const out: Buffer = await img.getBuffer('image/jpeg', { quality: 82 });
-    return { b64: out.toString('base64'), mediaType: 'image/jpeg' };
+    const out: Buffer = await img.getBuffer('image/jpeg', { quality: 80 });
+    return { b64: out.toString('base64'), mediaType: 'image/jpeg', w: img.bitmap.width, h: img.bitmap.height };
   } catch (err: any) {
     console.warn('[downscaleImageBuffer] jimp failed:', err?.message);
     return null;
@@ -540,7 +543,7 @@ async function downscaleImageBuffer(input: Buffer): Promise<{ b64: string; media
 async function fetchAndCacheImageBytes(
   postId: string,
   url: string
-): Promise<{ b64: string; mediaType: string } | null> {
+): Promise<{ b64: string; mediaType: string; w: number | null; h: number | null } | null> {
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), IMAGE_FETCH_TIMEOUT_MS);
   try {
@@ -554,9 +557,9 @@ async function fetchAndCacheImageBytes(
       return null;
     }
     // Downscale before caching — the stored bytes are what we ship to
-    // Anthropic, so caching the small version means we never pay full-res
-    // image tokens. Falls back to the original bytes if sharp can't
-    // process it (e.g. an exotic format).
+    // Anthropic, so caching the small (≤768px) version means we never pay
+    // full-res image tokens. Falls back to original bytes if jimp can't
+    // process it; dims unknown in that case.
     const ct = res.headers.get('content-type') || '';
     const small = await downscaleImageBuffer(buf);
     const b64 = small ? small.b64 : buf.toString('base64');
@@ -565,16 +568,20 @@ async function fetchAndCacheImageBytes(
       : (/^image\/(jpe?g|png|gif|webp)/i.test(ct.split(';')[0])
           ? ct.split(';')[0].toLowerCase().replace('jpg', 'jpeg')
           : 'image/jpeg');
+    const w = small ? small.w : null;
+    const h = small ? small.h : null;
     await pool.query(
       `UPDATE posts SET
          cached_image_b64 = $1,
          cached_image_media_type = $2,
          cached_image_source_url = $3,
-         cached_image_cached_at = NOW()
+         cached_image_cached_at = NOW(),
+         cached_image_w = $5,
+         cached_image_h = $6
        WHERE id = $4`,
-      [b64, mediaType, url, postId]
+      [b64, mediaType, url, postId, w, h]
     );
-    return { b64, mediaType };
+    return { b64, mediaType, w, h };
   } catch (err: any) {
     console.warn(
       `[fetchAndCacheImageBytes] post ${postId}: ${err?.message || 'unknown error'} — falling back without cached bytes.`
@@ -585,21 +592,30 @@ async function fetchAndCacheImageBytes(
   }
 }
 
-// Lazy downscale for images cached BEFORE downscaling existed: if a
-// cached b64 is large, resize it once, persist the small version, and
-// return it. Keeps full-res caches from costing full-res tokens forever.
+// Ensure a cached image is actually downscaled, gated on DIMENSIONS (the
+// real token driver), not byte size. If we already know the stored dims
+// and they're ≤ IMG_MAX_DIM → it's small, return as-is with NO decode
+// (the steady-state cheap path). If dims are unknown (cached before this
+// existed) OR exceed the cap → decode, downscale, persist b64 + dims, and
+// return the small version. After one pass every image has dims ≤768
+// stored, so no further decoding happens.
 async function ensureDownscaledCached(
   postId: string,
   b64: string,
-  mediaType: string
-): Promise<{ b64: string; mediaType: string }> {
-  if (b64.length <= DOWNSCALE_B64_THRESHOLD) return { b64, mediaType };
+  mediaType: string,
+  w: number | null,
+  h: number | null
+): Promise<{ b64: string; mediaType: string; w: number | null; h: number | null }> {
+  if (w && h && Math.max(w, h) <= IMG_MAX_DIM) {
+    return { b64, mediaType, w, h }; // already downscaled — no work
+  }
   const small = await downscaleImageBuffer(Buffer.from(b64, 'base64'));
-  if (!small) return { b64, mediaType };
+  if (!small) return { b64, mediaType, w, h };
   try {
     await pool.query(
-      `UPDATE posts SET cached_image_b64 = $1, cached_image_media_type = $2 WHERE id = $3`,
-      [small.b64, small.mediaType, postId]
+      `UPDATE posts SET cached_image_b64 = $1, cached_image_media_type = $2,
+         cached_image_w = $3, cached_image_h = $4 WHERE id = $5`,
+      [small.b64, small.mediaType, small.w, small.h, postId]
     );
   } catch (err: any) {
     console.warn(`[ensureDownscaledCached] post ${postId} persist failed:`, err?.message);
@@ -760,6 +776,8 @@ async function fetchAndValidateVisualPosts(): Promise<{
     cachedB64: string | null;
     cachedMediaType: string | null;
     cachedSourceUrl: string | null;
+    cachedW: number | null;
+    cachedH: number | null;
     attemptedAttach: boolean;
   }>;
   validations: boolean[];
@@ -771,6 +789,7 @@ async function fetchAndValidateVisualPosts(): Promise<{
             p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
             p.raw_data, p.post_url, p.creator_id,
             p.cached_image_b64, p.cached_image_media_type, p.cached_image_source_url,
+            p.cached_image_w, p.cached_image_h,
             c.name AS creator_name
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
@@ -789,6 +808,8 @@ async function fetchAndValidateVisualPosts(): Promise<{
     cachedB64: string | null;
     cachedMediaType: string | null;
     cachedSourceUrl: string | null;
+    cachedW: number | null;
+    cachedH: number | null;
     attemptedAttach: boolean;
   };
   const candidates: Candidate[] = [];
@@ -818,6 +839,8 @@ async function fetchAndValidateVisualPosts(): Promise<{
       cachedB64: post.cached_image_b64 || null,
       cachedMediaType: post.cached_image_media_type || null,
       cachedSourceUrl: post.cached_image_source_url || null,
+      cachedW: post.cached_image_w ?? null,
+      cachedH: post.cached_image_h ?? null,
       attemptedAttach: willTryAttach,
     });
   }
@@ -839,7 +862,7 @@ async function fetchAndValidateVisualPosts(): Promise<{
   return { rows, candidates, validations };
 }
 
-interface ImageDiag { compressed: boolean; count: number; approxKB: number }
+interface ImageDiag { compressed: boolean; count: number; approxKB: number; estTokens: number; maxDim: number }
 
 async function buildAccountImageBlocks(): Promise<{ blocks: any[]; diag: ImageDiag | null }> {
   try {
@@ -905,21 +928,28 @@ async function buildAccountImageBlocks(): Promise<{ blocks: any[]; diag: ImageDi
     const imageTargets: Array<{ post: any; b64: string; mediaType: string; sourceTag: 'cached' | 'just-cached' }> = [];
     let expiredCount = 0;
     let justCachedCount = 0;
+    let estImageTokenSum = 0;
+    let maxDimSeen = 0;
+    let dimsUnknown = false;
     for (let i = 0; i < candidates.length; i++) {
-      const { post, url, attemptedAttach, cachedB64, cachedMediaType } = candidates[i];
+      const { post, url, attemptedAttach, cachedB64, cachedMediaType, cachedW, cachedH } = candidates[i];
       const headValid = validationResults[i];
 
       // Decide if we attach + how the bytes are sourced.
       let attachB64: string | null = null;
       let attachMediaType: string | null = null;
       let attachSource: 'cached' | 'just-cached' | null = null;
+      let attachW: number | null = null;
+      let attachH: number | null = null;
       if (attemptedAttach && cachedB64) {
-        // Already in our DB cache — fastest, permanent path. Lazily
-        // downscale if this entry was cached full-res before downscaling
-        // existed (one-time resize + persist), so we never ship full-res.
-        const small = await ensureDownscaledCached(post.id, cachedB64, cachedMediaType || 'image/jpeg');
+        // Already in our DB cache — fastest, permanent path. Re-downscale
+        // (gated on DIMENSIONS) only if this entry was cached full-res
+        // before downscaling existed; otherwise no decode.
+        const small = await ensureDownscaledCached(post.id, cachedB64, cachedMediaType || 'image/jpeg', cachedW, cachedH);
         attachB64 = small.b64;
         attachMediaType = small.mediaType;
+        attachW = small.w;
+        attachH = small.h;
         attachSource = 'cached';
       } else if (attemptedAttach && headValid && url) {
         // URL is alive but we haven't cached the bytes yet. Do it now
@@ -929,11 +959,21 @@ async function buildAccountImageBlocks(): Promise<{ blocks: any[]; diag: ImageDi
         if (fetched) {
           attachB64 = fetched.b64;
           attachMediaType = fetched.mediaType;
+          attachW = fetched.w;
+          attachH = fetched.h;
           attachSource = 'just-cached';
           justCachedCount++;
         }
       }
       const willAttach = !!attachB64;
+      if (willAttach) {
+        if (attachW && attachH) {
+          estImageTokenSum += estImageTokens(attachW, attachH);
+          maxDimSeen = Math.max(maxDimSeen, attachW, attachH);
+        } else {
+          dimsUnknown = true; // jimp couldn't process / dims missing
+        }
+      }
       if (willAttach) imageTargets.push({
         post,
         b64: attachB64!,
@@ -1033,15 +1073,25 @@ ${imageTargets.length === 0
       });
     }
 
-    // Diagnostic surfaced to the browser console: is sharp compressing,
-    // how many images attached, and their total payload size. base64 is
-    // ~4/3 the raw bytes, so raw ≈ b64len * 0.75.
+    // Diagnostic surfaced to the browser console. The TRUTHFUL cost
+    // signal is estTokens (resolution-based, ~w*h/750 per image) and
+    // maxDim — NOT KB (file size is irrelevant to Anthropic image
+    // billing). "compressed" = jimp loaded AND every attached image is
+    // ≤768px (maxDim cap) with known dims. approxKB kept for bandwidth
+    // context only.
     const approxKB = Math.round(
       imageTargets.reduce((n, t) => n + t.b64.length * 0.75, 0) / 1024
     );
-    const diag: ImageDiag = { compressed: getJimp() != null, count: imageTargets.length, approxKB };
+    const compressed = getJimp() != null && !dimsUnknown && maxDimSeen <= IMG_MAX_DIM;
+    const diag: ImageDiag = {
+      compressed,
+      count: imageTargets.length,
+      approxKB,
+      estTokens: estImageTokenSum,
+      maxDim: maxDimSeen,
+    };
     console.log(
-      `[buildAccountImageBlocks] compression=${diag.compressed ? 'ON' : 'OFF'} · ${diag.count} image(s) attached · ~${diag.approxKB}KB total`
+      `[buildAccountImageBlocks] compression=${compressed ? 'ON' : 'OFF'} · ${diag.count} img · maxDim ${maxDimSeen}px · ~${estImageTokenSum} img-tokens · ~${approxKB}KB`
     );
     return { blocks, diag };
   } catch (err) {

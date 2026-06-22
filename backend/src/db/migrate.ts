@@ -520,6 +520,13 @@ const migration = `
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_media_type TEXT;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_source_url TEXT;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_cached_at TIMESTAMPTZ;
+  -- v28: cached image pixel dimensions. Anthropic bills image input by
+  -- RESOLUTION (~tokens = w*h/750), not file size — so the downscale
+  -- decision + the cost diagnostic must be driven by dimensions, not KB.
+  -- Stored when an image is cached/downscaled; lets us skip re-decoding
+  -- already-small images and report a truthful token estimate.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_w INTEGER;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS cached_image_h INTEGER;
 
   -- v26: Kanban pipeline for post_ideas + outlier-origin trace. The existing
   -- \`status\` column tracks the generation lifecycle (draft → generating →

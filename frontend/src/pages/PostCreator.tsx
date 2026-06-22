@@ -366,7 +366,7 @@ export default function PostCreator() {
                 console.log('%c[Post Creator] imágenes: no cargadas (turno de texto, sin intención visual) → 0 tokens de imagen', 'color:#888');
               } else {
                 console.log(
-                  `%c[Post Creator] imágenes: compresión ${im.compressed ? 'ON ✅' : 'OFF ⚠️'} · ${im.count} adjuntas · ~${im.approxKB}KB total`,
+                  `%c[Post Creator] imágenes: compresión ${im.compressed ? 'ON ✅' : 'OFF ⚠️'} · ${im.count} adjuntas · máx ${im.maxDim ?? '?'}px · ~${im.estTokens ?? '?'} tokens de imagen (≈ lo que cobra Anthropic) · ${im.approxKB}KB de descarga`,
                   `color:${im.compressed ? '#22c55e' : '#f59e0b'};font-weight:bold`
                 );
               }
