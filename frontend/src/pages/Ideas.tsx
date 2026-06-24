@@ -834,6 +834,20 @@ function KanbanCard({
             <img src={card.outlier_creator_image} alt="" className="w-4 h-4 rounded-full object-cover" />
           ) : null}
           <span className="truncate">{card.outlier_creator_name}</span>
+          {card.outlier_url && (
+            <a
+              href={card.outlier_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              draggable={false}
+              className="text-accent hover:text-accent-light"
+              title="Abrir el outlier original en LinkedIn"
+            >
+              ↗
+            </a>
+          )}
           {card.outlier_ratio && (
             <span className="text-accent tabular-nums ml-auto">{card.outlier_ratio.toFixed(1)}x</span>
           )}
