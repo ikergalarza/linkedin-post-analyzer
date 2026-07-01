@@ -1765,6 +1765,13 @@ interface ThreadedComment {
   // comment_reactions table (what we sent from the app) so it survives
   // reloads and the UI can show + lock the reaction state.
   my_reaction?: string | null;
+  // True when the comment has NO text body — a GIF / sticker / image-only
+  // comment. Unipile does NOT expose the media URL for these (confirmed
+  // 2026-07: same keys as any comment, just `text: ""` and no attachment
+  // field), so all we can do is flag it. The UI shows a "🎞️ GIF / imagen"
+  // placeholder instead of an empty line, and the reply generator answers
+  // with a single support emoji (there's no text to engage with).
+  is_media_only?: boolean;
 }
 
 function shapeComment(c: any): ThreadedComment {
@@ -1862,9 +1869,11 @@ function shapeComment(c: any): ThreadedComment {
     if (m) publicIdentifier = m[1];
   }
 
+  const text = String(c.text || c.body || c.content || c.message || '');
+
   return {
     id: String(c.id || c.social_id || c.comment_id_str || ''),
-    text: String(c.text || c.body || c.content || c.message || ''),
+    text,
     date:
       c.date ||
       c.created_at ||
@@ -1891,6 +1900,10 @@ function shapeComment(c: any): ThreadedComment {
     // directly, not just ones we sent via the app. Normalised to our
     // lowercase type. The DB-sourced value is only used as a fallback.
     my_reaction: normalizeReactionValue(c.user_reacted),
+    // GIF / sticker / image-only comment: Unipile gives us an empty text and
+    // no media field, so we can only flag it (the UI shows a placeholder and
+    // the reply becomes a support emoji).
+    is_media_only: !text.trim(),
   };
 }
 
@@ -2098,69 +2111,27 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
   }
 });
 
-// GET /comments/debug-raw?creator_id= — DIAGNOSTIC ONLY. Dumps the RAW
-// Unipile comment objects for the most recent posts of a creator, so we
-// can see exactly how Unipile represents special comments (e.g. a GIF /
-// sticker / media-only comment) and fix shapeComment to handle them.
-// Open it, find the GIF comment, paste its raw object back. Remove once
-// the shape is known.
-router.get('/comments/debug-raw', async (req: Request, res: Response) => {
-  try {
-    const creatorId = (req.query.creator_id as string) || null;
-    const params: any[] = [];
-    let creatorFilter = '';
-    if (creatorId && creatorId !== 'all') {
-      params.push(creatorId);
-      creatorFilter = `AND c.id = $${params.length}`;
-    }
-    const { rows: posts } = await pool.query(
-      `SELECT p.id, p.linkedin_post_id, p.hook_text, c.unipile_account_id
-         FROM posts p
-         JOIN creators c ON c.id = p.creator_id
-        WHERE c.is_managed = TRUE
-          AND c.unipile_account_id IS NOT NULL
-          AND p.linkedin_post_id IS NOT NULL
-          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-          AND p.published_at IS NOT NULL
-          ${creatorFilter}
-        ORDER BY p.published_at DESC
-        LIMIT 6`,
-      params
-    );
-
-    const out: any[] = [];
-    for (const post of posts) {
-      try {
-        const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
-        // Return every raw comment object + its top-level keys so a
-        // GIF/media comment (whatever field it uses) is visible verbatim.
-        out.push({
-          post_id: post.id,
-          hook: (post.hook_text || '').slice(0, 60),
-          comment_count: raw.length,
-          raw_comments: raw.map((c: any) => ({ keys: Object.keys(c), raw: c })),
-        });
-      } catch (err: any) {
-        out.push({ post_id: post.id, error: err?.message });
-      }
-    }
-
-    res.json({
-      note: 'DIAGNOSTIC — find the GIF/media comment and paste its whole raw object back so shapeComment can be taught its shape.',
-      posts: out,
-    });
-  } catch (err: any) {
-    console.error('[accounts/comments/debug-raw]', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId as string;
     const commentId = req.params.commentId as string;
     const { comment_text, commenter_name, commenter_headline, commenter_profile_id } = req.body || {};
-    if (!comment_text) return res.status(400).json({ error: 'comment_text required' });
+
+    // GIF / sticker / image-only comment → no text to engage with. Skip the
+    // LLM entirely and reply with a single support emoji (same behaviour as
+    // replyGenerator RULE 11 for name-only / emoji-only comments). This also
+    // makes "Generar respuesta" work at all for media comments, which used to
+    // 400 here because comment_text was empty.
+    if (!comment_text || !String(comment_text).trim()) {
+      const SUPPORT_EMOJI = ['🙌', '🔥', '💪', '👏', '❤️', '😄'];
+      const emoji = SUPPORT_EMOJI[Math.floor(Math.random() * SUPPORT_EMOJI.length)];
+      return res.json({
+        reply: emoji,
+        voice: null,
+        comment_id: commentId,
+        mention: null,
+      });
+    }
 
     const postQ = await pool.query(
       `SELECT p.content_text, c.name AS creator_name

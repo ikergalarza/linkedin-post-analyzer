@@ -35,6 +35,10 @@ interface Thread {
   // from the backend (comment_reactions table) so it persists across
   // reloads.
   my_reaction?: string | null;
+  // GIF / sticker / image-only comment: Unipile gives us empty text and no
+  // media URL, so we can't render the GIF — we show a placeholder and the
+  // generated reply is a support emoji.
+  is_media_only?: boolean;
 }
 
 interface Props {
@@ -163,21 +167,10 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
             {totalPending === 1 ? '' : 's'} sin responder en {groups.length} post{groups.length === 1 ? '' : 's'}
           </span>
         )}
-        {/* TEMP diagnostic — dumps the raw Unipile comment shapes so a
-            GIF/media comment can be parsed. Remove once fixed. */}
-        <a
-          href={`${import.meta.env.VITE_API_URL || ''}/api/accounts/comments/debug-raw${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-auto text-[10px] text-text-muted hover:text-accent"
-          title="Diagnóstico: vuelca la forma cruda de los comentarios (para arreglar GIFs)"
-        >
-          🐛 debug raw
-        </a>
         <button
           onClick={refetch}
           disabled={loading}
-          className="text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
+          className="ml-auto text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
           title="Vuelve a buscar comentarios pendientes en tus posts recientes"
         >
           {loading ? '↻ Buscando…' : '↻ Actualizar'}
@@ -552,7 +545,14 @@ function ThreadCard({
               {fmtRelative(thread.date)}
             </span>
           </div>
-          <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
+          {thread.is_media_only || !thread.text.trim() ? (
+            <p className="text-sm text-text-muted italic flex items-center gap-1">
+              <span>🎞️</span> comentó un GIF / imagen{' '}
+              <span className="not-italic text-[10px] text-text-muted">(LinkedIn no expone el contenido)</span>
+            </p>
+          ) : (
+            <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
+          )}
 
           {/* Reaction bar for the top-level comment. Once a reaction is
               set (this session or read back from LinkedIn) the bar locks
@@ -572,7 +572,11 @@ function ThreadCard({
                       <span className="text-xs font-medium">{r.author.name || 'Anónimo'}</span>
                       <span className="text-[10px] text-text-muted">{fmtRelative(r.date)}</span>
                     </div>
-                    <p className="text-xs text-text-secondary whitespace-pre-wrap">{r.text}</p>
+                    {r.is_media_only || !r.text.trim() ? (
+                      <p className="text-xs text-text-muted italic">🎞️ GIF / imagen</p>
+                    ) : (
+                      <p className="text-xs text-text-secondary whitespace-pre-wrap">{r.text}</p>
+                    )}
                     <ReactionBar postId={postId} commentId={r.id} initialReaction={r.my_reaction} compact />
                   </div>
                 </div>
