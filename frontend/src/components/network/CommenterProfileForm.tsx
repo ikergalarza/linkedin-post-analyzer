@@ -10,11 +10,6 @@ interface CommenterProfile {
   avoid: string;
 }
 
-interface ProfileRow extends CommenterProfile {
-  id?: string;
-  name: string;
-}
-
 const EMPTY: CommenterProfile = {
   headline: '',
   voice_style: '',
@@ -23,47 +18,33 @@ const EMPTY: CommenterProfile = {
   avoid: '',
 };
 
-const DEFAULT_PROFILES = ['Iker', 'Unai'];
-
+// Single generic "Voz Neety" — the one voice used for every generated comment
+// and reply. Per-person profiles were removed.
 export default function CommenterProfileForm() {
-  const [profiles, setProfiles] = useState<Record<string, CommenterProfile>>({
-    Iker: { ...EMPTY },
-    Unai: { ...EMPTY },
-  });
-  const [activeName, setActiveName] = useState<string>('Iker');
+  const [profile, setProfile] = useState<CommenterProfile>({ ...EMPTY });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE}/api/network/profiles`)
+    fetch(`${BASE}/api/network/profile`)
       .then((r) => r.json())
-      .then((rows: ProfileRow[]) => {
-        const next: Record<string, CommenterProfile> = { Iker: { ...EMPTY }, Unai: { ...EMPTY } };
-        for (const row of rows || []) {
-          if (!row || !row.name) continue;
-          next[row.name] = {
-            headline: row.headline || '',
-            voice_style: row.voice_style || '',
-            worldview: row.worldview || '',
-            signature_moves: row.signature_moves || '',
-            avoid: row.avoid || '',
-          };
-        }
-        setProfiles(next);
+      .then((row: Partial<CommenterProfile> | null) => {
+        setProfile({
+          headline: row?.headline || '',
+          voice_style: row?.voice_style || '',
+          worldview: row?.worldview || '',
+          signature_moves: row?.signature_moves || '',
+          avoid: row?.avoid || '',
+        });
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const active = profiles[activeName] || EMPTY;
-
   const set = (k: keyof CommenterProfile) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setProfiles((prev) => ({
-      ...prev,
-      [activeName]: { ...(prev[activeName] || EMPTY), [k]: e.target.value },
-    }));
+    setProfile((prev) => ({ ...prev, [k]: e.target.value }));
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,10 +52,10 @@ export default function CommenterProfileForm() {
     setError('');
     setSaved(false);
     try {
-      const res = await fetch(`${BASE}/api/network/profiles/${encodeURIComponent(activeName)}`, {
+      const res = await fetch(`${BASE}/api/network/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(active),
+        body: JSON.stringify(profile),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -91,33 +72,12 @@ export default function CommenterProfileForm() {
 
   if (loading) return <div className="text-text-muted text-sm">Loading...</div>;
 
-  const profileNames = Array.from(new Set([...DEFAULT_PROFILES, ...Object.keys(profiles)]));
-
   return (
     <form onSubmit={handleSave} className="max-w-2xl space-y-6">
       <p className="text-text-secondary text-sm">
-        Define <strong className="text-text-primary">how you comment</strong>, not what about. AI will use your voice and
-        worldview to generate comments that spark debate.
+        Define <strong className="text-text-primary">how you comment</strong>, not what about. This is the single{' '}
+        <strong className="text-text-primary">Neety voice</strong> used for every generated comment and reply.
       </p>
-
-      {/* Profile selector */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-text-muted font-medium">Editing profile:</span>
-        {profileNames.map((name) => (
-          <button
-            key={name}
-            type="button"
-            onClick={() => setActiveName(name)}
-            className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
-              activeName === name
-                ? 'border-accent/50 bg-accent/10 text-accent'
-                : 'border-border text-text-muted hover:border-accent/30'
-            }`}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
 
       {/* Headline */}
       <div>
@@ -126,7 +86,7 @@ export default function CommenterProfileForm() {
         </label>
         <input
           type="text"
-          value={active.headline}
+          value={profile.headline}
           onChange={set('headline')}
           placeholder="ej. Founder @Neety · B2B Sales"
           className="w-full px-4 py-2.5 bg-bg-card border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-sm"
@@ -139,7 +99,7 @@ export default function CommenterProfileForm() {
           Your writing style
         </label>
         <textarea
-          value={active.voice_style}
+          value={profile.voice_style}
           onChange={set('voice_style')}
           rows={3}
           placeholder={`Describe how you write, not what about.\n\ne.g. "Direct and to the point. Short sentences. I prefer data over opinions. Always first person. Never condescending."`}
@@ -156,7 +116,7 @@ export default function CommenterProfileForm() {
           Your worldview <span className="text-text-muted font-normal">(the lens through which you see things)</span>
         </label>
         <textarea
-          value={active.worldview}
+          value={profile.worldview}
           onChange={set('worldview')}
           rows={3}
           placeholder={`e.g. "I think most B2B sales advice is wrong because it ignores positioning. I believe SDRs aren't dying — they're evolving. I'm skeptical of AI hype but optimistic about real applications."`}
@@ -173,7 +133,7 @@ export default function CommenterProfileForm() {
           Your signature commenting moves
         </label>
         <textarea
-          value={active.signature_moves}
+          value={profile.signature_moves}
           onChange={set('signature_moves')}
           rows={3}
           placeholder={`e.g. "I usually cite a specific number from my experience. I like to flip the main argument. I end with a provocative open question. Sometimes I share what the post is missing."`}
@@ -190,7 +150,7 @@ export default function CommenterProfileForm() {
           What you never do
         </label>
         <textarea
-          value={active.avoid}
+          value={profile.avoid}
           onChange={set('avoid')}
           rows={2}
           placeholder={`e.g. "I never say 'great post'. I never self-promote directly. I never ask basic questions. I avoid being condescending or using corporate jargon."`}
@@ -206,7 +166,7 @@ export default function CommenterProfileForm() {
           disabled={saving}
           className="px-6 py-2.5 bg-accent text-bg-primary rounded-lg text-sm font-medium hover:bg-accent-light transition-colors disabled:opacity-50"
         >
-          {saving ? 'Saving...' : `Save ${activeName}`}
+          {saving ? 'Saving...' : 'Save'}
         </button>
         {saved && <span className="text-green-400 text-sm">✓ Saved</span>}
       </div>
