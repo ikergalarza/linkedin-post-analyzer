@@ -445,34 +445,13 @@ async function buildVideoProfileContext(): Promise<string> {
   return lines.join('\n');
 }
 
-// If the latest user message says it's a post FOR "Iker" or "Unai",
-// load that person's voice profile from Network (commenter_profile) and
-// return a voice block. Accent/case-insensitive, word-boundary so it
-// doesn't fire on substrings. If both names appear, the later mention
-// wins (it's usually the actual subject). Empty string = no persona.
-async function buildVoiceContext(messages: any[]): Promise<string> {
-  const lastUser = [...(messages || [])].reverse().find((m) => m?.role === 'user');
-  // Once images are attached, content becomes an array of blocks
-  // ([{type:'text',text:'…'},{type:'image',source:…}]). Pull the text out
-  // of those blocks so the Iker/Unai voice trigger still fires.
-  const raw =
-    typeof lastUser?.content === 'string'
-      ? lastUser.content
-      : Array.isArray(lastUser?.content)
-        ? lastUser.content
-            .filter((b: any) => b?.type === 'text' && typeof b.text === 'string')
-            .map((b: any) => b.text)
-            .join(' ')
-        : '';
-  if (!raw) return '';
-  const s = raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  const iAt = (() => { const m = s.match(/\biker\b/); return m ? m.index! : -1; })();
-  const uAt = (() => { const m = s.match(/\bunai\b/); return m ? m.index! : -1; })();
-  if (iAt < 0 && uAt < 0) return '';
-  const name = uAt > iAt ? 'Unai' : 'Iker';
-
+// Loads the single generic "Neety" voice from Network (commenter_profile) and
+// returns a voice block that steers HOW the post is written. Empty string when
+// no profile / no usable fields exist. Voice no longer depends on any name
+// mentioned in the message — every post is written in the one generic voice.
+async function buildVoiceContext(): Promise<string> {
   try {
-    const p = await CommenterProfileModel.getByName(name);
+    const p = await CommenterProfileModel.get();
     if (!p) return '';
     const v: string[] = [];
     if (p.headline) v.push(`Identity: ${p.headline}`);
@@ -481,10 +460,10 @@ async function buildVoiceContext(messages: any[]): Promise<string> {
     if (p.signature_moves) v.push(`Signature moves: ${p.signature_moves}`);
     if (p.avoid) v.push(`Never do: ${p.avoid}`);
     if (v.length === 0) return '';
-    return `\n\n═══ WRITE THIS POST IN ${name.toUpperCase()}'S VOICE (from Network → My Profile) ═══
+    return `\n\n═══ WRITE THIS POST IN THE NEETY VOICE (from Network → My Profile) ═══
 ${v.join('\n')}
 
-PRECEDENCE — READ CAREFULLY: The voice profile above only controls HOW the post is written (tone, phrasing, rhythm, vocabulary). It does NOT decide WHAT the post is. The hook type, post structure, archetype, angle and the virality tag MUST still come from the real outlier data above — viral data ALWAYS takes priority. If ${name}'s natural style would weaken a proven viral pattern, keep the pattern and bend the wording toward ${name}, not the other way around. Voice is the paint; the data is the blueprint.`;
+PRECEDENCE — READ CAREFULLY: The voice profile above only controls HOW the post is written (tone, phrasing, rhythm, vocabulary). It does NOT decide WHAT the post is. The hook type, post structure, archetype, angle and the virality tag MUST still come from the real outlier data above — viral data ALWAYS takes priority. Voice is the paint; the data is the blueprint.`;
   } catch (err) {
     console.warn('[buildVoiceContext] failed:', (err as Error).message);
     return '';
@@ -808,7 +787,7 @@ router.post('/', async (req: Request, res: Response) => {
       console.log(`[chat] mode locked to "${explicitMode}" by explicit user override (sticky across turns).`);
     }
 
-    const voiceContext = await buildVoiceContext(messages);
+    const voiceContext = await buildVoiceContext();
 
     // Anthropic prompt caching — single biggest cost lever for this endpoint.
     // Pre-caching audit: each turn re-paid full Opus-4.8 input price
