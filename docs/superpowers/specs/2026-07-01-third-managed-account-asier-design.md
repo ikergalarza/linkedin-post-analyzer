@@ -137,6 +137,24 @@ converge on one canonical row.
   prop/type and the `profile_name` it sends; call `generate-comments` with no profile
   override (backend uses the generic voice).
 
+### B4b. Name-display consistency across the Accounts section (audit result — no code change)
+
+An audit of every name-display site in the Accounts section confirmed Asier will render
+**consistently** with Iker/Unai everywhere, because names come from `creators.name` (the full
+LinkedIn name, e.g. "Iker Galarza Rodríguez") applied generically:
+- **Full name (all accounts):** account manager panel, account dropdown, per-account table
+  (`Accounts.tsx`), Live/Top post headers (`creator_name`), Comments inbox selector + post
+  group label (`RepliesPanel.tsx`), Google Chat modal subtitle.
+- **First name only, but derived generically:** the engagement chart tooltip + pencil title
+  (`AccountsEngagementChart.tsx`, `firstName(name) = name.split(/\s+/)[0]`) → Asier → "Asier"
+  automatically.
+- **Google Chat notification header:** made first-name-for-all in B4 (`NUEVO POST ASIER`).
+
+No per-account special-casing exists or is needed. Verification item: after onboarding,
+spot-check that Asier shows full name where Iker/Unai do and "Asier" in the chart tooltip /
+Google Chat header (i.e. never full-name where the others are first-name, and never
+first-name where the others are full-name).
+
 ### B7. Frontend — collapse the voice editor (`components/network/CommenterProfileForm.tsx`)
 - Remove `DEFAULT_PROFILES = ['Iker','Unai']`, the two-tab state, and the `activeName`
   tab switching (~L26–43, L94).
