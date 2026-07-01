@@ -155,6 +155,26 @@ spot-check that Asier shows full name where Iker/Unai do and "Asier" in the char
 Google Chat header (i.e. never full-name where the others are first-name, and never
 first-name where the others are full-name).
 
+### B6b. Post Creator LinkedIn preview persona (audit result — no code change for the preview)
+
+The Post Creator's LinkedIn preview is already fully dynamic and will show Asier's identity
+automatically once he is onboarded (Workstream A):
+- `pages/PostCreator.tsx` loads the persona list from `GET /api/accounts` (~L188–205) and
+  renders one **"Ver como: <name>"** button per managed account (`personas.map`, ~L802).
+- The active persona's `name` / `headline` / `profile_image_url` / `followers_count` are fed
+  into `components/postcreator/LinkedInPostPreview.tsx` (~L847–851), which renders the card
+  (avatar, name, headline, followers) purely from those props — no hardcoded names.
+- So Asier appears as a third "Ver como: Asier" button and the preview shows his real name +
+  photo + headline + followers, with zero preview code changes.
+
+Cosmetic cleanup (part of B, so the UI stops implying voice-by-name):
+- Update the empty-state help line (`PostCreator.tsx` ~L495) that reads
+  *"Say Iker or Unai to write in that person's voice"* — after the generic-voice change,
+  saying a name no longer changes the voice. Reword to reflect that the "Ver como" picker only
+  chooses the **preview identity** (name + photo), not the writing voice (which is now the one
+  Neety voice). Also refresh the stale comments at ~L466–468 and ~L797 that reference
+  "Iker & Unai".
+
 ### B7. Frontend — collapse the voice editor (`components/network/CommenterProfileForm.tsx`)
 - Remove `DEFAULT_PROFILES = ['Iker','Unai']`, the two-tab state, and the `activeName`
   tab switching (~L26–43, L94).
