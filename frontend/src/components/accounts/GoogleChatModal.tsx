@@ -10,7 +10,6 @@ interface PreviewData {
     content: string | null;
     creator_name: string | null;
   };
-  owner: 'Iker' | 'Unai' | 'unknown';
   // Flat array of supportive comments (3-5). No voice selection — these
   // are neutral network-support comments, not anyone's personal voice.
   comments: string[];
@@ -22,11 +21,11 @@ interface PreviewData {
 // to split into multiple messages. Kept as a safety check though.
 const MAX_LEN = 3800;
 
-function buildHeader(owner: 'Iker' | 'Unai' | 'unknown', creatorName: string | null, url: string | null): string {
-  const label = owner === 'unknown'
-    ? `NUEVO POST ${(creatorName || 'ACCOUNT').toUpperCase()}`
-    : `NUEVO POST ${owner.toUpperCase()}`;
-  return `🐝 ${label}:\n${url || '(sin URL)'}`;
+function buildHeader(creatorName: string | null, url: string | null): string {
+  // First name only, so all managed accounts read the same way
+  // (NUEVO POST IKER / UNAI / ASIER), never name + surname.
+  const first = (creatorName || '').trim().split(/\s+/)[0] || 'ACCOUNT';
+  return `🐝 NUEVO POST ${first.toUpperCase()}:\n${url || '(sin URL)'}`;
 }
 
 // Single-line reminder between the header and the comments — the 1st-hour
@@ -90,7 +89,7 @@ export default function GoogleChatModal({
 
   const computedMessage = useMemo(() => {
     if (!data) return '';
-    return buildMessage(buildHeader(data.owner, data.post.creator_name, data.post.url), comments);
+    return buildMessage(buildHeader(data.post.creator_name, data.post.url), comments);
   }, [data, comments]);
 
   const message = editedMessage ?? computedMessage;

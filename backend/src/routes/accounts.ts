@@ -7,7 +7,7 @@ import { CreatorModel } from '../models/creator';
 import { maybeTick, capturePostSnapshot } from '../services/postMonitor';
 import { generateComments, generateSupportiveComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
-import { sendToGoogleChat, detectOwner } from '../services/googleChat';
+import { sendToGoogleChat } from '../services/googleChat';
 import { captureAccountSnapshots } from '../services/accountSnapshots';
 import { extractViewerTimestamps } from '../utils/wvmp';
 import { generateReply } from '../services/replyGenerator';
@@ -1600,10 +1600,6 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
     const post = rows[0];
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
-    // Owner is still detected — but only to label the header
-    // ("NUEVO POST IKER/UNAI"), not to pick a commenter voice.
-    const ownerInfo = detectOwner(post.creator_name);
-
     // Randomise the count between 3 and 5 so daily messages don't feel like
     // a template. Variety reduces fatigue on the receiving side without
     // changing the underlying intent.
@@ -1649,7 +1645,6 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
         content: post.content_text,
         creator_name: post.creator_name,
       },
-      owner: ownerInfo.owner,
       comments,
       webhook_configured: !!process.env.GOOGLE_CHAT_WEBHOOK_URL,
     });
@@ -1722,16 +1717,6 @@ router.post('/posts/:postId/send-to-google-chat', async (req: Request, res: Resp
 // problem we can add a creator_post_comments table; until then, freshness >
 // caching complexity.
 
-// Map a creator's stored name to the commenter_profile voice entry. The two
-// managed accounts share their first name with the commenter_profile rows
-// seeded in migrations ("Iker", "Unai"), so a substring match is enough and
-// resilient to the post-creator's full name including surnames.
-function voiceProfileNameForCreator(creatorName: string | null | undefined): 'Iker' | 'Unai' | null {
-  const n = (creatorName || '').toLowerCase();
-  if (n.includes('iker')) return 'Iker';
-  if (n.includes('unai')) return 'Unai';
-  return null;
-}
 
 // Group a flat Unipile comment list into top-level + replies, mark threads
 // where the post author already replied so the UI can collapse those.
@@ -2143,17 +2128,11 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
     if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
     const post = postQ.rows[0];
 
-    const voiceName = voiceProfileNameForCreator(post.creator_name);
-    if (!voiceName) {
-      return res
-        .status(400)
-        .json({ error: `No voice profile mapped for creator "${post.creator_name}"` });
-    }
-    const profile = await CommenterProfileModel.getByName(voiceName);
+    const profile = await CommenterProfileModel.get();
     if (!profile) {
       return res
         .status(400)
-        .json({ error: `commenter_profile entry for "${voiceName}" is missing — seed it first` });
+        .json({ error: 'Generic voice profile (Neety) is missing — seed it first' });
     }
 
     const reply = await generateReply({
@@ -2161,7 +2140,9 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
       commentText: String(comment_text),
       commenterName: commenter_name || null,
       commenterHeadline: commenter_headline || null,
-      authorName: voiceName,
+      // The reply is authored by the real post owner (Iker / Unai / Asier),
+      // styled with the single generic Neety voice.
+      authorName: post.creator_name || 'Neety',
       authorVoice: {
         voice_style: profile.voice_style,
         worldview: profile.worldview,
@@ -2176,7 +2157,7 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
     // comment.author.id when we fetched the thread.
     res.json({
       reply,
-      voice: voiceName,
+      voice: profile.name,
       comment_id: commentId,
       mention: commenter_name && commenter_profile_id
         ? { name: String(commenter_name), profile_id: String(commenter_profile_id) }
