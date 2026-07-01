@@ -690,6 +690,16 @@ Rule #4 still stands: NO markdown formatting INSIDE the post (no **bold**, no *i
    (c) VERTICAL PARALLEL ENUMERATION — 2+ sentences with repeated syntax ("El SDR que… / El AE que… / El comercial que…" or "No es X. / No es Y. / No es Z."). Separate LINES, no blank line between them. NEVER pasted in a paragraph with period-space, NEVER on one horizontal line. (This is rule #14.)
    (d) HORIZONTAL STACCATO — 3-5 SHORT items (1-3 words each) acting as a rhythmic flag-block, pasted on ONE line with periods. e.g. "Saber. No hacer." · "Industrial. SaaS B2B. Servicios profesionales." · "Curiosidad. Deseo. Miedo." Test: each item is a SENTENCE (subject+verb) → vertical (c); each item is a bare NOUN/ADJ → horizontal staccato (d).
    GOLDEN RULE: a 300-500 word post must use AT LEAST 3 of the 4 units, ideally all 4. Only (a) → it suffocates. Only (b) → reads like bad poetry. Only (c) → reads like an invoice. The variety IS the prosody.
+
+   SHORT-LINE DEFAULT + LENGTH CEILING (this is the SPINE of the rhythm — apply it BEFORE picking block types above; the #1 failure is long chained sentences). The base unit is the SHORT one-idea line: 8–14 words MAX. If a sentence runs past ~15 words, OR packs two ideas joined by commas / "y" / "que", SPLIT it into two short lines. Never string long sentences one after another.
+     ❌ "aparece la persona que se pasó semanas colgada al teléfono para que ese pedido llegara a existir"
+     ✅ "Aparece la persona de detrás.\\nSemanas colgada al teléfono para que ese pedido existiera."
+     ❌ "un taller que arrancó un abuelo y hoy llena contenedores para medio mundo"
+     ✅ "Un taller que arrancó un abuelo.\\nHoy llena contenedores para medio mundo."
+   NO TWO CONSECUTIVE BLOCKS OF THE SAME TYPE: never place two 2-line blocks back to back, nor two 3-blocks back to back, nor two isolated darts back to back. Alternate the units consciously — dart, then a 2-block, then a dart, then a staccato… Same type twice in a row = flat rhythm.
+   3-BLOCK CAP: at most ONE or TWO vertical 3-blocks in the WHOLE post — no more. Beyond that it reads like a list, not prose. Default to 2-blocks and isolated darts.
+   THE ENDING MUST BREATHE (critical): the CLOSE of the post is NEVER a wall of long sentences stacked together. The last stretch goes to SHORT isolated lines (unit b) — one remate per line — so each hit lands alone and pega. If the final 4–5 lines are long sentences run together → rewrite the ending into short single lines.
+
    HOW TO READ FORMAT REQUESTS:
    - "junta más / compacta / bloques de 2" → MORE (a), do NOT eliminate (b)(c)(d). They want fewer UNNECESSARY single lines, not zero.
    - "más respirado / más aire / separa más" → MORE (b), LESS (a).
@@ -705,7 +715,7 @@ Rule #4 still stands: NO markdown formatting INSIDE the post (no **bold**, no *i
 
    HARDCODED ERROR TO AVOID: by DEFAULT do NOT turn the whole post into 2-line blocks. This rule demands VARIETY: isolated darts + some 3-blocks + 2-blocks ONLY where the idea is one + horizontal staccato where it fits. If on re-read 70%+ of the groups are 2-line blocks → you've fallen into the hardcoded pattern → redistribute.
 
-   MANDATORY STEP BEFORE DELIVERING: count how many groups there are of each type (isolated dart / 2-block / 3-block / separated antithesis / horizontal staccato / isolated quote). If only 1–2 types appear → variety failure, redo it. Then read the post out loud in your head — if it sounds monotone (same block rhythm repeated), redo it. The metric is not "how many lines did I glue" but "are there 3+ distinct formal units across this post?".
+   MANDATORY STEP BEFORE DELIVERING: count how many groups there are of each type (isolated dart / 2-block / 3-block / separated antithesis / horizontal staccato / isolated quote). Two hard gates: (1) if FEWER THAN 3 distinct block types appear → variety failure, rewrite; (2) if MORE THAN 60% of the lines are LONG sentences (15+ words / two ideas) → rewrite, splitting them into short lines. Also confirm no two consecutive blocks share a type, no more than two 3-blocks total, and the ending is short isolated lines (not a wall of long sentences). Then read the post out loud in your head — if it sounds monotone (same block rhythm repeated), redo it. The metric is not "how many lines did I glue" but "are there 3+ distinct formal units, short lines dominating, and a breathing ending?".
 
 19. NATURAL, NON-ROBOTIC BODY LANGUAGE — the body must read like a sharp person actually talking, never like AI. The hook already uses punchy/extreme language (rules #11/#17 own that); THIS rule owns the BODY, which is where AI-tells creep in and where the user keeps having to ask for rewrites because "suena demasiado a IA". The body's enemy is NOT weak language — it's CORPORATE-ROBOTIC language that smells like a language model: balanced, hedgy, abstract, connector-heavy, press-release-flavoured.
    KILL THESE AI-TELLS (the moment one shows up in a draft body, swap it before delivering):
