@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiPost } from '../../hooks/useApi';
-import NetworkPostCard, { CommenterChoice, CustomCommenter } from './NetworkPostCard';
+import NetworkPostCard from './NetworkPostCard';
 
 const BASE = import.meta.env.VITE_API_URL || '';
 
@@ -42,32 +42,6 @@ function formatWeekRange(start: string, end: string) {
   return `${s.toLocaleDateString('en-US', opts)} — ${e.toLocaleDateString('en-US', { ...opts, year: 'numeric' })}`;
 }
 
-const PROFILE_CHOICES: Array<'Iker' | 'Unai' | 'Custom'> = ['Iker', 'Unai', 'Custom'];
-const EMPTY_CUSTOM: CustomCommenter = { headline: '', voice_style: '', worldview: '' };
-
-function readStoredMode(): 'Iker' | 'Unai' | 'Custom' {
-  try {
-    const raw = localStorage.getItem('network.commenter_mode');
-    if (raw === 'Iker' || raw === 'Unai' || raw === 'Custom') return raw;
-  } catch {}
-  return 'Iker';
-}
-
-function readStoredCustom(): CustomCommenter {
-  try {
-    const raw = localStorage.getItem('network.commenter_custom');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return {
-        headline: parsed.headline || '',
-        voice_style: parsed.voice_style || '',
-        worldview: parsed.worldview || '',
-      };
-    }
-  } catch {}
-  return { ...EMPTY_CUSTOM };
-}
-
 export default function WeeklyFeed() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [feed, setFeed] = useState<FeedData | null>(null);
@@ -76,20 +50,6 @@ export default function WeeklyFeed() {
   const [refreshProgress, setRefreshProgress] = useState<{ current: number; total: number; currentName: string | null } | null>(null);
   const progressPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'commented' | 'skipped'>('pending');
-  const [commenterMode, setCommenterMode] = useState<'Iker' | 'Unai' | 'Custom'>(readStoredMode);
-  const [customCommenter, setCustomCommenter] = useState<CustomCommenter>(readStoredCustom);
-
-  useEffect(() => {
-    try { localStorage.setItem('network.commenter_mode', commenterMode); } catch {}
-  }, [commenterMode]);
-
-  useEffect(() => {
-    try { localStorage.setItem('network.commenter_custom', JSON.stringify(customCommenter)); } catch {}
-  }, [customCommenter]);
-
-  const commenterChoice: CommenterChoice = commenterMode === 'Custom'
-    ? { mode: 'Custom', custom: customCommenter }
-    : { mode: commenterMode };
 
   const fetchFeed = useCallback(async () => {
     setLoading(true);
@@ -218,66 +178,6 @@ export default function WeeklyFeed() {
         </div>
       )}
 
-      {/* Commenter selector */}
-      <div className="bg-bg-card border border-border rounded-xl p-3 space-y-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-text-muted font-medium">Commenting as:</span>
-          {PROFILE_CHOICES.map((name) => (
-            <button
-              key={name}
-              onClick={() => setCommenterMode(name)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
-                commenterMode === name
-                  ? 'border-accent/50 bg-accent/10 text-accent'
-                  : 'border-border text-text-muted hover:border-accent/30'
-              }`}
-            >
-              {name}
-            </button>
-          ))}
-          <span className="text-[11px] text-text-muted ml-2">
-            {commenterMode === 'Custom'
-              ? 'Ad-hoc voice — not saved to any profile'
-              : `Using saved "${commenterMode}" profile`}
-          </span>
-        </div>
-
-        {commenterMode === 'Custom' && (
-          <div className="space-y-2 pt-2 border-t border-border/50">
-            <div>
-              <label className="block text-[11px] text-text-muted mb-1">Who you are</label>
-              <input
-                type="text"
-                value={customCommenter.headline}
-                onChange={(e) => setCustomCommenter((c) => ({ ...c, headline: e.target.value }))}
-                placeholder="e.g. Head of Sales @Acme"
-                className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] text-text-muted mb-1">Your writing style</label>
-              <textarea
-                value={customCommenter.voice_style}
-                onChange={(e) => setCustomCommenter((c) => ({ ...c, voice_style: e.target.value }))}
-                rows={2}
-                placeholder="e.g. Direct. Short sentences. Data over opinions. No filler."
-                className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-xs resize-none"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] text-text-muted mb-1">Your angle on the topic</label>
-              <textarea
-                value={customCommenter.worldview}
-                onChange={(e) => setCustomCommenter((c) => ({ ...c, worldview: e.target.value }))}
-                rows={2}
-                placeholder="e.g. Most hiring advice ignores the onboarding cost. I think tenure beats talent."
-                className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/50 text-xs resize-none"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Filter tabs */}
       <div className="flex gap-1 border-b border-border">
         {(['pending', 'all', 'commented', 'skipped'] as const).map((f) => (
@@ -307,7 +207,7 @@ export default function WeeklyFeed() {
       ) : (
         <div className="space-y-3">
           {filteredPosts.map((post) => (
-            <NetworkPostCard key={post.id} post={post} onUpdate={fetchFeed} commenter={commenterChoice} />
+            <NetworkPostCard key={post.id} post={post} onUpdate={fetchFeed} />
           ))}
         </div>
       )}
