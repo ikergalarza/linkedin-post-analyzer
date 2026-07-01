@@ -19,7 +19,7 @@ export interface CommenterProfile {
   updated_at: Date;
 }
 
-const DEFAULT_NAME = 'Iker';
+const DEFAULT_NAME = 'Neety';
 
 export const CommenterProfileModel = {
   async listAll(): Promise<CommenterProfile[]> {
@@ -37,7 +37,7 @@ export const CommenterProfileModel = {
     return rows[0] || null;
   },
 
-  // Legacy singleton accessor — returns the default profile (Iker).
+  // Legacy singleton accessor — returns the default profile (Neety).
   async get(): Promise<CommenterProfile | null> {
     return this.getByName(DEFAULT_NAME);
   },
@@ -82,7 +82,7 @@ export const CommenterProfileModel = {
     return rows[0];
   },
 
-  // Legacy singleton upsert — writes to the default profile (Iker).
+  // Legacy singleton upsert — writes to the default profile (Neety).
   async upsert(data: Partial<CommenterProfile>): Promise<CommenterProfile> {
     return this.upsertByName(DEFAULT_NAME, data);
   },

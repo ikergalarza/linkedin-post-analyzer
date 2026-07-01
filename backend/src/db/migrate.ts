@@ -232,19 +232,28 @@ const migration = `
   );
   CREATE INDEX IF NOT EXISTS idx_snapshots_post ON post_snapshots(post_id, captured_at);
 
-  -- v19: Multiple named commenter profiles — Iker + Unai by default, plus room
-  -- for more. The old singleton becomes 'Iker'; 'Unai' is seeded blank so it can
-  -- be edited from the Profile tab. A profile selector above the Network feed
-  -- lets the user pick which voice generates the comments.
+  -- v19 + v29: single canonical commenter voice named 'Neety'. v19 originally
+  -- seeded per-person 'Iker'/'Unai' rows; v29 collapses to ONE generic voice.
+  -- Fully idempotent and safe to run on every boot (no re-seeding of the retired
+  -- names, and the rename is guarded so it never collides with the unique index).
   ALTER TABLE commenter_profile ADD COLUMN IF NOT EXISTS name TEXT;
-  UPDATE commenter_profile SET name = 'Iker' WHERE name IS NULL;
-  INSERT INTO commenter_profile (name)
-    SELECT 'Iker'
-    WHERE NOT EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'iker');
-  INSERT INTO commenter_profile (name)
-    SELECT 'Unai'
-    WHERE NOT EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'unai');
   CREATE UNIQUE INDEX IF NOT EXISTS uniq_commenter_profile_name ON commenter_profile (LOWER(name));
+  -- Legacy singleton (pre-v19, name IS NULL) becomes the Neety row.
+  UPDATE commenter_profile SET name = 'Neety' WHERE name IS NULL;
+  -- One-time rename of the previously-seeded 'Iker' row → 'Neety' (keeps its
+  -- filled-in content), only when a 'Neety' row does not already exist.
+  UPDATE commenter_profile SET name = 'Neety'
+    WHERE LOWER(name) = 'iker'
+      AND NOT EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'neety');
+  -- Remove the retired per-person rows: 'Unai' always; a stray 'Iker' only once a
+  -- 'Neety' row already exists (so we never delete the sole content row).
+  DELETE FROM commenter_profile WHERE LOWER(name) = 'unai';
+  DELETE FROM commenter_profile WHERE LOWER(name) = 'iker'
+    AND EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'neety');
+  -- Ensure a 'Neety' row exists on a fresh DB.
+  INSERT INTO commenter_profile (name)
+    SELECT 'Neety'
+    WHERE NOT EXISTS (SELECT 1 FROM commenter_profile WHERE LOWER(name) = 'neety');
 
   -- v18: Content-type taxonomy split — posts that mix text with media now get
   -- dedicated combined categories (text_image, text_carousel, text_video,
