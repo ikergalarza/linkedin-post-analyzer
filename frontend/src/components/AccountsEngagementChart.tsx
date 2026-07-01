@@ -42,6 +42,10 @@ interface Props {
   data: DailyPoint[];
   hasImpressions: boolean;
   xTickInterval: number;
+  // Managed-account creator ids in the canonical display order (by onboarding
+  // date), so the pencil rows read Iker → Unai → Asier instead of alphabetical.
+  // Creators not in the list fall back to alphabetical, after the ordered ones.
+  creatorOrder?: string[];
 }
 
 interface HoverState {
@@ -186,7 +190,7 @@ function MetricRow({
   );
 }
 
-export default function AccountsEngagementChart({ data, hasImpressions, xTickInterval }: Props) {
+export default function AccountsEngagementChart({ data, hasImpressions, xTickInterval, creatorOrder }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const chartBoxRef = useRef<HTMLDivElement>(null);
@@ -207,10 +211,12 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
   const effectiveTickInterval = xTickInterval;
 
   // Compute the stable ordering of creators that have at least one post
-  // in the visible range. Alphabetical by creator name so the same
-  // person always sits on the same row (Iker above, Unai below, etc.).
-  // If only one creator is visible (single-account filter, or only one
-  // of them published in the range) the strip collapses to one row.
+  // in the visible range. Primary order = the canonical onboarding order
+  // passed in `creatorOrder` (Iker → Unai → Asier); creators not in that
+  // list fall back to alphabetical after the ordered ones. This keeps each
+  // person on the same row across renders. If only one creator is visible
+  // (single-account filter, or only one published in the range) the strip
+  // collapses to one row.
   const creatorRowOrder = (() => {
     const map = new Map<string, string>(); // id → name
     for (const d of filteredData) {
@@ -218,8 +224,15 @@ export default function AccountsEngagementChart({ data, hasImpressions, xTickInt
         if (!map.has(p.creatorId)) map.set(p.creatorId, p.creatorName);
       }
     }
+    const orderIndex = new Map((creatorOrder || []).map((id, i) => [id, i] as const));
+    const rank = (id: string) => (orderIndex.has(id) ? orderIndex.get(id)! : Number.MAX_SAFE_INTEGER);
     return [...map.entries()]
-      .sort((a, b) => a[1].localeCompare(b[1], undefined, { sensitivity: 'base' }))
+      .sort((a, b) => {
+        const ra = rank(a[0]);
+        const rb = rank(b[0]);
+        if (ra !== rb) return ra - rb;
+        return a[1].localeCompare(b[1], undefined, { sensitivity: 'base' });
+      })
       .map(([id]) => id);
   })();
   const creatorRowIndex = new Map(creatorRowOrder.map((id, i) => [id, i] as const));

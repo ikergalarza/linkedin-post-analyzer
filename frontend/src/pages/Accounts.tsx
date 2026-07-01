@@ -29,6 +29,7 @@ interface ManagedAccount {
   avg_engagement: number;
   max_engagement: number;
   last_post_at: string | null;
+  created_at: string | null;
 }
 
 interface Candidate {
@@ -1159,6 +1160,10 @@ export default function Accounts() {
                 data={dailyChartData}
                 hasImpressions={analytics.totals.total_impressions > 0}
                 xTickInterval={xTickInterval}
+                creatorOrder={(accounts || [])
+                  .slice()
+                  .sort((a, b) => (a.created_at || '').localeCompare(b.created_at || ''))
+                  .map((a) => a.id)}
               />
             )}
           </div>

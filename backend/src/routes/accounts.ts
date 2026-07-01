@@ -158,6 +158,7 @@ router.get('/', async (_req: Request, res: Response) => {
       `SELECT
         c.id, c.name, c.headline, c.profile_image_url, c.followers_count,
         c.location, c.last_scraped_at, c.is_managed, c.unipile_account_id, c.linkedin_id,
+        c.created_at,
         COUNT(p.id)::int AS total_posts,
         COUNT(p.id) FILTER (WHERE p.is_outlier = TRUE)::int AS total_outliers,
         COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
@@ -2367,7 +2368,7 @@ router.get('/followers/sync-status', async (_req: Request, res: Response) => {
          FROM creators c
          LEFT JOIN creator_follower_sync_state s ON s.creator_id = c.id
         WHERE c.is_managed = TRUE
-        ORDER BY c.name`
+        ORDER BY c.created_at`
     );
     res.json({ progress, creators });
   } catch (err: any) {
