@@ -125,24 +125,37 @@ interface PendingResponse {
 // and filter by account CLIENT-SIDE — so switching accounts is instant (no
 // re-scan). Each post shows its first few pending comments with a per-post
 // "ver más", and the whole list paginates with an overall "ver más".
-export default function RepliesPanel({ accounts, selectedCreator, onSelectCreator }: Props) {
-  // No creator_id in the path → fetched once, never re-fetched on account
-  // switch (the backend returns all accounts' groups, each tagged with
-  // creator_id for the client-side filter below).
-  const { data, loading, error, refetch } = useApi<PendingResponse>('/api/accounts/comments/pending');
+export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
+  // Deferred load: entering the Comments tab must NOT auto-fetch (the scan
+  // is slow). We start with an EMPTY choice and show a "elige una cuenta"
+  // prompt; the fetch only fires once the user picks something. `choice` is
+  // local (not seeded from the shared filter) so every entry starts fresh.
+  // Passing null to useApi keeps it idle until then. The scan itself is the
+  // same regardless of account (backend returns all accounts, we filter
+  // client-side), so any choice triggers the one fetch and switching between
+  // accounts afterwards is instant.
+  const [choice, setChoice] = useState<string>('');
+  const { data, loading, error, refetch } = useApi<PendingResponse>(
+    choice ? '/api/accounts/comments/pending' : null
+  );
 
   const GROUPS_PAGE = 5;
   const [visibleGroups, setVisibleGroups] = useState(GROUPS_PAGE);
   useEffect(() => {
     setVisibleGroups(GROUPS_PAGE);
-  }, [selectedCreator]);
+  }, [choice]);
 
   const allGroups = data?.groups ?? [];
   // Client-side account filter — instant, no network.
-  const groups = selectedCreator === 'all'
+  const groups = choice === 'all'
     ? allGroups
-    : allGroups.filter((g) => g.post.creator_id === selectedCreator);
+    : allGroups.filter((g) => g.post.creator_id === choice);
   const totalPending = groups.reduce((n, g) => n + g.pending_count, 0);
+
+  const pick = (v: string) => {
+    setChoice(v);
+    onSelectCreator(v); // keep the shared filter in sync for the other tabs
+  };
 
   return (
     <div className="space-y-4 min-w-0">
@@ -151,31 +164,40 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
         <div className="flex items-center gap-2">
           <span className="text-xs text-text-muted">Cuenta:</span>
           <select
-            value={selectedCreator}
-            onChange={(e) => onSelectCreator(e.target.value)}
+            value={choice}
+            onChange={(e) => pick(e.target.value)}
             className="bg-bg-primary border border-border rounded-md px-2 py-1 text-xs"
           >
+            <option value="" disabled>— elige una cuenta —</option>
             <option value="all">Todas</option>
             {accounts.map((a) => (
               <option key={a.id} value={a.id}>{a.name || 'Unknown'}</option>
             ))}
           </select>
         </div>
-        {data && (
+        {choice && data && (
           <span className="text-xs text-text-secondary">
             <span className="font-semibold text-text-primary">{totalPending}</span> comentario
             {totalPending === 1 ? '' : 's'} sin responder en {groups.length} post{groups.length === 1 ? '' : 's'}
           </span>
         )}
-        <button
-          onClick={refetch}
-          disabled={loading}
-          className="ml-auto text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
-          title="Vuelve a buscar comentarios pendientes en tus posts recientes"
-        >
-          {loading ? '↻ Buscando…' : '↻ Actualizar'}
-        </button>
+        {choice && (
+          <button
+            onClick={refetch}
+            disabled={loading}
+            className="ml-auto text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
+            title="Vuelve a buscar comentarios pendientes en tus posts recientes"
+          >
+            {loading ? '↻ Buscando…' : '↻ Actualizar'}
+          </button>
+        )}
       </div>
+
+      {!choice && (
+        <p className="text-center text-text-muted text-sm py-10">
+          Elige una cuenta arriba para buscar sus comentarios pendientes.
+        </p>
+      )}
 
       {loading && !data && (
         <p className="text-center text-text-muted text-sm py-10">
