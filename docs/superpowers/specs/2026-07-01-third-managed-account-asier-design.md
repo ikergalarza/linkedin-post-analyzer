@@ -108,10 +108,19 @@ converge on one canonical row.
 ### B4. Google Chat owner label (`backend/src/services/googleChat.ts` + call site)
 - `detectOwner()` (~L19–24) currently maps the creator name to `Iker|Unai|unknown` and a
   `suggestedVoice`. The only consumer (`routes/accounts.ts` ~L1605) uses it **only for the
-  notification header**; supportive comments already use a neutral voice.
-- Replace `detectOwner` usage with the real `post.creator_name` for the header
-  (e.g. `NUEVO POST · Asier Olaizola`, falling back to a generic label when the name is
-  null). Remove `detectOwner` and the `OwnerInfo` type (and the now-unused `suggestedVoice`).
+  notification header**; supportive comments already use a neutral voice. The
+  `/google-chat-preview` endpoint returns `owner: ownerInfo.owner`, and the frontend
+  `GoogleChatModal.buildHeader` renders `NUEVO POST <OWNER>` — first name only for Iker/Unai,
+  but the full `creator_name` (uppercased) for the `unknown` fallback. So today Asier would
+  show as `NUEVO POST ASIER OLAIZOLA` (name + surname), inconsistent with the others.
+- Change so **all three read the same way — first name only**: the header shows
+  `NUEVO POST <FIRST_NAME>` where `<FIRST_NAME>` is the first token of `creator_name`,
+  uppercased (→ `NUEVO POST IKER` / `NUEVO POST UNAI` / `NUEVO POST ASIER`), with a generic
+  fallback when `creator_name` is null.
+- Implementation: drop `detectOwner`/`OwnerInfo`/`suggestedVoice`; the endpoint returns the
+  real `creator_name` (already in the payload), and `GoogleChatModal.buildHeader` derives the
+  first name from it. Update the `owner` field/type accordingly (or replace it with just
+  `creator_name`).
 
 ### B5. Network comment generation (`backend/src/routes/network.ts`, `POST /posts/:id/generate-comments`, ~L287–333)
 - Drop the `profile_name` and inline `override` branches. Always resolve the voice via
