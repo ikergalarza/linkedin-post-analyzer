@@ -286,51 +286,21 @@ router.patch('/posts/:id/status', async (req: Request, res: Response) => {
 
 router.post('/posts/:id/generate-comments', async (req: Request, res: Response) => {
   try {
-    // Pick the commenter profile: explicit override wins, then profile_name,
-    // then the legacy default (Iker). Override is a lightweight inline form
-    // with just headline/voice/worldview — everything else left blank.
-    const override = req.body?.override as
-      | { headline?: string; voice_style?: string; worldview?: string }
-      | undefined;
-    const profileName = typeof req.body?.profile_name === 'string' ? req.body.profile_name : null;
-
-    let profilePayload: {
-      headline: string | null;
-      voice_style: string | null;
-      worldview: string | null;
-      signature_moves: string | null;
-      avoid: string | null;
-      tone?: string;
-      expertise?: string | null;
-    };
-
-    if (override && (override.headline || override.voice_style || override.worldview)) {
-      console.log('[COMMENT GEN] Using inline override');
-      profilePayload = {
-        headline: override.headline || null,
-        voice_style: override.voice_style || null,
-        worldview: override.worldview || null,
-        signature_moves: null,
-        avoid: null,
-      };
-    } else {
-      console.log('[COMMENT GEN] Step 1: Getting profile...', { profileName });
-      const profile = profileName
-        ? await CommenterProfileModel.getByName(profileName)
-        : await CommenterProfileModel.get();
-      if (!profile) {
-        return res.status(400).json({ error: 'Please configure your commenter profile first' });
-      }
-      profilePayload = {
-        headline: profile.headline,
-        voice_style: profile.voice_style,
-        worldview: profile.worldview,
-        signature_moves: profile.signature_moves,
-        avoid: profile.avoid,
-        tone: profile.tone,
-        expertise: profile.expertise,
-      };
+    // Single generic "Neety" voice for all network comments — per-person
+    // voices and inline overrides were removed.
+    const profile = await CommenterProfileModel.get();
+    if (!profile) {
+      return res.status(400).json({ error: 'Please configure your commenter profile first' });
     }
+    const profilePayload = {
+      headline: profile.headline,
+      voice_style: profile.voice_style,
+      worldview: profile.worldview,
+      signature_moves: profile.signature_moves,
+      avoid: profile.avoid,
+      tone: profile.tone,
+      expertise: profile.expertise,
+    };
 
     console.log('[COMMENT GEN] Step 2: Profile resolved, getting post...');
 
