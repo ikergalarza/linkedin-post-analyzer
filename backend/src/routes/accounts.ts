@@ -2098,6 +2098,63 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
   }
 });
 
+// GET /comments/debug-raw?creator_id= — DIAGNOSTIC ONLY. Dumps the RAW
+// Unipile comment objects for the most recent posts of a creator, so we
+// can see exactly how Unipile represents special comments (e.g. a GIF /
+// sticker / media-only comment) and fix shapeComment to handle them.
+// Open it, find the GIF comment, paste its raw object back. Remove once
+// the shape is known.
+router.get('/comments/debug-raw', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || null;
+    const params: any[] = [];
+    let creatorFilter = '';
+    if (creatorId && creatorId !== 'all') {
+      params.push(creatorId);
+      creatorFilter = `AND c.id = $${params.length}`;
+    }
+    const { rows: posts } = await pool.query(
+      `SELECT p.id, p.linkedin_post_id, p.hook_text, c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND c.unipile_account_id IS NOT NULL
+          AND p.linkedin_post_id IS NOT NULL
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.published_at IS NOT NULL
+          ${creatorFilter}
+        ORDER BY p.published_at DESC
+        LIMIT 6`,
+      params
+    );
+
+    const out: any[] = [];
+    for (const post of posts) {
+      try {
+        const raw = await unipileService.getPostComments(post.linkedin_post_id, post.unipile_account_id);
+        // Return every raw comment object + its top-level keys so a
+        // GIF/media comment (whatever field it uses) is visible verbatim.
+        out.push({
+          post_id: post.id,
+          hook: (post.hook_text || '').slice(0, 60),
+          comment_count: raw.length,
+          raw_comments: raw.map((c: any) => ({ keys: Object.keys(c), raw: c })),
+        });
+      } catch (err: any) {
+        out.push({ post_id: post.id, error: err?.message });
+      }
+    }
+
+    res.json({
+      note: 'DIAGNOSTIC — find the GIF/media comment and paste its whole raw object back so shapeComment can be taught its shape.',
+      posts: out,
+    });
+  } catch (err: any) {
+    console.error('[accounts/comments/debug-raw]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, res: Response) => {
   try {
     const postId = req.params.postId as string;

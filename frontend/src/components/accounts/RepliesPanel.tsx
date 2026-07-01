@@ -163,10 +163,21 @@ export default function RepliesPanel({ accounts, selectedCreator, onSelectCreato
             {totalPending === 1 ? '' : 's'} sin responder en {groups.length} post{groups.length === 1 ? '' : 's'}
           </span>
         )}
+        {/* TEMP diagnostic — dumps the raw Unipile comment shapes so a
+            GIF/media comment can be parsed. Remove once fixed. */}
+        <a
+          href={`${import.meta.env.VITE_API_URL || ''}/api/accounts/comments/debug-raw${selectedCreator !== 'all' ? `?creator_id=${selectedCreator}` : ''}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-auto text-[10px] text-text-muted hover:text-accent"
+          title="Diagnóstico: vuelca la forma cruda de los comentarios (para arreglar GIFs)"
+        >
+          🐛 debug raw
+        </a>
         <button
           onClick={refetch}
           disabled={loading}
-          className="ml-auto text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
+          className="text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
           title="Vuelve a buscar comentarios pendientes en tus posts recientes"
         >
           {loading ? '↻ Buscando…' : '↻ Actualizar'}
