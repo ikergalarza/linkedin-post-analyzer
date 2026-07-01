@@ -463,9 +463,9 @@ export default function PostCreator() {
     // old -80px under-counted the chrome and pushed Send below the fold.
     <div className="flex flex-col h-[calc(100vh-128px)]">
       {/* Compact header — just the title. The "My Profile" tab was removed:
-          we post for both Iker & Unai and that standalone profile was
-          stale; voice/style now comes from the live managed-account data
-          and the preview identity is chosen per-post below. */}
+          we post for our managed accounts (Iker, Unai, Asier) and that
+          standalone profile was stale; voice/style now comes from the single
+          generic Neety voice and the preview identity is chosen per-post below. */}
       <div className="flex items-center border-b border-border mb-3 pr-1">
         <h1 className="text-lg font-semibold text-text-primary leading-none py-2">Post Creator</h1>
         <button
@@ -492,7 +492,7 @@ export default function PostCreator() {
                   <p className="text-text-muted text-sm mb-5">Based on your outlier data.</p>
                   <div className="max-w-md text-left text-xs text-text-muted space-y-2">
                     <p>🎬 Type <span className="text-accent">"modo texto"</span> for LinkedIn posts or <span className="text-accent">"modo video"</span> for video scripts.</p>
-                    <p>🧑 Say <span className="text-accent">"Iker"</span> or <span className="text-accent">"Unai"</span> to write in that person's voice.</p>
+                    <p>🧑 Elige <span className="text-accent">"Ver como"</span> en el preview para verlo con el nombre y la foto de esa cuenta (Iker, Unai o Asier).</p>
                     <p>🖼️ Also suggests post image ideas, based on what actually works.</p>
                   </div>
                 </div>
@@ -794,7 +794,7 @@ export default function PostCreator() {
                 )}
               </div>
 
-              {/* Persona picker — preview the post as Iker or Unai
+              {/* Persona picker — preview the post as any managed account
                   (name + photo pulled live from Accounts). */}
               {personas.length > 0 && (
                 <div className="flex items-center gap-1.5">
