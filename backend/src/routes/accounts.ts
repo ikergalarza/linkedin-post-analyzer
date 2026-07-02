@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import pool from '../db';
 import { unipileService, LINKEDIN_REACTION_TYPES, LinkedinReactionType, normalizeReactionValue } from '../services/unipile';
 import { enrichPost } from '../services/engagement';
+import { recalcCreatorOutliers } from '../services/outliers';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { maybeTick, capturePostSnapshot } from '../services/postMonitor';
@@ -901,6 +902,34 @@ router.post('/posts/:id/refresh', async (req: Request, res: Response) => {
     const result = await capturePostSnapshot(req.params.id as string);
     res.json(result);
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/accounts/posts/:id/impressions — manually set a post's impression
+// count. Needed to backfill posts published BEFORE we started tracking that
+// account: LinkedIn only returns impressions to the authenticated owner, so
+// those older posts (scraped under another account or before onboarding) have
+// none. Recomputes the creator's outliers so the rate-based metrics for
+// managed accounts (engagement / impressions) stay consistent afterwards.
+router.patch('/posts/:id/impressions', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const impressions = Number(req.body?.impressions);
+    if (!Number.isFinite(impressions) || impressions < 0) {
+      return res.status(400).json({ error: 'impressions must be a non-negative number' });
+    }
+    const { rows } = await pool.query(
+      `UPDATE posts SET impressions_count = $1 WHERE id = $2
+       RETURNING id, creator_id, impressions_count`,
+      [Math.round(impressions), id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = rows[0];
+    await recalcCreatorOutliers(post.creator_id);
+    res.json({ ok: true, id: post.id, impressions_count: post.impressions_count });
+  } catch (err: any) {
+    console.error('[accounts/posts/impressions]', err);
     res.status(500).json({ error: err.message });
   }
 });
