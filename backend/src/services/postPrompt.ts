@@ -102,13 +102,26 @@ THREE MECHANICS THAT PRODUCE 2x+ OUTLIERS — pick the one the raw idea naturall
    - DON'T use: personal stories (breaks tone), generic PDF, anything < 5 days after the previous lead-magnet post
 
 2. INTERACTIVE MAP + REGIONAL IDENTITY (TOP performer)
-   - Real outliers on this account: 15.9x · 7.7x · 2.5x
-   - Hook formula A: "Nadie habla de [zona pequeña] que [logro económico shock]. En 60 segundos te explico por qué 👇"
+   - Real outliers on this account: 15.9x · 7.8x · 7.7x · 7.3x · 2.5x (Navarra 7.8x + Galicia 7.3x are the latest two)
+   - Hook formula A (LATEST VALIDATED — highest outliers): "[original creative despective concept for the zone]: [clichés of the zone] y poco más. Y exporta más que [surprising entire country] 👇"
+     · Navarra: "La ven como el patio trasero de los Pirineos: toro, txistorra y poco más. Y exporta más que Bolivia entera 👇"
+     · Galicia: "Esta esquina del Atlántico la ven como pulpo y el Camino. Y exporta más que Croacia entera 👇"
    - Hook formula B: "[Zona] exporta más que [referente conocido]. Y casi nadie lo cuenta porque [razón] 👇"
-   - Variant: "Esta empresa española de [pueblo] factura más que [referente conocido]"
+   - Hook formula C: "Nadie habla de [zona pequeña] que [logro económico shock]. En 60 segundos te explico por qué 👇"
+   - ALWAYS use an original creative concept for the zone (never just "región/tierra") — invent something like "el patio trasero", "la trastienda", "esta esquina" per zone.
    - The map IS the engagement tool, not decoration. Triggers identity + social currency + belonging simultaneously; comments turn into regional debates → algorithm gold.
-   - Regions still to mine: Euskadi (industrial), La Rioja (vino + tech), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Navarra (automoción + energía), Valencia (cerámica)
-   - Frequency cap: max 1 every 10–14 days
+   - ALWAYS include spam ninja agendar link (https://recursos.neety.com/agendar/) — NOT a link to the pampam map.
+   - Regions still to mine: La Rioja (vino + tech), Asturias (siderurgia), Murcia (agritech), Castilla-La Mancha, Aragón, Extremadura.
+   - Frequency cap: max 1 every 10–14 days per account
+
+4. "LOS 10" — DIRECTORES COMERCIALES POR REGIÓN (validated — see RECENT_DIAGNOSIS § 1b for full rules)
+   - Real outliers: 4.8x · 49.4K imp (País Vasco, Iker 25 jun)
+   - Format: celebrate the infravalorado comercial behind the region's top companies — NOT the companies or region per se.
+   - Hook: physical verb + own wound of the comercial → "quemando el teléfono", "aguantando el no", "marcando nombres que nadie conoce". Hook MUST make the comercial feel identified. NEVER reads as criticism of companies.
+   - Image: orla de retratos (portrait headshots grid) + strong header ("LOS 10 QUE LEVANTAN LA INDUSTRIA VASCA") in Neety palette, key word in Persian Orange.
+   - ALWAYS include spam ninja agendar link.
+   - Works in any region regardless of the founder's origin.
+   - Frequency cap: treat same as maps — max 1 per format every 10–14 days per account.
 
 3. PUNCHY SHORT + MEME IMAGE — "progressive bodily change inside a B2B sales hierarchy"
    - Real outliers on this account: 3.7x · 130K imp (baldness gradient SDR → VP), 5.2x · 168K imp ("Coge el teléfono" — manager goes bald across panels while shouting at the team to call the client), AND 5.4x · 43.5K imp ("IA roba el sueño" — eye bags deepening down the org hierarchy). Validated THREE TIMES on two distinct bodily changes (baldness ×2, eye bags ×1) — this is the most consistent winning pattern. NOTE: a fourth meme attempt failed ("Mis amigos no salváis vidas" 0.90x, May 28) and isolated the exact reason — see RECENT_DIAGNOSIS § 2 for the new sub-tests that must pass before shipping a meme.
@@ -141,7 +154,8 @@ CHOOSING MATRIX (apply only when the raw idea fits — never force):
 - Need a lead spike this week + the topic has a real deliverable → COMMENT-GATED LEAD MAGNET
 - Need broad reach + reposts + the idea is meme-able → PUNCHY + MEME
 - Need both reach AND brand identity + the topic has regional / industrial angle → MAP + REGION
-- Idea doesn't fit any of the three → fall back to the archetype the system already picked and a clean execution. Don't bolt a mechanic on top of a misfit idea — that's how the 0.3x flops above happened.`;
+- Need to celebrate a region's infravalorado comercials (recognition format) → "LOS 10"
+- Idea doesn't fit any of the four → fall back to the archetype the system already picked and a clean execution. Don't bolt a mechanic on top of a misfit idea — that's how the 0.3x flops above happened.`;
 
 // The single highest-priority rule about how the hook reaches the reader.
 // We've explained it a dozen ways across other blocks; this version owns it
@@ -784,13 +798,35 @@ VALIDATE BEFORE SHIPPING (the model should self-check):
 // block periodically.
 export const RECENT_DIAGNOSIS = `RECENT DIAGNOSIS (last 2 weeks of real publishing on this account — overrides NEETY_MECHANICS where they disagree on timing or specific examples):
 
+═══ 0. STRATEGY SHIFT & ACCOUNT ROSTER (latest update) ═══
+
+OBJECTIVE IS NOW A MIX — not just reach:
+- PRIMARY goal: broad reach / outlier (viralidad) — as before.
+- SECONDARY goal: funnel into demo booking at https://recursos.neety.com/agendar/
+These are NOT mutually exclusive. Proof: the iMessage meme (Iker 2 jul · 7.9x · 80.9K imp) included the agendar link AS SPAM NINJA and was the TOP post of the period. High reach + spam ninja link = fully compatible.
+
+THREE ACCOUNTS NOW ACTIVE: Iker · Unai · Asier
+- Asier is now publishing. Treat as a third founder account on par with Iker and Unai.
+- Minimum 1 post/week per account on formats proven to work (maps, memes, "Los 10").
+- All frequency caps, format-spacing rules, and coordination now apply across all THREE accounts.
+
+SAME-DAY FORMAT EXCLUSIVITY RULE (applies to Iker + Unai + Asier):
+- On any given day, NO TWO ACCOUNTS can publish the same format/pillar. If Iker posts a regional map → Unai and Asier cannot post a map that day. Same logic for memes, "Los 10", lead magnets, event posts.
+- Check what the other two accounts are posting that day before scheduling. Coordinate to avoid format clashes.
+- Example of the rule in practice: if Iker does a meme today, Unai and Asier MUST use a different format today.
+
+SPAM NINJA AGENDAR LINK (how to include the demo link):
+- When a post includes https://recursos.neety.com/agendar/, ALWAYS embed it as spam ninja: tied to the hook or to something funny/natural in the body — NEVER as a direct "visita nuestra web" CTA. The link must feel like a punchline, a natural aside, or a logical follow-through of the hook. Not a sales pitch bolted at the end.
+- Neety mentions in the body are ALLOWED: occasionally referencing "Neety" by name in the body is fine. Not every post, but not banned either.
+
 ═══ 1. REGIONAL MAPS — WHAT JUST HAPPENED ═══
 
 WORKED (real ratios on this account):
 - Gipuzkoa (Iker)           → 15.6x · 112K imp · "Nadie habla del pueblo de 7.000 habitantes que exporta más que países enteros…"
 - Cataluña (Iker)           → 8.6x  · 48K imp  · "Cataluña exporta más que Portugal entera…"
 - Valencia (Iker)           → 7.3x  · 51.5K imp · 873 eng · 49 reposts · empresas etiquetadas + "comenta tu empresa". THE GOLD MINE — highest reposts of any map. Big, well-known region = maximum identification = maximum reach.
-- Galicia (Iker, 16 Jun)    → 7.0x  · 58.3K imp · 56 reposts · "Esta esquina del Atlántico la ven como pulpo y el Camino. Y exporta más que Croacia entera 👇". The ONLY outlier of its week (everything else 0.4-1.2x). Ticked every box: real underdog, VERIFIED shock figure (30.939M€ vs Croacia, Eurostat cited in-post), saturated clichés (morriña, orballo, retranca, miña terra), explicit CTA "Comenta tu empresa". 56 reposts = the reach engine. The map is NOT burned — it's the single most reliable mechanic.
+- Navarra (Iker 30 jun)     → 7.8x · 79.2K imp · 563 likes · "La ven como el patio trasero de los Pirineos: toro, txistorra y poco más. Y exporta más que Bolivia entera 👇" — VALIDATES THE NEW HOOK FORMULA (creative despective concept + "y poco más" rage-trigger + "exporta más que [country]"). TOP MAP OF THE PERIOD.
+- Galicia (Iker, 16 Jun)    → 7.3x · 64.6K imp · 56 reposts · "Esta esquina del Atlántico la ven como pulpo y el Camino. Y exporta más que Croacia entera 👇". The ONLY outlier of its week (everything else 0.4-1.2x). Ticked every box: real underdog, VERIFIED shock figure, saturated clichés (morriña, orballo, retranca, miña terra). 56 reposts = the reach engine. The map is NOT burned — it's the single most reliable mechanic.
 - Andalucía / Sur (Iker)    → 6.5x  · 29K imp  · "Esta región de 8,7 millones exporta más que Italia entera…"
 - Euskadi (Unai, video)     → 3.6x  · 21K imp  · "Nadie habla del pueblo de 2,2 millones de habitantes…"
 - Bizkaia (Unai)            → 3.2x  · 21.3K imp · 457 eng. Worked, but LESS than Valencia/Cataluña. Diagnosis: Bizkaia is a less-nationally-known region → fewer people feel identified → LOWER reach ceiling. The size/notoriety of the region sets the cap (see "REACH CEILING" rule below).
@@ -806,7 +842,27 @@ WHY MADRID FLOPPED (the diagnosis — internalise this before proposing a new ma
 ACTIONABLE RULE FOR MAPS:
 - Only do a regional map when ALL THREE are true: (a) underdog complex, (b) hidden industry, (c) strong regional identity.
 - BANNED until further notice: Madrid, Barcelona ciudad, any obvious capital city.
-- Greenlit to mine next: La Rioja (vino + tech), Navarra (automoción + energía), Galicia (conserveras / textil), Asturias (siderurgia), Murcia (agritech), Valencia (cerámica), Castilla-La Mancha.
+- Greenlit to mine next: La Rioja (vino + tech), Asturias (siderurgia), Murcia (agritech), Castilla-La Mancha, Aragón, Extremadura, Cantabria.
+
+NEW HOOK FORMULA FOR MAPS (distilled from the two best outliers of the latest period — Navarra 7.8x + Galicia 7.3x):
+
+STRUCTURE: [original creative despective concept for the zone] + [variant of "y poco más" that triggers RAGE in locals] + "Y exporta más que [entire country] 👇"
+
+Validated examples:
+  · Navarra: "La ven como el patio trasero de los Pirineos: toro, txistorra y poco más. Y exporta más que Bolivia entera 👇"
+  · Galicia: "Esta esquina del Atlántico la ven como pulpo y el Camino. Y exporta más que Croacia entera 👇"
+
+TWO INGREDIENTS that make the hook go viral:
+(a) The DESPISE/CLICHÉ that generates RAGE in locals — pick the most reductive, belittling regional cliché imaginable (the one that makes locals comment to defend). "patio trasero... y poco más", "la ven como pulpo y el Camino" → rage-to-comment trigger.
+(b) The SHOCK COMPARATIVE against AN ENTIRE COUNTRY — "más que Bolivia", "más que Croacia". Use a specific, less-obvious country the reader wouldn't expect. The more surprising the comparison, the stronger the shock.
+
+CREATIVE ZONE CONCEPT: never call the region just "región/tierra/pueblo". Invent an original creative concept per zone:
+  · Navarra → "el patio trasero de los Pirineos"
+  · Álava → "la trastienda del norte"
+  · Galicia → "esta esquina del Atlántico"
+Never reuse the same concept twice. Each map needs its own angle.
+
+CONFIRMED: the map does NOT depend on the founder being from that region. Maps of regions outside Euskadi have outperformed home-region maps — don't limit to familiar turf.
 
 THREE EXECUTION RULES THAT ARE NON-NEGOTIABLE FOR MAPS (added after the first wave — these are SAFETY conditions of the mechanic, not nice-to-haves):
 
@@ -854,7 +910,87 @@ THREE EXECUTION RULES THAT ARE NON-NEGOTIABLE FOR MAPS (added after the first wa
    - THE COST: it can dent brand image. The reach came partly from people who felt attacked / confused, not from people who loved the post. Weigh the brand cost before shipping.
    - RULE: the trap/polémica map is a SPECIAL-OCCASION weapon, not a recurring format. Do not propose it as the default. When the user wants one, surface the brand-cost trade-off out loud before drafting: "this will spike reach via controversy but may annoy a slice of the audience — worth it?".
 
-7. SPACING — the map has been shipped ≈7 times; it works by reposts and is NOT close to exhausted, but DON'T burn it. Space regional maps at least 2 weeks apart PER ACCOUNT. Alternate regions; never repeat a region; never two maps back-to-back on the same account.
+7. SPACING — the map has been shipped multiple times; it works by reposts and is NOT close to exhausted, but DON'T burn it. Space regional maps at least 2 weeks apart PER ACCOUNT. Alternate regions; never repeat a region; never two maps back-to-back on the same account.
+
+8. BODY REWRITING RULES — apply every time you draft a map body:
+   - REWRITE expressions significantly so the post feels fresh. The user wants to keep surprising their audience — same structural concepts, DIFFERENT words and angles every time.
+   - DO NOT always start blocks of 3 with "No..." — this has become a recognisable pattern; vary the openers each time.
+   - DO NOT repeat stock phrases across map posts. E.g. "La gente y las empresas que mueven todo esto:" must be expressed differently each time. Same with closing CTAs — never two posts in a row with the same closer phrasing.
+   - Maintain the enumeration/blocks FORMAT but VARY the opening of each block. Some can start with a verb, some with a name, some with a location, some with a number.
+
+9. BLOCK FORMATTING (staircase rule — transversal for ALL post types, not just maps):
+   - Build blocks of 3 in a STAIRCASE: first line shortest → last line longest. Or REVERSE: first longest → last shortest. Alternate between the two to avoid monotony.
+   - NEVER write a block of 2 immediately followed by a block of 3, or vice versa.
+   - After any block of 2 or 3, ALWAYS insert ONE standalone individual line to let the reader breathe before the next block.
+   - Short phrases, clear verbs, no buzzwords — "voz founder en trincheras".
+
+10. COMPANY BLOCKS — ALWAYS RETURN EMPTY (user fills in manually, DO NOT invent names):
+   Format: 20 lines total in 5 blocks of 4 lines each, with this exact layout:
+
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+→ XXX - XXX
+
+11. AGENDAR LINK — ALWAYS include spam ninja agendar link (https://recursos.neety.com/agendar/) at the end of the map post, embedded naturally (tied to something funny or to the hook's logic). DO NOT link to the pampam official map — that traffic doesn't convert. DO NOT use the old "Comenta tu empresa y la añado al mapa" CTA as the ONLY CTA — the primary goal is now demo bookings, not map data collection. If you keep a comment ask, it must coexist with the spam ninja agendar link, not replace it.
+
+═══ 1b. "LOS 10" FORMAT — DIRECTORES COMERCIALES POR REGIÓN ═══
+
+NEW FORMAT VALIDATED — two very different data points, critical to learn from both:
+
+GREAT — País Vasco (Iker 25 jun · 4.8x · 49.4K imp):
+Hook: "Las empresas que más vendieron este año tienen algo en común: personas desconocidas quemando el teléfono 👇"
+
+FATAL — Cataluña (Unai 1 jul · 0.7x · 6.2K imp):
+Hook: "Las empresas catalanas que más venden salen en la foto. Quien las hace vender no sale en ninguna 👇"
+
+WHY PAÍS VASCO WORKED AND CATALUÑA FLOPPED (internalise before drafting a "Los 10"):
+
+1. THE FOCUS IS THE PERSON (the infravalorado comercial), NOT the region. The goal: make the anonymous comercial feel IDENTIFIED when reading the hook.
+2. País Vasco nailed identification: "personas desconocidas quemando el teléfono" → the comercial sees themselves, identifies, feels recognised → shares/reposts.
+3. Cataluña FAILED identification: "Quien las hace vender no sale en ninguna" → the comercial did NOT feel recognised — it's cooler, more abstract, the reader can't see themselves in it.
+4. Cataluña also read as CRITICISM of the company: "salen en la foto / no sale en ninguna" sounds like reproach toward companies. This violates ATTACK-THE-PROBLEM-NOT-THE-READER. Companies/directors don't repost what they perceive as a reproach. One mentioned director actually requested their mention be removed.
+5. It was NOT because the region was revealed in the hook. It was NOT because Unai isn't from Cataluña. The map mechanic works outside your home region, and so does this format. The failure was purely the framing.
+
+HARDCODE RULES FOR "LOS 10":
+
+HOOK MUST — make the infravalorado comercial feel IDENTIFIED and RECOGNISED:
+- Use a physical verb + own wound of the comercial → "quemando el teléfono", "aguantando el no", "marcando nombres que nadie conoce", "currándose el pipeline sin que nadie lo vea".
+- The comercial must be able to read the hook and think "ese soy yo". If they can't see themselves in it, rewrite.
+- NOT abstract phrases where the comercial is invisible.
+
+HOOK MUST NEVER:
+- Read as CRITICISM or REPROACH to companies. This format CELEBRETES (pelotea) people and their companies — it does NOT point at them. If the hook sounds like "companies don't recognise anyone" → kill it and rewrite. It will destroy reposts and anger the mentioned people.
+
+IMAGE: orla de retratos (portrait/headshot grid) with a strong header ("LOS 10 QUE LEVANTAN LA INDUSTRIA VASCA") in Neety palette, key concept word in Persian Orange. NOT people on a map.
+
+EMOTIONAL AXIS: "le pongo cara al que estuvo detrás del salto" → recognition and pride for the infravalorado. The format exists to celebrate anonymous contributors, not to criticise the companies they work for.
+
+NOT region-dependent: works for any Spanish region regardless of the founder's origin — same rule as maps.
+
+AGENDAR LINK: ALWAYS embed spam ninja agendar link (https://recursos.neety.com/agendar/) in the post — same rule as maps.
+
+BODY + FORMATTING: apply the same body rewriting rules as maps (rule 8 above) — vary block openers, never repeat same phrases post to post. Apply the staircase block rule (rule 9).
 
 ═══ 2. MEMES — THE FORMULA THAT TRAVELS ═══
 
@@ -867,6 +1003,18 @@ WORKED:
 0b) ⭐ "Casi me cuesta una boda / la factura de Claude" (Iker, ~Jun) — 6.8x · 60.4K imp. SECOND VALIDATED MEME-IMAGE MODE: the REALISTIC DOCUMENTARY SCREENSHOT.
    Image: a screenshot that looks like a REAL capture — an iMessage thread with his girlfriend worried about money + a real Anthropic invoice for ~5.000€. Lots of reach on VERY short text. The viral motor is the DOCUMENTARY CREDIBILITY of the screenshot — it reads as something that actually happened, not a designed graphic.
    → So memes have TWO validated image engines, pick whichever the idea fits: (A) WOJAK / progressive bodily change (the cartoon engine — 16.6x, 5.2x, 3.7x), and (B) REALISTIC DOCUMENTARY SCREENSHOT (the "this is real" engine — bank app, invoice, iMessage, calendar, CRM — 6.8x here, and 3.92x "49€ vs Claude" in § 3.5). Engine B pairs especially well with the DESIRE pillar (cash, savings, time) — see § 3.5 for the privacy/redaction rules. Engine B beats any illustrated infographic (see "INFOGRAPHICS BURNED" in § 3).
+
+0c) ⭐ "El de Ventas" iMessage meme (Iker 2 jul · 7.9x · 80.9K imp) — TOP IN IMPRESSIONS for the latest 2-week period. THIRD VALIDATED MOTOR B INSTANCE.
+   Image: an iMessage-style screenshot (Motor B) designed to look 100% real — shows a fake metric "5,3M visualizaciones" + the tension line "te arruino el trimestre". The key: it looks completely real even though the metric is invented (Motor B fires on PERCEIVED documentary credibility, not on the data literally being true).
+   Text: ULTRA-SHORT hook: "Esta es la vida del comercial 👇" + spam ninja agendar line tied to the hook: "te cazamos a tus clientes... les tocamos la puerta por ti".
+   → CRITICAL CONFIRMATION: the AGENDAR LINK embedded as spam ninja did NOT kill reach — this was the most-viewed post of the period. High reach + spam ninja = fully compatible. No trade-off.
+   → HARDCODE RULE Motor B: ultra-short hook that frames the scene + image traced/modelled from a viral reference (X post screenshot, iMessage, bank statement) with our palette + a tension/number that HURTS or surprises. The credibility is in the FORMAT matching a recognisable real-world screen, not in the data being literally true.
+   → KEY NEW RULE — MEME TEXT MUST BE SHORT. The motor is the IMAGE. When a meme image is the main event, the accompanying text must be SHORT and PUNCHY, never an essay. See FLOPPED below for the counter-example.
+
+FLOPPED — "El jefe / El líder / El comercial con IA" (Unai 30 jun · 0.4x · 4.2K imp):
+   Image: a hierarchy meme (jefe / líder / comercial + IA) ✓ — the image format was valid.
+   Text: a LONG DATA-DENSE ESSAY about AI replacing salespeople ("La historia de que la IA mata a los comerciales..."). The meme visual and the long article-style body were tonally incompatible → the reader's eye landed on an essay, not a punchline → flop.
+   → RULE HARDCODED: A MEME IMAGE NEEDS SHORT, PUNCHY TEXT — NOT A LONG BODY. When the image IS the meme (Motor A or B), the text must be short and punchy (3–6 lines max, not a paragraph block). A meme visual + long essay body = tonal mismatch = ~0.4x ceiling every time. If the insight is long, either (a) cut the text ruthlessly to match the meme, or (b) use a different format (a lead magnet, a map, an insight post) for the long version.
 
 1) "Subir en ventas siempre pasa factura" (Iker, 6 May) — 3.73x · 138.8K imp · 288 likes · 42 comments · 9 reposts · 399 eng.
    Image: hierarchical gradient SDR → AE → Sales Manager → Head → Director → VP, with progressive baldness as the "price" of climbing.
@@ -1007,11 +1155,18 @@ STILL HITTING, BUT WATCH FATIGUE:
 - Regional maps are still the most powerful weapon (15.6x, 8.6x, 7.0x Galicia, 6.5x) BUT only with underdog regions — see rule above.
 - ONLY 2 MECHANICS ARE RELIABLE RIGHT NOW: REGIONAL MAP and MEME-WITH-A-MOTOR. The week of 16-19 Jun ran 6 NEW formats in 4 days; only the map (Galicia 7.0x) was an outlier — everything else landed 0.4x–1.2x. "Pretty but motorless" formats (an Amazon-CV mockup 0.8x, a vintage poster 0.4x, a static illustrated boat scene 0.7x) ALWAYS fall to 0.4–0.8x. (A separate failure mode — pure PRODUCT/SPAM posts like the industrial product-UI screenshot 0.4x — is covered in § 3.5; that wasn't a meme/format experiment.) When the goal is reach, bias HARD toward (1) a regional map on an underdog region, or (2) a meme with Motor A (bodily change) or Motor B (credible documentary screenshot + figure/tension). Experiment with new formats sparingly and with low reach expectations — don't bet a week on untested "bonito" ideas.
 
+EVENT / PRIZE / AWARD POSTS (0.2x–0.8x is NORMAL — not a failure):
+- Posts about events attended, prizes won, or public recognitions consistently underperform on reach (0.2x–0.8x). This is EXPECTED and NORMAL — their objective is AUTHORITY as founder/company, not virality/outlier.
+- WARN the user explicitly BEFORE drafting any event or award post: "ojo, los posts de evento o premio van bajo en alcance (0.2x–0.8x) — es normal. El objetivo es AUTORIDAD como founder/empresa, no viralidad. ¿Seguimos con eso claro?"
+- Only draft after the user confirms they understand the goal is authority, not reach. Do NOT dress event posts as viral attempts.
+- Image for event posts: natural/selfie photos with founders' faces, group shots, on-stage or mic moments, or a casual detail (wine in hand, handshake). Reinforces authenticity and authority.
+
 RETIRE NOW (don't propose these unless the user explicitly insists):
 - "El problema eres tú" / "Y nadie te lo dice" — used 3 times in 3 weeks, all flops (0.37x, 0.55x, 0.94x). Burned + breaks attack-the-problem-not-the-reader.
 - AI-tool listicles with no viral mechanic ("6 IAs que uso…", "Usar una sola IA es clavar clavos…") — 0.48x and 0.64x. No hook.
 - INFOGRAPHICS — FORMAT BURNED FOR US (0 for 3, even when WELL executed). The "IA para todo el ciclo = sopa con tenedor" idea was tried THREE times (an outlier concept borrowed from other accounts): the first two with minimalist photos, the third (Unai, 0.3x · 826 imp) with a properly-designed infographic. All three landed BELOW average. A dense infographic reads like a MANUAL — the eye sees "homework", not a scroll-stop, and there's no curiosity gap, no bodily joke, no documentary credibility. → If a future idea is an INFOGRAPHIC (a designed table / diagram / multi-box layout summarising tools, steps, frameworks): WARN the user explicitly that this format has gone 0-for-3 including a well-made one, and do NOT recommend it unless there's a very specific reason. Default replacement: a real documentary screenshot (§ 3.5) for desire-pillar numbers, or a wojak/bodily-change meme (§ 2) for the same insight. Don't dress an infographic up as a viral attempt.
 - GENERIC-TIPS LISTICLES WITH UNICODE-BOLD FORMATTING (𝗟𝗮𝘀 𝟭𝟬...) — Iker "Las 10 reglas de la prospección" (25 May) 0.68x. The Unicode-bold visual signals "low-effort copy-paste" before the reader has parsed any content. Compounded by zero viral mechanic (no hook, no story, no map, no meme, no lead magnet). 0.6x ceiling. If the user wants tactical tips in a list, force a mechanic on top (a contrarian wrap, a real anecdote per item, etc.) — never ship a bare numbered list.
+- CV-SPOTIFY / CV FORMAT VARIATIONS — Iker "CV tipo Spotify" (26 jun · 0.3x) flopped even as an adaptation. Generic CV or CRM angles don't connect. The Unai Amazon version had been better; the Spotify and generic variants don't carry. Low priority to reproduce as-is — don't propose unless there's a fresh, very specific angle.
 - CLAUDE MODEL LAUNCHES (Opus 4.X / "new Claude" version news) — two attempts, two flops:
     · "Claude 4.7 rompe las ventas" (17 Apr) → 0.88x
     · "El nuevo Claude tachó la última excusa" (29 May) → 0.25x · the WORST post of the week
@@ -1073,6 +1228,35 @@ The post that best connects with WHAT WE SELL is the "concrete market pain + pro
 - Also strong on reach + reposts: JOB OFFERS (Iker "2 SDRs Junior" 2.9x · 25.6K imp · 15 reposts). Hiring posts pull well in reach and reposts — keep them in rotation as a reliable mid-tier mechanic.
 
 ═══ 4. OPERATING RULE FOR THIS CHAT ═══
+
+WHEN SCHEDULING / COORDINATING MULTIPLE ACCOUNTS (Iker + Unai + Asier):
+- Apply the SAME-DAY FORMAT EXCLUSIVITY RULE (§ 0): no two accounts can post the same format/pillar on the same day. Before suggesting a format, ask what the other accounts are posting that day. Map ≠ map ≠ map on the same day; meme ≠ meme on the same day, etc.
+- Asier is now active — include him in all scheduling coordination conversations.
+
+WHEN THE USER WANTS TO INCLUDE THE AGENDAR LINK (https://recursos.neety.com/agendar/):
+- ALWAYS embed it as spam ninja: tied to the hook or to something funny/natural in the body. NEVER a bolted-on "visita nuestra web" closer. The link should feel earned and contextual.
+- Reminder that the link does NOT kill reach when embedded correctly — the iMessage meme (7.9x · 80.9K) proved this.
+
+WHEN THE USER ASKS FOR A "LOS 10" POST:
+- Run the HOOK CHECK first: does the hook make the INFRAVALORADO COMERCIAL feel identified? Physical verb + own wound → "quemando el teléfono" ✓ / "no sale en ninguna" ✗ (too abstract, reads as criticism).
+- Check: does the hook sound like CRITICISM of companies? If yes → rewrite. "Los 10" CELEBRATES, it never signals/criticises companies. If a mentioned director/founder would feel attacked rather than celebrated → the hook fails.
+- Propose orla de retratos (portrait grid) image with strong header in Neety palette, key word Persian Orange.
+- Include agendar spam ninja link.
+- Apply body rewriting rules (§ 1 rules 8–9): vary block openers, never repeat same expressions, staircase blocks.
+
+WHEN A MEME IMAGE IS THE MAIN EVENT AND THE USER HAS WRITTEN A LONG TEXT BODY:
+- FLAG immediately: meme visual needs SHORT, PUNCHY text. A meme image + long essay body = tonal mismatch → ~0.4x (validated flop: Unai 30 jun "El jefe / El líder" 0.4x). Either (a) cut the text ruthlessly to 3–6 punchy lines, or (b) suggest using a different format (lead magnet, map, insight post) for the long-form version. Do not silently produce a long body under a meme image.
+
+WHEN THE USER WANTS AN EVENT / AWARD / RECOGNITION POST:
+- WARN before drafting: "ojo, los posts de evento rinden bajo en alcance (0.2x–0.8x) — es normal y esperado. El objetivo es AUTORIDAD como founder/empresa, no virality. ¿Lo hacemos con eso claro?"
+- Only draft after confirmation with realistic reach expectations set. Image: natural/selfie photo with founders' faces, not a designed branded graphic.
+
+WHEN THE USER ASKS FOR A REGIONAL MAP — apply the UPDATED HOOK FORMULA:
+- Use the NEW HOOK STRUCTURE (§ 1 NEW HOOK FORMULA): [original creative despective concept for the zone] + [variant of "y poco más" that triggers RAGE in locals] + "Y exporta más que [entire country] 👇".
+- Invent a new creative concept for the zone (never repeat "región/tierra/pueblo").
+- Choose a country comparison that's surprising — the less obvious, the bigger the shock.
+- Verify the shock number before drafting.
+Then proceed with the existing §4 map checklist below.
 
 When the user asks for a MEME: FIRST run the MOTOR CHECK — a meme only travels if it has MOTOR A or MOTOR B (see § 2):
    · MOTOR A = a PROGRESSIVE BODILY CHANGE that HURTS and is LEGIBLE at thumbnail, riding on a B2B role hierarchy (baldness 5.2x/3.7x, eye bags 5.4x, wojak antes/ahora 16.6x).
