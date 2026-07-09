@@ -83,7 +83,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 4. **Reveal tardío:** "Sí, hablo de [región]."
 5. **VARÍA las expresiones** frente a mapas anteriores: mismo formato/pilar, palabras y ángulos distintos. Prohibido repetir comodines (ej. "La gente y las empresas que mueven todo esto:" → dilo distinto cada vez). Que se note que es un mapa NUEVO, no un calco.
 
-**Paso 4 — EMPRESAS y PERSONAS a mencionar** (rellenar tú, vía Unipile — antes se dejaba vacío):
+**Paso 4 — EMPRESAS y PERSONAS a mencionar** (las rellena el workflow vía Unipile — antes se dejaba vacío):
 Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona concreta mencionable y **activa** en LinkedIn, ordenadas de mayor a menor probabilidad de interactuar.
 - **Criterios de empresa:** 100-700 empleados (evita megaempresas demasiado corporativas); medianas/grandes, familiares, founder-led o con directivos visibles; sectores industriales (metalurgia, máquina-herramienta, bienes de equipo, automoción, aeronáutica, energía/oil&gas, forja, fundición, calderería, naval/offshore, electrónica, ingeniería, química, caucho, plástico, alimentación industrial…); cubre TODO el territorio (no solo la capital); prioriza exportadoras / presencia internacional.
 - **Persona (en este orden):** 1) CEO / director general / gerente; 2) fundador / presidente / propietario; 3) director comercial / marketing / desarrollo de negocio / export manager.
@@ -96,14 +96,19 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 → Empresa - Persona
 → Empresa - Persona
 ```
-- **Credenciales Unipile:** `account_id = 7F9jXBHXQJyR--5uTD62OQ`; endpoint `GET https://api3.unipile.com:13333/api/v1/accounts` con cabecera `X-API-KEY: <UNIPILE_API_KEY>`. ⚠️ **La API key es un SECRETO: NO va en el repo/skill.** Guárdala en los secretos del proyecto de Cowork (o pásala al runtime) y sustitúyela ahí. Aquí solo el procedimiento.
+- **Ejecución:** **Claude lo ejecuta** vía el conector de Unipile del proyecto de Cowork. Credenciales: `account_id = 7F9jXBHXQJyR--5uTD62OQ`; endpoint `GET https://api3.unipile.com:13333/api/v1/accounts` con cabecera `X-API-KEY: <UNIPILE_API_KEY>`. ⚠️ **La API key es un SECRETO: NO va en el repo/skill.** Vive en los secretos del proyecto de Cowork y se inyecta al runtime. Aquí solo el procedimiento.
 - **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega solo los NOMBRES verificados en el bloque del cuerpo.
 
-**Paso 5 — CTA:** link de agendar en spam ninja (doctrina actual, `global-instructions §4.1`; no el link de pampam).
+**Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
+- El link de agendar (`https://recursos.neety.com/agendar/`) va **tejido de forma natural y graciosa**, atacando un **punto de dolor** del cliente y ofreciendo la solución — usando los **diferenciadores de Neety** (`aboutme §1b`: listado con confianza, contacto por señal, el comercial valida y enseña) para introducirlo. Ni venta directa ni frase corporativa.
+- **Colocación:** **después del bloque de menciones** (o en el punto del cuerpo que quede más coherente para ESE post). **Nunca como última línea.**
+- Ejemplo de tono (variar): *"Vender callado está bien, hasta que otro te roba el cliente. Nosotros te lo cazamos por señal y tú solo cierras: [link]"*.
 
-**Paso 6 — Ensamblar el TEXTO** copy-ready: gancho + cuerpo (3 datos + clichés + reveal) + las 20 empresas en 5×4 + CTA. Corre el pase de validación (§8) en silencio.
+**Paso 6 — CIERRE del post:** una **frase punchy tipo bold statement** que remate el post. **NO** pide comentarios, **NO** hace pregunta, **NO** repite el link. Es un claim fuerte que cierra (p. ej. "Al final las que más venden son las que menos lo cuentan.").
 
-**Paso 7 — CSV para PamPam** (clonar `ref_import_navarra.csv`, en esta misma carpeta — plantilla de referencia sobre Navarra):
+**Paso 7 — Ensamblar el TEXTO** copy-ready, en este orden: **gancho → cuerpo (3 datos + clichés + reveal) → 20 empresas en 5×4 → spam ninja (link agendar) → cierre punchy**. Corre el pase de validación (§8) en silencio.
+
+**Paso 8 — CSV para PamPam** (clonar `ref_import_navarra.csv`, en esta misma carpeta — plantilla de referencia sobre Navarra):
 - **Cálcalo tal cual:** misma estructura de columnas, mismo orden, mismas comillas, mismo formato (incluida la columna `Section` que aparece DOS veces — se mantiene). Cambia solo la info por ser otra ubicación.
 - Solo las 20 empresas que has elegido para el post.
 - **Coordenadas:** formato `"lat, lng"` como string entre comillas, **verificadas** según la dirección real de la sede (se matchea como coordenadas, nunca como dirección, para que Google Places no sobrescriba).
@@ -112,7 +117,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Sin logos/imágenes:** deja el campo de imagen/`Media` VACÍO (los añade el usuario luego). `Sticker` = 🏢.
 - Incluye TODAS las columnas del archivo de referencia (el Match mode sobrescribe el registro entero).
 
-**Paso 8 — Descripción de 2 líneas** para la web del mapa: corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras.
+**Paso 9 — Descripción de 2 líneas** para la web del mapa: corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras.
 
 **OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas**. Nada de imagen.
 
