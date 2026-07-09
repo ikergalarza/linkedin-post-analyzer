@@ -246,7 +246,7 @@ Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección d
 
 - **Mejores días:** martes (mayor outlier ratio), miércoles y jueves cerca. Lunes tibio. Viernes y fin de semana: evitar (feed de ocio).
 - **Mejores horas (hora local de la audiencia):** 11:00-12:00 (pico mañanero), 14:00-15:00 (sobremesa), 18:00-19:00 (perfiles internacionales).
-- **Cadencia:** 3-5 posts/semana por el conjunto; máx. 1/día por cuenta (dos el mismo día se canibalizan). Recuerda la regla de exclusividad de formato por día entre las 3 cuentas.
+- **Cadencia:** 3-5 posts/semana por el conjunto; máx. 1/día por cuenta (dos el mismo día se canibalizan). Recuerda la exclusividad de CATEGORÍA por día entre las 3 cuentas (peloteo / lead magnet / meme intercalados) — lógica completa en `post-workflow §8`.
 - **Ventana de oro:** primeros 60 min tras publicar. Si no hay 5+ likes / 1-2 comentarios en la primera hora, LinkedIn deja de distribuir. Avisar a 3-5 contactos para comentar sustancioso en los primeros 30 min.
 
 ---

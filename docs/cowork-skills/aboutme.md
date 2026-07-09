@@ -111,7 +111,7 @@ Estos puntos son de identidad estratégica; el detalle operativo está en `globa
 
 - **Objetivo doble (MIX):** ya no es solo alcance/outlier. Ahora es **viralidad + que agenden demo** (https://recursos.neety.com/agendar/). No son excluyentes: el meme iMessage con link de agendar (7.9x · 80.9K) fue el post más visto del periodo.
 - **Mínimo 1 post/semana por cuenta** (Iker, Unai, Asier) sobre formatos ya probados (mapas, memes, "Los 10").
-- **Exclusividad de formato por día:** el mismo día NO se puede repetir el mismo pilar/formato en dos cuentas. Si hoy Iker hace mapa, Unai y Asier no hacen mapa hoy. Igual con memes, "Los 10" y lead magnets.
+- **Exclusividad de CATEGORÍA por día (intercalado):** las 3 cuentas rotan las mismas 3 categorías de pilar — **Peloteo** (mapa regional o "Los 10", cuentan como una sola), **Lead magnet** y **Meme** — pero intercaladas: el mismo día NO se repite categoría en dos cuentas. Cada día las 3 cuentas cubren las 3 categorías distintas; cada cuenta pasa por las 3 a lo largo de la semana. La lógica completa (cuadro latino 3×3, frecuencia, pregunta previa) vive en `post-workflow §8`.
 - **Link de agendar SIEMPRE en spam ninja**, atado al hook o a algo gracioso del cuerpo — nunca como venta directa.
 - **Mencionar Neety en el cuerpo está permitido** de vez en cuando (no en cada post, pero no prohibido).
 

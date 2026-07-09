@@ -14,7 +14,7 @@ Este archivo adapta el marco de "workflows" del playbook interno a la creación 
 ## 1 · El marco, traducido a posts
 Un solo concepto (el **workflow**) y dentro viven el resto:
 - **Workflow** = el guion que ordena el trabajo, estructura fija (no improvisa el proceso a mitad).
-- **Contexto** = de qué come. Aquí = **las 7 skills** (una skill es contexto en MD) + la idea semilla que le das. Sin contexto, trabaja a ciegas.
+- **Contexto** = de qué come. Aquí = **las demás skills** (una skill es contexto en MD) + la idea semilla que le das. Sin contexto, trabaja a ciegas.
 - **Goal** = objetivo que no se suelta. En posts **no hay métrica autónoma que perseguir** (la viralidad no se mide antes de publicar) → los posts caen en el lado "objetivo abierto/creativo = puntos de control", NO en "persigue una métrica". El "objetivo" real de un post es pasar el pase de validación y darte 2-3 variantes para elegir.
 - **Loop** = una etapa critica su propio resultado y lo rehace hasta pasar el listón de calidad. **Aquí el "listón" ES el pase de validación** (`global-instructions §8` + `working-preferences §2`). Este es el encaje perfecto del marco: corre el Loop en silencio antes de entregar.
 
@@ -23,16 +23,16 @@ Un solo concepto (el **workflow**) y dentro viven el resto:
 ## 2 · ¿Workflow o un solo prompt? (no sobre-ingenierices)
 - **UN post suelto → suele bastar UN prompt bien dado** (pilar + cuenta + idea + objetivo). Con las skills cargadas, el modelo ya devuelve 2-3 variantes buenas. Montar un multi-agente para un tuit es matar moscas a cañonazos de verdad.
 - **Monta workflow cuando pasa de 2-3 pasos y ves la película:**
-  - **Lote semanal** (p. ej. 3 posts para Iker/Unai/Asier respetando la exclusividad de formato por día) → workflow **paralelo** (una rama por cuenta) con una comprobación final de que no se repite pilar el mismo día.
-  - **Un mapa o "Los 10"** → workflow **encadenado**, porque la verificación de cifras y el triage de menciones son pasos en serie que condicionan el cuerpo.
+  - **⭐ EL objetivo real = planificador semanal de las 3 cuentas** ("planifícame la semana"): workflow **paralelo** (una rama por cuenta) que intercala categorías de pilar entre cuentas. Es el workflow complejo que da sentido a todo esto — **detallado en §8**. NO montes uno por tipo de post; montas UNO que planifica la semana entera.
+  - **Un post o un mapa suelto** → workflow **encadenado** (o incluso un solo prompt), con el runbook del pilar (§4).
 - **Regla previa del playbook (válida):** antes de montar, imagina "si lo hiciera yo a mano, ¿qué pasos daría?" = el esqueleto (que es justo la receta de §4). Y si algo no está claro, pídele a Claude que te **haga preguntas** para validar el sistema antes de lanzarlo.
 
 ---
 
 ## 3 · Los 2 patrones aplicados a posts
 - **Encadenado (en serie):** un objetivo, camino secuencial, cada paso necesita el anterior. Ej. mapa: idea → **verificar cifras** → hook → cuerpo → imagen → validación. Es el patrón por defecto de un post individual con verificación.
-- **Paralelizado (en abanico):** ramas independientes que corren a la vez y al final se juntan. Ej. lote semanal: rama Iker + rama Unai + rama Asier en paralelo → al final, un chequeo que junta y aplica la exclusividad de formato del día.
-- Dentro de cada rama, los pasos van encadenados (la receta de §4).
+- **Paralelizado (en abanico):** ramas independientes que corren a la vez y al final se juntan. Ej. el planificador semanal (§8): rama Iker + rama Unai + rama Asier en paralelo → al final, un chequeo que aplica el intercalado de categorías del día.
+- Dentro de cada rama, los pasos van encadenados (el runbook del pilar, §4).
 
 ---
 
@@ -118,3 +118,53 @@ El playbook dice "output = acción ejecutada o HTML estudio". Para posts **no**:
 - **Que Claude te diga siempre qué espera de ti para el siguiente paso** (paso 10) → puedes llevar varios hilos a la vez sin recoger contexto de cero.
 - **Dictar por audio** al montar/pedir: das más contexto que tecleando.
 - **Encadenado vs paralelo** como las dos únicas formas de organizar el trabajo.
+
+---
+
+## 8 · EL WORKFLOW REAL: planificador semanal de las 3 cuentas
+> Este es el objetivo de todo lo anterior: **UN solo workflow complejo** que planifica y produce la semana entera para las 3 cuentas a la vez. NO uno por pilar. Los runbooks de §4 son las piezas que este planificador ensambla.
+
+**Por qué se planifican juntas:** Iker, Unai y Asier son fundadores/cofundadores de la MISMA empresa (Neety), sobre el MISMO sector (ventas B2B), con la MISMA voz y los MISMOS pilares. El contenido es prácticamente el mismo entre las 3 siguiendo los mismos outliers → por eso se planifican en bloque y se **intercalan** para no pisarse.
+
+### 8.1 · Las 3 categorías de pilar (unidad de rotación)
+- **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).
+- **LEAD MAGNET** (comment-gated).
+- **MEME** (con motor).
+
+Vídeo, evento y formatos nuevos quedan **fuera de la rotación por defecto**; entran solo si tú lo pides (8.4).
+
+### 8.2 · La regla de intercalado (exclusividad por día = cuadro latino 3×3)
+Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** (nunca dos cuentas la misma categoría el mismo día), y a lo largo de la semana **cada cuenta pasa por las 3**. Ejemplo de reparto:
+
+| Día | Iker | Unai | Asier |
+|-----|------|------|-------|
+| Martes | Peloteo | Lead magnet | Meme |
+| Miércoles | Meme | Peloteo | Lead magnet |
+| Jueves | Lead magnet | Meme | Peloteo |
+
+- **Frecuencia por defecto:** 3 posts/semana/cuenta (tú confirmas la frecuencia al lanzar).
+- **Días/horas por defecto:** martes-jueves; 11:00-12:00 y 14:00-15:00 (hora local). Configurable.
+- **Rota semana a semana** quién hace qué (que no salga idéntico), y **dentro de PELOTEO alterna** mapa vs "Los 10" y cambia región/tema.
+
+### 8.3 · Guardarraíles de espaciado (entre semanas)
+- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta; nunca repetir región.
+- **Lead magnet:** ≥2 semanas por cuenta; nunca dos seguidos ni solapar dos cuentas el mismo día.
+- Para respetarlo el workflow necesita saber qué hizo cada cuenta las últimas 1-2 semanas → o lo **trackea** (un registro/memoria) o **te lo pregunta** antes de asignar. Si no consta, pregunta.
+
+### 8.4 · LA PREGUNTA PREVIA (obligatoria, antes de planificar nada)
+El workflow SIEMPRE arranca preguntando:
+> *"¿Planificamos la semana con los 3 pilares de siempre (peloteo / lead magnet / meme) o quieres meter o probar un formato nuevo esta semana (vídeo, evento, otro)?"*
+- **"Lo de siempre"** → aplica el cuadro latino de 8.2.
+- **"Formato nuevo X"** → lo encaja donde digas y recoloca el resto respetando el intercalado.
+
+### 8.5 · Flujo del workflow (paralelo por cuenta)
+1. **Pregunta previa** (8.4) + confirmar frecuencia y días.
+2. **Proponer la MATRIZ semanal** (tabla cuenta × día × categoría) aplicando 8.2 + 8.3. Para cada celda de PELOTEO, decidir si mapa o "Los 10" y la región/tema.
+3. **[Checkpoint] Enseñarte la matriz** para aprobar o ajustar ANTES de generar (recomendado siempre; imprescindible las primeras semanas).
+4. **Generar los posts en PARALELO** (una rama por cuenta; dentro de cada post, el runbook del pilar §4.2-4.5, encadenado): verificar datos → hook → cuerpo → CTA → concepto de imagen → Loop de validación (§8).
+5. **Entregar:** la matriz + todos los posts, cada uno con su texto en bloque cercado, tag, "por qué", riesgos, concepto de imagen y "revisa estas" (empresas/cifras/menciones). Y **di qué esperas de mí** para el siguiente paso.
+
+### 8.6 · El output por post (lo que te devuelve)
+- **PRIMERO el TEXTO perfecto (gancho + cuerpo)** en bloque cercado, listo para copiar.
+- **Fuera del bloque:** tag de viralidad, "por qué funciona", riesgos y el **CONCEPTO DE IMAGEN** (un párrafo listo para el generador).
+- **La imagen en sí:** si Cowork puede generarla, en el mismo run; si no, el párrafo es el entregable y la generas tú. **No tienes que "decírselo a Cowork" aparte** — el concepto de imagen sale con cada post porque el runbook lo incluye (paso 7 / paso imagen de cada runbook).
