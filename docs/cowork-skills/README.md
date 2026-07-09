@@ -16,6 +16,9 @@ Skills de artefacto (cargar según el post lo pida):
 6. **images** — concepto de imagen: 3 registros, paleta + tipografía + palabra naranja, calcar referencia, sistema meme, infografías quemadas.
 7. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
 
+Orquestación:
+8. **post-workflow** — cómo montar el workflow en Cowork y la RECETA cronológica paso a paso de un post (encadenado/paralelo, cuándo un workflow vs. un prompt, y los gates donde el sistema se para y te devuelve el control). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
+
 ## Estado / pendiente
 - **`outliers-database` §3** ya está **relleno** con el snapshot cross-creator del Explorer (2026-07-09): recetas hook×estructura×tono, distribuciones, aperturas/cierres, estilo, formato, timing y banco de remix. Fuente: `docs/explorer completo.pdf`.
 - **Sigue pendiente:** el split por cuenta Neety (Iker vs Unai vs Asier) — el export es cross-creator, no por cuenta propia. Y el refresco periódico del snapshot (los ratios decaen).
