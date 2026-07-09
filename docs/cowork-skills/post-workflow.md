@@ -97,7 +97,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 → Empresa - Persona
 → Empresa - Persona
 ```
-- **Ejecución:** **Claude lo ejecuta** vía el conector de Unipile del proyecto de Cowork. Credenciales: `account_id = 7F9jXBHXQJyR--5uTD62OQ`; endpoint `GET https://api3.unipile.com:13333/api/v1/accounts` con cabecera `X-API-KEY: <UNIPILE_API_KEY>`. ⚠️ **La API key es un SECRETO: NO va en el repo/skill.** Vive en los secretos del proyecto de Cowork y se inyecta al runtime. Aquí solo el procedimiento.
+- **Ejecución y credenciales:** **Claude lo ejecuta** vía Unipile. Las credenciales **NO van en el repo** — ya están puestas como **variables de entorno del entorno de Cowork "Iker"**: la **API key** de Unipile, la **URL/DSN base** (host + puerto) y el **account_id**. Léelas de ahí en el runtime (nombres del tipo `UNIPILE_API_KEY`, `UNIPILE_DSN`/URL, `UNIPILE_ACCOUNT_ID` — usa las que estén configuradas; si no las encuentras, lista las env vars del entorno). Construye las llamadas (`GET {DSN}/api/v1/linkedin/company/{identifier}`, cabecera `X-API-KEY`) con esos valores. Nunca hardcodees la key. (Respaldo si el account_id no estuviera en env: `7F9jXBHXQJyR--5uTD62OQ` — no es secreto sin la key.)
 - **URLs de LinkedIn:** al sacar cada empresa+persona, captura también la **URL de LinkedIn de la empresa** (su página) y la **URL del perfil de la persona**. Sirven para la guía de menciones del output (Paso 10).
 - **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega los NOMBRES en el bloque del cuerpo **y, aparte, la guía de menciones con los enlaces** (Paso 10) para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 
