@@ -98,7 +98,8 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 → Empresa - Persona
 ```
 - **Ejecución:** **Claude lo ejecuta** vía el conector de Unipile del proyecto de Cowork. Credenciales: `account_id = 7F9jXBHXQJyR--5uTD62OQ`; endpoint `GET https://api3.unipile.com:13333/api/v1/accounts` con cabecera `X-API-KEY: <UNIPILE_API_KEY>`. ⚠️ **La API key es un SECRETO: NO va en el repo/skill.** Vive en los secretos del proyecto de Cowork y se inyecta al runtime. Aquí solo el procedimiento.
-- **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega solo los NOMBRES verificados en el bloque del cuerpo.
+- **URLs de LinkedIn:** al sacar cada empresa+persona, captura también la **URL de LinkedIn de la empresa** (su página) y la **URL del perfil de la persona**. Sirven para la guía de menciones del output (Paso 10).
+- **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega los NOMBRES en el bloque del cuerpo **y, aparte, la guía de menciones con los enlaces** (Paso 10) para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 
 **Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
 - El link de agendar (`https://recursos.neety.com/agendar/`) va **tejido de forma natural y graciosa**, atacando un **punto de dolor** del cliente y ofreciendo la solución — usando los **diferenciadores de Neety** (`aboutme §1b`: listado con confianza, contacto por señal, el comercial valida y enseña) para introducirlo. Ni venta directa ni frase corporativa.
@@ -120,7 +121,13 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 **Paso 9 — Descripción de 2 líneas** para la web del mapa: corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras.
 
-**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas**. Nada de imagen.
+**Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): lista de las 20, cada una con el **enlace de LinkedIn de la empresa** y el **enlace del perfil de la persona**, para que el usuario encuentre a la correcta sin confundirse con homónimos. Formato:
+```
+1. Empresa — [nombre] · linkedin.com/company/…  |  Persona — [nombre] · linkedin.com/in/…
+2. …
+```
+
+**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas** · (4) la **guía de menciones con enlaces** (empresa + persona). Nada de imagen.
 
 **Guardarraíles de elección de región (Paso 0):** greenlit (La Rioja, Asturias, Murcia, Aragón, Cantabria, Extremadura, Castilla-La Mancha…); baneadas capitales obvias (Madrid 0.55x); ≥2 semanas desde el último mapa de esa cuenta; nunca repetir región.
 
