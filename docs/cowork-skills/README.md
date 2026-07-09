@@ -1,6 +1,6 @@
 # Cowork skills — Neety LinkedIn post creator
 
-Las 5 skills que destilan todo lo que sabe la herramienta (Post Creator +
+Las skills que destilan todo lo que sabe la herramienta (Post Creator +
 análisis de outliers) para escribir posts **fuera de la app**, en Claude Cowork.
 Fuente de verdad del "cerebro": `backend/src/services/postPrompt.ts` y el
 `SYSTEM_PROMPT` de `backend/src/routes/chat.ts`.
@@ -10,17 +10,18 @@ Fuente de verdad del "cerebro": `backend/src/services/postPrompt.ts` y el
 2. **brand-voice** — el CÓMO suena (voz Neety literal, regla de audiencia, tabla anti-IA).
 3. **working-preferences** — flujo de trabajo, entrega en bloques cercados, validación proactiva.
 4. **global-instructions** — el QUÉ y el CÓMO-mecánico del post de TEXTO: hooks, cuerpos, 4 mecánicas, timing. (Va en un campo de input de solo texto; imagen y vídeo salieron a sus propias skills.)
-5. **outliers-database** — datos vivos de arquetipos, hooks y ratios (la evidencia empírica).
+5. **outliers-database** — datos vivos de arquetipos, hooks y ratios (la evidencia empírica; §4 = histórico real por cuenta, §5 = evidencia externa ColdIQ).
+6. **swipe-file** — los TEXTOS completos de nuestros mejores outliers reales, anotados por pilar y estructura. Cargar al escribir hooks/cuerpos para copiar la anatomía exacta.
 
 Skills de artefacto (cargar según el post lo pida):
-6. **images** — concepto de imagen: 3 registros, paleta + tipografía + palabra naranja, calcar referencia, sistema meme, infografías quemadas.
-7. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
+7. **images** — concepto de imagen: 3 registros, paleta + tipografía + palabra naranja, calcar referencia, sistema meme, infografías quemadas.
+8. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
 
 Orquestación:
-8. **post-workflow** — cómo montar el workflow en Cowork, la RECETA cronológica por pilar, y **§8 el workflow real: planificador semanal de las 3 cuentas** (categorías peloteo/lead magnet/meme, intercalado 3×3, pregunta previa). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
+9. **post-workflow** — cómo montar el workflow en Cowork, la RECETA cronológica por pilar, y **§8 el workflow real: planificador semanal de las 3 cuentas** (categorías peloteo/lead magnet/meme, intercalado 3×3, pregunta previa). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
 
 Estado (no doctrina):
-9. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que persistirlo cada semana (re-subir / commit).
+10. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que persistirlo cada semana (re-subir / commit).
 
 ## Estado / pendiente
 - **`outliers-database` §3** ya está **relleno** con el snapshot cross-creator del Explorer (2026-07-09): recetas hook×estructura×tono, distribuciones, aperturas/cierres, estilo, formato, timing y banco de remix. Fuente: `docs/explorer completo.pdf`.

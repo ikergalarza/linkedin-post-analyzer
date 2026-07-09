@@ -151,51 +151,60 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 
 ---
 
-## 4 · Histórico destilado (lo que ya sabemos, cuenta a cuenta)
+## 4 · Histórico destilado, cuenta a cuenta (refrescado con export real abr-jul 2026)
 
-Esto es lo validado hasta la fecha en las cuentas gestionadas (Iker, Unai; Asier arranca sin histórico grande). Sirve de prior hasta refrescar §3.
+> Datos reales del export "Top posts (50)" por cuenta (primeros ~4 meses publicando). Los **textos completos** de estos ejemplos, anotados por estructura, están en la skill **`swipe-file`** — cárgala al escribir hooks/cuerpos. Aquí viven los números; allí la anatomía.
+
+### Stats por cuenta (abr-jul 2026)
+| Cuenta | Posts | Outliers | Hit rate | Media × | Pico × | Impresiones | Media imp/post |
+|---|---|---|---|---|---|---|---|
+| **Iker Galarza** | 48 | 15 | 31% | 3.00x | 16.5x | 1.18M | 24.7K |
+| **Unai Arambarri** | 34 | 6 | 18% | 2.19x | 17.0x | 518K | 15.2K |
+| **Asier Olaizola** | 1 | 0 | 0% | 0.96x | 1.0x | 4.3K | 4.3K (arranca) |
+- **Mix de formato publicado:** Texto+Foto 66 · Texto solo 15 · Carrusel 1 · Vídeo 1. (Foto domina; texto solo también rinde.)
+- **Hook por engagement medio:** `bold_claim 399` · `curiosity_gap 314` · `other 221` · `data_shock 159` · `story_opener 106` · `list_promise 102` · `rhetorical_q 86` · `direct_callout 50` · `analogy 35`. → **bold_claim y curiosity_gap** son los tipos que más engagement traen.
 
 ### Mapas regionales (la mecánica más fiable)
-- Gipuzkoa 15.6x · 112K · "pueblo de 7.000 hab que exporta más que países enteros".
-- **Navarra 7.8x · 79.2K · 563 likes** (fórmula "patio trasero de los Pirineos… y poco más. Exporta más que Bolivia").
-- Cataluña 8.6x · 48K · "exporta más que Portugal entera".
-- Valencia 7.3x · 51.5K · 49 reposts — la mina de oro (región grande y conocida = máxima identificación).
-- **Galicia 7.3x · 64.6K · 56 reposts** ("esta esquina del Atlántico… exporta más que Croacia").
-- Andalucía 6.5x · 29K · "8,7 millones exporta más que Italia entera".
-- Euskadi (Unai, vídeo) 3.6x · 21K.
-- Bizkaia 3.2x · 21.3K (región menos conocida → techo menor).
-- País inventado / trampa (Unai) 7.1x · 70.8K (alcance vía polémica — arma de ocasión).
-- FLOP: Madrid 0.55x · 4.5K (sin efecto underdog, sin dato shock en línea 1, sin identidad defensiva).
+- **Gipuzkoa (Iker, 1er mapa) 12.9x · 112.7K · 1.2K likes · 90 reposts** — "pueblo de 7.000 hab que exporta más que países enteros".
+- **Navarra (Iker) 7.7x · 79.2K · 563 likes · 46 reposts** — molde gold ("patio trasero de los Pirineos… y poco más. Exporta más que Bolivia") → ver `swipe-file §2.1`.
+- Galicia (Iker) 7.3x · 64.6K · 60 reposts ("esquina del Atlántico… más que Croacia").
+- Cataluña (Iker) 7.1x · 48.9K · 145 comentarios · 35 reposts.
+- Valencia (Iker) 6.8x · 51.5K · 49 reposts.
+- Andalucía (Iker) 5.4x · 29.8K · 51 reposts.
+- **País inventado / trampa (Unai) 8.1x · 78.7K** — alcance vía curiosidad + guessing game (arma de ocasión).
+- Euskadi (Unai, VÍDEO) 3.7x · 21.1K · 37 reposts.
+- Bizkaia (Unai) 3.3x · 21.3K.
+- Álava "trastienda del norte" (Unai) 2.1x · 20.1K (región menos conocida → techo menor).
+- **FLOP de repetición: "país inventado" REMIX (Iker) 1.2x** — repitió el concepto de Unai semanas después y se hundió. Nunca repetir concepto. (Madrid/capitales siguen baneadas por precedente.)
 
-### Memes
-- **"Caja de herramientas engorda pero el comercial cierra peor" (Unai) 16.6x · 165.5K — el mejor post del histórico.** Wojak antes/ahora (Chad→soyjak) calcado de plantilla viral.
-- **iMessage "El de Ventas" (Iker 2 jul) 7.9x · 80.9K — TOP en imps del último periodo.** Motor B (screenshot creíble con "5,3M visualizaciones" + "te arruino el trimestre") + link de agendar en spam ninja (no mató alcance).
-- Factura Claude 5.000€ (Iker) 6.8x · 60.4K (Motor B documental).
-- "Coge el teléfono" / calvicie del manager (Iker) 5.17x · 168.9K — mejor en comentarios (85) y reposts (22).
-- "IA roba el sueño" / ojeras (Iker) 5.37x · 43.5K (valida ojeras como cambio corporal).
-- "Subir en ventas" / calvicie SDR→VP (Iker) 3.73x · 138.8K.
-- "49€ vs Claude" captura de banco (Unai) 3.92x (Motor B, pilar deseo).
-- FLOPS instructivos: "El jefe/El líder/El comercial con IA" 0.4x (imagen de meme válida + cuerpo largo tipo ensayo → mismatch). "Comercial ha engordado" 1.12x (cambio corporal bien, pero timeline de UNA persona en vez de jerarquía de roles). "Mis amigos no salváis vidas" 0.90x (canas: no duele + no legible a miniatura). "Barco hace aguas" 0.7x y "CV Amazon" 0.8x (sin motor A ni B).
+### Memes (con motor)
+- **"Caja de herramientas engorda" (Unai) 16.9x · 165.5K — el mejor post del histórico** (Motor A, stacking de tools) → `swipe-file §1.1`.
+- **"Cold calling enterrado en vida" (Iker) 16.4x · 168.9K** (Motor A, jerarquía de roles + staccato "Nadie. Llamó. Al. Cliente.") → `swipe-file §1.2`.
+- **"Subir en ventas / calvicie SDR→VP" (Iker) 13.5x · 138.8K** (Motor A, cambio corporal en escalera de roles) → `swipe-file §1.3`.
+- Factura Claude / "casi me cuesta una boda" (Iker) 5.9x · 60.4K (Motor B, screenshot documental).
+- "El humo de la IA reemplaza al comercial / Mikel vuelve" (Iker) 4.4x · 45.0K (Motor A/B).
+- "49€ vs Claude por 20€/día" (Unai) 2.9x · 28.1K (Motor B, pilar deseo).
+- FLOPS: **"El comercial B2B ha engordado" (Unai) 2.6x** — cambio corporal OK pero timeline de UNA persona (2018→2026) en vez de jerarquía de roles → rinde 6x menos que el meme de jerarquía. "Claude del grupo de pádel" (Unai) 1.5x, "Perder un cliente es arte" (Unai) 1.2x (sátira sin motor).
 
 ### "Los 10"
-- País Vasco (Iker) 4.8x · 49.4K — GENIAL ("personas desconocidas quemando el teléfono").
-- Cataluña (Unai) 0.7x · 6.2K — FATAL (sin identificación + tono percibido como crítica a empresas).
+- **País Vasco (Iker) 4.8x · 49.4K — el molde** ("personas desconocidas quemando el teléfono"; foco en la persona) → `swipe-file §3.1`.
 
-### Lead magnets
-- "Desmonto perfiles" LIVE (Iker) 9.13x · 454-483 comentarios — el mejor lead magnet (entrega pública personalizada + foto real + verbo "desmonto" + CTA explícita).
-- PDF vía comentario (llaves, perfil) 4-5x.
-- FLOPS: "biblia de ventas" (todo en una caja) 1.2x; "arsenal" 0.63x; "destripo perfiles" caricatura 0.2x; "traduzco al vendedor más cringe" (sin valor) 1.1K imp.
+### Lead magnets (comment-gated)
+- **"Vibe prospecting" (Unai) 10.0x · 632 comentarios** — récord de comentarios (CTA `Comenta "vibe"`).
+- **"Desmonto perfiles" LIVE (Iker) 8.5x · 483 comentarios** — el mejor formato (entrega pública personalizada + verbo "desmonto" + CTA `Comenta "desmonta" + tu departamento`) → `swipe-file §4.1`.
+- "Llaves" (Unai 4.6x · 285 comentarios; Iker 4.1x · 232 comentarios), "perfil" (Iker 3.3x · 183 com.), "frase+emoji" (Unai 2.7x · 167 com.), "mensaje" (Iker 2.3x · 129 com.), cold-email "sí en comentarios" (Iker 2.1x · 120 com.).
+- **FLOP: "biblia de ventas" (todo junto) (Iker) 1.2x · 2.3K** — genérico "todo mi material en una caja" → LinkedIn no amplifica aunque comenten. El entregable tiene que ser UNO y específico.
 
-### Otros mecanismos fiables
-- Oferta de empleo (Iker "2 SDRs Junior") 2.9x · 25.6K · 15 reposts (gama media fiable de alcance+reposts).
-- Vibe prospecting / Claude + outbound: 9.7x, 4.95x, 4.43x (curva decae — pausar 7-10 días).
+### Otros
+- Oferta de empleo ("2 SDRs Junior", Iker) 2.5x · 25.6K · 15 reposts (gama media fiable de alcance+reposts).
+- Posts de ronda/evento ("330.000€ levantados") 2.0-2.7x — objetivo autoridad, no viralidad (esperado).
 
-### Patrones de hook confirmados (top 8 virales, 3.6x-15.6x)
-- 50% cero números, 50% exactamente uno, 0% con dos o más.
-- Estructura recurrente: [claim único O métrica única] + [tensión o reframe] + [👇], con un verbo físico (matar, enterrar, perder, reventar, tirar) en al menos una de las dos partes.
+### Patrones de hook confirmados
+- **≤1 número:** 50% cero, 50% exactamente uno, 0% con dos o más.
+- Estructura recurrente: `[claim único O métrica única] + [tensión/reframe] + 👇`, con verbo físico (matar, enterrar, quemar, tirar, reventar) en al menos una parte. El primer salto en blanco va DESPUÉS del gancho.
 
 ### Timing confirmado
-- Mejor día: martes. Mejores horas: 11:00-12:00 y 14:00-15:00 (hora local).
+- Mejor día: martes (miércoles-jueves cerca). Mejores horas: 11:00-12:00 y 14:00-15:00 (hora local).
 
 ---
 

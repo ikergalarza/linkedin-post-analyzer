@@ -50,8 +50,8 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 1. **Input:** pilar · cuenta (Iker/Unai/Asier) · idea semilla · objetivo (`alcance | pipeline`).
 2. **Test gana/pierde + mecánica** (`global-instructions §0`, matriz §4.6) + **chequeo de riesgo** (`working-preferences §2-§3`: región baneada, fatiga de lead magnet, meme sin motor, exclusividad de formato del día). Si hay riesgo → **avisar ANTES** del borrador.
 3. **Verificación de datos** (donde aplique): cifras contra fuente real + empresas/menciones según §4.0.
-4. **Hook:** 2-3 candidatos (`global-instructions §2`).
-5. **Cuerpo:** `§3` + voz `brand-voice`.
+4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras).
+5. **Cuerpo:** `§3` + voz `brand-voice`, con `swipe-file` como molde de estructura (bloques, anáforas, staccato, reveal).
 6. **CTA:** regla del UNO (`§4.5`).
 7. **Imagen:** skill `images` (o `video` si es vídeo).
 8. **Tag de viralidad:** `outliers-database §4` (Neety) primero; §3 solo etiquetado.
