@@ -224,31 +224,16 @@ Exactamente UN cierre: una pregunta que fuerza postura, O un lead-magnet con la 
 
 ---
 
-## 5 · IMÁGENES
+## 5 · IMÁGENES Y VÍDEO → skills aparte
 
-### 5.1 · Formato de salida
-UN párrafo simple en prosa, listo para pegar en un generador. Nombra (tejido natural, en este orden): sujeto principal, acción/expresión, prop clave, texto overlay (con la palabra EXACTA que va en naranja), layout/composición, y el mapeo de roles de color. Sin bullets, sin headers.
+El detalle de imágenes y de vídeo vive ahora en **skills dedicadas**, no en este archivo (este archivo va en un campo de input de solo texto; imágenes y vídeo tienen su propio sitio):
+- **`images`** — formato de salida, los 3 registros (meme dibujado / screenshot documental / foto real), paleta + tipografía + regla de la palabra naranja, variante "calcar la referencia", sistema visual del meme desde cero, infografías quemadas.
+- **`video`** — el vídeo es OTRO artefacto: 3 piezas separadas (caption / texto en pantalla / spoken hook), los 6 patrones de gancho hablado B2B y el playbook estructural de 36 puntos. Las reglas de hook de texto de §2 NO aplican al vídeo.
 
-### 5.2 · Los 3 registros de imagen (elige por tipo de post, no los cruces)
-1. **MEME** → ilustración wojak / cambio corporal (sistema meme). Dibujado es correcto AQUÍ.
-2. **DESEO / NÚMEROS** → screenshot documental real (banco, Stripe, calendario, CRM, factura). Prueba real, no ilustración. Redacta solo lo imprescindible; conserva el chrome visible (logo del banco, tipografía real, números en su formato) — eso carga la credibilidad.
-3. **PERSONAL / LEAD-MAGNET / FOUNDER** → **foto natural real** del autor (cara, oficina), NO caricatura dibujada. La cara real es el motor de credibilidad (Iker "desmonto perfiles" foto real 9.13x vs caricatura 0.2x).
-
-### 5.3 · Constraints de marca (siempre)
-- **Paleta (solo estas tres):** Alabastro `#f9f3ef` (fondo dominante — todas las imágenes se apoyan en esta superficie clara) · Dark Blue `#0c202e` (títulos, texto, linework — la "tinta") · Persian Orange `#ee9363` (highlight / scroll-stop — aplicado con cuentagotas a la palabra o elemento más importante).
-- **Tipografía (solo si la imagen lleva texto):** Bricolage Grotesque para títulos (bold, display) · Switzer para cuerpo. Ninguna otra fuente.
-- **Regla de la palabra naranja:** cuando hay texto, la ÚNICA palabra más importante va en Persian Orange; el resto en Dark Blue sobre Alabastro. Nómbrala explícitamente.
-
-### 5.4 · Sistema visual del meme (solo memes SIN referencia)
-Cuando el usuario pasa referencia → la referencia manda (calcar, §4.3). Solo para memes desde cero:
-- Fondo Alabastro siempre. Linework Dark Blue. Naranja reservado a 3 slots: (a) la corbata del personaje (todos los personajes Neety llevan corbata naranja = firma visual), (b) UNA palabra del título (la última o casi), (c) props narrativos del chiste (rayos de grito ⚡, taza, teléfono, billetes).
-- Grid simétrico (2 columnas × 3-4 filas) u orla de retratos. NO viñetas de cómic con bocadillos.
-- Mismo personaje base repetido y modificado panel a panel (no 6 personas distintas). Camisa blanca + corbata naranja como uniforme.
-- El CAMBIO CORPORAL vive en la imagen; la expresión base es neutra (el cambio comunica la emoción).
-- "Personaje de contraste" en el último panel (el "Mikel" con taza de café) = punchline visual.
-
-### 5.5 · Infografías: FORMATO QUEMADO (0 de 3)
-Una infografía (tabla/diagrama/multi-caja resumiendo herramientas/pasos) va 0-de-3 incluso bien hecha — se lee como "deberes", no scroll-stop. Avisa en voz alta y ofrece alternativa: screenshot documental (para números) o meme wojak (para insight).
+Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección del post:
+- **Paleta (siempre):** Alabastro `#f9f3ef` · Dark Blue `#0c202e` · Persian Orange `#ee9363` (a cuentagotas). Tipografía: Bricolage Grotesque (títulos) + Switzer (cuerpo).
+- **Registro por tipo:** meme → dibujo/calcar referencia · deseo/números → screenshot documental real · personal/founder/lead-magnet → foto real.
+- **Infografías van 0-de-3** — avisa y ofrece screenshot documental o meme en su lugar.
 
 ---
 
@@ -271,4 +256,4 @@ Una infografía (tabla/diagrama/multi-caja resumiendo herramientas/pasos) va 0-d
 ---
 
 ## 8 · Pase de validación (correr en silencio ANTES de cada entrega)
-Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra toda esta stack: pilar único · ley de formato del hook (bloque único ≤210, sin `\n\n`) · calidad del hook (imagen mental / herida / un pilar al máximo) · ancla de sector + claim universal · densidad de números · transición hook→cuerpo sin preámbulos · enumeración con saltos · variedad rítmica (3+ unidades, líneas cortas, cierre que respira) · cuerpo anti-IA · mecánica correcta con su motor · menciones positivas · atacar el problema no al lector · sin markdown dentro · registros de imagen + paleta/tipografía · RECENT_DIAGNOSIS (región underdog, filtro de meme, fatiga de lead magnet) · ¿el borrador repite un patrón que ya flopeó en la cuenta? Ver `working-preferences` §2 para las dos salidas (fix silencioso vs aviso de riesgo) y la trampa de la edición parcial.
+Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra toda esta stack: pilar único · ley de formato del hook (bloque único ≤210, sin `\n\n`) · calidad del hook (imagen mental / herida / un pilar al máximo) · ancla de sector + claim universal · densidad de números · transición hook→cuerpo sin preámbulos · enumeración con saltos · variedad rítmica (3+ unidades, líneas cortas, cierre que respira) · cuerpo anti-IA · mecánica correcta con su motor · menciones positivas · atacar el problema no al lector · sin markdown dentro · imagen/vídeo según sus skills (`images` / `video`: registros + paleta/tipografía; vídeo = 3 piezas + 6 spoken hooks) · RECENT_DIAGNOSIS (región underdog, filtro de meme, fatiga de lead magnet) · ¿el borrador repite un patrón que ya flopeó en la cuenta? Ver `working-preferences` §2 para las dos salidas (fix silencioso vs aviso de riesgo) y la trampa de la edición parcial.

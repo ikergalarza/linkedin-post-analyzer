@@ -131,7 +131,7 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 
 ### 3.8 · Formato visual (los 500 top por formato)
 `Texto+Foto 60% (n=300, ~13.6x)` · `Texto+Vídeo (n=113, ~13.3x)` · `Texto solo (n=61, ~13.6x)` · `Texto+Doc (n=17, ~11.6x)` · `Texto+Carrusel (n=9, ~11.1x)`.
-> Foto domina en volumen, pero **texto solo rinde igual de alto (~13.6x)**: no todo post necesita imagen. Doc y carrusel quedan por debajo (coherente con "infografías 0/3" de `global-instructions §5.5`).
+> Foto domina en volumen, pero **texto solo rinde igual de alto (~13.6x)**: no todo post necesita imagen. Doc y carrusel quedan por debajo (coherente con "infografías 0/3" de la skill `images §7`).
 
 ### 3.9 · Timing (confirma y afina §4/§7)
 - **Horas por outlier-ratio (señal FUERTE):** `11:00 → 8.21x` (la mejor con diferencia) · `12:00 → 7.10x` · `14:00 → 7.03x` · `09:00 → 6.75x` · `05:00 → 6.66x` · `07:00 → 6.57x` · `15:00 → 6.12x` · `16:00 → 6.02x`. → Refuerza la ventana **11:00-12:00 y 14:00-15:00** ya recomendada; 11:00 es el pico claro.
@@ -220,5 +220,5 @@ En Claude Code local (tu máquina), sin egress restringido, tanto la URL de Post
 - [x] §3 relleno con el snapshot cross-creator del Explorer (2026-07-09): recetas, distribuciones de hook/estructura/tono, aperturas/cierres, estilo, formato, timing y banco de remix.
 - [x] Patrones de lenguaje (densidad outlier vs normal): incorporados en §3.7 (el hallazgo contraintuitivo de menos autoridad/urgencia/"tú").
 - [x] Banco de remix de OTRAS cuentas: §3.10 (curado a los top relevantes para B2B; el resto de las ~150 págs de ejemplos se dejan fuera a propósito).
-- [ ] **Split por cuenta Neety** (qué arquetipo rinde mejor en Iker vs Unai vs Asier): el Explorer da ratios cross-creator, no el desglose por cuenta propia. Sigue pendiente hasta poder consultar `/api/creators/:id/stats` por cuenta (o pegar ese desglose). Asier aún sin histórico grande.
+- [~] **Split por cuenta Neety** (qué arquetipo rinde mejor en Iker vs Unai vs Asier): **NO es bloqueante** — §4 ya atribuye los formatos por cuenta cualitativamente (mapas/lead magnets/iMessage = sobre todo Iker; wojak "caja de herramientas" 16.6x, "país inventado" 7.1x, "49€ vs Claude" = Unai; Asier arranca sin histórico grande). Lo único que falta es el desglose estadístico fino por cuenta, que requeriría `/api/creators/:id/stats`. Con lo que hay (§3 + §4) se elige arquetipo de sobra.
 - [ ] **Refresco periódico:** este snapshot es de 2026-07-09; los ratios decaen. Reexporta el Explorer cuando quieras actualizarlo.

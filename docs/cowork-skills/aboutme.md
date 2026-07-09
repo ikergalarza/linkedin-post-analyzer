@@ -73,18 +73,21 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 ### 👤 Iker Galarza — Cofundador (parte comercial)
 - Rol: **cofounder**, lado **comercial / ventas**.
 - LinkedIn: **https://www.linkedin.com/in/ikergalarza/**
+- Headline: *Co-Founder @ Neety | El radar de IA que encuentra a tu cliente ideal por específico que sea y detecta el momento exacto para contactarlo | Software para empresas industriales y servicios B2B*
 - Es el autor del playbook interno "LinkedIn no es una lotería" — la voz de referencia original del sistema.
 - Perfil más veterano en publicación: la mayoría de los outliers históricos de mapas y memes salieron de su cuenta (Navarra 7.8x, Galicia 7.3x, iMessage "El de Ventas" 7.9x, "desmonto perfiles" 9.13x, etc.).
 
 ### 👤 Unai Arambarri — CEO
 - Rol: **CEO** de Neety.
 - LinkedIn: **https://www.linkedin.com/in/unai-arambarri-yeregui/**
+- Headline: *Founder & CEO @ Neety | El próximo motor de ventas B2B no se contrata, se despliega | Software de IA autónoma para prospección en empresas industriales y de servicios B2B*
 - Publica sobre ventas B2B igual que los demás.
 - Outliers propios validados: mapa "país inventado" (polémica) 7.1x, wojak "caja de herramientas engorda" 16.6x (el mejor post del histórico), "49€ vs Claude" 3.92x.
 
 ### 👤 Asier Olaizola — Cofundador (parte de programación / técnica)
 - Rol: **cofounder**, lado **programación / técnico / producto**.
 - LinkedIn: **https://www.linkedin.com/in/asier-olaizola/**
+- Headline: *Co-Founder @ Neety | Construyo la IA de ventas que te trae reuniones, no promesas | Software para empresas industriales y de servicios B2B*
 - **Empezó a publicar en julio 2026** — es la cuenta más nueva, todavía sin histórico propio grande de outliers.
 - Se trata con **la misma paridad** que Iker y Unai: mismos formatos, misma voz, misma coordinación.
 
@@ -118,8 +121,8 @@ Estos puntos son de identidad estratégica; el detalle operativo está en `globa
 
 Estos datos viven en la base de datos de la herramienta, **no en el código**, así que no los tengo con exactitud. Si los quieres precisos en esta skill, pásamelos y los incorporo:
 
-- [ ] **Headline exacto** de cada perfil (Iker / Unai / Asier) tal cual aparece en LinkedIn.
-- [ ] **Nº de seguidores** actual de cada cuenta.
+- [x] **Headline exacto** de cada perfil (Iker / Unai / Asier) — incorporados arriba en §2.
+- [x] **Nº de seguidores:** da igual. Decisión del usuario: si el contenido es bueno, tira igual. No se trackea como variable.
 - [x] **URL de LinkedIn** de las tres cuentas (Iker `in/ikergalarza`, Unai `in/unai-arambarri-yeregui`, Asier `in/asier-olaizola`).
 - [x] Apellido completo: Iker = "Galarza", Unai = "Arambarri". Ya reflejados arriba.
 - [ ] Cualquier matiz de posicionamiento personal que quieras diferenciar entre las tres personas (a día de hoy comparten voz y ángulo).
