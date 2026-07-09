@@ -146,10 +146,10 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
 - **Días/horas por defecto:** martes-jueves; 11:00-12:00 y 14:00-15:00 (hora local). Configurable.
 - **Rota semana a semana** quién hace qué (que no salga idéntico), y **dentro de PELOTEO alterna** mapa vs "Los 10" y cambia región/tema.
 
-### 8.3 · Guardarraíles de espaciado (entre semanas)
+### 8.3 · Guardarraíles de espaciado (entre semanas) → vía el HISTORIAL
 - **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta; nunca repetir región.
 - **Lead magnet:** ≥2 semanas por cuenta; nunca dos seguidos ni solapar dos cuentas el mismo día.
-- Para respetarlo el workflow necesita saber qué hizo cada cuenta las últimas 1-2 semanas → o lo **trackea** (un registro/memoria) o **te lo pregunta** antes de asignar. Si no consta, pregunta.
+- **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **persistir** ese archivo cada semana (re-subirlo a Cowork / commit al repo) para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
 
 ### 8.4 · LA PREGUNTA PREVIA (obligatoria, antes de planificar nada)
 El workflow SIEMPRE arranca preguntando:

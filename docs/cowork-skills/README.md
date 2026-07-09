@@ -17,7 +17,10 @@ Skills de artefacto (cargar según el post lo pida):
 7. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
 
 Orquestación:
-8. **post-workflow** — cómo montar el workflow en Cowork y la RECETA cronológica paso a paso de un post (encadenado/paralelo, cuándo un workflow vs. un prompt, y los gates donde el sistema se para y te devuelve el control). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
+8. **post-workflow** — cómo montar el workflow en Cowork, la RECETA cronológica por pilar, y **§8 el workflow real: planificador semanal de las 3 cuentas** (categorías peloteo/lead magnet/meme, intercalado 3×3, pregunta previa). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
+
+Estado (no doctrina):
+9. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que persistirlo cada semana (re-subir / commit).
 
 ## Estado / pendiente
 - **`outliers-database` §3** ya está **relleno** con el snapshot cross-creator del Explorer (2026-07-09): recetas hook×estructura×tono, distribuciones, aperturas/cierres, estilo, formato, timing y banco de remix. Fuente: `docs/explorer completo.pdf`.
