@@ -58,17 +58,65 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 9. **Loop = pase de validación en silencio** (`global-instructions §8`): autocrítica hasta pasar el listón.
 10. **Entrega:** 2-3 variantes en bloques cercados (`working-preferences §1`); empresas/menciones rellenas y marcadas (§4.0); lista de "revisa estas"; y **di qué esperas del usuario** para el siguiente paso.
 
-### 4.2 · Runbook MAPA REGIONAL (encadenado)
-1. Elegir región: con identidad fuerte + notoriedad; **greenlit** (La Rioja, Asturias, Murcia, Aragón…), **baneadas** capitales obvias (Madrid 0.55x). Chequear ≥2 semanas desde el último mapa de esa cuenta y no repetir región.
-2. **Concepto creativo de zona** original (nunca "región/tierra/pueblo"; ej. "el patio trasero de los Pirineos"). No repetir concepto usado antes.
-3. **Cifras shock:** listarlas y **verificarlas** contra fuente real (ICEX, puerto, INE, Eurostat, IDESCAT/EUSTAT/IECA). Citar la fuente dentro del post. No seguir sin verificar.
-4. **Empresas (§4.0):** rellenar 5 bloques de 4 (`→ Empresa - sector/dato`) con exportadoras reales de la zona, con fuente; marcar las dudosas. Nunca inventar.
-5. **Menciones @ (§4.0):** solo decisores/mandos con actividad reciente comprobada.
-6. **Hook:** fórmula `[concepto despectivo de zona] + [clichés] + "y poco más". Y exporta más que [país entero sorprendente] 👇` (`global-instructions §4.1`).
-7. **Cuerpo:** saturar con 4-8 clichés locales tejidos; voz Neety; escalera y ritmo (`§3`).
-8. **CTA:** link de agendar en spam ninja (NO el de pampam).
-9. **Imagen:** foto del mapa de pampam con logos de empresas encima (`images §8`).
-10. Validación (§8) → entregar 2-3 variantes + "revisa estas cifras/empresas".
+### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
+> **Input del usuario:** SOLO la región. Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
+> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) una **descripción de 2 líneas** para la web del mapa.
+> **La IMAGEN la hace el usuario** (captura de la web PamPam). El workflow **NO genera ni menciona imagen** para mapas. (Por eso el mapa NO usa la skill `images`.)
+
+**Paso 1 — Iterar el GANCHO** (estructura archi-probada, ver `swipe-file §2.1`). Empieza SIEMPRE por aquí. Fórmula:
+`[concepto original despectivo/gracioso de la zona] + [2-3 clichés locales] + [frase-rabia entre comillas] . Y exporta más que [PAÍS] entero 👇`
+- **Concepto:** nunca "región/pueblo/tierra". Inventa uno gracioso/despectivo (validados: "esquina del Atlántico", "patio trasero de los Pirineos", "trastienda del norte"). No repitas un concepto ya usado.
+- **Clichés:** de ESA región (Sevilla → feria y playa; Valencia → paella y Fallas).
+- **Frase-rabia entre comillas:** "y poco más" / "buena para un pintxo-pote y para irse" → sube la indignación defensiva del local (lo que le hace comentar). Está validado en Navarra y Álava.
+- **Cierre:** `Y exporta más que [PAÍS] entero 👇` (el país sale del Paso 2).
+
+**Paso 2 — Elegir y VERIFICAR el PAÍS de comparación** (sub-procedimiento — antes NO lo tenía):
+1. Busca el **dato oficial más reciente de exportaciones de la provincia/región** en euros, **citando fuente** (EUSTAT / ICEX / Datacomex).
+2. Lista los países que exportan **un poco MENOS** que esa cifra → candidatos a "XXX exporta más que [país] entero". Para cada candidato: **nombre, cifra y año**.
+3. **Elige el país que MÁS frene el scroll** para nuestra audiencia (director industrial español de 50-60): prioriza países **conocidos** y que **sorprendan** (que parezcan "más grandes/importantes" que una provincia — Bolivia, Croacia, Portugal, Luxemburgo, Honduras, Italia han funcionado). Itera varios y quédate con el más impactante.
+4. **INNEGOCIABLE — el dato tiene que ser real y verificable, con fuente.** Nunca sacrifiques veracidad por impacto: un dato mal → el primer comentario de un local corrigiéndote hunde el post (de 6x a 0.5x). Entre dos países igual de impactantes, el de dato más sólido.
+
+**Paso 3 — CUERPO** (fiel a `swipe-file §2.1` + voz `brand-voice`, VARIANDO expresiones):
+1. Setup corto justo tras el gancho (sin preámbulo en la línea 2).
+2. **Los 3 datos numéricos en lista (1/2/3), cada uno con FUENTE citada** (Eurostat, EUSTAT, Banco Mundial, Datacomex…). El primero suele ampliar la comparación del gancho.
+3. Cuerpo saturado de **clichés de la zona nueva** (4-8, tejidos), anáfora de negación ("No paga X. No las pagan Y."), frases-oficio, y variedad de formato (bloques de 2/3, líneas sueltas, escalera).
+4. **Reveal tardío:** "Sí, hablo de [región]."
+5. **VARÍA las expresiones** frente a mapas anteriores: mismo formato/pilar, palabras y ángulos distintos. Prohibido repetir comodines (ej. "La gente y las empresas que mueven todo esto:" → dilo distinto cada vez). Que se note que es un mapa NUEVO, no un calco.
+
+**Paso 4 — EMPRESAS y PERSONAS a mencionar** (rellenar tú, vía Unipile — antes se dejaba vacío):
+Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona concreta mencionable y **activa** en LinkedIn, ordenadas de mayor a menor probabilidad de interactuar.
+- **Criterios de empresa:** 100-700 empleados (evita megaempresas demasiado corporativas); medianas/grandes, familiares, founder-led o con directivos visibles; sectores industriales (metalurgia, máquina-herramienta, bienes de equipo, automoción, aeronáutica, energía/oil&gas, forja, fundición, calderería, naval/offshore, electrónica, ingeniería, química, caucho, plástico, alimentación industrial…); cubre TODO el territorio (no solo la capital); prioriza exportadoras / presencia internacional.
+- **Persona (en este orden):** 1) CEO / director general / gerente; 2) fundador / presidente / propietario; 3) director comercial / marketing / desarrollo de negocio / export manager.
+- **Actividad (filtro duro):** que en los **últimos 3-6 meses** haya publicado, comentado o reposteado en LinkedIn. Si nadie de la empresa está activo, **descarta esa empresa** y coge otra. Verifica que el cargo sea ACTUAL.
+- **Orden:** por probabilidad de interacción (actividad reciente > cercanía industria/territorio/exportación > perfil personal visible > tamaño adecuado).
+- **Salida:** lista limpia, sin explicación, en **5 bloques de 4 líneas** (20 en total), formato exacto:
+```
+→ Empresa - Persona
+→ Empresa - Persona
+→ Empresa - Persona
+→ Empresa - Persona
+```
+- **Credenciales Unipile:** `account_id = 7F9jXBHXQJyR--5uTD62OQ`; endpoint `GET https://api3.unipile.com:13333/api/v1/accounts` con cabecera `X-API-KEY: <UNIPILE_API_KEY>`. ⚠️ **La API key es un SECRETO: NO va en el repo/skill.** Guárdala en los secretos del proyecto de Cowork (o pásala al runtime) y sustitúyela ahí. Aquí solo el procedimiento.
+- **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega solo los NOMBRES verificados en el bloque del cuerpo.
+
+**Paso 5 — CTA:** link de agendar en spam ninja (doctrina actual, `global-instructions §4.1`; no el link de pampam).
+
+**Paso 6 — Ensamblar el TEXTO** copy-ready: gancho + cuerpo (3 datos + clichés + reveal) + las 20 empresas en 5×4 + CTA. Corre el pase de validación (§8) en silencio.
+
+**Paso 7 — CSV para PamPam** (clonar `ref_import_navarra.csv`, en esta misma carpeta — plantilla de referencia sobre Navarra):
+- **Cálcalo tal cual:** misma estructura de columnas, mismo orden, mismas comillas, mismo formato (incluida la columna `Section` que aparece DOS veces — se mantiene). Cambia solo la info por ser otra ubicación.
+- Solo las 20 empresas que has elegido para el post.
+- **Coordenadas:** formato `"lat, lng"` como string entre comillas, **verificadas** según la dirección real de la sede (se matchea como coordenadas, nunca como dirección, para que Google Places no sobrescriba).
+- **Descripciones:** en español, **una sola frase** por empresa, foco industrial/exportador, sin relleno.
+- **Agrupa por `Section`** en categorías limpias de sector.
+- **Sin logos/imágenes:** deja el campo de imagen/`Media` VACÍO (los añade el usuario luego). `Sticker` = 🏢.
+- Incluye TODAS las columnas del archivo de referencia (el Match mode sobrescribe el registro entero).
+
+**Paso 8 — Descripción de 2 líneas** para la web del mapa: corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras.
+
+**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas**. Nada de imagen.
+
+**Guardarraíles de elección de región (Paso 0):** greenlit (La Rioja, Asturias, Murcia, Aragón, Cantabria, Extremadura, Castilla-La Mancha…); baneadas capitales obvias (Madrid 0.55x); ≥2 semanas desde el último mapa de esa cuenta; nunca repetir región.
 
 ### 4.3 · Runbook "LOS 10" (encadenado)
 1. Chequear frecuencia/exclusividad como en mapa.

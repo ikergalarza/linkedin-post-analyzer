@@ -162,7 +162,7 @@ Outliers reales: 15.9x, 7.8x (Navarra), 7.7x, 7.3x (Galicia), 6.5x…
 → Empresa - sector/dato
 (… ×5 bloques; usa → [PENDIENTE · no verificado] donde no haya fuente)
 ```
-**Imagen:** foto del mapa de pampam tal cual, con logos de empresas sobre el mapa.
+**Imagen:** la genera el USUARIO (captura de la web PamPam) — el workflow NO genera ni describe imagen para mapas. Lo que sí entrega el workflow es un **CSV** para importar en PamPam (las 20 empresas del post). Receta completa y sub-procedimientos (país, empresas vía Unipile, CSV) en `post-workflow §4.2`.
 
 ### 4.2 · "LOS 10" — directores/comerciales por región
 Outlier validado: País Vasco 4.8x · 49.4K. Formato NUEVO a repetir.
