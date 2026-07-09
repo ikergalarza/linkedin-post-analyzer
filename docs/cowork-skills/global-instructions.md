@@ -246,8 +246,11 @@ Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección d
 
 - **Mejores días:** martes (mayor outlier ratio), miércoles y jueves cerca. Lunes tibio. Viernes y fin de semana: evitar (feed de ocio).
 - **Mejores horas (hora local de la audiencia):** 11:00-12:00 (pico mañanero), 14:00-15:00 (sobremesa), 18:00-19:00 (perfiles internacionales).
-- **Cadencia:** 3-5 posts/semana por el conjunto; máx. 1/día por cuenta (dos el mismo día se canibalizan). Recuerda la exclusividad de CATEGORÍA por día entre las 3 cuentas (peloteo / lead magnet / meme intercalados) — lógica completa en `post-workflow §8`.
-- **Ventana de oro:** primeros 60 min tras publicar. Si no hay 5+ likes / 1-2 comentarios en la primera hora, LinkedIn deja de distribuir. Avisar a 3-5 contactos para comentar sustancioso en los primeros 30 min.
+- **Cadencia:** por defecto **3 posts/semana por cuenta** (≈9/semana entre las 3); máx. 1/día por cuenta (dos el mismo día se canibalizan). Mínimo absoluto: 1/semana/cuenta. Exclusividad de CATEGORÍA por día entre las 3 cuentas (peloteo / lead magnet / meme intercalados) — lógica completa en `post-workflow §8`.
+- **Ventana de oro:** primeros 60 min tras publicar. Si no hay 5+ likes / 1-2 comentarios en la primera hora, LinkedIn deja de distribuir.
+- **Palanca de las 3 cuentas (interna, gratis):** somos 3 fundadores de la MISMA empresa → Iker, Unai y Asier **se comentan y repostean entre sí** en los primeros 30 min de cada post (comentario sustancioso, no "🔥"). Es el motor de arranque más fiable que tenemos y no cuesta nada.
+- **Comentar antes de publicar:** 30-60 min antes, la cuenta que publica comenta de verdad en 5-10 personas que comentaron su post anterior → les salta la notificación y devuelven el comentario en la ventana de oro (táctica externa validada, `outliers-database §5.2`).
+- **Responder rápido:** contesta a los primeros comentarios en cuanto entran (alimenta la ventana de oro), con la voz de `brand-voice §7` (corto, vocales alargadas, agradecer si elogian).
 
 ---
 
