@@ -168,3 +168,12 @@ El workflow SIEMPRE arranca preguntando:
 - **PRIMERO el TEXTO perfecto (gancho + cuerpo)** en bloque cercado, listo para copiar.
 - **Fuera del bloque:** tag de viralidad, "por qué funciona", riesgos y el **CONCEPTO DE IMAGEN** (un párrafo listo para el generador).
 - **La imagen en sí:** si Cowork puede generarla, en el mismo run; si no, el párrafo es el entregable y la generas tú. **No tienes que "decírselo a Cowork" aparte** — el concepto de imagen sale con cada post porque el runbook lo incluye (paso 7 / paso imagen de cada runbook).
+
+---
+
+## 9 · Cerrar el bucle: medir y aprender (después de publicar)
+El sistema no termina al entregar el post. Para que mejore con el tiempo:
+1. **Registrar el resultado:** cuando un post lleva unos días, apunta en `historial-publicaciones` su **ratio real** (y likes/comentarios/reposts). Así el planificador tiene datos frescos y el espaciado sigue teniendo sentido.
+2. **Destilar el aprendizaje:** si un post **rompe** (muy por encima) o **flopea** (muy por debajo) de lo esperado, saca UNA frase de aprendizaje y proponla para la skill que toque (`outliers-database §4` si es un ratio/patrón, `swipe-file` si es un molde de texto, `global-instructions` si es una regla nueva). No lo dejes solo en la memoria de la conversación.
+3. **Persistir:** el aprendizaje solo cuenta si se guarda en el archivo (commit al repo / re-subida a Cowork). Memoria ≠ archivo (ver README, flujo de actualización).
+4. **Refrescar los ratios:** cada 1-2 meses, reexporta "Top posts" y el Explorer y actualiza §4 y §3 — los ratios decaen y las mecánicas se queman.

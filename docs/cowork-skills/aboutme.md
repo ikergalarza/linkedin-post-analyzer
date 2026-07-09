@@ -93,6 +93,8 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 > ⚠️ **Nota sobre el ángulo técnico de Asier:** aunque su rol es programación, sus posts **siguen siendo sobre ventas B2B** (misma voz Neety, mismo ICP). Su perfil técnico puede aportar credibilidad cuando el post toca el "cómo está construido por dentro" un sistema de outbound, pero el hook y el cuerpo se anclan en ventas, no en ingeniería. No conviertas sus posts en contenido para AI-builders.
 
+> ⚠️ **Arranque de la cuenta de Asier:** empezó en jul 2026 sin histórico → **el outlier ratio aún NO significa nada** en su cuenta (necesita ~4-6 semanas de posts para que LinkedIn fije una baseline). Durante ese periodo, júzgalo por **consistencia y engagement absoluto**, no por el ratio (que puede salir ~1x aunque el post sea bueno). No descartes un formato en su cuenta por un ratio bajo temprano.
+
 ---
 
 ## 3 · Una sola voz para los tres: "voz Neety"
