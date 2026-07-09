@@ -152,19 +152,15 @@ Outliers reales: 15.9x, 7.8x (Navarra), 7.7x, 7.3x (Galicia), 6.5x…
 - **Variante polémica/trampa** (país inventado, 7.1x): arma de ocasión, no la norma. Alcance vía controversia; puede dañar imagen de marca. Saca el trade-off en voz alta antes.
 - **Espaciado:** ≥2 semanas entre mapas por cuenta; nunca repetir región; nunca dos seguidos en la misma cuenta.
 
-**Bloques de empresas:** SIEMPRE vacíos (el usuario los rellena a mano, NO inventar). 20 líneas en 5 bloques de 4:
+**Bloques de empresas:** RELLENAR con empresas reales verificadas (ver `post-workflow §4.0`): exportadoras de la zona sacadas de una fuente real (mapa de pampam / lista del usuario / ICEX / cámara / web con cita). Marca las dudosas y **nunca inventes** — lo que no puedas verificar va como `→ [PENDIENTE · no verificado]`. Formato: 20 líneas en 5 bloques de 4 (`→ Empresa - sector/dato`):
 ```
-→ XXX - XXX
-→ XXX - XXX
-→ XXX - XXX
-→ XXX - XXX
+→ Empresa - sector/dato
+→ Empresa - sector/dato
+→ Empresa - sector/dato
+→ Empresa - sector/dato
 
-→ XXX - XXX
-→ XXX - XXX
-→ XXX - XXX
-→ XXX - XXX
-
-(… ×5 bloques)
+→ Empresa - sector/dato
+(… ×5 bloques; usa → [PENDIENTE · no verificado] donde no haya fuente)
 ```
 **Imagen:** foto del mapa de pampam tal cual, con logos de empresas sobre el mapa.
 
