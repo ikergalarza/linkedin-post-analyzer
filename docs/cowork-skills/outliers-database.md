@@ -199,7 +199,44 @@ Esto es lo validado hasta la fecha en las cuentas gestionadas (Iker, Unai; Asier
 
 ---
 
-## 5 · Cómo pasarme datos frescos (procedimiento)
+## 5 · Evidencia externa cross-mercado — guía ColdIQ (6.750 posts GTM)
+
+> **Qué es:** guía pública de ColdIQ (Michel Lieben) que analizó con Claude Code **6.750 posts** de **25 top creators** de GTM/ventas/IA (8k-864k seguidores), comparando los **2.089 que superaron 500 likes** contra el resto (baseline "viral" = 28,4% de posts con 200+ likes).
+> **Cómo tratarla:** es **evidencia externa direccional**, aún más externa que §3 — son creadores **ingleses de GTM**, y la métrica es **"tasa de viralidad"** (% de posts que pasan un umbral de likes), NO nuestro "outlier ratio" (Nx vs. la media del propio autor) ni nuestro mercado (B2B español). Úsala como confirmación/prior, nunca por encima de §4 (Neety) ni de §3. **Y ojo con los mitos:** varias de sus reglas CHOCAN con lo que nosotros ya hemos verificado — ahí mandan nuestros datos (ver 5.3).
+
+### 5.1 · Lo que CONFIRMA (validación externa de lo que ya hacemos)
+- **Hook con número:** aparece en el 62,8% de los virales vs 46,6% de los normales. Encaja con nuestra regla de ≤1 número en el hook (`global-instructions §2.5`): un número sí, dos no.
+- **Posts de texto/historia largos:** la tasa sube casi lineal con la longitud (<100 palabras 12,4% · 300-400 39,4% · 400-500 58,3%). Confirma nuestro rango de 300-500 palabras (`§3.3`). **Ojo de alcance:** esto es para posts de TEXTO/historia — NO para memes ni screenshots, que en nuestros datos van CORTOS (`global-instructions §4.3`). Ahí manda lo nuestro.
+- **Una idea por línea + voz humana sin clichés de IA:** "here's the thing" / "let that sink in" casi ausentes en top creators. Refuerza `§3` (variedad rítmica, líneas cortas) y la tabla anti-IA de `brand-voice §3`.
+- **Comment-to-get como CTA rey:** 41,3% viral y 378 comentarios de media, vs pregunta 81, link en el post 46, y "sígueme" 35 (9,1% viral, el PEOR). Solo ~8% de posts lo usan. Valida de lleno nuestro lead magnet con "Comenta X + Y" (`§4.4`) y la regla del UNO en el cierre.
+- **Timing:** ventana de media mañana europea (11:00-12:30) y los primeros 30 min deciden. Confirma nuestro `§3.9`/`§4/§7` (11:00-12:00 y la ventana de oro).
+- **Vulnerabilidad rinde** (53% viral vs 28% baseline) → coherente con nuestro tono Empatía/Vulnerable alto (`§3.4`).
+- **"Operator lane":** los operadores ganan con **prueba y números grandes** (posts más largos y densos, 62,8% con número). Es exactamente nuestro posicionamiento founder-en-trincheras + cifras de cliente (`brand-voice §1`, `§4.2`).
+- **Apropiarte de un concepto/formato y repetirlo:** los mejores reejecutan su formato/hook firma. Encaja con "reusa una palabra-concepto que sea nuestra" (`brand-voice §4.4`). **Matiz nuestro:** apropiarse del CONCEPTO/estructura sí, pero **variando las palabras cada vez** (`working-preferences §4`) — no repetir el hook calcado.
+
+### 5.2 · Lo que AÑADE (nuevo y útil, sin chocar)
+- **Banda de 7-10 palabras en el hook** rinde mejor (1-3 palabras es lo peor). Compatible con nuestra ley de bloque único ≤210.
+- **Primera persona ("yo") gana a segunda ("tú")** en el hook — la experiencia propia bate al sermón. Encaja con `brand-voice §6` (no apuntar al lector con "tú").
+- **5 fórmulas de hook (con ejemplos reales):** (1) la frase escuchada al vuelo ("Founder: 'We need leads NOW!'"), (2) el pattern break ("Contraté a un Gen-Z sin entrevistarlo"), (3) la orden contrarian ("Deja de avergonzarte con herramientas obsoletas"), (4) el curiosity gap ("No me creo que esto no sea real"), (5) el número/hito ("4.000 cold emails. 1 lead. Luego 4M ARR."). Son plantillas de hook que conviven con nuestros hook types — buenas como banco de arranque.
+- **Táctica de distribución afilada:** 30-60 min ANTES de publicar, comenta de verdad en 5-10 personas que comentaron tu post anterior → les llega la notificación, ven el nuevo y te devuelven el comentario en la ventana de oro. Es una versión más concreta de nuestro "avisa a 3-5 contactos".
+- **Mecanismos emocionales (lente extra):** vindicación · celebración vicaria · articular lo que el lector no sabía decir · el momento "WTF" · pertenencia vía sátira. Decide cuál dispara tu post antes de escribir. Complementa (no sustituye) nuestros 3 pilares (curiosidad/deseo/miedo).
+- **"Client story" (case study reenfocado):** abre con la situación, sube al problema, aterriza el resultado. Misma prueba, postura distinta. Encaja con nuestros diferenciadores y cifras de cliente (`aboutme §1b`, "+200 PYMEs / +40%").
+
+### 5.3 · ⚠️ MITOS — donde ColdIQ CHOCA con lo nuestro (mandan NUESTROS datos)
+No importar nada de esto; está aquí para reconocerlo y descartarlo:
+1. **"Los links matan alcance → ponlo en el primer comentario, nunca en el cuerpo."** ❌ CONTRADICE nuestro `global-instructions §4.5`: hemos **verificado con posts >100K imp** que un link en el cuerpo NO suprime alcance y que el folklore del primer comentario está obsoleto. Además nuestra estrategia mete el link de agendar en spam ninja EN el cuerpo. **Manda lo nuestro.**
+2. **"Sin emojis en la primera línea/hook."** ❌ Nuestros mapas cierran el hook con `👇` y está validado en nuestras cuentas. El emoji funcional en el hook se queda.
+3. **"Haz infografías (con logos de las tools para que las guarden)."** ❌ Nuestras infografías van **0-de-3** (`images §7`). No las proponemos. Manda lo nuestro.
+4. **"El texto solo rinde flojo (15,8%); imagen mucho mejor."** ❌ En NUESTROS datos el **texto solo rinde alto (~13,6x, `§3.8`)**. Métrica y mercado distintos; no trates el texto-solo como débil.
+5. **"Reejecuta el MISMO hook calcado varias veces."** ❌ Choca con `working-preferences §4` (variar expresiones, seguir sorprendiendo). Repetimos el CONCEPTO, no las palabras.
+6. **"Súbete al trigger del lanzamiento de IA (Anthropic, etc.)."** ⚠️ Para NOSOTROS los posts de lanzamiento de modelo **flopean** (0,88x, 0,25x); hay que **reformular como resultado para la audiencia** (`working-preferences §3`). El "trigger" vale, el post de changelog no.
+7. **Ranking de temas (fundraise/revenue/milestone #1).** ⚠️ Es el carril de los creators GTM, **no el nuestro**: nosotros tiramos de mapa / "Los 10" / meme / lead magnet. No pivotes a posts de "hemos facturado X". Lo único aprovechable es el "client story" con resultado concreto (5.2).
+
+> Nota de método: su "tasa de viralidad" (% de posts que pasan un umbral de likes en cuentas grandes inglesas) y nuestro "outlier ratio" (Nx vs. la media del autor, en B2B español) **no son la misma métrica**. Por eso ColdIQ vale como dirección, no como cifra que sustituya a §3/§4.
+
+---
+
+## 6 · Cómo pasarme datos frescos (procedimiento)
 
 ### Vía A — Export/HTML del Explorer (la que funciona HOY sin tocar nada) ✅
 1. Abre la herramienta → pestaña **Explorer / Dashboard**.
@@ -216,9 +253,10 @@ En Claude Code local (tu máquina), sin egress restringido, tanto la URL de Post
 
 ---
 
-## 6 · Huecos a rellenar
+## 7 · Huecos a rellenar
 - [x] §3 relleno con el snapshot cross-creator del Explorer (2026-07-09): recetas, distribuciones de hook/estructura/tono, aperturas/cierres, estilo, formato, timing y banco de remix.
 - [x] Patrones de lenguaje (densidad outlier vs normal): incorporados en §3.7 (el hallazgo contraintuitivo de menos autoridad/urgencia/"tú").
 - [x] Banco de remix de OTRAS cuentas: §3.10 (curado a los top relevantes para B2B; el resto de las ~150 págs de ejemplos se dejan fuera a propósito).
 - [~] **Split por cuenta Neety** (qué arquetipo rinde mejor en Iker vs Unai vs Asier): **NO es bloqueante** — §4 ya atribuye los formatos por cuenta cualitativamente (mapas/lead magnets/iMessage = sobre todo Iker; wojak "caja de herramientas" 16.6x, "país inventado" 7.1x, "49€ vs Claude" = Unai; Asier arranca sin histórico grande). Lo único que falta es el desglose estadístico fino por cuenta, que requeriría `/api/creators/:id/stats`. Con lo que hay (§3 + §4) se elige arquetipo de sobra.
+- [x] **Evidencia externa (guía ColdIQ, 6.750 posts GTM):** destilada en §5 — confirmaciones (5.1), añadidos útiles (5.2) y, sobre todo, los **mitos que chocan con lo nuestro** filtrados y descartados (5.3: links al cuerpo, sin-emoji-hook, infografías, texto-solo-débil, rehook calcado, trigger de lanzamiento IA).
 - [ ] **Refresco periódico:** este snapshot es de 2026-07-09; los ratios decaen. Reexporta el Explorer cuando quieras actualizarlo.
