@@ -112,7 +112,7 @@ Decisión de producto (julio 2026): **NO mantenemos voces por persona**. Las tre
 Estos puntos son de identidad estratégica; el detalle operativo está en `global-instructions` y `working-preferences`.
 
 - **Objetivo doble (MIX):** ya no es solo alcance/outlier. Ahora es **viralidad + que agenden demo** (https://recursos.neety.com/agendar/). No son excluyentes: el meme iMessage con link de agendar (7.9x · 80.9K) fue el post más visto del periodo.
-- **Mínimo 1 post/semana por cuenta** (Iker, Unai, Asier) sobre formatos ya probados (mapas, memes, "Los 10").
+- **Frecuencia: 3 posts/semana por cuenta** (Iker, Unai, Asier), mínimo absoluto 1/semana. Ojo al histórico: durante abr-jul 2026 eran **4/semana** porque solo se gestionaban 2 cuentas (Iker + Unai); al entrar Asier (jul 2026) se bajó a **3** para no saturar el feed con 3 cuentas a la vez. Si en el futuro cambia el nº de cuentas, revisa esta cifra.
 - **Exclusividad de CATEGORÍA por día (intercalado):** las 3 cuentas rotan las mismas 3 categorías de pilar — **Peloteo** (mapa regional o "Los 10", cuentan como una sola), **Lead magnet** y **Meme** — pero intercaladas: el mismo día NO se repite categoría en dos cuentas. Cada día las 3 cuentas cubren las 3 categorías distintas; cada cuenta pasa por las 3 a lo largo de la semana. La lógica completa (cuadro latino 3×3, frecuencia, pregunta previa) vive en `post-workflow §8`.
 - **Link de agendar SIEMPRE en spam ninja**, atado al hook o a algo gracioso del cuerpo — nunca como venta directa.
 - **Mencionar Neety en el cuerpo está permitido** de vez en cuando (no en cada post, pero no prohibido).
