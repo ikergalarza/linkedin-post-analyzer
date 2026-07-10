@@ -23,6 +23,13 @@ Orquestación:
 Estado (no doctrina):
 10. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que persistirlo cada semana (re-subir / commit).
 
+## Montaje en el proyecto de Cowork (3 carpetas + instrucciones)
+Principio: **`context` = lo que Claude LEE · `project` = ESTADO que cambia · `output` = lo que Claude ENTREGA.**
+- **`context/`** (conocimiento estático, read-only): `aboutme`, `brand-voice`, `working-preferences`, `global-instructions`, `outliers-database`, `swipe-file`, `images`, `video`, `post-workflow`, `ref_import_navarra.csv` y este `README`. Si el proyecto lee del repo, apunta `context/` a `docs/cowork-skills/`.
+- **`project/`** (estado vivo, mutable): `historial-publicaciones.md` (se actualiza cada semana) y los planes semanales ya aprobados.
+- **`output/`** (entregables): los posts copy-ready, los CSV de PamPam, las guías de menciones y las descripciones de 2 líneas — un archivo/subcarpeta por post o por semana.
+- **Campo de "instrucciones del proyecto":** un **bootstrap CORTO**, NO toda la doctrina. `global-instructions.md` va como archivo en `context/`, no pegado aquí. El bootstrap solo orquesta: cargar `context/` en orden, seguir `post-workflow`, entregar según `working-preferences`, escribir en `output/`, actualizar `project/historial-publicaciones.md`, y leer las credenciales de Unipile de las env vars del entorno "Iker".
+
 ## Estado / pendiente
 - **`outliers-database` §3** ya está **relleno** con el snapshot cross-creator del Explorer (2026-07-09): recetas hook×estructura×tono, distribuciones, aperturas/cierres, estilo, formato, timing y banco de remix. Fuente: `docs/explorer completo.pdf`.
 - **Sigue pendiente:** el split por cuenta Neety (Iker vs Unai vs Asier) — el export es cross-creator, no por cuenta propia. Y el refresco periódico del snapshot (los ratios decaen).
