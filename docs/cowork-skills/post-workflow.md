@@ -141,12 +141,38 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 7. **Imagen:** orla de retratos (cabezas), cabecera fuerte en paleta Neety con palabra clave en naranja (`images §8`).
 8. Validación → entregar + "revisa estos nombres".
 
-### 4.4 · Runbook MEME (con motor)
-1. **MOTOR CHECK primero:** ¿MOTOR A (cambio corporal progresivo que duele + legible a miniatura, sobre jerarquía de roles B2B) o MOTOR B (screenshot documental creíble con cifra/tensión)? Sin motor → no publicar, avisar.
-2. **Filtro de 4 puntos** (`global-instructions §4.3`): ≥3/4 fuertes (jerarquía de roles · cambio corporal/screenshot · punchline citable · el lector ríe CON nosotros). Si 1-2 → parar y proponer cómo añadir motor.
-3. **Texto CORTO** (3-6 líneas), nunca ensayo — el motor es la imagen.
-4. **Imagen:** si hay **referencia**, calcarla (solo cambiar paleta + tipografía, `images §5-B`); si es desde cero, sistema meme (`images §6`).
-5. CTA regla del UNO (o ninguno). Validación → entregar.
+### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
+> **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
+> **Output final:** (1) el **TEXTO** del post copy-ready + (2) un **PROMPT de modificaciones para la foto** (Claude **NO genera la imagen**; el usuario la edita a partir de la referencia).
+> **Prioridad:** la FOTO es el motor. El texto (gancho + cuerpo) va **corto**.
+
+**Paso 0 — Conseguir la referencia:** accede al enlace y extrae (a) el **TEXTO** del post (gancho/1ª línea + cuerpo) y (b) la **FOTO**.
+
+**Paso 1 — Traducir (si está en inglés, que es lo habitual):** EN→ES **fiel al original** en formato, longitud y estructura, pero con **expresiones naturales en español** donde suenen mejor (no traducción literal robótica).
+
+**Paso 2 — HOOK:**
+- **Itera VERBOS** hasta el más punchy **sin perder el significado original**: criticar (flojo) → **desmontar** (punch limpio, punto dulce) → destrozar/destripar (se pasan, pierden la esencia). Quédate con el del punto dulce.
+- Aplica TODAS las reglas de hook (`global-instructions §2` + `swipe-file`): bloque único ≤210, imagen mental, ≤1 número, corto.
+- **Ancla a VENTAS siempre**, aunque la referencia no vaya de ventas: desde el lado de vender, del cliente o del comercial. Amplifica el alcance al máximo sin perder la esencia de ventas.
+
+**Paso 3 — CUERPO:** lo más **fiel al original** en formato/longitud/formateado, pero **adaptado a ventas B2B**. Corto (3-6 líneas; el motor es la foto, no el texto).
+- **Roles de trabajadores:** sin anglicismos ni títulos complejos. Español genérico que un **industrial de 50+ entienda** (comercial, jefe de ventas, director comercial, gerente…) — lo más genérico = más alcance. (Mismo criterio en la foto, Paso 6.)
+
+**Paso 4 — SPAM NINJA:** link de agendar tejido en el **lugar más adecuado del cuerpo** (nunca la última línea), de forma **original y divertida**, con los **diferenciadores de Neety** (`aboutme §1b`). Igual que en mapas.
+
+**Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs). Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
+
+**Paso 6 — FOTO: PROMPT de modificaciones (NO generar la imagen).** Observa la foto de referencia y entrega **UN párrafo simple** con los cambios a aplicar sobre ella:
+- **Textos:** si la foto lleva texto en inglés, traducirlo al español (adaptado a ventas si no lo estaba), con **nuestra tipografía** (Bricolage Grotesque títulos + Switzer cuerpo) y la **regla de la palabra naranja** (`images §4`).
+- **Roles en la imagen:** español genérico, sin anglicismos, entendibles por industrial 50+ (igual que el cuerpo).
+- **Paleta + detalles de marca:** aplica Alabastro (fondo) · Dark Blue (tinta) · Persian Orange (highlight), y **añade detalles nuestros** (corbatas naranjas, patrones, siluetas, props en naranja…) — no solo recolorear.
+- **Fidelidad al diseño original:** mantén el **estilo de dibujo** (minimalista→minimalista, recargado→recargado), el **layout, paneles, escena y mecánica cómica** de la referencia.
+- **Cambia solo los específicos:** conserva el elemento pero varía el detalle (si el original tiene café o avión → nosotros también, pero otro café u otro avión).
+- **Objetivo:** replicar el caso de éxito del original, **misma esencia**, remix a nuestro sector + Neety. (Sistema visual completo en `images §5-B` y `§6`.)
+
+**Sanity check (antes de entregar):** ¿la referencia tiene un motor que transfiere a ventas (filtro de 4 puntos, `global-instructions §4.3`)? Si el meme no puede anclarse a ventas o pierde la gracia al remixarlo, dilo en vez de forzarlo.
+
+**OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **PROMPT de modificaciones de la foto**. Sin CSV ni menciones (eso es del mapa).
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated)
 1. **Puerta de frecuencia:** ¿≥2 semanas desde el último de esta cuenta? ¿no solapa otra cuenta hoy? Si no → avisar de fatiga.

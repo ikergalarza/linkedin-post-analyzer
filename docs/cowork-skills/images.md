@@ -45,7 +45,12 @@ UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nomb
 Un sujeto principal, un scroll-stopper, composición limpia, paleta de marca. Los principios de §2 aplican directos.
 
 ### (B) MEME CON IMAGEN DE REFERENCIA que pasa el usuario → CALCAR LA REFERENCIA
-La referencia manda: layout, nº de paneles, escena, expresiones, lenguaje corporal, mecánica cómica, el chiste. Cópiala lo más fielmente posible e **IGNORA la regla minimalista de (A)**. Sea cual sea su forma (un panel, tres, un sketch, una tira, un screenshot, una foto candid, incluso un meme no-Neety) → clávala. Solo sobrescribe DOS cosas: (1) remapea los colores a la paleta Neety; (2) si hay texto, ponlo en Bricolage Grotesque (títulos) + Switzer (cuerpo) con la regla de la palabra naranja. Todo lo demás de la referencia se preserva. No fuerces el uniforme camisa-blanca+corbata-naranja ni el grid simétrico si la referencia no los tiene.
+La referencia manda: layout, nº de paneles, escena, expresiones, lenguaje corporal, mecánica cómica, el chiste, y el **estilo de dibujo** (si es minimalista → minimalista; si es recargado → recargado). Cópiala lo más fielmente posible e **IGNORA la regla minimalista de (A)**. Sea cual sea su forma (un panel, tres, un sketch, una tira, un screenshot, una foto candid, incluso un meme no-Neety) → clávala. Sobrescribe SOLO esto:
+1. **Remapea los colores** a la paleta Neety **y añade detalles de marca** (no solo recolorear): corbatas naranjas, patrones, siluetas, props narrativos en naranja.
+2. **Textos:** si los hay, tradúcelos al español (adaptados a ventas) en Bricolage Grotesque (títulos) + Switzer (cuerpo) con la regla de la palabra naranja.
+3. **Props específicos:** conserva el elemento pero varía el detalle (café → otro café, avión → otro avión).
+4. **Roles de trabajadores:** en español genérico, sin anglicismos ni títulos complejos, entendibles por un industrial de 50+.
+Todo lo demás de la referencia se preserva. No fuerces el uniforme camisa-blanca+corbata-naranja ni el grid simétrico si la referencia no los tiene. (Runbook operativo completo en `post-workflow §4.4`.)
 
 ### (B-fallback) MEME SIN REFERENCIA → sistema meme desde cero (§6)
 Aplica el filtro de 4 puntos del meme (`global-instructions §4.3`: jerarquía de roles B2B + cambio corporal que DUELE y es LEGIBLE a miniatura + punchline citable + el lector ríe CON nosotros) y el sistema visual de §6.
