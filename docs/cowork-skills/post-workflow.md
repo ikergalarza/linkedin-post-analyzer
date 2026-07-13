@@ -59,7 +59,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 10. **Entrega:** 2-3 variantes en bloques cercados (`working-preferences §1`); empresas/menciones rellenas y marcadas (§4.0); lista de "revisa estas"; y **di qué esperas del usuario** para el siguiente paso.
 
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
-> **Input del usuario:** SOLO la región. Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
+> **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
 > **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) una **descripción de 2 líneas** para la web del mapa.
 > **La IMAGEN la hace el usuario** (captura de la web PamPam). El workflow **NO genera ni menciona imagen** para mapas. (Por eso el mapa NO usa la skill `images`.)
 
@@ -81,7 +81,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 2. **Los 3 datos numéricos en lista (1/2/3), cada uno con FUENTE citada** (Eurostat, EUSTAT, Banco Mundial, Datacomex…). El primero suele ampliar la comparación del gancho.
 3. Cuerpo saturado de **clichés de la zona nueva** (4-8, tejidos), anáfora de negación ("No paga X. No las pagan Y."), frases-oficio, y variedad de formato (bloques de 2/3, líneas sueltas, escalera).
 4. **Reveal tardío:** "Sí, hablo de [región]."
-5. **VARÍA las expresiones** frente a mapas anteriores: mismo formato/pilar, palabras y ángulos distintos. Prohibido repetir comodines (ej. "La gente y las empresas que mueven todo esto:" → dilo distinto cada vez). Que se note que es un mapa NUEVO, no un calco.
+5. **VARÍA las expresiones** frente a mapas anteriores: mismo formato/pilar (mismos bloques de 2/3, mismas ideas), pero **palabras, ángulos y ARRANQUES de bloque distintos**. No abras siempre igual — ni todos los bloques con "No es X, no es Y" (la anáfora de negación), ni repitas comodines ("La gente y las empresas que mueven todo esto:" → dilo distinto cada vez). Rota el arranque: verbo, nombre, lugar, número (`working-preferences §4`). Que se note que es un mapa NUEVO, no un calco.
 
 **Paso 4 — EMPRESAS y PERSONAS a mencionar** (las rellena el workflow vía Unipile — antes se dejaba vacío):
 Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona concreta mencionable y **activa** en LinkedIn, ordenadas de mayor a menor probabilidad de interactuar.
@@ -133,7 +133,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 ### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
 > **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
-> **Input del usuario:** SOLO la región (o sector). El resto lo verifica y rellena el workflow.
+> **Input del usuario:** SOLO la región (o sector) — **si no te la da, pídesela primero** (igual que el mapa). El resto lo verifica y rellena el workflow.
 > **Diferencias de OUTPUT vs mapa:** (a) **NO hay CSV** (no se dibuja mapa) · (b) en su lugar, las **10 FOTOS en un ZIP/carpeta, en el ORDEN de mención** (el usuario las mete en SU plantilla de imagen con otra herramienta) · (c) el resto igual: texto copy-ready + guía de menciones con enlaces.
 
 **Paso 0 — Región + guardarraíles:** como en mapa (peloteo: ≥2 semanas desde el último peloteo de esa cuenta, no repetir región/tema).
@@ -151,11 +151,12 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Ejecución:** Claude vía Unipile (credenciales de las env vars del entorno "Iker", como §4.2).
 - **Formato en el cuerpo:** `→ Persona - Empresa · logro concreto` (ej. `→ Edorta Arriet Azpiroz - Geminis Lathes · +77% bº`).
 
-**Paso 3 — CUERPO** (pelotea a la persona invisible, `swipe-file §3.1`, variando expresiones):
-- Setup que pinta al que decide de verdad y no sale en la foto (anáfora "No publica. No da charlas. No sale en la nota de prensa.").
+**Paso 3 — CUERPO** (pelotea a la persona invisible, `swipe-file §3.1`):
+- Setup que pinta al que decide de verdad y no sale en la foto (una anáfora tipo "No publica. No da charlas. No sale en la nota de prensa." — **es UNA opción, no la plantilla fija**).
 - La **lista de las 10** (`→ Persona - Empresa · logro`).
 - **Reveal tardío:** "Sí, hablo de [región]. Pero esto va de las personas."
-- Eje emocional: "le pongo cara al que estuvo detrás del salto". Varía los comodines respecto a otros posts.
+- Eje emocional: "le pongo cara al que estuvo detrás del salto".
+- **QUE SE NOTE QUE ES UN POST NUEVO (clave):** mantén la ESENCIA del formato (mismos bloques de 2/3, misma estructura, mismas ideas) pero **cambia las expresiones y sobre todo cómo ABRES los bloques**. No arranques siempre igual — ni todos los bloques con "No publica / No da charlas", ni con "No es por X, no es por Y" (esa anáfora de negación es la del mapa; no la calques). Rota el arranque: unos por verbo, otros por nombre, otros por número, otros por lugar (`working-preferences §4`). Mismo pilar, palabras distintas cada vez.
 
 **Paso 4 — SPAM NINJA:** igual que mapa (§4.2 Paso 5): link de agendar tejido tras las menciones, nunca última línea, con diferenciadores de Neety.
 
