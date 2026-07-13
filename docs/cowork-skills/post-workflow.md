@@ -204,13 +204,38 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **PROMPT de modificaciones de la foto**. Sin CSV ni menciones (eso es del mapa).
 
-### 4.5 · Runbook LEAD MAGNET (comment-gated)
-1. **Puerta de frecuencia:** ¿≥2 semanas desde el último de esta cuenta? ¿no solapa otra cuenta hoy? Si no → avisar de fatiga.
-2. **Topic específico y auto-intrigante** + entregable ÚNICO y concreto (el genérico "toda mi biblia" está muerto).
-3. **Entrega LIVE en comentarios** (audit/roast/consejo) > PDF, si da valor real al que comenta.
-4. **CTA literal "Comenta [X] + [Y]"** (X = palabra atada al recurso; Y = esfuerzo mínimo: su sector, su CRM). Nada de formas implícitas.
-5. **Imagen:** foto real del founder si aplica (registro 3, `images §3`).
-6. Validación → entregar.
+### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
+> Se reconoce el outlier de lead magnet en la DB porque **se disparan los COMENTARIOS** (vibe prospecting 632 · desmonto perfiles 483). El objetivo del formato es EL comentario.
+> **Diferencia clave con los otros pilares: NO lleva spam ninja.** El CTA de comentar ES el cierre (regla del UNO); meter el link de agendar aquí apila CTAs y lo rompe.
+> **Output:** solo el **TEXTO** copy-ready. (Imagen = foto real del founder si aplica, `images §3`; la pones tú.) Sin CSV, sin ZIP, sin spam ninja.
+
+**Paso 0 — Input:** la idea/recurso a regalar. Si no te la da, pregúntale qué entregable quiere.
+
+**Paso 1 — Puerta de frecuencia:** ¿≥2 semanas desde el último lead magnet de esta cuenta? ¿no solapa otra cuenta hoy/esta semana? Si no → **avisar de fatiga** (3 en pocos días hunden el alcance).
+
+**Paso 2 — ÁNGULO ORIGINAL (aquí se gana o se pierde):**
+- El entregable = **UNA cosa concreta y específica**. El genérico "toda mi biblia / todos mis recursos en una caja" está **MUERTO** (biblia 1.2x): comentan poco y LinkedIn no amplifica.
+- **Evita temas quemados:** "plantillas de mensajes", "los mejores recursos", cosas que TODO el mundo regala → nadie comenta porque ya lo han visto mil veces.
+- **Busca el ángulo fresco en la competencia** (ahora con acceso a la DB): mira lead magnets outlier en `/api/analysis/cross-creators` y en otros nichos (no solo ventas) para encontrar mecánicas originales que aún no estén quemadas en nuestro sector. Los ángulos se queman rápido → esto se investiga en cada post, no se hardcodea.
+
+**Paso 3 — HOOK (lo más crítico del formato):**
+- Tiene que **frenar el scroll** y, sobre todo, **pintar una imagen física/visual** (acción concreta sobre un objeto): "le tiré las **llaves** de mi LinkedIn a Claude" (tirar un objeto) fue el mejor — genera un frame mental. `global-instructions §2.2`.
+- **Original** (no un hook visto mil veces), corto, anclado a ventas, ≤1 número, `👇`.
+- **El hook lleva una PALABRA-gancho con gracia** que luego será la palabra a comentar (ver Paso 5). Ej.: hook "para mandar buenos mensajes tienes que ser **psicólogo**" → palabra = "psicólogo".
+
+**Paso 4 — CUERPO:**
+- Problema → el sistema/valor (a menudo en lista numerada de pasos) → prueba de que funciona. Aplica todo el formateado (bloques de 2/3, líneas sueltas, staccato) y voz `brand-voice`.
+- **NO repitas las mismas expresiones** de otros lead magnets: que se note que es un post NUEVO (varía arranques y comodines, `working-preferences §4`).
+- **Entrega LIVE en comentarios** (audit/roast/consejo one-liner público) bate al PDF (desmonto perfiles 8.5x/483 com.) — la recompensa pública e inmediata dispara el loop de comentarios. Sanity: el entregable live tiene que dar VALOR REAL, no ser un chiste a costa del que comenta.
+- **NADA de spam ninja / link de agendar aquí.**
+
+**Paso 5 — CTA (crítico, fórmula exacta):**
+- Literal y explícito: **`Comenta "[PALABRA]" + [tu sector/departamento] y te lo paso`**.
+- **PALABRA** = la que remata la gracia del hook (psicólogo, llaves, vibe, desmonta…). Si el CTA no reconecta con el chiste del hook, pierde fuerza.
+- **+ sector/departamento** = el añadido que varía por persona (cada uno trabaja en un sector/depto distinto) → cada comentario es único y LinkedIn no lo nerfea por spam. Preferimos **sector/departamento** (mundo empresarial/ventas) antes que "día favorito / mes de cumple" (descartados: no encajan con el tono).
+- **Di SIEMPRE la palabra "Comenta" de forma explícita.** FAIL confirmado: cuando pusimos formas implícitas (rollo *si lo quieres, "[palabra]"*) la gente **no entendía que tenía que comentar** y se hundió el conteo. Nada de implícitos.
+
+**Paso 6 — Validación (§8) → entregar el TEXTO copy-ready.**
 
 ---
 
