@@ -84,7 +84,8 @@ Un post es **outlier** cuando supera **≥3x** el engagement promedio de su auto
 
 ## 3 · Análisis cross-creator del Explorer (snapshot 2026-07-09)
 
-> Destilado del export completo del **Outlier Explorer** ("explorer completo.pdf", en `docs/`). Muestra: **1.893 outliers** de TODAS las cuentas analizadas (competencia + referentes globales + las cuentas Neety), con los **500 top** desglosados por formato. **Población distinta de §4** (que es solo Neety). Trátalo como el mapa cross-creator de qué combinaciones viajan; para el ratio de TU cuenta manda §4. Los números son de este scrape — órdenes de magnitud, no verdad eterna.
+> Destilado del export completo del **Outlier Explorer** ("explorer completo.pdf", en `docs/`). Muestra: **~1.894 outliers** de TODAS las cuentas analizadas (competencia + referentes globales + las cuentas Neety), con los **500 top** desglosados por formato. **Población distinta de §4** (que es solo Neety). Trátalo como el mapa cross-creator de qué combinaciones viajan; para el ratio de TU cuenta manda §4. Los números son de este scrape — órdenes de magnitud, no verdad eterna.
+> ✅ **Verificado en vivo contra Railway (`/api/analysis/cross-creators`) el 2026-07-13:** las distribuciones coinciden con este snapshot (1.894 vs 1.893 outliers, mismas distros de hook/estructura, empatía 7.63x vs 7.75x). El snapshot está vigente; refrescar cada 1-2 meses desde ese endpoint.
 
 ### 3.1 · Qué tienen en común los top outliers (retrato agregado)
 - **1.893 outliers** · media **178 palabras** · **CTA en 36%** · formato top = **texto + imagen**.
@@ -101,7 +102,7 @@ Un post es **outlier** cuando supera **≥3x** el engagement promedio de su auto
 > Lectura: **arco narrativo** (setup→tensión→resolución) es la estructura más frecuente entre outliers, pero conviven con el **corto e impactante**. No hay UNA estructura ganadora; hay dos polos (historia larga vs dardo).
 
 ### 3.4 · Tono × outlier ratio (ranking — el tono que MÁS multiplica)
-`Empathy 7.75x` · `Social Proof 6.97x` · `Authority 6.78x` · `Provocative 6.69x` · `Educational 6.46x` · `Urgency 6.45x` · `Aspirational 6.45x` · `Vulnerable 6.24x` · `Humorous 5.79x` · `FOMO 4.84x`.
+`Empathy 7.63x` · `Social Proof 6.97x` · `Authority 6.78x` · `Provocative 6.69x` · `Educational 6.46x` · `Urgency 6.45x` · `Aspirational 6.45x` · `Vulnerable 6.24x` · `Humorous 5.79x` · `FOMO 4.84x`.
 > Empatía ("te entiendo, he estado ahí") es el tono con mayor ratio — encaja de lleno con `brand-voice §6` (atacar el problema, no al lector) y con el eje de "Los 10". FOMO es el que menos viaja.
 
 ### 3.5 · Los 10 "Viral Archetypes" (recetas hook × estructura × tono, cross-creator)
