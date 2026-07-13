@@ -223,8 +223,10 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Original** (no un hook visto mil veces), corto, anclado a ventas, ≤1 número, `👇`.
 - **El hook lleva una PALABRA-gancho con gracia** que luego será la palabra a comentar (ver Paso 5). Ej.: hook "para mandar buenos mensajes tienes que ser **psicólogo**" → palabra = "psicólogo".
 
-**Paso 4 — CUERPO:**
-- Problema → el sistema/valor (a menudo en lista numerada de pasos) → prueba de que funciona. Aplica todo el formateado (bloques de 2/3, líneas sueltas, staccato) y voz `brand-voice`.
+**Paso 4 — CUERPO (corto):**
+- **CORTO:** no un ensayo. Un setup breve del problema + **~5 bullets de "lo que te vas a encontrar dentro"** y poco más. La mayor parte del peso está en el hook y el CTA, no en el cuerpo.
+- **TEASEA, NUNCA DESVELES el contenido:** los bullets dicen QUÉ se va a cubrir (el titular de cada cosa), pero **NO dan la respuesta/el contenido** — si lo desvelas, ya no hay razón para comentar. Se mantiene el curiosity gap: el contenido está DENTRO del recurso, que se consigue comentando. (Ej.: "✅ Cómo convertir tu banner en una máquina de leads" — dice qué, no cómo.)
+- Formateado completo (bloques de 2/3, líneas sueltas, staccato) y voz `brand-voice`.
 - **NO repitas las mismas expresiones** de otros lead magnets: que se note que es un post NUEVO (varía arranques y comodines, `working-preferences §4`).
 - **Entrega LIVE en comentarios** (audit/roast/consejo one-liner público) bate al PDF (desmonto perfiles 8.5x/483 com.) — la recompensa pública e inmediata dispara el loop de comentarios. Sanity: el entregable live tiene que dar VALOR REAL, no ser un chiste a costa del que comenta.
 - **NADA de spam ninja / link de agendar aquí.**
