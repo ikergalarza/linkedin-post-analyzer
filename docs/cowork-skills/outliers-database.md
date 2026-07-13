@@ -8,17 +8,16 @@
 
 ## 0 · IMPORTANTE — cómo se alimenta esta skill
 
-> ✅ **Estado 2026-07-09:** §3 ya está relleno con un **snapshot real del Explorer** (export completo en `docs/explorer completo.pdf`, 161 págs). El acceso automático al backend SIGUE bloqueado, así que el snapshot se cargó pegando/exportando el PDF a mano (Vía A). Para refrescar, repite la Vía A con un export nuevo.
+> ✅ **Estado 2026-07-13:** el backend de **Railway YA es accesible** desde el entorno (antes daba 403). Ahora se puede consultar en vivo por HTTPS con auth básica. §3 (Explorer) y §4 (histórico + split por cuenta) se pueden **refrescar solos** desde la API — ya no hace falta pegar PDFs a mano.
 
-El análisis real de outliers **no vive en el código ni en un archivo estático**: se calcula en vivo desde la base de datos de la herramienta (sección **Dashboard / Explorer**). Desde el entorno de ejecución donde corre Claude, el acceso automático está **bloqueado por la política de red del entorno** (reprobado el 9 jul 2026, sigue 403):
+El análisis real de outliers se calcula en vivo desde la base de datos (sección **Dashboard / Explorer**). Acceso directo por HTTPS (auth básica, usuario `Neety`):
+- `GET /api/creators` — lista de las 149 cuentas trackeadas (managed + referencia).
+- `GET /api/analysis/{id}/stats` — stats por cuenta: hook_type_breakdown, structure_breakdown, content_type, timing_heatmap, best_timing_slots (base del split por cuenta, §4).
+- `GET /api/analysis/cross-creators` — análisis cross-creator (base de §3).
+- `GET /api/analysis/{id}/export`, `/patterns`, `/timeline`, `/compare` — detalle fino.
+- IDs managed: Iker `3d545376-057c-48db-8b45-c5c5510110bb` · Unai `88d272b7-0f93-49cf-bac1-1334965f361d` · Asier `89610120-758c-4d25-8353-76c1147e0f0c`.
 
-- ❌ **Postgres directo** (`postgresql://…railway.app:PORT/railway`): la política solo permite salida HTTPS por un proxy; una conexión TCP directa a Postgres queda bloqueada (timeout).
-- ❌ **Backend HTTPS de Railway** (`https://linkedin-post-analyzer-production.up.railway.app`): el host **no está en la allowlist de egress** de la sesión → el proxy responde **403** al CONNECT. No es problema de credenciales (usuario/contraseña son correctos); es la política de red.
-
-**Vías para alimentar esta skill (por orden de facilidad):**
-1. ✅ **Pegar el export/HTML del Explorer** directamente en el chat — **la vía que funciona hoy sin tocar nada**. Es solo texto que pegas; yo lo destilo.
-2. ⚙️ **Añadir el dominio de Railway a la allowlist del entorno** (network policy). Si se autoriza `linkedin-post-analyzer-production.up.railway.app` en la configuración del entorno de Claude Code, yo podría consultar los endpoints de análisis por HTTPS directamente. Requiere cambiar la política de red del entorno (ver docs: https://code.claude.com/docs/en/claude-code-on-the-web — sección de network policy).
-3. ⚙️ **En un entorno con red abierta** (p. ej. Claude Code local en tu máquina, sin egress restringido), tanto la URL de Postgres como el backend funcionarían.
+**Para refrescar:** consulta esos endpoints y vuelca los números a §3/§4 (los ratios decaen; refresca cada 1-2 meses). Si el acceso vuelve a caer, la vía manual de siempre (pegar el export del Explorer) sigue valiendo.
 
 Usa el **snapshot cross-creator** (§3), la **taxonomía** (§1) y el **histórico Neety** (§4). Los ratios cambian con cada scrape: trátalos como órdenes de magnitud, no como cifras exactas, hasta refrescar.
 
@@ -164,6 +163,21 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 - **Mix de formato publicado:** Texto+Foto 66 · Texto solo 15 · Carrusel 1 · Vídeo 1. (Foto domina; texto solo también rinde.)
 - **Hook por engagement medio:** `bold_claim 399` · `curiosity_gap 314` · `other 221` · `data_shock 159` · `story_opener 106` · `list_promise 102` · `rhetorical_q 86` · `direct_callout 50` · `analogy 35`. → **bold_claim y curiosity_gap** son los tipos que más engagement traen.
 
+### Split por cuenta — señal EN VIVO (Railway, 2026-07-13, todo el histórico)
+> Del endpoint `/api/analysis/{id}/stats`. `avg_ratio` = media de TODOS los posts de ese tipo en la cuenta (no el pico de un post) → es la señal de "qué arquetipo rinde mejor en cada cuenta". Cifras all-time (más posts que la tabla de arriba, que era el export de 50).
+
+- **Iker** (148 posts · 16 outliers · rate 11% · mejor día martes):
+  - Hook por ratio: **`curiosity_gap` 2.27x (n=20) ← el mejor** · `bold_claim` 1.49x · `other` 1.34x · `list_promise` 0.96x · `story_opener` 0.95x · `rhetorical_q` 0.65x.
+  - Estructura por ratio: `data_driven` 16.45x (n=1, el mapa Gipuzkoa) · `content_with_cta` 3.05x · `contrarian_proof_reframe` 2.87x (avgEng 370) · `list_framework` 2.49x (n=21) · `short_punchy` 2.02x.
+  - Mejor slot: **martes 11:00 (80% outlier rate, avgEng 647)**, martes 9:00, jueves 9-10.
+- **Unai** (72 posts · 7 outliers · rate 10% · mejor día martes):
+  - Hook por ratio: **`curiosity_gap` 3.15x (n=11) ← el mejor** · `data_shock` 2.01x · `other` 1.11x · `bold_claim` 0.91x · `rhetorical_q` 0.85x.
+  - Estructura por ratio: `content_with_cta` 8.25x (n=3) · `comparison` 5.25x (n=2) · `contrarian_proof_reframe` 3.7x · `list_framework` 1.42x.
+  - Mejor slot: martes 8:00 (67%).
+- **Asier** (2 posts · 0 outliers): sin señal aún — su cuenta necesita baseline (ver `aboutme`). No leer ratios todavía.
+
+> **Lo más accionable:** en las DOS cuentas con histórico, **`curiosity_gap` es el hook con mejor ratio** (Iker 2.27x, Unai 3.15x) — por encima de bold_claim. Y las estructuras `content_with_cta` y `contrarian_proof_reframe` rinden alto en ambas. El martes por la mañana (9:00-11:00) es el pico claro.
+
 ### Mapas regionales (la mecánica más fiable)
 - **Gipuzkoa (Iker, 1er mapa) 12.9x · 112.7K · 1.2K likes · 90 reposts** — "pueblo de 7.000 hab que exporta más que países enteros".
 - **Navarra (Iker) 7.7x · 79.2K · 563 likes · 46 reposts** — molde gold ("patio trasero de los Pirineos… y poco más. Exporta más que Bolivia") → ver `swipe-file §2.1`.
@@ -258,7 +272,7 @@ El backend (`https://linkedin-post-analyzer-production.up.railway.app`, auth bá
 ### Vía C — Ejecutar en un entorno de red abierta ⚙️
 En Claude Code local (tu máquina), sin egress restringido, tanto la URL de Postgres como el backend funcionarían directamente.
 
-> ⚠️ Estado a jul 2026: desde el entorno remoto actual, **Postgres directo** y **backend Railway** están **ambos bloqueados** por la política de red (no por credenciales). La Vía A (pegar el Explorer) es la práctica hoy.
+> ✅ Estado 2026-07-13: el **backend de Railway ya funciona** desde el entorno (auth básica HTTPS). Se consulta directamente (ver §0 para endpoints). La Vía A (pegar el export) sigue como respaldo si el acceso vuelve a caer.
 
 ---
 
@@ -266,6 +280,6 @@ En Claude Code local (tu máquina), sin egress restringido, tanto la URL de Post
 - [x] §3 relleno con el snapshot cross-creator del Explorer (2026-07-09): recetas, distribuciones de hook/estructura/tono, aperturas/cierres, estilo, formato, timing y banco de remix.
 - [x] Patrones de lenguaje (densidad outlier vs normal): incorporados en §3.7 (el hallazgo contraintuitivo de menos autoridad/urgencia/"tú").
 - [x] Banco de remix de OTRAS cuentas: §3.10 (curado a los top relevantes para B2B; el resto de las ~150 págs de ejemplos se dejan fuera a propósito).
-- [~] **Split por cuenta Neety** (qué arquetipo rinde mejor en Iker vs Unai vs Asier): **NO es bloqueante** — §4 ya atribuye los formatos por cuenta cualitativamente (mapas/lead magnets/iMessage = sobre todo Iker; wojak "caja de herramientas" 16.6x, "país inventado" 7.1x, "49€ vs Claude" = Unai; Asier arranca sin histórico grande). Lo único que falta es el desglose estadístico fino por cuenta, que requeriría `/api/creators/:id/stats`. Con lo que hay (§3 + §4) se elige arquetipo de sobra.
+- [x] **Split por cuenta Neety** (qué arquetipo rinde mejor en Iker vs Unai vs Asier): RELLENO en §4 con datos en vivo de Railway (2026-07-13). Hallazgo: `curiosity_gap` es el mejor hook por ratio en Iker (2.27x) y Unai (3.15x); `content_with_cta`/`contrarian_proof_reframe` las mejores estructuras; martes mañana el pico. Asier aún sin baseline.
 - [x] **Evidencia externa (guía ColdIQ, 6.750 posts GTM):** destilada en §5 — confirmaciones (5.1), añadidos útiles (5.2) y, sobre todo, los **mitos que chocan con lo nuestro** filtrados y descartados (5.3: links al cuerpo, sin-emoji-hook, infografías, texto-solo-débil, rehook calcado, trigger de lanzamiento IA).
 - [ ] **Refresco periódico:** este snapshot es de 2026-07-09; los ratios decaen. Reexporta el Explorer cuando quieras actualizarlo.
