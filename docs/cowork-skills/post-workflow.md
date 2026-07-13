@@ -131,15 +131,41 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 **Guardarraíles de elección de región (Paso 0):** greenlit (La Rioja, Asturias, Murcia, Aragón, Cantabria, Extremadura, Castilla-La Mancha…); baneadas capitales obvias (Madrid 0.55x); ≥2 semanas desde el último mapa de esa cuenta; nunca repetir región.
 
-### 4.3 · Runbook "LOS 10" (encadenado)
-1. Chequear frecuencia/exclusividad como en mapa.
-2. **Foco = LA PERSONA** (el comercial infravalorado), NUNCA crítica a las empresas.
-3. **Hook** = verbo físico + herida propia del comercial para que se identifique ("quemando el teléfono", "aguantando el no"). Nada abstracto, nada de reproche.
-4. **Los 10 nombres (§4.0):** personas reales con actividad reciente comprobada; marcar dudosas.
-5. Cuerpo que pelotea a las personas y sus empresas (eje "le pongo cara al que estuvo detrás del salto").
-6. **CTA:** link de agendar en spam ninja.
-7. **Imagen:** orla de retratos (cabezas), cabecera fuerte en paleta Neety con palabra clave en naranja (`images §8`).
-8. Validación → entregar + "revisa estos nombres".
+### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
+> **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
+> **Input del usuario:** SOLO la región (o sector). El resto lo verifica y rellena el workflow.
+> **Diferencias de OUTPUT vs mapa:** (a) **NO hay CSV** (no se dibuja mapa) · (b) en su lugar, las **10 FOTOS en un ZIP/carpeta, en el ORDEN de mención** (el usuario las mete en SU plantilla de imagen con otra herramienta) · (c) el resto igual: texto copy-ready + guía de menciones con enlaces.
+
+**Paso 0 — Región + guardarraíles:** como en mapa (peloteo: ≥2 semanas desde el último peloteo de esa cuenta, no repetir región/tema).
+
+**Paso 1 — HOOK (foco en la persona):**
+- Fórmula = **verbo físico + la herida propia del comercial** para que se IDENTIFIQUE al leerlo ("personas desconocidas quemando el teléfono", "aguantando el no", "marcando nombres que nadie conoce") + `👇`.
+- El comercial anónimo tiene que pensar "ese soy yo". Nada abstracto.
+- **NUNCA crítica ni reproche a las empresas** (eso mató la versión de Cataluña 0.7x y molestó a los mencionados). Este formato PELOTEA a personas y empresas, no las señala.
+- Aplica el resto de reglas de hook (`global-instructions §2` + `swipe-file §3.1`).
+
+**Paso 2 — Las 10 PERSONAS (vía Unipile — como en §4.2, pero personas):**
+- Objetivo: 10 directores/comerciales de la región **cuyo trabajo hizo VENDER más a su empresa**, cada uno con un **logro concreto** (crecimiento de ventas, récord de facturación, inversión, internacionalización, premio) — real y verificable, sin polémica. Marca los dudosos.
+- **Activos en LinkedIn** (últimos 3 meses: post/comentario/repost); si no está activo, se descarta (mención desperdiciada).
+- Ordena por probabilidad de interacción / relevancia del logro.
+- **Ejecución:** Claude vía Unipile (credenciales de las env vars del entorno "Iker", como §4.2).
+- **Formato en el cuerpo:** `→ Persona - Empresa · logro concreto` (ej. `→ Edorta Arriet Azpiroz - Geminis Lathes · +77% bº`).
+
+**Paso 3 — CUERPO** (pelotea a la persona invisible, `swipe-file §3.1`, variando expresiones):
+- Setup que pinta al que decide de verdad y no sale en la foto (anáfora "No publica. No da charlas. No sale en la nota de prensa.").
+- La **lista de las 10** (`→ Persona - Empresa · logro`).
+- **Reveal tardío:** "Sí, hablo de [región]. Pero esto va de las personas."
+- Eje emocional: "le pongo cara al que estuvo detrás del salto". Varía los comodines respecto a otros posts.
+
+**Paso 4 — SPAM NINJA:** igual que mapa (§4.2 Paso 5): link de agendar tejido tras las menciones, nunca última línea, con diferenciadores de Neety.
+
+**Paso 5 — CIERRE punchy** (bold statement, sin pedir comentarios ni preguntar; §4.2 Paso 6). Ej. "Hoy, al menos, sabes su nombre." Corre la validación (§8).
+
+**Paso 6 — FOTOS de las 10 personas (en vez del CSV):** para cada persona, saca su **foto de perfil de LinkedIn** vía Unipile (endpoint de perfil de persona → campo de foto de perfil, `profile_picture_url`/`picture_url`), descárgala, y entrega las 10 en un **ZIP/carpeta nombradas en ORDEN de mención**: `01_Nombre-Apellido.jpg`, `02_…`, … `10_…`. (El usuario las coloca en su plantilla; nosotros NO montamos la imagen — imagen = orla de retratos, `images §8`.)
+
+**Paso 7 — Guía de menciones con enlaces** (igual que mapa, §4.2 Paso 10): las 10 con el enlace de perfil de LinkedIn de la persona y el de la empresa, para pegar las @ sin confundir homónimos.
+
+**OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces**. **Sin CSV** y sin montar imagen.
 
 ### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**

@@ -100,7 +100,7 @@ Una infografía (tabla/diagrama/multi-caja resumiendo herramientas/pasos) va 0-d
 
 ## 8 · Registro de imagen por tipo de post (atajo)
 - **Mapa regional** → la imagen la hace el USUARIO (captura de la web PamPam); el workflow NO genera imagen para mapas (entrega un CSV para PamPam en su lugar — ver `post-workflow §4.2`). Esta skill no aplica al mapa.
-- **"Los 10"** → orla de retratos (cabezas), NO personas sobre mapa. Cabecera fuerte en paleta Neety, palabra clave en naranja.
+- **"Los 10"** → orla de retratos (cabezas), NO personas sobre mapa. Cabecera fuerte en paleta Neety, palabra clave en naranja. **El usuario la monta con SU plantilla**; el workflow NO genera la imagen — entrega las **10 fotos en un ZIP en orden de mención** (`post-workflow §4.3`).
 - **Meme** → §6 (o calcar referencia, §5-B).
 - **Deseo / números** → screenshot documental real (registro 2).
 - **Personal / founder / lead-magnet / evento** → foto natural real (registro 3). En eventos: selfie/grupo/microfonados/detalle (vino en mano).
