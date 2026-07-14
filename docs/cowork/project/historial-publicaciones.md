@@ -11,11 +11,16 @@
 >
 > **El CONCEPTO sí es global: no se repite nunca, ni entre cuentas.** Medido: "país inventado" 7.87x en Unai → **1.2x** cuando Iker lo repitió. Si una cuenta hace una región que ya hizo otra, el **concepto, el país de comparación y los clichés van todos nuevos** (la audiencia se solapa y si no, lee a refrito).
 
-| Cuenta | Regiones ya usadas (NO repetir en ESA cuenta) | Conceptos gastados por esa cuenta |
-|---|---|---|
-| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra · País Vasco (en "Los 10") | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
-| **Unai** | País Vasco · Bizkaia · Álava · país inventado (trampa) | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "país inventado" (⛔ gastado para TODAS las cuentas) |
-| **Asier** | Aragón | "secarral que peina el cierzo" |
+**Aplica igual a MAPA y a "LOS 10"**: los dos son Peloteo y los dos van por cuenta. Ojo: **cuentan juntos para el espaciado de ≥2 semanas**, pero **NO se queman la región entre sí** — validado: Iker hizo el mapa de Gipuzkoa (12.92x, 14-abr) y "Los 10" del País Vasco (4.81x, 25-jun), territorio solapado, 10 semanas después y sin penalización. Son pilares distintos: uno pelotea empresas, el otro personas.
+
+| Cuenta | MAPAS usados (no repetir en esa cuenta) | "LOS 10" usados | Conceptos gastados por esa cuenta |
+|---|---|---|---|
+| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra | País Vasco | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
+| **Unai** | País Vasco · Bizkaia · Álava · país inventado (trampa) | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "país inventado" (⛔ gastado para TODAS las cuentas) |
+| **Asier** | Aragón | — | "secarral que peina el cierzo" |
+
+**"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.
+**Personas ya mencionadas en "Los 10"** (no repetir NUNCA a la misma persona en otro "Los 10"): las 10 del País Vasco de Iker (Edorta Arriet Azpiroz, Ana Isabel Portilla, Andoni Iriarte, Oscar Urdangarin, Xabier Otaño Eguidazu, Oier Elguezabal, Carlos Muriel, Borja Jareño Irazola, Javier Gomez de Cadiñanos, Fernando Martínez).
 
 **Libres para Iker:** Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 **Libres para Unai:** Cataluña, Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
