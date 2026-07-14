@@ -364,10 +364,14 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
 
 - **Frecuencia por defecto:** 3 posts/semana/cuenta (tú confirmas la frecuencia al lanzar).
 - **Días/horas por defecto:** martes-jueves; 11:00-12:00 y 14:00-15:00 (hora local). Configurable.
-- **Rota semana a semana** quién hace qué (que no salga idéntico), y **dentro de PELOTEO alterna** mapa vs "Los 10" y cambia región/tema.
+- **Rota semana a semana** quién hace qué (que no salga idéntico).
+- **⭐ Dentro de PELOTEO, cada cuenta ALTERNA semana a semana: mapa → "Los 10" → mapa → "Los 10"…** Si la semana pasada esa cuenta sacó mapa, esta semana le toca "Los 10", y al revés. **Esa alternancia ES lo que produce el espaciado de ≥2 semanas entre mapas** (§8.3): no hay que calcularlo aparte, sale solo. Cambia siempre región/tema.
+- **La única regla dura entre semanas es POR CUENTA: que no repita el mismo pilar que ella misma sacó la semana pasada.** No hay regla de "una sola cuenta por pilar y semana".
+- **SÍ pueden coincidir dos cuentas en el mismo pilar la MISMA semana** (p. ej. Unai y Asier con "Los 10"). Con 3 cuentas alternando es inevitable y **no pasa nada**: lo que está prohibido es coincidir el mismo **DÍA** en la misma **categoría**, y de eso ya se encarga el cuadro latino (peloteo es una sola categoría, así que dos peloteos caen por fuerza en días distintos). Si dos cuentas hacen "Los 10" esa semana, que sean **regiones distintas** y **personas distintas**.
 
 ### 8.3 · Guardarraíles de espaciado (entre semanas) → vía el HISTORIAL
-- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta; **no repetir región EN ESA CUENTA** (la cobertura por cuenta está en `project/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
+> **Todo se mide POR CUENTA.** Ninguna de estas reglas es global entre cuentas.
+- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta — **lo cumple solo si respetas la alternancia mapa/"Los 10" de §8.2**, no hace falta contar nada. Nunca dos semanas seguidas de mapa en la misma cuenta. **No repetir región EN ESA CUENTA** (la cobertura por cuenta está en `project/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
 - **Lead magnet:** ≥2 semanas por cuenta; nunca dos seguidos ni solapar dos cuentas el mismo día.
 - **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **persistir** ese archivo cada semana (re-subirlo a Cowork / commit al repo) para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
 
