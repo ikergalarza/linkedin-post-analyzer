@@ -188,7 +188,7 @@ Frase de entrada:
 ### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
 > **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
 > **Input del usuario:** SOLO la región (o sector) — **si no te la da, pídesela primero** (igual que el mapa). El resto lo verifica y rellena el workflow.
-> **Diferencias de OUTPUT vs mapa:** (a) **NO hay CSV** (no se dibuja mapa) · (b) en su lugar, las **10 FOTOS en un ZIP/carpeta, en el ORDEN de mención** (el usuario las mete en SU plantilla de imagen con otra herramienta) · (c) el resto igual: texto copy-ready + guía de menciones con enlaces.
+> **Diferencias de OUTPUT vs mapa:** (a) **NO hay CSV** (no se dibuja mapa) · (b) en su lugar, las **10 FOTOS en un ZIP/carpeta, en el ORDEN de mención** (el usuario las mete en SU plantilla de imagen con otra herramienta) · (c) **los 2 PROMPTS de imagen** literales, adaptados a la región (Paso 6b) · (d) el resto igual: texto copy-ready + guía de menciones con enlaces.
 
 **Paso 0 — Región + guardarraíles:** **PREGUNTA PRIMERO PARA QUÉ CUENTA ES** (igual que el mapa, §4.2). Los guardarraíles son los mismos y **todos se miden POR CUENTA**:
 - **≥2 semanas desde el último PELOTEO de esa cuenta.** Mapa y "Los 10" son la MISMA categoría a efectos de espaciado: cuentan juntos.
@@ -227,13 +227,27 @@ Frase de entrada:
 
 **Paso 6 — FOTOS de las 10 personas (en vez del CSV):** para cada persona, saca su **foto de perfil de LinkedIn** vía Unipile (endpoint de perfil de persona → campo de foto de perfil, `profile_picture_url`/`picture_url`), descárgala, y entrega las 10 en un **ZIP/carpeta nombradas en ORDEN de mención**: `01_Nombre-Apellido.jpg`, `02_…`, … `10_…`. (El usuario las coloca en su plantilla; nosotros NO montamos la imagen — imagen = orla de retratos, `images §8`.)
 
+**Paso 6b — LOS 2 PROMPTS DE IMAGEN (output fijo, se entregan SIEMPRE).**
+El usuario monta la imagen con SU plantilla en otra herramienta y le pasa estos dos prompts. **Van literales, palabra por palabra**: no los reescribas, no los "mejores", no los resumas. Lo único que cambia son los `XXX`. Cada uno en su bloque cercado, para copiar de un clic.
+
+- **`XXX` del PROMPT 1 = el GENTILICIO de la región, no su nombre.** La plantilla dice "LA INDUSTRIA VASCA", así que se sustituye adjetivo por adjetivo: Cataluña → `catalana` · Valencia → `valenciana` · Aragón → `aragonesa` · Navarra → `navarra` · Galicia → `gallega` · Andalucía → `andaluza` · Asturias → `asturiana` · Murcia → `murciana`. Poner el nombre daría "LA INDUSTRIA CATALUÑA".
+- **`XXX` del PROMPT 2 = los 10 nombres en ORDEN de mención**, los mismos y en el mismo orden que el bloque del post y que los ficheros `01_…`-`10_…` del ZIP.
+
+```
+cambia del segundo titulo la palabra "vasca" por "XXX" y deja luego el titulo centrado ya que la frase será más larga, deja el resto de la imagen intacta solo haz ese cambio
+```
+
+```
+inserta en los placeholders de las imagenes las fotos de personas en el orden que te paso con sus nombres: XXX solo haz este cambio no suavices las caras ni las deformes insertalas tal cual asegurándote que esta condición se cumple en TODAS las filas ya que sueles insertar las fotos en la primera fila perfectas sin deformar y en la ultima siempre haces lo que quieres (aunque la foto original tenga baja calidad insertala tal cual)
+```
+
 **Paso 7 — Guía de menciones con enlaces** (mismas reglas de formato que el mapa, §4.2 Paso 10): **bloque cercado de texto plano, NUNCA tabla**, calcando el orden y el formato del bloque de personas del post pero con URLs en vez de nombres. Aquí el orden es **persona primero** (como en el cuerpo, `→ Persona - Empresa`), y **se mantiene el logro** al final: en este pilar el logro SÍ justifica la ficha (es el criterio de selección) y el usuario lo necesita a mano para responder comentarios. Esa es la única diferencia con el mapa, donde no se justifica nada.
 ```
 → linkedin.com/in/… - linkedin.com/company/… · logro concreto
 (… 10 líneas, en el orden exacto del post)
 ```
 
-**OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces**. **Sin CSV** y sin montar imagen.
+**OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces** · (4) **los 2 PROMPTS de imagen** literales con sus `XXX` rellenos (Paso 6b). **Sin CSV** y sin montar la imagen: eso lo hace el usuario con su plantilla.
 
 ### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
