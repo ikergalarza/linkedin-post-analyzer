@@ -160,8 +160,10 @@ Outliers reales: 15.9x, 7.8x (Navarra), 7.7x, 7.3x (Galicia), 6.5x…
 - **Variante polémica/trampa** (país inventado, 7.1x): arma de ocasión, no la norma. Alcance vía controversia; puede dañar imagen de marca. Saca el trade-off en voz alta antes.
 - **Espaciado:** ≥2 semanas entre mapas por cuenta; nunca repetir región; nunca dos seguidos en la misma cuenta.
 
-**Bloques de empresas:** RELLENAR con empresas reales verificadas (ver `post-workflow §4.0`): exportadoras de la zona sacadas de una fuente real (mapa de pampam / lista del usuario / ICEX / cámara / web con cita). Marca las dudosas y **nunca inventes** — lo que no puedas verificar va como `→ [PENDIENTE · no verificado]`. Formato: 20 líneas en 5 bloques de 4, **cada empresa con SU persona mencionable y @ delante de ambos nombres** (`post-workflow §4.2` Paso 4):
+**Bloques de empresas:** RELLENAR con empresas reales verificadas (ver `post-workflow §4.0`): exportadoras de la zona sacadas de una fuente real (mapa de pampam / lista del usuario / ICEX / cámara / web con cita). Marca las dudosas y **nunca inventes** — lo que no puedas verificar va como `→ [PENDIENTE · no verificado]`. Formato: 20 líneas en 5 bloques de 4, **cada empresa con SU persona mencionable y @ delante de ambos nombres** (`post-workflow §4.2` Paso 4). La **frase de entrada va sola, con línea en blanco antes de la primera `→`** (nunca pegada a la lista):
 ```
+Estas son las 20 que lo sostienen, y quien hay detrás:
+
 → @Empresa - @Persona
 → @Empresa - @Persona
 → @Empresa - @Persona

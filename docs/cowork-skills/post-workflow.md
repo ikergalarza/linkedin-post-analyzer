@@ -107,12 +107,24 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
   **Por qué importa (no es cosmético):** el usuario pega las @ a mano y LinkedIn autocompleta **por el nombre exacto**. Si el nombre no coincide, no salta el autocompletado → la mención se queda en texto muerto → esa empresa no recibe notificación → mención perdida y, con ella, el alcance que el mapa presta. Y como LinkedIn inserta el nombre real al mencionar, el post publicado acabaría distinto del que validaste.
   Lo mismo para las personas (`first_name + last_name` tal cual: `Oscar Fernandez Feito`, sin ponerle las tildes que su perfil no tiene).
 - **@ DELANTE DE CADA NOMBRE**, empresa y persona: `→ @Empresa - @Persona`. No es cosmético: el usuario pega el post en LinkedIn y clica detrás de cada @; con la arroba ya puesta, LinkedIn dispara el buscador de menciones solo. Sin ella tiene que ir escribiendo arroba por arroba, 40 veces.
+- **LÍNEA EN BLANCO entre la frase de entrada y la primera empresa.** La frase que presenta la lista (`Estas son las 20 que lo sostienen, y quien hay detrás:`) va **sola, con un salto en blanco detrás de los dos puntos**. Nunca pegada a la primera `→`: pegada, la lista se lee como un muro y la frase pierde el efecto de anuncio.
+```
+❌ MAL                          ✅ BIEN
+Estas son las 20:               Estas son las 20:
+→ @Fersa - @Rafael Paniagua
+                                → @Fersa - @Rafael Paniagua
+```
 - **Salida:** lista limpia, sin explicación, en **5 bloques de 4 líneas** (20 en total), formato exacto:
 ```
+Frase de entrada:
+
 → @Empresa - @Persona
 → @Empresa - @Persona
 → @Empresa - @Persona
 → @Empresa - @Persona
+
+→ @Empresa - @Persona
+(… ×5 bloques)
 ```
 - **Avisa de los nombres que llevan tagline o símbolos** (`@Cartonajes Barco | Soluciones de embalaje`): al clicar, LinkedIn busca con todo lo que sigue a la @ y la barra/el eslogan no matchean. Dile al usuario que recorte a la parte corta (`@Cartonajes Barco`) y elija en el desplegable, que LinkedIn ya inserta el nombre completo. El nombre en el post va completo igualmente (Paso 4, nombres exactos).
 - **Ejecución y credenciales:** **Claude lo ejecuta** vía Unipile. Las credenciales **NO van en el repo** — ya están puestas como **variables de entorno del entorno de Cowork "Iker"**: la **API key** de Unipile, la **URL/DSN base** (host + puerto) y el **account_id**. Léelas de ahí en el runtime (nombres del tipo `UNIPILE_API_KEY`, `UNIPILE_DSN`/URL, `UNIPILE_ACCOUNT_ID` — usa las que estén configuradas; si no las encuentras, lista las env vars del entorno). Construye las llamadas (`GET {DSN}/api/v1/linkedin/company/{identifier}`, cabecera `X-API-KEY`) con esos valores. Nunca hardcodees la key. (Respaldo si el account_id no estuviera en env: `7F9jXBHXQJyR--5uTD62OQ` — no es secreto sin la key.)
@@ -203,7 +215,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 **Paso 3 — CUERPO** (pelotea a la persona invisible, `swipe-file §3.1`):
 - Setup que pinta al que decide de verdad y no sale en la foto (una anáfora tipo "No publica. No da charlas. No sale en la nota de prensa." — **es UNA opción, no la plantilla fija**).
-- La **lista de las 10** (`→ Persona - Empresa · logro`).
+- La **lista de las 10** (`→ @Persona - @Empresa · logro`), con **línea en blanco entre la frase de entrada y la primera persona** (igual que el mapa, §4.2 Paso 4): la frase que presenta la lista va sola, nunca pegada a la primera `→`.
 - **Reveal tardío:** "Sí, hablo de [región]. Pero esto va de las personas."
 - Eje emocional: "le pongo cara al que estuvo detrás del salto".
 - **QUE SE NOTE QUE ES UN POST NUEVO (clave):** mantén la ESENCIA del formato (mismos bloques de 2/3, misma estructura, mismas ideas) pero **cambia las expresiones y sobre todo cómo ABRES los bloques**. No arranques siempre igual — ni todos los bloques con "No publica / No da charlas", ni con "No es por X, no es por Y" (esa anáfora de negación es la del mapa; no la calques). Rota el arranque: unos por verbo, otros por nombre, otros por número, otros por lugar (`working-preferences §4`). Mismo pilar, palabras distintas cada vez.
