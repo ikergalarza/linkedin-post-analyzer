@@ -28,7 +28,14 @@ Principio: **`context` = lo que Claude LEE · `project` = ESTADO que cambia · `
 - **`context/`** (conocimiento estático, read-only): `aboutme`, `brand-voice`, `working-preferences`, `global-instructions`, `outliers-database`, `swipe-file`, `images`, `video`, `post-workflow`, `ref_import_navarra.csv` (plantilla CSV de PamPam), `ref_empresas_industriales_pais-vasco.csv` (semilla de 346 empresas ICP para mapa/"Los 10" del País Vasco) y este `README`. Si el proyecto lee del repo, apunta `context/` a `docs/cowork-skills/`.
 - **`project/`** (estado vivo, mutable): `historial-publicaciones.md` (se actualiza cada semana) y los planes semanales ya aprobados.
 - **`output/`** (entregables): los posts copy-ready, los CSV de PamPam, las guías de menciones y las descripciones de 2 líneas — un archivo/subcarpeta por post o por semana.
-- **Campo de "instrucciones del proyecto":** un **bootstrap CORTO**, NO toda la doctrina. `global-instructions.md` va como archivo en `context/`, no pegado aquí. El bootstrap solo orquesta: cargar `context/` en orden, seguir `post-workflow`, entregar según `working-preferences`, escribir en `output/`, actualizar `project/historial-publicaciones.md`, y leer las credenciales de Unipile de las env vars del entorno "Iker".
+- **Campo de "instrucciones del proyecto":** un **bootstrap CORTO**, NO toda la doctrina. `global-instructions.md` va como archivo en `context/`, no pegado aquí. **El texto ya está escrito y listo para pegar en `BOOTSTRAP.md`** (en esta misma carpeta). Solo orquesta: cargar `context/` en orden, seguir `post-workflow`, entregar según `working-preferences`, escribir en `output/`, actualizar `project/historial-publicaciones.md`, y leer las credenciales de Unipile de las env vars del entorno "Iker".
+
+## Checklist de montaje (qué archivo va a qué carpeta)
+- **`context/`** (9 .md + 2 .csv): `aboutme.md` · `brand-voice.md` · `working-preferences.md` · `global-instructions.md` · `outliers-database.md` · `swipe-file.md` · `images.md` · `video.md` · `post-workflow.md` · `ref_import_navarra.csv` · `ref_empresas_industriales_pais-vasco.csv` (+ este `README.md` si quieres).
+- **`project/`**: `historial-publicaciones.md` — **ojo, este NO va en `context/`**: es estado que cambia cada semana y hay que re-subirlo/commitearlo al actualizarlo.
+- **`output/`**: vacío al empezar; lo llena Claude.
+- **Instrucciones del proyecto**: el bloque de `BOOTSTRAP.md`.
+- **NO subas** `docs/explorer completo.pdf` (17 MB, ya está destilado en `outliers-database §3`) ni `BOOTSTRAP.md` (su contenido va pegado en el campo, no como archivo).
 
 ## Estado / pendiente
 - **`outliers-database` §3** ya está **relleno** con el snapshot cross-creator del Explorer (2026-07-09): recetas hook×estructura×tono, distribuciones, aperturas/cierres, estilo, formato, timing y banco de remix. Fuente: `docs/explorer completo.pdf`.
