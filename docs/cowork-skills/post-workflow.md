@@ -133,13 +133,18 @@ Frase de entrada:
 
 **Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
 > Reglas canónicas: **`global-instructions §4.4b`** (aplican a todos los pilares). Esto de abajo es la implementación de referencia del mapa; si algo choca, manda §4.4b.
-- **MÁX 2 líneas CORTAS de verdad.** No valen 2 líneas kilométricas: en móvil envuelven y se leen como un bloque de 4 → canta a anuncio. Cuenta el ancho, no los puntos y aparte.
+- **MÁX 2 líneas CORTAS de verdad, SEPARADAS por una línea en blanco** (cada una aislada, y blanco antes y después del conjunto). No valen 2 líneas kilométricas: en móvil envuelven y se leen como un bloque → canta a anuncio. Cuenta el ancho, no los puntos y aparte.
 - **NUNCA nombres a Neety** ("Neety detecta…", "Neety te avisa…"). Nombrar la marca convierte el guiño en **publicidad encubierta** y el lector lo caza al instante. Habla en primera persona del plural sin marca ("te marcamos", "te avisamos") y deja que el link sea la única firma. (Coherente con `brand-voice §4`: el producto se menciona como mucho una vez y nunca vendiendo.)
 - **Colocación:** **justo DESPUÉS del bloque de menciones**, nunca al final. En este formato es una posición fija, no "donde quede coherente".
 - **Que tenga GRACIA + verbo punchy.** Un chiste que recoge el concepto del hook y lo gira contra el dolor del lector. Verbos validados: quemar, reventar, tirar, marcar, enterrar (`global §2.9`).
 - **Reenlaza con el CONCEPTO del hook** girándolo: el mejor remate es usar la palabra del gancho para describir el dolor de ventas (Aragón: el hook va de "secarral" → *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*).
 - Ataca un **punto de dolor concreto del industrial** + resuélvelo con un **diferenciador aterrizado** de `aboutme §1b` (contacto por señal / listado con confianza). Nada de "IA para ventas" en abstracto: que el director comercial VEA el cambio (500 llamadas frías → entrar solo en la que va a comprar).
-- Ejemplo validado (variar siempre): *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral. / Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link]"*.
+- Ejemplo validado (variar siempre, ojo al blanco de en medio):
+```
+Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral.
+
+Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link]
+```
 
 **Paso 6 — CIERRE del post:** una **frase punchy tipo bold statement** que remate el post. **NO** pide comentarios, **NO** hace pregunta, **NO** repite el link. Es un claim fuerte que cierra (p. ej. "Al final las que más venden son las que menos lo cuentan.").
 

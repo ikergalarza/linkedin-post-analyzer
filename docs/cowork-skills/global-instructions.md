@@ -234,7 +234,13 @@ Outliers: 9.13x ("desmonto perfiles" live), 5.0x, 4.4x, 4.0x. Corre estas puerta
 | **LEAD MAGNET** | ❌ **NUNCA** | Ver la excepción abajo |
 
 **Las 7 reglas duras:**
-1. **MÁX 2 líneas CORTAS de verdad.** Cuenta el ANCHO, no los puntos y aparte: dos líneas kilométricas envuelven en móvil y se leen como un bloque de 4 → canta a anuncio y el lector lo salta.
+1. **MÁX 2 líneas CORTAS de verdad, y SEPARADAS entre sí por una línea en blanco.** Cada una va **aislada** (blanco antes y después, también del conjunto): es la unidad (b) de §3.3 y el aislamiento ES el efecto. Pegadas forman un bloque de 2 que se lee como un párrafo de anuncio; separadas, el chiste respira y el link cae solo. Y cuenta el ANCHO, no los puntos y aparte: dos líneas kilométricas envuelven en móvil y vuelven a leerse como un bloque → canta a anuncio y el lector lo salta.
+```
+❌ MAL                                    ✅ BIEN
+[chiste que gira el hook]                 [chiste que gira el hook]
+[solución + link]
+                                          [solución + link]
+```
 2. **NUNCA nombres a Neety.** "Neety detecta…", "Neety te avisa…" convierte el guiño en **publicidad encubierta** y el lector lo caza al instante. Primera persona del plural sin marca ("te marcamos", "te avisamos"); el link es la única firma. (Coherente con `brand-voice §4`: el producto se menciona como mucho una vez y nunca vendiendo.)
 3. **Reenlaza con el CONCEPTO del hook, girándolo.** No repitas la frase del gancho: coge su palabra y úsala para describir el dolor de ventas. Validado (Aragón): hook de "secarral" → *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*
 4. **Verbo punchy CON TECHO** (§2.9): quemar, reventar, tirar, marcar, enterrar. Para en el que encaja; **no te pases a gore** (destripar/descuartizar). Punch sin pasarse de extremo.
@@ -245,6 +251,7 @@ Outliers: 9.13x ("desmonto perfiles" live), 5.0x, 4.4x, 4.0x. Corre estas puerta
 **Ejemplo validado (variar siempre, nunca copiar literal):**
 ```
 Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral.
+
 Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link]
 ```
 
