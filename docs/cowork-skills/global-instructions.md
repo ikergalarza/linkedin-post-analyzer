@@ -92,10 +92,12 @@ Cuando tengas 2+ frases que sean estructura paralela, enumeración, dato+consecu
 - ✅ `No es la inversión.\nNo es el espacio.\nNo son los mentores.`
 - **Excepción staccato:** 3-5 items MUY cortos (1-3 palabras, sustantivos/adjetivos sin verbo) van pegados en una línea con puntos: "Industrial. SaaS B2B. Servicios. Logística." · "Curiosidad. Deseo. Miedo." Test: item = frase (sujeto+verbo) → línea propia; item = sustantivo/adjetivo pelado → staccato.
 
-### 3.2 · Bloques en escalera (regla transversal)
-- Bloques de 3 en **escalera**: primera línea más corta → última más larga. O al revés (primera más larga → última más corta). Alterna entre ambas para no hacerlo monótono.
-- **Nunca** un bloque de 2 seguido de uno de 3, ni al revés.
-- Después de **cualquier bloque de 2 o 3, SIEMPRE una línea individual** para respirar.
+### 3.2 · Bloques en escalera + respiración (regla transversal, NO negociable)
+- **Tamaño de bloque de prosa: MÁXIMO 2 o 3 líneas. NUNCA 4 o 5.** Si tienes 4-5 frases seguidas, pártelas en bloques de 2/3 separados por líneas individuales. (Las listas numeradas de datos y el bloque de empresas son aparte — no cuentan como "bloque de prosa".)
+- **La respiración la dan las LÍNEAS INDIVIDUALES:** después de **CUALQUIER bloque de 2 o de 3, SIEMPRE una línea individual** (sola, con blanco antes y después). Sin excepción.
+- **NUNCA un bloque de 2 pegado a uno de 3** (ni al revés): entre bloque y bloque, SIEMPRE cae una línea individual. La secuencia es `bloque → individual → bloque → individual…`.
+- Bloques de 3 en **escalera** (1ª más corta → última más larga, o al revés; alterna).
+- **Anáfora DENTRO del bloque, variedad ENTRE bloques:** dentro de un bloque paralelo, las líneas comparten arranque (ej. un bloque de 2 con las dos líneas empezando por "No es por…"). Pero **NO hagas que TODOS los bloques del post empiecen igual** — cada bloque paralelo usa un arranque DISTINTO (uno "No es…", otro "Lo levantó…", otro por sustantivo, otro por verbo, otro por lugar). Mil variantes, no la misma muletilla repetida (`working-preferences §4`).
 - Frases cortas, verbos claros, sin buzzwords (voz founder en trincheras).
 
 ### 3.3 · Variedad rítmica (4 unidades formales)

@@ -71,7 +71,8 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 
 **Paso 1 — Iterar el GANCHO** (estructura archi-probada, ver `swipe-file §2.1`). Empieza SIEMPRE por aquí. Fórmula:
 `[concepto original despectivo/gracioso de la zona] + [2-3 clichés locales] + [frase-rabia entre comillas] . Y exporta más que [PAÍS] entero 👇`
-- **Concepto:** nunca "región/pueblo/tierra". Inventa uno gracioso/despectivo (validados: "esquina del Atlántico", "patio trasero de los Pirineos", "trastienda del norte"). No repitas un concepto ya usado.
+- **Concepto: DERIVADO DE LA GEOGRAFÍA de la región** (su posición en el mapa, accidentes geográficos, fronteras). Nunca "región/pueblo/tierra". Así lo hemos hecho siempre: Galicia = "la esquina del Atlántico" (arriba a la izquierda), Álava/País Vasco = "la trastienda del norte" (arriba, la olvidada del norte), Navarra = "el patio trasero de los Pirineos" (frontera con Francia). Inventa uno original y geográfico por región; no repitas concepto usado.
+- **⚠️ NO criticar otras regiones/ciudades ESPAÑOLAS.** Estos posts buscan **HERMANDAD entre regiones, no dividir el país** (igual que nunca hablamos mal de otra empresa, tampoco de otra región). **Prohibido nombrar/pinchar a Madrid, Barcelona u otras ciudades/regiones españolas** en el concepto o el hook. El "desprecio" es (a) **auto-despectivo** de la propia región (sus clichés) o (b) apoyado en una **frontera extranjera** (los Pirineos están entre España y Francia → "patio trasero de los Pirineos" vale). Nada de "la sala de espera entre Madrid y Barcelona" ni "para media España": genera conflicto entre regiones.
 - **Clichés:** de ESA región (Sevilla → feria y playa; Valencia → paella y Fallas).
 - **Frase-rabia entre comillas:** "y poco más" / "buena para un pintxo-pote y para irse" → sube la indignación defensiva del local (lo que le hace comentar). Está validado en Navarra y Álava.
 - **Cierre:** `Y exporta más que [PAÍS] entero 👇` (el país sale del Paso 2).
@@ -109,9 +110,11 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega los NOMBRES en el bloque del cuerpo **y, aparte, la guía de menciones con los enlaces** (Paso 10) para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 
 **Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
-- El link de agendar (`https://recursos.neety.com/agendar/`) va **tejido de forma natural y graciosa**, atacando un **punto de dolor** del cliente y ofreciendo la solución — usando los **diferenciadores de Neety** (`aboutme §1b`: listado con confianza, contacto por señal, el comercial valida y enseña) para introducirlo. Ni venta directa ni frase corporativa.
-- **Colocación:** **después del bloque de menciones** (o en el punto del cuerpo que quede más coherente para ESE post). **Nunca como última línea.**
-- Ejemplo de tono (variar): *"Vender callado está bien, hasta que otro te roba el cliente. Nosotros te lo cazamos por señal y tú solo cierras: [link]"*.
+- **MÁX 2 líneas, punchy** (no un párrafo — el de Aragón que ocupaba 3 líneas era demasiado largo). Palabras con punch, cero relleno corporativo.
+- **Reenlaza SIEMPRE con el hook/concepto** del post: retoma la imagen o la frase del gancho para que el link no chirríe (ej. si el hook iba de "exportar callado", el spam ninja recoge ese "callado").
+- Ataca un **punto de dolor** + ofrece la solución con los **diferenciadores de Neety** (`aboutme §1b`: contacto por señal, listado con confianza). Ni venta directa ni frase corporativa.
+- **Colocación:** **después del bloque de menciones** (o donde quede más coherente). **Nunca como última línea.**
+- Ejemplo de tono (variar, ≤2 líneas): *"Aquí venden callados hasta que otro les roba el cliente. Nosotros detectamos por señal cuándo va a comprar y tu comercial entra justo ahí: [link]"*.
 
 **Paso 6 — CIERRE del post:** una **frase punchy tipo bold statement** que remate el post. **NO** pide comentarios, **NO** hace pregunta, **NO** repite el link. Es un claim fuerte que cierra (p. ej. "Al final las que más venden son las que menos lo cuentan.").
 
@@ -136,7 +139,11 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 **OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas** · (4) la **guía de menciones con enlaces** (empresa + persona). Nada de imagen.
 
-**Guardarraíles de elección de región (Paso 0):** greenlit (La Rioja, Asturias, Murcia, Aragón, Cantabria, Extremadura, Castilla-La Mancha…); baneadas capitales obvias (Madrid 0.55x); ≥2 semanas desde el último mapa de esa cuenta; nunca repetir región.
+**Guardarraíles de elección de región (Paso 0):**
+- **Prefiere la COMUNIDAD AUTÓNOMA a la provincia/ciudad** — más alcance. Validado: elegimos Cataluña (no Barcelona); y Álava (provincia) rindió MENOS que País Vasco (comunidad). Baja a provincia solo si tiene identidad muy fuerte y ya tocaste la comunidad.
+- Greenlit (comunidades sin tocar): Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares…
+- Baneadas: capitales/ciudades obvias (Madrid 0.55x) y cualquier cosa que critique a otra región española.
+- ≥2 semanas desde el último mapa de esa cuenta; nunca repetir región ni concepto.
 
 ### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
 > **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
@@ -196,7 +203,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 **Paso 3 — CUERPO:** lo más **fiel al original** en formato/longitud/formateado, pero **adaptado a ventas B2B**. Corto (3-6 líneas; el motor es la foto, no el texto).
 - **Roles de trabajadores:** sin anglicismos ni títulos complejos. Español genérico que un **industrial de 50+ entienda** (comercial, jefe de ventas, director comercial, gerente…) — lo más genérico = más alcance. (Mismo criterio en la foto, Paso 6.)
 
-**Paso 4 — SPAM NINJA:** link de agendar tejido en el **lugar más adecuado del cuerpo** (nunca la última línea), de forma **original y divertida**, con los **diferenciadores de Neety** (`aboutme §1b`). Igual que en mapas.
+**Paso 4 — SPAM NINJA:** link de agendar tejido en el **lugar más adecuado del cuerpo** (nunca la última línea), de forma **original y divertida**, con los **diferenciadores de Neety** (`aboutme §1b`). **Igual que en mapas (§4.2 Paso 5): máx 2 líneas, punchy, y reenlaza con el hook.**
 
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs). Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
 

@@ -96,7 +96,8 @@ El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el
 ## 5 · Menciones de terceros: SIEMPRE en positivo
 
 - **Nunca** critiques, te burles o hables mal de otra empresa, marca, herramienta, producto, persona o competidor **por su nombre**. Cualquier mención a otro producto/software/empresa debe ser positiva o neutral-respetuosa.
-- Los reposts son la métrica de mayor palanca en LinkedIn; una empresa criticada nunca reposta. El upside de un zasca casi nunca compensa el alcance perdido.
+- **Tampoco de otras REGIONES o CIUDADES españolas.** En los mapas y en cualquier post buscamos **hermandad entre regiones, no dividir el país**: no pinches a Madrid, Barcelona ni a ninguna otra comunidad/ciudad de España. El único "desprecio" permitido es **auto-despectivo** (de la propia región del post) o apoyado en una **frontera extranjera** (ej. "el patio trasero de los Pirineos", entre España y Francia). Ver `post-workflow §4.2` Paso 1.
+- Los reposts son la métrica de mayor palanca en LinkedIn; una empresa (o una región) criticada nunca reposta. El upside de un zasca casi nunca compensa el alcance perdido.
 - Si necesitas un contraejemplo, usa una categoría genérica ("la mayoría de CRMs", "el típico playbook de outbound"), no un nombre.
 
 ---
