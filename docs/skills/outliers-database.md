@@ -178,7 +178,16 @@ Preguntas que hacen el trabajo: **¿cuál es el equivalente de ese resultado en 
 
 **Paso 6 — Remixa también la IMAGEN, no solo el hook.** ¿La original usa comparación? ¿contradicción? ¿enseña un resultado visual? ¿crea una pregunta en la cabeza? Adapta ESO. Los ejes de comparación que transfieren: NO/SÍ · antes/después · principiante/pro · mal/bien · normal/top 1%. (Encaja con `images §6` y con el motor A del meme: el wojak 16.56x es exactamente un *antes vs ahora*.)
 
-**Paso 7 — El paquete completo:** idea remixada + hook adaptado + imagen adaptada + promesa clara + formato reconocible pero fresco.
+**Paso 7 — ⭐ EL TEST QUE DECIDE SI EL REMIX ESTÁ TERMINADO: "¿esto solo puede publicarlo una cuenta de VENTAS?"**
+Es el paso que más se falla y el que convierte el robo en algo original. Robar el hueso es la mitad del trabajo; **re-anclarlo a NUESTRO sector es la otra mitad**, y sin ella el post no sirve.
+- **El peor error posible: que tu post lo pudiera subir cualquier cuenta.** Si el mismo texto vale en una consultora, una agencia o una constructora, has copiado un formato genérico. No es un remix, es un post huérfano.
+- **La prueba:** lee el post e imagina que lo publica una cuenta de otro sector. ¿Cuela? → **está sin terminar, vuelve a escribirlo.** Tiene que leerse como algo que **SOLO** es posible en una cuenta de ventas.
+- **Por qué importa (no es estética):** el algoritmo de LinkedIn ES la audiencia, no suerte. Si el post no está alineado con lo que le interesa a nuestro ICP, no lo distribuye a quien queremos. Contenido de ventas → audiencia de ventas.
+- **Cómo se aterriza:** el vocabulario del post tiene que ser el del oficio — vender, cerrar, cliente, comercial, venta, precio, propuesta, cuota, facturar, exportar. No basta con que el TEMA sea traducible: la piel entera se cambia (`global-instructions §2.3`).
+- ⚠️ **Pero NO acotes de más en el hook.** "Ventas B2B", "outbound", "pipeline" o "SDR" estrechan el alcance aunque describan bien al cliente. En el gancho, cuanto más genérico dentro de VENTAS, más lejos llega. La especificidad va en el cuerpo.
+- **Ejemplo real (lead magnet de Asier, 2026-07-14):** el hueso del McKinsey Slide Playbook se remixó a *"tu propuesta entra sola en un comité"*. **Falla el test**: eso lo publica igual una consultora. Arreglado a *"Cierras con tu cliente. Y la venta se cae en un comité en el que no conoces a nadie"* → cerrar + cliente + venta = solo posible en una cuenta de ventas. Mismo hueso, misma emoción, ahora sí es nuestro.
+
+**Paso 8 — El paquete completo:** idea remixada + hook adaptado + imagen adaptada + promesa clara + formato reconocible pero fresco.
 
 **Sanity check antes de entregar (si fallas uno, no lo publiques):**
 - ¿Estoy **copiando o transformando**?

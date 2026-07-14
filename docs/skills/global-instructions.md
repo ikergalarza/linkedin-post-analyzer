@@ -60,7 +60,10 @@ Nuestro sector es **ventas B2B** (la IA es una herramienta que usamos, NO nuestr
 - La perspectiva **comprador**: comprar / "por qué te compran (o no)" / la decisión de compra.
 - El **rol/mundo**: comercial, equipo comercial, director comercial, prospectar, reuniones, B2B.
 
-Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cadencia", "reply rate", "touchpoints", "SDR/AE" como término, "cold email", "discovery", "GTM", "ICP".
+Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cadencia", "reply rate", "touchpoints", "SDR/AE" como término, "cold email", "discovery", "GTM", "ICP". **Tampoco "B2B" en el hook**: describe bien a nuestro cliente pero estrecha el alcance. Dentro de VENTAS, cuanto más genérico el gancho, más lejos llega; la especificidad va en el cuerpo.
+
+**⭐ EL TEST DEL ANCLA (correr en TODO post, no solo en remixes): "¿esto solo puede publicarlo una cuenta de VENTAS?"**
+Lee el post e imagina que lo sube una consultora, una agencia o una constructora. **Si cuela, está mal.** El peor error posible es que tu publicación la pudiera subir cualquier cuenta: entonces es un post huérfano y el algoritmo no sabe a quién dárselo. **El algoritmo ES la audiencia, no es suerte** — contenido de ventas, audiencia de ventas. El post tiene que leerse como algo que SOLO es posible en una cuenta de ventas, y eso se consigue con el vocabulario del oficio (vender, cerrar, cliente, comercial, venta, precio, cuota, facturar, exportar), no solo con un tema traducible. Caso real en `outliers-database §3.9c` Paso 7.
 
 ### 2.4 · Claim universal dentro del sector
 El claim (el shock, la tensión, el reframe) debe aterrizar para CUALQUIERA cerca del B2B comercial: SDRs, AEs, sales managers, RevOps, founders B2B. Test: ¿un sales manager pararía el scroll con esto? ¿un founder B2B? Si solo lo pilla el SDR ultra-técnico, es un hook del 1% — amplía.
