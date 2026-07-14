@@ -137,6 +137,23 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 - **Horas por outlier-ratio (señal FUERTE):** `11:00 → 8.21x` (la mejor con diferencia) · `12:00 → 7.10x` · `14:00 → 7.03x` · `09:00 → 6.75x` · `05:00 → 6.66x` · `07:00 → 6.57x` · `15:00 → 6.12x` · `16:00 → 6.02x`. → Refuerza la ventana **11:00-12:00 y 14:00-15:00** ya recomendada; 11:00 es el pico claro.
 - **Días (señal DÉBIL):** las tasas por día están todas apretadas ~4.3-4.9% (Sáb 4.9%, Mié 4.6%, Vie 4.6%, Mar 4.5%, Jue 4.5%). No hay un día ganador nítido cross-creator; el "martes" de §4 sigue siendo el prior propio, con miércoles-jueves igual de válidos.
 
+### 3.9b · 🔎 CÓMO CAZAR LEAD MAGNETS EN LA BD (huella dactilar + remix cross-sector)
+> Método verificado el 2026-07-14 contra `/api/analysis/cross-creators`. Sirve para encontrar ángulos frescos sin depender de lo que opine un blog.
+
+**La huella dactilar del lead magnet: `comment_like_ratio ≥ 1`.** Un post normal tiene MUCHOS más likes que comentarios (Gipuzkoa: 1.208❤ / 95💬 = **0,08**). Un lead magnet invierte la proporción, porque el comentario es el peaje (vibe prospecting 95❤ / 632💬 = **6,65** · desmonto perfiles 116❤ / 483💬 = **4,16**). **Si comentarios ≈ o > likes, casi seguro que es comment-gated.**
+
+**El filtro de 2 pasos (rinde 83 lead magnets reales de los 500 top):**
+1. `comment_like_ratio >= 1.0` → de 500 outliers quedan **105**.
+2. De esos, quédate con los que llevan **palabra-puerta explícita en `content_text`** (`comment "X"`, `comenta "X"`, `type "X"`, `drop … below`) → **83 confirmados**.
+   - ⚠️ La BD **no guarda el texto de los comentarios**, así que "todos comentan la misma palabra" no se puede verificar directamente. No hace falta: **la palabra-puerta del post ES la que la gente comenta**. Mismo señal, y este sí es verificable.
+   - Un post con los comentarios disparados pero **sin** palabra común no es un lead magnet: es una polémica. No lo remixes como si lo fuera.
+
+**⭐ BUSCA EN TODOS LOS SECTORES, no solo en ventas.** Es la parte que más valor da:
+- **Un outlier robado de nuestro propio sector sorprende menos**: nuestra audiencia ya lo ha visto. Robado de otro sector, es original aquí aunque allí sea un clásico.
+- Lo que se copia **NUNCA es el tema: es la ESENCIA, el porqué funciona**. Se extrae el mecanismo (qué hace que el lector pague el peaje del comentario) y se remixa a ventas B2B.
+- Prueba viva: **Guillermo Flor · 22.1x · 5.432💬 / 451❤ (ratio 12,04)** — un playbook de Claude en Excel y PowerPoint. Cero ventas, y es de los mejores ratios comentario/like de toda la BD. Su esencia (la herramienta que ya usas a diario + un playbook de atajos que no conoces) transfiere a ventas sin despeinarse.
+- Criterio de orden: **ratio C/L alto × outlier ratio alto × distancia de nuestro sector**. Cuanto más lejos, más original el remix.
+
 ### 3.10 · Banco de remix (SOLO top-top relevantes para B2B — no la competencia entera)
 > De las ~150 páginas de ejemplos (ordenados de más a menos outlier) **no** copio el catálogo. Aquí van los pocos cuyo MECANISMO transfiere a Neety. Ratio = vs. la media del PROPIO autor (cross-creator). Se calca la mecánica, nunca el texto.
 
