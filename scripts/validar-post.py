@@ -50,8 +50,24 @@ def leer_historial():
         return ''
     return io.open(HISTORIAL, encoding='utf-8').read()
 
+def validar_entregable(texto):
+    """Cualquier cosa que entregamos y que un humano va a leer: prompt para el
+    programador, descripciones del CSV, copy del gate. NO es un post de LinkedIn,
+    así que no aplican hook ni bloques, pero SÍ la puntuación anti-IA: el copy del
+    gate lo lee un cliente, y el prompt lo lee el programador."""
+    r = []
+    m = re.search(r'[—–]', texto)
+    r.append((not m, 'Sin guion largo (brand-voice §3)', 'delator de IA nº1' if m else ''))
+    ms = re.findall(r'[^\s]+,\s+[ye]\s', texto)
+    r.append((not ms, 'Sin coma antes de "y"/"e" (brand-voice §3)', f'{len(ms)}: {ms[:3]}' if ms else ''))
+    m = re.search(OPENERS_QUEMADOS, texto, re.I)
+    r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
+    return r
+
 def validar(texto, pilar, cuenta=None):
     texto = norm(texto)
+    if pilar == 'entregable':
+        return validar_entregable(texto)
     bs = bloques(texto)
     hook = bs[0] if bs else []
     hook_txt = ' '.join(hook)
@@ -161,7 +177,8 @@ def validar(texto, pilar, cuenta=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('fichero')
-    ap.add_argument('--pilar', required=True, choices=['mapa', 'los10', 'meme', 'leadmagnet'])
+    ap.add_argument('--pilar', required=True,
+                    choices=['mapa', 'los10', 'meme', 'leadmagnet', 'entregable'])
     ap.add_argument('--cuenta', default=None)
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()

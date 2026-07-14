@@ -157,6 +157,18 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 - Prueba viva: **Guillermo Flor · 22.1x · 5.432💬 / 451❤ (ratio 12,04)** — un playbook de Claude en Excel y PowerPoint. Cero ventas, y es de los mejores ratios comentario/like de toda la BD. Su esencia (la herramienta que ya usas a diario + un playbook de atajos que no conoces) transfiere a ventas sin despeinarse.
 - Criterio de orden: **ratio C/L alto × outlier ratio alto × distancia de nuestro sector**. Cuanto más lejos, más original el remix.
 
+### 3.9bis · ¿El lead magnet lleva FOTO? SÍ (medido, 2026-07-14)
+> Duda recurrente ("creo que nunca llevaban foto"). **Es al revés, y por mucho.** Medido sobre los 500 top outliers de `cross-creators`.
+
+| | Lleva foto | Solo texto |
+|---|---|---|
+| **Lead magnets confirmados** (n=83) | **85%** | 7% |
+| Resto de outliers (n=417) | 54% | 13% |
+
+- **El lead magnet lleva foto MÁS que ningún otro formato**, no menos. Y los que la llevan promedian **2.217 comentarios frente a 987** de los de solo texto: 2,2× más de la única métrica que le importa a este pilar.
+- **PERO el formato NO es la palanca.** En nuestras cuentas el mejor lead magnet es **solo texto** ("vibe prospecting" 9.85x · 632 com.) y el 2º lleva foto (desmonto perfiles 8.52x · 483 com.). Con foto tenemos desde 8.52x hasta 0.21x. Lo que separa un 9.85x de un 0.21x es el ángulo, el mecanismo y el CTA — nunca si había imagen.
+- **Conclusión operativa:** la foto se mantiene (es la norma y correlaciona con más comentarios) pero **no le eches horas**: es un selfie natural (`images §3`), no un diseño. Si un post sale sin foto, no lo bloquees por eso.
+
 ### 3.9c · 🔁 CÓMO SE REMIXA UN OUTLIER (el método, no el catálogo)
 > Destilado de los apuntes internos "APUNTES REMIX OUTLIERS" (Documents/Mario/LINKEDIN GROWTH). Vienen del mundo del vídeo: **traducción a lo nuestro → "título" = HOOK · "miniatura" = IMAGEN**. Aplica a los 4 pilares, no solo al meme.
 

@@ -77,13 +77,15 @@ No escribimos código ni montamos la web. Entregamos **un prompt en bloque cerca
 
 ```
 RECURSO: [nombre accionable, vende el resultado no el formato]
+(OJO: ni guiones largos ni coma antes de "y" en NADA de este prompt. El copy del
+ gate lo lee un cliente. Valida con: python scripts/validar-post.py f.txt --pilar entregable)
 URL sugerida: recursos.neety.com/[slug]
 PALABRA DEL GATE (la que comentan en LinkedIn): "[X]"
 
 1. GATE (lo que se ve ANTES de dejar el email)
 - Titular (Atención): [problema o resultado, concreto]
 - Subtítulo (Interés): [qué incluye y por qué es útil, 1-2 líneas]
-- LA MUESTRA GRATIS (Deseo) — esto es lo que se regala sin pedir nada:
+- LA MUESTRA GRATIS (Deseo). Esto es lo que se regala sin pedir nada:
   [el trozo concreto que se enseña: 1 de los 7 errores, 2 filas de la checklist,
    el primer resultado de la calculadora... Suficiente para probar que vale,
    insuficiente para resolver el problema entero]
