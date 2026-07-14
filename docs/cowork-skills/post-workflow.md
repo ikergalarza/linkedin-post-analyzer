@@ -53,7 +53,13 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras).
 5. **Cuerpo:** `§3` + voz `brand-voice`, con `swipe-file` como molde de estructura (bloques, anáforas, staccato, reveal).
 6. **CTA:** regla del UNO (`§4.5`).
-7. **Imagen:** skill `images` (o `video` si es vídeo).
+7. **Imagen — SIEMPRE un prompt o una recomendación basada en datos** (según el registro correcto, `images §3`):
+   - **Mapa:** captura de PamPam (la haces tú) → el workflow no da prompt, entrega el CSV.
+   - **"Los 10":** orla de retratos con TU plantilla → el workflow entrega el ZIP de 10 fotos (no prompt).
+   - **Meme:** **prompt de modificaciones** sobre la referencia (`§4.4` Paso 6).
+   - **Lead magnet / personal / founder:** **recomendación de foto natural** (selfie o grupo con compañeros; NO caricatura ni diseño elaborado).
+   - **Deseo/números/conversación/métricas:** prompt de **screenshot documental** (iMessage, app del banco, dashboard de LinkedIn con nuestros datos).
+   - Vídeo → skill `video`.
 8. **Tag de viralidad:** `outliers-database §4` (Neety) primero; §3 solo etiquetado.
 9. **Loop = pase de validación en silencio** (`global-instructions §8`): autocrítica hasta pasar el listón.
 10. **Entrega:** 2-3 variantes en bloques cercados (`working-preferences §1`); empresas/menciones rellenas y marcadas (§4.0); lista de "revisa estas"; y **di qué esperas del usuario** para el siguiente paso.
@@ -207,7 +213,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 > Se reconoce el outlier de lead magnet en la DB porque **se disparan los COMENTARIOS** (vibe prospecting 632 · desmonto perfiles 483). El objetivo del formato es EL comentario.
 > **Diferencia clave con los otros pilares: NO lleva spam ninja.** El CTA de comentar ES el cierre (regla del UNO); meter el link de agendar aquí apila CTAs y lo rompe.
-> **Output:** solo el **TEXTO** copy-ready. (Imagen = foto real del founder si aplica, `images §3`; la pones tú.) Sin CSV, sin ZIP, sin spam ninja.
+> **Output:** el **TEXTO** copy-ready **+ una recomendación de imagen** (registro personal/founder: **foto natural real, selfie o foto en grupo con compañeros** — NO caricatura ni diseño elaborado; `images §3`). La foto la haces/pones tú; el workflow te dice qué tipo encaja. Sin CSV, sin ZIP, sin spam ninja.
 
 **Paso 0 — Input:** la idea/recurso a regalar. Si no te la da, pregúntale qué entregable quiere.
 

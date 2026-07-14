@@ -26,9 +26,9 @@ UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nomb
 ---
 
 ## 3 · Los 3 registros de imagen (elige por tipo de post, no los cruces)
-1. **MEME** → ilustración wojak / cambio corporal (sistema meme, §5). Dibujado es correcto AQUÍ.
-2. **DESEO / NÚMEROS** → **screenshot documental real** (banco, Stripe, calendario, CRM, factura). Prueba real, no ilustración. Conserva el chrome visible (logo del banco, tipografía real, números en su formato) — eso carga la credibilidad. La credibilidad está en que el FORMATO calca una pantalla real, no en que el dato sea literalmente cierto.
-3. **PERSONAL / LEAD-MAGNET / FOUNDER** → **foto natural real** del autor (cara, oficina), NO caricatura dibujada. La cara real es el motor de credibilidad (Iker "desmonto perfiles" foto real 9.13x vs caricatura 0.2x).
+1. **MEME** → ilustración / cambio corporal, o **calcar la referencia** (§5-B). Dibujado es correcto AQUÍ. (El meme es la EXCEPCIÓN: si la referencia es dibujo, nuestra foto es dibujo.)
+2. **DESEO / NÚMEROS / CONVERSACIÓN** → **screenshot documental real** que calca una pantalla reconocible: **iMessage de iPhone** (conversación/mensajes simulados), **captura de la app del banco**, Stripe, calendario, CRM, factura. Y para un **post de métricas**: **captura del dashboard oficial de analíticas de LinkedIn** con NUESTROS datos. Prueba real, no ilustración. Conserva el chrome visible (logo, tipografía real, números en su formato) — ahí está la credibilidad. La credibilidad está en que el FORMATO calca una pantalla real, no en que el dato sea literalmente cierto. Funciona muy bien tanto en memes (motor B) como fuera.
+3. **PERSONAL / LEAD-MAGNET / FOUNDER** → **foto natural real** del autor, NO caricatura ni diseño elaborado/complejo. Rinden mejor las **fotos naturales tipo selfie o foto en grupo con compañeros** (cara real, oficina) que las ilustraciones. La cara real es el motor de credibilidad (Iker "desmonto perfiles" foto real 9.13x vs caricatura 0.2x). Especialmente en **lead magnets**: selfie / grupo con el equipo > cualquier caricatura.
 
 ---
 
