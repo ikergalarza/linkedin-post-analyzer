@@ -9,14 +9,14 @@
 ## 🗺️ Cobertura de mapas POR CUENTA (leer ANTES de elegir región)
 > **La región quemada lo está SOLO para la cuenta que la hizo, no para las otras.** Iker ya hizo Cataluña → Iker no la repite nunca; **Unai y Asier sí pueden**. El plan a largo plazo: que **cada cuenta acabe tocando todas las regiones** (España se acaba). Por eso **lo primero que hay que preguntar es para qué cuenta es el mapa**.
 >
-> **El CONCEPTO sí es global: no se repite nunca, ni entre cuentas.** Medido: "país inventado" 7.87x en Unai → **1.2x** cuando Iker lo repitió. Si una cuenta hace una región que ya hizo otra, el **concepto, el país de comparación y los clichés van todos nuevos** (la audiencia se solapa y si no, lee a refrito).
+> **El CONCEPTO no se repite, tampoco entre cuentas.** Es regla de frescura (`working-preferences §4`), **no un hecho medido**: no tenemos ningún caso limpio que lo pruebe. ⚠️ El "país inventado" 7.87x → 1.24x **NO vale como prueba** (aquí se citaba como tal): el segundo no cayó por repetido, cayó porque su país ficticio se puso donde no había nada y no ofendió a nadie. Si una cuenta hace una región que ya hizo otra, el **concepto, el país de comparación y los clichés van todos nuevos** — la audiencia se solapa y si no, lee a refrito.
 
 **Aplica igual a MAPA y a "LOS 10"**: los dos son Peloteo y los dos van por cuenta. Ojo: **cuentan juntos para el espaciado de ≥2 semanas**, pero **NO se queman la región entre sí** — validado: Iker hizo el mapa de Gipuzkoa (12.92x, 14-abr) y "Los 10" del País Vasco (4.81x, 25-jun), territorio solapado, 10 semanas después y sin penalización. Son pilares distintos: uno pelotea empresas, el otro personas.
 
 | Cuenta | MAPAS usados (no repetir en esa cuenta) | "LOS 10" usados | Conceptos gastados por esa cuenta |
 |---|---|---|---|
 | **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra | País Vasco | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
-| **Unai** | País Vasco · Bizkaia · Álava · país inventado (trampa) | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "país inventado" (⛔ gastado para TODAS las cuentas) |
+| **Unai** | País Vasco · Bizkaia · Álava | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" |
 | **Asier** | Aragón | — | "secarral que peina el cierzo" |
 
 **"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.
@@ -24,6 +24,8 @@
 
 **Libres para Iker:** Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 **Libres para Unai:** Cataluña, Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
+
+> **El "país inventado" NO cuenta como región gastada** y no está en esta tabla: no es un mapa de peloteo (no menciona a nadie, la imagen es un dibujo y no una captura de PamPam, y el motor es la controversia). Ficha en `context/global-instructions.md §4.1`. Lo hicieron Unai (7.87x, 12-jun) e Iker (1.24x, 23-jun).
 **Libres para Asier:** todas menos Aragón.
 **Baneada para todas:** Madrid y capitales obvias (Madrid 0.55x, sin efecto underdog).
 
@@ -52,7 +54,8 @@
 | 2026-06-15 | Unai | Jue 18/06 | Lead magnet | — | mensajes que más cierran | publicado | 0.57x · flop |
 | 2026-06-15 | Iker | Mié 17/06 | Lead magnet | — | biblia de ventas | publicado | 1.20x · FLOP de referencia: el entregable genérico "todo en una caja" está muerto |
 | 2026-06-15 | Iker | Mar 16/06 | Peloteo | Mapa | Galicia | publicado | 7.28x · 64.6K · 60 reposts · "esquina del Atlántico" vs Croacia |
-| 2026-06-08 | Unai | Vie 12/06 | Peloteo | Mapa | país inventado (trampa) | publicado | 7.87x · 78.7K · variante polémica, arma de ocasión |
+| 2026-06-22 | Iker | Mar 23/06 | Meme/otro | Mapa-meme dibujado (NO peloteo) | país inventado (2º intento) | publicado | 1.24x · 12.7K · el país ficticio cayó donde no había nada → nadie se sintió aludido → sin controversia, sin alcance. NO murió por repetir concepto |
+| 2026-06-08 | Unai | Vie 12/06 | Meme/otro | Mapa-meme dibujado (NO peloteo) | país inventado | publicado | 7.87x · 78.7K pero solo 33 likes y 2 reposts: alcance sin respaldo. Motor = controversia involuntaria (lo leyeron como burla a Baleares). No cuenta como región gastada |
 | 2026-06-08 | Unai | Jue 11/06 | Lead magnet | — | "destripo perfiles" | publicado | 0.21x · FLOP clave: mismo concepto que "desmonto" (8.52x) con el verbo pasado de vueltas → global §2.9 |
 | 2026-06-08 | Unai | Mar 09/06 | Peloteo | Mapa | Bizkaia | publicado | 3.27x · 21.3K · 25 reposts |
 | 2026-06-01 | Unai | Vie 05/06 | Meme | Motor A | wojak Chad→soyjak "caja de herramientas engorda" | publicado | 16.56x · 165.5K · EL mejor post del histórico |

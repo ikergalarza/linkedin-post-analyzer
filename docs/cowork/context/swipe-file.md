@@ -110,7 +110,8 @@ Si tu empresa carga contenedores desde ahí, este es su sitio.
 ```
 > ⚠️ Fíjate en dos cosas: (a) **cada cifra cita fuente** (Datacomex, Banco Mundial) — obligatorio; (b) el cierre "La gente y las empresas que mueven todo esto:" es una **frase-comodín que se ha repetido** entre mapas → `working-preferences §4` pide variarla cada vez. No la copies literal.
 
-> **Variante "país inventado" (trampa)** — Unai 7.87x · 78.7K. Gancho `Nadie habla de este país... pero es donde mejor se vende del mundo 👇` + "razones" con guessing game ("¿Alguien se atreve a adivinar?"). ⚠️ Iker la **repitió** semanas después ("Este país no cuenta para los rankings…") y **cayó a 1.2x**: repetir el mismo concepto lo mata (confirma la regla de variar).
+> **⚠️ La variante "país inventado" NO es un mapa de peloteo** (no menciona a nadie, la imagen es un DIBUJO y no una captura de PamPam, y el motor es la controversia, no el orgullo regional). Está aquí solo por parecido de gancho. Ficha completa en `global-instructions §4.1`.
+> **Variante "país inventado" (trampa)** — Unai 7.87x · 78.7K, pero con **33 likes y 2 reposts**: alcance sin respaldo (Navarra, con las mismas impresiones, tuvo 563 likes y 46 reposts). Gancho `Nadie habla de este país... pero es donde mejor se vende del mundo 👇` + "razones" con guessing game ("¿Alguien se atreve a adivinar?"). ⚠️ **Corrección (2026-07-14): aquí ponía que Iker lo repitió y cayó a 1.2x "porque repetir el concepto lo mata". Es una conclusión mal sacada.** El de Iker (1.24x · 12.7K, "Este país no cuenta para los rankings…") no murió por repetido: murió **porque su país ficticio cayó en un sitio donde no había nada y no ofendió a nadie**. El de Unai voló porque se dibujó pegado a España y sin islas en el Mediterráneo, y la gente leyó que le habíamos puesto un país encima de **Baleares** → se lió. **El motor era la controversia (involuntaria), no la novedad del concepto.** Sin ofendido, no hay post.
 
 ---
 
