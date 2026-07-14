@@ -179,6 +179,21 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 
 > **Lo más accionable:** en las DOS cuentas con histórico, **`curiosity_gap` es el hook con mejor ratio** (Iker 2.27x, Unai 3.15x) — por encima de bold_claim. Y las estructuras `content_with_cta` y `contrarian_proof_reframe` rinden alto en ambas. El martes por la mañana (9:00-11:00) es el pico claro.
 
+### 4.0b · La FIRMA DE ENGAGEMENT de cada pilar (BD en vivo, 2026-07-14 — los 23 outliers)
+> Hallazgo nuevo al revisar los 23 outliers uno a uno. **Cada pilar gana en una métrica distinta.** Sirve para dos cosas: saber si un post está funcionando en las primeras horas, y no juzgar un pilar con la métrica de otro.
+
+| Pilar | Gana en | Reposts | Comentarios | Ejemplo |
+|---|---|---|---|---|
+| **Mapa** | **REPOSTS** | **20-90** | 27-145 | Gipuzkoa 90🔁 · Galicia 60🔁 · Andalucía 51🔁 |
+| **Meme** | **IMPRESIONES** | 9-22 | 25-85 | cold calling 168.9K · wojak 165.5K |
+| **Lead magnet** | **COMENTARIOS** | **5-6** | **177-632** | vibe 632💬 · desmonto 483💬 |
+| **"Los 10"** | mixto | 12 | 33 | País Vasco 4.81x · 49.4K |
+
+- **El mapa se mide en reposts.** Es el pilar más reposteado con diferencia (hasta 90). Si un mapa no cosecha reposts en las primeras horas, no está viajando: es la señal temprana.
+- **El lead magnet casi no se repostea (5-6) y tiene pocos likes** (95 y 116 en los dos mejores) pero se come los comentarios. Un lead magnet con muchos likes y pocos comentarios ha fallado.
+- **El meme no se repostea tanto como parece** (9-22) pero es el que revienta impresiones. Su trabajo es alcance, no conversación.
+- Ojo con leer likes: Gipuzkoa tiene 1.208 likes (nuestro récord) y el mejor post del histórico (wojak 16.56x) solo 257. Los likes no ordenan nada.
+
 ### Mapas regionales (la mecánica más fiable)
 - **Gipuzkoa (Iker, 1er mapa) 12.9x · 112.7K · 1.2K likes · 90 reposts** — "pueblo de 7.000 hab que exporta más que países enteros".
 - **Navarra (Iker) 7.7x · 79.2K · 563 likes · 46 reposts** — molde gold ("patio trasero de los Pirineos… y poco más. Exporta más que Bolivia") → ver `swipe-file §2.1`.
@@ -186,14 +201,14 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 - Cataluña (Iker) 7.1x · 48.9K · 145 comentarios · 35 reposts.
 - Valencia (Iker) 6.8x · 51.5K · 49 reposts.
 - Andalucía (Iker) 5.4x · 29.8K · 51 reposts.
-- **País inventado / trampa (Unai) 8.1x · 78.7K** — alcance vía curiosidad + guessing game (arma de ocasión).
+- **País inventado / trampa (Unai) 7.87x · 78.7K** — alcance vía curiosidad + guessing game (arma de ocasión).
 - Euskadi (Unai, VÍDEO) 3.7x · 21.1K · 37 reposts.
 - Bizkaia (Unai) 3.3x · 21.3K.
 - Álava "trastienda del norte" (Unai) 2.1x · 20.1K (región menos conocida → techo menor).
 - **FLOP de repetición: "país inventado" REMIX (Iker) 1.2x** — repitió el concepto de Unai semanas después y se hundió. Nunca repetir concepto. (Madrid/capitales siguen baneadas por precedente.)
 
 ### Memes (con motor)
-- **"Caja de herramientas engorda" (Unai) 16.9x · 165.5K — el mejor post del histórico** (Motor A, stacking de tools) → `swipe-file §1.1`.
+- **"Caja de herramientas engorda" (Unai) 16.56x · 165.5K — el mejor post del histórico** (Motor A, stacking de tools) → `swipe-file §1.1`.
 - **"Cold calling enterrado en vida" (Iker) 16.4x · 168.9K** (Motor A, jerarquía de roles + staccato "Nadie. Llamó. Al. Cliente.") → `swipe-file §1.2`.
 - **"Subir en ventas / calvicie SDR→VP" (Iker) 13.5x · 138.8K** (Motor A, cambio corporal en escalera de roles) → `swipe-file §1.3`.
 - Factura Claude / "casi me cuesta una boda" (Iker) 5.9x · 60.4K (Motor B, screenshot documental).

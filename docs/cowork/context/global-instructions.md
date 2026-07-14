@@ -44,7 +44,7 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 - Si son dos frases, sepáralas con **punto + espacio** (". "). Nunca `\n`. Nunca `\n\n`.
 - Patrón de hook de dos partes que funciona: [afirmación tajante o dato shock] + [puente que abre curiosidad: "Y casi nadie lo cuenta…", "Pero el motivo real…", "👇"].
 - El **primer salto de línea en blanco de todo el post va DESPUÉS del bloque de hook**, nunca dentro.
-- Ejemplo real (Cataluña 7.7x): ✅ `Cataluña exporta más que Portugal entera. Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇` (una sola línea). ❌ La misma con blank line en medio muere.
+- Ejemplo real (Cataluña **7.11x**): ✅ `Cataluña exporta más que Portugal entera. Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇` (una sola línea). ❌ La misma con blank line en medio muere.
 
 ### 2.2 · Calidad de la idea del hook (antes de que el formato pueda salvarlo)
 Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tres, dóblala hasta que pueda:
@@ -136,7 +136,8 @@ Ver `brand-voice` §3 (tabla de traducción de AI-tells + palabras de registro n
 Solo un puñado de mecánicas produce outliers de forma fiable. Elige la que la idea cruda encaje de forma natural — **nunca fuerces una encima de una idea que no la pide** (así salen los flops de 0.3x).
 
 ### 4.1 · MAPA REGIONAL + identidad (TOP performer)
-Outliers reales: 15.9x, 7.8x (Navarra), 7.7x, 7.3x (Galicia), 6.5x…
+**Outliers reales (verificado en vivo contra la BD el 2026-07-14 — los 10 mapas publicados, ratio real):** Gipuzkoa 12.92x · país inventado 7.87x · Navarra 7.72x · Galicia 7.28x · Cataluña 7.11x · Valencia 6.76x · Andalucía 5.39x · pueblo de 2,2M (vídeo) 3.69x · Álava 3.60x · Bizkaia 3.27x. **Ningún mapa ha hecho 15.9x** (esa cifra estaba en esta skill y no existe en la BD). Techo real de la mecánica: **12.9x**; mediana ~7x.
+**Firma de engagement del mapa: los REPOSTS.** Es el pilar que más repostean con diferencia (Gipuzkoa 90 · Galicia 60 · Andalucía 51 · Valencia 49 · Navarra 46) frente a los memes (9-22) y los lead magnets (5-6). Si un mapa no está cosechando reposts en las primeras horas, es la señal de que no está viajando. (Meme = impresiones · lead magnet = comentarios · mapa = reposts.)
 
 **Fórmula de hook validada (la más nueva y la que más pega):**
 `[concepto creativo despectivo de la zona] + [clichés de la zona] + "y poco más". Y exporta más que [país entero sorprendente] 👇`
@@ -157,7 +158,7 @@ Outliers reales: 15.9x, 7.8x (Navarra), 7.7x, 7.3x (Galicia), 6.5x…
 - **Baneadas:** Madrid, Barcelona ciudad, cualquier capital obvia (sin efecto underdog; Madrid 0.55x).
 - **Greenlit:** La Rioja, Asturias, Murcia, Castilla-La Mancha, Aragón, Extremadura, Cantabria.
 - **NO depende** de que el founder sea de la región (mapas de regiones ajenas han ido igual o mejor).
-- **Variante polémica/trampa** (país inventado, 7.1x): arma de ocasión, no la norma. Alcance vía controversia; puede dañar imagen de marca. Saca el trade-off en voz alta antes.
+- **Variante polémica/trampa** (país inventado, **7.87x** · 78.7K): arma de ocasión, no la norma. Alcance vía controversia; puede dañar imagen de marca. Saca el trade-off en voz alta antes.
 - **Espaciado:** ≥2 semanas entre mapas por cuenta; nunca repetir región; nunca dos seguidos en la misma cuenta.
 
 **Bloques de empresas:** RELLENAR con empresas reales verificadas (ver `post-workflow §4.0`): exportadoras de la zona sacadas de una fuente real (mapa de pampam / lista del usuario / ICEX / cámara / web con cita). Marca las dudosas y **nunca inventes** — lo que no puedas verificar va como `→ [PENDIENTE · no verificado]`. Formato: 20 líneas en 5 bloques de 4, **cada empresa con SU persona mencionable y @ delante de ambos nombres** (`post-workflow §4.2` Paso 4). La **frase de entrada va sola, con línea en blanco antes de la primera `→`** (nunca pegada a la lista):
@@ -196,7 +197,9 @@ Outlier validado: País Vasco 4.8x · 49.4K. Formato NUEVO a repetir.
 Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
 
 - **MOTOR A — cambio corporal progresivo** que DUELE y es LEGIBLE a tamaño miniatura, montado sobre una **jerarquía de roles de ventas B2B** (no una timeline de una persona).
-  - Validados: calvicie progresiva (5.2x "Coge el teléfono", 3.7x "Subir en ventas"), ojeras (5.37x "IA roba el sueño"), wojak antes/ahora Chad→soyjak (16.6x "caja de herramientas engorda" — EL mejor post, contraste brutal de 2 estados calcado de plantilla viral).
+  - Validados (**ratios verificados en vivo contra la BD, 2026-07-14**): **"El cold calling no ha muerto" 16.45x · 168.9K** (calvicie progresiva del JEFE panel a panel) · **"Subir en ventas siempre pasa factura" 13.52x · 138.8K** (calvicie; esta skill decía **3.7x**, que era falso: es nuestro 2º mejor post de todos los tiempos) · **wojak antes/ahora Chad→soyjak 16.56x · 165.5K** ("caja de herramientas engorda", EL mejor post, calco de plantilla viral).
+  - ⚠️ "5.2x Coge el teléfono" y "5.37x ojeras / IA roba el sueño" **NO aparecen en la BD como outliers** con esos ratios: o son otros posts, o el dato venía de memoria. No los cites hasta reverificarlos.
+  - **Lo que enseñan las imágenes reales** (revisadas una a una el 2026-07-14): el 16.45x NO dibuja una escalera de roles — son 4 paneles del MISMO par jefe/comercial repetido, y lo que progresa es la calvicie del jefe mientras el comercial pone excusas. La jerarquía de roles vive en el TEXTO, no en la imagen. El 16.56x es un calco fiel de plantilla wojak (línea B/N, nada de paleta Neety salvo detalles naranjas). Confirma `images §6`: **la fidelidad al estilo del original manda sobre la paleta de marca.**
   - Cambios que funcionan (duelen + legibles): calvicie, ojeras, peso, encorvamiento, sudor.
   - Cambios que NO (probados y flopearon): canas (no duele — lee como madurez/sabiduría; y no es legible a miniatura). Sospecha de la misma familia: barba encaneciendo, gafas de leer, "aire distinguido".
   - Los 4 ingredientes: (1) jerarquía/cadena de roles B2B en una imagen (no timeline de una persona), (2) cambio corporal universal dibujado que DUELE + es LEGIBLE, (3) punchline tipográfica citable ("Nadie. Llamó. Al. Cliente."), (4) el chiste INCLUYE al lector, no le ataca.
@@ -212,10 +215,13 @@ Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
 **Calcar referencias (el caso normal del meme):** el usuario pasa un enlace a un post-meme de LinkedIn; cópialo fielmente (layout, paneles, escena, expresiones, mecánica cómica, estilo de dibujo). Cambia: paleta Neety **+ detalles de marca** (corbatas naranjas, props), textos traducidos al español con tipografía Bricolage/Switzer + palabra naranja, props específicos variados (café→otro café), y **roles en español genérico** (sin anglicismos, para industrial 50+). El resto se preserva. **Runbook operativo completo: `post-workflow §4.4`** (extraer texto+foto del enlace, traducir, iterar hook, cuerpo, spam ninja, y el output = texto + prompt de modificaciones de la foto; Claude NO genera la imagen).
 
 ### 4.4 · LEAD MAGNET (comment-gated)
-Outliers: 9.13x ("desmonto perfiles" live), 5.0x, 4.4x, 4.0x. Corre estas puertas EN ORDEN:
+**Outliers reales (BD en vivo, 2026-07-14):** "vibe prospecting" (Unai) **9.85x · 632 com.** · "desmonto perfiles" LIVE (Iker) **8.52x · 483 com.** · "llaves a Claude" (Unai) **4.52x · 285 com.** · "llaves a Claude" (Iker) **4.10x · 232 com.** · "Claude cazar leads" (Iker) **3.33x · 183 com.** · "he reunido todo para prospectar" (Iker, nov-2025) **3.09x · 177 com.**
+⚠️ Esta skill decía **9.13x** para "desmonto perfiles": es falso, son **8.52x**. El techo real del pilar es **9.85x**.
+**Firma de engagement del lead magnet: los COMENTARIOS, y casi nada más.** Mira los likes: 95 y 116 en los dos mejores, con 632 y 483 comentarios. Y **5-6 reposts**, los más bajos de todos los pilares. Un lead magnet con muchos likes y pocos comentarios ha fallado, por bien que se lea.
+Corre estas puertas EN ORDEN:
 1. **Frecuencia:** mín. 1 cada 2 SEMANAS por cuenta. Nunca dos seguidos en la misma cuenta; nunca solapar dos cuentas el mismo día/semana. (3 lead magnets en 3 días hundió el alcance por fatiga.)
 2. **Topic específico y auto-intrigante.** El genérico "todo mi material en una caja" está MUERTO (biblia 1.2x, arsenal 0.63x): comentan pero LinkedIn no amplifica. Solo si el topic ya pica solo Y el entregable es UNA cosa concreta.
-3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (9.13x vs 4-5x) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
+3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)

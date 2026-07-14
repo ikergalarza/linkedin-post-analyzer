@@ -13,7 +13,7 @@ Cada ejemplo lleva: ratio real · métricas · y una nota de ANATOMÍA (qué hac
 
 ## 1 · MEME (con motor) — los 3 mejores del histórico
 
-### 1.1 · "Caja de herramientas" — Unai · 16.9x · 257❤ 27💬 12🔁 · 165.5K 👁 (EL mejor post)
+### 1.1 · "Caja de herramientas" — Unai · 16.56x · 257❤ 27💬 12🔁 · 165.5K 👁 (EL mejor post)
 Anatomía: gancho de contraste en una línea (👇) → jerarquía de pasos numerados (1️⃣-7️⃣), cada uno con un dardo corto debajo → staccato de cierre ("Siete sitios… Ninguno se habla con el otro.") → pregunta-producto final. El motor es la imagen (wojak); el texto acompaña.
 ```
 En ventas, cada año la caja de herramientas engorda pero el comercial cierra peor 👇
@@ -36,7 +36,7 @@ Luego nos extraña que arrancar lleve 4 meses y que la previsión nunca cuadre.
 Si pudieras llevar toda tu operativa comercial desde un solo sitio, con la IA conectada al dato real, ¿lo usarías?
 ```
 
-### 1.2 · "Cold calling enterrado" — Iker · 16.4x · 317❤ 85💬 22🔁 · 168.9K 👁
+### 1.2 · "Cold calling enterrado" — Iker · 16.45x · 317❤ 85💬 22🔁 · 168.9K 👁
 Anatomía: gancho belief-breaker (👇) → **jerarquía de roles de ventas en enumeración vertical** (Manager/SDR/AE/…), cada rol una excusa por no llamar → **punchline en staccato con puntos** ("Nadie. Llamó. Al. Cliente.") → cierre de 2 líneas con dato. Corto. Este es el molde del meme de jerarquía de roles.
 ```
 El cold calling no ha muerto. Lo hemos enterrado en vida 👇
@@ -54,7 +54,7 @@ El 99% de los deals no mueren por falta de touchpoints.
 Mueren porque nadie descuelga el teléfono.
 ```
 
-### 1.3 · "Subir en ventas / calvicie" — Iker · 13.5x · 288❤ 42💬 · 138.8K 👁
+### 1.3 · "Subir en ventas / calvicie" — Iker · 13.52x · 288❤ 42💬 9🔁 · 138.8K 👁
 Anatomía: gancho de una línea (sin 👇 aquí, cierra con punto) → escalera de roles SDR→VP, cada uno con el cambio corporal (pelo) → dístico de cierre ("El pipeline crece. El control se reduce.") → CTA de etiquetar (👇). Cambio corporal = motor A.
 ```
 Subir en ventas siempre pasa factura.
@@ -77,7 +77,7 @@ Etiqueta al compi que ya empezó a mirar champús anticaída 👇
 
 ## 2 · MAPA REGIONAL — el molde gold
 
-### 2.1 · Navarra — Iker · 7.7x · 563❤ 72💬 46🔁 · 79.2K 👁
+### 2.1 · Navarra — Iker · 7.72x · 563❤ 72💬 46🔁 · 79.2K 👁
 Anatomía (el esqueleto a repetir, variando palabras): **gancho** = `[concepto despectivo de zona] + [clichés] + "y poco más". Y exporta más que [país entero] 👇` → setup corto → **"tres números" enumerados con FUENTE citada** → anáfora de negación ("No paga X. No las pagan Y. No la paga Z.") → serie de frases-oficio → **reveal** "Sí, hablo de Navarra." → bloque de empresas `→ Empresa - Persona` → link al mapa → cierre.
 ```
 La ven como el patio trasero de los Pirineos: toro, txistorra y poco más. Y exporta más que Bolivia entera 👇
@@ -110,13 +110,13 @@ Si tu empresa carga contenedores desde ahí, este es su sitio.
 ```
 > ⚠️ Fíjate en dos cosas: (a) **cada cifra cita fuente** (Datacomex, Banco Mundial) — obligatorio; (b) el cierre "La gente y las empresas que mueven todo esto:" es una **frase-comodín que se ha repetido** entre mapas → `working-preferences §4` pide variarla cada vez. No la copies literal.
 
-> **Variante "país inventado" (trampa)** — Unai 8.1x · 78.7K. Gancho `Nadie habla de este país... pero es donde mejor se vende del mundo 👇` + "razones" con guessing game ("¿Alguien se atreve a adivinar?"). ⚠️ Iker la **repitió** semanas después ("Este país no cuenta para los rankings…") y **cayó a 1.2x**: repetir el mismo concepto lo mata (confirma la regla de variar).
+> **Variante "país inventado" (trampa)** — Unai 7.87x · 78.7K. Gancho `Nadie habla de este país... pero es donde mejor se vende del mundo 👇` + "razones" con guessing game ("¿Alguien se atreve a adivinar?"). ⚠️ Iker la **repitió** semanas después ("Este país no cuenta para los rankings…") y **cayó a 1.2x**: repetir el mismo concepto lo mata (confirma la regla de variar).
 
 ---
 
 ## 3 · "LOS 10" — la persona, no la región
 
-### 3.1 · "Los 10 que hacen vender a la industria" — Iker · 4.8x · 197❤ 33💬 · 49.4K 👁
+### 3.1 · "Los 10 que hacen vender a la industria" — Iker · 4.81x · 197❤ 33💬 12🔁 · 49.4K 👁
 Anatomía: gancho = **verbo físico + herida del comercial** ("personas desconocidas quemando el teléfono 👇") → cuerpo que pelotea a la persona invisible (anáfora "No publica. No da charlas. No sale en la nota de prensa.") → lista de 10 personas con su empresa y su LOGRO concreto → reveal región al final ("Sí, hablo del País Vasco. Pero esto va de las personas.") → cierre cálido.
 ```
 Las empresas que más vendieron este año tienen algo en común: personas desconocidas quemando el teléfono 👇
@@ -142,7 +142,7 @@ Pero esto va de las personas.
 
 ## 4 · LEAD MAGNET (comment-gated) — los que reventaron comentarios
 
-### 4.1 · "Desmonto perfiles" LIVE — Iker · 8.5x · 116❤ **483💬** · 44.2K 👁
+### 4.1 · "Desmonto perfiles" LIVE — Iker · 8.52x · 116❤ **483💬** 6🔁 · 44.2K 👁
 Anatomía: gancho provocador (👇) → lista de errores comunes (guiones) → reframe ("tu perfil debería vender por ti") → **oferta de entrega LIVE pública** ("Entro a tu perfil y te respondo aquí mismo, con 3 mejoras") → **CTA literal "Comenta [X] + [Y]"**. El valor es público e inmediato → loop de comentarios.
 ```
 Hoy desmonto perfiles de LinkedIn gratis. Sí, LinkedIn va a arder un rato 👇
@@ -160,7 +160,7 @@ Entro a tu perfil y te respondo aquí mismo, en público, con 3 mejoras concreta
 Comenta "desmonta" + tu departamento y te respondo.
 ```
 
-### 4.2 · "Vibe prospecting" — Unai · 10.0x · 95❤ **632💬** · 25.1K 👁 (récord de comentarios)
+### 4.2 · "Vibe prospecting" — Unai · 9.85x · 95❤ **632💬** 6🔁 · 25.1K 👁 (récord de comentarios · EL mejor lead magnet)
 Gancho `🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound como lo conocemos 👇` → bandwagon ("9 de cada 10 ya están migrando. Todos menos tú.") → sistema numerado de 5 puntos ("X > Y") → CTA `Comenta "vibe" y te lo paso.` La fórmula "Comenta [palabra] + te lo paso" repite en todos los lead magnets ganadores (llaves/frase/perfil/mensaje).
 
 ---

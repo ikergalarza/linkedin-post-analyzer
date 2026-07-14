@@ -75,20 +75,20 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 - LinkedIn: **https://www.linkedin.com/in/ikergalarza/**
 - Headline: *Co-Founder @ Neety | El radar de IA que encuentra a tu cliente ideal por específico que sea y detecta el momento exacto para contactarlo | Software para empresas industriales y servicios B2B*
 - Es el autor del playbook interno "LinkedIn no es una lotería" — la voz de referencia original del sistema.
-- Perfil más veterano en publicación: la mayoría de los outliers históricos de mapas y memes salieron de su cuenta (Navarra 7.8x, Galicia 7.3x, iMessage "El de Ventas" 7.9x, "desmonto perfiles" 9.13x, etc.).
+- Perfil más veterano en publicación: la mayoría de los outliers históricos de mapas y memes salieron de su cuenta. **Ratios verificados en vivo contra la BD (2026-07-14):** cold calling 16.45x · "subir en ventas" 13.52x · Gipuzkoa 12.92x · desmonto perfiles 8.52x · iMessage "El de Ventas" 8.46x · Navarra 7.72x · Galicia 7.28x · Cataluña 7.11x. (Antes esta línea decía 7.9x el iMessage y 9.13x el desmonto: los dos estaban mal.)
 
 ### 👤 Unai Arambarri — CEO
 - Rol: **CEO** de Neety.
 - LinkedIn: **https://www.linkedin.com/in/unai-arambarri-yeregui/**
 - Headline: *Founder & CEO @ Neety | El próximo motor de ventas B2B no se contrata, se despliega | Software de IA autónoma para prospección en empresas industriales y de servicios B2B*
 - Publica sobre ventas B2B igual que los demás.
-- Outliers propios validados: mapa "país inventado" (polémica) 7.1x, wojak "caja de herramientas engorda" 16.6x (el mejor post del histórico), "49€ vs Claude" 3.92x.
+- Outliers propios validados (**BD en vivo, 2026-07-14**): wojak "caja de herramientas engorda" **16.56x · 165.5K** (el mejor post del histórico) · "vibe prospecting" **9.85x · 632 com.** (el mejor lead magnet de las 3 cuentas) · mapa "país inventado" (polémica) **7.87x** · llaves a Claude 4.52x. (Antes ponía 7.1x el país inventado: era 7.87x. "49€ vs Claude 3.92x" no aparece en la BD como outlier — reverificar antes de citarlo.)
 
 ### 👤 Asier Olaizola — Cofundador (parte de programación / técnica)
 - Rol: **cofounder**, lado **programación / técnico / producto**.
 - LinkedIn: **https://www.linkedin.com/in/asier-olaizola/**
 - Headline: *Co-Founder @ Neety | Construyo la IA de ventas que te trae reuniones, no promesas | Software para empresas industriales y de servicios B2B*
-- **Empezó a publicar en julio 2026** — es la cuenta más nueva, todavía sin histórico propio grande de outliers.
+- **Empezó a publicar en julio 2026** — es la cuenta más nueva, todavía sin histórico propio grande de outliers. **Estado real (BD, 2026-07-14): 3 posts, 0 outliers.** Uno personal de 2024, la oferta de Full Stack Dev del 5-jun (1.10x · 4.3K imp) y el mapa de Aragón del 14-jul.
 - Se trata con **la misma paridad** que Iker y Unai: mismos formatos, misma voz, misma coordinación.
 
 > ⚠️ **Nota sobre el ángulo técnico de Asier:** aunque su rol es programación, sus posts **siguen siendo sobre ventas B2B** (misma voz Neety, mismo ICP). Su perfil técnico puede aportar credibilidad cuando el post toca el "cómo está construido por dentro" un sistema de outbound, pero el hook y el cuerpo se anclan en ventas, no en ingeniería. No conviertas sus posts en contenido para AI-builders.
