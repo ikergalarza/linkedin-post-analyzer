@@ -66,8 +66,10 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
 > **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
-> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) una **descripción de 2 líneas** para la web del mapa.
-> **La IMAGEN la hace el usuario** (captura de la web PamPam). El workflow **NO genera ni menciona imagen** para mapas. (Por eso el mapa NO usa la skill `images`.)
+> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) una **descripción de 2 líneas** para la web del mapa · (4) la **guía de menciones con enlaces** · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
+> **Ojo, son DOS imágenes distintas y solo una la das tú:**
+> - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.)
+> - **Foto de portada de la WEB del mapa** = foto de la región → **la entrega el workflow** (Paso 11).
 
 **Paso 1 — Iterar el GANCHO** (estructura archi-probada, ver `swipe-file §2.1`). Empieza SIEMPRE por aquí. Fórmula:
 `[concepto original despectivo/gracioso de la zona] + [2-3 clichés locales] + [frase-rabia entre comillas] . Y exporta más que [PAÍS] entero 👇`
@@ -143,7 +145,15 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 2. …
 ```
 
-**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas** · (4) la **guía de menciones con enlaces** (empresa + persona). Nada de imagen.
+**Paso 11 — FOTO de portada para la web del mapa** (no es la imagen del post):
+- Una foto **icónica y reconocible de la región** (lo primero que a alguien le viene a la cabeza con "Aragón"): capital/skyline, río, monumento o paisaje-marca. Horizontal, ≥1200px de ancho, que funcione recortada como cabecera.
+- **🚫 NUNCA "la primera que salga en Google Imágenes".** Casi todo lo que devuelve Google es **material con copyright** (bancos de imágenes, prensa, fotógrafos). Esta foto va a la **web pública de una empresa** = uso comercial: una reclamación es dinero real y llega por burofax. Que sea fácil de coger no la hace libre.
+- **Busca solo en fuentes de licencia libre y comprueba la licencia una por una:** **Wikimedia Commons** (usa su API: `action=query&generator=search&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata` → lee `LicenseShortName` y `Artist`), Unsplash, Pexels. Sirven: **CC0 / dominio público** (lo mejor: sin obligaciones), **CC BY** y **CC BY-SA** (obligan a atribuir). **NO sirve** ningún **CC NC** (prohíbe uso comercial) ni nada sin licencia explícita.
+- **MÍRALA antes de entregarla** (descárgala y ábrela). No entregues una foto por su título: los buscadores devuelven escaneos de libros, cuadros y fotos mal encuadradas mezclados con las buenas.
+- **Entrega:** el fichero + la URL de descarga + **licencia y autor listos para pegar**. Si hay una CC0 decente, ofrécela como alternativa aunque la bonita sea CC BY-SA: al usuario le puede compensar no tener que atribuir.
+- Validado (Aragón): `Zaragoza Rio Ebro and Catedral-Basílica del Pilar upstream from Puente de Piedra.jpg` (CC BY-SA 4.0, Ymblanter) y la alternativa CC0 `Zaragoza shel.JPG`.
+
+**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas** · (4) la **guía de menciones con enlaces** (empresa + persona) · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
 
 **Guardarraíles de elección de región (Paso 0):**
 - **Prefiere la COMUNIDAD AUTÓNOMA a la provincia/ciudad** — más alcance. Validado: elegimos Cataluña (no Barcelona); y Álava (provincia) rindió MENOS que País Vasco (comunidad). Baja a provincia solo si tiene identidad muy fuerte y ya tocaste la comunidad.
