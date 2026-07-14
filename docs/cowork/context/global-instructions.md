@@ -159,7 +159,11 @@ Solo un puñado de mecánicas produce outliers de forma fiable. Elige la que la 
 - **Greenlit:** La Rioja, Asturias, Murcia, Castilla-La Mancha, Aragón, Extremadura, Cantabria.
 - **NO depende** de que el founder sea de la región (mapas de regiones ajenas han ido igual o mejor).
 - **Variante polémica/trampa** (país inventado, **7.87x** · 78.7K): arma de ocasión, no la norma. Alcance vía controversia; puede dañar imagen de marca. Saca el trade-off en voz alta antes.
-- **Espaciado:** ≥2 semanas entre mapas por cuenta; nunca repetir región; nunca dos seguidos en la misma cuenta.
+- **Espaciado y repetición — TODO se mide POR CUENTA, no global:**
+  - **≥2 semanas** entre mapas **de esa cuenta**; nunca dos seguidos en la misma cuenta.
+  - **REGIÓN: no repetir DENTRO de la misma cuenta.** Entre cuentas SÍ se puede: si Iker ya hizo Cataluña, Iker no la repite nunca, pero **Unai y Asier sí pueden hacerla**. El plan a largo plazo es que **cada cuenta acabe tocando todas las regiones**, porque España se acaba. Por eso, **antes de elegir región, PREGUNTA para qué cuenta es**: la lista de regiones libres es distinta en cada una. La cobertura por cuenta vive en `project/historial-publicaciones.md`.
+  - **CONCEPTO: no repetir NUNCA, ni entre cuentas.** Esto sí es global y está medido: Unai hizo "país inventado" (7.87x) y semanas después Iker lo repitió → **1.2x**. El mismo concepto en otra cuenta se muere, porque la audiencia se solapa.
+  - **Si una cuenta repite una región que ya hizo OTRA cuenta**, el concepto, el país de comparación y los clichés tienen que ser **todos nuevos**. Es lo único que lo diferencia de un refrito ante un lector que ya lo vio. (No validado aún con datos: la primera vez que se haga, mídelo.)
 
 **Bloques de empresas:** RELLENAR con empresas reales verificadas (ver `post-workflow §4.0`): exportadoras de la zona sacadas de una fuente real (mapa de pampam / lista del usuario / ICEX / cámara / web con cita). Marca las dudosas y **nunca inventes** — lo que no puedas verificar va como `→ [PENDIENTE · no verificado]`. Formato: 20 líneas en 5 bloques de 4, **cada empresa con SU persona mencionable y @ delante de ambos nombres** (`post-workflow §4.2` Paso 4). La **frase de entrada va sola, con línea en blanco antes de la primera `→`** (nunca pegada a la lista):
 ```

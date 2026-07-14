@@ -6,9 +6,27 @@
 
 ---
 
+## 🗺️ Cobertura de mapas POR CUENTA (leer ANTES de elegir región)
+> **La región quemada lo está SOLO para la cuenta que la hizo, no para las otras.** Iker ya hizo Cataluña → Iker no la repite nunca; **Unai y Asier sí pueden**. El plan a largo plazo: que **cada cuenta acabe tocando todas las regiones** (España se acaba). Por eso **lo primero que hay que preguntar es para qué cuenta es el mapa**.
+>
+> **El CONCEPTO sí es global: no se repite nunca, ni entre cuentas.** Medido: "país inventado" 7.87x en Unai → **1.2x** cuando Iker lo repitió. Si una cuenta hace una región que ya hizo otra, el **concepto, el país de comparación y los clichés van todos nuevos** (la audiencia se solapa y si no, lee a refrito).
+
+| Cuenta | Regiones ya usadas (NO repetir en ESA cuenta) | Conceptos gastados por esa cuenta |
+|---|---|---|
+| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra · País Vasco (en "Los 10") | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
+| **Unai** | País Vasco · Bizkaia · Álava · país inventado (trampa) | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "país inventado" (⛔ gastado para TODAS las cuentas) |
+| **Asier** | Aragón | "secarral que peina el cierzo" |
+
+**Libres para Iker:** Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
+**Libres para Unai:** Cataluña, Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
+**Libres para Asier:** todas menos Aragón.
+**Baneada para todas:** Madrid y capitales obvias (Madrid 0.55x, sin efecto underdog).
+
+---
+
 ## Cómo lo usa el planificador semanal
 1. **Antes de planificar:** lee las últimas **2-3 semanas** para:
-   - Respetar espaciado: **mapa ≥2 semanas** por cuenta y **nunca repetir región**; **lead magnet ≥2 semanas** por cuenta.
+   - Respetar espaciado: **mapa ≥2 semanas** por cuenta y **nunca repetir región EN ESA CUENTA** (ver la tabla de cobertura de arriba); **lead magnet ≥2 semanas** por cuenta.
    - Variar la rotación (que no salga el mismo reparto que la semana pasada) y, dentro de PELOTEO, alternar mapa vs "Los 10".
 2. **Después de que apruebes la semana:** añade una fila por post publicado (o planificado) en la tabla de abajo, lo más reciente arriba.
 3. **Si el registro está vacío o desactualizado:** pregunta al usuario qué publicó cada cuenta en las últimas 2 semanas antes de asignar categorías.

@@ -188,10 +188,12 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 **OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** en bloque cercado, solo URLs, calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
 
 **Guardarraíles de elección de región (Paso 0):**
+- **⚠️ PREGUNTA PRIMERO PARA QUÉ CUENTA ES.** La región no se elige en abstracto: **las regiones quemadas son POR CUENTA**, no globales. Iker ya hizo Cataluña → Iker no la repite jamás, pero **Unai y Asier sí pueden hacerla**. El plan es que cada cuenta acabe tocando todas las regiones (España se acaba). Mira la cobertura por cuenta en `project/historial-publicaciones.md` **antes** de proponer nada.
+- **El CONCEPTO, en cambio, no se repite NUNCA ni entre cuentas** (medido: "país inventado" 7.87x en Unai → 1.2x al repetirlo Iker). Y si una cuenta hace una región que ya hizo otra, el concepto, el país de comparación y los clichés van **todos nuevos**.
 - **Prefiere la COMUNIDAD AUTÓNOMA a la provincia/ciudad** — más alcance. Validado: elegimos Cataluña (no Barcelona); y Álava (provincia) rindió MENOS que País Vasco (comunidad). Baja a provincia solo si tiene identidad muy fuerte y ya tocaste la comunidad.
 - Greenlit (comunidades sin tocar): Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares…
 - Baneadas: capitales/ciudades obvias (Madrid 0.55x) y cualquier cosa que critique a otra región española.
-- ≥2 semanas desde el último mapa de esa cuenta; nunca repetir región ni concepto.
+- ≥2 semanas desde el último mapa de esa cuenta. **Región: no repetir DENTRO de esa cuenta** (otra cuenta sí puede hacerla). **Concepto: no repetir NUNCA, ni entre cuentas** (medido: 7.87x → 1.2x al repetirlo otra cuenta).
 
 ### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
 > **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
@@ -361,7 +363,7 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
 - **Rota semana a semana** quién hace qué (que no salga idéntico), y **dentro de PELOTEO alterna** mapa vs "Los 10" y cambia región/tema.
 
 ### 8.3 · Guardarraíles de espaciado (entre semanas) → vía el HISTORIAL
-- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta; nunca repetir región.
+- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta; **no repetir región EN ESA CUENTA** (la cobertura por cuenta está en `project/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
 - **Lead magnet:** ≥2 semanas por cuenta; nunca dos seguidos ni solapar dos cuentas el mismo día.
 - **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **persistir** ese archivo cada semana (re-subirlo a Cowork / commit al repo) para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
 
