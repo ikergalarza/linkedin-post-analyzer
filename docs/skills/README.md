@@ -16,6 +16,7 @@ Fuente de verdad del "cerebro": `backend/src/services/postPrompt.ts` y el
 
 Skills de artefacto (cargar según el post lo pida):
 7. **images** — concepto de imagen: 3 registros, paleta + tipografía + palabra naranja, calcar referencia, sistema meme, infografías quemadas.
+8b. **lead-magnet-web** — el TERCER artefacto del lead magnet: el gate y el recurso de `recursos.neety.com`. Ni todo ni nada en el gate (regala una muestra, pide el correo), el recurso resuelve el paso 1 y vende el resto. Output = prompt para el programador. Obligatoria en todo lead magnet.
 8. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
 
 Orquestación:

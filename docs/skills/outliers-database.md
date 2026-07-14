@@ -157,6 +157,37 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 - Prueba viva: **Guillermo Flor · 22.1x · 5.432💬 / 451❤ (ratio 12,04)** — un playbook de Claude en Excel y PowerPoint. Cero ventas, y es de los mejores ratios comentario/like de toda la BD. Su esencia (la herramienta que ya usas a diario + un playbook de atajos que no conoces) transfiere a ventas sin despeinarse.
 - Criterio de orden: **ratio C/L alto × outlier ratio alto × distancia de nuestro sector**. Cuanto más lejos, más original el remix.
 
+### 3.9c · 🔁 CÓMO SE REMIXA UN OUTLIER (el método, no el catálogo)
+> Destilado de los apuntes internos "APUNTES REMIX OUTLIERS" (Documents/Mario/LINKEDIN GROWTH). Vienen del mundo del vídeo: **traducción a lo nuestro → "título" = HOOK · "miniatura" = IMAGEN**. Aplica a los 4 pilares, no solo al meme.
+
+**La tesis:** coges lo que ya funcionó, **entiendes POR QUÉ funcionó**, y lo transformas en algo original para tu nicho. Copiar sin entender es llevarse el número sin el mecanismo.
+
+**Paso 1 — Despieza el outlier.** Sepáralo en: hook · imagen · idea principal · formato · promesa · nicho/audiencia · curiosidad que genera. Y pregúntate **qué pieza concreta lo hizo funcionar**: ¿el hook? ¿la imagen? ¿el formato? ¿el tema? ¿el ángulo?
+
+**Paso 2 — 🚫 NO te quedes con el tema superficial. Es el error nº1.**
+- ❌ "Esto solo sirve para finanzas."
+- ✅ "Esto funciona porque usa el formato *si tuviera que empezar de nuevo*."
+- El tema es la piel. **La ESTRUCTURA GANADORA es el hueso**, y el hueso viaja entre nichos.
+
+**Paso 3 — Extrae el PATRÓN y adáptalo.** Del patrón base *"Cómo haría 10.000€/mes si tuviera que empezar de nuevo"* salen: cocina → *"…como chef si tuviera que empezar de nuevo"* · gaming → *"Cómo llegaría a Grandmaster desde Bronze"* · fitness → *"Cómo perdería 45 kg si volviera a pesar 225"*. Mismo hueso, cuatro pieles.
+Preguntas que hacen el trabajo: **¿cuál es el equivalente de ese resultado en ventas B2B? ¿cuál es el "empezar de nuevo" de un director comercial? ¿qué transformación quiere de verdad? ¿qué versión suena natural aquí y no a traducción?**
+
+**Paso 4 — Busca FORMATOS REPETIBLES, no ideas sueltas.** Si un formato ya ha funcionado en varios nichos distintos, es hueso y transfiere. Formatos conocidos a detectar: *si tuviera que empezar de nuevo* · *1 estrella vs 5 estrellas* · *antes vs después* · *barato vs caro* · *no hagas esto / haz esto* · *probé X durante Y días* · *de principiante a experto* · *el método del top 1%* · *lo que haría diferente si empezara hoy*.
+
+**Paso 5 — Cambia lo superficial, MANTÉN la emoción.** Cambia restaurantes→gimnasios, dinero→habilidad, chef→comercial. **Nunca cambies el motor emocional**: curiosidad, transformación, contraste, reto, prueba social, aspiración, resultado concreto. Si al remixar se pierde la emoción, has copiado la piel.
+
+**Paso 6 — Remixa también la IMAGEN, no solo el hook.** ¿La original usa comparación? ¿contradicción? ¿enseña un resultado visual? ¿crea una pregunta en la cabeza? Adapta ESO. Los ejes de comparación que transfieren: NO/SÍ · antes/después · principiante/pro · mal/bien · normal/top 1%. (Encaja con `images §6` y con el motor A del meme: el wojak 16.56x es exactamente un *antes vs ahora*.)
+
+**Paso 7 — El paquete completo:** idea remixada + hook adaptado + imagen adaptada + promesa clara + formato reconocible pero fresco.
+
+**Sanity check antes de entregar (si fallas uno, no lo publiques):**
+- ¿Estoy **copiando o transformando**?
+- ¿La idea funciona **aunque cambie el nicho**? (Si solo funciona con el tema original, era piel.)
+- ¿**No parece** una copia literal?
+- ¿Se siente **específico para NUESTRA audiencia**?
+- ¿El hook genera curiosidad y la promesa es concreta?
+- ¿El formato **ya ha demostrado** funcionar?
+
 ### 3.10 · Banco de remix (SOLO top-top relevantes para B2B — no la competencia entera)
 > De las ~150 páginas de ejemplos (ordenados de más a menos outlier) **no** copio el catálogo. Aquí van los pocos cuyo MECANISMO transfiere a Neety. Ratio = vs. la media del PROPIO autor (cross-creator). Se calca la mecánica, nunca el texto.
 

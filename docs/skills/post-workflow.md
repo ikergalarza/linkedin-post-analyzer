@@ -285,7 +285,8 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 > Se reconoce el outlier de lead magnet en la DB porque **se disparan los COMENTARIOS** (vibe prospecting 632 · desmonto perfiles 483). El objetivo del formato es EL comentario.
 > **⛔ Diferencia clave con los otros pilares: NO lleva spam ninja. Es la ÚNICA excepción y no se "arregla".** El CTA de comentar ES el cierre (regla del UNO). Meter el link de agendar aquí **apila dos CTAs**: el lector que iba a comentar duda entre comentar o clicar, y el conteo de comentarios —que es TODO el motor del formato (632 com. vibe prospecting · 483 desmonto perfiles)— se hunde. El resto de reglas de spam ninja viven en `global-instructions §4.4b`; aquí NO aplica ninguna. Si algún día se prueba, es un A/B consciente con expectativa de caída, no el default.
-> **Output:** el **TEXTO** copy-ready **+ una recomendación de imagen** (registro personal/founder: **foto natural real, selfie o foto en grupo con compañeros** — NO caricatura ni diseño elaborado; `images §3`). La foto la haces/pones tú; el workflow te dice qué tipo encaja. Sin CSV, sin ZIP, sin spam ninja.
+> **Output (TRES piezas, no una):** (1) el **TEXTO** copy-ready · (2) una **recomendación de imagen** (registro personal/founder: **foto natural real, selfie o foto en grupo con compañeros** — NO caricatura ni diseño elaborado; `images §3`. El mejor del histórico, 8.52x, lleva un selfie de oficina) · (3) el **PROMPT PARA EL PROGRAMADOR** con el gate y el recurso de `recursos.neety.com` → **carga la skill `lead-magnet-web` y sigue su §5**. Sin CSV, sin ZIP, sin spam ninja.
+> **El post NO es el lead magnet entero.** El post consigue el comentario; el dinero está en la página: gate que regala un poco + pide el correo → recurso que resuelve el PASO 1 → secuencia de emails → demo. Si entregas solo el texto, has hecho medio trabajo.
 
 **Paso 0 — Input:** la idea/recurso a regalar. Si no te la da, pregúntale qué entregable quiere.
 
@@ -318,7 +319,10 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 - **+ sector/departamento** = el añadido que varía por persona (cada uno trabaja en un sector/depto distinto) → cada comentario es único y LinkedIn no lo nerfea por spam. Preferimos **sector/departamento** (mundo empresarial/ventas) antes que "día favorito / mes de cumple" (descartados: no encajan con el tono).
 - **Di SIEMPRE la palabra "Comenta" de forma explícita.** FAIL confirmado: cuando pusimos formas implícitas (rollo *si lo quieres, "[palabra]"*) la gente **no entendía que tenía que comentar** y se hundió el conteo. Nada de implícitos.
 
-**Paso 6 — Validación (§8) → entregar el TEXTO copy-ready.**
+**Paso 6 — LA PÁGINA DEL RECURSO (`lead-magnet-web`, obligatorio).** Carga la skill `lead-magnet-web` y entrega el **prompt para el programador** (su §5) con el gate y el recurso.
+La regla que más se falla, de su §1: **ni todo ni nada.** Regalar todo en el gate = no hay motivo para dejar el correo. Formulario pelado sin regalar nada = nadie paga por adelantado. **Hay que regalar UNA MUESTRA antes del formulario.** Y el recurso resuelve el **paso 1**, no todo el camino: da el QUÉ y vende el CÓMO, que es donde entra Neety.
+
+**Paso 7 — Validación (§8) → entregar las 3 piezas: TEXTO copy-ready + recomendación de foto + prompt del programador.**
 
 ---
 
