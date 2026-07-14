@@ -142,7 +142,11 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Descripción de 2 líneas:** corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras. Sin fechas (`global §3.5b`).
 
 **Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): las 20, para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
-- **Va en BLOQUE CERCADO de texto plano, NUNCA en tabla markdown.** El usuario la usa pegando menciones a mano, línea a línea: la tabla estorba y no se copia bien.
+- **NUNCA en tabla markdown.** El usuario la usa línea a línea; la tabla estorba y no se copia bien.
+- **Tiene DOS usos y por eso DOS formatos. Da el que toca según dónde la entregues:**
+  - **En el CHAT (revisión):** enlaces **CLICABLES** (markdown `[texto](url)`), **fuera** de bloque cercado. Es la única forma de que el usuario abra las 20 fichas de una en una y confirme que la persona sigue ahí, que el cargo cuadra y que es de la región. Dentro de un bloque cercado NO se puede clicar → inservible para revisar.
+  - **En el fichero de `output/` (Cowork):** **bloque cercado de texto plano** con las URLs desnudas, para copiar/pegar limpio.
+  - Es la excepción a `working-preferences §1` (que pide bloque cercado): esa regla existe porque LinkedIn mangla los saltos del POST, y la guía de menciones no se pega en LinkedIn.
 - **Calca el formato y el orden del bloque de empresas del post** (mismas 5×4, mismo orden), pero cambiando cada nombre por su URL. Así cada línea de la guía cae en la MISMA posición que su línea del post y se va bajando a la vez por los dos.
 - **Solo las dos URLs, nada más.** Sin cargo, sin fecha de actividad, sin por qué está elegida: en el MAPA no hay que justificar cada ficha (la justificación va aparte, en la lista de "revisa estas"). El nombre ya viaja dentro de la URL.
 ```
