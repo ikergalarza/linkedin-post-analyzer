@@ -37,7 +37,10 @@ Orquestación:
 - NUNCA inventes una empresa, una persona ni un dato. Lo que no puedas verificar va como `[PENDIENTE · no verificado]`. Un nombre inventado tira un mapa de 6x a 0.5x.
 - Verifica TODA cifra contra fuente real antes de escribirla. En el cuerpo cita el NOMBRE de la fuente y **NUNCA su año** (`global §3.5b`); los años van en la entrega interna, para responder en comentarios.
 - Menciones: solo personas con actividad real en LinkedIn en los últimos 3 meses, con el **nombre exacto** que devuelve Unipile. Un mando intermedio activo bate a un CEO dormido.
-- Corre el pase de validación (`global §8`) en silencio antes de CADA entrega, con sus checks uno a uno y no de memoria.
+- **Antes de CADA entrega de un post, corre el VALIDADOR MECÁNICO y pega su resultado:**
+  `python scripts/validar-post.py <fichero.txt> --pilar mapa|los10|meme|leadmagnet [--cuenta X]`
+  Escribe el borrador a un fichero temporal y pásaselo. **En la entrega, fuera del bloque, va SIEMPRE una línea con el resultado** (`✅ Validador 18/18` o las violaciones). Si esa línea falta, es que te lo has saltado. No es opcional y no se sustituye por "lo he revisado".
+- Corre además el pase de validación de criterio (`global §8`) en silencio: es lo que el script NO puede ver (motor, ángulo quemado, dato falso, remix mal robado).
 - Avisa del riesgo ANTES o junto al borrador, con dato concreto (`working-preferences §2`). No esperes a que te pregunten si va a funcionar: esa pregunta la respondes tú.
 
 ## Credenciales (léelas del entorno, nunca las hardcodees ni las commitees)

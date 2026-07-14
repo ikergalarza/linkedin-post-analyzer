@@ -329,7 +329,21 @@ Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección d
 
 ## 8 · Pase de validación (correr en silencio ANTES de cada entrega)
 Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra toda esta stack: pilar único · ley de formato del hook (bloque único ≤210, sin `\n\n`) · calidad del hook (imagen mental / herida / un pilar al máximo) · ancla de sector + claim universal · densidad de números · transición hook→cuerpo sin preámbulos · enumeración con saltos · variedad rítmica (3+ unidades, líneas cortas, cierre que respira) · cuerpo anti-IA · mecánica correcta con su motor · menciones positivas · atacar el problema no al lector · sin markdown dentro ·
-**Los checks que más se escapan (mirar SIEMPRE uno por uno, no de memoria). Los 3 primeros son UNIVERSALES: aplican a TODOS los pilares y a TODAS las recetas, sin excepción.**
+> ## ⚙️ LO MECÁNICO NO SE MIRA A OJO: LO CORRE EL SCRIPT
+> `python scripts/validar-post.py <fichero.txt> --pilar mapa|los10|meme|leadmagnet [--cuenta X]`
+> **Obligatorio antes de cada entrega, y su resultado se pega en el chat** (`✅ Validador 18/18`). Comprueba de forma determinista: longitud y bloque único del hook · cifras · **ancla de ventas** · **verbo flojo** · jerga que estrecha · guion largo · **coma antes de "y"** · markdown · openers quemados · años de fuente · tamaño de bloques y línea individual · spam ninja (presencia, 2 líneas separadas, sin nombrar la marca, no última) · eje "callado" en mapas · menciones con @ en 5×4 · CTA con "Comenta" · palabra de CTA ya gastada · regiones usadas por esa cuenta.
+> **Por qué existe:** el 2026-07-14 se entregaron tres posts saltándose reglas que YA estaban escritas (coma antes de "y", ancla de ventas, verbo punchy). Estar escrita no basta; con ~61k tokens de doctrina, lo que no está en la puerta no se mira. Lo que el script dice OK, no se discute. Lo que dice FALLA, se arregla.
+
+**LO QUE EL SCRIPT NO PUEDE VER — esto sí lo miras tú, uno por uno y no de memoria.** Es criterio, no sintaxis:
+- **¿Hay MOTOR?** Meme sin motor A/B, mapa sin dato shock verificado, lead magnet sin mecanismo (live/urgencia) → no publicar.
+- **El TEST DEL ANCLA de verdad (§2.3).** El script solo ve que aparezca una palabra de ventas. Tú tienes que leerlo imaginando que lo sube una consultora: **¿cuela? → está mal.** La palabra puede estar y el post seguir siendo huérfano.
+- **El VERBO, de verdad (§2.9).** El script solo caza la lista negra. Tú subes la escalera: ¿este verbo frena el scroll o solo describe? criticar → **desmontar** → destrozar.
+- **¿El DATO es cierto?** Verificado contra fuente real, con su año en la entrega interna. El script no sabe si mientes.
+- **¿El ÁNGULO está quemado?** Contra `§6` y el historial.
+- **¿El remix robó el HUESO o la piel?** (`outliers-database §3.9c`.)
+- **¿Repite expresiones** de posts anteriores? (`working-preferences §4`.)
+
+**Checks de criterio, uno por uno:**
 1. **⭐ VERBO PUNCHY CON TECHO (§2.9) — en el hook y en los remates del cuerpo.** Subraya el verbo principal del gancho y pregúntate: **¿este verbo frena el scroll o solo describe?** Si describe, sube un peldaño. La escalera de referencia: `criticar` (flojo, describe) → **`desmontar`** (punto dulce) → `destrozar` (se pasa, pierde la esencia). Validados: desmontar, reventar, enterrar, quemar, tirar, matar, tumbar, robar. **Delatores de verbo flojo: se cae, hay, es, tiene, pasa, ocurre, se pierde, no funciona.** Medido: "desmonto perfiles" 8.52x vs "destripo perfiles" 0.21x — mismo concepto, un peldaño de más.
 2. **⭐ TEST DEL ANCLA (§2.3): "¿esto solo puede publicarlo una cuenta de VENTAS?"** Léelo imaginando que lo sube una consultora, una agencia o una constructora. **Si cuela, está mal y se reescribe.** No basta con que el tema sea traducible: el vocabulario tiene que ser del oficio (vender, cerrar, cliente, comercial, venta, precio, cuota, facturar). Ojo con el sobrecorrección: "B2B", "outbound" o "pipeline" NO van en el hook (estrechan alcance).
 3. **⭐ FORMATEADO (§3.2-§3.3):** bloques de prosa de 2 o 3 líneas, **NUNCA de 4-5** · después de CADA bloque, una **línea individual** · nunca un bloque de 2 pegado a uno de 3 · máximo dos 3-bloques en todo el post · el cierre respira en líneas cortas.
