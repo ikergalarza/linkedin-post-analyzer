@@ -1,7 +1,7 @@
-# Cowork skills — Neety LinkedIn post creator
+# Skills — el cerebro de LinkedIn de Neety
 
 Las skills que destilan todo lo que sabe la herramienta (Post Creator +
-análisis de outliers) para escribir posts **fuera de la app**, en Claude Cowork.
+análisis de outliers) para escribir posts **fuera de la app**, desde Claude Code.
 Fuente de verdad del "cerebro": `backend/src/services/postPrompt.ts` y el
 `SYSTEM_PROMPT` de `backend/src/routes/chat.ts`.
 
@@ -10,7 +10,7 @@ Fuente de verdad del "cerebro": `backend/src/services/postPrompt.ts` y el
 2. **brand-voice** — el CÓMO suena (voz Neety literal, regla de audiencia, tabla anti-IA).
 3. **working-preferences** — flujo de trabajo, entrega en bloques cercados, validación proactiva.
 4. **global-instructions** — el QUÉ y el CÓMO-mecánico del post de TEXTO: hooks, cuerpos, 4 mecánicas, timing. Cubre solo el post de texto; imagen y vídeo tienen sus propias skills.
-   > ⚠️ **`global-instructions.md` va como ARCHIVO en `context/`. NO se pega en el campo de "instrucciones del proyecto".** Son ~38 KB de doctrina. Lo que se pega en ese campo es el bloque corto de `BOOTSTRAP.md`. Regla mental: **el campo de instrucciones dice DÓNDE mirar; `context/` es LO que se mira.**
+   > ⚠️ **`global-instructions.md` va como ARCHIVO en `docs/skills/`. NO se pega en el campo de "instrucciones del proyecto".** Son ~38 KB de doctrina. Lo que se pega en ese campo es el bloque corto de `BOOTSTRAP.md`. Regla mental: **el campo de instrucciones dice DÓNDE mirar; `docs/skills/` es LO que se mira.**
 5. **outliers-database** — datos vivos de arquetipos, hooks y ratios (la evidencia empírica; §4 = histórico real por cuenta, §5 = evidencia externa ColdIQ).
 6. **swipe-file** — los TEXTOS completos de nuestros mejores outliers reales, anotados por pilar y estructura. Cargar al escribir hooks/cuerpos para copiar la anatomía exacta.
 
@@ -19,30 +19,18 @@ Skills de artefacto (cargar según el post lo pida):
 8. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
 
 Orquestación:
-9. **post-workflow** — cómo montar el workflow en Cowork, la RECETA cronológica por pilar, y **§8 el workflow real: planificador semanal de las 3 cuentas** (categorías peloteo/lead magnet/meme, intercalado 3×3, pregunta previa). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
+9. **post-workflow** — cómo montar el workflow, la RECETA cronológica por pilar, y **§8 el workflow real: planificador semanal de las 3 cuentas** (categorías peloteo/lead magnet/meme, intercalado 3×3, pregunta previa). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
 
 Estado (no doctrina):
-10. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que persistirlo cada semana (re-subir / commit).
+10. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que **commitearlo** cada vez que cambie.
 
-## Montaje en Cowork — esta carpeta YA ES la estructura, cópiala tal cual
-Principio: **`context` = lo que Claude LEE · `project` = ESTADO que cambia · `output` = lo que Claude ENTREGA.**
+## Dónde vive cada cosa
+- **`docs/skills/`** (esta carpeta) = todo el cerebro. Doctrina + el historial.
+- **`CLAUDE.md`** (raíz del repo) = el bootstrap. Se carga **solo** en cada sesión de Claude Code y dice qué cargar, en qué orden y qué no se negocia. Es el equivalente al campo de "instrucciones del proyecto" de Cowork, pero automático.
+- **`historial-publicaciones.md`** = ESTADO, no doctrina: cambia cada semana. Vive aquí igual que el resto porque en git todo está versionado, pero trátalo distinto: se lee antes de planificar y se actualiza (y commitea) después.
+- **Entregables** (CSV de PamPam, ZIPs de fotos, fotos de portada) → **fuera del repo**: Escritorio o scratchpad.
 
-`docs/cowork/` está ordenada exactamente como tiene que quedar el proyecto de Cowork. **Sube las tres carpetas tal cual**, sin reorganizar nada:
-
-```
-docs/cowork/
-├── context/     ← súbela entera (11 archivos: 9 .md + 2 .csv)
-├── project/     ← súbela entera (historial-publicaciones.md)
-├── output/      ← créala VACÍA en Cowork (aquí solo hay un README que no se sube)
-├── BOOTSTRAP.md ← NO se sube: su contenido se PEGA en "instrucciones del proyecto"
-└── README.md    ← NO hace falta subirlo (es la guía de montaje)
-```
-
-- **`context/`** (conocimiento estático, read-only): `aboutme` · `brand-voice` · `working-preferences` · `global-instructions` · `outliers-database` · `swipe-file` · `images` · `video` · `post-workflow` · `ref_import_navarra.csv` (plantilla CSV de PamPam) · `ref_empresas_industriales_pais-vasco.csv` (semilla de 346 empresas ICP para mapa/"Los 10" del País Vasco).
-- **`project/`** (estado vivo, mutable): `historial-publicaciones.md` y los planes semanales ya aprobados. **Ojo: NO va en `context/`.** Es estado que cambia cada semana, y hay que **re-subirlo/commitearlo cada vez que se actualiza** o el planificador se queda ciego y vuelve a preguntar.
-- **`output/`** (entregables): vacía al empezar, la llena Claude. Una subcarpeta por post o por semana.
-- **Campo de "instrucciones del proyecto":** un **bootstrap CORTO**, NO toda la doctrina (`global-instructions.md` va como archivo en `context/`, no pegado ahí). **El texto está escrito y listo para pegar en `BOOTSTRAP.md`.**
-- **NO subas** `docs/explorer completo.pdf` (17 MB, ya destilado en `outliers-database §3`).
+> **Nota histórica:** esto vivió un tiempo en `docs/cowork/` partido en `context/` + `project/` + `output/`, imitando la estructura de un proyecto de Claude Cowork. Se decidió (2026-07-14) quedarse en **Claude Code**, porque aquí las skills están en git: se corrigen y se commitean solas, cada aprendizaje queda versionado con su porqué, y las credenciales de Unipile y Railway están en el entorno para verificar datos reales. En Cowork había que resubir el historial a mano cada semana y se desincronizaba del repo. Si algún día se monta el Cowork, la estructura de 3 carpetas está en el historial de git.
 
 ## Estado / pendiente
 - **`outliers-database` §3** ya está **relleno** con el snapshot cross-creator del Explorer (2026-07-09): recetas hook×estructura×tono, distribuciones, aperturas/cierres, estilo, formato, timing y banco de remix. Fuente: `docs/explorer completo.pdf`.

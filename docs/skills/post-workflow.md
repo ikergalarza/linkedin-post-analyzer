@@ -188,7 +188,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 **OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** en bloque cercado, solo URLs, calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
 
 **Guardarraíles de elección de región (Paso 0):**
-- **⚠️ PREGUNTA PRIMERO PARA QUÉ CUENTA ES.** La región no se elige en abstracto: **las regiones quemadas son POR CUENTA**, no globales. Iker ya hizo Cataluña → Iker no la repite jamás, pero **Unai y Asier sí pueden hacerla**. El plan es que cada cuenta acabe tocando todas las regiones (España se acaba). Mira la cobertura por cuenta en `project/historial-publicaciones.md` **antes** de proponer nada.
+- **⚠️ PREGUNTA PRIMERO PARA QUÉ CUENTA ES.** La región no se elige en abstracto: **las regiones quemadas son POR CUENTA**, no globales. Iker ya hizo Cataluña → Iker no la repite jamás, pero **Unai y Asier sí pueden hacerla**. El plan es que cada cuenta acabe tocando todas las regiones (España se acaba). Mira la cobertura por cuenta en `docs/skills/historial-publicaciones.md` **antes** de proponer nada.
 - **El CONCEPTO, en cambio, no se repite NUNCA ni entre cuentas** (medido: "país inventado" 7.87x en Unai → 1.2x al repetirlo Iker). Y si una cuenta hace una región que ya hizo otra, el concepto, el país de comparación y los clichés van **todos nuevos**.
 - **Prefiere la COMUNIDAD AUTÓNOMA a la provincia/ciudad** — más alcance. Validado: elegimos Cataluña (no Barcelona); y Álava (provincia) rindió MENOS que País Vasco (comunidad). Baja a provincia solo si tiene identidad muy fuerte y ya tocaste la comunidad.
 - Greenlit (comunidades sin tocar): Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares…
@@ -202,7 +202,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 **Paso 0 — Región + guardarraíles:** **PREGUNTA PRIMERO PARA QUÉ CUENTA ES** (igual que el mapa, §4.2). Los guardarraíles son los mismos y **todos se miden POR CUENTA**:
 - **≥2 semanas desde el último PELOTEO de esa cuenta.** Mapa y "Los 10" son la MISMA categoría a efectos de espaciado: cuentan juntos.
-- **Región: no repetir DENTRO de esa cuenta.** Entre cuentas SÍ se puede (si Iker ya hizo "Los 10" del País Vasco, Unai y Asier todavía pueden). Cobertura por cuenta en `project/historial-publicaciones.md`.
+- **Región: no repetir DENTRO de esa cuenta.** Entre cuentas SÍ se puede (si Iker ya hizo "Los 10" del País Vasco, Unai y Asier todavía pueden). Cobertura por cuenta en `docs/skills/historial-publicaciones.md`.
 - **Un mapa y un "Los 10" del mismo territorio NO se queman entre sí** — validado: Iker hizo el mapa de Gipuzkoa (12.92x, abril) y "Los 10" del País Vasco (4.81x, junio), 10 semanas después y sin penalización. Son pilares distintos (uno pelotea empresas, el otro personas). Pero **no los pegues en el tiempo**.
 - **Concepto y personas: no repetir NUNCA, ni entre cuentas.** Y jamás menciones dos veces a la misma persona en dos "Los 10".
 
@@ -371,7 +371,7 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
 
 ### 8.3 · Guardarraíles de espaciado (entre semanas) → vía el HISTORIAL
 > **Todo se mide POR CUENTA.** Ninguna de estas reglas es global entre cuentas.
-- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta — **lo cumple solo si respetas la alternancia mapa/"Los 10" de §8.2**, no hace falta contar nada. Nunca dos semanas seguidas de mapa en la misma cuenta. **No repetir región EN ESA CUENTA** (la cobertura por cuenta está en `project/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
+- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta — **lo cumple solo si respetas la alternancia mapa/"Los 10" de §8.2**, no hace falta contar nada. Nunca dos semanas seguidas de mapa en la misma cuenta. **No repetir región EN ESA CUENTA** (la cobertura por cuenta está en `docs/skills/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
 - **Lead magnet:** ≥2 semanas por cuenta; nunca dos seguidos ni solapar dos cuentas el mismo día.
 - **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **persistir** ese archivo cada semana (re-subirlo a Cowork / commit al repo) para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
 
