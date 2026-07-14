@@ -9,7 +9,8 @@ Fuente de verdad del "cerebro": `backend/src/services/postPrompt.ts` y el
 1. **aboutme** — identidad: Neety, ICP, los 3 diferenciales (§1b) y los 3 perfiles (Iker / Unai / Asier) con headlines.
 2. **brand-voice** — el CÓMO suena (voz Neety literal, regla de audiencia, tabla anti-IA).
 3. **working-preferences** — flujo de trabajo, entrega en bloques cercados, validación proactiva.
-4. **global-instructions** — el QUÉ y el CÓMO-mecánico del post de TEXTO: hooks, cuerpos, 4 mecánicas, timing. (Va en un campo de input de solo texto; imagen y vídeo salieron a sus propias skills.)
+4. **global-instructions** — el QUÉ y el CÓMO-mecánico del post de TEXTO: hooks, cuerpos, 4 mecánicas, timing. Cubre solo el post de texto; imagen y vídeo tienen sus propias skills.
+   > ⚠️ **`global-instructions.md` va como ARCHIVO en `context/`. NO se pega en el campo de "instrucciones del proyecto".** Son ~38 KB de doctrina. Lo que se pega en ese campo es el bloque corto de `BOOTSTRAP.md`. Regla mental: **el campo de instrucciones dice DÓNDE mirar; `context/` es LO que se mira.**
 5. **outliers-database** — datos vivos de arquetipos, hooks y ratios (la evidencia empírica; §4 = histórico real por cuenta, §5 = evidencia externa ColdIQ).
 6. **swipe-file** — los TEXTOS completos de nuestros mejores outliers reales, anotados por pilar y estructura. Cargar al escribir hooks/cuerpos para copiar la anatomía exacta.
 
