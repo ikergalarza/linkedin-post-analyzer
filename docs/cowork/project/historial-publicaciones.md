@@ -22,8 +22,39 @@
 
 | Semana (lunes) | Cuenta | Día | Categoría | Pilar/formato | Región o tema | Estado | Notas |
 |---|---|---|---|---|---|---|---|
-| _(ejemplo — borrar al empezar)_ | Iker | Mar | Peloteo | Mapa | Navarra | publicado | referencia de formato |
-| _(ejemplo — borrar al empezar)_ | Unai | Mar | Lead magnet | "Comenta GUÍA" | plantilla email frío | publicado | |
-| _(ejemplo — borrar al empezar)_ | Asier | Mar | Meme | Motor B | screenshot iMessage | publicado | |
+| 2026-07-06 | Unai | Mar 07/07 | Peloteo | Mapa | Álava | publicado | 3.60x · 36.0K · 20 reposts · hook "trastienda del norte: buena para un pintxo-pote y para irse" |
+| 2026-06-29 | Iker | Jue 02/07 | Meme | Motor B | screenshot iMessage "El de Ventas" | publicado | 8.46x · 86.8K · el TOP en impresiones del periodo · llevaba link de agendar en spam ninja sin matar alcance |
+| 2026-06-29 | Iker | Mar 30/06 | Peloteo | Mapa | Navarra | publicado | 7.72x · 79.2K · 46 reposts · el molde gold (swipe-file §2.1) |
+| 2026-06-22 | Iker | Jue 25/06 | Peloteo | "Los 10" | País Vasco | publicado | 4.81x · 49.4K · orla de retratos |
+| 2026-06-15 | Unai | Jue 18/06 | Lead magnet | — | mensajes que más cierran | publicado | 0.57x · flop |
+| 2026-06-15 | Iker | Mié 17/06 | Lead magnet | — | biblia de ventas | publicado | 1.20x · FLOP de referencia: el entregable genérico "todo en una caja" está muerto |
+| 2026-06-15 | Iker | Mar 16/06 | Peloteo | Mapa | Galicia | publicado | 7.28x · 64.6K · 60 reposts · "esquina del Atlántico" vs Croacia |
+| 2026-06-08 | Unai | Vie 12/06 | Peloteo | Mapa | país inventado (trampa) | publicado | 7.87x · 78.7K · variante polémica, arma de ocasión |
+| 2026-06-08 | Unai | Jue 11/06 | Lead magnet | — | "destripo perfiles" | publicado | 0.21x · FLOP clave: mismo concepto que "desmonto" (8.52x) con el verbo pasado de vueltas → global §2.9 |
+| 2026-06-08 | Unai | Mar 09/06 | Peloteo | Mapa | Bizkaia | publicado | 3.27x · 21.3K · 25 reposts |
+| 2026-06-01 | Unai | Vie 05/06 | Meme | Motor A | wojak Chad→soyjak "caja de herramientas engorda" | publicado | 16.56x · 165.5K · EL mejor post del histórico |
+| 2026-06-01 | Iker | Vie 05/06 | Meme | Motor B | factura de Claude / "casi me cuesta una boda" | publicado | 5.89x · 60.4K |
+| 2026-06-01 | Unai | Jue 04/06 | Lead magnet | — | arsenal volcado | publicado | 0.64x · flop (mismo patrón que la biblia) |
+| 2026-06-01 | Iker | Mar 02/06 | Peloteo | Mapa | Valencia | publicado | 6.76x · 51.5K · 49 reposts · "playa y paella" vs Luxemburgo |
+| 2026-05-25 | Iker | Jue 28/05 | Lead magnet | Entrega LIVE | "desmonto perfiles" | publicado | 8.52x · 483 comentarios · el 2º mejor lead magnet |
+| 2026-05-25 | Iker | Mié 27/05 | Lead magnet | — | psicólogo en los mensajes | publicado | 0.59x · flop |
+| 2026-05-25 | Iker | Mar 26/05 | — | Insight | "el humo de la IA reemplaza comerciales" | publicado | 4.38x · 45.0K · categoría sin clasificar con seguridad |
+| 2026-05-11 | Iker | Vie 15/05 | Meme | Motor A | calvicie / "cold calling enterrado" | publicado | 16.45x · 168.9K · el mejor de Iker |
+| 2026-05-11 | Unai | Vie 15/05 | Lead magnet | — | Claude reduce la prospección | publicado | 2.69x |
+| 2026-05-11 | Iker | Jue 14/05 | Lead magnet | — | Claude caza leads | publicado | 3.33x · 183 comentarios |
+| 2026-05-11 | Iker | Mié 13/05 | Peloteo | Mapa | Andalucía | publicado | 5.39x · 29.8K · 51 reposts · "8,7 millones" vs Italia |
+| 2026-05-11 | Unai | Mar 12/05 | Lead magnet | — | llaves de LinkedIn a Claude | publicado | 4.52x · 285 comentarios |
+| 2026-05-04 | Iker | Mié 06/05 | Meme | Motor A | calvicie / "subir en ventas pasa factura" | publicado | 13.52x · 138.8K · el 2º mejor post del histórico |
+| 2026-05-04 | Iker | Mar 05/05 | Lead magnet | — | llaves de LinkedIn a Claude | publicado | 4.10x · 232 comentarios · lo repitieron las 2 cuentas |
+| 2026-04-27 | Iker | Jue 30/04 | Peloteo | Mapa | Cataluña | publicado | 7.11x · 48.9K · 35 reposts · vs Portugal |
+| 2026-04-27 | Unai | Jue 30/04 | Lead magnet | — | "vibe prospecting" | publicado | 9.85x · 632 comentarios · EL mejor lead magnet de las 3 cuentas |
+| 2026-04-27 | Iker | Mar 28/04 | Lead magnet | — | la señal que dispara la prospección | publicado | 0.63x · flop |
+| 2026-04-27 | Unai | Mar 28/04 | Peloteo | Mapa (vídeo) | País Vasco | publicado | 3.69x · 21.1K · único mapa en formato vídeo |
+| 2026-04-13 | Iker | Jue 16/04 | Lead magnet | — | mensajes de prospección | publicado | 2.31x |
+| 2026-04-13 | Iker | Mar 14/04 | Peloteo | Mapa | Gipuzkoa | publicado | 12.92x · 112.7K · 1.208 likes · 90 reposts · TECHO REAL de la mecánica, 1er mapa |
 
-> Vacío de datos reales hasta la primera semana planificada. Al arrancar, borra las filas de ejemplo y empieza a registrar de verdad.
+> **Origen:** volcado desde la BD en vivo (Railway) el **2026-07-14**, no de memoria. Cubre abr-jul 2026, que es cuando arrancó la publicación en serio.
+>
+> **Asier NO está en la tabla a propósito.** Lleva 3 posts (uno personal de 2024, la oferta de Full Stack Dev del 5-jun a 1.10x, y el mapa de Aragón del 14-jul). Su cuenta no tiene baseline y el mapa se subió hace horas: meterlo aquí con un ratio sería inventar señal. Cuando pasen ~4-6 semanas y LinkedIn le fije baseline, se añade.
+>
+> **Cobertura:** están todos los mapas, "Los 10" y lead magnets identificados por texto, más los memes que son outliers. Puede faltar algún meme o insight no outlier: si el planificador necesita certeza sobre un día concreto, que pregunte.
