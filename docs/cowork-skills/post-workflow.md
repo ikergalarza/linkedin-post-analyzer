@@ -74,7 +74,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 - **Concepto: DERIVADO DE LA GEOGRAFÍA de la región** (su posición en el mapa, accidentes geográficos, fronteras). Nunca "región/pueblo/tierra". Así lo hemos hecho siempre: Galicia = "la esquina del Atlántico" (arriba a la izquierda), Álava/País Vasco = "la trastienda del norte" (arriba, la olvidada del norte), Navarra = "el patio trasero de los Pirineos" (frontera con Francia). Inventa uno original y geográfico por región; no repitas concepto usado.
 - **⚠️ NO criticar otras regiones/ciudades ESPAÑOLAS.** Estos posts buscan **HERMANDAD entre regiones, no dividir el país** (igual que nunca hablamos mal de otra empresa, tampoco de otra región). **Prohibido nombrar/pinchar a Madrid, Barcelona u otras ciudades/regiones españolas** en el concepto o el hook. El "desprecio" es (a) **auto-despectivo** de la propia región (sus clichés) o (b) apoyado en una **frontera extranjera** (los Pirineos están entre España y Francia → "patio trasero de los Pirineos" vale). Nada de "la sala de espera entre Madrid y Barcelona" ni "para media España": genera conflicto entre regiones.
 - **Clichés:** de ESA región (Sevilla → feria y playa; Valencia → paella y Fallas).
-- **Frase-rabia entre comillas:** "y poco más" / "buena para un pintxo-pote y para irse" → sube la indignación defensiva del local (lo que le hace comentar). Está validado en Navarra y Álava.
+- **Frase-rabia (OBLIGATORIA — es el motor de la rabia, no un adorno):** el remate que despacha la región en cuatro palabras y hace que el local comente para defenderla. **NUNCA la escribas igual que la vez anterior, pero NUNCA la omitas.** Validadas: Navarra `toro, txistorra y poco más` · Álava `buena para un pintxo-pote y para irse` · Aragón `un ternasco antes de seguir carretera`. Familia de variantes para rotar: "y para de contar", "y gracias", "y poco que rascar", "buena para [comer X] y [largarse]", "sitio de parar y seguir". El patrón es: **[cliché de comida/fiesta] + [gesto de despacharla]**. Si el hook no tiene este beat, el local no siente el desprecio → no comenta → no hay motor.
 - **Cierre:** `Y exporta más que [PAÍS] entero 👇` (el país sale del Paso 2).
 - **Verbo punchy con techo** donde el hook lleve verbo (exportar, vender, cargar…): el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
 
@@ -87,9 +87,12 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 **Paso 3 — CUERPO** (fiel a `swipe-file §2.1` + voz `brand-voice`, VARIANDO expresiones):
 1. Setup corto justo tras el gancho (sin preámbulo en la línea 2).
 2. **Los 3 datos numéricos en lista (1/2/3), cada uno con FUENTE citada** (Eurostat, EUSTAT, Banco Mundial, Datacomex…). El primero suele ampliar la comparación del gancho.
+   - **NUNCA pongas la FECHA/AÑO de la fuente en el cuerpo.** Cita el nombre (`(IAEST y Banco Mundial)`), nunca `(EUSTAT 2024)` ni "vendieron 15.615M€ **en 2025**". Motivo: el lector ve un año y lee el post como viejo aunque se publique hoy → rechazo y scroll. El dato SIEMPRE va verificado y con su año registrado **fuera del post** (entrega interna); si alguien pregunta el año en comentarios, se le responde ahí y suma credibilidad. Usa referencias temporales relativas o ninguna: "ya adelantó", "en un año", presente ("venden al mundo").
 3. Cuerpo saturado de **clichés de la zona nueva** (4-8, tejidos), anáfora de negación ("No paga X. No las pagan Y."), frases-oficio, y variedad de formato (bloques de 2/3, líneas sueltas, escalera).
 4. **Reveal tardío:** "Sí, hablo de [región]."
-5. **VARÍA las expresiones** frente a mapas anteriores: mismo formato/pilar (mismos bloques de 2/3, mismas ideas), pero **palabras, ángulos y ARRANQUES de bloque distintos**. No abras siempre igual — ni todos los bloques con "No es X, no es Y" (la anáfora de negación), ni repitas comodines ("La gente y las empresas que mueven todo esto:" → dilo distinto cada vez). Rota el arranque: verbo, nombre, lugar, número (`working-preferences §4`). Que se note que es un mapa NUEVO, no un calco.
+5. **🚫 EL EJE "CALLADO" ESTÁ QUEMADO — prohibido.** Nada de "aquí se vende callado", "trabajan en silencio", "no lo cuentan", "no salen en la foto", "nadie los conoce", "sin hacer ruido" en el cuerpo, el spam ninja NI el cierre. Lo hemos usado en TODAS las regiones y quien nos lee lo tiene fichado: **no puede ser que todas las regiones estén calladas, alguna hablará**. Además es un ángulo de lástima ("pobrecitos, nadie les hace caso") cuando lo que queremos es dar **mérito y protagonismo**. (Ojo: el silencio SÍ es el eje propio de "Los 10" §4.3 — la persona invisible. En mapas, no.)
+   **Ejes de mérito para rotar** (uno por mapa, nunca repetir el del anterior): **carácter forjado por la geografía** (Aragón: "el cierzo no deja crecer nada flojo") · **ubicuidad invisible** ("lo tienes en casa y no sabes ni cómo se llaman") · **exigencia del cliente** ("aquí te compra quien no perdona un retraso") · **oficio heredado** ("empezó barriendo la nave y acabó dirigiéndola") · **récord contra pronóstico**. El local tiene que pensar "qué bien, nos están dando mérito", no "qué pena damos".
+6. **VARÍA las expresiones** frente a mapas anteriores: mismo formato/pilar (mismos bloques de 2/3, mismas ideas), pero **palabras, ángulos y ARRANQUES de bloque distintos**. No abras siempre igual — ni todos los bloques con "No es X, no es Y" (la anáfora de negación), ni repitas comodines ("La gente y las empresas que mueven todo esto:" → dilo distinto cada vez). Rota el arranque: verbo, nombre, lugar, número (`working-preferences §4`). Que se note que es un mapa NUEVO, no un calco.
 
 **Paso 4 — EMPRESAS y PERSONAS a mencionar** (las rellena el workflow vía Unipile — antes se dejaba vacío):
 Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona concreta mencionable y **activa** en LinkedIn, ordenadas de mayor a menor probabilidad de interactuar.
@@ -110,11 +113,14 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega los NOMBRES en el bloque del cuerpo **y, aparte, la guía de menciones con los enlaces** (Paso 10) para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 
 **Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
-- **MÁX 2 líneas, punchy** (no un párrafo — el de Aragón que ocupaba 3 líneas era demasiado largo). Palabras con punch, cero relleno corporativo.
-- **Reenlaza SIEMPRE con el hook/concepto** del post: retoma la imagen o la frase del gancho para que el link no chirríe (ej. si el hook iba de "exportar callado", el spam ninja recoge ese "callado").
-- Ataca un **punto de dolor** + ofrece la solución con los **diferenciadores de Neety** (`aboutme §1b`: contacto por señal, listado con confianza). Ni venta directa ni frase corporativa.
-- **Colocación:** **después del bloque de menciones** (o donde quede más coherente). **Nunca como última línea.**
-- Ejemplo de tono (variar, ≤2 líneas): *"Aquí venden callados hasta que otro les roba el cliente. Nosotros detectamos por señal cuándo va a comprar y tu comercial entra justo ahí: [link]"*.
+> Reglas canónicas: **`global-instructions §4.4b`** (aplican a todos los pilares). Esto de abajo es la implementación de referencia del mapa; si algo choca, manda §4.4b.
+- **MÁX 2 líneas CORTAS de verdad.** No valen 2 líneas kilométricas: en móvil envuelven y se leen como un bloque de 4 → canta a anuncio. Cuenta el ancho, no los puntos y aparte.
+- **NUNCA nombres a Neety** ("Neety detecta…", "Neety te avisa…"). Nombrar la marca convierte el guiño en **publicidad encubierta** y el lector lo caza al instante. Habla en primera persona del plural sin marca ("te marcamos", "te avisamos") y deja que el link sea la única firma. (Coherente con `brand-voice §4`: el producto se menciona como mucho una vez y nunca vendiendo.)
+- **Colocación:** **justo DESPUÉS del bloque de menciones**, nunca al final. En este formato es una posición fija, no "donde quede coherente".
+- **Que tenga GRACIA + verbo punchy.** Un chiste que recoge el concepto del hook y lo gira contra el dolor del lector. Verbos validados: quemar, reventar, tirar, marcar, enterrar (`global §2.9`).
+- **Reenlaza con el CONCEPTO del hook** girándolo: el mejor remate es usar la palabra del gancho para describir el dolor de ventas (Aragón: el hook va de "secarral" → *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*).
+- Ataca un **punto de dolor concreto del industrial** + resuélvelo con un **diferenciador aterrizado** de `aboutme §1b` (contacto por señal / listado con confianza). Nada de "IA para ventas" en abstracto: que el director comercial VEA el cambio (500 llamadas frías → entrar solo en la que va a comprar).
+- Ejemplo validado (variar siempre): *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral. / Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link]"*.
 
 **Paso 6 — CIERRE del post:** una **frase punchy tipo bold statement** que remate el post. **NO** pide comentarios, **NO** hace pregunta, **NO** repite el link. Es un claim fuerte que cierra (p. ej. "Al final las que más venden son las que menos lo cuentan.").
 
@@ -176,7 +182,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - Eje emocional: "le pongo cara al que estuvo detrás del salto".
 - **QUE SE NOTE QUE ES UN POST NUEVO (clave):** mantén la ESENCIA del formato (mismos bloques de 2/3, misma estructura, mismas ideas) pero **cambia las expresiones y sobre todo cómo ABRES los bloques**. No arranques siempre igual — ni todos los bloques con "No publica / No da charlas", ni con "No es por X, no es por Y" (esa anáfora de negación es la del mapa; no la calques). Rota el arranque: unos por verbo, otros por nombre, otros por número, otros por lugar (`working-preferences §4`). Mismo pilar, palabras distintas cada vez.
 
-**Paso 4 — SPAM NINJA:** igual que mapa (§4.2 Paso 5): link de agendar tejido tras las menciones, nunca última línea, con diferenciadores de Neety.
+**Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). Resumen: máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), colocado **justo después de las menciones** y nunca como última línea. Aquí el giro va al dolor del comercial de la región, no al de la empresa.
 
 **Paso 5 — CIERRE punchy** (bold statement, sin pedir comentarios ni preguntar; §4.2 Paso 6). Ej. "Hoy, al menos, sabes su nombre." Corre la validación (§8).
 
@@ -203,7 +209,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 **Paso 3 — CUERPO:** lo más **fiel al original** en formato/longitud/formateado, pero **adaptado a ventas B2B**. Corto (3-6 líneas; el motor es la foto, no el texto).
 - **Roles de trabajadores:** sin anglicismos ni títulos complejos. Español genérico que un **industrial de 50+ entienda** (comercial, jefe de ventas, director comercial, gerente…) — lo más genérico = más alcance. (Mismo criterio en la foto, Paso 6.)
 
-**Paso 4 — SPAM NINJA:** link de agendar tejido en el **lugar más adecuado del cuerpo** (nunca la última línea), de forma **original y divertida**, con los **diferenciadores de Neety** (`aboutme §1b`). **Igual que en mapas (§4.2 Paso 5): máx 2 líneas, punchy, y reenlaza con el hook.**
+**Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). Máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), nunca última línea. Aquí no hay menciones, así que va en el punto más natural del cuerpo — y ojo: el cuerpo del meme es de 3-6 líneas, así que el spam ninja **no puede comerse el post**. Validado: el iMessage "El de Ventas" (7.9x · 80.9K) llevaba link de agendar en spam ninja sin matar alcance.
 
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs). Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
 
@@ -221,7 +227,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 > Se reconoce el outlier de lead magnet en la DB porque **se disparan los COMENTARIOS** (vibe prospecting 632 · desmonto perfiles 483). El objetivo del formato es EL comentario.
-> **Diferencia clave con los otros pilares: NO lleva spam ninja.** El CTA de comentar ES el cierre (regla del UNO); meter el link de agendar aquí apila CTAs y lo rompe.
+> **⛔ Diferencia clave con los otros pilares: NO lleva spam ninja. Es la ÚNICA excepción y no se "arregla".** El CTA de comentar ES el cierre (regla del UNO). Meter el link de agendar aquí **apila dos CTAs**: el lector que iba a comentar duda entre comentar o clicar, y el conteo de comentarios —que es TODO el motor del formato (632 com. vibe prospecting · 483 desmonto perfiles)— se hunde. El resto de reglas de spam ninja viven en `global-instructions §4.4b`; aquí NO aplica ninguna. Si algún día se prueba, es un A/B consciente con expectativa de caída, no el default.
 > **Output:** el **TEXTO** copy-ready **+ una recomendación de imagen** (registro personal/founder: **foto natural real, selfie o foto en grupo con compañeros** — NO caricatura ni diseño elaborado; `images §3`). La foto la haces/pones tú; el workflow te dice qué tipo encaja. Sin CSV, sin ZIP, sin spam ninja.
 
 **Paso 0 — Input:** la idea/recurso a regalar. Si no te la da, pregúntale qué entregable quiere.

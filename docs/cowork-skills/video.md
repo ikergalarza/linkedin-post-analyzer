@@ -14,7 +14,7 @@ Un post de vídeo se consume distinto (autoplay, swipe, sonido normalmente off�
 - ❌ Las 4 mecánicas de texto (mapa, "Los 10", meme, lead magnet como estructura) y `outliers-database §3` (decomposición de outliers de texto).
 - ❌ El registro de imágenes (`images` skill), HOOK_LAW, calidad de hook de texto.
 
-**Sí siguen mandando** (son de comercio, no de formato): menciones a terceros SIEMPRE en positivo, atacar el problema y no al lector, público B2B amplio (no fuerces marco industrial), fórmula "Comenta X + Y" si hay lead magnet en el caption, idioma del usuario, y **sin markdown dentro del caption**. Y la voz Neety (`brand-voice`).
+**Sí siguen mandando** (son de comercio, no de formato): menciones a terceros SIEMPRE en positivo, atacar el problema y no al lector, público B2B amplio (no fuerces marco industrial), fórmula "Comenta X + Y" si hay lead magnet en el caption, idioma del usuario, **sin markdown dentro del caption**, el **verbo punchy con techo** (`global §2.9`: sube hasta el que encaja, sin pasarse a gore) y el **SPAM NINJA en el caption** (`global §4.4b`: máx 2 líneas cortas, sin nombrar a Neety, girando el concepto del gancho, nunca última línea — **salvo que el caption sea un lead magnet**, que entonces no lleva). Y la voz Neety (`brand-voice`).
 
 **Datos propios que sí valen:** los outliers de TEXTO+VÍDEO de la cuenta (no los de texto solo). Ese subconjunto es la única referencia de la cuenta que aplica a un vídeo.
 

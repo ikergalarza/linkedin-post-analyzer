@@ -120,6 +120,12 @@ Reglas de oro del ritmo:
 - "listas más claras" → MÁS (c), no convertir todo en lista.
 - **Error frecuente:** "junta los bloques de 2" y aplicarlo a TODO el post incluyendo dardos y enumeraciones → post asfixiado. Re-lee entero y aplica solo donde encaja.
 
+### 3.5b · Citar fuentes en el cuerpo: el NOMBRE sí, el AÑO nunca (aplica a TODO post con datos)
+Cuando el cuerpo lleva cifras, **cita la fuente por su nombre** (es escudo: te protege del listillo que corrige) pero **NUNCA su fecha**. `(IAEST y Banco Mundial)` ✅ · `(EUSTAT 2024)` ❌ · "vendieron 15.615M€ **en 2025**" ❌.
+- **Motivo:** el lector ve un año y lee el post como viejo aunque lo publiques hoy → rechazo y scroll. Un dato de 2024 publicado en 2026 es perfectamente válido; el problema es *parecer* viejo, no serlo.
+- **El dato SIEMPRE va verificado y con su año registrado FUERA del post** (en la entrega interna, para poder responder). Si alguien pregunta el año en comentarios, se le contesta ahí con naturalidad: reconocerlo suma credibilidad.
+- **Usa referencias temporales relativas o ninguna:** presente ("venden al mundo"), "ya adelantó", "en un año". Ojo con "este año": si el dato es del cierre del año pasado, es falso además de fechado.
+
 ### 3.5 · Cuerpo natural (anti-IA)
 Ver `brand-voice` §3 (tabla de traducción de AI-tells + palabras de registro natural + test de leer en voz alta). Es parte no-negociable del pase de validación de cada cuerpo.
 
@@ -142,9 +148,9 @@ Outliers reales: 15.9x, 7.8x (Navarra), 7.7x, 7.3x (Galicia), 6.5x…
 **Concepto creativo de zona:** nunca "región/tierra/pueblo". Inventa uno original por zona: Navarra → "el patio trasero de los Pirineos"; Álava → "la trastienda del norte"; Galicia → "esta esquina del Atlántico". Nunca repitas concepto.
 
 **Reglas de ejecución NO negociables (condiciones de seguridad, no adornos):**
-1. **Verificar TODA cifra shock antes de publicar** contra fuente real (ICEX, Cámara, autoridad portuaria, INE, Eurostat, Datacomex, IDESCAT/EUSTAT/IECA). Un dato mal → el primer comentario de un local corrigiéndolo envenena el hilo → de 6x a 0.5x. Citar la fuente dentro del post es escudo + credibilidad.
+1. **Verificar TODA cifra shock antes de publicar** contra fuente real (ICEX, Cámara, autoridad portuaria, INE, Eurostat, Datacomex, IDESCAT/EUSTAT/IECA). Un dato mal → el primer comentario de un local corrigiéndolo envenena el hilo → de 6x a 0.5x. Citar la fuente dentro del post es escudo + credibilidad, pero **solo el NOMBRE de la fuente, nunca su año** (`(IAEST)`, no `(IAEST 2024)`): un año a la vista hace que el post se lea como viejo y el lector se pira. Detalle en `post-workflow §4.2` Paso 3.
 2. **Saturar con clichés locales** (4-8 tejidos por el cuerpo, no uno arriba y olvidado). Cada referencia que un local reconoce = un "ostras, es de los míos" = trigger de comentario. "Sin forzar": dos bien tejidos baten a cinco grapados.
-3. **Spam ninja + cierre (NO son lo mismo):** el **link de agendar** va tejido de forma natural/graciosa atacando un punto de dolor + ofreciendo la solución (con los diferenciadores de `aboutme §1b`), colocado **después de las menciones** o donde quede coherente — **nunca como última línea**, y NO el link de pampam. El **cierre del post** es una **frase punchy/bold statement**, sin pedir comentarios ni preguntar. (Detalle en `post-workflow §4.2`, pasos 5-6.)
+3. **Spam ninja + cierre (NO son lo mismo):** el **link de agendar** va **justo después de las menciones** (posición fija en este pilar), **nunca como última línea**, y NO es el link de pampam. **Reglas completas: §4.4b** (máx 2 líneas cortas · nunca nombrar a Neety · chiste que gira el concepto del hook · verbo punchy con techo · diferenciador aterrizado). El **cierre del post** es una **frase punchy/bold statement**, sin pedir comentarios ni preguntar. (Runbook: `post-workflow §4.2`, pasos 5-6.)
 4. **Menciones @:** por actividad real en LinkedIn (post/repost/comentarios en los **últimos 3 meses**). Descartar dormidos >3 meses aunque sean el CEO de la región — un mando intermedio activo bate a un CEO silencioso. Además, para el CSV, se saca el **logo de LinkedIn** de cada empresa vía Unipile (no favicons).
 
 **Techo de alcance = notoriedad regional:** regiones grandes/conocidas (Cataluña, Valencia, Andalucía) → techo alto (7x-9x+); regiones pequeñas (Bizkaia 3.2x) → la mecánica dispara pero techo menor. Para máximo alcance, pide región con identidad fuerte Y notoriedad nacional.
@@ -180,7 +186,7 @@ Outlier validado: País Vasco 4.8x · 49.4K. Formato NUEVO a repetir.
 - **NO fue** por desvelar la región en el hook ni por que el founder no sea de allí. El foco es la persona.
 - **Imagen:** orla de retratos (cabezas), NO personas sobre un mapa. Cabecera fuerte ("LOS 10 QUE LEVANTAN LA INDUSTRIA VASCA") en paleta Neety, palabra clave en naranja.
 - Eje emocional: "le pongo cara al que estuvo detrás del salto".
-- **Link de agendar en spam ninja** (mismo criterio que mapas).
+- **Link de agendar en spam ninja** justo después de las menciones, con las reglas canónicas de **§4.4b** (mismo criterio que mapas).
 - Aplica las mismas reglas de reescritura y concepto regional original que en mapas.
 
 ### 4.3 · MEME (con MOTOR — sin motor no viaja)
@@ -208,6 +214,38 @@ Outliers: 9.13x ("desmonto perfiles" live), 5.0x, 4.4x, 4.0x. Corre estas puerta
 2. **Topic específico y auto-intrigante.** El genérico "todo mi material en una caja" está MUERTO (biblia 1.2x, arsenal 0.63x): comentan pero LinkedIn no amplifica. Solo si el topic ya pica solo Y el entregable es UNA cosa concreta.
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (9.13x vs 4-5x) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
+
+### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
+> Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
+
+**Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
+
+**Dónde va (por pilar):**
+| Pilar | Lleva spam ninja | Colocación |
+|---|---|---|
+| MAPA | ✅ | **Justo después del bloque de menciones** (posición fija) |
+| "LOS 10" | ✅ | **Justo después del bloque de menciones** (posición fija) |
+| MEME | ✅ | En el punto más natural del cuerpo (el cuerpo es corto, 3-6 líneas) |
+| Insight / evento / otros con cuerpo | ✅ | Donde el chiste caiga natural |
+| Vídeo (caption) | ✅ | Regla de comercio, no de formato → aplica (`video §0`) |
+| **LEAD MAGNET** | ❌ **NUNCA** | Ver la excepción abajo |
+
+**Las 7 reglas duras:**
+1. **MÁX 2 líneas CORTAS de verdad.** Cuenta el ANCHO, no los puntos y aparte: dos líneas kilométricas envuelven en móvil y se leen como un bloque de 4 → canta a anuncio y el lector lo salta.
+2. **NUNCA nombres a Neety.** "Neety detecta…", "Neety te avisa…" convierte el guiño en **publicidad encubierta** y el lector lo caza al instante. Primera persona del plural sin marca ("te marcamos", "te avisamos"); el link es la única firma. (Coherente con `brand-voice §4`: el producto se menciona como mucho una vez y nunca vendiendo.)
+3. **Reenlaza con el CONCEPTO del hook, girándolo.** No repitas la frase del gancho: coge su palabra y úsala para describir el dolor de ventas. Validado (Aragón): hook de "secarral" → *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*
+4. **Verbo punchy CON TECHO** (§2.9): quemar, reventar, tirar, marcar, enterrar. Para en el que encaja; **no te pases a gore** (destripar/descuartizar). Punch sin pasarse de extremo.
+5. **Que tenga GRACIA.** Es un chiste que gira el concepto contra el dolor del lector, no una cuña publicitaria.
+6. **Dolor concreto + diferenciador ATERRIZADO** (`aboutme §1b`: contacto por señal, listado con confianza). Nada de "IA para ventas" en abstracto: el director comercial tiene que VER el cambio (500 llamadas frías → entrar solo en la que va a comprar). En mapas, aterrízalo en el dolor del industrial de ESA región.
+7. **Nunca venta directa ni frase corporativa**, y en mapas **nunca el link de PamPam** (es el de agendar).
+
+**Ejemplo validado (variar siempre, nunca copiar literal):**
+```
+Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral.
+Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link]
+```
+
+**⛔ La excepción del LEAD MAGNET (no la "arregles"):** el lead magnet NO lleva spam ninja. Su mecánica ES el comentario (632 com. vibe prospecting · 483 desmonto perfiles) y su CTA "Comenta X + Y" es el cierre. Meter el link de agendar **apila dos CTAs** y rompe la regla del UNO (§4.5): el lector que iba a comentar duda entre comentar o clicar, y el conteo de comentarios (que es TODO el motor del formato) se hunde. Si algún día se prueba, es un A/B consciente con expectativa de caída, no el default.
 
 ### 4.5 · La regla del UNO en el cierre (CTA)
 Exactamente UN cierre: una pregunta que fuerza postura, O un lead-magnet con la fórmula "Comenta X + Y", O un link directo en el cuerpo, O ningún CTA (un claim fuerte cierra). **Nunca apiles cierres.** (Nota: LinkedIn en 2026 NO penaliza links en el cuerpo — el folklore "ponlo en el primer comentario" está obsoleto. Un link en el cuerpo no suprime alcance; lo hemos verificado con posts >100K imp.)
@@ -257,4 +295,10 @@ Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección d
 ---
 
 ## 8 · Pase de validación (correr en silencio ANTES de cada entrega)
-Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra toda esta stack: pilar único · ley de formato del hook (bloque único ≤210, sin `\n\n`) · calidad del hook (imagen mental / herida / un pilar al máximo) · ancla de sector + claim universal · densidad de números · transición hook→cuerpo sin preámbulos · enumeración con saltos · variedad rítmica (3+ unidades, líneas cortas, cierre que respira) · cuerpo anti-IA · mecánica correcta con su motor · menciones positivas · atacar el problema no al lector · sin markdown dentro · imagen/vídeo según sus skills (`images` / `video`: registros + paleta/tipografía; vídeo = 3 piezas + 6 spoken hooks) · RECENT_DIAGNOSIS (región underdog, filtro de meme, fatiga de lead magnet) · ¿el borrador repite un patrón que ya flopeó en la cuenta? Ver `working-preferences` §2 para las dos salidas (fix silencioso vs aviso de riesgo) y la trampa de la edición parcial.
+Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra toda esta stack: pilar único · ley de formato del hook (bloque único ≤210, sin `\n\n`) · calidad del hook (imagen mental / herida / un pilar al máximo) · ancla de sector + claim universal · densidad de números · transición hook→cuerpo sin preámbulos · enumeración con saltos · variedad rítmica (3+ unidades, líneas cortas, cierre que respira) · cuerpo anti-IA · mecánica correcta con su motor · menciones positivas · atacar el problema no al lector · sin markdown dentro ·
+**Los 4 checks que más se escapan (mirar SIEMPRE uno por uno, no de memoria):**
+1. **Spam ninja (§4.4b):** ¿está? ¿≤2 líneas CORTAS (mide el ancho, no los puntos)? ¿NO nombra a Neety? ¿gira el concepto del hook? ¿verbo punchy sin pasarse? ¿colocado donde toca y NUNCA de última línea? ¿lead magnet → sin spam ninja?
+2. **Fechas de fuente:** ¿el cuerpo cita el NOMBRE de la fuente y NINGÚN año? (`(IAEST)` sí, `(IAEST 2024)` no, "vendieron X **en 2025**" tampoco). Los años van en la entrega interna, fuera del post.
+3. **Ángulos quemados:** ¿el cuerpo/cierre repite el eje "callado / en silencio / no lo cuentan / nadie los conoce"? En MAPAS está **prohibido** (`post-workflow §4.2` Paso 3) — rota a otro eje de mérito. (En "Los 10" ese eje sí es el suyo.)
+4. **Frase-rabia:** en mapas, ¿el hook lleva el beat "y poco más" **reformulado** (nunca literal, nunca ausente)?
+Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/tipografía; vídeo = 3 piezas + 6 spoken hooks) · RECENT_DIAGNOSIS (región underdog, filtro de meme, fatiga de lead magnet) · ¿el borrador repite un patrón que ya flopeó en la cuenta? Ver `working-preferences` §2 para las dos salidas (fix silencioso vs aviso de riesgo) y la trampa de la edición parcial.
