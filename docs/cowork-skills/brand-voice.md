@@ -62,6 +62,11 @@ El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el
 | "No se trata de X, sino de Y" (apilado) | vale UNA vez; delator si se repite — varíalo o córtalo |
 | Tricolon perfecto (tres items simétricos) en cada párrafo | rompe la simetría; la gente real no es tan ordenada |
 
+**Puntuación de persona real (los 2 delatores de IA más visibles — aplican a TODO: hooks, cuerpos, spam ninja, captions de vídeo, comentarios):**
+- **NUNCA guion largo `—` ni `–`.** Es el delator de IA nº 1. Usa coma, punto, o "y / pero / así que". Tampoco lo cueles como raya de inciso.
+- **NUNCA coma antes de "y" / "e".** ❌ *"Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí"* · ✅ *"Te marcamos quién va a comprar y cuándo. Tu comercial entra solo ahí"*. ❌ *"las 20 que lo sostienen, y quien hay detrás"* · ✅ *"las 20 que lo sostienen y quien hay detrás"*. Si la frase pide una pausa ahí, **parte en dos frases** o quita la coma; no la dejes.
+- Coma antes de **"pero"** sí es natural, esa se queda.
+
 **Palabras de registro natural** (suenan humanas sin sonar a adolescente — funcionan tanto para el director comercial de 45-60 como para un founder joven; ese solape es el punto dulce):
 - **tocho** (grande/importante): "un curro tocho", "lo más tocho".
 - **movida** (asunto/lío): "toda esta movida de la IA".
@@ -125,7 +130,7 @@ Esto es lo que hace que una respuesta suene a persona y no a IA. Reglas duras:
 - **Abrir con el nombre = @-mención:** empieza por el nombre exacto del que comenta (tal cual, mismas mayúsculas), un espacio, y la primera palabra en minúscula, sin coma ni dos puntos: "Basilio García y lo peor es que…", "Joan Bisquert totalmente de acuerdo…". El backend convierte ese nombre inicial en una @-mención azul, así que va literal en la posición 0. Tras el primer punto, mayúsculas normales.
 - **Tono de anfitrión, no de vendedor:** reconoce al que comenta y engancha con SU punto (dale la razón y añade un ángulo, aporta un ejemplo/número, matiza con suavidad, o responde su pregunta). Nada de "¡Gracias por comentar!" / "¡Gran punto!" de relleno.
 - **Varía el arranque:** "exacto", "totalmente", "justo", "cierto", "buen punto" son válidos DE VEZ EN CUANDO, no como reflejo en cada respuesta. Rota el primer movimiento según lo que diga el comentario (acuerdo+ángulo nuevo · ejemplo concreto · matiz · responder la duda · reacción punchy + línea que la expande · coger una palabra suya · micro-anécdota entre bastidores).
-- **Puntuación de persona real (mismos tells que en posts):** NUNCA guion largo "—"/"–" (delator de IA nº 1: usa coma, punto o "y/pero/así que"). NUNCA coma antes de "y"/"e" ("recursos limitados y la demanda sube", no "…limitados, y…"). Coma antes de "pero" sí es natural.
+- **Puntuación de persona real:** ver **§3** (regla general, aplica igual aquí): nunca guion largo `—`, nunca coma antes de "y"/"e", coma antes de "pero" sí.
 - **Idioma:** siempre el MISMO que el post/comentario (post en español → respuesta en español, sin colar inglés). Iguala el registro (tú/usted, formal/informal).
 - Sin markdown, sin meta ("el algoritmo", "en LinkedIn"), sin auto-promo.
 
