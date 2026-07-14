@@ -66,7 +66,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
 > **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
-> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) una **descripción de 2 líneas** para la web del mapa · (4) la **guía de menciones con enlaces** · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
+> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción de 2 líneas** para la web del mapa · (4) la **guía de menciones** (bloque cercado, solo URLs) · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
 > **Ojo, son DOS imágenes distintas y solo una la das tú:**
 > - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.)
 > - **Foto de portada de la WEB del mapa** = foto de la región → **la entrega el workflow** (Paso 11).
@@ -137,12 +137,18 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Logo (columna de imagen):** rellena la columna de imagen del CSV (en la plantilla de referencia es **`Media`**, la última) con la **URL del logo de LinkedIn** de cada empresa (el `logoUrl`/`pictureUrl` que sacaste en el Paso 4). NO uses favicons de la web (salían en blanco). Si PamPam esperara la imagen en otra columna, ponla ahí; por defecto = `Media`. `Sticker` = 🏢.
 - Incluye TODAS las columnas del archivo de referencia (el Match mode sobrescribe el registro entero).
 
-**Paso 9 — Descripción de 2 líneas** para la web del mapa: corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras.
+**Paso 9 — TÍTULO y DESCRIPCIÓN para la web del mapa** (van juntos, los dos siempre):
+- **Título — plantilla FIJA, no la reinventes:** `[Región]: el músculo industrial`. Ej.: `Álava: el músculo industrial` · `Aragón: el músculo industrial`. Aquí no toca creatividad: es el formato de la web y se repite mapa a mapa.
+- **Descripción de 2 líneas:** corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras. Sin fechas (`global §3.5b`).
 
-**Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): lista de las 20, cada una con el **enlace de LinkedIn de la empresa** y el **enlace del perfil de la persona**, para que el usuario encuentre a la correcta sin confundirse con homónimos. Formato:
+**Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): las 20, para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
+- **Va en BLOQUE CERCADO de texto plano, NUNCA en tabla markdown.** El usuario la usa pegando menciones a mano, línea a línea: la tabla estorba y no se copia bien.
+- **Calca el formato y el orden del bloque de empresas del post** (mismas 5×4, mismo orden), pero cambiando cada nombre por su URL. Así cada línea de la guía cae en la MISMA posición que su línea del post y se va bajando a la vez por los dos.
+- **Solo las dos URLs, nada más.** Sin cargo, sin fecha de actividad, sin por qué está elegida: en el MAPA no hay que justificar cada ficha (la justificación va aparte, en la lista de "revisa estas"). El nombre ya viaja dentro de la URL.
 ```
-1. Empresa — [nombre] · linkedin.com/company/…  |  Persona — [nombre] · linkedin.com/in/…
-2. …
+→ linkedin.com/company/… - linkedin.com/in/…
+→ linkedin.com/company/… - linkedin.com/in/…
+(… 5 bloques de 4, en el orden exacto del post)
 ```
 
 **Paso 11 — FOTO de portada para la web del mapa** (no es la imagen del post):
@@ -153,7 +159,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Entrega:** el fichero + la URL de descarga + **licencia y autor listos para pegar**. Si hay una CC0 decente, ofrécela como alternativa aunque la bonita sea CC BY-SA: al usuario le puede compensar no tener que atribuir.
 - Validado (Aragón): `Zaragoza Rio Ebro and Catedral-Basílica del Pilar upstream from Puente de Piedra.jpg` (CC BY-SA 4.0, Ymblanter) y la alternativa CC0 `Zaragoza shel.JPG`.
 
-**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) la **descripción de 2 líneas** · (4) la **guía de menciones con enlaces** (empresa + persona) · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
+**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** en bloque cercado, solo URLs, calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
 
 **Guardarraíles de elección de región (Paso 0):**
 - **Prefiere la COMUNIDAD AUTÓNOMA a la provincia/ciudad** — más alcance. Validado: elegimos Cataluña (no Barcelona); y Álava (provincia) rindió MENOS que País Vasco (comunidad). Baja a provincia solo si tiene identidad muy fuerte y ya tocaste la comunidad.
@@ -198,7 +204,11 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 
 **Paso 6 — FOTOS de las 10 personas (en vez del CSV):** para cada persona, saca su **foto de perfil de LinkedIn** vía Unipile (endpoint de perfil de persona → campo de foto de perfil, `profile_picture_url`/`picture_url`), descárgala, y entrega las 10 en un **ZIP/carpeta nombradas en ORDEN de mención**: `01_Nombre-Apellido.jpg`, `02_…`, … `10_…`. (El usuario las coloca en su plantilla; nosotros NO montamos la imagen — imagen = orla de retratos, `images §8`.)
 
-**Paso 7 — Guía de menciones con enlaces** (igual que mapa, §4.2 Paso 10): las 10 con el enlace de perfil de LinkedIn de la persona y el de la empresa, para pegar las @ sin confundir homónimos.
+**Paso 7 — Guía de menciones con enlaces** (mismas reglas de formato que el mapa, §4.2 Paso 10): **bloque cercado de texto plano, NUNCA tabla**, calcando el orden y el formato del bloque de personas del post pero con URLs en vez de nombres. Aquí el orden es **persona primero** (como en el cuerpo, `→ Persona - Empresa`), y **se mantiene el logro** al final: en este pilar el logro SÍ justifica la ficha (es el criterio de selección) y el usuario lo necesita a mano para responder comentarios. Esa es la única diferencia con el mapa, donde no se justifica nada.
+```
+→ linkedin.com/in/… - linkedin.com/company/… · logro concreto
+(… 10 líneas, en el orden exacto del post)
+```
 
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces**. **Sin CSV** y sin montar imagen.
 
