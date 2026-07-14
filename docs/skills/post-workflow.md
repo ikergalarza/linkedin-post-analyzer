@@ -275,7 +275,8 @@ Frase de entrada:
 
 **Paso 0 — Input:** la idea/recurso a regalar. Si no te la da, pregúntale qué entregable quiere.
 
-**Paso 1 — Puerta de frecuencia:** ¿≥2 semanas desde el último lead magnet de esta cuenta? ¿no solapa otra cuenta hoy/esta semana? Si no → **avisar de fatiga** (3 en pocos días hunden el alcance).
+**Paso 1 — ⚠️ NO hay puerta de frecuencia (revisado 2026-07-14).** Aquí había una que pedía ≥2 semanas por cuenta y avisaba de "fatiga". **La BD la desmiente:** Iker publicó lead magnet el 27-may (0.59x) y otro el 28-may (**8.52x · 483 com.**), días consecutivos y misma cuenta. Detalle y los 5 flops de junio explicados uno a uno en `global-instructions §4.4` puerta 1.
+**Lo que SÍ se comprueba antes de escribir:** que el ÁNGULO no se parezca al del último lead magnet de esa cuenta y que la PALABRA del CTA no se repita. El calendario no es el problema; el ángulo sí.
 
 **Paso 2 — ÁNGULO ORIGINAL (aquí se gana o se pierde):**
 - El entregable = **UNA cosa concreta y específica**. El genérico "toda mi biblia / todos mis recursos en una caja" está **MUERTO** (biblia 1.2x): comentan poco y LinkedIn no amplifica.

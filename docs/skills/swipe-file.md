@@ -161,6 +161,14 @@ Entro a tu perfil y te respondo aquí mismo, en público, con 3 mejoras concreta
 Comenta "desmonta" + tu departamento y te respondo.
 ```
 
+> ⭐ **LA PAREJA QUE MÁS ENSEÑA DEL HISTÓRICO — 27 vs 28 de mayo, Iker, días consecutivos:**
+> - **27-may · 0.59x · 20💬** — CTA implícito: *"Si lo quieres, \"psicólogo\" + tu sector aquí abajo y te lo paso."*
+> - **28-may · 8.52x · 483💬** — CTA explícito: *"**Comenta** \"desmonta\" + tu departamento y te respondo."*
+>
+> Mismo autor, mismo formato, un día de diferencia, **24× más comentarios**. Dos lecciones y las dos son de mecánica, no de calendario:
+> 1. **Sin la palabra "Comenta", la gente NO comenta.** No entiende que hay que hacerlo. El usuario lo probó pensando que el CTA explícito limitaba el alcance y pasó justo lo contrario.
+> 2. **No existe la fatiga de lead magnet.** Dos seguidos en la misma cuenta y el segundo es el 2º mejor post de la historia. Si un lead magnet flopea, mira el ángulo y el CTA, nunca la fecha.
+
 ### 4.2 · "Vibe prospecting" — Unai · 9.85x · 95❤ **632💬** 6🔁 · 25.1K 👁 (récord de comentarios · EL mejor lead magnet)
 Gancho `🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound como lo conocemos 👇` → bandwagon ("9 de cada 10 ya están migrando. Todos menos tú.") → sistema numerado de 5 puntos ("X > Y") → CTA `Comenta "vibe" y te lo paso.` La fórmula "Comenta [palabra] + te lo paso" repite en todos los lead magnets ganadores (llaves/frase/perfil/mensaje).
 

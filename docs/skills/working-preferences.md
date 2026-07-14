@@ -37,7 +37,7 @@ Cuando acoto la petición a un trozo ("no toques el hook, mejora el cuerpo", "so
 - **Mapa regional en capital obvia** (Madrid / Barcelona ciudad): empújame para atrás con el precedente Madrid 0.55x y propón una región greenlit.
 - **Post sobre versión nueva de Claude / modelo IA:** empújame para atrás (0.88x, 0.25x, dos flops). Propón reformular como "el resultado en términos de la audiencia" (reuniones, replies, horas ahorradas).
 - **Infografía:** avísame que van 0-de-3 (incluida una bien hecha). Ofrece alternativas validadas primero.
-- **Lead magnet:** comprueba en voz alta la frecuencia ("¿han pasado 2 semanas desde el último de esta cuenta?") antes de dibujar nada.
+- **Lead magnet:** ⚠️ **ya NO hay puerta de frecuencia** (revisado 2026-07-14 contra la BD: Iker sacó dos en días consecutivos, 0.59x y 8.52x). Lo que se comprueba en voz alta es el **ÁNGULO**: ¿se parece al del último de esa cuenta? ¿repite la palabra del CTA? ¿es el entregable genérico "todo en una caja", que está muerto? Ver `global-instructions §4.4`.
 
 ---
 
