@@ -182,4 +182,4 @@ Gancho `🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound como lo conoce
 - **Reveal tardío** ("Sí, hablo de [X].") en mapas y "Los 10".
 - **Emojis funcionales**, no decorativos: `👇` (gancho), `1️⃣/→` (listas), `💍😂😅` puntuales en memes. Nada de sopa de emojis.
 - **CTA lead magnet:** literal `Comenta "[palabra]" + [tu sector/depto] y te lo paso`.
-- **Empresas:** `→ Empresa - Persona` (mapa) o `→ Persona - Empresa · logro` ("Los 10").
+- **Empresas:** `→ @Empresa - @Persona` (mapa) o `→ @Persona - @Empresa · logro` ("Los 10"). **Arroba delante de ambos nombres y nombres EXACTOS de LinkedIn** — si no coinciden no salta el autocompletado y la mención muere (`post-workflow §4.2` Paso 4). Ojo: los posts históricos citados arriba se escribieron sin la @ delante; el formato actual la lleva.
