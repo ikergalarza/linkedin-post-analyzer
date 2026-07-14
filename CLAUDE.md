@@ -48,7 +48,7 @@ Orquestación:
 - `POST {BASE}/api/v1/linkedin/search?account_id=…` con `{"api":"classic","category":"people","company":["{id}"]}` → directivos de una empresa
 - `GET {BASE}/api/v1/posts/{linkedin_post_id}/comments?account_id=…&limit=50` → **el texto de los comentarios de cualquier post** (la BD no los guarda). Es la prueba del lead magnet: si una palabra sale en ≥50-60% de los comentarios, es comment-gated (`outliers-database §3.9b`).
 
-**Backend propio (Railway)** — outliers reales, imágenes de nuestros posts y la BD cross-creator de la competencia. Basic Auth con `APP_BASIC_USER` / `APP_BASIC_PASS`. ⚠️ **No están en el entorno**: si dan 401, pídeselas al usuario (que las ponga como variables de entorno, no pegadas en el chat). La red NO está bloqueada: `/api/health` responde 200.
+**Backend propio (Railway)** — outliers reales, imágenes de nuestros posts y la BD cross-creator de la competencia. Basic Auth con `APP_BASIC_USER` / `APP_BASIC_PASS`. ✅ **Ya están en el entorno, verificado 2026-07-14** (`/api/creators` responde 200). Si algún día dan 401, pídeselas al usuario como variables de entorno, nunca pegadas en el chat.
 - `GET /api/creators` · `GET /api/creators/{id}/posts?outliers_only=true&limit=60` · `GET /api/analysis/{id}/stats`
 - `GET /api/analysis/cross-creators` — los ~1.894 outliers de la competencia (el Paso 2 de la receta de lead magnet los pide)
 - `GET /api/posts/post/{id}/media` + `POST /api/posts/post/{id}/refresh-media` (las URLs de LinkedIn caducan y dan 403)
