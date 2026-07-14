@@ -73,6 +73,6 @@ Este es un tema importante para mí: **quiero seguir sorprendiendo al lector**. 
 
 ## 7 · Huecos / cosas que me puedes preguntar
 
-- [ ] ¿Quieres un canal fijo de entrega (Cowork, doc, etc.) o vale el chat?
+- [x] Canal de entrega: **el chat de Claude Code**, y los entregables grandes (CSV, ZIP, fotos) al Escritorio. Decidido 2026-07-14.
 - [ ] ¿Hay días/horas de publicación fijos por cuenta que quieras que asuma? (el sistema sugiere martes-jueves, 11:00-12:00 y 14:00-15:00 hora local).
 - [ ] ¿Quieres que lleve yo el control de qué formato tocó a cada cuenta cada día (para la regla de exclusividad) o me lo dices tú en cada sesión?

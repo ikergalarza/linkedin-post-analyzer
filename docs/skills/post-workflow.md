@@ -2,7 +2,7 @@
 
 > **name:** post-workflow
 > **description:** El marco de workflows de Neety (destilado del playbook interno) YA ADAPTADO a la creación de posts, más la receta cronológica paso a paso para devolver publicaciones casi listas. Define cómo orquestar, cuándo montar un workflow vs. un solo prompt, y dónde el "círculo" se para y te devuelve el control.
-> **when-to-use:** Cargar al montar el workflow de LinkedIn en Cowork y al producir cualquier post. Se apoya en todas las demás skills; NO las reemplaza — si algo aquí choca con `global-instructions` / `brand-voice` / `working-preferences` / `outliers-database` / `images` / `video`, **mandan ellas**.
+> **when-to-use:** Cargar al producir cualquier post de LinkedIn. Se apoya en todas las demás skills; NO las reemplaza — si algo aquí choca con `global-instructions` / `brand-voice` / `working-preferences` / `outliers-database` / `images` / `video`, **mandan ellas**.
 
 ---
 
@@ -40,7 +40,7 @@ Un solo concepto (el **workflow**) y dentro viven el resto:
 
 ### 4.0 · Política de empresas y menciones @ (CORREGIDA — leer primero)
 Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
-- **Rellena** los bloques de empresas y las menciones @ con datos **reales y verificables**, tomados de una **fuente**: (a) los datos del **mapa de pampam** o la lista que te pase el usuario, (b) fuentes públicas con cita (ICEX, cámara de comercio, INE/Eurostat, autoridad portuaria, prensa sectorial), o (c) **búsqueda web** en el entorno de Cowork, siempre citando de dónde sale.
+- **Rellena** los bloques de empresas y las menciones @ con datos **reales y verificables**, tomados de una **fuente**: (a) los datos del **mapa de pampam** o la lista que te pase el usuario, (b) fuentes públicas con cita (ICEX, cámara de comercio, INE/Eurostat, autoridad portuaria, prensa sectorial), o (c) **búsqueda web**, siempre citando de dónde sale.
 - **Marca cada entrada** con su fuente y un nivel de confianza, y añade una lista corta **"revisa estas"** con las dudosas. El usuario da el visto bueno final.
 - **NUNCA inventes.** Si no puedes verificar una empresa/persona, deja ese hueco como `→ [PENDIENTE · no verificado]` en vez de rellenarlo con algo falso. Un nombre inventado o un dato mal envenena el hilo (mapa de 6x → 0.5x).
 - **Menciones @:** solo personas con **actividad real reciente** (<3 meses: post/repost/comentarios). Descarta dormidos aunque sean el CEO. Si no puedes comprobar actividad, no la menciones.
@@ -50,7 +50,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 1. **Input:** pilar · cuenta (Iker/Unai/Asier) · idea semilla · objetivo (`alcance | pipeline`).
 2. **Test gana/pierde + mecánica** (`global-instructions §0`, matriz §4.6) + **chequeo de riesgo** (`working-preferences §2-§3`: región baneada, fatiga de lead magnet, meme sin motor, exclusividad de formato del día). Si hay riesgo → **avisar ANTES** del borrador.
 3. **Verificación de datos** (donde aplique): cifras contra fuente real + empresas/menciones según §4.0.
-4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras). **En TODO hook, itera el VERBO hasta el más punchy CON TECHO:** criticar (flojo) → **desmontar** (punto dulce) → destrozar/destripar (se pasan, pierden la esencia). Sube por impacto pero para en el que encaja sin pasarse a gore (`global-instructions §2.9`). Verbos validados: desmontar, reventar, enterrar, quemar, tirar, matar.
+4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras). **En TODO hook, itera el VERBO hasta el más punchy CON TECHO: la escalera y los verbos validados están en `global-instructions §2.9`.** Medido en nuestras cuentas: "desmonto perfiles" 8.52x vs "destripo perfiles" 0.21x.
 5. **Cuerpo:** `§3` + voz `brand-voice`, con `swipe-file` como molde de estructura (bloques, anáforas, staccato, reveal).
 6. **CTA:** regla del UNO (`§4.5`).
 7. **Imagen — SIEMPRE un prompt o una recomendación basada en datos** (según el registro correcto, `images §3`):
@@ -78,7 +78,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 - **Clichés:** de ESA región (Sevilla → feria y playa; Valencia → paella y Fallas).
 - **Frase-rabia (OBLIGATORIA — es el motor de la rabia, no un adorno):** el remate que despacha la región en cuatro palabras y hace que el local comente para defenderla. **NUNCA la escribas igual que la vez anterior, pero NUNCA la omitas.** Validadas: Navarra `toro, txistorra y poco más` · Álava `buena para un pintxo-pote y para irse` · Aragón `un ternasco antes de seguir carretera`. Familia de variantes para rotar: "y para de contar", "y gracias", "y poco que rascar", "buena para [comer X] y [largarse]", "sitio de parar y seguir". El patrón es: **[cliché de comida/fiesta] + [gesto de despacharla]**. Si el hook no tiene este beat, el local no siente el desprecio → no comenta → no hay motor.
 - **Cierre:** `Y exporta más que [PAÍS] entero 👇` (el país sale del Paso 2).
-- **Verbo punchy con techo** donde el hook lleve verbo (exportar, vender, cargar…): el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
+- **Verbo punchy con techo** (`global §2.9`) donde el hook lleve verbo (exportar, vender, cargar…).
 
 **Paso 2 — Elegir y VERIFICAR el PAÍS de comparación** (sub-procedimiento — antes NO lo tenía):
 1. Busca el **dato oficial más reciente de exportaciones de la provincia/región** en euros, **citando fuente** (EUSTAT / ICEX / Datacomex).
@@ -127,24 +127,14 @@ Frase de entrada:
 (… ×5 bloques)
 ```
 - **Avisa de los nombres que llevan tagline o símbolos** (`@Cartonajes Barco | Soluciones de embalaje`): al clicar, LinkedIn busca con todo lo que sigue a la @ y la barra/el eslogan no matchean. Dile al usuario que recorte a la parte corta (`@Cartonajes Barco`) y elija en el desplegable, que LinkedIn ya inserta el nombre completo. El nombre en el post va completo igualmente (Paso 4, nombres exactos).
-- **Ejecución y credenciales:** **Claude lo ejecuta** vía Unipile. Las credenciales **NO van en el repo** — ya están puestas como **variables de entorno del entorno de Cowork "Iker"**: la **API key** de Unipile, la **URL/DSN base** (host + puerto) y el **account_id**. Léelas de ahí en el runtime (nombres del tipo `UNIPILE_API_KEY`, `UNIPILE_DSN`/URL, `UNIPILE_ACCOUNT_ID` — usa las que estén configuradas; si no las encuentras, lista las env vars del entorno). Construye las llamadas (`GET {DSN}/api/v1/linkedin/company/{identifier}`, cabecera `X-API-KEY`) con esos valores. Nunca hardcodees la key. (Respaldo si el account_id no estuviera en env: `7F9jXBHXQJyR--5uTD62OQ` — no es secreto sin la key.)
+- **Ejecución y credenciales:** **Claude lo ejecuta** vía Unipile. Las credenciales **NO van en el repo** — ya están puestas como **variables de entorno**: la **API key** de Unipile, la **URL/DSN base** (host + puerto) y el **account_id**. Léelas de ahí en el runtime (nombres del tipo `UNIPILE_API_KEY`, `UNIPILE_DSN`/URL, `UNIPILE_ACCOUNT_ID` — usa las que estén configuradas; si no las encuentras, lista las env vars del entorno). Construye las llamadas (`GET {DSN}/api/v1/linkedin/company/{identifier}`, cabecera `X-API-KEY`) con esos valores. Nunca hardcodees la key. (Respaldo si el account_id no estuviera en env: `7F9jXBHXQJyR--5uTD62OQ` — no es secreto sin la key.)
 - **URLs de LinkedIn:** al sacar cada empresa+persona, captura también la **URL de LinkedIn de la empresa** (su página) y la **URL del perfil de la persona**. Sirven para la guía de menciones del output (Paso 10).
 - **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega los NOMBRES en el bloque del cuerpo **y, aparte, la guía de menciones con los enlaces** (Paso 10) para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 
 **Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
-> Reglas canónicas: **`global-instructions §4.4b`** (aplican a todos los pilares). Esto de abajo es la implementación de referencia del mapa; si algo choca, manda §4.4b.
-- **MÁX 2 líneas CORTAS de verdad, SEPARADAS por una línea en blanco** (cada una aislada, y blanco antes y después del conjunto). No valen 2 líneas kilométricas: en móvil envuelven y se leen como un bloque → canta a anuncio. Cuenta el ancho, no los puntos y aparte.
-- **NUNCA nombres a Neety** ("Neety detecta…", "Neety te avisa…"). Nombrar la marca convierte el guiño en **publicidad encubierta** y el lector lo caza al instante. Habla en primera persona del plural sin marca ("te marcamos", "te avisamos") y deja que el link sea la única firma. (Coherente con `brand-voice §4`: el producto se menciona como mucho una vez y nunca vendiendo.)
-- **Colocación:** **justo DESPUÉS del bloque de menciones**, nunca al final. En este formato es una posición fija, no "donde quede coherente".
-- **Que tenga GRACIA + verbo punchy.** Un chiste que recoge el concepto del hook y lo gira contra el dolor del lector. Verbos validados: quemar, reventar, tirar, marcar, enterrar (`global §2.9`).
-- **Reenlaza con el CONCEPTO del hook** girándolo: el mejor remate es usar la palabra del gancho para describir el dolor de ventas (Aragón: el hook va de "secarral" → *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*).
-- Ataca un **punto de dolor concreto del industrial** + resuélvelo con un **diferenciador aterrizado** de `aboutme §1b` (contacto por señal / listado con confianza). Nada de "IA para ventas" en abstracto: que el director comercial VEA el cambio (500 llamadas frías → entrar solo en la que va a comprar).
-- Ejemplo validado (variar siempre, ojo al blanco de en medio):
-```
-Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral.
-
-Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link]
-```
+> **Las 7 reglas duras están en `global-instructions §4.4b` y son de obligado cumplimiento. Léelas ahí, no de memoria.** Aquí solo lo específico del mapa:
+- **Colocación fija: justo DESPUÉS del bloque de menciones.** En este pilar no es "donde quede coherente".
+- **Aterriza el dolor en el industrial de ESA región** con un diferenciador de `aboutme §1b`, y gira la palabra del hook para nombrarlo. Validado (Aragón, hook de "secarral"): *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*
 
 **Paso 6 — CIERRE del post:** una **frase punchy tipo bold statement** que remate el post. **NO** pide comentarios, **NO** hace pregunta, **NO** repite el link. Es un claim fuerte que cierra (p. ej. "Al final las que más venden son las que menos lo cuentan.").
 
@@ -167,7 +157,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 - **NUNCA en tabla markdown.** El usuario la usa línea a línea; la tabla estorba y no se copia bien.
 - **Tiene DOS usos y por eso DOS formatos. Da el que toca según dónde la entregues:**
   - **En el CHAT (revisión):** enlaces **CLICABLES** (markdown `[texto](url)`), **fuera** de bloque cercado. Es la única forma de que el usuario abra las 20 fichas de una en una y confirme que la persona sigue ahí, que el cargo cuadra y que es de la región. Dentro de un bloque cercado NO se puede clicar → inservible para revisar.
-  - **En el fichero de `output/` (Cowork):** **bloque cercado de texto plano** con las URLs desnudas, para copiar/pegar limpio.
+  - **En un fichero de entrega:** **bloque cercado de texto plano** con las URLs desnudas, para copiar/pegar limpio.
   - Es la excepción a `working-preferences §1` (que pide bloque cercado): esa regla existe porque LinkedIn mangla los saltos del POST, y la guía de menciones no se pega en LinkedIn.
 - **Calca el formato y el orden del bloque de empresas del post** (mismas 5×4, mismo orden), pero cambiando cada nombre por su URL. Así cada línea de la guía cae en la MISMA posición que su línea del post y se va bajando a la vez por los dos.
 - **Solo las dos URLs, nada más.** Sin cargo, sin fecha de actividad, sin por qué está elegida: en el MAPA no hay que justificar cada ficha (la justificación va aparte, en la lista de "revisa estas"). El nombre ya viaja dentro de la URL.
@@ -210,7 +200,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 - Fórmula = **verbo físico + la herida propia del comercial** para que se IDENTIFIQUE al leerlo ("personas desconocidas quemando el teléfono", "aguantando el no", "marcando nombres que nadie conoce") + `👇`.
 - El comercial anónimo tiene que pensar "ese soy yo". Nada abstracto.
 - **NUNCA crítica ni reproche a las empresas** (eso mató la versión de Cataluña 0.7x y molestó a los mencionados). Este formato PELOTEA a personas y empresas, no las señala.
-- **Verbo físico punchy con techo:** "quemando el teléfono", "aguantando el no" — el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
+- **Verbo físico punchy con techo** (`global §2.9`): "quemando el teléfono", "aguantando el no".
 - Aplica el resto de reglas de hook (`global-instructions §2` + `swipe-file §3.1`).
 
 **Paso 2 — Las 10 PERSONAS (vía Unipile — como en §4.2, pero personas):**
@@ -255,7 +245,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 **Paso 1 — Traducir (si está en inglés, que es lo habitual):** EN→ES **fiel al original** en formato, longitud y estructura, pero con **expresiones naturales en español** donde suenen mejor (no traducción literal robótica).
 
 **Paso 2 — HOOK:**
-- **Itera VERBOS** hasta el más punchy **sin perder el significado original**: criticar (flojo) → **desmontar** (punch limpio, punto dulce) → destrozar/destripar (se pasan, pierden la esencia). Quédate con el del punto dulce.
+- **Itera VERBOS** hasta el más punchy **sin perder el significado original** (escalera y techo: `global-instructions §2.9`).
 - Aplica TODAS las reglas de hook (`global-instructions §2` + `swipe-file`): bloque único ≤210, imagen mental, ≤1 número, corto.
 - **Ancla a VENTAS siempre**, aunque la referencia no vaya de ventas: desde el lado de vender, del cliente o del comercial. Amplifica el alcance al máximo sin perder la esencia de ventas.
 
@@ -296,7 +286,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 - Tiene que **frenar el scroll** y, sobre todo, **pintar una imagen física/visual** (acción concreta sobre un objeto): "le tiré las **llaves** de mi LinkedIn a Claude" (tirar un objeto) genera un frame mental. `global-instructions §2.2`.
 - ⚠️ **Corrección (BD en vivo, 2026-07-14):** aquí ponía que el de las llaves "fue el mejor". **No lo es.** Lo publicaron las dos cuentas y se quedó en **4.10x (Iker, 232 com.)** y **4.52x (Unai, 285 com.)**. Los que reventaron de verdad: **"vibe prospecting" 9.85x · 632 com.** (urgencia + bandwagon) y **"desmonto perfiles" 8.52x · 483 com.** (entrega LIVE). La imagen física del gancho ayuda, pero lo que dobla los comentarios es el **MECANISMO** (entrega live > PDF, urgencia), no el objeto del hook. No sobreoptimices el gancho a costa del mecanismo.
 - **Original** (no un hook visto mil veces), corto, anclado a ventas, ≤1 número, `👇`.
-- **Verbo punchy con techo:** "le **tiré** las llaves a Claude" (tirar) — el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
+- **Verbo punchy con techo** (`global §2.9`): "le **tiré** las llaves a Claude" (tirar).
 - **El hook lleva una PALABRA-gancho con gracia** que luego será la palabra a comentar (ver Paso 5). Ej.: hook "para mandar buenos mensajes tienes que ser **psicólogo**" → palabra = "psicólogo".
 
 **Paso 4 — CUERPO (corto):**
@@ -373,7 +363,7 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
 > **Todo se mide POR CUENTA.** Ninguna de estas reglas es global entre cuentas.
 - **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta — **lo cumple solo si respetas la alternancia mapa/"Los 10" de §8.2**, no hace falta contar nada. Nunca dos semanas seguidas de mapa en la misma cuenta. **No repetir región EN ESA CUENTA** (la cobertura por cuenta está en `docs/skills/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
 - **Lead magnet:** ≥2 semanas por cuenta; nunca dos seguidos ni solapar dos cuentas el mismo día.
-- **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **persistir** ese archivo cada semana (re-subirlo a Cowork / commit al repo) para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
+- **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **commitear** ese archivo cada vez que cambie para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
 
 ### 8.4 · LA PREGUNTA PREVIA (obligatoria, antes de planificar nada)
 El workflow SIEMPRE arranca preguntando:
@@ -391,7 +381,7 @@ El workflow SIEMPRE arranca preguntando:
 ### 8.6 · El output por post (lo que te devuelve)
 - **PRIMERO el TEXTO perfecto (gancho + cuerpo)** en bloque cercado, listo para copiar.
 - **Fuera del bloque:** tag de viralidad, "por qué funciona", riesgos y el **CONCEPTO DE IMAGEN** (un párrafo listo para el generador).
-- **La imagen en sí:** si Cowork puede generarla, en el mismo run; si no, el párrafo es el entregable y la generas tú. **No tienes que "decírselo a Cowork" aparte** — el concepto de imagen sale con cada post porque el runbook lo incluye (paso 7 / paso imagen de cada runbook).
+- **La imagen en sí:** el párrafo/prompt de imagen es el entregable y la generas tú. **No hay que pedirlo aparte** — el concepto de imagen sale del propio runbook del pilar.
 
 ---
 
@@ -399,5 +389,5 @@ El workflow SIEMPRE arranca preguntando:
 El sistema no termina al entregar el post. Para que mejore con el tiempo:
 1. **Registrar el resultado:** cuando un post lleva unos días, apunta en `historial-publicaciones` su **ratio real** (y likes/comentarios/reposts). Así el planificador tiene datos frescos y el espaciado sigue teniendo sentido.
 2. **Destilar el aprendizaje:** si un post **rompe** (muy por encima) o **flopea** (muy por debajo) de lo esperado, saca UNA frase de aprendizaje y proponla para la skill que toque (`outliers-database §4` si es un ratio/patrón, `swipe-file` si es un molde de texto, `global-instructions` si es una regla nueva). No lo dejes solo en la memoria de la conversación.
-3. **Persistir:** el aprendizaje solo cuenta si se guarda en el archivo (commit al repo / re-subida a Cowork). Memoria ≠ archivo (ver README, flujo de actualización).
+3. **Persistir:** el aprendizaje solo cuenta si se guarda en el archivo y se **commitea**. Memoria ≠ archivo (ver README, flujo de actualización).
 4. **Refrescar los ratios:** cada 1-2 meses, reexporta "Top posts" y el Explorer y actualiza §4 y §3 — los ratios decaen y las mecánicas se queman.

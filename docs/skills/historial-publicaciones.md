@@ -2,7 +2,7 @@
 
 > ⚠️ Esto **no es una skill de reglas**: es el **registro de estado** que el planificador semanal (`post-workflow §8`) LEE antes de planificar y ACTUALIZA después. Cambia cada semana.
 >
-> **Para que sirva, hay que persistirlo:** cada vez que se actualiza, guárdalo donde vivan las skills (re-subir al proyecto de Cowork / commit al repo). Si este registro no está al día, el workflow **te preguntará** qué hizo cada cuenta antes de asignar (no adivina).
+> **Para que sirva, hay que persistirlo:** cada vez que se actualiza, **commitéalo**. Si este registro no está al día, el workflow **te preguntará** qué hizo cada cuenta antes de asignar (no adivina).
 
 ---
 
