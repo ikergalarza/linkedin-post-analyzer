@@ -50,7 +50,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 1. **Input:** pilar · cuenta (Iker/Unai/Asier) · idea semilla · objetivo (`alcance | pipeline`).
 2. **Test gana/pierde + mecánica** (`global-instructions §0`, matriz §4.6) + **chequeo de riesgo** (`working-preferences §2-§3`: región baneada, fatiga de lead magnet, meme sin motor, exclusividad de formato del día). Si hay riesgo → **avisar ANTES** del borrador.
 3. **Verificación de datos** (donde aplique): cifras contra fuente real + empresas/menciones según §4.0.
-4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras).
+4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras). **En TODO hook, itera el VERBO hasta el más punchy CON TECHO:** criticar (flojo) → **desmontar** (punto dulce) → destrozar/destripar (se pasan, pierden la esencia). Sube por impacto pero para en el que encaja sin pasarse a gore (`global-instructions §2.9`). Verbos validados: desmontar, reventar, enterrar, quemar, tirar, matar.
 5. **Cuerpo:** `§3` + voz `brand-voice`, con `swipe-file` como molde de estructura (bloques, anáforas, staccato, reveal).
 6. **CTA:** regla del UNO (`§4.5`).
 7. **Imagen — SIEMPRE un prompt o una recomendación basada en datos** (según el registro correcto, `images §3`):
@@ -75,6 +75,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 - **Clichés:** de ESA región (Sevilla → feria y playa; Valencia → paella y Fallas).
 - **Frase-rabia entre comillas:** "y poco más" / "buena para un pintxo-pote y para irse" → sube la indignación defensiva del local (lo que le hace comentar). Está validado en Navarra y Álava.
 - **Cierre:** `Y exporta más que [PAÍS] entero 👇` (el país sale del Paso 2).
+- **Verbo punchy con techo** donde el hook lleve verbo (exportar, vender, cargar…): el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
 
 **Paso 2 — Elegir y VERIFICAR el PAÍS de comparación** (sub-procedimiento — antes NO lo tenía):
 1. Busca el **dato oficial más reciente de exportaciones de la provincia/región** en euros, **citando fuente** (EUSTAT / ICEX / Datacomex).
@@ -148,6 +149,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - Fórmula = **verbo físico + la herida propia del comercial** para que se IDENTIFIQUE al leerlo ("personas desconocidas quemando el teléfono", "aguantando el no", "marcando nombres que nadie conoce") + `👇`.
 - El comercial anónimo tiene que pensar "ese soy yo". Nada abstracto.
 - **NUNCA crítica ni reproche a las empresas** (eso mató la versión de Cataluña 0.7x y molestó a los mencionados). Este formato PELOTEA a personas y empresas, no las señala.
+- **Verbo físico punchy con techo:** "quemando el teléfono", "aguantando el no" — el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
 - Aplica el resto de reglas de hook (`global-instructions §2` + `swipe-file §3.1`).
 
 **Paso 2 — Las 10 PERSONAS (vía Unipile — como en §4.2, pero personas):**
@@ -227,6 +229,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 **Paso 3 — HOOK (lo más crítico del formato):**
 - Tiene que **frenar el scroll** y, sobre todo, **pintar una imagen física/visual** (acción concreta sobre un objeto): "le tiré las **llaves** de mi LinkedIn a Claude" (tirar un objeto) fue el mejor — genera un frame mental. `global-instructions §2.2`.
 - **Original** (no un hook visto mil veces), corto, anclado a ventas, ≤1 número, `👇`.
+- **Verbo punchy con techo:** "le **tiré** las llaves a Claude" (tirar) — el más punchy sin pasarse ni perder la esencia (§4.1 paso 4 · `global §2.9`).
 - **El hook lleva una PALABRA-gancho con gracia** que luego será la palabra a comentar (ver Paso 5). Ej.: hook "para mandar buenos mensajes tienes que ser **psicólogo**" → palabra = "psicólogo".
 
 **Paso 4 — CUERPO (corto):**
