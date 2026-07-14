@@ -103,6 +103,9 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Actividad (filtro duro):** que en los **últimos 3 meses** haya publicado, comentado o reposteado en LinkedIn. Más de 3 meses inactivo = mención desperdiciada (no nos va a hacer caso) → **descártalo**. Si nadie de la empresa está activo, **descarta esa empresa** y coge otra. Verifica que el cargo sea ACTUAL.
 - **Logo de cada empresa (para el CSV):** para cada una de las 20, saca la **URL de la foto de perfil (logo) de su página de empresa en LinkedIn** vía Unipile: `GET /api/v1/linkedin/company/{identifier}` (con `account_id`) → lee el campo `logoUrl` o `pictureUrl` del JSON. Esa URL va en la columna de imagen del CSV (Paso 8). (No uses favicons de la web oficial — salían en blanco.)
 - **Orden:** por probabilidad de interacción (actividad reciente > cercanía industria/territorio/exportación > perfil personal visible > tamaño adecuado).
+- **⚠️ NOMBRES EXACTOS DE LINKEDIN, ni uno retocado.** Copia el campo `name` que devuelve Unipile (empresa y persona) **literal**: mayúsculas, tildes, `S.A.`/`S.A.U.`, y hasta el tagline si la página lo lleva en el nombre (`Cartonajes Barco | Soluciones de embalaje`). **Prohibido "embellecerlos"**: nada de `ARPA EMC` por `ARPA Equipos Móviles de Campaña`, ni `Nurel` por `NUREL`, ni quitar el `S.A.`.
+  **Por qué importa (no es cosmético):** el usuario pega las @ a mano y LinkedIn autocompleta **por el nombre exacto**. Si el nombre no coincide, no salta el autocompletado → la mención se queda en texto muerto → esa empresa no recibe notificación → mención perdida y, con ella, el alcance que el mapa presta. Y como LinkedIn inserta el nombre real al mencionar, el post publicado acabaría distinto del que validaste.
+  Lo mismo para las personas (`first_name + last_name` tal cual: `Oscar Fernandez Feito`, sin ponerle las tildes que su perfil no tiene).
 - **Salida:** lista limpia, sin explicación, en **5 bloques de 4 líneas** (20 en total), formato exacto:
 ```
 → Empresa - Persona
@@ -194,6 +197,7 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - Ordena por probabilidad de interacción / relevancia del logro.
 - **Ejecución:** Claude vía Unipile (credenciales de las env vars del entorno "Iker", como §4.2).
 - **Formato en el cuerpo:** `→ Persona - Empresa · logro concreto` (ej. `→ Edorta Arriet Azpiroz - Geminis Lathes · +77% bº`).
+- **⚠️ NOMBRES EXACTOS DE LINKEDIN**, igual que en el mapa (§4.2 Paso 4): copia el `name` de Unipile literal, sin embellecer. Si el nombre no coincide, no salta el autocompletado de la @ y la mención muere.
 
 **Paso 3 — CUERPO** (pelotea a la persona invisible, `swipe-file §3.1`):
 - Setup que pinta al que decide de verdad y no sale en la foto (una anáfora tipo "No publica. No da charlas. No sale en la nota de prensa." — **es UNA opción, no la plantilla fija**).
