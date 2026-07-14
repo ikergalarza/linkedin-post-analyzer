@@ -46,6 +46,7 @@ Orquestación:
 - `GET {BASE}/api/v1/users/{identificador}?account_id=…` → nombre exacto y `provider_id`
 - `GET {BASE}/api/v1/users/{provider_id}/posts?account_id=…` → última actividad (filtro duro de 3 meses)
 - `POST {BASE}/api/v1/linkedin/search?account_id=…` con `{"api":"classic","category":"people","company":["{id}"]}` → directivos de una empresa
+- `GET {BASE}/api/v1/posts/{linkedin_post_id}/comments?account_id=…&limit=50` → **el texto de los comentarios de cualquier post** (la BD no los guarda). Es la prueba del lead magnet: si una palabra sale en ≥50-60% de los comentarios, es comment-gated (`outliers-database §3.9b`).
 
 **Backend propio (Railway)** — outliers reales, imágenes de nuestros posts y la BD cross-creator de la competencia. Basic Auth con `APP_BASIC_USER` / `APP_BASIC_PASS`. ⚠️ **No están en el entorno**: si dan 401, pídeselas al usuario (que las ponga como variables de entorno, no pegadas en el chat). La red NO está bloqueada: `/api/health` responde 200.
 - `GET /api/creators` · `GET /api/creators/{id}/posts?outliers_only=true&limit=60` · `GET /api/analysis/{id}/stats`

@@ -145,8 +145,11 @@ Ratios de todas las cuentas; n bajo (2-7 posts) → priors, no leyes.
 **El filtro de 2 pasos (rinde 83 lead magnets reales de los 500 top):**
 1. `comment_like_ratio >= 1.0` → de 500 outliers quedan **105**.
 2. De esos, quédate con los que llevan **palabra-puerta explícita en `content_text`** (`comment "X"`, `comenta "X"`, `type "X"`, `drop … below`) → **83 confirmados**.
-   - ⚠️ La BD **no guarda el texto de los comentarios**, así que "todos comentan la misma palabra" no se puede verificar directamente. No hace falta: **la palabra-puerta del post ES la que la gente comenta**. Mismo señal, y este sí es verificable.
-   - Un post con los comentarios disparados pero **sin** palabra común no es un lead magnet: es una polémica. No lo remixes como si lo fuera.
+3. **La prueba definitiva: LEE LOS COMENTARIOS con Unipile.** La BD no los guarda, pero Unipile sí los sirve:
+   `GET {UNIPILE_BASE_URL}/api/v1/posts/{linkedin_post_id}/comments?account_id={UNIPILE_ACCOUNT_ID}&limit=50` (cabecera `X-API-KEY`). El campo `linkedin_post_id` viene en cada outlier de `cross-creators`.
+   Cuenta la frecuencia de palabras en esos 50 comentarios: **si UNA palabra aparece en ≥50-60% de ellos, es un lead magnet confirmado y esa palabra es la puerta.**
+   - **Verificado el 2026-07-14** sobre el nº1 de la BD (Jan van Musscher, 130.2x · 3.508💬 · *"the ultimate outbound cheat sheet"*): la palabra **"sheet" sale en el 90% de los comentarios**. Así de limpio se ve.
+   - **Por qué importa:** un post con los comentarios disparados pero **sin palabra dominante NO es un lead magnet, es una polémica** — la gente discute, no paga peaje. Remixarlo como lead magnet es copiar el número sin el mecanismo. Este test los separa.
 
 **⭐ BUSCA EN TODOS LOS SECTORES, no solo en ventas.** Es la parte que más valor da:
 - **Un outlier robado de nuestro propio sector sorprende menos**: nuestra audiencia ya lo ha visto. Robado de otro sector, es original aquí aunque allí sea un clásico.
