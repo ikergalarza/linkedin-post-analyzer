@@ -31,7 +31,37 @@ export interface ReplyGenerationInput {
   leadMagnet?: { topic: string };
 }
 
-const SYSTEM_PROMPT = `You are the AUTHOR of a LinkedIn post, writing a short reply to someone who commented on it. You are NOT a generic AI — you are impersonating the real author, whose voice profile is given below as hard constraints.
+// How hard this author leans on the vowel stretch. A voice trait of the real
+// person, not a setting: Asier writes soberly, so "muuy buena" is him and
+// "muuuy buena" isn't. Iker and Unai keep the fuller stretch they've always
+// had, and anyone we don't recognise defaults to that — a new account must
+// never silently inherit someone else's voice.
+//
+// TWIN: frontend/src/components/accounts/leadMagnetCopy.ts has the same rule
+// for the Lead Magnet templates (voiceFor). Backend and frontend are separate
+// packages with no shared module, so the rule is stated in both. If Asier
+// stops being the only sober one, both need editing.
+type Voice = 'sober' | 'normal';
+
+function voiceForAuthor(authorName: string): Voice {
+  const first = authorName.trim().split(/\s+/)[0]?.toLowerCase();
+  return first === 'asier' ? 'sober' : 'normal';
+}
+
+// RULE 12 + 13 are the two that decide how loud the author sounds, so they're
+// the only ones that vary by voice. Everything else is identical for everyone.
+const STRETCH_RULES: Record<Voice, { r12: string; r13: string }> = {
+  normal: {
+    r12: `RULE 12 — NATURAL VOWEL ELONGATION (this is what makes a reply sound human, not AI). Stretch a vowel in ONE or TWO words per reply by repeating a vowel — both mid-word and word-final. "muuuy buena" reads better than "muy buena"; "ciertooo" better than "cierto"; also "totaaal", "buenííísimo", "graciaas", "síííí". Put the stretch where the emphasis naturally lands (agreement, praise, emphasis). ONE or TWO stretches per reply is human; stretching every word is try-hard — keep it subtle. Do this on most replies; it's a core part of the natural voice.`,
+    r13: `RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it). If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm, elongated variant: "graciasss", "graciaas", "graciaaas", "muchas graciaaas", "gracias por valorarlo", "graciaas por el cariño", "se agradeceee". This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`,
+  },
+  sober: {
+    r12: `RULE 12 — NATURAL VOWEL ELONGATION, SOBER VERSION (this is what makes a reply sound human, not AI — but you are a understated writer, so it stays quiet). Stretch a vowel in ONE word per reply, and by exactly ONE extra letter — the doubled vowel, never more. "muuy buena", "ciertoo", "totaal", "buenííisimo" is TOO MUCH → "buenísimoo", "síí". NEVER three or more of the same letter: "muuuy", "ciertooo", "síííí" are NOT your voice — they read as shouting. One doubled vowel, once per reply, where the emphasis naturally lands. Most replies get exactly one; some get none. That restraint IS the voice.`,
+    r13: `RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it). If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm but UNDERSTATED variant: "graciass", "graciaas", "muchas graciaas", "gracias por valorarlo", "graciaas por el cariño". At most ONE doubled letter — "graciasss" / "graciaaas" / "se agradeceee" are too loud for you. This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`,
+  },
+};
+
+const buildSystemPrompt = (voice: Voice): string => `You are the AUTHOR of a LinkedIn post, writing a short reply to someone who commented on it. You are NOT a generic AI — you are impersonating the real author, whose voice profile is given below as hard constraints.
 
 ═══ NON-NEGOTIABLES ═══
 
@@ -57,9 +87,9 @@ RULE 10 — VARIETY (don't ban, just don't default): openers like "exacto", "tot
 
 RULE 11 — NAME-ONLY OR EMOJI-ONLY COMMENTS → REPLY WITH A SINGLE SUPPORT EMOJI. If the comment is ONLY a person's name (someone tagging a colleague, e.g. "@Fulano" or just "Fulano Menganez"), or ONLY emoji(s) / a reaction with no real words, do NOT write sentences. Reply with a SINGLE supportive emoji that fits the tone (🙌 · 🔥 · 💪 · 👏 · ❤️ · 😄). No name lead, no words at all — just the emoji. This OVERRIDES rules 3, 4, 5 and 10 for these cases.
 
-RULE 12 — NATURAL VOWEL ELONGATION (this is what makes a reply sound human, not AI). Stretch a vowel in ONE or TWO words per reply by repeating a vowel — both mid-word and word-final. "muuuy buena" reads better than "muy buena"; "ciertooo" better than "cierto"; also "totaaal", "buenííísimo", "graciaas", "síííí". Put the stretch where the emphasis naturally lands (agreement, praise, emphasis). ONE or TWO stretches per reply is human; stretching every word is try-hard — keep it subtle. Do this on most replies; it's a core part of the natural voice.
+${STRETCH_RULES[voice].r12}
 
-RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it). If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm, elongated variant: "graciasss", "graciaas", "graciaaas", "muchas graciaaas", "gracias por valorarlo", "graciaas por el cariño", "se agradeceee". This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`;
+${STRETCH_RULES[voice].r13}`;
 
 function buildPrompt(input: ReplyGenerationInput): string {
   const v = input.authorVoice;
@@ -133,10 +163,11 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not set');
   }
+  const voice = voiceForAuthor(input.authorName);
   const message = await trackedCreate('reply_generator', {
     model: 'claude-sonnet-4-6',
     max_tokens: 400,
-    system: SYSTEM_PROMPT,
+    system: buildSystemPrompt(voice),
     messages: [{ role: 'user', content: buildPrompt(input) }],
   });
   const block = message.content.find((b) => b.type === 'text') as { type: 'text'; text: string } | undefined;
@@ -158,6 +189,15 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
   //     intentional lowercase opening word is preserved. \p{Ll} + /u keeps
   //     accented letters working (á→Á).
   text = text.replace(/([.!?])(\s+)(\p{Ll})/gu, (_m, p, sp, ch) => `${p}${sp}${ch.toUpperCase()}`);
+  // 1d. SOBER VOICE: collapse any run of 3+ of the same letter down to 2
+  //     ("síííí" → "síí", "graciasss" → "graciass"). RULE 12 already asks for
+  //     this, but the prompt is a request and the voice is a promise — one
+  //     slip and Asier sounds like someone else. Safe to do blindly: Spanish
+  //     has no legitimate triple letter. Lowercase only, so an acronym like
+  //     "AAA" survives untouched.
+  if (voice === 'sober') {
+    text = text.replace(/(\p{Ll})\1{2,}/gu, '$1$1');
+  }
   // 2. Strip a stray comma right after the leading mention name so the
   //    reply reads "Name y…" not "Name, y…" (the backend keeps whatever
   //    follows the name verbatim, so the comma must be gone here).
