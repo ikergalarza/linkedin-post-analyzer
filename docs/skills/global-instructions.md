@@ -252,11 +252,19 @@ Corre estas puertas EN ORDEN:
 | Pilar | Lleva spam ninja | Colocación |
 |---|---|---|
 | MAPA | ✅ | **Justo después del bloque de menciones** (posición fija) |
-| "LOS 10" | ✅ | **Justo después del bloque de menciones** (posición fija) |
+| "LOS 10" | ✅ | **Justo después del REVEAL de región**, que en este pilar va DESPUÉS de la lista (ver ⚠️ abajo) |
 | MEME | ✅ | En el punto más natural del cuerpo (el cuerpo es corto, 3-6 líneas) |
 | Insight / evento / otros con cuerpo | ✅ | Donde el chiste caiga natural |
 | Vídeo (caption) | ✅ | Regla de comercio, no de formato → aplica (`video §0`) |
 | **LEAD MAGNET** | ❌ **NUNCA** | Ver la excepción abajo |
+
+**⚠️ MAPA y "LOS 10" colocan el reveal al revés, y eso mueve el spam ninja** (verificado contra los 4 posts reales de la BD el 2026-07-15, no de memoria):
+| Pilar | Orden real medido |
+|---|---|
+| MAPA | hook (con clichés, sin nombrar la región) → cuerpo → **reveal** → lista → **spam ninja** → cierre |
+| "LOS 10" | hook (herida del comercial) → cuerpo → lista → **clichés** → **reveal** → **spam ninja** → cierre |
+
+Navarra 7.72x (reveal l.28 → lista), Galicia 7.28x (l.23 → lista) y Aragón (l.26 → lista) ponen el reveal ANTES de la lista. El "Los 10" del País Vasco 4.81x lo pone DESPUÉS (l.39). En los dos casos el spam ninja va detrás del reveal: en el mapa eso coincide con "después de las menciones", en "Los 10" no. **Regla:** el spam ninja va **después del reveal**, siempre. Nunca lo metas entre la lista y el reveal, que parte el bloque en dos.
 
 **Las 7 reglas duras:**
 1. **MÁX 2 líneas CORTAS de verdad, y SEPARADAS entre sí por una línea en blanco.** Cada una va **aislada** (blanco antes y después, también del conjunto): es la unidad (b) de §3.3 y el aislamiento ES el efecto. Pegadas forman un bloque de 2 que se lee como un párrafo de anuncio; separadas, el chiste respira y el link cae solo. Y cuenta el ANCHO, no los puntos y aparte: dos líneas kilométricas envuelven en móvil y vuelven a leerse como un bloque → canta a anuncio y el lector lo salta.
