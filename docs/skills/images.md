@@ -20,6 +20,29 @@ Una vez publicado un post con foto, la foto **NO se puede cambiar** (habría que
 - **⚠️ AL CALCAR UNA REFERENCIA, el formato es NUESTRO, no suyo.** Si el original es vertical (la referencia del meme del perro era **480x720**, ratio 0,67), el remix **se recompone a 1:1**: se calca la esencia, nunca el encuadre malo (`post-workflow §4.4`, tabla de qué se calca). Calcar un 2:3 es entregar un post recortado.
 - **En el prompt de imagen va escrito siempre**, con estas palabras: `en formato cuadrado 1:1`.
 
+## 0c · 🎯 CÓMO SE LE PIDE UNA COLOCACIÓN (nunca digas "céntralo")
+> Técnica validada peleándose con la herramienta. Aplica a cualquier prompt de imagen, de cualquier pilar.
+
+**El fallo:** pedirle un JUICIO. `céntralo` · `alinéalo` · `ponlo en el centro` · `equilíbralo`. La herramienta **no mide, mueve**. Si le pides que evalúe si algo está centrado, se equivoca **siempre**.
+
+**Lo que funciona: dale una OPERACIÓN, no un resultado.** Nómbrale el **espacio disponible** y la **dirección**:
+- ❌ `Centra el título "Realidad".`
+- ❌ `El título está descentrado, muévelo a la izquierda.`
+- ✅ `Aprovecha el espacio que le queda a la izquierda al título "Realidad" para que quede centrado.`
+
+**Validado (2026-07-14):** en la referencia del meme del perro, el título "Realidad" tiraba al centro en vez de a la izquierda. Con `céntralo` fallaba; con **"aprovecha el espacio que tiene a la izquierda para centrarlo"** salió perfecto a la primera.
+
+**La plantilla:** `aprovecha el espacio que [elemento] tiene hacia [la izquierda/la derecha/arriba/abajo] para que [quede centrado / respire / llene el ancho]`.
+Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que cuelga. **Describe el movimiento y el espacio, nunca el resultado abstracto.**
+
+## 0d · ⭐ EL OBJETIVO NO ES CALCAR: ES CALCAR Y MEJORAR
+> Al remixar una referencia se copia la **esencia** (`post-workflow §4.4`), pero **los DEFECTOS del original no se heredan: se arreglan**. Ser fiel no es ser fiel a sus fallos.
+
+- El original lo hizo un humano con prisa. Que algo esté ahí no significa que sea lo que funcionó: puede ser simplemente lo que le salió.
+- **Lo que se arregla siempre, sin preguntar:** encuadre alargado → **1:1** (`§0b`) · textos descentrados → colocados con la técnica de `§0c` · nuestra paleta y nuestros detalles de marca (`§4`).
+- **Lo que NO se toca aunque te pique:** la mecánica cómica, el sujeto, el layout, el estilo de dibujo. Eso es el motor.
+- **La pregunta:** ¿esto es lo que hizo volar al post, o es un defecto que nadie ha mirado? Lo primero se calca. Lo segundo se mejora. **Estos detalles de diseño marcan la diferencia entre un remix y una copia peor que el original.**
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 

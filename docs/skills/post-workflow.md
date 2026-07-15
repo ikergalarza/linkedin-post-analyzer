@@ -303,6 +303,8 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 - **Cierra con las prohibiciones, cortas:** `No suavices ni deformes las caras. No añadas nada más.` Lo de las caras solo si las hay, y va literal: las herramientas suelen clavar la primera fila y hacer lo que quieren en la última.
 - **La tipografía SOLO si la imagen lleva texto.** Si no lleva, no la menciones: le estás dando una instrucción sin objeto y la puede usar de excusa para añadir texto que nadie pidió.
 - **Regla de pulgar:** si una frase describe algo que ya está en la referencia y no cambia, **bórrala**.
+- **🎯 NUNCA le digas "céntralo"** (`images §0c`). Es un juicio y la herramienta no mide, mueve: falla siempre. Dale la operación: `aprovecha el espacio que tiene a la izquierda para que quede centrado`. Validado.
+- **⭐ El objetivo es calcar Y MEJORAR** (`images §0d`). Los defectos del original **no se heredan**: encuadre alargado → 1:1, textos descentrados → colocados. Ser fiel no es ser fiel a sus fallos. Lo que no se toca es la mecánica, el sujeto y el estilo.
 - **Textos (SOLO si la imagen lleva):** si van en inglés, traducirlos al español (adaptado a ventas si no lo estaba), con **nuestra tipografía** (Bricolage Grotesque títulos + Switzer cuerpo) y la **regla de la palabra naranja** (`images §4`). **Si la imagen no lleva texto, no menciones la tipografía.**
 - **Roles en la imagen:** español genérico, sin anglicismos, entendibles por industrial 50+ (igual que el cuerpo).
 - **Paleta + detalles de marca:** aplica Alabastro (fondo) · Dark Blue (tinta) · Persian Orange (highlight), y **añade detalles nuestros** (corbatas naranjas, patrones, siluetas, props en naranja…) — no solo recolorear.
