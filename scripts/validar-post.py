@@ -76,8 +76,16 @@ def validar_entregable(texto):
     r = []
     m = re.search(r'[—–]', texto)
     r.append((not m, 'Sin guion largo (brand-voice §3)', 'delator de IA nº1' if m else ''))
-    ms = re.findall(r'[^\s]+,\s+[ye]\s', texto)
-    r.append((not ms, 'Sin coma antes de "y"/"e" (brand-voice §3)', f'{len(ms)}: {ms[:3]}' if ms else ''))
+    # OJO: aquí NO se prohíbe la coma antes de "y" como en un post.
+    # Decidido el 2026-07-14: la regla depende del ARTEFACTO. En un post de
+    # LinkedIn está vetada (registro corto y hablado, canta a IA). En la WEB es
+    # correcta en español uniendo dos oraciones independientes largas, y los seis
+    # gates publicados la usan. Lo que sí está mal en los dos sitios es la coma
+    # antes de "y" en una ENUMERACIÓN ("LinkedIn, email, y automatización"),
+    # que es lo único que se marca aquí.
+    ms = re.findall(r',\s*\w[\w\s]{0,30},\s+[ye]\s', texto)
+    r.append((not ms, 'Sin coma antes de "y" en ENUMERACIONES (playbook §12)',
+              f'{len(ms)}: {ms[:2]}' if ms else 'la coma uniendo 2 oraciones largas sí vale en web'))
     m = re.search(OPENERS_QUEMADOS, texto, re.I)
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r

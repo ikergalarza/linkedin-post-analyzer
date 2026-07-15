@@ -88,56 +88,92 @@ Nunca empieces pidiendo la llamada: primero valor, después la invitación.
 - **Si el copy no cuadra, se acorta el copy. NUNCA se toca el CSS**, que es el mismo de los otros seis.
 
 ## 5 · Qué entrega el workflow: el PROMPT PARA EL PROGRAMADOR
-No escribimos código ni montamos la web. Entregamos **un prompt en bloque cercado** para que el programador cree la página en `https://recursos.neety.com/`.
 
-**Las dos órdenes que más valen del prompt no son reglas de copy, son de método. Van SIEMPRE:**
-1. **"Mide antes de escribir, no estimes."** Los seis recursos existentes son la especificación (§4c). Sin esta orden, se estiman saltos de línea a ojo y salen mal.
-2. **"Contradíceme con datos."** Las tres veces que el trabajo mejoró de verdad fue cuando algo medible tumbó una decisión ya aprobada (un titular que renderizaba a 4 líneas, un `robots.txt` que faltaba, un `<em>` de más). **Si el prompt solo pide ejecutar, esas tres se cuelan.**
+> **📖 El detalle de construcción vive en `docs/lead-magnet-playbook.md`** (destilado de montar `/propuesta/` entero: invariantes medidos del gate, la escalera del titular, el `<em>` coral, el alta en 3 registros, el indexado, la home, las trampas del entorno de medición y la checklist de 18 puntos). **Esta skill decide QUÉ recurso y QUÉ se regala; el playbook dice CÓMO se construye.** El prompt no lo repite: lo referencia y le mete lo específico de ESTE recurso.
+
+**⭐ LA LECCIÓN QUE MANDA SOBRE EL PROMPT ENTERO** (playbook §0): *"Una regla escrita no se cumple sola: el spec original ya decía 'medir, no estimar' y aun así se estimó tres veces y se falló las tres. Lo que sí funciona es un **snippet concreto que copiar y un valor esperado exacto**."*
+→ Por eso el prompt **no es una lista de reglas**: lleva **números exactos y snippets ejecutables**. Una regla sin su snippet es una regla que se va a incumplir.
+
+**Las 3 órdenes de método, van SIEMPRE y arriba del todo:**
+1. **"Mide, no estimes. Y mide lo que ve el lector, no lo que dice el CSS."** Los recursos publicados son la especificación. Dos formas de verificar que NO valen: medir caja contra caja (daba 80px donde el usuario veía 152) y comprobar "¿desborda?" y llamarlo verificado (`overflow:false` no dice nada de si se ve bien).
+2. **"Contradíceme con datos."** Las cuatro mejores decisiones salieron de que algo medible tumbara una decisión YA APROBADA: el titular de 93 caracteres que renderizaba a 4 líneas, el `robots.txt` que faltaba, el `<em>` de 7 palabras y los 152px de hueco. **Si el prompt solo pide ejecutar, esas cuatro se cuelan.**
 3. **"Verifica cada dato y cada promesa del briefing contra el código o contra una fuente. Lo que no se pueda, se queda fuera y se avisa."** Sin esta línea se publican cifras sin origen y promesas que el código no cumple (§4b).
 
-**Detalle de implementación completo (invariantes medidos del gate, el `<em>` coral, los tres registros del alta, el `robots.txt`, la home, las trampas):** vive en el repo de `recursos.neety.com`, en `docs/lead-magnet-playbook.md`, **junto al código y no aquí**, para que envejezca con él. Esta skill decide QUÉ recurso y QUÉ se regala; ese playbook dice CÓMO se construye.
-
-El prompt tiene que llevar, sí o sí:
+**Plantilla del prompt** (rellenar los corchetes, entregar en bloque cercado):
 
 ```
 RECURSO: [nombre accionable, vende el resultado no el formato]
-(OJO: ni guiones largos ni coma antes de "y" en NADA de este prompt. El copy del
- gate lo lee un cliente. Valida con: python scripts/validar-post.py f.txt --pilar entregable)
-URL sugerida: recursos.neety.com/[slug]
+URL: recursos.neety.com/[slug]
 PALABRA DEL GATE (la que comentan en LinkedIn): "[X]"
 
+CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
+- Lee docs/lead-magnet-playbook.md entero. Los recursos ya publicados son la
+  especificación: no inventes CSS ni patrones nuevos, reutiliza los suyos.
+- MIDE, NO ESTIMES. Levanta un estático y mide los gates que ya existen. El
+  número de caracteres NO es la restricción: lo es el número de LÍNEAS
+  RENDERIZADAS (57 caracteres cabían en 2 líneas y 61 no). Mide contenido a
+  contenido, nunca caja a caja. "No desborda" no es una verificación.
+- CONTRADÍCEME CON DATOS. Si algo de este briefing no cuadra al medirlo,
+  túmbalo y dime con qué número. Prefiero cambiar el copy a publicar un titular
+  a 4 líneas.
+- VERIFICA CADA DATO Y CADA PROMESA de este briefing contra el código o contra
+  una fuente antes de escribirla. Lo que no se pueda verificar se queda fuera y
+  me avisas. Los ejemplos ficticios se etiquetan como ficticios en el texto.
+
 1. GATE (lo que se ve ANTES de dejar el email)
-- Titular (Atención): [problema o resultado, concreto]
-- Subtítulo (Interés): [qué incluye y por qué es útil, 1-2 líneas]
-- LA MUESTRA GRATIS (Deseo). Esto es lo que se regala sin pedir nada:
-  [el trozo concreto que se enseña: 1 de los 7 errores, 2 filas de la checklist,
-   el primer resultado de la calculadora... Suficiente para probar que vale,
-   insuficiente para resolver el problema entero]
-- Preview visual: [captura/mockup de qué van a recibir]
-- Prueba social: [testimonio, cifra o logos]
-- Formulario: [solo email | email + N campos] · CTA: "[texto del botón, nunca 'Enviar']"
-- Qué pasa después: "acceso inmediato" (NUNCA "te llega al correo": el sistema no envía correos, §4b)
+- H1: [39-55 caracteres, termina en punto, con un <em> coral de 1-2 palabras en
+  LA PALABRA QUE DA NOMBRE al recurso]. Dos líneas exactas a 1440 y a 360. Salto
+  a mano con <br>, escalera con proporción línea1/línea2 entre 0,65 y 0,80.
+- Lede: [155-190 caracteres]. 3 líneas a 1440, 4 a 360. Cierra situando lo que
+  hay detrás del gate ("Aquí abajo, 1 error entero como prueba y el resto va en
+  el playbook").
+- LA MUESTRA GRATIS: [la pieza 1 ENTERA y aplicable]. El resto se enseña
+  BLOQUEADO EN BORROSO, no se cuenta: contar lo que hay detrás es débil,
+  enseñarlo bloqueado es fuerte. Reutiliza el .finder-card-locked de agendar
+  (blur 4.5px + opacidad 0.6), no inventes otro.
+- Formulario: se hereda assets/neety-form.js TAL CUAL, no se toca. Los dos
+  consentimientos son obligatorios por RGPD: "solo pedimos el email" significa
+  un campo, no quitar los consentimientos.
+- CTA del botón: "[texto, nunca 'Enviar']"
+- Qué pasa después: ACCESO INMEDIATO. El sistema NO envía correos.
 
 2. RECURSO (lo que se ve DESPUÉS de dejar el email)
-- Formato: [checklist / diagnóstico / calculadora / plantilla / playbook]
-- Contenido: [el paso 1 del problema, resuelto de verdad]
-- Lo que NO incluye a propósito: [los pasos 2-4 = el hueco que llena Neety]
-- Siguiente paso dentro del recurso: [CTA a demo, conectado con lo que acaban de leer]
+- El ARTEFACTO va ARRIBA y tiene que ASOMAR AL ENTRAR: [checklist de 1 página,
+  pensada para captura de pantalla]. Si al aterrizar solo hay texto, es un error
+  de producto. El lede de la guía va de UN párrafo: con dos, el contenido
+  visible al entrar pasa de 146-357px a cero.
+- Estructura: artefacto → secciones numeradas (00, 01, 02…) que expanden cada
+  línea → todo junto sobre un ejemplo real → EL HUECO A PROPÓSITO → autor.
+- EL HUECO A PROPÓSITO (el cierre): [qué NO resuelve el recurso, y que eso es
+  Neety]. El CTA nace del hueco, no es un "agenda una reunión" pegado al final.
+- Firma: [Iker | Unai].
 
-3. NOTAS TÉCNICAS
-- [alta en los 3 registros · robots.txt + noindex de la guía · card en la home · tracking]
-- MIDE antes de escribir el copy y CONTRADICE con datos si algo no cuadra (§4c y §5).
+3. ALTA, INDEXADO Y HOME (si falta uno, se rompe en silencio)
+- Los TRES registros con el mismo literal, igual que el data-resource del gate y
+  que el nombre del directorio:
+  src/gate.js → GATED · src/db.js → RESOURCES · src/api/submit.js → withGuide
+- robots.txt → Disallow: /[slug]/guia/  Y  la guía → meta robots noindex. Las
+  dos mitades: sin una, Google indexa la guía y el recurso queda regalado. La
+  guía NO va al sitemap; el gate sí.
+- Home: card con SUS DOS descripciones (p de 85-109 y p.card-p-m de 51-65), el
+  retardo .grid .card:nth-child(N), y actualizar el contador del trust strip.
+
+4. COPY
+- Cero guiones largos. Español de España, tuteando, sin jerga de marketing.
+- Coma antes de "y": vale uniendo dos oraciones independientes largas (los seis
+  gates la usan). NUNCA en enumeraciones.
+- Ninguna cifra sin fuente verificada.
+
+5. NO ME DIGAS QUE ESTÁ TERMINADO SIN PASAR LA CHECKLIST del playbook §19 (18
+   puntos). Pégamela con el resultado de cada uno.
 ```
 
-**Antes de entregarlo, comprueba:**
-- ¿La muestra del gate **regala algo de verdad**? (Si no hay muestra, el gate es un formulario pelado → fuera.)
+**Antes de entregar el prompt, comprueba:**
+- ¿La muestra del gate **regala la pieza 1 entera**, y el resto se enseña **bloqueado**, no contado?
 - ¿El recurso **deja fuera** los pasos 2-4 a propósito? (Si lo resuelve todo, no hay negocio.)
-- ¿El CTA **no** dice "Enviar"?
-- ¿El formulario pide **lo mínimo**?
-- ¿El título vende **resultado** y no formato?
-- ¿El recurso está **pegado al dolor que resuelve Neety**?
-
----
+- ¿Has quitado del briefing **toda cifra sin fuente** y **toda promesa que el código no cumple**?
+- ¿Lleva las **3 órdenes de método** y el puntero al playbook?
+- ¿Cero guiones largos? (`python scripts/validar-post.py f.txt --pilar entregable`)
 
 ## 6 · Medición (para pedirla, no para hacerla)
 Visitas → correos dejados → recursos abiertos → respuestas/demos. Si la conversión es baja, el problema suele estar en: promesa poco clara · recurso poco deseable · formulario largo · sin prueba social · CTA débil · demasiado texto · desconexión con el dolor real. Testea títulos, CTAs y formatos (PDF vs quiz vs calculadora vs checklist vs auditoría).
