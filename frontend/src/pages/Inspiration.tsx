@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import FilterSelect from '../components/inspiration/FilterSelect';
 import { useApi } from '../hooks/useApi';
 import GenerateTab from '../components/inspiration/GenerateTab';
 import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
@@ -296,6 +297,9 @@ export default function Inspiration() {
   const [classifying, setClassifying] = useState(false);
   const [classifyResult, setClassifyResult] = useState<string | null>(null);
   const [reclassifyScope, setReclassifyScope] = useState<'images' | 'all'>('images');
+  // Panel de mantenimiento: clasificador y backfill del reaction mix. Cerrado
+  // por defecto porque son operaciones de administración, no de uso diario.
+  const [showMaint, setShowMaint] = useState(false);
 
   // Reaction-mix backfill — separate flow from the Claude-based topic
   // classifier. Pulls reactions per outlier from the dedicated Unipile
@@ -372,10 +376,12 @@ export default function Inspiration() {
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   }, [outliers]);
 
+  // Con contador, como el resto de filtros: el desplegable enseña cuántos
+  // outliers tiene cada creador, que es justo lo que quieres saber al elegirlo.
   const creators = useMemo(() => {
-    const set = new Set<string>();
-    outliers.forEach((p) => set.add(p.creator_name));
-    return [...set].sort();
+    const counts = new Map<string, number>();
+    outliers.forEach((p) => counts.set(p.creator_name, (counts.get(p.creator_name) || 0) + 1));
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   }, [outliers]);
 
   const topics = useMemo(() => {
@@ -580,34 +586,31 @@ export default function Inspiration() {
 
       {tab === 'steal' && !loading && outliers.length > 0 && (
         <>
-          {/* Classify + topic filter */}
-          {topics.length > 0 && (
-            <div className="bg-bg-card border border-amber-400/20 rounded-xl p-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-amber-400 font-semibold">📂 Topic:</span>
-                <button
-                  onClick={() => setFilterTopic('')}
-                  className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${!filterTopic ? 'border-amber-400/50 bg-amber-400/10 text-amber-400' : 'border-border text-text-muted hover:border-amber-400/30'}`}
-                >
-                  All ({outliers.length})
-                </button>
-                {topics.map(([topic, count]) => (
-                  <button
-                    key={topic}
-                    onClick={() => setFilterTopic(filterTopic === topic ? '' : topic)}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                      filterTopic === topic
-                        ? 'border-amber-400/50 bg-amber-400/10 text-amber-400'
-                        : 'border-border text-text-muted hover:border-amber-400/30'
-                    }`}
-                  >
-                    {topic} ({count})
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
+          {/* MANTENIMIENTO — clasificador de topics y backfill del reaction mix.
+              Colapsado: son operaciones de administración que se corren de uvas a
+              peras, y en abierto se comían media pantalla por encima de lo que sí
+              se usa a diario. No se borran porque el backfill aún no ha terminado
+              y sin el botón no habría forma de relanzarlo. */}
+          <div className="border border-border/60 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setShowMaint((v) => !v)}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs text-text-muted hover:text-text-secondary hover:bg-bg-secondary/50 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                ⚙️ Mantenimiento
+                {unclassifiedCount > 0 && (
+                  <span className="text-amber-400/80">{unclassifiedCount} sin clasificar</span>
+                )}
+                {mixStatus && mixStatus.running && (
+                  <span className="text-purple-300/80">
+                    reaction mix {mixStatus.processed}/{mixStatus.total}…
+                  </span>
+                )}
+              </span>
+              <span className="text-[10px]">{showMaint ? '▲' : '▼'}</span>
+            </button>
+            {showMaint && (
+              <div className="px-3 pb-3 pt-1 space-y-3 border-t border-border/40">
           {/* Classify + Reclassify controls */}
           <div className="flex flex-wrap items-center gap-3">
             {unclassifiedCount > 0 && (
@@ -694,104 +697,78 @@ export default function Inspiration() {
               )}
             </div>
           )}
+              </div>
+            )}
+          </div>
 
-          {/* Filters & sort */}
-          <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
-            {/* Free-text search across content / hook / creator. Lives at the top
-                because it's the most direct way to find a specific post (e.g.
-                everything mentioning "CLAUDE" or "cold outreach"). */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-text-muted font-medium shrink-0">🔎 Buscar:</span>
+          {/* BARRA DE FILTROS — una sola fila. Antes eran 5 filas de chips
+              (topic 148, creator 134, hook 27, structure 21) = ~280 botones que
+              ocupaban media pantalla y en los que no se encontraba nada. Los que
+              tienen muchos valores pasan a desplegable con buscador; el toggle de
+              memes se queda a la vista porque es el que se usa. El formato NO está
+              aquí: sube a la fila de resultados, que solo son 5 valores. */}
+          <div className="bg-bg-card border border-border rounded-xl p-3 flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-[220px]">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">🔍</span>
               <input
-                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='Palabra exacta en el contenido (p.ej. "CLAUDE", "outbound", "HubSpot")'
-                className="flex-1 bg-bg-secondary border border-border rounded-lg px-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50"
+                placeholder='Palabra exacta en el contenido (p.ej. "CLAUDE", "outbound")'
+                className="w-full bg-bg-secondary border border-border rounded-lg pl-8 pr-8 py-1.5 text-xs text-text-primary placeholder:text-text-muted/60 focus:outline-none focus:border-accent/50"
               />
               {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="text-[11px] text-text-muted hover:text-accent shrink-0"
-                  title="Borrar búsqueda"
-                >
-                  ✕ limpiar
-                </button>
+                <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-text-muted hover:text-text-primary">✕</button>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-text-muted font-medium">Sort:</span>
-              {([
-                ['ratio', '🔥 Outlier ratio'],
-                ['likes', '👍 Likes'],
-                ['comments', '💬 Comments'],
-                ['recent', '🕐 Recent'],
-              ] as const).map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => setSortBy(key)}
-                  className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                    sortBy === key
-                      ? 'border-accent/50 bg-accent/10 text-accent'
-                      : 'border-border bg-bg-secondary text-text-muted hover:border-accent/30'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <FilterSelect label="Topic" icon="📂" options={topics} value={filterTopic} onChange={setFilterTopic} totalLabel={String(outliers.length)} />
+            <FilterSelect label="Hook" options={hookTypes} value={filterHook} onChange={setFilterHook} />
+            <FilterSelect label="Structure" options={structureTypes} value={filterStructure} onChange={setFilterStructure} />
+            <FilterSelect label="Creator" options={creators} value={filterCreator} onChange={setFilterCreator} />
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="bg-bg-secondary border border-border rounded-lg px-2 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent/50"
+            >
+              <option value="ratio">🔥 Outlier ratio</option>
+              <option value="likes">👍 Likes</option>
+              <option value="comments">💬 Comments</option>
+              <option value="recent">🕐 Recent</option>
+            </select>
 
             {/* MEMES — el único control de memes. Antes había dos ("Solo memes"
-                como filtro y "Más funny" como orden) y confundían, porque para
-                nosotros funny y meme son lo mismo. Se condensa en este toggle.
-                Al activarlo, las chips de formato de abajo pasan a contar solo
-                memes, así se ve qué formato usan los memes que funcionan. */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-text-muted font-medium">Memes:</span>
-              <button
-                onClick={() => { setOnlyMemes((v) => !v); setFilterContentType(''); }}
-                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                  onlyMemes
-                    ? 'border-orange-400/60 bg-orange-400/15 text-orange-300'
-                    : 'border-border bg-bg-secondary text-text-muted hover:border-orange-400/30'
-                }`}
-                title="Filtra a los posts cuya audiencia reaccionó con >25% 😂, según el reaction mix real. Es la señal de meme de la audiencia, no del clasificador."
-              >
-                😂 Solo memes ({memeCount})
-              </button>
-              {onlyMemes && (
-                <span className="text-xs text-text-muted">
-                  filtra por formato abajo para ver qué usan
-                </span>
-              )}
-            </div>
+                como filtro y "Más funny" como orden) y confundían: para nosotros
+                funny y meme son lo mismo. Se queda a la vista, no en desplegable:
+                es el filtro que de verdad se usa. */}
+            <button
+              onClick={() => { setOnlyMemes((v) => !v); setFilterContentType(''); }}
+              className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
+                onlyMemes
+                  ? 'border-orange-400/60 bg-orange-400/15 text-orange-300'
+                  : 'border-border bg-bg-secondary text-text-muted hover:border-orange-400/30'
+              }`}
+              title="Filtra a los posts cuya audiencia reaccionó con >25% 😂, según el reaction mix real. Es la señal de meme de la audiencia, no del clasificador."
+            >
+              😂 Solo memes ({memeCount})
+            </button>
+          </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-text-muted font-medium">Hook:</span>
-              <button
-                onClick={() => setFilterHook('')}
-                className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterHook ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
-              >
-                All
-              </button>
-              {hookTypes.slice(0, 8).map(([hook, count]) => (
-                <button
-                  key={hook}
-                  onClick={() => setFilterHook(filterHook === hook ? '' : hook)}
-                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
-                    filterHook === hook
-                      ? 'border-accent/50 bg-accent/10 text-accent'
-                      : 'border-border text-text-muted hover:border-accent/30'
-                  }`}
-                >
-                  {HOOK_LABELS[hook] || hook} ({count})
-                </button>
-              ))}
-            </div>
+          {/* FILA DE RESULTADOS — recuento a la izquierda y FORMATO a la derecha.
+              El formato vive aquí y no en la barra de filtros porque solo tiene 5
+              valores: es el único filtro donde los chips funcionan, y es donde el
+              resto de secciones lo pone. Los recuentos se calculan sobre lo que se
+              está mirando: con "Solo memes" activo, cuentan solo memes. */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-text-muted">
+              {filtered.length} outlier{filtered.length !== 1 ? 's' : ''}{' '}
+              {filterHook || filterStructure || filterCreator || filterTopic || filterContentType || searchQuery
+                ? `(de ${outliers.length} total${searchQuery ? ` · búsqueda: "${searchQuery}"` : ''})`
+                : 'total'}
+            </p>
 
             {contentTypes.length > 1 && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-xs text-text-muted font-medium">
                   {onlyMemes ? 'Formato del meme:' : 'Formato:'}
                 </span>
@@ -816,63 +793,7 @@ export default function Inspiration() {
                 ))}
               </div>
             )}
-
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-text-muted font-medium">Structure:</span>
-              <button
-                onClick={() => setFilterStructure('')}
-                className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterStructure ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
-              >
-                All
-              </button>
-              {structureTypes.slice(0, 6).map(([struct, count]) => (
-                <button
-                  key={struct}
-                  onClick={() => setFilterStructure(filterStructure === struct ? '' : struct)}
-                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
-                    filterStructure === struct
-                      ? 'border-accent/50 bg-accent/10 text-accent'
-                      : 'border-border text-text-muted hover:border-accent/30'
-                  }`}
-                >
-                  {STRUCT_LABELS[struct] || struct} ({count})
-                </button>
-              ))}
-            </div>
-
-            {creators.length > 1 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-text-muted font-medium">Creator:</span>
-                <button
-                  onClick={() => setFilterCreator('')}
-                  className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterCreator ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
-                >
-                  All
-                </button>
-                {creators.map((name) => (
-                  <button
-                    key={name}
-                    onClick={() => setFilterCreator(filterCreator === name ? '' : name)}
-                    className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
-                      filterCreator === name
-                        ? 'border-accent/50 bg-accent/10 text-accent'
-                        : 'border-border text-text-muted hover:border-accent/30'
-                    }`}
-                  >
-                    {name}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
-
-          {/* Results count */}
-          <p className="text-xs text-text-muted">
-            {filtered.length} outlier{filtered.length !== 1 ? 's' : ''}{' '}
-            {filterHook || filterStructure || filterCreator || filterTopic || filterContentType || searchQuery
-              ? `(filtered from ${outliers.length} total${searchQuery ? ` · search: "${searchQuery}"` : ''})`
-              : 'total'}
-          </p>
 
           {/* Cards grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
