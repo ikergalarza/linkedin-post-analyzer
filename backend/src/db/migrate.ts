@@ -608,6 +608,29 @@ const migration = `
     UNIQUE (comment_social_id, kind)
   );
   CREATE INDEX IF NOT EXISTS idx_lead_magnet_sends_post ON lead_magnet_sends(post_id);
+
+  -- v28b: the uniqueness above is per COMMENT, which is the wrong unit. One
+  -- person can leave two comments that both carry the keyword (the real
+  -- request, plus a longer one where the keyword happens to appear mid
+  -- sentence) — two comments, two rows, and nothing stopping us from sending
+  -- the same person the resource twice. The thing we actually promise is
+  -- "one resource per PERSON per post", so that's what the database should
+  -- enforce.
+  --
+  -- Dedupe before indexing: rows from before this constraint could already
+  -- violate it, and CREATE UNIQUE INDEX would fail on them and take the whole
+  -- migration (and the boot) down with it. Keep the newest row per person —
+  -- it's the one whose status/error reflects reality.
+  DELETE FROM lead_magnet_sends a
+   USING lead_magnet_sends b
+   WHERE a.post_id = b.post_id
+     AND a.provider_id = b.provider_id
+     AND a.kind = b.kind
+     AND a.created_at < b.created_at;
+
+  ALTER TABLE lead_magnet_sends DROP CONSTRAINT IF EXISTS lead_magnet_sends_comment_social_id_kind_key;
+  CREATE UNIQUE INDEX IF NOT EXISTS uq_lead_magnet_sends_person
+    ON lead_magnet_sends (post_id, provider_id, kind);
 `;
 
 export async function runMigrations() {

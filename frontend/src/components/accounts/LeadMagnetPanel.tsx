@@ -56,9 +56,11 @@ interface CommentsResponse {
   threads: Thread[];
 }
 
-// One row of lead_magnet_sends, as the backend returns it.
+// One row of lead_magnet_sends, as the backend returns it. Keyed by PERSON
+// (provider_id), not by comment — one resource per person per post.
 interface SendRecord {
   comment_social_id: string;
+  provider_id: string;
   kind: 'dm' | 'invite';
   status: 'sent' | 'failed';
   text: string | null;
@@ -215,14 +217,16 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     `/api/accounts/lead-magnet/sends?post_id=${post.id}`
   );
 
-  // comment_social_id → the records for it. A person can legitimately have
-  // both an invite and (later) a DM, so this is a list, not a single record.
-  const sendsByComment = useMemo(() => {
+  // provider_id → the records for that PERSON. Keyed by person, not comment:
+  // someone with two keyword-carrying comments has one delivery between them,
+  // and both cards need to know about it. A person can legitimately have both
+  // an invite and (later) a DM, so this is a list.
+  const sendsByPerson = useMemo(() => {
     const m = new Map<string, SendRecord[]>();
     for (const s of sendsData?.sends ?? []) {
-      const list = m.get(s.comment_social_id) ?? [];
+      const list = m.get(s.provider_id) ?? [];
       list.push(s);
-      m.set(s.comment_social_id, list);
+      m.set(s.provider_id, list);
     }
     return m;
   }, [sendsData]);
@@ -244,6 +248,41 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // list, and inheriting "showing 40" from the previous one is nonsense).
   // The reset is DERIVED rather than done in an effect: we remember which
   // keyword the count belongs to, and ignore it once that goes stale.
+  // Which comment owns the DM for each person.
+  //
+  // The same person can land on this list twice: once for the real request
+  // ("COMITÉ ventas") and once for a longer comment where the keyword just
+  // happens to appear mid-sentence ("...el comité te la desmonta"). Both
+  // match, and offering the resource on both is how you send it twice — the
+  // second time for a comment that never asked for anything.
+  //
+  // So the resource lives on exactly ONE card per person: their plain
+  // keyword comment, which is the actual request. Only if a person has no
+  // plain comment at all does the rich one inherit it — otherwise someone
+  // who asked AND added something ("PROPUESTA, ¿cubre servicios?") would
+  // silently never get it, which is worse than the duplicate we're avoiding.
+  //
+  // Ties break on the OLDEST comment: if someone left the same shape twice,
+  // the first is the request and the second is chatter.
+  const dmOwnerByPerson = useMemo(() => {
+    const owner = new Map<string, string>(); // provider_id → comment id
+    const best = new Map<string, { id: string; plain: boolean; at: number }>();
+    for (const t of matches) {
+      const pid = t.author.profile_id;
+      if (!pid) continue;
+      const plain = commentDepth(t.text || '', cfg.keyword) === 'plain';
+      const at = t.date ? new Date(t.date).getTime() : Number.MAX_SAFE_INTEGER;
+      const cur = best.get(pid);
+      const better =
+        !cur ||
+        (plain && !cur.plain) ||            // a real request beats prose
+        (plain === cur.plain && at < cur.at); // same shape → the earlier one
+      if (better) best.set(pid, { id: t.id, plain, at });
+    }
+    for (const [pid, b] of best) owner.set(pid, b.id);
+    return owner;
+  }, [matches, cfg.keyword]);
+
   const PAGE = 10;
   const [vis, setVis] = useState<{ key: string; n: number }>({ key: cfg.keyword, n: PAGE });
   const visible = vis.key === cfg.keyword ? vis.n : PAGE;
@@ -367,7 +406,8 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           postId={post.id}
           creatorId={creatorId}
           cfg={cfg}
-          sends={sendsByComment.get(t.id) ?? []}
+          sends={t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []}
+          ownsDm={dmOwnerByPerson.get(t.author.profile_id ?? '') === t.id}
           initialReply={takeVariant}
           onSent={refetchSends}
         />
@@ -441,6 +481,7 @@ function CommenterCard({
   creatorId,
   cfg,
   sends,
+  ownsDm,
   initialReply,
   onSent,
 }: {
@@ -449,6 +490,10 @@ function CommenterCard({
   creatorId: string;
   cfg: LmConfig;
   sends: SendRecord[];
+  // True on the ONE card per person that carries the resource. False on that
+  // person's other keyword-matching comments, which show only a reply — the
+  // resource goes out once, from the comment that actually asked for it.
+  ownsDm: boolean;
   initialReply: () => string;
   onSent: () => void;
 }) {
@@ -487,7 +532,9 @@ function CommenterCard({
   // but the regional touch.
   const [location, setLocation] = useState<string | null>(null);
   useEffect(() => {
-    if (!thread.author.profile_id) return;
+    // Not the owner → no message to greet with, so don't spend a Unipile
+    // profile call on it.
+    if (!thread.author.profile_id || !ownsDm) return;
     let cancelled = false;
     apiGet<{ location: string | null }>(
       `/api/accounts/lead-magnet/commenter?creator_id=${creatorId}&provider_id=${encodeURIComponent(thread.author.profile_id)}`
@@ -495,7 +542,7 @@ function CommenterCard({
       .then((r) => { if (!cancelled && r?.location) setLocation(r.location); })
       .catch(() => { /* neutral greeting is a fine outcome */ });
     return () => { cancelled = true; };
-  }, [thread.author.profile_id, creatorId]);
+  }, [thread.author.profile_id, creatorId, ownsDm]);
 
   // ── message state ──
   const [message, setMessage] = useState<string>('');
@@ -503,10 +550,10 @@ function CommenterCard({
   // location arrives or the topic changes.
   const [msgTouched, setMsgTouched] = useState(false);
   useEffect(() => {
-    if (msgTouched || alreadySent) return;
+    if (msgTouched || alreadySent || !ownsDm) return;
     const input = { name: thread.author.name, location, topic: cfg.topic, link: cfg.link };
     setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
-  }, [location, cfg.topic, cfg.link, kind, msgTouched, alreadySent, thread.author.name]);
+  }, [location, cfg.topic, cfg.link, kind, msgTouched, alreadySent, ownsDm, thread.author.name]);
 
   const [msgSending, setMsgSending] = useState(false);
   const [msgResult, setMsgResult] = useState<{ status: 'sent' | 'failed'; error: string | null } | null>(
@@ -696,7 +743,16 @@ function CommenterCard({
             )}
           </div>
 
-          {/* ── The resource: DM or invitation ── */}
+          {/* ── The resource: DM or invitation ──
+              Only on the card that owns it. This person's OTHER matching
+              comments get no send box at all: two boxes for one person is
+              how you send the resource twice, and the second one would be
+              answering a comment that never asked for it. */}
+          {!ownsDm ? (
+            <p className="mt-3 pt-3 border-t border-border text-[11px] text-text-muted">
+              El recurso se le manda desde su otro comentario, el que trae la palabra clave.
+            </p>
+          ) : (
           <div className="mt-3 pt-3 border-t border-border space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-medium text-text-secondary">
@@ -747,6 +803,7 @@ function CommenterCard({
               </>
             )}
           </div>
+          )}
         </div>
       </div>
     </div>

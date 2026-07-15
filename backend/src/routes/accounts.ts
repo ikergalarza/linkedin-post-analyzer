@@ -2448,7 +2448,7 @@ router.get('/lead-magnet/sends', async (req: Request, res: Response) => {
     const postId = (req.query.post_id as string) || '';
     if (!postId) return res.status(400).json({ error: 'post_id required' });
     const { rows } = await pool.query(
-      `SELECT comment_social_id, kind, status, text, error, created_at
+      `SELECT comment_social_id, provider_id, kind, status, text, error, created_at
          FROM lead_magnet_sends
         WHERE post_id = $1
         ORDER BY created_at DESC`,
@@ -2557,15 +2557,19 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
       console.warn(`[accounts/lead-magnet/send] ${kind} to ${provider_id} failed:`, error);
     }
 
-    // Record the attempt either way. ON CONFLICT overwrites so a retry that
-    // finally succeeds replaces the earlier failure.
+    // Record the attempt either way, keyed by PERSON (post + provider + kind),
+    // not by comment: someone with two keyword-carrying comments must still
+    // only ever be one row, or nothing stops us sending them the resource
+    // twice. ON CONFLICT overwrites so a retry that finally succeeds replaces
+    // the earlier failure.
     try {
       await pool.query(
         `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
-         ON CONFLICT (comment_social_id, kind)
+         ON CONFLICT (post_id, provider_id, kind)
          DO UPDATE SET status = EXCLUDED.status, text = EXCLUDED.text,
-                       error = EXCLUDED.error, created_at = NOW()`,
+                       error = EXCLUDED.error, created_at = NOW(),
+                       comment_social_id = EXCLUDED.comment_social_id`,
         [post_id, comment_id, provider_id, kind, status, body, error]
       );
     } catch (storeErr: any) {
