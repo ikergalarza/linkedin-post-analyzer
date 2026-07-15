@@ -88,6 +88,10 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 ### 2.9 · Techo de intensidad del verbo
 **⭐ Regla UNIVERSAL: aplica a TODO hook, de TODOS los pilares y TODAS las recetas.** No es del meme ni del lead magnet: es de cualquier post. Está en el pase de validación (§8, check 1) porque es lo que más se escapa.
 **El verbo del gancho tiene un trabajo: frenar el scroll.** Si solo describe, no vale. Delatores de verbo flojo: `se cae`, `hay`, `es`, `tiene`, `pasa`, `ocurre`, `se pierde`, `no funciona`. Sube un peldaño hasta el punto dulce.
+**La familia punchy validada** (roba de aquí, pero NO repitas el que ya usó ese pilar): **quemar · reventar · enterrar · tirar · desmontar · arrancar · comerse · fundir · machacar**. Se pasan de rosca: destripar, descuartizar.
+**Delatores de gerundio que DESCRIBEN** (el fallo real, 2026-07-15): `colgando`, `volviendo a`, `intentando`, `trabajando`, `haciendo`, `dando vueltas`. Caso: *"Alguien lleva un año **colgando** el teléfono **y volviendo a marcar**"* → cuenta lo que hace, no frena a nadie. Arreglado a *"Alguien lleva un año **comiéndose** noes para **arrancar** un sí"*: dos verbos punchy, la herida y el premio. Ya están en el validador.
+> ⚠️ **Lo que el script NO puede ver:** la lista negra caza el verbo flojo conocido, pero **no sabe si un verbo nuevo tiene punch**. Eso es criterio y vive en §8. Si el gancho pasa el validador, aún tienes que leerlo y preguntarte si ese verbo para el scroll.
+
 La regla de verbo punchy empuja hacia arriba (criticar → desmontar → destrozar/destripar). Hay TECHO: sube por impacto pero **para en el verbo que encaja con la promesa sin pasarse a gore/over-the-top**. "desmontar" es el punto dulce (máximo punch limpio); "destripar/descuartizar" se pasa. Validados: desmontar, reventar, enterrar, quemar, tirar (las llaves). Se pasan: destripar, descuartizar. (Caso: "desmonto perfiles" 9.13x vs "destripo perfiles" 0.2x — mismo concepto, verbo pasado + caricatura en vez de foto real.)
 
 ---
