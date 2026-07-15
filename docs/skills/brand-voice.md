@@ -30,7 +30,10 @@ Escribe como un founder-operador se lo diría **a un director comercial de 55 a�
 
 **El hook NUNCA lleva (por defecto):**
 - Anglicismos técnicos: tool, agent, agentic, context, prompt, fine-tune, RAG, embedding, framework, stack, workflow, deployment.
-- Inglés sin traducir (excepto nombres propios: Claude, GPT, Salesforce, HubSpot, LinkedIn, Apollo; y términos de ventas ya naturalizados que un comercial senior conoce: SDR, AE, CRM, B2B, SaaS, GTM, ICP, outbound, lead, follow-up).
+- Inglés sin traducir. Solo se salvan los **nombres propios**: Claude, GPT, Salesforce, HubSpot, LinkedIn, Apollo.
+- ⚠️ **CORREGIDO (2026-07-14).** Aquí ponía que SDR, AE, CRM, B2B, SaaS, GTM, ICP, outbound, lead y follow-up sí valían en el hook por ser "términos ya naturalizados que un comercial senior conoce". **Contradecía de frente a `global-instructions §2.3`**, que los prohíbe en el hook por estrechar el alcance. Gana §2.3 y esta lista pasa a ser **solo del CUERPO**.
+  **Lo que desempata está en `aboutme`:** el lector "lleva vendiendo desde **antes de que existiera Salesforce**, no es early-adopter y no lee Hacker News". Un director comercial de 55 años que vende maquinaria industrial no habla de GTM ni de ICP, y **puede no tener CRM siquiera**. Que un término te suene naturalizado a ti no significa que le suene a él.
+  **En el hook manda la lista de `global §2.3`. Sin excepciones.** En el cuerpo, estos términos sí pasan.
 - Jerga inventada que suena a paper ("execution gap", "agentic skip", "tool adherence").
 - Métricas o conceptos que necesitan haber leído el changelog.
 

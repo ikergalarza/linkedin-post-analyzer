@@ -26,8 +26,11 @@ HISTORIAL = os.path.join(RAIZ, 'docs', 'skills', 'historial-publicaciones.md')
 # --- vocabularios (de docs/skills/) -----------------------------------------
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 ANCLA_VENTAS = r'\b(vender|vendes|vende|vendo|vendiendo|venta|ventas|vendid\w+|cliente|clientes|cerrar|cierras|cierra|cierro|cerrand\w+|comercial|comerciales|comprar|compra|compras|comprando|precio|precios|cuota|comisi[oó]n|facturar|factura|facturas|facturaci[oó]n|exportar|exporta|exportas|exportaci[oó]n|prospectar|cartera|deal|deals|pedido|pedidos|propuesta comercial)\b'
-# §2.3 — estrechan el alcance, fuera del hook
-DEMASIADO_NICHO = r'\b(b2b|outbound|inbound|pipeline|cadencia|reply rate|touchpoints?|sdr|aes?|cold email|discovery|gtm|icp)\b'
+# §2.3 — estrechan el alcance, FUERA del hook. Lista canónica: gana a la de
+# "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
+# aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
+# CRM y forecast añadidos el 2026-07-14 (se coló "Tu CRM…" en un hook de meme).
+DEMASIADO_NICHO = r'\b(b2b|outbound|inbound|pipeline|cadencia|reply rate|touchpoints?|sdr|aes?|cold email|discovery|gtm|icp|crm|forecast|saas|leads?|follow-?up)\b'
 # §2.9 — delatores de verbo flojo: describen en vez de frenar el scroll
 VERBO_FLOJO = r'(\bse cae\b|\bse caen\b|\bse pierde\b|\bse pierden\b|\bocurre\b|\bocurren\b|\bpasa\b|\bpasan\b|\bno funciona\b|\bexiste\b|\bexisten\b|\bhay que\b|\btiene que\b|\bes importante\b|\bes clave\b)'
 # §2.8 — openers quemados
