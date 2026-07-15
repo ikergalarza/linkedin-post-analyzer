@@ -133,6 +133,16 @@ Cuando el cuerpo lleva cifras, **cita la fuente por su nombre** (es escudo: te p
 - **El dato SIEMPRE va verificado y con su año registrado FUERA del post** (en la entrega interna, para poder responder). Si alguien pregunta el año en comentarios, se le contesta ahí con naturalidad: reconocerlo suma credibilidad.
 - **Usa referencias temporales relativas o ninguna:** presente ("venden al mundo"), "ya adelantó", "en un año". Ojo con "este año": si el dato es del cierre del año pasado, es falso además de fechado.
 
+### 3.6 · Cifras: SIEMPRE en dígito, nunca en letra (universal, todos los pilares)
+**Si eliges dígitos, van dígitos en TODO el post.** Mezclar `Los 10 nombres` arriba con `seiscientos kilómetros` abajo canta a descuido. La elección está hecha: **dígitos**, porque frenan el scroll y se escanean.
+- ✅ `600 kilómetros para una reunión de 40 minutos` · `Marcar 500 para que compren 3` · `los 10 de arriba`
+- ❌ `seiscientos kilómetros` · `cuarenta minutos` · `quinientos` · `los diez de arriba`
+- **`un`/`una` son artículos**, no cifras: `un año`, `una nave` se quedan como están.
+- **La unidad sigue en letra:** `15.615M€`, `1,3 millones`, `690.000 personas`. Lo que va en dígito es el número, no la unidad.
+
+**Lo que dicen los datos (histórico completo, medido el 2026-07-15):** 928 cifras en dígito contra 66 en letra. De esas 66, **ninguna pasa de 12** — el techo real es "seis meses", "siete palabras", "diez señales". **Todo lo ≥20 ya iba siempre en dígito**, así que `seiscientos`/`quinientos` en letra no tenían precedente en ningún post nuestro: eran la anomalía, no la norma.
+> ⚠️ **El coste conocido, dicho en voz alta:** los ganadores SÍ usan letra para números pequeños en prosa narrativa. Navarra 7.72x abre con *"Les pasé tres números y se callaron"* y Aragón con *"cierra pedidos en 5 idiomas"*. Esta regla los convierte en `3 números` y `5 idiomas`. Se aplica igual (decisión del usuario, 2026-07-15): la consistencia dentro del post pesa más, y no está medido que la letra aporte nada. **Está en el validador** para no depender de la memoria.
+
 ### 3.5 · Cuerpo natural (anti-IA)
 Ver `brand-voice` §3 (tabla de traducción de AI-tells + palabras de registro natural + test de leer en voz alta). Es parte no-negociable del pase de validación de cada cuerpo.
 

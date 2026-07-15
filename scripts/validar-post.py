@@ -36,6 +36,12 @@ VERBO_FLOJO = r'(\bse cae\b|\bse caen\b|\bse pierde\b|\bse pierden\b|\bocurre\b|
 # §2.8 — openers quemados
 OPENERS_QUEMADOS = r'(nadie te dice esto|lo que nadie te cuenta|me ha costado \w+ a[nñ]os|este es el error m[aá]s grande|el problema eres t[uú]|spoiler:|plot twist:)'
 
+# §3.6 — cifras SIEMPRE en dígito, nunca en letra (universal). "un/una" son artículos y no cuentan.
+NUMERO_EN_LETRA = (r'\b(dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince'
+                   r'|diecis[eé]is|diecisiete|dieciocho|diecinueve|veinte|treinta|cuarenta|cincuenta'
+                   r'|sesenta|setenta|ochenta|noventa|cien|ciento|doscientos|trescientos|cuatrocientos'
+                   r'|quinientos|seiscientos|setecientos|ochocientos|novecientos)\b')
+
 # §4.1 — comodines de peloteo gastados: 4/4 posts reales los usan LITERAL (working-preferences §4)
 REVEAL_QUEMADO = r'\bs[ií],?\s+hablo\s+d'
 COMODIN_LISTA = r'la gente y las empresas que mueven todo esto'
@@ -128,6 +134,9 @@ def validar(texto, pilar, cuenta=None):
     chk(not ms, 'Sin markdown dentro del post (working-preferences §1)', f'{ms[:3]}' if ms else '')
     m = re.search(OPENERS_QUEMADOS, cuerpo, re.I)
     chk(not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else '')
+    ms = re.findall(NUMERO_EN_LETRA, cuerpo, re.I)
+    chk(not ms, 'Cifras en dígito, nunca en letra (§3.6)',
+        f'{len(ms)} en letra: {ms[:4]} → mezclar "10" y "seiscientos" en un mismo post canta' if ms else '')
     ms = re.findall(r'\((?:[^()]*\b(?:19|20)\d{2}\b[^()]*)\)', cuerpo)
     chk(not ms, 'Sin AÑO de fuente en el cuerpo (§3.5b)',
         f'{ms[:2]} → cita el nombre, nunca el año' if ms else '')
