@@ -35,6 +35,10 @@ DEMASIADO_NICHO = r'\b(b2b|outbound|inbound|pipeline|cadencia|reply rate|touchpo
 VERBO_FLOJO = r'(\bse cae\b|\bse caen\b|\bse pierde\b|\bse pierden\b|\bocurre\b|\bocurren\b|\bpasa\b|\bpasan\b|\bno funciona\b|\bexiste\b|\bexisten\b|\bhay que\b|\btiene que\b|\bes importante\b|\bes clave\b)'
 # §2.8 — openers quemados
 OPENERS_QUEMADOS = r'(nadie te dice esto|lo que nadie te cuenta|me ha costado \w+ a[nñ]os|este es el error m[aá]s grande|el problema eres t[uú]|spoiler:|plot twist:)'
+
+# §4.1 — comodines de peloteo gastados: 4/4 posts reales los usan LITERAL (working-preferences §4)
+REVEAL_QUEMADO = r'\bs[ií],?\s+hablo\s+d'
+COMODIN_LISTA = r'la gente y las empresas que mueven todo esto'
 # post-workflow §4.2 Paso 3 — el eje "callado" está PROHIBIDO en mapas
 EJE_CALLADO = r'(se vende callad|venden callad|en silencio|no lo cuentan|no lo cuenta|sin hacer ruido|nadie los conoce|no salen en la foto|trabajan callad)'
 
@@ -158,6 +162,13 @@ def validar(texto, pilar, cuenta=None):
                     chk(len(b) == 1, 'Las 2 líneas del spam ninja van separadas (§4.4b)',
                         f'{len(b)} líneas pegadas en el mismo bloque' if len(b) != 1 else '')
                     break
+    if pilar in ('mapa', 'los10'):
+        m = re.search(REVEAL_QUEMADO, cuerpo, re.I)
+        chk(not m, 'Reveal de región sin el comodín "Sí, hablo de" (§4.1)',
+            f'"{m.group(0)}…" → lo usan LITERAL los 4 posts reales; di lo mismo con otras palabras' if m else '')
+        m = re.search(COMODIN_LISTA, cuerpo, re.I)
+        chk(not m, 'Frase de entrada a la lista sin comodín (§4.1)',
+            f'"{m.group(0)}" → ya repetida entre mapas' if m else '')
     if pilar == 'mapa':
         m = re.search(EJE_CALLADO, cuerpo, re.I)
         chk(not m, 'Eje "callado" PROHIBIDO en mapas (post-workflow §4.2)',

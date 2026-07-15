@@ -153,6 +153,8 @@ Solo un puñado de mecánicas produce outliers de forma fiable. Elige la que la 
 
 **Los DOS ingredientes que lo hacen viral:** (a) el desprecio/cliché que genera RABIA al local (el que le hace comentar para defender) + (b) el dato shock comparativo contra UN PAÍS ENTERO (cuanto menos obvio el país, más shock).
 
+**⚠️ EL REVEAL: la frase se varía SIEMPRE, la función no.** Los **4 posts reales dicen literal `Sí, hablo de X.`** (Navarra, Galicia, Aragón, País Vasco). Es un comodín gastado, igual que `La gente y las empresas que mueven todo esto:` como entrada a la lista (`swipe-file §2.1`). El reveal **tiene que seguir existiendo y llegando tarde**; lo que cambia son las palabras (`working-preferences §4`). Alternativas: `Se llama Asturias.` · `Todo esto es Navarra.` · `Los diez son de Galicia.` · `Bienvenido a Aragón.` · `Y esto pasa en Álava.` **Está en el validador** (`--pilar mapa|los10`) porque es Type A puro: la regla de frescura ya existía y aun así se coló 4 de 4 veces.
+
 **Concepto creativo de zona:** nunca "región/tierra/pueblo". Inventa uno original por zona: Navarra → "el patio trasero de los Pirineos"; Álava → "la trastienda del norte"; Galicia → "esta esquina del Atlántico". Nunca repitas concepto.
 
 **Reglas de ejecución NO negociables (condiciones de seguridad, no adornos):**
