@@ -72,8 +72,32 @@ Nunca empieces pidiendo la llamada: primero valor, después la invitación.
 
 ---
 
+## 4b · ⚠️ LO QUE EL SISTEMA NO HACE (medido en el código, no lo prometas)
+> Aprendido a base de escribirlo mal el 2026-07-14. Estas tres cosas se colaron en un prompt entregado y las tres eran falsas.
+
+- **NO se envía ningún correo.** `src/api/submit.js` deja la cookie y redirige a la guía. Punto. Prometer *"te llega al correo en 2 minutos"* es mentira y encima la descubre el propio lead. **El copy correcto es "acceso inmediato"**, que además es mejor promesa.
+- **Por tanto, la secuencia de 4 emails de §4 NO existe todavía.** Es lo deseable, no lo que hay. Si la metes en el prompt, va marcada como trabajo nuevo a construir, nunca como algo que ya ocurre.
+- **La cookie `neety_gate` desbloquea TODAS las guías.** Un lead que entra por un post se lleva los siete recursos. No es una fuga: por eso el enlace "Todos los recursos" del gate está bien puesto.
+
+## 4c · ⭐ MEDIR, NO ESTIMAR (la regla que más caro sale)
+> La lección de fondo de la primera implementación real: **todo lo que falló eran reglas que existían pero no estaban escritas en ningún sitio, y todas eran descubribles midiendo los seis recursos que ya hay.** Los recursos existentes SON la especificación.
+
+- **El número de caracteres NO es la restricción. Lo es el número de LÍNEAS RENDERIZADAS.** Medido: un titular de 57 caracteres cabía en 2 líneas y uno de 61 no. **Contar caracteres te hará fallar.** Los tres sitios donde se estimó a ojo salieron mal.
+- **Antes de proponer copy, se mide en el navegador.** Levanta un estático (`python -m http.server 8899 --bind 127.0.0.1`, en background y **SIN pipe**: si lo pasas por `| head` se muere a la primera petición) y mide los seis gates.
+- Snippet: `const L = el => +(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)).toFixed(2);`
+- **Si el copy no cuadra, se acorta el copy. NUNCA se toca el CSS**, que es el mismo de los otros seis.
+
 ## 5 · Qué entrega el workflow: el PROMPT PARA EL PROGRAMADOR
-No escribimos código ni montamos la web. Entregamos **un prompt en bloque cercado** para que el programador cree la página en `https://recursos.neety.com/`. Tiene que llevar, sí o sí:
+No escribimos código ni montamos la web. Entregamos **un prompt en bloque cercado** para que el programador cree la página en `https://recursos.neety.com/`.
+
+**Las dos órdenes que más valen del prompt no son reglas de copy, son de método. Van SIEMPRE:**
+1. **"Mide antes de escribir, no estimes."** Los seis recursos existentes son la especificación (§4c). Sin esta orden, se estiman saltos de línea a ojo y salen mal.
+2. **"Contradíceme con datos."** Las tres veces que el trabajo mejoró de verdad fue cuando algo medible tumbó una decisión ya aprobada (un titular que renderizaba a 4 líneas, un `robots.txt` que faltaba, un `<em>` de más). **Si el prompt solo pide ejecutar, esas tres se cuelan.**
+3. **"Verifica cada dato y cada promesa del briefing contra el código o contra una fuente. Lo que no se pueda, se queda fuera y se avisa."** Sin esta línea se publican cifras sin origen y promesas que el código no cumple (§4b).
+
+**Detalle de implementación completo (invariantes medidos del gate, el `<em>` coral, los tres registros del alta, el `robots.txt`, la home, las trampas):** vive en el repo de `recursos.neety.com`, en `docs/lead-magnet-playbook.md`, **junto al código y no aquí**, para que envejezca con él. Esta skill decide QUÉ recurso y QUÉ se regala; ese playbook dice CÓMO se construye.
+
+El prompt tiene que llevar, sí o sí:
 
 ```
 RECURSO: [nombre accionable, vende el resultado no el formato]
@@ -92,7 +116,7 @@ PALABRA DEL GATE (la que comentan en LinkedIn): "[X]"
 - Preview visual: [captura/mockup de qué van a recibir]
 - Prueba social: [testimonio, cifra o logos]
 - Formulario: [solo email | email + N campos] · CTA: "[texto del botón, nunca 'Enviar']"
-- Qué pasa después: "[qué recibe y en cuánto tiempo]"
+- Qué pasa después: "acceso inmediato" (NUNCA "te llega al correo": el sistema no envía correos, §4b)
 
 2. RECURSO (lo que se ve DESPUÉS de dejar el email)
 - Formato: [checklist / diagnóstico / calculadora / plantilla / playbook]
@@ -101,7 +125,8 @@ PALABRA DEL GATE (la que comentan en LinkedIn): "[X]"
 - Siguiente paso dentro del recurso: [CTA a demo, conectado con lo que acaban de leer]
 
 3. NOTAS TÉCNICAS
-- [entrega inmediata, integración de email, tracking de visitas/conversión...]
+- [alta en los 3 registros · robots.txt + noindex de la guía · card en la home · tracking]
+- MIDE antes de escribir el copy y CONTRADICE con datos si algo no cuadra (§4c y §5).
 ```
 
 **Antes de entregarlo, comprueba:**

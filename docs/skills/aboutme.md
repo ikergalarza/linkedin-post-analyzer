@@ -12,9 +12,10 @@ Neety construye **sistemas de outbound operativo con IA** para **empresas indust
 
 - Frase raíz de posicionamiento: **"No vendemos AI SDRs. Operamos pipeline."**
 - Categoría que reivindicamos: **outbound operativo** (concepto propio, repetible en los posts para construir categoría).
-- Pruebas de cliente reales (usar cuando encajen, ancla mejor que la auto-promoción):
-  - **+200 PYMEs** atendidas.
-  - **+40% de conversión** sobre baseline en industrial.
+- Pruebas de cliente (usar cuando encajen, ancla mejor que la auto-promoción):
+  - **+200 PYMEs** atendidas. ⚠️ `[PENDIENTE · sin origen documentado]`
+  - **+40% de conversión** sobre baseline en industrial. ⚠️ `[PENDIENTE · sin origen documentado]`
+  > ⚠️ **Estas dos cifras NO tienen fuente registrada** (detectado el 2026-07-14 al revisar un gate donde iban a salir publicadas como prueba social). Esta skill las listaba como "pruebas reales", pero nadie ha documentado de dónde salen. **Hasta que alguien las confirme, NO se publican**: ni en un post, ni en un gate, ni en la web. La regla no admite excepciones por ser cifras nuestras — de hecho es peor, porque un cliente las puede preguntar. Si son ciertas, apunta aquí la fuente y quita el aviso.
   - **0 herramientas genéricas** — todo se construye sobre el playbook del cliente.
 - Web: **neety.io**
 - Link de agendar demo (el que metemos en spam ninja): **https://recursos.neety.com/agendar/**
