@@ -294,10 +294,14 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 **Paso 6 — FOTO: PROMPT de modificaciones (NO generar la imagen).** Observa la foto de referencia y entrega **UN SOLO PÁRRAFO** con los cambios a aplicar sobre ella. Nada de listas ni de secciones: un párrafo, simple de leer y **lo más específico posible, para que el diseñador lo entienda a la primera**.
 
 **Cómo se escribe el prompt (técnica validada por el usuario, funciona):**
-- **Empieza en MAYÚSCULAS con la orden de contención:** `SOLO HAZ LO QUE TE PIDO Y NADA MÁS.` Es lo que más reduce que la herramienta se invente cosas.
-- **Cierra con las prohibiciones explícitas:** `No suavices ni deformes las caras. No añadas logos, marcas de agua ni elementos nuevos. No hagas nada que no te haya pedido.` Lo de las caras solo si las hay, y va literal: las herramientas suelen clavar la primera fila y hacer lo que quieren en la última.
+- **UN párrafo, CORTO y en lenguaje llano.** Lo lee un diseñador que va a tardar en montarlo: cada frase de más le cuesta tiempo. Claro y corto bate a exhaustivo.
+- **Empieza en MAYÚSCULAS con la orden de contención:** `SOLO HAZ LO QUE TE PIDO Y DEJA TODO LO DEMÁS INTACTO.` Es lo que más reduce que la herramienta se invente cosas.
+- **Di "calca esta referencia".** Así, con esas palabras. Nada de "parte de la imagen de referencia y mantén el layout, los paneles, la línea divisoria…": eso es hablar complicado para decir "calca".
+- **⛔ NUNCA enumeres lo que se queda igual.** Es el error que más engorda el prompt. `SOLO HAZ LO QUE TE PIDO Y DEJA TODO LO DEMÁS INTACTO` **ya lo cubre entero**. Listar "los dos paneles, la línea divisoria, el fondo de papel, la etiqueta negra, el encuadre, el estilo de dibujo…" no añade precisión: añade ruido y esconde los cambios de verdad entre la paja.
+- **Pide SOLO los cambios exactos**, numerados dentro del párrafo (1), (2), (3). Y en cada uno, solo lo que cambia: no repitas "con la misma pose, el mismo encuadre y el mismo tratamiento", que también es decir lo que NO cambia.
+- **Cierra con las prohibiciones, cortas:** `No suavices ni deformes las caras. No añadas nada más.` Lo de las caras solo si las hay, y va literal: las herramientas suelen clavar la primera fila y hacer lo que quieren en la última.
 - **La tipografía SOLO si la imagen lleva texto.** Si no lleva, no la menciones: le estás dando una instrucción sin objeto y la puede usar de excusa para añadir texto que nadie pidió.
-- Enumera los cambios dentro del párrafo (1), (2), (3)… y di **qué se queda intacto** antes de decir qué cambia.
+- **Regla de pulgar:** si una frase describe algo que ya está en la referencia y no cambia, **bórrala**.
 - **Textos (SOLO si la imagen lleva):** si van en inglés, traducirlos al español (adaptado a ventas si no lo estaba), con **nuestra tipografía** (Bricolage Grotesque títulos + Switzer cuerpo) y la **regla de la palabra naranja** (`images §4`). **Si la imagen no lleva texto, no menciones la tipografía.**
 - **Roles en la imagen:** español genérico, sin anglicismos, entendibles por industrial 50+ (igual que el cuerpo).
 - **Paleta + detalles de marca:** aplica Alabastro (fondo) · Dark Blue (tinta) · Persian Orange (highlight), y **añade detalles nuestros** (corbatas naranjas, patrones, siluetas, props en naranja…) — no solo recolorear.
