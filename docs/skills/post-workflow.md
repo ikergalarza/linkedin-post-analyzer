@@ -291,12 +291,20 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs). Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
 
-**Paso 6 — FOTO: PROMPT de modificaciones (NO generar la imagen).** Observa la foto de referencia y entrega **UN párrafo simple** con los cambios a aplicar sobre ella:
-- **Textos:** si la foto lleva texto en inglés, traducirlo al español (adaptado a ventas si no lo estaba), con **nuestra tipografía** (Bricolage Grotesque títulos + Switzer cuerpo) y la **regla de la palabra naranja** (`images §4`).
+**Paso 6 — FOTO: PROMPT de modificaciones (NO generar la imagen).** Observa la foto de referencia y entrega **UN SOLO PÁRRAFO** con los cambios a aplicar sobre ella. Nada de listas ni de secciones: un párrafo, simple de leer y **lo más específico posible, para que el diseñador lo entienda a la primera**.
+
+**Cómo se escribe el prompt (técnica validada por el usuario, funciona):**
+- **Empieza en MAYÚSCULAS con la orden de contención:** `SOLO HAZ LO QUE TE PIDO Y NADA MÁS.` Es lo que más reduce que la herramienta se invente cosas.
+- **Cierra con las prohibiciones explícitas:** `No suavices ni deformes las caras. No añadas logos, marcas de agua ni elementos nuevos. No hagas nada que no te haya pedido.` Lo de las caras solo si las hay, y va literal: las herramientas suelen clavar la primera fila y hacer lo que quieren en la última.
+- **La tipografía SOLO si la imagen lleva texto.** Si no lleva, no la menciones: le estás dando una instrucción sin objeto y la puede usar de excusa para añadir texto que nadie pidió.
+- Enumera los cambios dentro del párrafo (1), (2), (3)… y di **qué se queda intacto** antes de decir qué cambia.
+- **Textos (SOLO si la imagen lleva):** si van en inglés, traducirlos al español (adaptado a ventas si no lo estaba), con **nuestra tipografía** (Bricolage Grotesque títulos + Switzer cuerpo) y la **regla de la palabra naranja** (`images §4`). **Si la imagen no lleva texto, no menciones la tipografía.**
 - **Roles en la imagen:** español genérico, sin anglicismos, entendibles por industrial 50+ (igual que el cuerpo).
 - **Paleta + detalles de marca:** aplica Alabastro (fondo) · Dark Blue (tinta) · Persian Orange (highlight), y **añade detalles nuestros** (corbatas naranjas, patrones, siluetas, props en naranja…) — no solo recolorear.
 - **Fidelidad al diseño original:** mantén el **estilo de dibujo** (minimalista→minimalista, recargado→recargado), el **layout, paneles, escena y mecánica cómica** de la referencia.
-- **Cambia solo los específicos:** conserva el elemento pero varía el detalle (si el original tiene café o avión → nosotros también, pero otro café u otro avión).
+- **⛔ EL SUJETO NO SE CAMBIA. Es el motor, no el decorado.** Conserva el elemento y varía solo el detalle: si el original tiene un perro → **otro perro**; café → otro café; avión → otro avión; camión → otro camión, **nunca un gato**. Un perro nuevo con nuestros colores haciendo lo mismo. Punto.
+  ❌ **Fallo real (2026-07-14):** referencia con un perro (1.307 likes, 96 reposts) y el prompt salió "el perro pasa a ser un COMERCIAL", razonando que había que anclar la imagen a ventas. **La gracia ERA el perro**; sin él no hay meme, hay una viñeta corporativa. El ancla de ventas se pone en el TEXTO (el del post y el de la imagen), nunca cambiando el sujeto.
+  **La regla de "roles en español genérico" NO es permiso para sustituir al protagonista**: aplica cuando el original YA tiene roles, no para meterlos donde no los había.
 - **Objetivo:** replicar el caso de éxito del original, **misma esencia**, remix a nuestro sector + Neety. (Sistema visual completo en `images §5-B` y `§6`.)
 
 **Sanity check (antes de entregar):** ¿la referencia tiene un motor que transfiere a ventas (filtro de 4 puntos, `global-instructions §4.3`)? Si el meme no puede anclarse a ventas o pierde la gracia al remixarlo, dilo en vez de forzarlo.
