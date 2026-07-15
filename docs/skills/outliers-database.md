@@ -199,6 +199,8 @@ Es el paso que más se falla y el que convierte el robo en algo original. Robar 
 - ⚠️ **Pero NO acotes de más en el hook.** "Ventas B2B", "outbound", "pipeline" o "SDR" estrechan el alcance aunque describan bien al cliente. En el gancho, cuanto más genérico dentro de VENTAS, más lejos llega. La especificidad va en el cuerpo.
 - **Ejemplo real (lead magnet de Asier, 2026-07-14):** el hueso del McKinsey Slide Playbook se remixó a *"tu propuesta entra sola en un comité"*. **Falla el test**: eso lo publica igual una consultora. Arreglado a *"Cierras con tu cliente. Y la venta se cae en un comité en el que no conoces a nadie"* → cerrar + cliente + venta = solo posible en una cuenta de ventas. Mismo hueso, misma emoción, ahora sí es nuestro.
 
+**Paso 7b — ⚖️ Se calca la ESENCIA, nunca el formateado.** Si ser fiel a la referencia te obliga a romper nuestras reglas (un parrafazo sin saltos, un guion largo, una coma antes de "y", jerga en el hook), **ganan las nuestras**. Se copia lo que hizo volar al post (gancho, imagen, esqueleto, emoción); no se copia cómo lo tecleó su autor. Tabla completa en `post-workflow §4.4`.
+
 **Paso 8 — El paquete completo:** idea remixada + hook adaptado + imagen adaptada + promesa clara + formato reconocible pero fresco.
 
 **Sanity check antes de entregar (si fallas uno, no lo publiques):**
