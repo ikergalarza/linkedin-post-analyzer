@@ -43,7 +43,22 @@ def bloques(texto):
     return [b.split('\n') for b in re.split(r'\n\s*\n', texto) if b.strip()]
 
 def es_lista(bloque):
-    return all(re.match(r'\s*(→|✅|[0-9]+[\.\)]|-|•|1️⃣|[2-9]️⃣)', l) for l in bloque if l.strip())
+    """¿Es una enumeración y no un bloque de prosa? Las enumeraciones están
+    exentas de las reglas de tamaño de §3.2: van pegadas a propósito.
+
+    Dos formas de serlo:
+    1. Marcadores clásicos (→, ✅, 1., -).
+    2. Patrón de ETIQUETA: 2+ líneas que acaban en ":" (Realidad: / CRM: /
+       Traducción:). Es la unidad (c) de §3.3, "enumeración vertical paralela
+       con sintaxis repetida, sin blanco entre líneas". Faltaba, y marcaba como
+       prosa mal formateado un remix que calcaba bien a su referencia.
+    """
+    lineas = [l for l in bloque if l.strip()]
+    if not lineas:
+        return True
+    if all(re.match(r'\s*(→|✅|[0-9]+[\.\)]|-|•|1️⃣|[2-9]️⃣)', l) for l in lineas):
+        return True
+    return sum(1 for l in lineas if l.rstrip().endswith(':')) >= 2
 
 def leer_historial():
     if not os.path.exists(HISTORIAL):
