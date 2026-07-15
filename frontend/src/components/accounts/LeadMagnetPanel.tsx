@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApi, apiPost, apiGet } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
-import { buildDm, buildInviteNote, buildReply, commentDepth, matchesKeyword } from './leadMagnetCopy';
+import { buildDm, buildInviteNote, buildReply, commentDepth, matchesKeyword, voiceFor } from './leadMagnetCopy';
+import type { Voice } from './leadMagnetCopy';
 
 // LeadMagnetPanel — the "Lead Magnet" sub-tab.
 //
@@ -293,9 +294,13 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // Variant rotation lives at the LIST level, not the card: the point is that
   // two cards in the same batch don't both say "Enviado!". A ref (not state)
   // because updating it must not re-render every sibling card.
+  // Whose account is answering. Everything written on this post is in that
+  // person's voice — Asier's stretch is shorter than Iker's or Unai's.
+  const voice = voiceFor(post.creator_name);
+
   const recentVariants = useRef<string[]>([]);
   const takeVariant = () => {
-    const { text, variant } = buildReply({ recent: recentVariants.current });
+    const { text, variant } = buildReply({ recent: recentVariants.current, voice });
     recentVariants.current = [...recentVariants.current, variant].slice(-6);
     return text;
   };
@@ -408,6 +413,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           cfg={cfg}
           sends={t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []}
           ownsDm={dmOwnerByPerson.get(t.author.profile_id ?? '') === t.id}
+          voice={voice}
           initialReply={takeVariant}
           onSent={refetchSends}
         />
@@ -482,6 +488,7 @@ function CommenterCard({
   cfg,
   sends,
   ownsDm,
+  voice,
   initialReply,
   onSent,
 }: {
@@ -494,6 +501,8 @@ function CommenterCard({
   // person's other keyword-matching comments, which show only a reply — the
   // resource goes out once, from the comment that actually asked for it.
   ownsDm: boolean;
+  // The voice of the account that published the post, not of the commenter.
+  voice: Voice;
   initialReply: () => string;
   onSent: () => void;
 }) {
@@ -554,9 +563,9 @@ function CommenterCard({
   const [msgTouched, setMsgTouched] = useState(false);
   useEffect(() => {
     if (msgTouched || alreadySent || !ownsDm) return;
-    const input = { name: thread.author.name, location, topic: cfg.topic, link: cfg.link };
+    const input = { name: thread.author.name, location, topic: cfg.topic, link: cfg.link, voice };
     setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
-  }, [location, cfg.topic, cfg.link, kind, msgTouched, alreadySent, ownsDm, thread.author.name]);
+  }, [location, cfg.topic, cfg.link, kind, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
 
   const [msgSending, setMsgSending] = useState(false);
   const [msgResult, setMsgResult] = useState<{ status: 'sent' | 'failed'; error: string | null } | null>(

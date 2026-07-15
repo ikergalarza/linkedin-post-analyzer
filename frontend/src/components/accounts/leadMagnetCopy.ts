@@ -88,7 +88,9 @@ export function firstName(fullName: string | null | undefined): string | null {
 // word, which is where the emphasis naturally lands in Spanish. Same trick
 // replyGenerator's RULE 12 asks the model for, done in code because here the
 // input is a fixed vocabulary.
-function stretchLastVowel(word: string, times: number): string {
+// `total` is how many copies of the vowel end up in the word, not how many
+// get added: total=2 turns "Hola" into "Holaa".
+function stretchLastVowel(word: string, total: number): string {
   const m = word.match(/^(.*?)([aeiouáéíóú])([^aeiouáéíóú]*)$/i);
   if (!m) return word;
   const [, head, vowel, tail] = m;
@@ -96,7 +98,23 @@ function stretchLastVowel(word: string, times: number): string {
   // capital ("Ep" — the vowel is the first letter), repeating it verbatim
   // gives "EEEp", which reads as shouting at someone we're cold-messaging.
   // "Eeep" is the thing a person actually types.
-  return head + vowel + vowel.toLowerCase().repeat(Math.max(0, times - 1)) + tail;
+  return head + vowel + vowel.toLowerCase().repeat(Math.max(0, total - 1)) + tail;
+}
+
+// ─────────────────────────────── voice per founder ───────────────────────────
+
+// How hard the vowel stretch leans. This is a VOICE TRAIT of the person whose
+// account is posting, not a global setting: Asier writes soberly, so "Holaa"
+// sounds like him and "Holaaaa" doesn't. Iker and Unai keep the fuller
+// stretch, which is what they've always had.
+export type Voice = 'sober' | 'normal';
+
+// Matched on the first name because that's what the creators table stores and
+// what the UI already shows. Anyone we don't recognise gets 'normal', so a new
+// account can never silently inherit someone else's voice.
+export function voiceFor(creatorName: string | null | undefined): Voice {
+  const first = (creatorName || '').trim().split(/\s+/)[0]?.toLowerCase();
+  return first === 'asier' ? 'sober' : 'normal';
 }
 
 // ────────────────────────────── reply variants ──────────────────────────────
@@ -130,17 +148,20 @@ function pick<T>(arr: T[], rng: () => number): T {
 // a row, which is the exact thing that makes it read as a bot. Once every
 // variant is spent the caller resets the list.
 export function buildReply(
-  opts: { recent?: string[]; rng?: () => number } = {}
+  opts: { recent?: string[]; rng?: () => number; voice?: Voice } = {}
 ): { text: string; variant: string } {
   const rng = opts.rng ?? Math.random;
   const recent = opts.recent ?? [];
+  const voice = opts.voice ?? 'normal';
   const pool = REPLY_VARIANTS.filter((v) => !recent.includes(v.text));
   const chosen = pick(pool.length > 0 ? pool : REPLY_VARIANTS, rng);
 
   let text = chosen.text;
   // Stretch roughly 2 of every 3 eligible replies — always is try-hard.
   if (chosen.stretch && rng() < 0.66) {
-    text = stretchLastVowel(text, 2 + Math.floor(rng() * 2)); // 2–3 repeats
+    // Sober stops at "Enviadoo"; normal keeps the 2–3 it has always had.
+    const total = voice === 'sober' ? 2 : 2 + Math.floor(rng() * 2);
+    text = stretchLastVowel(text, total);
   }
   // "!" on about half. Some variants read better flat ("Ya está").
   if (rng() < 0.5) text += '!';
@@ -202,13 +223,17 @@ function baseGreeting(location: string | null | undefined, rng: () => number): s
   return pick(NEUTRAL_GREETINGS, rng);
 }
 
-// "Hola" → "Holaaa", "Ey" → "Eyyy". Stretching the greeting is what turns a
-// dry mail-merge open into something a person would type. For "Ey" the letter
-// that stretches is the y, not a vowel, so it's handled apart.
-function stretchGreeting(g: string, rng: () => number): string {
-  const n = 2 + Math.floor(rng() * 2); // 2–3 extra chars
-  if (/y$/i.test(g)) return g + 'y'.repeat(n);
-  return stretchLastVowel(g, n + 1);
+// "Hola" → "Holaaa" / "Holaa". Stretching the greeting is what turns a dry
+// mail-merge open into something a person would type. For "Ey" the letter that
+// stretches is the y, not a vowel, so it's handled apart.
+//
+// `total` counts the final letters, so it lines up with buildReply. Sober is a
+// flat 2 ("Holaa", "Eyy", "Kaixoo"); normal keeps 3–4, which is what this has
+// always produced.
+function stretchGreeting(g: string, rng: () => number, voice: Voice): string {
+  const total = voice === 'sober' ? 2 : 3 + Math.floor(rng() * 2);
+  if (/y$/i.test(g)) return g + 'y'.repeat(Math.max(0, total - 1));
+  return stretchLastVowel(g, total);
 }
 
 // ──────────────────────────────── DM variants ────────────────────────────────
@@ -248,6 +273,9 @@ export interface DmInput {
   location?: string | null;
   topic: string;
   link: string;
+  // Whose account is writing. Defaults to 'normal' so a caller that forgets it
+  // gets the long-standing behaviour, never a voice that isn't theirs.
+  voice?: Voice;
   rng?: () => number;
 }
 
@@ -256,7 +284,7 @@ export interface DmInput {
 // than risking a wrong name.
 export function buildDm(input: DmInput): string {
   const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng);
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'normal');
   const name = firstName(input.name);
   const open = name ? `${g} ${name}!` : `${g}!`;
   // replaceAll with a function: a plain string replacement would interpret
@@ -277,7 +305,7 @@ export function buildDm(input: DmInput): string {
 // arriving pre-trimmed means the link is never what gets cut.
 export function buildInviteNote(input: DmInput): string {
   const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng);
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'normal');
   const name = firstName(input.name);
   const open = name ? `${g} ${name}!` : `${g}!`;
   const note = `${open} Comentaste en mi post, te dejo el recurso sobre ${input.topic}: ${input.link}`;
