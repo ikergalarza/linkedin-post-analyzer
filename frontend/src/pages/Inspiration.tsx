@@ -277,7 +277,7 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
 
 export default function Inspiration() {
   const { data, loading, error, refetch } = useApi<InspirationData>('/api/ideas/inspiration');
-  const [sortBy, setSortBy] = useState<'ratio' | 'likes' | 'comments' | 'recent' | 'funny'>('ratio');
+  const [sortBy, setSortBy] = useState<'ratio' | 'likes' | 'comments' | 'recent'>('ratio');
   const [filterHook, setFilterHook] = useState('');
   const [filterStructure, setFilterStructure] = useState('');
   const [filterCreator, setFilterCreator] = useState('');
@@ -384,11 +384,18 @@ export default function Inspiration() {
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   }, [outliers]);
 
+  // Los contadores por formato se calculan sobre el universo que el usuario
+  // está mirando: si "Solo memes" está activo, cuentan SOLO memes. Antes se
+  // calculaban siempre sobre todos los outliers, así que al filtrar memes los
+  // números de las chips seguían siendo los globales y no cuadraban con la lista.
   const contentTypes = useMemo(() => {
+    const universo = onlyMemes
+      ? outliers.filter((p) => (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD)
+      : outliers;
     const counts = new Map<string, number>();
-    outliers.forEach((p) => counts.set(p.content_type || 'text', (counts.get(p.content_type || 'text') || 0) + 1));
+    universo.forEach((p) => counts.set(p.content_type || 'text', (counts.get(p.content_type || 'text') || 0) + 1));
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  }, [outliers]);
+  }, [outliers, onlyMemes]);
 
   const filtered = useMemo(() => {
     let list = [...outliers];
@@ -415,7 +422,6 @@ export default function Inspiration() {
       case 'likes': list.sort((a, b) => b.likes_count - a.likes_count); break;
       case 'comments': list.sort((a, b) => b.comments_count - a.comments_count); break;
       case 'recent': list.sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime()); break;
-      case 'funny': list.sort((a, b) => (funnyPct(b.reaction_mix) ?? -1) - (funnyPct(a.reaction_mix) ?? -1)); break;
       default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
     return list;
@@ -721,7 +727,6 @@ export default function Inspiration() {
                 ['likes', '👍 Likes'],
                 ['comments', '💬 Comments'],
                 ['recent', '🕐 Recent'],
-                ['funny', '😂 Más funny'],
               ] as const).map(([key, label]) => (
                 <button
                   key={key}
@@ -735,20 +740,31 @@ export default function Inspiration() {
                   {label}
                 </button>
               ))}
-              {/* Memes-only toggle — separated visually because it's a
-                  filter, not a sort, but lives in the same row for proximity
-                  to the "Más funny" sort. */}
+            </div>
+
+            {/* MEMES — el único control de memes. Antes había dos ("Solo memes"
+                como filtro y "Más funny" como orden) y confundían, porque para
+                nosotros funny y meme son lo mismo. Se condensa en este toggle.
+                Al activarlo, las chips de formato de abajo pasan a contar solo
+                memes, así se ve qué formato usan los memes que funcionan. */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-text-muted font-medium">Memes:</span>
               <button
-                onClick={() => setOnlyMemes((v) => !v)}
+                onClick={() => { setOnlyMemes((v) => !v); setFilterContentType(''); }}
                 className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
                   onlyMemes
                     ? 'border-orange-400/60 bg-orange-400/15 text-orange-300'
                     : 'border-border bg-bg-secondary text-text-muted hover:border-orange-400/30'
                 }`}
-                title="Filtra a los posts cuya audiencia reaccionó con >25% 😂, según el reaction mix real"
+                title="Filtra a los posts cuya audiencia reaccionó con >25% 😂, según el reaction mix real. Es la señal de meme de la audiencia, no del clasificador."
               >
                 😂 Solo memes ({memeCount})
               </button>
+              {onlyMemes && (
+                <span className="text-xs text-text-muted">
+                  filtra por formato abajo para ver qué usan
+                </span>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -776,7 +792,9 @@ export default function Inspiration() {
 
             {contentTypes.length > 1 && (
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-text-muted font-medium">Type:</span>
+                <span className="text-xs text-text-muted font-medium">
+                  {onlyMemes ? 'Formato del meme:' : 'Formato:'}
+                </span>
                 <button
                   onClick={() => setFilterContentType('')}
                   className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${!filterContentType ? 'border-accent/50 bg-accent/10 text-accent' : 'border-border text-text-muted hover:border-accent/30'}`}
