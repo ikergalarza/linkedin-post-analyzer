@@ -155,6 +155,20 @@ def validar(texto, pilar, cuenta=None):
     chk(not fallos, 'Línea individual tras cada bloque de 2-3 (§3.2)',
         f'bloque pegado a otro bloque en posición {fallos}' if fallos else '')
 
+    # escalera: todo bloque de prosa de 2-3 líneas va en longitud monótona,
+    # recta (corta→larga) o invertida (larga→corta). Zigzag = no hay escalera (§3.2)
+    zigzag = []
+    for i, b in enumerate(bs):
+        if es_lista(b) or not 2 <= len(b) <= 3:
+            continue
+        L = [len(l.strip()) for l in b]
+        sube = all(L[j] < L[j + 1] for j in range(len(L) - 1))
+        baja = all(L[j] > L[j + 1] for j in range(len(L) - 1))
+        if not (sube or baja):
+            zigzag.append(f'bloque {i} {L}')
+    chk(not zigzag, 'Bloques de 2-3 en escalera, recta o invertida (§3.2)',
+        f'{zigzag} → cada línea más larga que la anterior, o cada una más corta' if zigzag else '')
+
     # ---------- POR PILAR ----------
     tiene_link = 'recursos.neety.com' in cuerpo
     if pilar in ('mapa', 'los10', 'meme'):
