@@ -258,12 +258,19 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 
 **Paso 1 — Traducir (si está en inglés, que es lo habitual):** EN→ES **fiel al original** en formato, longitud y estructura, pero con **expresiones naturales en español** donde suenen mejor (no traducción literal robótica).
 
-**Paso 2 — HOOK:**
+**Paso 2 — HOOK: ⭐ CALCA LA MECÁNICA DEL GANCHO ORIGINAL, igual que calcas la foto.**
+- **El gancho se roba con la misma fidelidad que la imagen.** Si calcas el layout de la foto pero te inventas un gancho nuevo, has tirado la mitad del outlier: el gancho original es parte del motor que lo hizo volar, no un envoltorio.
+- **Método:** escribe en una frase QUÉ hace el gancho original (su mecánica), y reprodúcela. Ej. real: *"LinkedIn es mágico ✨"* = **afirmación corta, irónica, sobre la herramienta, que monta el marco sin destripar el chiste**. El remix mantiene esa mecánica (corta + irónica + sobre la herramienta) y cambia la piel a ventas: *"Tu CRM resucita clientes muertos ✨"*.
+- **Mismo o mejor, nunca distinto.** "Mejor" = el verbo sube un peldaño (`global §2.9`) y se ancla a ventas (`§2.3`). "Distinto" = un gancho tuyo pegado a una foto ajena.
+- ❌ **Fallo real (2026-07-14):** referencia con gancho *"LinkedIn es mágico ✨"* y el remix salió *"Tu cliente no te cogió el teléfono. El CRM lo asciende a oportunidad en fase avanzada 👇"*. Largo, específico, destripa el chiste que cuenta la foto y no se parece en nada al original. El validador dio 17/17 porque **esto el script no lo ve**: es criterio.
+- **Si el gancho original no lleva 👇** (muchos memes cierran con un emoji irónico o un punto), no se lo metas a la fuerza: la fidelidad manda sobre la convención. Validado: "Subir en ventas siempre pasa factura." (13.52x) cierra con punto.
 - **Itera VERBOS** hasta el más punchy **sin perder el significado original** (escalera y techo: `global-instructions §2.9`).
 - Aplica TODAS las reglas de hook (`global-instructions §2` + `swipe-file`): bloque único ≤210, imagen mental, ≤1 número, corto.
 - **Ancla a VENTAS siempre**, aunque la referencia no vaya de ventas: desde el lado de vender, del cliente o del comercial. Amplifica el alcance al máximo sin perder la esencia de ventas.
 
-**Paso 3 — CUERPO:** lo más **fiel al original** en formato/longitud/formateado, pero **adaptado a ventas B2B**. Corto (3-6 líneas; el motor es la foto, no el texto).
+**Paso 3 — CUERPO: fiel al original en ESTRUCTURA, no solo en tono.** Copia su esqueleto etiqueta por etiqueta y cambia solo el contenido. Ej. real: si el original va `Realidad: / LinkedIn: / Traducción: / Pero hey… / PD:`, el remix va `Realidad: / CRM: / Traducción: / Pero oye… / PD:`. **Escribir un cuerpo propio "en el mismo espíritu" NO es calcar: es otro post.**
+- **Longitud: la del original.** La regla de 3-6 líneas es el DEFAULT del pilar; si la referencia tiene 10 líneas cortas, el remix tiene 10 líneas cortas. Manda la fidelidad.
+- Adaptado a ventas B2B (`§2.3`), pero sin destripar el chiste que cuenta la foto: el texto monta el marco, la foto remata.
 - **Roles de trabajadores:** sin anglicismos ni títulos complejos. Español genérico que un **industrial de 50+ entienda** (comercial, jefe de ventas, director comercial, gerente…) — lo más genérico = más alcance. (Mismo criterio en la foto, Paso 6.)
 
 **Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). Máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), nunca última línea. Aquí no hay menciones, así que va en el punto más natural del cuerpo — y ojo: el cuerpo del meme es de 3-6 líneas, así que el spam ninja **no puede comerse el post**. Validado: el iMessage "El de Ventas" (7.9x · 80.9K) llevaba link de agendar en spam ninja sin matar alcance.

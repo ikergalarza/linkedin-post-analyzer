@@ -341,6 +341,7 @@ Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra 
 - **¿El DATO es cierto?** Verificado contra fuente real, con su año en la entrega interna. El script no sabe si mientes.
 - **¿El ÁNGULO está quemado?** Contra `§6` y el historial.
 - **¿El remix robó el HUESO o la piel?** (`outliers-database §3.9c`.)
+- **⭐ EN UN REMIX DE REFERENCIA: ¿el GANCHO y el CUERPO calcan al original, o solo la foto?** El error es calcar la imagen con lupa y luego escribir un texto propio. El gancho original es parte del motor. Escribe en una frase la mecánica del gancho de la referencia y comprueba que la tuya es la MISMA (`post-workflow §4.4` Pasos 2 y 3). **El script da 17/17 igual: esto no lo ve.**
 - **¿Repite expresiones** de posts anteriores? (`working-preferences §4`.)
 
 **Checks de criterio, uno por uno:**
