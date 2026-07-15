@@ -272,16 +272,32 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           <span className="text-sm font-medium">{post.creator_name}</span>
           <span className="text-[11px] text-text-muted">· {fmtRelative(post.published_at)}</span>
           <span className="text-[11px] text-text-muted">· 💬 {post.comments_count ?? 0}</span>
-          {post.post_url && (
-            <a
-              href={post.post_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] text-accent hover:text-accent-light ml-auto"
+          {/* Refresh lives HERE, top-right of the post, and is NOT gated on
+              the config being filled in: while a lead magnet is live the
+              comments arrive by the minute, and this is the button you hit
+              over and over. Re-reads the comments from LinkedIn AND the
+              already-sent list, so a card can't come back offering to send
+              the resource to someone who already got it. */}
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => { refetch(); refetchSends(); }}
+              disabled={loading}
+              className="text-[11px] text-text-muted hover:text-accent disabled:opacity-50 transition-colors whitespace-nowrap"
+              title="Vuelve a leer los comentarios de este post en LinkedIn"
             >
-              Ver en LinkedIn →
-            </a>
-          )}
+              {loading ? '↻ Buscando…' : '↻ Recargar comentarios'}
+            </button>
+            {post.post_url && (
+              <a
+                href={post.post_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-accent hover:text-accent-light whitespace-nowrap"
+              >
+                Ver en LinkedIn →
+              </a>
+            )}
+          </div>
         </div>
         {headline && <p className="text-xs text-text-primary line-clamp-2">{headline}</p>}
       </div>
@@ -320,13 +336,6 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             {sentCount > 0 && (
               <span className="text-text-muted">· {sentCount} ya recibieron el recurso</span>
             )}
-            <button
-              onClick={() => { refetch(); refetchSends(); }}
-              disabled={loading}
-              className="ml-auto text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
-            >
-              {loading ? '↻ Buscando…' : '↻ Actualizar comentarios'}
-            </button>
           </div>
         )}
       </div>
