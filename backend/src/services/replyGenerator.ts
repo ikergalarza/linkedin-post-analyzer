@@ -23,6 +23,12 @@ export interface ReplyGenerationInput {
     signature_moves: string | null;
     avoid: string | null;
   };
+  // Set ONLY by the Lead Magnet tab. This person commented a keyword to get a
+  // resource, and we're sending it to them by DM in the same breath — so the
+  // reply has a second job the normal one doesn't: confirm the thing is on its
+  // way. Without this the model writes a perfectly good reply that never
+  // mentions the resource, and the commenter has no idea to check their DMs.
+  leadMagnet?: { topic: string };
 }
 
 const SYSTEM_PROMPT = `You are the AUTHOR of a LinkedIn post, writing a short reply to someone who commented on it. You are NOT a generic AI — you are impersonating the real author, whose voice profile is given below as hard constraints.
@@ -92,6 +98,19 @@ function buildPrompt(input: ReplyGenerationInput): string {
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
   const varietyNudge = `VARIETY NUDGE for THIS reply: lean toward this move IF it fits the comment naturally (don't force it): ${move}. The point is variety across replies (RULE 10) — a common opener like "exacto/totalmente" is fine now and then, just not as the default every time.`;
 
+  // Lead magnet: this person didn't just comment, they asked for something —
+  // and they're getting it by DM right now. The reply must do BOTH jobs.
+  const leadMagnetInstruction = input.leadMagnet
+    ? `\n═══ LEAD MAGNET (applies to THIS reply) ═══
+This person commented on a post that offered a resource about "${input.leadMagnet.topic}" in exchange for a keyword. You are sending them that resource by private message RIGHT NOW.
+
+So this reply has TWO jobs and needs both:
+1. ENGAGE with what they actually said. They didn't only drop the keyword — they wrote something real (an opinion, their own experience, a question). React to THAT, specifically, the way you would to any good comment. This is the part that matters; a reply that skips it is worthless.
+2. CONFIRM the resource is sent, in a SHORT closing beat — "te lo acabo de mandar", "lo tienes en privado", "te lo he pasado por DM". Casual, tacked on at the end, NOT the headline of the reply.
+
+Order matters: engage FIRST, confirm LAST. Never open with "enviado" — that turns a real comment into a receipt, which is exactly what we're trying to avoid. Keep the whole thing to 2-3 short sentences even with both jobs.\n`
+    : '';
+
   return `You are ${input.authorName}. Reply to a comment on your own post.
 
 ${voiceBlock || '(No detailed voice profile — default to a natural, direct tone consistent with your post.)'}
@@ -104,7 +123,7 @@ ${commenterLine}
 "${input.commentText}"
 
 ${mentionInstruction}
-
+${leadMagnetInstruction}
 ${varietyNudge}
 
 Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApi, apiPost, apiGet } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
-import { buildDm, buildInviteNote, buildReply, hasQuestion, matchesKeyword } from './leadMagnetCopy';
+import { buildDm, buildInviteNote, buildReply, commentDepth, matchesKeyword } from './leadMagnetCopy';
 
 // LeadMagnetPanel — the "Lead Magnet" sub-tab.
 //
@@ -461,6 +461,11 @@ function CommenterCard({
   const priorSend = sends.find((s) => s.kind === kind) ?? null;
   const alreadySent = priorSend?.status === 'sent';
 
+  // 'plain' → they dropped the keyword and nothing else; the template IS the
+  // answer. 'rich' → they wrote something real, and "remitido!" would be
+  // throwing away the best comment on the post.
+  const depth = commentDepth(thread.text || '', cfg.keyword);
+
   // ── reply state ──
   // Drafted once on mount, from the list-level variant rotation. Lazy initial
   // state so the rotation advances exactly once per card, not on every render.
@@ -526,9 +531,11 @@ function CommenterCard({
     });
   };
 
-  // The AI path, offered only when the comment carries a real question next
-  // to the keyword. Reuses the Comentarios tab's generator — same voice, same
-  // rules — because at that point it IS a normal reply, not a receipt.
+  // The written reply, for comments that earned one. Goes through the
+  // Comentarios tab's generator — same voice, same rules — but with the lead
+  // magnet topic attached, so the reply engages with their point AND closes
+  // by confirming the resource is on its way. Without that topic the model
+  // writes a fine reply that never mentions the DM, and they never check it.
   const handleAi = async () => {
     setAiLoading(true);
     setReplyMsg(null);
@@ -540,6 +547,7 @@ function CommenterCard({
           commenter_name: thread.author.name,
           commenter_headline: thread.author.headline,
           commenter_profile_id: thread.author.profile_id,
+          lead_magnet_topic: cfg.topic,
         }
       );
       setReply(res.reply);
@@ -549,6 +557,19 @@ function CommenterCard({
       setAiLoading(false);
     }
   };
+
+  // A rich comment drafts its real reply on its own — no button to hunt for.
+  // The template draft is already in the box, so if this is slow or fails you
+  // still have something sendable; it just gets replaced when the good one
+  // lands. Only fires for rich comments, so a post full of bare "PROPUESTA"
+  // costs nothing. The ref guard is what stops StrictMode's double-mount (and
+  // any re-render) from paying for the same reply twice.
+  const autoFired = useRef(false);
+  useEffect(() => {
+    if (depth !== 'rich' || autoFired.current || replySent || !cfg.topic.trim()) return;
+    autoFired.current = true;
+    handleAi();
+  }, [depth, replySent, cfg.topic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReply = async () => {
     if (!reply.trim()) return;
@@ -591,7 +612,6 @@ function CommenterCard({
     }
   };
 
-  const question = hasQuestion(thread.text || '', cfg.keyword);
   const noProfileId = !thread.author.profile_id;
 
   return (
@@ -613,19 +633,30 @@ function CommenterCard({
 
           {/* ── Reply ── */}
           <div className="mt-3 space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-medium text-text-secondary">Respuesta al comentario</span>
-              {question && !aiLoading && (
+              {depth === 'rich' && (
+                <span
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30"
+                  title="No solo dejó la palabra clave: escribió algo. La plantilla se queda corta, así que la respuesta se redacta entera."
+                >
+                  ✨ comentario con chicha
+                </span>
+              )}
+              {aiLoading && <span className="text-[10px] text-text-muted">Escribiendo respuesta…</span>}
+              {!aiLoading && !replySent && (
                 <button
                   onClick={handleAi}
-                  disabled={replySent}
-                  className="text-[10px] px-2 py-0.5 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 transition-colors"
-                  title="Este comentario trae una pregunta — la plantilla se queda corta"
+                  className="text-[10px] text-text-muted hover:text-accent transition-colors ml-auto"
+                  title={
+                    depth === 'rich'
+                      ? 'Vuelve a redactarla'
+                      : 'Este comentario es solo la palabra clave, pero puedes redactarle una respuesta igualmente'
+                  }
                 >
-                  ✨ Responder con IA
+                  {depth === 'rich' ? '↻ Regenerar' : '✨ Redactar respuesta'}
                 </button>
               )}
-              {aiLoading && <span className="text-[10px] text-text-muted">Escribiendo…</span>}
             </div>
             {replySent ? (
               <p className="text-[11px] text-text-muted">{replyMsg || '✓ Ya respondido'}</p>

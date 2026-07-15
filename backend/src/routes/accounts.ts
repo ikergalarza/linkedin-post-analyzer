@@ -2155,7 +2155,12 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
   try {
     const postId = req.params.postId as string;
     const commentId = req.params.commentId as string;
-    const { comment_text, commenter_name, commenter_headline, commenter_profile_id } = req.body || {};
+    const {
+      comment_text, commenter_name, commenter_headline, commenter_profile_id,
+      // Set only by the Lead Magnet tab: the resource's topic. Its presence
+      // is what tells the generator to also confirm the DM is on its way.
+      lead_magnet_topic,
+    } = req.body || {};
 
     // GIF / sticker / image-only comment → no text to engage with. Skip the
     // LLM entirely and reply with a single support emoji (same behaviour as
@@ -2204,6 +2209,9 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
         signature_moves: profile.signature_moves,
         avoid: profile.avoid,
       },
+      leadMagnet: lead_magnet_topic && String(lead_magnet_topic).trim()
+        ? { topic: String(lead_magnet_topic).trim() }
+        : undefined,
     });
 
     // Echo the commenter identity back so the frontend can pass it to /reply

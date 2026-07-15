@@ -275,15 +275,42 @@ export function buildInviteNote(input: DmInput): string {
   return `${open} Comentaste en mi post, te dejo el recurso: ${input.link}`.slice(0, 300);
 }
 
-// Does this comment deserve a real, written answer instead of "Enviado!"?
+// Words that are NOT content: someone typing "MAPA porfa gracias!!" wrote the
+// keyword and nothing else, however many words it technically is.
+const FILLER = new Set([
+  'porfa', 'porfavor', 'favor', 'por', 'gracias', 'graciass', 'grac', 'plis',
+  'please', 'quiero', 'me', 'lo', 'la', 'el', 'interesa', 'interesada',
+  'interesado', 'apunto', 'apuntado', 'yo', 'tambien', 'gustaria', 'dale',
+  'va', 'vamos', 'si', 'sii', 'claro', 'genial', 'top', 'crack', 'grande',
+  'gran', 'buen', 'bueno', 'buena', 'brutal', 'mucho', 'muy', 'un', 'una',
+  'y', 'a', 'de', 'que', 'en', 'con', 'para', 'mil', 'eso', 'esto',
+]);
+
+// Does this comment deserve a written answer, or is "Enviado!" the whole of it?
 //
-// The signal is a question mark plus enough words to be an actual question —
-// someone who typed "MAPA" and nothing else gets the template; someone who
-// typed "MAPA, ¿cubre también Gipuzkoa?" gets the AI button. The keyword
-// itself is stripped first so "¿MAPA?" alone doesn't trip it.
-export function hasQuestion(text: string, keyword: string): boolean {
-  const withoutKeyword = normalize(text).replace(normalize(keyword), ' ');
-  if (!/[?¿]/.test(withoutKeyword)) return false;
-  const words = withoutKeyword.replace(/[?¿!¡.,]/g, ' ').trim().split(/\s+/).filter(Boolean);
-  return words.length >= 3;
+//   'plain' — the keyword and nothing more ("MAPA", "MAPA porfa!", "MAPA 🙌").
+//             The template IS the right answer; there's nothing to engage with.
+//   'rich'  — they wrote something real next to the keyword: a question, an
+//             opinion, their own experience. This is the best comment on the
+//             post and answering it with "remitido!" wastes it.
+//
+// Rich is deliberately NOT "has a question mark". Plenty of the best comments
+// never ask anything — they tell you something. So the test is whether any
+// CONTENT survives once the keyword, the punctuation, the emoji and the
+// filler are stripped out.
+export function commentDepth(text: string, keyword: string): 'plain' | 'rich' {
+  let rest = normalize(text);
+  // Remove every occurrence of the keyword, not just the first.
+  const k = normalize(keyword).trim();
+  if (k) rest = rest.split(k).join(' ');
+  const words = rest
+    .replace(/[\p{Extended_Pictographic}️]/gu, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 1 && !FILLER.has(w));
+  // A question is rich even if short ("¿cubre Gipuzkoa?" → 2 content words),
+  // because a question demands an answer no template can give.
+  if (/[?¿]/.test(rest) && words.length >= 1) return 'rich';
+  return words.length >= 3 ? 'rich' : 'plain';
 }
