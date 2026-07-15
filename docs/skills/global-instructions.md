@@ -223,6 +223,7 @@ Outlier validado: País Vasco 4.8x · 49.4K. Formato NUEVO a repetir.
 - **NO fue** por desvelar la región en el hook ni por que el founder no sea de allí. El foco es la persona.
 - **Imagen:** orla de retratos (cabezas), NO personas sobre un mapa. Cabecera fuerte ("LOS 10 QUE LEVANTAN LA INDUSTRIA VASCA") en paleta Neety, palabra clave en naranja.
 - Eje emocional: "le pongo cara al que estuvo detrás del salto".
+- **Clichés SÍ, shock de país NO.** Del mapa se roba la saturación de clichés (4-8, entre la lista y el reveal: es lo que dispara el repost del local, y este pilar solo saca 12 reposts frente a los 46-90 de los mapas). **Pero nunca su cifra comparativa contra un país entero:** descentra el post de las personas y canibaliza el mapa. El 4.81x del País Vasco no llevaba ninguna cifra regional. Detalle en `post-workflow §4.3` Paso 3b.
 - **Link de agendar en spam ninja** justo después de las menciones, con las reglas canónicas de **§4.4b** (mismo criterio que mapas).
 - Aplica las mismas reglas de reescritura y concepto regional original que en mapas.
 
