@@ -1,0 +1,714 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useApi, apiPost, apiGet } from '../../hooks/useApi';
+import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
+import type { Thread } from './shared';
+import { buildDm, buildInviteNote, buildReply, hasQuestion, matchesKeyword } from './leadMagnetCopy';
+
+// LeadMagnetPanel — the "Lead Magnet" sub-tab.
+//
+// The job: a lead magnet post tells people to comment a keyword, and in
+// exchange we send them a resource by DM. This tab does that end to end —
+// pick the account, pick the post, type the keyword + link + topic, and get
+// one card per person who commented it, each with the reply and the DM
+// already drafted.
+//
+// Three things worth knowing before reading on:
+//
+// 1. The drafts are TEMPLATES, not model output (see leadMagnetCopy.ts).
+//    They're there the moment the card renders — there's no "generate" step
+//    for the normal case. The AI button only shows on comments that asked a
+//    real question.
+//
+// 2. LinkedIn only delivers a plain DM to a 1st-degree connection. Everyone
+//    else gets an invitation carrying the resource in the note. The card
+//    picks which, from the degree badge, and says so.
+//
+// 3. Sends are ONE BY ONE, deliberately. No "send all" — a hundred DMs in a
+//    burst from one account is the pattern LinkedIn restricts accounts for,
+//    and losing the account costs more than any lead magnet earns.
+
+interface ManagedAccount {
+  id: string;
+  name: string | null;
+  profile_image_url?: string | null;
+}
+
+interface Props {
+  accounts: ManagedAccount[];
+  onSelectCreator: (id: string) => void;
+}
+
+interface GridPost {
+  id: string;
+  hook_text: string | null;
+  content_text: string | null;
+  content_type: string | null;
+  published_at: string | null;
+  post_url: string | null;
+  comments_count: number | null;
+  likes_count: number | null;
+  creator_name: string | null;
+  creator_image: string | null;
+}
+
+interface CommentsResponse {
+  post: { id: string; content_text: string | null; creator_name: string | null };
+  threads: Thread[];
+}
+
+// One row of lead_magnet_sends, as the backend returns it.
+interface SendRecord {
+  comment_social_id: string;
+  kind: 'dm' | 'invite';
+  status: 'sent' | 'failed';
+  text: string | null;
+  error: string | null;
+  created_at: string;
+}
+
+// The per-post config (keyword / link / topic). Kept in localStorage keyed by
+// post id: you'll come back to the same lead magnet over a couple of days as
+// comments trickle in, and retyping the link every time is how a wrong link
+// eventually goes out.
+interface LmConfig { keyword: string; link: string; topic: string }
+const emptyConfig: LmConfig = { keyword: '', link: '', topic: '' };
+
+function loadConfig(postId: string): LmConfig {
+  try {
+    const raw = localStorage.getItem(`lm-config:${postId}`);
+    if (!raw) return emptyConfig;
+    const p = JSON.parse(raw);
+    return { keyword: p.keyword || '', link: p.link || '', topic: p.topic || '' };
+  } catch {
+    return emptyConfig;
+  }
+}
+function saveConfig(postId: string, cfg: LmConfig) {
+  try {
+    localStorage.setItem(`lm-config:${postId}`, JSON.stringify(cfg));
+  } catch {
+    /* private mode / quota — the config just won't persist, not fatal */
+  }
+}
+
+export default function LeadMagnetPanel({ accounts, onSelectCreator }: Props) {
+  // Same deferred-load shape as the Comentarios tab: nothing fetches until
+  // an account is chosen.
+  const [creator, setCreator] = useState<string>('');
+  const [postId, setPostId] = useState<string | null>(null);
+
+  const { data: gridData, loading: gridLoading, error: gridError } = useApi<{ posts: GridPost[] }>(
+    creator ? `/api/accounts/lead-magnet/posts?creator_id=${creator}` : null
+  );
+
+  const posts = gridData?.posts ?? [];
+  const selectedPost = posts.find((p) => p.id === postId) ?? null;
+
+  const pickAccount = (v: string) => {
+    setCreator(v);
+    setPostId(null); // a post from the old account must not survive the switch
+    onSelectCreator(v);
+  };
+
+  return (
+    <div className="space-y-4 min-w-0">
+      {/* Step 1 — account */}
+      <div className="bg-bg-card border border-border rounded-xl p-4 flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-text-muted">Cuenta:</span>
+          <select
+            value={creator}
+            onChange={(e) => pickAccount(e.target.value)}
+            className="bg-bg-primary border border-border rounded-md px-2 py-1 text-xs"
+          >
+            <option value="" disabled>— elige una cuenta —</option>
+            {accounts.map((a) => (
+              <option key={a.id} value={a.id}>{a.name || 'Unknown'}</option>
+            ))}
+          </select>
+        </div>
+        {selectedPost && (
+          <button
+            onClick={() => setPostId(null)}
+            className="text-xs text-accent hover:text-accent-light"
+          >
+            ← Cambiar de post
+          </button>
+        )}
+      </div>
+
+      {!creator && (
+        <p className="text-center text-text-muted text-sm py-10">
+          Elige una cuenta para ver sus posts.
+        </p>
+      )}
+
+      {/* Step 2 — the post grid. Hidden once a post is picked, so the working
+          area isn't competing with 20 cards you're done with. */}
+      {creator && !selectedPost && (
+        <div>
+          {gridLoading && <p className="text-center text-text-muted text-sm py-10">Cargando posts…</p>}
+          {gridError && <p className="text-center text-red-400 text-sm py-6">{gridError}</p>}
+          {!gridLoading && posts.length === 0 && (
+            <p className="text-center text-text-muted text-sm py-10">Esta cuenta no tiene posts registrados.</p>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {posts.map((p) => (
+              <PostTile key={p.id} post={p} onPick={() => setPostId(p.id)} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 3 — the working area. Keyed by post id so switching posts
+          REMOUNTS it: every draft, every "ver más" and the loaded config
+          belong to one post, and carrying any of it across would mean
+          sending post A's resource to post B's commenters. */}
+      {selectedPost && <Workspace key={selectedPost.id} post={selectedPost} creatorId={creator} />}
+    </div>
+  );
+}
+
+// One tile in the post grid. No thumbnail on purpose: LinkedIn's image URLs
+// are time-signed and 403 once expired, so a 20-tile grid would fire 20
+// refresh calls and still show holes. The hook is what identifies the post
+// anyway.
+function PostTile({ post, onPick }: { post: GridPost; onPick: () => void }) {
+  const headline = (post.hook_text || post.content_text || '(sin texto)')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return (
+    <button
+      onClick={onPick}
+      className="text-left bg-bg-card border border-border hover:border-accent/50 rounded-xl p-3 transition-colors min-w-0 flex flex-col gap-2"
+    >
+      <div className="flex items-center gap-2 min-w-0">
+        <Avatar src={post.creator_image} name={post.creator_name} size={20} />
+        <span className="text-[11px] text-text-muted whitespace-nowrap">{fmtRelative(post.published_at)}</span>
+        {post.content_type && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-bg-primary border border-border text-text-muted whitespace-nowrap">
+            {post.content_type}
+          </span>
+        )}
+      </div>
+      <p className="text-xs text-text-primary line-clamp-3 flex-1">{headline}</p>
+      <div className="flex items-center gap-3 text-[11px] text-text-muted">
+        <span className="tabular-nums">💬 {post.comments_count ?? 0}</span>
+        <span className="tabular-nums">👍 {post.likes_count ?? 0}</span>
+      </div>
+    </button>
+  );
+}
+
+// The post's config bar + the filtered commenter list.
+function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
+  // No "reload on post change" effect: the parent keys this component by
+  // post id, so a different post is a fresh mount and this initialiser runs
+  // again on its own.
+  const [cfg, setCfg] = useState<LmConfig>(() => loadConfig(post.id));
+  useEffect(() => { saveConfig(post.id, cfg); }, [post.id, cfg]);
+
+  const { data, loading, error, refetch } = useApi<CommentsResponse>(
+    `/api/accounts/posts/${post.id}/comments`
+  );
+  const { data: sendsData, refetch: refetchSends } = useApi<{ sends: SendRecord[] }>(
+    `/api/accounts/lead-magnet/sends?post_id=${post.id}`
+  );
+
+  // comment_social_id → the records for it. A person can legitimately have
+  // both an invite and (later) a DM, so this is a list, not a single record.
+  const sendsByComment = useMemo(() => {
+    const m = new Map<string, SendRecord[]>();
+    for (const s of sendsData?.sends ?? []) {
+      const list = m.get(s.comment_social_id) ?? [];
+      list.push(s);
+      m.set(s.comment_social_id, list);
+    }
+    return m;
+  }, [sendsData]);
+
+  const ready = cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim();
+
+  // Keyword filter, client-side: the comment list is already in memory, so
+  // changing the keyword re-filters instantly instead of hitting LinkedIn
+  // again. Company pages are dropped — you can't DM a company page, and a
+  // company commenting the keyword isn't a lead.
+  const matches = useMemo(() => {
+    if (!cfg.keyword.trim()) return [];
+    return (data?.threads ?? []).filter(
+      (t) => !t.author.is_company && matchesKeyword(t.text || '', cfg.keyword)
+    );
+  }, [data, cfg.keyword]);
+
+  // Pagination resets whenever the keyword changes (a new keyword is a new
+  // list, and inheriting "showing 40" from the previous one is nonsense).
+  // The reset is DERIVED rather than done in an effect: we remember which
+  // keyword the count belongs to, and ignore it once that goes stale.
+  const PAGE = 10;
+  const [vis, setVis] = useState<{ key: string; n: number }>({ key: cfg.keyword, n: PAGE });
+  const visible = vis.key === cfg.keyword ? vis.n : PAGE;
+  const showMore = () => setVis({ key: cfg.keyword, n: visible + PAGE });
+
+  const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+
+  // Variant rotation lives at the LIST level, not the card: the point is that
+  // two cards in the same batch don't both say "Enviado!". A ref (not state)
+  // because updating it must not re-render every sibling card.
+  const recentVariants = useRef<string[]>([]);
+  const takeVariant = () => {
+    const { text, variant } = buildReply({ recent: recentVariants.current });
+    recentVariants.current = [...recentVariants.current, variant].slice(-6);
+    return text;
+  };
+
+  const sentCount = (sendsData?.sends ?? []).filter((s) => s.status === 'sent').length;
+
+  return (
+    <div className="space-y-4 min-w-0">
+      {/* The post we're working on */}
+      <div className="bg-bg-card border border-border rounded-xl p-4">
+        <div className="flex items-center gap-2 flex-wrap min-w-0 mb-1.5">
+          <Avatar src={post.creator_image} name={post.creator_name} size={24} />
+          <span className="text-sm font-medium">{post.creator_name}</span>
+          <span className="text-[11px] text-text-muted">· {fmtRelative(post.published_at)}</span>
+          <span className="text-[11px] text-text-muted">· 💬 {post.comments_count ?? 0}</span>
+          {post.post_url && (
+            <a
+              href={post.post_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-accent hover:text-accent-light ml-auto"
+            >
+              Ver en LinkedIn →
+            </a>
+          )}
+        </div>
+        {headline && <p className="text-xs text-text-primary line-clamp-2">{headline}</p>}
+      </div>
+
+      {/* Config: keyword / link / topic */}
+      <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Field
+            label="Palabra clave"
+            hint="La que pides comentar. Ej: MAPA"
+            value={cfg.keyword}
+            onChange={(v) => setCfg((c) => ({ ...c, keyword: v }))}
+            placeholder="MAPA"
+          />
+          <Field
+            label="Enlace del recurso"
+            hint="El de recursos.neety.com que va en el mensaje"
+            value={cfg.link}
+            onChange={(v) => setCfg((c) => ({ ...c, link: v }))}
+            placeholder="https://recursos.neety.com/…"
+          />
+          <Field
+            label="Tema"
+            hint="Rellena «el recurso sobre…»"
+            value={cfg.topic}
+            onChange={(v) => setCfg((c) => ({ ...c, topic: v }))}
+            placeholder="el mapa de logística de Bizkaia"
+          />
+        </div>
+        {ready && (
+          <div className="flex items-center gap-3 flex-wrap text-xs text-text-secondary pt-1 border-t border-border">
+            <span>
+              <span className="font-semibold text-text-primary">{matches.length}</span> comentario
+              {matches.length === 1 ? '' : 's'} con «{cfg.keyword.trim()}»
+            </span>
+            {sentCount > 0 && (
+              <span className="text-text-muted">· {sentCount} ya recibieron el recurso</span>
+            )}
+            <button
+              onClick={() => { refetch(); refetchSends(); }}
+              disabled={loading}
+              className="ml-auto text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
+            >
+              {loading ? '↻ Buscando…' : '↻ Actualizar comentarios'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {!ready && (
+        <p className="text-center text-text-muted text-sm py-10">
+          Rellena la palabra clave, el enlace y el tema para ver a quién hay que mandarle el recurso.
+        </p>
+      )}
+
+      {ready && loading && !data && (
+        <p className="text-center text-text-muted text-sm py-10">Cargando comentarios del post…</p>
+      )}
+      {ready && error && (
+        <p className="text-center text-red-400 text-sm py-6">
+          {error} <button onClick={refetch} className="underline">Reintentar</button>
+        </p>
+      )}
+      {ready && data && matches.length === 0 && (
+        <p className="text-center text-text-muted text-sm py-10">
+          Ningún comentario contiene «{cfg.keyword.trim()}». Revisa que la palabra sea la del post.
+        </p>
+      )}
+
+      {ready && matches.slice(0, visible).map((t) => (
+        <CommenterCard
+          key={t.id}
+          thread={t}
+          postId={post.id}
+          creatorId={creatorId}
+          cfg={cfg}
+          sends={sendsByComment.get(t.id) ?? []}
+          initialReply={takeVariant}
+          onSent={refetchSends}
+        />
+      ))}
+
+      {ready && matches.length > visible && (
+        <button
+          onClick={showMore}
+          className="w-full py-2.5 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+        >
+          Ver más ({matches.length - visible} restantes) ↓
+        </button>
+      )}
+    </div>
+  );
+}
+
+function Field({
+  label,
+  hint,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  hint: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="min-w-0">
+      <label className="block text-[11px] font-medium text-text-secondary mb-1">{label}</label>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent"
+      />
+      <p className="text-[10px] text-text-muted mt-1">{hint}</p>
+    </div>
+  );
+}
+
+// The degree badge. This is the load-bearing bit of information on the card:
+// it decides whether the person can be DM'd at all.
+function DegreeBadge({ d }: { d: number | null | undefined }) {
+  if (d === 1) {
+    return (
+      <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
+        1er grado · DM
+      </span>
+    );
+  }
+  const label = d === 2 ? '2º grado' : d === 3 ? '3er grado' : 'grado desconocido';
+  return (
+    <span
+      className="text-[10px] px-1.5 py-0.5 rounded bg-bg-primary text-text-muted border border-border whitespace-nowrap"
+      title="LinkedIn solo entrega un DM normal a contactos de 1er grado. A esta persona se le manda una invitación con el recurso en la nota."
+    >
+      {label} · invitación
+    </span>
+  );
+}
+
+// One person who commented the keyword: their comment, the reaction bar, the
+// reply draft, and the DM (or invitation) draft. Both drafts arrive written.
+function CommenterCard({
+  thread,
+  postId,
+  creatorId,
+  cfg,
+  sends,
+  initialReply,
+  onSent,
+}: {
+  thread: Thread;
+  postId: string;
+  creatorId: string;
+  cfg: LmConfig;
+  sends: SendRecord[];
+  initialReply: () => string;
+  onSent: () => void;
+}) {
+  const degree = thread.author.network_distance ?? null;
+  // A plain DM only reaches 1st-degree. Unknown degree → invitation, because
+  // guessing wrong on a DM burns the send; an invitation always at least
+  // arrives.
+  const kind: 'dm' | 'invite' = degree === 1 ? 'dm' : 'invite';
+
+  const priorSend = sends.find((s) => s.kind === kind) ?? null;
+  const alreadySent = priorSend?.status === 'sent';
+
+  // ── reply state ──
+  // Drafted once on mount, from the list-level variant rotation. Lazy initial
+  // state so the rotation advances exactly once per card, not on every render.
+  const [reply, setReply] = useState<string>(() => {
+    const name = thread.author.name;
+    const base = initialReply();
+    return name && thread.author.profile_id ? `${name} ${base.charAt(0).toLowerCase()}${base.slice(1)}` : base;
+  });
+  const [replySending, setReplySending] = useState(false);
+  const [replySent, setReplySent] = useState(!!thread.answered_by_author);
+  const [replyMsg, setReplyMsg] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const replyRef = useRef<HTMLTextAreaElement>(null);
+
+  // ── location, for the region-aware greeting ──
+  // Lazily fetched per rendered card (the comment payload has no location).
+  // The DM draft is written immediately with a neutral greeting and rewritten
+  // if a location turns up — so a slow or failed profile call costs nothing
+  // but the regional touch.
+  const [location, setLocation] = useState<string | null>(null);
+  useEffect(() => {
+    if (!thread.author.profile_id) return;
+    let cancelled = false;
+    apiGet<{ location: string | null }>(
+      `/api/accounts/lead-magnet/commenter?creator_id=${creatorId}&provider_id=${encodeURIComponent(thread.author.profile_id)}`
+    )
+      .then((r) => { if (!cancelled && r?.location) setLocation(r.location); })
+      .catch(() => { /* neutral greeting is a fine outcome */ });
+    return () => { cancelled = true; };
+  }, [thread.author.profile_id, creatorId]);
+
+  // ── message state ──
+  const [message, setMessage] = useState<string>('');
+  // The user may have edited the draft; don't clobber their text when the
+  // location arrives or the topic changes.
+  const [msgTouched, setMsgTouched] = useState(false);
+  useEffect(() => {
+    if (msgTouched || alreadySent) return;
+    const input = { name: thread.author.name, location, topic: cfg.topic, link: cfg.link };
+    setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
+  }, [location, cfg.topic, cfg.link, kind, msgTouched, alreadySent, thread.author.name]);
+
+  const [msgSending, setMsgSending] = useState(false);
+  const [msgResult, setMsgResult] = useState<{ status: 'sent' | 'failed'; error: string | null } | null>(
+    priorSend ? { status: priorSend.status, error: priorSend.error } : null
+  );
+
+  const mention = thread.author.name && thread.author.profile_id && !thread.author.is_company
+    ? { name: thread.author.name, profile_id: thread.author.profile_id }
+    : null;
+  const willMention = !!mention && reply.slice(0, mention.name.length).toLowerCase() === mention.name.toLowerCase();
+
+  const insertEmoji = (emoji: string) => {
+    const ta = replyRef.current;
+    if (!ta) { setReply((d) => d + emoji); return; }
+    const start = ta.selectionStart ?? reply.length;
+    const end = ta.selectionEnd ?? reply.length;
+    setReply(reply.slice(0, start) + emoji + reply.slice(end));
+    requestAnimationFrame(() => {
+      ta.focus();
+      const pos = start + emoji.length;
+      ta.setSelectionRange(pos, pos);
+    });
+  };
+
+  // The AI path, offered only when the comment carries a real question next
+  // to the keyword. Reuses the Comentarios tab's generator — same voice, same
+  // rules — because at that point it IS a normal reply, not a receipt.
+  const handleAi = async () => {
+    setAiLoading(true);
+    setReplyMsg(null);
+    try {
+      const res = await apiPost<{ reply: string }>(
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/generate`,
+        {
+          comment_text: thread.text,
+          commenter_name: thread.author.name,
+          commenter_headline: thread.author.headline,
+          commenter_profile_id: thread.author.profile_id,
+        }
+      );
+      setReply(res.reply);
+    } catch (e: any) {
+      setReplyMsg(`✗ ${e.message}`);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleReply = async () => {
+    if (!reply.trim()) return;
+    setReplySending(true);
+    setReplyMsg(null);
+    try {
+      await apiPost(
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/reply`,
+        { text: reply.trim(), mention }
+      );
+      setReplySent(true);
+      setReplyMsg('✓ Respondido en LinkedIn');
+    } catch (e: any) {
+      setReplyMsg(`✗ ${e.message}`);
+    } finally {
+      setReplySending(false);
+    }
+  };
+
+  const handleSendResource = async () => {
+    if (!message.trim() || !thread.author.profile_id) return;
+    setMsgSending(true);
+    try {
+      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null }>(
+        `/api/accounts/lead-magnet/send`,
+        {
+          post_id: postId,
+          comment_id: thread.id,
+          provider_id: thread.author.profile_id,
+          kind,
+          text: message.trim(),
+        }
+      );
+      setMsgResult({ status: res.status, error: res.error });
+      onSent();
+    } catch (e: any) {
+      setMsgResult({ status: 'failed', error: e.message });
+    } finally {
+      setMsgSending(false);
+    }
+  };
+
+  const question = hasQuestion(thread.text || '', cfg.keyword);
+  const noProfileId = !thread.author.profile_id;
+
+  return (
+    <div className={`bg-bg-card border rounded-xl p-4 min-w-0 ${alreadySent ? 'border-accent/30' : 'border-border'}`}>
+      <div className="flex items-start gap-3">
+        <Avatar src={thread.author.profile_picture_url} name={thread.author.name} size={32} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0 flex-wrap">
+            <span className="text-sm font-medium">{thread.author.name || 'Anónimo'}</span>
+            <DegreeBadge d={degree} />
+            {thread.author.headline && (
+              <span className="text-[11px] text-text-muted truncate min-w-0">· {thread.author.headline}</span>
+            )}
+            <span className="text-[10px] text-text-muted ml-auto whitespace-nowrap">{fmtRelative(thread.date)}</span>
+          </div>
+          <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
+
+          <ReactionBar postId={postId} commentId={thread.id} initialReaction={thread.my_reaction} />
+
+          {/* ── Reply ── */}
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-medium text-text-secondary">Respuesta al comentario</span>
+              {question && !aiLoading && (
+                <button
+                  onClick={handleAi}
+                  disabled={replySent}
+                  className="text-[10px] px-2 py-0.5 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-50 transition-colors"
+                  title="Este comentario trae una pregunta — la plantilla se queda corta"
+                >
+                  ✨ Responder con IA
+                </button>
+              )}
+              {aiLoading && <span className="text-[10px] text-text-muted">Escribiendo…</span>}
+            </div>
+            {replySent ? (
+              <p className="text-[11px] text-text-muted">{replyMsg || '✓ Ya respondido'}</p>
+            ) : (
+              <>
+                <textarea
+                  ref={replyRef}
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
+                  disabled={replySending || aiLoading}
+                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 min-h-[52px] resize-y focus:outline-none focus:border-accent disabled:opacity-50"
+                />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={handleReply}
+                    disabled={replySending || !reply.trim()}
+                    className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
+                  >
+                    {replySending ? 'Enviando…' : 'Responder'}
+                  </button>
+                  <EmojiPicker onPick={insertEmoji} disabled={replySending} />
+                  {mention && (
+                    <span
+                      className={`text-[10px] ${willMention ? 'text-accent' : 'text-text-muted'}`}
+                      title={
+                        willMention
+                          ? `LinkedIn etiquetará a ${mention.name}, y así le llega la notificación de que mire el DM`
+                          : `El nombre "${mention.name}" debe ir al inicio para que se etiquete`
+                      }
+                    >
+                      {willMention ? `@${mention.name} ✓` : `@${mention.name} ✗`}
+                    </span>
+                  )}
+                  {replyMsg && <span className="text-[10px] text-text-muted">{replyMsg}</span>}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* ── The resource: DM or invitation ── */}
+          <div className="mt-3 pt-3 border-t border-border space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-medium text-text-secondary">
+                {kind === 'dm' ? 'Mensaje privado con el recurso' : 'Invitación con el recurso en la nota'}
+              </span>
+              {kind === 'invite' && (
+                <span className="text-[10px] text-text-muted tabular-nums">
+                  {message.length}/300
+                </span>
+              )}
+            </div>
+
+            {noProfileId ? (
+              <p className="text-[11px] text-text-muted">
+                LinkedIn no expone el perfil de esta persona, así que no se le puede escribir. Solo respuesta.
+              </p>
+            ) : msgResult?.status === 'sent' ? (
+              <p className="text-[11px] text-accent">
+                ✓ {kind === 'dm' ? 'Recurso enviado por DM' : 'Invitación enviada con el recurso'}
+              </p>
+            ) : (
+              <>
+                <textarea
+                  value={message}
+                  onChange={(e) => { setMessage(e.target.value); setMsgTouched(true); }}
+                  disabled={msgSending}
+                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 min-h-[68px] resize-y focus:outline-none focus:border-accent disabled:opacity-50"
+                />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={handleSendResource}
+                    disabled={msgSending || !message.trim() || !cfg.link.trim()}
+                    className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
+                  >
+                    {msgSending ? 'Enviando…' : kind === 'dm' ? 'Enviar DM' : 'Invitar con nota'}
+                  </button>
+                  {location && (
+                    <span className="text-[10px] text-text-muted" title="Se usa para adaptar el saludo">
+                      📍 {location}
+                    </span>
+                  )}
+                  {msgResult?.status === 'failed' && (
+                    <span className="text-[10px] text-red-400" title={msgResult.error || ''}>
+                      ✗ LinkedIn lo rechazó: {(msgResult.error || '').slice(0, 90)}
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

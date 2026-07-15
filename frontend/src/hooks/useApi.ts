@@ -62,6 +62,13 @@ export function useApi<T>(path: string | null) {
   return { data, loading, error, refetch };
 }
 
+// One-shot GET, for fetches that aren't a component's data source and so
+// don't want useApi's loading/error state — e.g. enriching a single row on
+// demand.
+export async function apiGet<T>(path: string): Promise<T> {
+  return apiFetch<T>(path);
+}
+
 export async function apiPost<T>(path: string, body: any): Promise<T> {
   return apiFetch<T>(path, { method: 'POST', body: JSON.stringify(body) });
 }

@@ -12,6 +12,7 @@ import GoogleChatModal from '../components/accounts/GoogleChatModal';
 import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
 import MonthlyBarChart from '../components/MonthlyBarChart';
 import RepliesPanel from '../components/accounts/RepliesPanel';
+import LeadMagnetPanel from '../components/accounts/LeadMagnetPanel';
 
 interface ManagedAccount {
   id: string;
@@ -396,10 +397,14 @@ export default function Accounts() {
   type TopPostsSortKey = 'outlier_ratio' | 'impressions' | 'likes' | 'comments' | 'reposts' | 'engagement' | 'recent';
   const [topPostsSort, setTopPostsSort] = useState<TopPostsSortKey>('outlier_ratio');
   const [chatPostId, setChatPostId] = useState<string | null>(null);
-  // Top-level tab — the BI view is the original Accounts BI dashboard; the
-  // Replies view is the new sub-section where the user picks one of their
-  // posts and answers unanswered comments in their own voice (Iker / Unai).
-  const [view, setView] = useState<'bi' | 'replies'>('bi');
+  // Top-level tab. BI is the original Accounts dashboard; Replies is the
+  // inbox for answering unanswered comments in the author's own voice
+  // (Iker / Unai); Lead Magnet is the delivery flow for a keyword post —
+  // pick the post, filter the comments that carry the keyword, reply and
+  // send each person the resource. Lead Magnet is its own tab rather than a
+  // mode inside Replies because the flow is the opposite shape: Replies
+  // starts from "what's pending everywhere", this starts from one post.
+  const [view, setView] = useState<'bi' | 'replies' | 'leadmagnet'>('bi');
   // Live-posts list grows long fast; reveal in pages of LIVE_PAGE.
   const LIVE_PAGE = 12;
   const [visibleLive, setVisibleLive] = useState(LIVE_PAGE);
@@ -700,12 +705,14 @@ export default function Accounts() {
       )}
 
       {/* Sub-section tabs — BI is the dashboard you've always had; Replies
-          is the new triage view for answering comments in your own voice. */}
+          is the triage view for answering comments in your own voice; Lead
+          Magnet delivers the resource to whoever commented the keyword. */}
       {hasAccounts && (
         <div className="flex items-center gap-1 border-b border-border">
           {([
             { key: 'bi', label: 'Accounts' },
             { key: 'replies', label: 'Comments' },
+            { key: 'leadmagnet', label: 'Lead Magnet' },
           ] as const).map((t) => (
             <button
               key={t.key}
@@ -724,6 +731,10 @@ export default function Accounts() {
 
       {view === 'replies' && hasAccounts && (
         <RepliesPanel accounts={accounts || []} selectedCreator={selectedCreator} onSelectCreator={setSelectedCreator} />
+      )}
+
+      {view === 'leadmagnet' && hasAccounts && (
+        <LeadMagnetPanel accounts={accounts || []} onSelectCreator={setSelectedCreator} />
       )}
 
       {view === 'bi' && (<>

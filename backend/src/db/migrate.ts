@@ -582,6 +582,32 @@ const migration = `
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
   CREATE INDEX IF NOT EXISTS idx_comment_reactions_post ON comment_reactions(post_id);
+
+  -- v28: the resource we sent to each person who commented the keyword on a
+  -- lead-magnet post (Lead Magnet tab). Unlike replies (LinkedIn tells us
+  -- who we answered via answered_by_author) and reactions (Unipile's
+  -- user_reacted), a DM or an invitation leaves NO trace on the comment
+  -- object — so without this table a reload would re-offer someone we
+  -- already wrote to, and they'd get the resource twice. Keyed by
+  -- (comment_social_id, kind) so the same person can legitimately get an
+  -- invite AND, later, a DM once they accept.
+  --
+  -- Failures are stored too (status='failed' + error): the whole point of
+  -- the degree pre-check is knowing who we couldn't reach, and that answer
+  -- must survive a reload.
+  CREATE TABLE IF NOT EXISTS lead_magnet_sends (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+    comment_social_id TEXT NOT NULL,
+    provider_id TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (kind IN ('dm','invite')),
+    status TEXT NOT NULL CHECK (status IN ('sent','failed')),
+    text TEXT,
+    error TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (comment_social_id, kind)
+  );
+  CREATE INDEX IF NOT EXISTS idx_lead_magnet_sends_post ON lead_magnet_sends(post_id);
 `;
 
 export async function runMigrations() {

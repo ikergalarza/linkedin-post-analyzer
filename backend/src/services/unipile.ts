@@ -808,6 +808,80 @@ export class UnipileService {
     return res;
   }
 
+  // Send a 1-to-1 LinkedIn direct message (Lead Magnet tab: deliver the
+  // resource to someone who commented the keyword).
+  //
+  // Endpoint: POST /api/v1/chats — starts a chat with the attendee and
+  // sends the first message in one call. If a chat with that person already
+  // exists, LinkedIn appends to it rather than creating a duplicate.
+  //
+  // MULTIPART, not JSON: this endpoint takes multipart/form-data (it also
+  // accepts attachments), so it can't go through `request` — that helper
+  // hard-sets Content-Type: application/json. We build a FormData and let
+  // fetch set the boundary itself; setting Content-Type by hand here would
+  // omit the boundary and Unipile would 400.
+  //
+  // LinkedIn only delivers a plain DM to a 1st-degree connection. For
+  // anyone else this throws (the caller pre-checks network_distance and
+  // offers an invitation instead).
+  async sendDirectMessage(
+    providerId: string,
+    text: string,
+    accountIdOverride?: string
+  ): Promise<{ chat_id: string | null; message_id: string | null }> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for DM');
+
+    const form = new FormData();
+    form.append('account_id', accountId);
+    form.append('attendees_ids', providerId);
+    form.append('text', text);
+
+    const url = `${this.baseUrl}/api/v1/chats`;
+    console.log(`[Unipile sendDirectMessage] → POST /api/v1/chats attendee=${providerId}`);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'X-API-KEY': this.apiKey },
+      body: form,
+    });
+    const body = await res.text().catch(() => '');
+    if (!res.ok) {
+      console.error(`[Unipile sendDirectMessage] Error ${res.status}: ${body}`);
+      throw new Error(`Unipile API error ${res.status}: ${body}`);
+    }
+    console.log(`[Unipile sendDirectMessage] ← ${body}`);
+    const parsed = body ? JSON.parse(body) : {};
+    return { chat_id: parsed.chat_id ?? null, message_id: parsed.message_id ?? null };
+  }
+
+  // Send a connection invitation carrying a personalised note (Lead Magnet
+  // tab: the fallback for commenters who aren't 1st-degree and therefore
+  // can't receive a DM). The note is where the resource link goes.
+  //
+  // Endpoint: POST /api/v1/users/invite — plain JSON {provider_id,
+  // account_id, message}. LinkedIn caps the note at ~300 characters and
+  // rejects longer ones, so the caller truncates before we get here.
+  async sendInvitation(
+    providerId: string,
+    message: string,
+    accountIdOverride?: string
+  ): Promise<any> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for invitation');
+    const body: Record<string, unknown> = {
+      account_id: accountId,
+      provider_id: providerId,
+    };
+    if (message) body.message = message;
+    console.log(`[Unipile sendInvitation] → POST /api/v1/users/invite provider=${providerId}`);
+    const res = await this.request<any>(`/api/v1/users/invite`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    console.log(`[Unipile sendInvitation] ← ${JSON.stringify(res)}`);
+    return res;
+  }
+
   // List followers via /api/v1/users/followers (confirmed path). Items come
   // back reverse-chronological (most recent follower first), so callers can
   // pass `knownIds` for an incremental pull: we stop paginating the moment

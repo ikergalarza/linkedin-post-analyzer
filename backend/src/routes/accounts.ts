@@ -1768,6 +1768,13 @@ interface ThreadedComment {
     // Companies aren't mentionable via the @-mention template, so the
     // reply is sent without a mention for them.
     is_company?: boolean;
+    // How far this commenter is from the account that owns the post:
+    // 1 / 2 / 3 (degrees), or null when LinkedIn doesn't say. Comes free
+    // in author_details.network_distance — no extra call per commenter.
+    // The Lead Magnet tab needs it because LinkedIn only delivers a plain
+    // DM to a 1st-degree connection; anyone else gets an invitation with
+    // a note instead.
+    network_distance?: number | null;
   };
   replies: ThreadedComment[];
   // True iff at least one reply in this thread is from the post author
@@ -1787,6 +1794,23 @@ interface ThreadedComment {
   // placeholder instead of an empty line, and the reply generator answers
   // with a single support emoji (there's no text to engage with).
   is_media_only?: boolean;
+}
+
+// LinkedIn expresses the viewer↔profile distance as an enum, which Unipile
+// passes through verbatim: "DISTANCE_1" / "DISTANCE_2" / "DISTANCE_3" /
+// "OUT_OF_NETWORK" / "SELF". We collapse it to the number the UI shows.
+// OUT_OF_NETWORK is 3+ for our purposes (everything past 2nd degree is
+// equally un-DM-able), and anything unrecognised → null = "we don't know",
+// which the UI treats as "not safe to DM".
+function parseNetworkDistance(raw: unknown): number | null {
+  if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+  if (typeof raw !== 'string') return null;
+  const v = raw.trim().toUpperCase();
+  if (v === 'SELF' || v === 'DISTANCE_0') return 0;
+  const m = v.match(/^DISTANCE_([123])$/);
+  if (m) return Number(m[1]);
+  if (v === 'OUT_OF_NETWORK') return 3;
+  return null;
 }
 
 function shapeComment(c: any): ThreadedComment {
@@ -1907,6 +1931,7 @@ function shapeComment(c: any): ThreadedComment {
       // (Unipile 422s on the @-mention template), so the frontend skips
       // the mention when this is true. Sourced from author_details.is_company.
       is_company: details.is_company === true || sub.is_company === true,
+      network_distance: parseNetworkDistance(details.network_distance ?? sub.network_distance),
     },
     replies: [],
     // The viewer's own reaction on this comment, straight from Unipile's
@@ -2353,6 +2378,195 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
     res.json({ ok: true, reaction_type: reactionType, result });
   } catch (err: any) {
     console.error('[accounts/comments/react]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ──────────────────────────── Lead Magnet tab ────────────────────────────
+//
+// Delivering the resource to everyone who commented the keyword on a lead
+// magnet post. Three endpoints; everything else the tab needs (the comment
+// list, replies, reactions) is the SAME machinery the Comentarios tab uses.
+//
+// GET  /api/accounts/lead-magnet/posts?creator_id=  — the post grid
+// GET  /api/accounts/lead-magnet/sends?post_id=     — who we already wrote to
+// POST /api/accounts/lead-magnet/send               — DM or invitation
+
+// GET /api/accounts/lead-magnet/posts?creator_id=xxx&limit=20
+//
+// The newest posts of ONE managed account, for the grid where the user
+// picks which lead magnet they're working through. Deliberately NOT
+// filtered to "lead magnet" posts: there's no such flag and guessing from
+// the text would misfire, so we show the recent ones and the user picks.
+// comments_count comes straight from the posts table (already tracked by
+// the monitor) — it's the number that tells them the post is the right one.
+router.get('/lead-magnet/posts', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || '';
+    if (!creatorId) return res.status(400).json({ error: 'creator_id required' });
+    const limit = Math.min(Number(req.query.limit) || 20, 50);
+
+    const { rows } = await pool.query(
+      `SELECT p.id, p.hook_text, p.content_text, p.content_type, p.published_at,
+              p.post_url, p.comments_count, p.likes_count,
+              c.name AS creator_name, c.profile_image_url AS creator_image
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.id = $1
+          AND c.is_managed = TRUE
+          AND c.unipile_account_id IS NOT NULL
+          AND p.linkedin_post_id IS NOT NULL
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.published_at IS NOT NULL
+        ORDER BY p.published_at DESC
+        LIMIT $2`,
+      [creatorId, limit]
+    );
+    res.json({ posts: rows });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/posts]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/lead-magnet/sends?post_id=xxx
+//
+// Everyone we've already sent the resource to on this post, so the UI can
+// lock those cards instead of offering to send it a second time. Returns
+// failures too — "we tried and LinkedIn refused" is an answer the user
+// needs to keep after a reload, not a blank card that invites a retry loop.
+router.get('/lead-magnet/sends', async (req: Request, res: Response) => {
+  try {
+    const postId = (req.query.post_id as string) || '';
+    if (!postId) return res.status(400).json({ error: 'post_id required' });
+    const { rows } = await pool.query(
+      `SELECT comment_social_id, kind, status, text, error, created_at
+         FROM lead_magnet_sends
+        WHERE post_id = $1
+        ORDER BY created_at DESC`,
+      [postId]
+    );
+    res.json({ sends: rows });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/sends]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/lead-magnet/commenter?creator_id=xxx&provider_id=ACoXXX
+//
+// One commenter's location, for the region-aware greeting on the DM.
+//
+// This is a separate, LAZY call on purpose: the comment payload carries the
+// name, headline and network_distance but NOT the location, and the only way
+// to get it is a profile fetch — one Unipile call per person. Folding that
+// into the comment list would mean ~100 calls to open the tab, most of them
+// for people the user never writes to. So the panel asks only for the cards
+// it actually renders.
+//
+// Location is best-effort by nature (it's free text the person typed, and
+// plenty leave it blank), so a failure returns 200 with location:null and
+// the greeting falls back to neutral. It must never block a card.
+router.get('/lead-magnet/commenter', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || '';
+    const providerId = (req.query.provider_id as string) || '';
+    if (!creatorId || !providerId) {
+      return res.status(400).json({ error: 'creator_id and provider_id required' });
+    }
+    const { rows } = await pool.query(
+      `SELECT unipile_account_id FROM creators WHERE id = $1`,
+      [creatorId]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Creator not found' });
+    const accountId = rows[0].unipile_account_id;
+    if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    try {
+      const profile = await unipileService.getProfile(providerId, accountId);
+      res.json({ location: profile.location ?? null, name: profile.name ?? null });
+    } catch (err: any) {
+      console.warn(`[accounts/lead-magnet/commenter] profile ${providerId} failed:`, err?.message);
+      res.json({ location: null, name: null });
+    }
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/commenter]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/lead-magnet/send
+// Body: { post_id, comment_id, provider_id, kind: 'dm'|'invite', text }
+//
+// Delivers the resource to one commenter. `kind` is decided by the CLIENT
+// from the degree badge (1st → dm, otherwise → invite), but we re-derive
+// nothing here: the user can override, and LinkedIn is the real authority
+// on what's allowed — it'll reject what it rejects.
+//
+// A failure is recorded, not swallowed: we persist status='failed' with the
+// error and STILL return 200, because "LinkedIn refused this one" is a
+// normal outcome of this workflow (out-of-network, invite limit reached,
+// already invited), not a server error. The UI shows the reason on the card.
+router.post('/lead-magnet/send', async (req: Request, res: Response) => {
+  try {
+    const { post_id, comment_id, provider_id, kind, text } = req.body || {};
+    if (!post_id || !comment_id || !provider_id) {
+      return res.status(400).json({ error: 'post_id, comment_id and provider_id required' });
+    }
+    if (kind !== 'dm' && kind !== 'invite') {
+      return res.status(400).json({ error: "kind must be 'dm' or 'invite'" });
+    }
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      return res.status(400).json({ error: 'text required' });
+    }
+
+    const postQ = await pool.query(
+      `SELECT p.id, c.unipile_account_id
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE p.id = $1`,
+      [post_id]
+    );
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const accountId = postQ.rows[0].unipile_account_id;
+    if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    // LinkedIn hard-caps the invitation note at 300 chars and rejects the
+    // whole invite if it's longer. Truncating here (rather than trusting the
+    // client) means a long "tema" can never cost us the send.
+    const body = kind === 'invite' ? text.trim().slice(0, 300) : text.trim();
+
+    let status: 'sent' | 'failed' = 'sent';
+    let error: string | null = null;
+    let result: any = null;
+    try {
+      result = kind === 'dm'
+        ? await unipileService.sendDirectMessage(provider_id, body, accountId)
+        : await unipileService.sendInvitation(provider_id, body, accountId);
+    } catch (err: any) {
+      status = 'failed';
+      error = err?.message || String(err);
+      console.warn(`[accounts/lead-magnet/send] ${kind} to ${provider_id} failed:`, error);
+    }
+
+    // Record the attempt either way. ON CONFLICT overwrites so a retry that
+    // finally succeeds replaces the earlier failure.
+    try {
+      await pool.query(
+        `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         ON CONFLICT (comment_social_id, kind)
+         DO UPDATE SET status = EXCLUDED.status, text = EXCLUDED.text,
+                       error = EXCLUDED.error, created_at = NOW()`,
+        [post_id, comment_id, provider_id, kind, status, body, error]
+      );
+    } catch (storeErr: any) {
+      console.warn('[accounts/lead-magnet/send] persist failed:', storeErr?.message);
+    }
+
+    res.json({ ok: status === 'sent', kind, status, error, result });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/send]', err);
     res.status(500).json({ error: err.message });
   }
 });
