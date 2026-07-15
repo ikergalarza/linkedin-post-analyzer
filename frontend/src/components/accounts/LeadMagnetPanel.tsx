@@ -521,6 +521,9 @@ function CommenterCard({
   });
   const [replySending, setReplySending] = useState(false);
   const [replySent, setReplySent] = useState(!!thread.answered_by_author);
+  // Your own edits are law: once you've typed in the box, nothing auto-drafts
+  // over it.
+  const [replyTouched, setReplyTouched] = useState(false);
   const [replyMsg, setReplyMsg] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const replyRef = useRef<HTMLTextAreaElement>(null);
@@ -566,6 +569,7 @@ function CommenterCard({
   const willMention = !!mention && reply.slice(0, mention.name.length).toLowerCase() === mention.name.toLowerCase();
 
   const insertEmoji = (emoji: string) => {
+    setReplyTouched(true); // dropping an emoji in is an edit like any other
     const ta = replyRef.current;
     if (!ta) { setReply((d) => d + emoji); return; }
     const start = ta.selectionStart ?? reply.length;
@@ -579,10 +583,15 @@ function CommenterCard({
   };
 
   // The written reply, for comments that earned one. Goes through the
-  // Comentarios tab's generator — same voice, same rules — but with the lead
-  // magnet topic attached, so the reply engages with their point AND closes
-  // by confirming the resource is on its way. Without that topic the model
-  // writes a fine reply that never mentions the DM, and they never check it.
+  // Comentarios tab's generator — same voice, same rules.
+  //
+  // The topic is sent ONLY when this card is the one delivering the resource
+  // (ownsDm). That flag is what makes "te lo acabo de mandar" true: if the
+  // DM goes out from this person's OTHER comment, saying it here is a lie the
+  // first time and a repeat the second — they'd read that we sent it twice.
+  // Without the topic the generator writes a plain reply that just engages
+  // with their point, which is exactly right for a comment that isn't the
+  // request.
   const handleAi = async () => {
     setAiLoading(true);
     setReplyMsg(null);
@@ -594,7 +603,7 @@ function CommenterCard({
           commenter_name: thread.author.name,
           commenter_headline: thread.author.headline,
           commenter_profile_id: thread.author.profile_id,
-          lead_magnet_topic: cfg.topic,
+          lead_magnet_topic: ownsDm ? cfg.topic : undefined,
         }
       );
       setReply(res.reply);
@@ -609,14 +618,23 @@ function CommenterCard({
   // The template draft is already in the box, so if this is slow or fails you
   // still have something sendable; it just gets replaced when the good one
   // lands. Only fires for rich comments, so a post full of bare "PROPUESTA"
-  // costs nothing. The ref guard is what stops StrictMode's double-mount (and
-  // any re-render) from paying for the same reply twice.
-  const autoFired = useRef(false);
+  // costs nothing.
+  //
+  // The ref remembers WHICH role we drafted under, not just "did we draft".
+  // Two reasons: it stops StrictMode's double-mount from paying for the same
+  // reply twice, and it re-drafts if ownership moves. Ownership really does
+  // move — someone comments with substance (this card owns the DM, so the
+  // reply confirms it), then leaves the bare keyword a minute later, and on
+  // refresh the delivery hops to that one. Without this the stale reply would
+  // still claim we sent it, which is the double-confirm we're avoiding.
+  // A reply you've edited is never clobbered.
+  const draftedFor = useRef<boolean | null>(null);
   useEffect(() => {
-    if (depth !== 'rich' || autoFired.current || replySent || !cfg.topic.trim()) return;
-    autoFired.current = true;
+    if (depth !== 'rich' || replySent || replyTouched) return;
+    if (draftedFor.current === ownsDm) return;
+    draftedFor.current = ownsDm;
     handleAi();
-  }, [depth, replySent, cfg.topic]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [depth, replySent, replyTouched, ownsDm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReply = async () => {
     if (!reply.trim()) return;
@@ -712,7 +730,7 @@ function CommenterCard({
                 <textarea
                   ref={replyRef}
                   value={reply}
-                  onChange={(e) => setReply(e.target.value)}
+                  onChange={(e) => { setReply(e.target.value); setReplyTouched(true); }}
                   disabled={replySending || aiLoading}
                   className="w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 min-h-[52px] resize-y focus:outline-none focus:border-accent disabled:opacity-50"
                 />
@@ -750,7 +768,8 @@ function CommenterCard({
               answering a comment that never asked for it. */}
           {!ownsDm ? (
             <p className="mt-3 pt-3 border-t border-border text-[11px] text-text-muted">
-              El recurso se le manda desde su otro comentario, el que trae la palabra clave.
+              Aquí solo se responde. El recurso se le manda desde su otro comentario, el de la palabra
+              clave, y es ahí donde se le avisa del envío.
             </p>
           ) : (
           <div className="mt-3 pt-3 border-t border-border space-y-2">
