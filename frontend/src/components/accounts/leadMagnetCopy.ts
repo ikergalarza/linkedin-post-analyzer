@@ -217,13 +217,20 @@ function stretchGreeting(g: string, rng: () => number): string {
 //   "Hola XXNOMBREXX! Te dejo el recurso sobre XXTEMAXX por aquí: XXENLACEXX
 //    Espero que te sirva XXEMOJIXX"
 // Same skeleton (greeting → here's the resource → link → sign-off), reworded
-// so a batch doesn't read identical. `{g}` greeting, `{t}` topic, `{l}` link.
+// so a batch doesn't read identical. `{t}` is the topic.
+//
+// The link is NOT in these strings — it goes on its own line (see buildDm).
+// A URL is one unbreakable token, and LinkedIn's message pane drops it onto
+// a new line together with whatever word precedes it, so "…comercial por /
+// aquí: <link>" is what the recipient actually sees. Owning the break means
+// LinkedIn has nothing left to wrap, and a link on its own line is how a
+// person sends one anyway.
 const DM_BODIES = [
-  'Te dejo el recurso sobre {t} por aquí: {l}',
-  'Aquí lo tienes, el recurso sobre {t}: {l}',
-  'Va para ti el recurso sobre {t}: {l}',
-  'Como prometido, el recurso sobre {t}: {l}',
-  'Te paso el recurso sobre {t}: {l}',
+  'Te dejo el recurso sobre {t} por aquí:',
+  'Aquí lo tienes, el recurso sobre {t}:',
+  'Va para ti el recurso sobre {t}:',
+  'Como te prometí, el recurso sobre {t}:',
+  'Te paso el recurso sobre {t}:',
 ];
 
 const DM_SIGNOFFS = [
@@ -252,9 +259,13 @@ export function buildDm(input: DmInput): string {
   const g = stretchGreeting(baseGreeting(input.location, rng), rng);
   const name = firstName(input.name);
   const open = name ? `${g} ${name}!` : `${g}!`;
-  const body = pick(DM_BODIES, rng).replace('{t}', input.topic).replace('{l}', input.link);
+  // replaceAll with a function: a plain string replacement would interpret
+  // "$&"/"$'" inside the topic as substitution patterns.
+  const body = pick(DM_BODIES, rng).replaceAll('{t}', () => input.topic);
   const signoff = `${pick(DM_SIGNOFFS, rng)} ${pick(DM_EMOJIS, rng)}`;
-  return `${open} ${body}\n${signoff}`;
+  // Link on its own line, sign-off after a blank one. See DM_BODIES for why
+  // the link can't share a line with the text.
+  return `${open} ${body}\n${input.link}\n\n${signoff}`;
 }
 
 // The invitation note — same job as the DM, for people we can't DM because
