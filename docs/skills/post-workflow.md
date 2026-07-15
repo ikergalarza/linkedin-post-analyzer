@@ -294,6 +294,7 @@ inserta en los placeholders de las imagenes las fotos de personas en el orden qu
 **Paso 6 — FOTO: PROMPT de modificaciones (NO generar la imagen).** Observa la foto de referencia y entrega **UN SOLO PÁRRAFO** con los cambios a aplicar sobre ella. Nada de listas ni de secciones: un párrafo, simple de leer y **lo más específico posible, para que el diseñador lo entienda a la primera**.
 
 **Cómo se escribe el prompt (técnica validada por el usuario, funciona):**
+- **⬛ SIEMPRE `en formato cuadrado 1:1`**, aunque la referencia sea vertical (`images §0b`). LinkedIn recorta arriba y abajo en el feed. 19 de 20 de nuestros outliers son 1:1. El formato es NUESTRO: se calca la esencia, no el encuadre.
 - **UN párrafo, CORTO y en lenguaje llano.** Lo lee un diseñador que va a tardar en montarlo: cada frase de más le cuesta tiempo. Claro y corto bate a exhaustivo.
 - **Empieza en MAYÚSCULAS con la orden de contención:** `SOLO HAZ LO QUE TE PIDO Y DEJA TODO LO DEMÁS INTACTO.` Es lo que más reduce que la herramienta se invente cosas.
 - **Di "calca esta referencia".** Así, con esas palabras. Nada de "parte de la imagen de referencia y mantén el layout, los paneles, la línea divisoria…": eso es hablar complicado para decir "calca".

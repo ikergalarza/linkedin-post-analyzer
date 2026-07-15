@@ -11,6 +11,15 @@ Una vez publicado un post con foto, la foto **NO se puede cambiar** (habría que
 
 ---
 
+## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
+> Aplica a **los 4 pilares y a cualquier foto que publiquemos**: meme, mapa, "Los 10", lead magnet, evento. Es lo primero que se comprueba y lo último que se negocia.
+
+- **Por qué:** LinkedIn recorta la previsualización del feed. Una imagen **vertical alargada pierde la parte de arriba y la de abajo**, que suele ser justo donde está el titular y el remate. La imagen la ve el 100% del que scrollea; el post entero, solo el que abre "ver más".
+- **Medido en nuestro histórico (2026-07-14): 19 de 20 imágenes de outliers son exactamente 1:1.** Cold calling 16.45x, wojak 16.56x, Gipuzkoa 12.92x, Navarra 7.72x, Galicia 7.28x, "Los 10" 4.81x… todas 800x800 o 480x480. **La única foto que NO es cuadrada (800x450, 16:9) es el lead magnet de las llaves: 4.10x**, el más flojo del grupo. (Las otras dos excepciones son un vídeo y un documento, que no cuentan.)
+- **Tamaño recomendado: 800x800** (es el que más se repite en los que funcionaron). 480x480 también vale.
+- **⚠️ AL CALCAR UNA REFERENCIA, el formato es NUESTRO, no suyo.** Si el original es vertical (la referencia del meme del perro era **480x720**, ratio 0,67), el remix **se recompone a 1:1**: se calca la esencia, nunca el encuadre malo (`post-workflow §4.4`, tabla de qué se calca). Calcar un 2:3 es entregar un post recortado.
+- **En el prompt de imagen va escrito siempre**, con estas palabras: `en formato cuadrado 1:1`.
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 
