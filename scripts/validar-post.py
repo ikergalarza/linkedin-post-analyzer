@@ -25,7 +25,24 @@ HISTORIAL = os.path.join(RAIZ, 'docs', 'skills', 'historial-publicaciones.md')
 
 # --- vocabularios (de docs/skills/) -----------------------------------------
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
-ANCLA_VENTAS = r'\b(vender|vendes|vende|vendo|vendiendo|venta|ventas|vendid\w+|cliente|clientes|cerrar|cierras|cierra|cierro|cerrand\w+|comercial|comerciales|comprar|compra|compras|comprando|precio|precios|cuota|comisi[oó]n|facturar|factura|facturas|facturaci[oó]n|exportar|exporta|exportas|exportaci[oó]n|prospectar|cartera|deal|deals|pedido|pedidos|propuesta comercial)\b'
+# §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
+# "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
+# Por eso el ancla va partida en dos: hay palabras del oficio que NO son solo
+# nuestras.
+#
+# FUERTE = inequívocamente ventas. Nadie más las dice así.
+ANCLA_FUERTE = (r'\b(vender|vendes|vende|vendo|vendiendo|venta|ventas|vendid\w+'
+                r'|comercial|comerciales|cuota|comisi[oó]n|prospectar|deal|deals|propuesta comercial)\b')
+# AMBIGUA = las comparte media empresa. "pedido" lo dicen logística, compras,
+# almacén y producción; "cartera" la dice finanzas; "cliente" y "precio" los dice
+# cualquiera. Un hook anclado SOLO en estas es candidato a post huérfano.
+# Caso real (2026-07-16): "El pedido encoge cada vez que sube un piso" pasó el
+# check con ancla="pedido" y el usuario preguntó, con razón, si eso se sabe que
+# es de ventas. No se sabe: lo puede publicar un jefe de logística tal cual.
+ANCLA_AMBIGUA = (r'\b(cliente|clientes|cerrar|cierras|cierra|cierro|cerrand\w+|comprar|compra|compras'
+                 r'|comprando|precio|precios|facturar|factura|facturas|facturaci[oó]n|exportar|exporta'
+                 r'|exportas|exportaci[oó]n|cartera|pedido|pedidos)\b')
+ANCLA_VENTAS = f'({ANCLA_FUERTE}|{ANCLA_AMBIGUA})'
 # §2.3 — estrechan el alcance, FUERA del hook. Lista canónica: gana a la de
 # "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
 # aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
@@ -132,9 +149,20 @@ def validar(texto, pilar, cuenta=None):
         f'{len(hook)} líneas en el bloque del hook' if len(hook) != 1 else '')
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
-    m = re.search(ANCLA_VENTAS, hook_txt, re.I)
-    chk(bool(m), 'Hook anclado a VENTAS (§2.3)',
-        f'ancla: "{m.group(0)}"' if m else 'NINGUNA palabra de ventas en el hook → lo podría subir cualquier cuenta')
+    fuerte = re.search(ANCLA_FUERTE, hook_txt, re.I)
+    ambigua = re.search(ANCLA_AMBIGUA, hook_txt, re.I)
+    if fuerte:
+        detalle = f'ancla FUERTE: "{fuerte.group(0)}"'
+    elif ambigua:
+        # No se falla: Navarra (7.72x, el molde gold) ancla en "exporta", que es
+        # ambigua, y voló. Pero se canta, porque es donde se cuela el post
+        # huérfano y el script NO puede correr el test de §2.3 por ti.
+        detalle = (f'⚠️ ancla solo AMBIGUA: "{ambigua.group(0)}" — la comparten logística/compras/'
+                   f'finanzas. LEE el hook y pregúntate: ¿esto SOLO puede subirlo una cuenta de '
+                   f'ventas? Si cuela en otra, añade "ventas"/"comercial" (§2.3)')
+    else:
+        detalle = 'NINGUNA palabra de ventas en el hook → lo podría subir cualquier cuenta'
+    chk(bool(fuerte or ambigua), 'Hook anclado a VENTAS (§2.3)', detalle)
     m = re.search(VERBO_FLOJO, hook_txt, re.I)
     chk(not m, 'Hook sin verbo flojo (§2.9)',
         f'verbo flojo: "{m.group(0)}" → sube un peldaño (criticar→desmontar)' if m else '')
