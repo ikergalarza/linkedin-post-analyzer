@@ -241,7 +241,7 @@ Frase de entrada:
 El usuario monta la imagen con SU plantilla en otra herramienta y le pasa estos dos prompts. **Van literales, palabra por palabra**: no los reescribas, no los "mejores", no los resumas. Lo único que cambia son los `XXX`. Cada uno en su bloque cercado, para copiar de un clic.
 
 - **`XXX` del PROMPT 1 = el GENTILICIO de la región, no su nombre.** La plantilla dice "LA INDUSTRIA VASCA", así que se sustituye adjetivo por adjetivo: Cataluña → `catalana` · Valencia → `valenciana` · Aragón → `aragonesa` · Navarra → `navarra` · Galicia → `gallega` · Andalucía → `andaluza` · Asturias → `asturiana` · Murcia → `murciana`. Poner el nombre daría "LA INDUSTRIA CATALUÑA".
-- **`XXX` del PROMPT 2 = los 10 nombres en ORDEN de mención**, los mismos y en el mismo orden que el bloque del post y que los ficheros `01_…`-`10_…` del ZIP.
+- **`XXX` del PROMPT 2 = los 10 nombres en ORDEN de mención**, en el mismo orden que el bloque del post y que los ficheros `01_…`-`10_…` del ZIP. **⚠️ Los mismos NO: van NORMALIZADOS** (`images §0e`) — Title Case y nombre completo + PRIMER apellido. El nombre exacto de LinkedIn es obligatorio en la **@ del post**, donde si no coincide la mención muere; en la **imagen** es texto dibujado y manda el diseño. Ojo con los nombres compuestos (`Jose Antonio Garcia`, nunca `Jose Garcia`) y con los campos invertidos (`first_name="OUAZZANI TOUHAMI"` → en la orla `Asma Ouazzani`).
 
 ```
 cambia del segundo titulo la palabra "vasca" por "XXX" y deja luego el titulo centrado ya que la frase será más larga, deja el resto de la imagen intacta solo haz ese cambio

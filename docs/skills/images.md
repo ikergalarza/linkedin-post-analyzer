@@ -43,6 +43,26 @@ Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que 
 - **Lo que NO se toca aunque te pique:** la mecánica cómica, el sujeto, el layout, el estilo de dibujo. Eso es el motor.
 - **La pregunta:** ¿esto es lo que hizo volar al post, o es un defecto que nadie ha mirado? Lo primero se calca. Lo segundo se mejora. **Estos detalles de diseño marcan la diferencia entre un remix y una copia peor que el original.**
 
+## 0e · 🏷️ NOMBRES DENTRO DE UNA IMAGEN (orla de "Los 10"): NO son la @ del post
+> **El fallo (2026-07-15):** metí `OUAZZANI TOUHAMI ASMA` tal cual en la orla porque así lo tiene en LinkedIn, y salió gritando en mayúsculas al lado de 9 nombres en Title Case.
+
+**La distinción que lo explica, y que hay que tener siempre presente:**
+| Artefacto | Regla del nombre | Por qué |
+|---|---|---|
+| **La @ del POST** | **EXACTO como LinkedIn**, sin tocar una letra (`post-workflow §4.0`) | Si no coincide, no salta el autocompletado y **la mención muere** |
+| **La IMAGEN (orla)** | **Normalizado** (abajo) | Es texto DIBUJADO: no hay mención, no hay autocompletado, no hay nada que romper. Manda el diseño |
+
+Son artefactos distintos con reglas opuestas. **No apliques la del post a la imagen.**
+
+**Las 3 reglas de la orla:**
+1. **Title Case siempre.** Solo la inicial de cada palabra. `OUAZZANI TOUHAMI ASMA` → `Asma Ouazzani`. Un nombre en mayúsculas rompe la coherencia visual de toda la plantilla.
+2. **Nombre completo + PRIMER apellido.** Todos con un apellido, para que ninguno desborde. ⚠️ **El nombre COMPUESTO no se parte**: `Jose Antonio Garcia Sanchez` → `Jose Antonio Garcia`, **nunca** `Jose Garcia`. "Antonio" no es su apellido.
+   - **No lo adivines partiendo la cadena: Unipile ya te lo da resuelto** en `first_name` y `last_name`. `first_name="Jose Antonio"`, `last_name="Garcia Sanchez"` → nombre completo + `last_name.split()[0]`. Cero heurística.
+   - **El guion NO separa apellidos:** `Fernández-Catuxo García` es UN primer apellido (`Javier Fernández-Catuxo`), no dos.
+3. **⚠️ Comprueba que los campos no estén INVERTIDOS.** Mucha gente rellena LinkedIn al revés, sobre todo con convenciones no españolas. Caso real: Asma tenía `first_name="OUAZZANI TOUHAMI"` y `last_name="ASMA"`. **El desempate lo da su `public_identifier`**, que es lo que ella misma eligió: `asma-ouazzani` → Asma es el NOMBRE. Aplicar la regla a ciegas habría puesto el apellido delante del nombre en la orla.
+
+**Lo que NO se toca: las tildes.** Si escribe `Jose Antonio Garcia` sin tildes, va sin tildes. Así escribe él su nombre y corregírselo es inventar. La incoherencia de tildes no canta; la de MAYÚSCULAS sí.
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 
