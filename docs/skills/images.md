@@ -69,6 +69,19 @@ Son artefactos distintos con reglas opuestas. **No apliques la del post a la ima
 - **La regla:** si la operación es **determinista** (pegar, recortar, enmascarar, colocar, redimensionar), la hace un **script**; el modelo es para lo que hay que **inventar** (un meme nuevo, una escena). Caso: `scripts/montar-orla.py` (`post-workflow §4.3` Paso 6b) → 0 píxeles de la plantilla tocados, foto idéntica al original.
 - Es la misma lección que el validador de posts y que el sorteo del agradecimiento en `replyGenerator`: **lo que se puede comprobar o ejecutar mecánicamente no se le pide por favor a un modelo.**
 
+## 0g · 🎭 EL REGISTRO DE LA IMAGEN VA POR CUENTA (Unai ≠ Iker)
+> La escala de voz de `brand-voice §1b` **también aplica a la imagen**, y aquí es donde más se nota. Fue lo que falló con el meme del perro en la cuenta de Unai.
+
+| Cuenta | Qué imagen le pega |
+|---|---|
+| **Unai** (fundador) | **Nada infantil.** Ni dibujos de animales, ni caricaturas monas, ni cosas que parezcan de un canal de memes. Lo que le hace gracia a un director comercial de 50 años: capturas reales, gráficos, fotos, un wojak (que es feo, no mono) |
+| **Asier** | Punto medio |
+| **Iker** | Lo más suelto de los tres |
+
+- **El meme NO se le prohíbe a Unai**, y es importante no confundirlo: su mejor post (16.62x) ES un meme (el wojak de la caja de herramientas). Lo que se le prohíbe es el **registro infantil**. Un wojak no es mono; un border collie dibujado sí.
+- **El texto de Unai ya era sobrio en ese 16.62x.** La lección: en su cuenta, la sobriedad se juega en la IMAGEN, no en el texto.
+- Si una referencia de meme es buenísima pero su imagen es un dibujo tierno, **va a la cuenta de Iker**, no a la de Unai. Cambiar de cuenta es gratis; forzar el registro, no.
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 

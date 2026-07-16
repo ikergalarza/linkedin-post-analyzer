@@ -10,7 +10,8 @@
 
 **La voz controla el CÓMO, nunca el QUÉ.** El tipo de hook, la estructura, el arquetipo, el ángulo y la mecánica viral salen de los datos de outliers (`outliers-database` + `global-instructions`). La voz es la pintura; los datos son el plano. **Si hay conflicto, mandan los datos.**
 
-Una única voz para las tres cuentas (Iker, Unai, Asier): la **voz Neety**. No hay voces por persona.
+Una única voz de marca para las tres cuentas (Iker, Unai, Asier): la **voz Neety**. Lo que dicen, lo que creen y cómo formatean es lo mismo en las tres.
+**Pero desde el 2026-07-16 el REGISTRO sí va por persona** (`§1b`): Unai (fundador) es el más sobrio, luego Asier, luego Iker. Comparten el QUÉ; cambia el volumen.
 
 ---
 
@@ -23,6 +24,25 @@ Una única voz para las tres cuentas (Iker, Unai, Asier): la **voz Neety**. No h
 - Autoridad: se **demuestra** con el contenido (datos, anécdota, mecanismo), **nunca se anuncia** ("llevo X años…", "tras analizar…").
 
 ---
+
+## 1b · ⭐ LAS 3 CUENTAS NO SUENAN IGUAL (leer antes de escribir nada)
+> Hasta el 2026-07-16 las tres compartían voz entera y estaba mal. **Comparten el QUÉ, no el VOLUMEN.**
+
+**La escala, de más sobrio a menos:  UNAI  >  ASIER  >  IKER.**
+
+| Cuenta | Rol | Registro |
+|---|---|---|
+| **Unai** | **FUNDADOR y CEO.** Firma la casa | **El más sobrio.** Tiene que sonar como el director industrial de ~50 años que nos lee, y que le vea como un IGUAL. Afirma, no exclama. Cero hype, cero jerga de creador, cero caricatura, **nada infantil** |
+| **Asier** | Crea contenido | **Punto medio.** Más sobrio que Iker, menos que Unai. Natural y directo, sin hype |
+| **Iker** | Crea contenido | **El más cercano**, el que más se permite el guiño. Aun así, **un punto por debajo de lo que era** |
+
+**⚠️ SOBRIO NO ES ACARTONADO.** Los tres siguen siendo naturales, punchy, con clichés y con el formateado de siempre. **Lo que cambia es el volumen, no el idioma.** Un Unai corporativo sería un fallo peor que un Unai informal.
+
+**Lo que dicen los datos, y matiza la regla (medido el 2026-07-16):** el mejor post de la historia de Unai (**16.62x**) abre con *"En ventas, cada año la caja de herramientas engorda pero el comercial cierra menos"*. **Ese texto YA es sobrio**: suena a industrial, no a creador. Lo infantil estaba en la **imagen** (un wojak), no en el texto.
+- **Conclusión:** ponerle voz sobria a Unai **no le cuesta su mejor pilar**. La restricción cae en el **registro de la imagen** (`images §0g`), no en el meme como formato.
+- **⚠️ El peaje que sí existe, dicho en voz alta:** su **2º mejor (9.93x)** es *"🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound"*. Eso es lo contrario de sobrio. Con esta regla, ese post no se le vuelve a escribir a Unai. Si algún día hace falta ese registro, va en la cuenta de Iker.
+
+**Dónde vive esto en el código** (no es solo doctrina): `backend/src/services/replyGenerator.ts` (`voiceForAuthor` → `sobrio`/`medio`/`cercano`, RULE 0/12/13) y su gemelo `frontend/src/components/accounts/leadMagnetCopy.ts` (`voiceFor`). Un desconocido cae en `medio`: una cuenta nueva nunca hereda en silencio la voz de otro. Además, en las voces sobrias **el backend colapsa por código** cualquier racha de 3+ letras iguales (`síííí` → `síí`), porque el prompt es una petición y la voz una promesa.
 
 ## 2 · El lector manda sobre el vocabulario (regla de audiencia)
 

@@ -232,6 +232,7 @@ Outlier validado: País Vasco 4.8x · 49.4K. Formato NUEVO a repetir.
 - Aplica las mismas reglas de reescritura y concepto regional original que en mapas.
 
 ### 4.3 · MEME (con MOTOR — sin motor no viaja)
+> **⚠️ Antes de elegir la referencia, mira DE QUIÉN es la cuenta** (`brand-voice §1b`): el registro va por persona y **a Unai no le pega lo infantil**. El meme sí es suyo (su 16.62x lo es), lo infantil no. Detalle en `images §0g`.
 Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
 
 - **MOTOR A — cambio corporal progresivo** que DUELE y es LEGIBLE a tamaño miniatura, montado sobre una **jerarquía de roles de ventas B2B** (no una timeline de una persona).

@@ -103,18 +103,28 @@ function stretchLastVowel(word: string, total: number): string {
 
 // ─────────────────────────────── voice per founder ───────────────────────────
 
-// How hard the vowel stretch leans. This is a VOICE TRAIT of the person whose
-// account is posting, not a global setting: Asier writes soberly, so "Holaa"
-// sounds like him and "Holaaaa" doesn't. Iker and Unai keep the fuller
-// stretch, which is what they've always had.
-export type Voice = 'sober' | 'normal';
+// Cuánto se alarga la vocal. Es un RASGO DE VOZ de la persona cuya cuenta
+// publica, no un ajuste global, y va en escala:
+//
+//   sobrio (Unai) > medio (Asier) > cercano (Iker)
+//
+// Unai es el FUNDADOR: firma él y nuestro lector es un director industrial de
+// ~50 años, así que "Holaaaa" no es él. Iker es el más cercano de los tres.
+//
+// TWIN: backend/src/services/replyGenerator.ts tiene la misma escala
+// (voiceForAuthor) para las respuestas a comentarios. Son paquetes separados
+// sin módulo común: si cambia el reparto, hay que tocar los dos.
+export type Voice = 'sobrio' | 'medio' | 'cercano';
 
-// Matched on the first name because that's what the creators table stores and
-// what the UI already shows. Anyone we don't recognise gets 'normal', so a new
-// account can never silently inherit someone else's voice.
+// Se compara por el nombre de pila porque es lo que guarda la tabla creators y
+// lo que ya enseña la UI. Un desconocido cae en 'medio', que es el menos
+// equivocado de los tres: una cuenta nueva nunca debe heredar en silencio la
+// voz de otro.
 export function voiceFor(creatorName: string | null | undefined): Voice {
   const first = (creatorName || '').trim().split(/\s+/)[0]?.toLowerCase();
-  return first === 'asier' ? 'sober' : 'normal';
+  if (first === 'unai') return 'sobrio';
+  if (first === 'iker') return 'cercano';
+  return 'medio';
 }
 
 // ────────────────────────────── reply variants ──────────────────────────────
@@ -152,15 +162,15 @@ export function buildReply(
 ): { text: string; variant: string } {
   const rng = opts.rng ?? Math.random;
   const recent = opts.recent ?? [];
-  const voice = opts.voice ?? 'normal';
+  const voice = opts.voice ?? 'medio';
   const pool = REPLY_VARIANTS.filter((v) => !recent.includes(v.text));
   const chosen = pick(pool.length > 0 ? pool : REPLY_VARIANTS, rng);
 
   let text = chosen.text;
   // Stretch roughly 2 of every 3 eligible replies — always is try-hard.
   if (chosen.stretch && rng() < 0.66) {
-    // Sober stops at "Enviadoo"; normal keeps the 2–3 it has always had.
-    const total = voice === 'sober' ? 2 : 2 + Math.floor(rng() * 2);
+    // Unai y Asier paran en "Enviadoo"; Iker mantiene los 2-3 de siempre.
+    const total = voice === 'cercano' ? 2 + Math.floor(rng() * 2) : 2;
     text = stretchLastVowel(text, total);
   }
   // "!" on about half. Some variants read better flat ("Ya está").
@@ -228,10 +238,10 @@ function baseGreeting(location: string | null | undefined, rng: () => number): s
 // stretches is the y, not a vowel, so it's handled apart.
 //
 // `total` counts the final letters, so it lines up with buildReply. Sober is a
-// flat 2 ("Holaa", "Eyy", "Kaixoo"); normal keeps 3–4, which is what this has
+// flat 2 ("Holaa", "Eyy", "Kaixoo"); 'cercano' (Iker) keeps 3–4, which is what this has
 // always produced.
 function stretchGreeting(g: string, rng: () => number, voice: Voice): string {
-  const total = voice === 'sober' ? 2 : 3 + Math.floor(rng() * 2);
+  const total = voice === 'cercano' ? 3 + Math.floor(rng() * 2) : 2;
   if (/y$/i.test(g)) return g + 'y'.repeat(Math.max(0, total - 1));
   return stretchLastVowel(g, total);
 }
@@ -273,7 +283,7 @@ export interface DmInput {
   location?: string | null;
   topic: string;
   link: string;
-  // Whose account is writing. Defaults to 'normal' so a caller that forgets it
+  // Whose account is writing. Defaults to 'medio' so a caller that forgets it
   // gets the long-standing behaviour, never a voice that isn't theirs.
   voice?: Voice;
   rng?: () => number;
@@ -284,7 +294,7 @@ export interface DmInput {
 // than risking a wrong name.
 export function buildDm(input: DmInput): string {
   const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'normal');
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
   const name = firstName(input.name);
   const open = name ? `${g} ${name}!` : `${g}!`;
   // replaceAll with a function: a plain string replacement would interpret
@@ -305,7 +315,7 @@ export function buildDm(input: DmInput): string {
 // arriving pre-trimmed means the link is never what gets cut.
 export function buildInviteNote(input: DmInput): string {
   const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'normal');
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
   const name = firstName(input.name);
   const open = name ? `${g} ${name}!` : `${g}!`;
   const note = `${open} Comentaste en mi post, te dejo el recurso sobre ${input.topic}: ${input.link}`;
