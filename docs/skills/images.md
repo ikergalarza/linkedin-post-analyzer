@@ -84,6 +84,20 @@ Son artefactos distintos con reglas opuestas. **No apliques la del post a la ima
 - Si una referencia es buenísima pero su imagen es un dibujo tierno, **va a la cuenta de Iker**, no a la de Unai ni a la de Asier. Cambiar de cuenta es gratis; forzar el registro, no.
 - ⚠️ **"Inteligente y específico de ventas" NO significa "de nicho".** `global §2.4` sigue mandando: el claim tiene que aterrizar en CUALQUIERA cerca del B2B comercial. Un meme que solo pilla el SDR ultratécnico es un meme del 1% y no viaja, en la cuenta de quien sea. El modelo es el 16.62x: *"cada año la caja de herramientas engorda pero el comercial cierra menos"* lo entiende cualquier comercial, y aun así suena a industrial y no a creador. **Específico de ventas = pasa el test del ancla; no = jerga que estrecha el alcance.**
 
+## 0h · 🖼️ EL TEXTO DE LA IMAGEN (4 reglas que faltaban, 2026-07-16)
+> Las cuatro salieron de la misma tanda de correcciones sobre el meme de Asier. Ninguna era un fallo de esa imagen: eran reglas que no estaban escritas.
+
+**1 · ⭐ EL TÍTULO DE LA IMAGEN TAMBIÉN SE ANCLA A VENTAS.** El test de `global §2.3` ("¿esto SOLO puede publicarlo una cuenta de ventas?") **no es solo del hook: es de todo lo que se lee**, y el título de la imagen se lee tanto como el hook.
+- ❌ **Caso real:** el hook se corrigió a *"En ventas, el pedido encoge…"* porque "pedido" es ancla ambigua… y el título de la imagen se quedó en **"LA VIDA DE UN PEDIDO"**, igual de genérico. Lo puede firmar un jefe de logística. Se arregló el hook y se dejó el mismo agujero al lado.
+- ✅ **Corregido a "EL PEDIDO SUBE. LA VENTA NO."** — ancla fuerte ("VENTA") y encima cuenta el chiste.
+
+**2 · EL TÍTULO NO REPITE EL HOOK.** Si el hook ya dice *"En ventas, el pedido encoge cada vez que sube un piso"*, la imagen **no lo vuelve a decir**: el lector lee lo mismo dos veces y la foto no aporta nada. El título de la imagen es **otra frase** del mismo chiste, no un eco.
+
+**3 · ⛔ SIN FOOTER, NUNCA.** Aunque la referencia lleve una franja inferior (la del meme de The Office llevaba *"BREAKING NEWS: 99% OF DEALS DIE OF OVER-COMMUNICATION"*), **se quita**. Queda fatal. La imagen termina en la última fila. Es de las cosas que se calcan NO (`§4.4`: el formato es nuestro, no el suyo).
+- Y en la misma familia: **cero logos y cero marcas de agua**. Nuestra marca se pone con la paleta y los detalles, nunca con un logo pegado.
+
+**4 · SE TRADUCE **TODO** EL TEXTO DE LA IMAGEN, no solo las etiquetas.** Si el post se traduce, la imagen también. **Mira los rincones**, que es donde se queda el inglés: badges, botones, estados y micro-copia de las capturas. Caso real: se tradujeron las 6 etiquetas grandes y la columna derecha entera se quedó en inglés (`Delivered`, `Pending`, `Subject: Following up…`, `Send`). Traducciones: Delivered → Entregado · Pending → Pendiente · Send → Enviar · Subject → Asunto.
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 
