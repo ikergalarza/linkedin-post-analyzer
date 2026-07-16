@@ -13,6 +13,7 @@ import { captureAccountSnapshots } from '../services/accountSnapshots';
 import { extractViewerTimestamps } from '../utils/wvmp';
 import { generateReply } from '../services/replyGenerator';
 import { roastProfile } from '../services/roaster';
+import { generarRastro } from '../services/rastroGenerator';
 import { runFollowerSync, getFollowerSyncProgress } from '../services/followerSync';
 
 const router = Router();
@@ -2152,6 +2153,40 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/accounts/rastro/generate — el lead magnet público "rastro".
+// Genera el análisis de SU sector, lo guarda, crea su página y devuelve el
+// comentario listo para pegar (con el enlace ya dentro).
+router.post('/rastro/generate', async (req: Request, res: Response) => {
+  try {
+    const { post_id, comment_text, commenter_name, commenter_headline, commenter_profile_id } = req.body ?? {};
+    if (!comment_text || !String(comment_text).trim()) {
+      return res.status(400).json({ error: 'Falta el comentario' });
+    }
+    // PostModel no tiene findById: solo hacen falta 2 campos, así que se piden.
+    const { rows } = post_id
+      ? await pool.query(
+          `SELECT p.content_text, c.name AS creator_name
+             FROM posts p JOIN creators c ON c.id = p.creator_id
+            WHERE p.id = $1`,
+          [String(post_id)]
+        )
+      : { rows: [] as any[] };
+    const post = rows[0] ?? null;
+    const out = await generarRastro({
+      postId: post_id ? String(post_id) : null,
+      commentText: String(comment_text),
+      commenterName: commenter_name ? String(commenter_name) : null,
+      commenterHeadline: commenter_headline ? String(commenter_headline) : null,
+      commenterProfileId: commenter_profile_id ? String(commenter_profile_id) : null,
+      postContent: post?.content_text || '',
+      authorName: post?.creator_name || 'Neety',
+    });
+    res.json(out);
+  } catch (err: any) {
+    res.status(502).json({ error: err.message });
+  }
+});
+
 // POST /api/accounts/roaster/analyze — analiza un perfil con el roaster y
 // devuelve el análisis + la URL pública para pegar en el comentario.
 //
@@ -2185,7 +2220,6 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
       // Set only by the Lead Magnet tab: the resource's topic. Its presence
       // is what tells the generator to also confirm the DM is on its way.
       lead_magnet_topic,
-      lead_magnet_publico,
     } = req.body || {};
 
     // GIF / sticker / image-only comment → no text to engage with. Skip the
@@ -2235,16 +2269,9 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
         signature_moves: profile.signature_moves,
         avoid: profile.avoid,
       },
-      // Los dos tipos de lead magnet (`global-instructions §4.4`). El público
-      // manda si vienen los dos: sus campos son más específicos.
-      leadMagnet: lead_magnet_publico?.valor && lead_magnet_publico?.link
-        ? {
-            kind: 'publico' as const,
-            valor: String(lead_magnet_publico.valor).trim(),
-            link: String(lead_magnet_publico.link).trim(),
-            gate: String(lead_magnet_publico.gate || '').trim(),
-          }
-        : lead_magnet_topic && String(lead_magnet_topic).trim()
+      // Solo el DM pasa por aquí. El público tiene su propia ruta
+      // (/rastro/generate) porque crea además su página.
+      leadMagnet: lead_magnet_topic && String(lead_magnet_topic).trim()
         ? { kind: 'dm' as const, topic: String(lead_magnet_topic).trim() }
         : undefined,
     });

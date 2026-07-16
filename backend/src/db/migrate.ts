@@ -631,6 +631,33 @@ const migration = `
   ALTER TABLE lead_magnet_sends DROP CONSTRAINT IF EXISTS lead_magnet_sends_comment_social_id_kind_key;
   CREATE UNIQUE INDEX IF NOT EXISTS uq_lead_magnet_sends_person
     ON lead_magnet_sends (post_id, provider_id, kind);
+
+  -- v30: lead magnet PÚBLICO con página personalizada ("rastro").
+  -- Cada persona que comenta la palabra clave recibe SU análisis. El comentario
+  -- público lleva el enlace a esta fila, y la página pide el correo para enseñar
+  -- el análisis entero.
+  --
+  -- El gate ES el motivo de que exista la tabla: el lead magnet público que
+  -- mejor fue (8.55x · 483 comentarios) regalaba el análisis completo sin pedir
+  -- nada y capturó CERO correos. Aquí el teaser va gratis y el resto se cambia
+  -- por el email.
+  CREATE TABLE IF NOT EXISTS rastro_analysis (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    share_id TEXT UNIQUE NOT NULL,
+    post_id UUID REFERENCES posts(id) ON DELETE SET NULL,
+    commenter_name TEXT,
+    commenter_headline TEXT,
+    commenter_profile_id TEXT,
+    sector TEXT,
+    teaser JSONB,          -- lo que se ve gratis, antes del correo
+    full_analysis JSONB,   -- lo que se desbloquea al dejarlo
+    public_comment TEXT,   -- lo que pegamos en LinkedIn, guardado para saber qué se dijo
+    email TEXT,
+    email_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  CREATE INDEX IF NOT EXISTS idx_rastro_share ON rastro_analysis (share_id);
+  CREATE INDEX IF NOT EXISTS idx_rastro_email ON rastro_analysis (email) WHERE email IS NOT NULL;
 `;
 
 export async function runMigrations() {

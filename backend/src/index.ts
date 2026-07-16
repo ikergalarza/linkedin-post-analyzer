@@ -26,6 +26,7 @@ import usageRouter from './routes/usage';
 import reactionsRouter from './routes/reactions';
 import { startPostMonitor } from './services/postMonitor';
 import { basicAuthMiddleware } from './middleware/basicAuth';
+import rastroRouter from './routes/rastro';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -35,6 +36,9 @@ app.use(cors({ origin: '*' }));
 // base64-encoded media (e.g. uploaded references for analysis) don't get
 // rejected. 16mb keeps us well under typical proxy limits.
 app.use(express.json({ limit: '16mb' }));
+// El gate de /r/ es un <form> HTML normal, no JSON: sin esto, req.body llega
+// vacío y el correo se pierde sin decir nada.
+app.use(express.urlencoded({ extended: false }));
 
 // Log every request (before auth so probe attempts are visible in logs)
 app.use((req, _res, next) => {
@@ -49,6 +53,9 @@ app.use((req, _res, next) => {
 app.use(basicAuthMiddleware());
 
 // Routes
+// /r/… va ANTES que nada y fuera del auth: son las páginas públicas del lead
+// magnet, las únicas de toda la app que abre gente de fuera.
+app.use('/r', rastroRouter);
 app.use('/api/creators', creatorsRouter);
 app.use('/api/creators', postsRouter);
 app.use('/api/posts', postsRouter);

@@ -79,7 +79,9 @@ interface SendRecord {
 //  · publico → el valor se entrega en el comentario, a la vista de todos, y el
 //              enlace lleva a lo que no puede conseguir solo (ahí pedimos correo).
 // El público tiene el techo (8.55x · 483 comentarios) pero el que se hizo
-// regalaba TODO y no capturó ni un correo: por eso existe el campo `gate`.
+// regalaba TODO y no capturó ni un correo. Por eso el público NO pide campos: su
+// generador (/api/accounts/rastro/generate) escribe el análisis, le crea su
+// página con gate de correo y devuelve el comentario con el enlace ya dentro.
 export type LmKind = 'dm' | 'publico';
 
 interface LmConfig {
@@ -87,18 +89,8 @@ interface LmConfig {
   keyword: string;
   link: string;
   topic: string;
-  valor: string; // solo público: qué le damos GRATIS en la respuesta
-  gate: string;  // solo público: qué hay detrás del enlace y NO va en la respuesta
-  // Solo público. Con el roaster, el enlace NO es fijo: se genera uno por
-  // persona con SU análisis, y el propio roaster devuelve el comentario ya
-  // redactado. Por eso `valor` y `link` sobran en este modo.
-  roaster: boolean;
-  roasterNota: string;
 }
-const emptyConfig: LmConfig = {
-  kind: 'dm', keyword: '', link: '', topic: '', valor: '', gate: '',
-  roaster: false, roasterNota: '',
-};
+const emptyConfig: LmConfig = { kind: 'dm', keyword: '', link: '', topic: '' };
 
 function loadConfig(postId: string): LmConfig {
   try {
@@ -110,10 +102,6 @@ function loadConfig(postId: string): LmConfig {
       keyword: p.keyword || '',
       link: p.link || '',
       topic: p.topic || '',
-      valor: p.valor || '',
-      gate: p.gate || '',
-      roaster: !!p.roaster,
-      roasterNota: p.roasterNota || '',
     };
   } catch {
     return emptyConfig;
@@ -266,11 +254,11 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   }, [sendsData]);
 
   // Cada tipo necesita campos distintos, así que "listo" no es el mismo.
+  // En PÚBLICO solo hace falta la palabra clave: el generador pone el análisis,
+  // la página y el enlace. En DM siguen haciendo falta el enlace y el tema.
   const ready =
     cfg.kind === 'publico'
-      ? cfg.roaster
-        ? !!cfg.keyword.trim() // el roaster pone el análisis Y el enlace
-        : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.valor.trim())
+      ? !!cfg.keyword.trim()
       : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim());
 
   // Keyword filter, client-side: the comment list is already in memory, so
@@ -399,20 +387,19 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             onChange={(v) => setCfg((c) => ({ ...c, keyword: v }))}
             placeholder="MAPA"
           />
-          {!(cfg.kind === 'publico' && cfg.roaster) && (
-          <Field
-            label={cfg.kind === 'dm' ? 'Enlace del recurso' : 'Enlace del análisis completo'}
-            hint={
-              cfg.kind === 'dm'
-                ? 'El de recursos.neety.com que va en el mensaje'
-                : 'Va al final de la respuesta pública. Aquí es donde piden el correo'
-            }
-            value={cfg.link}
-            onChange={(v) => setCfg((c) => ({ ...c, link: v }))}
-            placeholder="https://recursos.neety.com/…"
-          />
+          {/* El DM necesita saber QUÉ se manda y ADÓNDE. El público no: el
+              generador escribe el análisis y le crea su propia página, así que
+              pedirle un enlace fijo aquí sería pedirle algo que no existe. */}
+          {cfg.kind === 'dm' && (
+            <Field
+              label="Enlace del recurso"
+              hint="El de recursos.neety.com que va en el mensaje"
+              value={cfg.link}
+              onChange={(v) => setCfg((c) => ({ ...c, link: v }))}
+              placeholder="https://recursos.neety.com/…"
+            />
           )}
-          {cfg.kind === 'dm' ? (
+          {cfg.kind === 'dm' && (
             <Field
               label="Tema"
               hint="Rellena «el recurso sobre…»"
@@ -420,58 +407,18 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
               onChange={(v) => setCfg((c) => ({ ...c, topic: v }))}
               placeholder="el mapa de logística de Bizkaia"
             />
-          ) : (
-            <Field
-              label="Qué hay detrás del enlace"
-              hint="Lo que NO se cuenta en la respuesta. Es el motivo de dejar el correo"
-              value={cfg.gate}
-              onChange={(v) => setCfg((c) => ({ ...c, gate: v }))}
-              placeholder="las empresas de su sector que tienen esa señal ahora mismo"
-            />
           )}
         </div>
 
-        {cfg.kind === 'publico' && !cfg.roaster && (
-          <Field
-            label="Qué le damos GRATIS en la respuesta"
-            hint="El valor entero, aterrizado en SU sector. Si le vale igual a cualquiera, no vale: eso es lo que mata este formato"
-            value={cfg.valor}
-            onChange={(v) => setCfg((c) => ({ ...c, valor: v }))}
-            placeholder="las 3 señales que en su sector avisan de que van a comprar, dónde se ven gratis y cuánto tardan en firmar desde que aparecen"
-            multiline
-          />
+        {cfg.kind === 'publico' && (
+          <p className="text-[11px] text-text-muted leading-snug pt-1 border-t border-border">
+            Solo hace falta la palabra clave. Al darle a{' '}
+            <span className="text-text-secondary">Redactar respuesta</span> en cada comentario, se genera el análisis
+            de SU sector, se le crea su propia página y el enlace ya viene dentro del texto. La página enseña 1 señal
+            gratis y pide el correo para ver las demás.
+          </p>
         )}
 
-        {cfg.kind === 'publico' && (
-          <div className="pt-1 border-t border-border space-y-2">
-            <label className="flex items-start gap-2 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={cfg.roaster}
-                onChange={(e) => setCfg((c) => ({ ...c, roaster: e.target.checked }))}
-                className="mt-0.5 accent-accent"
-              />
-              <span className="min-w-0">
-                <span className="block text-xs font-medium text-text-primary group-hover:text-accent transition-colors">
-                  Analizar su perfil con el roaster
-                </span>
-                <span className="block text-[10px] text-text-muted mt-0.5">
-                  Lee su perfil, escribe el comentario y crea un enlace único con su análisis
-                  completo. Uno por persona: no hace falta ni el enlace ni el valor de arriba.
-                </span>
-              </span>
-            </label>
-            {cfg.roaster && (
-              <Field
-                label="Contexto para el análisis (opcional)"
-                hint="Lo que quieras que tenga en cuenta con todos. Lo que cada uno escriba en su comentario ya se le pasa aparte"
-                value={cfg.roasterNota}
-                onChange={(v) => setCfg((c) => ({ ...c, roasterNota: v }))}
-                placeholder="son directores comerciales de industria, tono directo pero sin pasarse"
-              />
-            )}
-          </div>
-        )}
         {ready && (
           <div className="flex items-center gap-3 flex-wrap text-xs text-text-secondary pt-1 border-t border-border">
             <span>
@@ -771,37 +718,22 @@ function CommenterCard({
     setAiLoading(true);
     setReplyMsg(null);
     try {
-      // Camino del ROASTER: no pasa por el generador de respuestas. El roaster
-      // lee su perfil y devuelve el comentario YA redactado + un enlace único
-      // con su análisis completo. Reescribirlo con el modelo sería empeorarlo.
-      if (cfg.kind === 'publico' && cfg.roaster) {
-        // CommentAuthor NO tiene profile_url: solo public_identifier. La URL se
-        // compone. (Y sin él no hay perfil que leer: pasa con las páginas de
-        // empresa y con los perfiles que LinkedIn no resuelve.)
-        const perfil = thread.author.public_identifier
-          ? `https://www.linkedin.com/in/${thread.author.public_identifier}`
-          : null;
-        if (!perfil) {
-          setReplyMsg('✗ No tengo la URL de su perfil, así que el roaster no puede leerlo');
-          return;
-        }
-        const r = await apiPost<{
-          comentarioPublicable: string | null;
-          veredicto: string | null;
-          puntuacion: number | null;
-          shareUrl: string | null;
-        }>('/api/accounts/roaster/analyze', {
-          url: perfil,
-          note: [cfg.roasterNota, thread.text].filter(Boolean).join(' · '),
-        });
-        const cuerpo = r.comentarioPublicable || r.veredicto || '';
-        if (!cuerpo) {
-          setReplyMsg('✗ El roaster no devolvió comentario');
-          return;
-        }
-        setReply(r.shareUrl ? `${cuerpo}
-
-Te lo he dejado entero aquí: ${r.shareUrl}` : cuerpo);
+      // Camino PÚBLICO: no pasa por el generador de respuestas normal. Este
+      // escribe el análisis de SU sector, le crea su propia página y devuelve
+      // el comentario con el enlace ya dentro.
+      if (cfg.kind === 'publico') {
+        const r = await apiPost<{ publicComment: string; shareUrl: string; sector: string }>(
+          '/api/accounts/rastro/generate',
+          {
+            post_id: postId,
+            comment_text: thread.text,
+            commenter_name: thread.author.name,
+            commenter_headline: thread.author.headline,
+            commenter_profile_id: thread.author.profile_id,
+          }
+        );
+        setReply(r.publicComment);
+        setReplyMsg(`✓ Página creada para «${r.sector}» · ${r.shareUrl}`);
         return;
       }
 
@@ -812,13 +744,7 @@ Te lo he dejado entero aquí: ${r.shareUrl}` : cuerpo);
           commenter_name: thread.author.name,
           commenter_headline: thread.author.headline,
           commenter_profile_id: thread.author.profile_id,
-          lead_magnet_topic: cfg.kind === 'dm' && ownsDm ? cfg.topic : undefined,
-          // El público NO depende de ownsDm: la respuesta pública se escribe
-          // para todos, se pueda mandar DM o no. Ahí está el valor entero.
-          lead_magnet_publico:
-            cfg.kind === 'publico'
-              ? { valor: cfg.valor, link: cfg.link, gate: cfg.gate }
-              : undefined,
+          lead_magnet_topic: ownsDm ? cfg.topic : undefined,
         }
       );
       setReply(res.reply);

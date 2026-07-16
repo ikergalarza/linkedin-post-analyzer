@@ -43,6 +43,13 @@ export function basicAuthMiddleware(): RequestHandler {
     // Health endpoint open so Railway / uptime checks aren't 401-ing.
     if (req.path === '/health' || req.path === '/api/health') return next();
 
+    // Las páginas del lead magnet "rastro" van ABIERTAS a propósito: el enlace
+    // se pega en un comentario de LinkedIn y lo abre un desconocido que no
+    // tiene nuestras credenciales. Si esto se quita, el lead magnet muere en
+    // silencio: el enlace sale igual y nadie puede abrirlo.
+    // Solo /r/… — el resto de la app sigue cerrada.
+    if (req.path === '/r' || req.path.startsWith('/r/')) return next();
+
     const header = req.headers.authorization || '';
     const [scheme, encoded] = header.split(' ');
 
