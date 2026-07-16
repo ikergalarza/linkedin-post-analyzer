@@ -239,7 +239,7 @@ Frase de entrada:
 
 **Paso 6b — LA ORLA: la monta un SCRIPT, no el robot de diseño (2026-07-16).**
 ```
-python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/LOS 10/LOS 10 PLANTILLA DEF.psd"   --fotos "C:/Users/LENOVO/Desktop/los10-<region>"   --fuente "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/Bricolage_Grotesque/static/BricolageGrotesque-ExtraBold.ttf"   --nombres "Nombre 1 | Nombre 2 | … | Nombre 10"   --salida "C:/Users/LENOVO/Desktop/orla-<region>.png"
+python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/LOS 10/LOS 10 PLANTILLA v2.psd"   --fotos "C:/Users/LENOVO/Desktop/los10-<region>"   --fuente "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/Bricolage_Grotesque/static/BricolageGrotesque-ExtraBold.ttf"   --nombres "Nombre 1 | Nombre 2 | … | Nombre 10"   --salida "C:/Users/LENOVO/Desktop/orla-<region>.png"
 ```
 **Por qué se cambió, que es lo que no hay que olvidar:** los 2 prompts de imagen que había aquí **NO se podían arreglar escribiéndolos mejor**. Un modelo generativo no pega una foto, la **REDIBUJA**: sintetiza píxeles nuevos en todo el lienzo. Por eso devolvía caras que no eran de esas personas, cambiaba el color de los ojos, convertía las fotos malas en fotos de modelo, metía ruido en el azul del header y lo descentraba. **No era un fallo de prompt: era lo único que sabe hacer.** Cada "no toques" que le añadías alargaba el prompt y le hacía menos caso a todo.
 - El script detecta **solo** los huecos transparentes, escala con Lanczos (que reduce información, no la inventa), recorta centrado y pone la foto **DEBAJO** con la plantilla encima: la máscara del círculo es la que dibujó el diseñador. Los nombres, la fuente, el cuerpo y el color se **leen del propio PSD**, así que si el diseñador cambia el estilo, el script le sigue.
@@ -247,6 +247,9 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 - **La foto fea se queda fea, y es lo correcto.** Es su foto de LinkedIn. El comercial cuya cara casi no se ve seguirá sin vérsele.
 - **Nombres:** normalizados según `images §0e` (Title Case + nombre completo y PRIMER apellido), no el exacto de LinkedIn (eso es solo para la @ del post).
 - Si algún día la plantilla cambia de huecos o de placeholders, el script **avisa y sale con error** en vez de dibujar de más.
+- **La plantilla buena es `LOS 10 PLANTILLA v2.psd`** (2026-07-16): círculos más grandes y **sin aro** (los aros finos azules de la v1 quedaban feos). La `DEF` es la vieja, no la uses.
+  - **Cambiar de plantilla NO costó tocar una línea del script:** los huecos se detectan solos y pasaron de 209x220 a 213x224 sin que nadie los midiera. Esa es la prueba de que detectarlos automáticamente valía la pena frente a hardcodear coordenadas, que habría roto la orla en silencio.
+  - Ojo con la capa `placeholders`: va **oculta a propósito** (es la guía del diseñador). Los huecos de verdad son la transparencia del compuesto, que es lo que lee el script. Que esté invisible NO es un error.
 
 **Paso 7 — Guía de menciones con enlaces** (mismas reglas de formato que el mapa, §4.2 Paso 10): calcando el orden del bloque de personas del post. Aquí el orden es **persona primero** (como en el cuerpo, `→ Persona - Empresa`), y **se mantiene el logro** al final: en este pilar el logro SÍ justifica la ficha (es el criterio de selección) y el usuario lo necesita a mano para responder comentarios. Esa es la única diferencia con el mapa, donde no se justifica nada.
 
