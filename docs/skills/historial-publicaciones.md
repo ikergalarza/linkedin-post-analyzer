@@ -15,14 +15,14 @@
 
 | Cuenta | MAPAS usados (no repetir en esa cuenta) | "LOS 10" usados | Conceptos gastados por esa cuenta |
 |---|---|---|---|
-| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra | País Vasco | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
+| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra | País Vasco · **Asturias** | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
 | **Unai** | País Vasco · Bizkaia · Álava | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" |
 | **Asier** | Aragón | — | "secarral que peina el cierzo" |
 
 **"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.
-**Personas ya mencionadas en "Los 10"** (no repetir NUNCA a la misma persona en otro "Los 10"): las 10 del País Vasco de Iker (Edorta Arriet Azpiroz, Ana Isabel Portilla, Andoni Iriarte, Oscar Urdangarin, Xabier Otaño Eguidazu, Oier Elguezabal, Carlos Muriel, Borja Jareño Irazola, Javier Gomez de Cadiñanos, Fernando Martínez).
+**Personas ya mencionadas en "Los 10"** (no repetir NUNCA a la misma persona en otro "Los 10"): las 10 del País Vasco de Iker (Edorta Arriet Azpiroz, Ana Isabel Portilla, Andoni Iriarte, Oscar Urdangarin, Xabier Otaño Eguidazu, Oier Elguezabal, Carlos Muriel, Borja Jareño Irazola, Javier Gomez de Cadiñanos, Fernando Martínez) y **las 10 de Asturias de Iker** (Javier Soto, Alvaro Vallaure Mori, Jose Antonio Garcia Sanchez, OUAZZANI TOUHAMI ASMA, David Menéndez Mozo, Alvaro Platero Alonso, Alfredo Fernández Olano, Alejandro García Menéndez, José Arturo Gutiérrez García, Alfonso Sanchez Miguez).
 
-**Libres para Iker:** Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
+**Libres para Iker:** Aragón, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 **Libres para Unai:** Cataluña, Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 
 > **El "país inventado" NO cuenta como región gastada** y no está en esta tabla: no es un mapa de peloteo (no menciona a nadie, la imagen es un dibujo y no una captura de PamPam, y el motor es la controversia). Ficha en `context/global-instructions.md §4.1`. Lo hicieron Unai (7.87x, 12-jun) e Iker (1.24x, 23-jun).
@@ -47,6 +47,10 @@
 
 | Semana (lunes) | Cuenta | Día | Categoría | Pilar/formato | Región o tema | Estado | Notas |
 |---|---|---|---|---|---|---|---|
+| 2026-07-13 | Iker | Jue 16/07 | Peloteo | "Los 10" | Asturias | publicado | recién subido, sin ratio útil todavía · 1er "Los 10" con clichés importados del mapa (post-workflow §4.3 Paso 3b) · orla montada por script, sin robot |
+| 2026-07-13 | Unai | Mié 15/07 | Meme | Motor A/B (2 de 4) | remix del perro "Tu informe de ventas resucita clientes muertos" | publicado | 0.76x a 1 día · avisado como 2/4 motores ANTES de subir · ⚠️ el registro infantil (perro dibujado) es lo que disparó la regla de voz por cuenta (brand-voice §1b · images §0g) |
+| 2026-07-13 | Asier | Mié 15/07 | Lead magnet | — | "un comité que no te ha visto la cara" | publicado | 0.51x a 1 día |
+| 2026-07-13 | Asier | Mar 14/07 | Peloteo | Mapa | Aragón | publicado | 2.06x · 13 reposts · 1er post de Asier con baseline |
 | 2026-07-06 | Unai | Mar 07/07 | Peloteo | Mapa | Álava | publicado | 3.60x · 36.0K · 20 reposts · hook "trastienda del norte: buena para un pintxo-pote y para irse" |
 | 2026-06-29 | Iker | Jue 02/07 | Meme | Motor B | screenshot iMessage "El de Ventas" | publicado | 8.46x · 86.8K · el TOP en impresiones del periodo · llevaba link de agendar en spam ninja sin matar alcance |
 | 2026-06-29 | Iker | Mar 30/06 | Peloteo | Mapa | Navarra | publicado | 7.72x · 79.2K · 46 reposts · el molde gold (swipe-file §2.1) |
@@ -81,6 +85,7 @@
 
 > **Origen:** volcado desde la BD en vivo (Railway) el **2026-07-14**, no de memoria. Cubre abr-jul 2026, que es cuando arrancó la publicación en serio.
 >
-> **Asier NO está en la tabla a propósito.** Lleva 3 posts (uno personal de 2024, la oferta de Full Stack Dev del 5-jun a 1.10x, y el mapa de Aragón del 14-jul). Su cuenta no tiene baseline y el mapa se subió hace horas: meterlo aquí con un ratio sería inventar señal. Cuando pasen ~4-6 semanas y LinkedIn le fije baseline, se añade.
+> **Asier YA está en la tabla** (desde el 2026-07-16): tiene el mapa de Aragón (2.06x) y el lead magnet del 15/07 con ratio, así que LinkedIn le ha fijado baseline. Sus ratios son bajos comparados con Iker/Unai porque su cuenta es joven: no los compares entre cuentas, compáralos con los suyos.
+> **Nota vieja, ya resuelta:** ~~Asier NO está en la tabla a propósito.~~ Lleva 3 posts (uno personal de 2024, la oferta de Full Stack Dev del 5-jun a 1.10x, y el mapa de Aragón del 14-jul). Su cuenta no tiene baseline y el mapa se subió hace horas: meterlo aquí con un ratio sería inventar señal. Cuando pasen ~4-6 semanas y LinkedIn le fije baseline, se añade.
 >
 > **Cobertura:** están todos los mapas, "Los 10" y lead magnets identificados por texto, más los memes que son outliers. Puede faltar algún meme o insight no outlier: si el planificador necesita certeza sobre un día concreto, que pregunte.
