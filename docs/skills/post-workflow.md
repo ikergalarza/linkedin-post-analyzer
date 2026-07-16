@@ -56,7 +56,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 7. **Imagen — SIEMPRE un prompt o una recomendación basada en datos** (según el registro correcto, `images §3`):
    - **Mapa:** captura de PamPam (la haces tú) → el workflow no da prompt, entrega el CSV.
    - **"Los 10":** orla de retratos con TU plantilla → el workflow entrega el ZIP de 10 fotos (no prompt).
-   - **Meme:** **prompt de modificaciones** sobre la referencia (`§4.4` Paso 6).
+   - **Meme:** **prompt de modificaciones** sobre la referencia (`§4.4` Pasos 6a-6b: primero se inventaría la foto, luego se escribe el prompt).
    - **Lead magnet / personal / founder:** **recomendación de foto natural** (selfie o grupo con compañeros; NO caricatura ni diseño elaborado).
    - **Deseo/números/conversación/métricas:** prompt de **screenshot documental** (iMessage, app del banco, dashboard de LinkedIn con nuestros datos).
    - Vídeo → skill `video`.
@@ -314,7 +314,26 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs). Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
 
-**Paso 6 — FOTO: PROMPT de modificaciones (NO generar la imagen).** Observa la foto de referencia y entrega **UN SOLO PÁRRAFO** con los cambios a aplicar sobre ella. Nada de listas ni de secciones: un párrafo, simple de leer y **lo más específico posible, para que el diseñador lo entienda a la primera**.
+**Paso 6a — ⭐ INVENTARIO DE LA IMAGEN (antes de escribir una sola línea del prompt).**
+> **El objetivo es UN prompt que salga a la primera, no una cadena de prompts de edición.** Cuando hacen falta 3 rondas, el fallo casi nunca es del diseñador: es que el primer prompt pedía mal las cosas.
+
+Mira la foto **sola**, tapando el texto del post, y escribe en literal:
+1. **¿Cuántos paneles / filas / columnas tiene?** → el remix lleva **EXACTAMENTE los mismos**. No es orientativo.
+2. **¿Qué hay en cada panel y quién es?** (mismo par repetido, escalera de personas, antes/después…)
+3. **¿La imagen lleva texto? ¿De quién y qué dice?** ¿Es diálogo, son etiquetas, es un titular?
+4. **¿Qué NO lleva la imagen?** ← el más importante. Aquí es donde se cuela lo que solo estaba en el post.
+
+**⛔ LA TRAMPA QUE YA CAYÓ (2026-07-16): el texto del post y el texto de la imagen son DOS MITADES DISTINTAS. No se mezclan.**
+- La referencia (The Office, 8.57x) tenía **`Manager: / SDR: / AE:` en el TEXTO** del post y **diálogo puro en la IMAGEN** (`CALL THE PROSPECT.` → `I EMAILED THEM.`). **La foto no llevaba ni un rol.**
+- El prompt salió pidiendo **6 filas con los roles como etiquetas**: conté los roles del TEXTO en vez de los paneles de la FOTO, y convertí un meme de diálogo en un gráfico de etiquetas. Costó 3 rondas de edición arreglarlo.
+- **El reparto correcto, que es el que hace la referencia:** el **TEXTO** lleva la escalera de roles · la **IMAGEN** lleva el diálogo. Cada uno cuenta una mitad. Con los roles metidos en la foto, la imagen **repetía lo que ya decía el texto** y dejaba de aportar (es la misma regla que "el título no repite el hook", `images §0h`).
+- **Regla de pulgar:** si algo lo sabes por haber leído el post y NO se ve en la foto, **no va en el prompt**.
+
+**Si la imagen es un DIÁLOGO, se calca la mecánica del diálogo,** no solo el hecho de que hablen: el original **escala la MISMA frase** (`CALL THE PROSPECT.` / `CALL THEM.` / `CALL THEM!` / `JUST CALL THEM!!!`) mientras el otro se desinfla. El remix escala la misma frase (`¿El pedido está cerrado?` → `¡¡¿ESTÁ CERRADO O NO?!!`). Cambia la piel, nunca el mecanismo.
+
+**⚠️ DE VERTICAL A 1:1 SE COMPRIME, y ahí se muere el motor.** Casi todas las referencias son verticales y nosotros publicamos 1:1 (`images §0b`), así que los paneles se aplastan. `global §4.3` exige que el cambio corporal sea **legible a tamaño miniatura**: si al reencuadrar la calvicie deja de verse, el post sale **sin motor**, con el chiste técnicamente dentro pero invisible en el feed. **Si el original es vertical y lleva cambio corporal, pídele explícitamente que ese cambio se note a simple vista** y dile de dónde sacar el espacio (quitar el footer libera alto: `images §0h`).
+
+**Paso 6b — FOTO: PROMPT de modificaciones (NO generar la imagen).** Con el inventario delante, entrega **UN SOLO PÁRRAFO** con los cambios a aplicar sobre ella. Nada de listas ni de secciones: un párrafo, simple de leer y **lo más específico posible, para que el diseñador lo entienda a la primera**.
 
 **Cómo se escribe el prompt (técnica validada por el usuario, funciona):**
 - **⬛ SIEMPRE `en formato cuadrado 1:1`**, aunque la referencia sea vertical (`images §0b`). LinkedIn recorta arriba y abajo en el feed. 19 de 20 de nuestros outliers son 1:1. El formato es NUESTRO: se calca la esencia, no el encuadre.
