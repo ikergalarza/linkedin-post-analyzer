@@ -53,11 +53,11 @@ function voiceForAuthor(authorName: string): Voice {
 const STRETCH_RULES: Record<Voice, { r12: string; r13: string }> = {
   normal: {
     r12: `RULE 12 — NATURAL VOWEL ELONGATION (this is what makes a reply sound human, not AI). Stretch a vowel in ONE or TWO words per reply by repeating a vowel — both mid-word and word-final. "muuuy buena" reads better than "muy buena"; "ciertooo" better than "cierto"; also "totaaal", "buenííísimo", "graciaas", "síííí". Put the stretch where the emphasis naturally lands (agreement, praise, emphasis). ONE or TWO stretches per reply is human; stretching every word is try-hard — keep it subtle. Do this on most replies; it's a core part of the natural voice.`,
-    r13: `RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it). If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm, elongated variant: "graciasss", "graciaas", "graciaaas", "muchas graciaaas", "gracias por valorarlo", "graciaas por el cariño", "se agradeceee". This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`,
+    r13: `RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it), AND NEVER THANK THE SAME WAY TWICE. If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm, elongated variant: "graciasss", "graciaas", "muchas graciaaas", "gracias por valorarlo", "gracias por tenerlo en cuenta", "gracias por decirlo", "gracias por leerlo", "gracias por pasarte por aquí", "me alegra que te sirva", "se agradeceee". ⚠️ "graciaas por el cariño" is ONE option among many, NOT your default — it has been massively overused and now reads as canned. A THANKS VARIANT is picked for you per reply in the user message: use that one. This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`,
   },
   sober: {
     r12: `RULE 12 — NATURAL VOWEL ELONGATION, SOBER VERSION (this is what makes a reply sound human, not AI — but you are a understated writer, so it stays quiet). Stretch a vowel in ONE word per reply, and by exactly ONE extra letter — the doubled vowel, never more. "muuy buena", "ciertoo", "totaal", "buenííisimo" is TOO MUCH → "buenísimoo", "síí". NEVER three or more of the same letter: "muuuy", "ciertooo", "síííí" are NOT your voice — they read as shouting. One doubled vowel, once per reply, where the emphasis naturally lands. Most replies get exactly one; some get none. That restraint IS the voice.`,
-    r13: `RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it). If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm but UNDERSTATED variant: "graciass", "graciaas", "muchas graciaas", "gracias por valorarlo", "graciaas por el cariño". At most ONE doubled letter — "graciasss" / "graciaaas" / "se agradeceee" are too loud for you. This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`,
+    r13: `RULE 13 — ALWAYS THANK WHEN THEY PRAISE US (never skip it), AND NEVER THANK THE SAME WAY TWICE. If the comment is mainly praise / flattery ("gran post", "me encanta", "brutal", "qué bueno", "de los mejores", "crack", "top", etc.), the reply MUST include a thanks — and NEVER a flat "gracias". Use a warm but UNDERSTATED variant: "graciass", "graciaas", "muchas graciaas", "gracias por valorarlo", "gracias por tenerlo en cuenta", "gracias por decirlo", "gracias por leerlo", "me alegra que te sirva". ⚠️ "graciaas por el cariño" is ONE option among many, NOT your default — it has been massively overused and now reads as canned. A THANKS VARIANT is picked for you per reply in the user message: use that one, toned down to your voice. At most ONE doubled letter — "graciasss" / "graciaaas" / "se agradeceee" are too loud for you. This is non-negotiable when the comment is basically a compliment — we too often skip the thanks and it reads cold. You can add a short line after the thanks, but the thanks comes first.`,
   },
 };
 
@@ -128,6 +128,27 @@ function buildPrompt(input: ReplyGenerationInput): string {
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
   const varietyNudge = `VARIETY NUDGE for THIS reply: lean toward this move IF it fits the comment naturally (don't force it): ${move}. The point is variety across replies (RULE 10) — a common opener like "exacto/totalmente" is fine now and then, just not as the default every time.`;
 
+  // Same per-call trick as OPENING_MOVES, for the same reason. RULE 13 lists the
+  // thanks variants but a menu doesn't produce variety: every call is independent,
+  // so the model can't know what it said last time and just picks its favourite.
+  // In practice that was ALWAYS "graciaas por el cariño". Picking one HERE is the
+  // only thing that actually spreads them out across replies.
+  const THANKS_VARIANTS = [
+    'gracias por valorarlo',
+    'gracias por tenerlo en cuenta',
+    'gracias por decirlo',
+    'gracias por leerlo',
+    'gracias por pasarte por aquí',
+    'gracias por el apunte',
+    'me alegra que te sirva',
+    'qué bien que te haya servido',
+    'graciaas por el cariño',
+    'se agradece un montón',
+    'plain elongated thanks with nothing after it ("graciaas", "muchas graciaaas")',
+  ];
+  const thanks = THANKS_VARIANTS[Math.floor(Math.random() * THANKS_VARIANTS.length)];
+  const thanksNudge = `THANKS VARIANT for THIS reply (only relevant IF the comment is praise, see RULE 13): use this specific flavour of thanks rather than your usual one: "${thanks}". Adapt the vowel stretch to your voice per RULE 12. If the comment is NOT praise, ignore this line entirely — do not bolt a thanks onto a comment that wasn't complimenting you.`;
+
   // Lead magnet: this person didn't just comment, they asked for something —
   // and they're getting it by DM right now. The reply must do BOTH jobs.
   const leadMagnetInstruction = input.leadMagnet
@@ -155,6 +176,7 @@ ${commenterLine}
 ${mentionInstruction}
 ${leadMagnetInstruction}
 ${varietyNudge}
+${thanksNudge}
 
 Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;
 }
