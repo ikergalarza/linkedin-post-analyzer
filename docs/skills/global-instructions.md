@@ -280,6 +280,23 @@ Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
 **Calcar referencias (el caso normal del meme):** el usuario pasa un enlace a un post-meme de LinkedIn; cópialo fielmente (layout, paneles, escena, expresiones, mecánica cómica, estilo de dibujo). Cambia: paleta Neety **+ detalles de marca** (corbatas naranjas, props), textos traducidos al español con tipografía Bricolage/Switzer + palabra naranja, props específicos variados (café→otro café), y **roles en español genérico** (sin anglicismos, para industrial 50+). El resto se preserva. **Runbook operativo completo: `post-workflow §4.4`** (extraer texto+foto del enlace, traducir, iterar hook, cuerpo, spam ninja, y el output = texto + prompt de modificaciones de la foto; Claude NO genera la imagen).
 
 ### 4.4 · LEAD MAGNET (comment-gated)
+
+> ## ⭐ LOS 2 SUBTIPOS DE LEAD MAGNET (taxonomía medida, 2026-07-16)
+> Igual que PELOTEO se abre en mapa / "Los 10" y MEME en cuerpo / captura / viñeta, el lead magnet tiene **dos variantes** y no se comportan igual:
+>
+> | Subtipo | Mecánica | Lo mejor / lo peor |
+> |---|---|---|
+> | **DM · privado** | Comenta la palabra → le mandamos el recurso **por privado** | 9.93x (vibe prospecting, 632💬) · 4.56x · 4.11x · 3.34x — **es el motor de leads** |
+> | **PÚBLICO · en comentarios** | Comenta la palabra + algo suyo → **el valor se entrega ahí mismo, en público** | **8.55x** (desmonto perfiles, 483💬) vs **0.44x** (traductor cringe, 12💬) |
+>
+> **⚠️ EL PÚBLICO SOLO FUNCIONA SI DAS VALOR DE VERDAD, Y LA DIFERENCIA ES DE 19×.** Los dos son la misma mecánica y el mismo autor:
+> - ✅ **"Hoy desmonto perfiles gratis"** (8.55x · 483💬): entras a SU perfil y le das **3 mejoras concretas**. Se lleva algo que vale dinero, gratis y delante de todos.
+> - ❌ **"Hoy traduzco tus comentarios al idioma del vendedor más cringe"** (0.44x · 12💬 · 1.248 impresiones): le devuelves **un chiste**. No se lleva nada. Nadie comenta para recibir una broma.
+> - **El test:** ¿lo que le devuelvo en el comentario **le sirve para vender más mañana**? Si es solo gracioso, es el traductor y flopea.
+>
+> **⚠️ LA DUDA DEL LINK, RESUELTA: el público NO renuncia a los leads, los mueve al privado.** El miedo es "si el valor va en comentarios y no hay enlace, no hay lead". Falso: **los 483 comentarios SON los leads** — 483 personas levantando la mano y diciendo su sector. Lo que falta no es un link en el post (rompería la regla del UNO, `§4.5`), es **el DM**.
+> - **El híbrido, que ya está montado en la herramienta:** `backend/src/services/replyGenerator.ts` tiene un modo `leadMagnet` que **responde en público Y confirma el envío por privado** en el mismo gesto. El público conserva el motor (valor gratis a la vista → comentario), y el enlace viaja por el privado, donde no compite con nada.
+> - **Reparto:** el DM es la vía **directa** de leads; el público es la vía de **autoridad + alcance** que genera la lista a la que DMear. No compiten: se encadenan.
 **Outliers reales (BD en vivo, 2026-07-14):** "vibe prospecting" (Unai) **9.85x · 632 com.** · "desmonto perfiles" LIVE (Iker) **8.52x · 483 com.** · "llaves a Claude" (Unai) **4.52x · 285 com.** · "llaves a Claude" (Iker) **4.10x · 232 com.** · "Claude cazar leads" (Iker) **3.33x · 183 com.** · "he reunido todo para prospectar" (Iker, nov-2025) **3.09x · 177 com.**
 ⚠️ Esta skill decía **9.13x** para "desmonto perfiles": es falso, son **8.52x**. El techo real del pilar es **9.85x**.
 **Firma de engagement del lead magnet: los COMENTARIOS, y casi nada más.** Mira los likes: 95 y 116 en los dos mejores, con 632 y 483 comentarios. Y **5-6 reposts**, los más bajos de todos los pilares. Un lead magnet con muchos likes y pocos comentarios ha fallado, por bien que se lea.

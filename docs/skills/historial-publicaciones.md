@@ -48,6 +48,7 @@
 | Semana (lunes) | Cuenta | Día | Categoría | Pilar/formato | Región o tema | Estado | Notas |
 |---|---|---|---|---|---|---|---|
 | 2026-07-13 | Iker | Jue 16/07 | Peloteo | "Los 10" | Asturias | publicado | recién subido, sin ratio útil todavía · 1er "Los 10" con clichés importados del mapa (post-workflow §4.3 Paso 3b) · orla montada por script, sin robot |
+| 2026-07-13 | Asier | Jue 16/07 | Meme | Motor A · cuerpo/psicológico | remix The Office "El pedido sube. La venta no." | publicado | 1er meme de su cuenta · 1ª aplicación de la regla "el formato se repite, el ángulo se itera" (misma plantilla que el 16.56x de Iker, 2 meses después, otra cuenta, otro ángulo) |
 | 2026-07-13 | Unai | Mié 15/07 | Meme | Motor A/B (2 de 4) | remix del perro "Tu informe de ventas resucita clientes muertos" | publicado | 0.76x a 1 día · avisado como 2/4 motores ANTES de subir · ⚠️ el registro infantil (perro dibujado) es lo que disparó la regla de voz por cuenta (brand-voice §1b · images §0g) |
 | 2026-07-13 | Asier | Mié 15/07 | Lead magnet | — | "un comité que no te ha visto la cara" | publicado | 0.51x a 1 día |
 | 2026-07-13 | Asier | Mar 14/07 | Peloteo | Mapa | Aragón | publicado | 2.06x · 13 reposts · 1er post de Asier con baseline |
