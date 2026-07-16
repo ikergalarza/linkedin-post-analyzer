@@ -32,7 +32,10 @@ ANCLA_VENTAS = r'\b(vender|vendes|vende|vendo|vendiendo|venta|ventas|vendid\w+|c
 # CRM y forecast añadidos el 2026-07-14 (se coló "Tu CRM…" en un hook de meme).
 DEMASIADO_NICHO = r'\b(b2b|outbound|inbound|pipeline|cadencia|reply rate|touchpoints?|sdr|aes?|cold email|discovery|gtm|icp|crm|forecast|saas|leads?|follow-?up)\b'
 # §2.9 — delatores de verbo flojo: describen en vez de frenar el scroll
-VERBO_FLOJO = (r'(\bse cae\b|\bse caen\b|\bse pierde\b|\bse pierden\b|\bocurre\b|\bocurren\b|\bpasa\b|\bpasan\b'
+# Ojo con "pasa": "pasa factura" es un MODISMO punchy, no un verbo flojo, y es el
+# gancho de "Subir en ventas siempre pasa factura" (13.61x). El check lo tumbaba.
+VERBO_FLOJO = (r'(\bse cae\b|\bse caen\b|\bse pierde\b|\bse pierden\b|\bocurre\b|\bocurren\b'
+               r'|\bpasa\b(?! factura)|\bpasan\b(?! factura)'
                r'|\bno funciona\b|\bexiste\b|\bexisten\b|\bhay que\b|\btiene que\b|\bes importante\b|\bes clave\b'
                # gerundios que DESCRIBEN en vez de frenar el scroll (§2.9). Solo se miden en el HOOK.
                r'|\bcolgando\b|\bvolviendo a\b|\bintentando\b|\btrabajando\b|\bdando vueltas\b|\bhaciendo\b)')
@@ -62,19 +65,27 @@ def es_lista(bloque):
     """¿Es una enumeración y no un bloque de prosa? Las enumeraciones están
     exentas de las reglas de tamaño de §3.2: van pegadas a propósito.
 
-    Dos formas de serlo:
+    Tres formas de serlo:
     1. Marcadores clásicos (→, ✅, 1., -).
-    2. Patrón de ETIQUETA: 2+ líneas que acaban en ":" (Realidad: / CRM: /
-       Traducción:). Es la unidad (c) de §3.3, "enumeración vertical paralela
-       con sintaxis repetida, sin blanco entre líneas". Faltaba, y marcaba como
-       prosa mal formateado un remix que calcaba bien a su referencia.
+    2. Patrón de ETIQUETA al final: 2+ líneas que acaban en ":" (Realidad: /
+       CRM: / Traducción:). Es la unidad (c) de §3.3, "enumeración vertical
+       paralela con sintaxis repetida, sin blanco entre líneas".
+    3. Patrón de ETIQUETA en medio: 2+ líneas tipo "Comercial: cerrado." Es la
+       MISMA unidad (c), pero con los dos puntos en medio en vez de al final.
+       Faltaba, y por eso este script tumbaba por "bloque de 4+ líneas" la
+       estructura del 13.61x ("SDR: ilusión y pelo intactos. / AE: primeras
+       cuotas…"), que es el 3er mejor post del histórico. Lo destapó correr el
+       validador contra nuestros propios ganadores, que es el test que nunca se
+       había hecho.
     """
     lineas = [l for l in bloque if l.strip()]
     if not lineas:
         return True
     if all(re.match(r'\s*(→|✅|[0-9]+[\.\)]|-|•|1️⃣|[2-9]️⃣)', l) for l in lineas):
         return True
-    return sum(1 for l in lineas if l.rstrip().endswith(':')) >= 2
+    if sum(1 for l in lineas if l.rstrip().endswith(':')) >= 2:
+        return True
+    return sum(1 for l in lineas if re.match(r'\s*[^:\n]{2,28}:\s+\S', l)) >= 2
 
 def leer_historial():
     if not os.path.exists(HISTORIAL):
