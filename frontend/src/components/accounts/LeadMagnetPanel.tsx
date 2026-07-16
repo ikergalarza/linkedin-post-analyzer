@@ -89,8 +89,16 @@ interface LmConfig {
   topic: string;
   valor: string; // solo público: qué le damos GRATIS en la respuesta
   gate: string;  // solo público: qué hay detrás del enlace y NO va en la respuesta
+  // Solo público. Con el roaster, el enlace NO es fijo: se genera uno por
+  // persona con SU análisis, y el propio roaster devuelve el comentario ya
+  // redactado. Por eso `valor` y `link` sobran en este modo.
+  roaster: boolean;
+  roasterNota: string;
 }
-const emptyConfig: LmConfig = { kind: 'dm', keyword: '', link: '', topic: '', valor: '', gate: '' };
+const emptyConfig: LmConfig = {
+  kind: 'dm', keyword: '', link: '', topic: '', valor: '', gate: '',
+  roaster: false, roasterNota: '',
+};
 
 function loadConfig(postId: string): LmConfig {
   try {
@@ -104,6 +112,8 @@ function loadConfig(postId: string): LmConfig {
       topic: p.topic || '',
       valor: p.valor || '',
       gate: p.gate || '',
+      roaster: !!p.roaster,
+      roasterNota: p.roasterNota || '',
     };
   } catch {
     return emptyConfig;
@@ -258,7 +268,9 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // Cada tipo necesita campos distintos, así que "listo" no es el mismo.
   const ready =
     cfg.kind === 'publico'
-      ? !!(cfg.keyword.trim() && cfg.link.trim() && cfg.valor.trim())
+      ? cfg.roaster
+        ? !!cfg.keyword.trim() // el roaster pone el análisis Y el enlace
+        : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.valor.trim())
       : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim());
 
   // Keyword filter, client-side: the comment list is already in memory, so
@@ -387,6 +399,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             onChange={(v) => setCfg((c) => ({ ...c, keyword: v }))}
             placeholder="MAPA"
           />
+          {!(cfg.kind === 'publico' && cfg.roaster) && (
           <Field
             label={cfg.kind === 'dm' ? 'Enlace del recurso' : 'Enlace del análisis completo'}
             hint={
@@ -398,6 +411,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             onChange={(v) => setCfg((c) => ({ ...c, link: v }))}
             placeholder="https://recursos.neety.com/…"
           />
+          )}
           {cfg.kind === 'dm' ? (
             <Field
               label="Tema"
@@ -417,7 +431,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           )}
         </div>
 
-        {cfg.kind === 'publico' && (
+        {cfg.kind === 'publico' && !cfg.roaster && (
           <Field
             label="Qué le damos GRATIS en la respuesta"
             hint="El valor entero, aterrizado en SU sector. Si le vale igual a cualquiera, no vale: eso es lo que mata este formato"
@@ -426,6 +440,37 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             placeholder="las 3 señales que en su sector avisan de que van a comprar, dónde se ven gratis y cuánto tardan en firmar desde que aparecen"
             multiline
           />
+        )}
+
+        {cfg.kind === 'publico' && (
+          <div className="pt-1 border-t border-border space-y-2">
+            <label className="flex items-start gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={cfg.roaster}
+                onChange={(e) => setCfg((c) => ({ ...c, roaster: e.target.checked }))}
+                className="mt-0.5 accent-accent"
+              />
+              <span className="min-w-0">
+                <span className="block text-xs font-medium text-text-primary group-hover:text-accent transition-colors">
+                  Analizar su perfil con el roaster
+                </span>
+                <span className="block text-[10px] text-text-muted mt-0.5">
+                  Lee su perfil, escribe el comentario y crea un enlace único con su análisis
+                  completo. Uno por persona: no hace falta ni el enlace ni el valor de arriba.
+                </span>
+              </span>
+            </label>
+            {cfg.roaster && (
+              <Field
+                label="Contexto para el análisis (opcional)"
+                hint="Lo que quieras que tenga en cuenta con todos. Lo que cada uno escriba en su comentario ya se le pasa aparte"
+                value={cfg.roasterNota}
+                onChange={(v) => setCfg((c) => ({ ...c, roasterNota: v }))}
+                placeholder="son directores comerciales de industria, tono directo pero sin pasarse"
+              />
+            )}
+          </div>
         )}
         {ready && (
           <div className="flex items-center gap-3 flex-wrap text-xs text-text-secondary pt-1 border-t border-border">
@@ -726,6 +771,40 @@ function CommenterCard({
     setAiLoading(true);
     setReplyMsg(null);
     try {
+      // Camino del ROASTER: no pasa por el generador de respuestas. El roaster
+      // lee su perfil y devuelve el comentario YA redactado + un enlace único
+      // con su análisis completo. Reescribirlo con el modelo sería empeorarlo.
+      if (cfg.kind === 'publico' && cfg.roaster) {
+        // CommentAuthor NO tiene profile_url: solo public_identifier. La URL se
+        // compone. (Y sin él no hay perfil que leer: pasa con las páginas de
+        // empresa y con los perfiles que LinkedIn no resuelve.)
+        const perfil = thread.author.public_identifier
+          ? `https://www.linkedin.com/in/${thread.author.public_identifier}`
+          : null;
+        if (!perfil) {
+          setReplyMsg('✗ No tengo la URL de su perfil, así que el roaster no puede leerlo');
+          return;
+        }
+        const r = await apiPost<{
+          comentarioPublicable: string | null;
+          veredicto: string | null;
+          puntuacion: number | null;
+          shareUrl: string | null;
+        }>('/api/accounts/roaster/analyze', {
+          url: perfil,
+          note: [cfg.roasterNota, thread.text].filter(Boolean).join(' · '),
+        });
+        const cuerpo = r.comentarioPublicable || r.veredicto || '';
+        if (!cuerpo) {
+          setReplyMsg('✗ El roaster no devolvió comentario');
+          return;
+        }
+        setReply(r.shareUrl ? `${cuerpo}
+
+Te lo he dejado entero aquí: ${r.shareUrl}` : cuerpo);
+        return;
+      }
+
       const res = await apiPost<{ reply: string }>(
         `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/generate`,
         {

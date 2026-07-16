@@ -12,6 +12,7 @@ import { sendToGoogleChat } from '../services/googleChat';
 import { captureAccountSnapshots } from '../services/accountSnapshots';
 import { extractViewerTimestamps } from '../utils/wvmp';
 import { generateReply } from '../services/replyGenerator';
+import { roastProfile } from '../services/roaster';
 import { runFollowerSync, getFollowerSyncProgress } from '../services/followerSync';
 
 const router = Router();
@@ -2148,6 +2149,30 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[accounts/comments/pending]', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/roaster/analyze — analiza un perfil con el roaster y
+// devuelve el análisis + la URL pública para pegar en el comentario.
+//
+// Existe para el lead magnet PÚBLICO: el valor va en el comentario y el enlace
+// lleva al análisis entero. Sin esto habría que abrir el roaster a mano, pegar
+// la URL, esperar, copiar el resultado y copiar el enlace, uno por uno y por
+// cada persona que comenta. Con 483 comentarios eso no lo hace nadie.
+router.post('/roaster/analyze', async (req: Request, res: Response) => {
+  try {
+    const { url, note, style } = req.body ?? {};
+    if (!url || !String(url).trim()) {
+      return res.status(400).json({ error: 'Falta la URL del perfil' });
+    }
+    const out = await roastProfile({
+      url: String(url).trim(),
+      note: note ? String(note).trim() : undefined,
+      style: style ? String(style).trim() : undefined,
+    });
+    res.json(out);
+  } catch (err: any) {
+    res.status(502).json({ error: err.message });
   }
 });
 
