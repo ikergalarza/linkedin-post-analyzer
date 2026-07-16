@@ -6,6 +6,12 @@
 
 ---
 
+## 0b · ⭐ RESUMEN AL FINAL, SIEMPRE (2026-07-16)
+**Cada respuesta termina con un `## Resumen` de 2-4 líneas.** Sin excepción, aunque la respuesta sea corta.
+- **Por qué:** "me pones mucho texto y no me entero". El resumen no es un adorno: es lo que el usuario lee primero y a veces lo único que lee.
+- **Qué va dentro:** qué he hecho o qué he decidido, y **qué necesito de él**. Nada de repetir el razonamiento.
+- **Lo demás va arriba y más corto.** El resumen no es la excusa para escribir 30 líneas antes.
+
 ## 1 · Formato de entrega
 
 - **Todo borrador de post va dentro de un bloque de código cercado** (triple backtick sin lenguaje). Motivo: la UI mangla los saltos de línea y el espaciado si el post va como texto normal; dentro del bloque se preserva exacto y sale botón de copiar.
