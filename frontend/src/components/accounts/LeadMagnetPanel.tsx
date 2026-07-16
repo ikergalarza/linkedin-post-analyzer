@@ -73,15 +73,38 @@ interface SendRecord {
 // post id: you'll come back to the same lead magnet over a couple of days as
 // comments trickle in, and retyping the link every time is how a wrong link
 // eventually goes out.
-interface LmConfig { keyword: string; link: string; topic: string }
-const emptyConfig: LmConfig = { keyword: '', link: '', topic: '' };
+// Los 2 tipos de lead magnet (`docs/skills/global-instructions.md §4.4`). No son
+// un ajuste: son dos formatos con dos mecánicas y dos resultados distintos.
+//  · dm      → comenta la palabra, le mandamos el recurso por privado.
+//  · publico → el valor se entrega en el comentario, a la vista de todos, y el
+//              enlace lleva a lo que no puede conseguir solo (ahí pedimos correo).
+// El público tiene el techo (8.55x · 483 comentarios) pero el que se hizo
+// regalaba TODO y no capturó ni un correo: por eso existe el campo `gate`.
+export type LmKind = 'dm' | 'publico';
+
+interface LmConfig {
+  kind: LmKind;
+  keyword: string;
+  link: string;
+  topic: string;
+  valor: string; // solo público: qué le damos GRATIS en la respuesta
+  gate: string;  // solo público: qué hay detrás del enlace y NO va en la respuesta
+}
+const emptyConfig: LmConfig = { kind: 'dm', keyword: '', link: '', topic: '', valor: '', gate: '' };
 
 function loadConfig(postId: string): LmConfig {
   try {
     const raw = localStorage.getItem(`lm-config:${postId}`);
     if (!raw) return emptyConfig;
     const p = JSON.parse(raw);
-    return { keyword: p.keyword || '', link: p.link || '', topic: p.topic || '' };
+    return {
+      kind: p.kind === 'publico' ? 'publico' : 'dm', // los configs viejos no tienen kind
+      keyword: p.keyword || '',
+      link: p.link || '',
+      topic: p.topic || '',
+      valor: p.valor || '',
+      gate: p.gate || '',
+    };
   } catch {
     return emptyConfig;
   }
@@ -232,7 +255,11 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     return m;
   }, [sendsData]);
 
-  const ready = cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim();
+  // Cada tipo necesita campos distintos, así que "listo" no es el mismo.
+  const ready =
+    cfg.kind === 'publico'
+      ? !!(cfg.keyword.trim() && cfg.link.trim() && cfg.valor.trim())
+      : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim());
 
   // Keyword filter, client-side: the comment list is already in memory, so
   // changing the keyword re-filters instantly instead of hitting LinkedIn
@@ -346,8 +373,12 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
         {headline && <p className="text-xs text-text-primary line-clamp-2">{headline}</p>}
       </div>
 
-      {/* Config: keyword / link / topic */}
+      {/* Tipo de lead magnet + su config. El tipo va PRIMERO y arriba porque
+          decide qué campos tienen sentido debajo: son dos formatos distintos,
+          no un ajuste. */}
       <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
+        <KindPicker value={cfg.kind} onChange={(k) => setCfg((c) => ({ ...c, kind: k }))} />
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Field
             label="Palabra clave"
@@ -357,20 +388,45 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             placeholder="MAPA"
           />
           <Field
-            label="Enlace del recurso"
-            hint="El de recursos.neety.com que va en el mensaje"
+            label={cfg.kind === 'dm' ? 'Enlace del recurso' : 'Enlace del análisis completo'}
+            hint={
+              cfg.kind === 'dm'
+                ? 'El de recursos.neety.com que va en el mensaje'
+                : 'Va al final de la respuesta pública. Aquí es donde piden el correo'
+            }
             value={cfg.link}
             onChange={(v) => setCfg((c) => ({ ...c, link: v }))}
             placeholder="https://recursos.neety.com/…"
           />
-          <Field
-            label="Tema"
-            hint="Rellena «el recurso sobre…»"
-            value={cfg.topic}
-            onChange={(v) => setCfg((c) => ({ ...c, topic: v }))}
-            placeholder="el mapa de logística de Bizkaia"
-          />
+          {cfg.kind === 'dm' ? (
+            <Field
+              label="Tema"
+              hint="Rellena «el recurso sobre…»"
+              value={cfg.topic}
+              onChange={(v) => setCfg((c) => ({ ...c, topic: v }))}
+              placeholder="el mapa de logística de Bizkaia"
+            />
+          ) : (
+            <Field
+              label="Qué hay detrás del enlace"
+              hint="Lo que NO se cuenta en la respuesta. Es el motivo de dejar el correo"
+              value={cfg.gate}
+              onChange={(v) => setCfg((c) => ({ ...c, gate: v }))}
+              placeholder="las empresas de su sector que tienen esa señal ahora mismo"
+            />
+          )}
         </div>
+
+        {cfg.kind === 'publico' && (
+          <Field
+            label="Qué le damos GRATIS en la respuesta"
+            hint="El valor entero, aterrizado en SU sector. Si le vale igual a cualquiera, no vale: eso es lo que mata este formato"
+            value={cfg.valor}
+            onChange={(v) => setCfg((c) => ({ ...c, valor: v }))}
+            placeholder="las 3 señales que en su sector avisan de que van a comprar, dónde se ven gratis y cuánto tardan en firmar desde que aparecen"
+            multiline
+          />
+        )}
         {ready && (
           <div className="flex items-center gap-3 flex-wrap text-xs text-text-secondary pt-1 border-t border-border">
             <span>
@@ -431,28 +487,89 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   );
 }
 
+// El selector de tipo. Dos opciones, no un desplegable: con dos, un desplegable
+// esconde la mitad de la decisión detrás de un clic. Cada una dice en una línea
+// qué hace, porque la diferencia entre las dos no es obvia por el nombre.
+function KindPicker({ value, onChange }: { value: LmKind; onChange: (k: LmKind) => void }) {
+  const OPCIONES: { id: LmKind; titulo: string; sub: string }[] = [
+    { id: 'dm', titulo: 'Por privado', sub: 'Comentan la palabra y les mandamos el recurso al DM' },
+    { id: 'publico', titulo: 'En comentarios', sub: 'Les damos el valor en público y el enlace pide el correo' },
+  ];
+  return (
+    <div>
+      <label className="block text-[11px] font-medium text-text-secondary mb-1.5">
+        Tipo de lead magnet
+      </label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {OPCIONES.map((o) => {
+          const on = value === o.id;
+          return (
+            <button
+              key={o.id}
+              type="button"
+              onClick={() => onChange(o.id)}
+              aria-pressed={on}
+              className={`text-left rounded-lg border px-3 py-2.5 transition-colors ${
+                on
+                  ? 'border-accent bg-accent/10'
+                  : 'border-border bg-bg-primary hover:border-text-muted'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <span
+                  className={`w-3.5 h-3.5 rounded-full border-[3px] shrink-0 transition-colors ${
+                    on ? 'border-accent' : 'border-border'
+                  }`}
+                />
+                <span className={`text-sm font-medium ${on ? 'text-accent' : 'text-text-primary'}`}>
+                  {o.titulo}
+                </span>
+              </span>
+              <span className="block text-[10px] text-text-muted mt-1 ml-[22px]">{o.sub}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function Field({
   label,
   hint,
   value,
   onChange,
   placeholder,
+  multiline,
 }: {
   label: string;
   hint: string;
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
+  multiline?: boolean;
 }) {
+  const cls =
+    'w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent';
   return (
     <div className="min-w-0">
       <label className="block text-[11px] font-medium text-text-secondary mb-1">{label}</label>
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent"
-      />
+      {multiline ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={2}
+          className={`${cls} resize-y leading-snug`}
+        />
+      ) : (
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={cls}
+        />
+      )}
       <p className="text-[10px] text-text-muted mt-1">{hint}</p>
     </div>
   );
@@ -524,6 +641,10 @@ function CommenterCard({
   // Drafted once on mount, from the list-level variant rotation. Lazy initial
   // state so the rotation advances exactly once per card, not on every render.
   const [reply, setReply] = useState<string>(() => {
+    // En PÚBLICO no hay plantilla que valga: la respuesta es el valor entero y
+    // personalizado, así que se redacta. Un "Enviado!" precargado aquí sería
+    // justo lo contrario de lo que hace funcionar al formato.
+    if (cfg.kind === 'publico') return '';
     const name = thread.author.name;
     const base = initialReply();
     return name && thread.author.profile_id ? `${name} ${base.charAt(0).toLowerCase()}${base.slice(1)}` : base;
@@ -612,7 +733,13 @@ function CommenterCard({
           commenter_name: thread.author.name,
           commenter_headline: thread.author.headline,
           commenter_profile_id: thread.author.profile_id,
-          lead_magnet_topic: ownsDm ? cfg.topic : undefined,
+          lead_magnet_topic: cfg.kind === 'dm' && ownsDm ? cfg.topic : undefined,
+          // El público NO depende de ownsDm: la respuesta pública se escribe
+          // para todos, se pueda mandar DM o no. Ahí está el valor entero.
+          lead_magnet_publico:
+            cfg.kind === 'publico'
+              ? { valor: cfg.valor, link: cfg.link, gate: cfg.gate }
+              : undefined,
         }
       );
       setReply(res.reply);

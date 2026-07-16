@@ -23,12 +23,20 @@ export interface ReplyGenerationInput {
     signature_moves: string | null;
     avoid: string | null;
   };
-  // Set ONLY by the Lead Magnet tab. This person commented a keyword to get a
-  // resource, and we're sending it to them by DM in the same breath — so the
-  // reply has a second job the normal one doesn't: confirm the thing is on its
-  // way. Without this the model writes a perfectly good reply that never
-  // mentions the resource, and the commenter has no idea to check their DMs.
-  leadMagnet?: { topic: string };
+  // Set ONLY by the Lead Magnet tab. Hay DOS tipos de lead magnet y la respuesta
+  // que pide cada uno no se parece en nada (`global-instructions §4.4`):
+  //
+  //  · 'dm'      → comenta la palabra y le mandamos el recurso por privado. La
+  //                respuesta pública solo CONFIRMA que va de camino. Corta.
+  //  · 'publico' → el valor se entrega EN EL COMENTARIO, a la vista de todos, y
+  //                el enlace lleva a lo que no puede conseguir solo. Larga.
+  //
+  // El público es el que tiene el techo (8.55x · 483 comentarios) pero el que se
+  // hizo se regalaba TODO y no capturó ni un correo. De ahí el campo `gate`: lo
+  // que hay detrás del enlace y NO va en la respuesta.
+  leadMagnet?:
+    | { kind: 'dm'; topic: string }
+    | { kind: 'publico'; valor: string; link: string; gate: string };
 }
 
 // Las 3 cuentas comparten QUÉ decimos (la voz Neety del commenter_profile, que
@@ -169,11 +177,31 @@ function buildPrompt(input: ReplyGenerationInput): string {
   const thanks = THANKS_VARIANTS[Math.floor(Math.random() * THANKS_VARIANTS.length)];
   const thanksNudge = `THANKS VARIANT for THIS reply (only relevant IF the comment is praise, see RULE 13): use this specific flavour of thanks rather than your usual one: "${thanks}". Adapt the vowel stretch to your voice per RULE 12. If the comment is NOT praise, ignore this line entirely — do not bolt a thanks onto a comment that wasn't complimenting you.`;
 
-  // Lead magnet: this person didn't just comment, they asked for something —
+  // Lead magnet PÚBLICO: el valor se entrega aquí, en el comentario, delante de
+  // todo el mundo. Es la excepción a la RULE 3 (1-3 frases): aquí el texto ES el
+  // producto. Lo que decide si funciona: que esté aterrizado en SU caso (si le
+  // vale a cualquiera, no vale) y que el enlace ofrezca lo que la respuesta no da.
+  const leadMagnetPublico =
+    input.leadMagnet?.kind === 'publico'
+      ? `\n═══ LEAD MAGNET PÚBLICO (aplica a ESTA respuesta) ═══
+Esta persona ha comentado la palabra clave + su sector para que le demos algo. Tu respuesta se publica EN LOS COMENTARIOS, a la vista de todos, y tiene TRES trabajos:
+
+1. DALE EL VALOR. Entero, gratis y aterrizado en SU caso. Esto es lo prometido:
+   "${input.leadMagnet.valor}"
+   Úsalo sobre el sector/situación que ha dicho ÉL en su comentario, con ejemplos y nombres de cosas de su mundo. **Si tu respuesta le vale igual a cualquier otro, está mal**: el que la lea por encima tiene que pensar "esta gente sabe de lo mío". Aquí es donde se gana el post.
+2. NO REGATEES lo prometido para forzar el clic. Se nota, y hunde los comentarios, que son el motor entero del formato. El valor va COMPLETO en la respuesta.
+3. EL ENLACE, al final y como continuación natural de lo que acabas de decirle. Detrás está: "${input.leadMagnet.gate}". Eso es lo que NO puede conseguir solo, y es el único motivo honesto para clicar. Enlace: ${input.leadMagnet.link}
+   Di QUÉ hay al otro lado, concreto y en su caso. Nunca un "más info aquí".
+
+LONGITUD — ESTO ANULA LA RULE 3: aquí SÍ te extiendes (unas 5-10 líneas). El texto es el producto. Pero cada línea lleva algo: cero relleno, cero preámbulo.
+FORMATO: LinkedIn no renderiza markdown, así que nada de **negritas** ni viñetas con guion. Líneas cortas y saltos de línea, que se lee en el móvil. Cero guiones largos.\n`
+      : '';
+
+  // Lead magnet DM: this person didn't just comment, they asked for something —
   // and they're getting it by DM right now. The reply must do BOTH jobs.
-  const leadMagnetInstruction = input.leadMagnet
+  const leadMagnetInstruction = input.leadMagnet?.kind === 'dm'
     ? `\n═══ LEAD MAGNET (applies to THIS reply) ═══
-This person commented on a post that offered a resource about "${input.leadMagnet.topic}" in exchange for a keyword. You are sending them that resource by private message RIGHT NOW.
+This person commented on a post that offered a resource about "${input.leadMagnet.kind === 'dm' ? input.leadMagnet.topic : ''}" in exchange for a keyword. You are sending them that resource by private message RIGHT NOW.
 
 So this reply has TWO jobs and needs both:
 1. ENGAGE with what they actually said. They didn't only drop the keyword — they wrote something real (an opinion, their own experience, a question). React to THAT, specifically, the way you would to any good comment. This is the part that matters; a reply that skips it is worthless.
@@ -194,7 +222,7 @@ ${commenterLine}
 "${input.commentText}"
 
 ${mentionInstruction}
-${leadMagnetInstruction}
+${leadMagnetInstruction}${leadMagnetPublico}
 ${varietyNudge}
 ${thanksNudge}
 

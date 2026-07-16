@@ -2160,6 +2160,7 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
       // Set only by the Lead Magnet tab: the resource's topic. Its presence
       // is what tells the generator to also confirm the DM is on its way.
       lead_magnet_topic,
+      lead_magnet_publico,
     } = req.body || {};
 
     // GIF / sticker / image-only comment → no text to engage with. Skip the
@@ -2209,8 +2210,17 @@ router.post('/posts/:postId/comments/:commentId/generate', async (req: Request, 
         signature_moves: profile.signature_moves,
         avoid: profile.avoid,
       },
-      leadMagnet: lead_magnet_topic && String(lead_magnet_topic).trim()
-        ? { topic: String(lead_magnet_topic).trim() }
+      // Los dos tipos de lead magnet (`global-instructions §4.4`). El público
+      // manda si vienen los dos: sus campos son más específicos.
+      leadMagnet: lead_magnet_publico?.valor && lead_magnet_publico?.link
+        ? {
+            kind: 'publico' as const,
+            valor: String(lead_magnet_publico.valor).trim(),
+            link: String(lead_magnet_publico.link).trim(),
+            gate: String(lead_magnet_publico.gate || '').trim(),
+          }
+        : lead_magnet_topic && String(lead_magnet_topic).trim()
+        ? { kind: 'dm' as const, topic: String(lead_magnet_topic).trim() }
         : undefined,
     });
 
