@@ -66,7 +66,7 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
 > **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
-> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción de 2 líneas** para la web del mapa · (4) la **guía de menciones** (bloque cercado, solo URLs) · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
+> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción de 2 líneas** para la web del mapa · (4) la **guía de menciones** (en el chat: enlaces CLICABLES fuera de cercado, Paso 10) · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
 > **Ojo, son DOS imágenes distintas y solo una la das tú:**
 > - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.)
 > - **Foto de portada de la WEB del mapa** = foto de la región → **la entrega el workflow** (Paso 11).
@@ -161,6 +161,10 @@ Frase de entrada:
   - Es la excepción a `working-preferences §1` (que pide bloque cercado): esa regla existe porque LinkedIn mangla los saltos del POST, y la guía de menciones no se pega en LinkedIn.
 - **Calca el formato y el orden del bloque de empresas del post** (mismas 5×4, mismo orden), pero cambiando cada nombre por su URL. Así cada línea de la guía cae en la MISMA posición que su línea del post y se va bajando a la vez por los dos.
 - **Solo las dos URLs, nada más.** Sin cargo, sin fecha de actividad, sin por qué está elegida: en el MAPA no hay que justificar cada ficha (la justificación va aparte, en la lista de "revisa estas"). El nombre ya viaja dentro de la URL.
+**Así en el CHAT** (suelto, sin cercar, para que se renderice y se pueda clicar):
+`→ [Empresa](https://www.linkedin.com/company/…) - [Persona](https://www.linkedin.com/in/…)`
+
+**Así en un FICHERO** (cercado, URLs desnudas):
 ```
 → linkedin.com/company/… - linkedin.com/in/…
 → linkedin.com/company/… - linkedin.com/in/…
@@ -175,7 +179,7 @@ Frase de entrada:
 - **Entrega:** el fichero + la URL de descarga + **licencia y autor listos para pegar**. Si hay una CC0 decente, ofrécela como alternativa aunque la bonita sea CC BY-SA: al usuario le puede compensar no tener que atribuir.
 - Validado (Aragón): `Zaragoza Rio Ebro and Catedral-Basílica del Pilar upstream from Puente de Piedra.jpg` (CC BY-SA 4.0, Ymblanter) y la alternativa CC0 `Zaragoza shel.JPG`.
 
-**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** en bloque cercado, solo URLs, calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
+**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** con enlaces CLICABLES fuera de cercado (Paso 10), calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
 
 **Guardarraíles de elección de región (Paso 0):**
 - **⚠️ PREGUNTA PRIMERO PARA QUÉ CUENTA ES.** La región no se elige en abstracto: **las regiones quemadas son POR CUENTA**, no globales. Iker ya hizo Cataluña → Iker no la repite jamás, pero **Unai y Asier sí pueden hacerla**. El plan es que cada cuenta acabe tocando todas las regiones (España se acaba). Mira la cobertura por cuenta en `docs/skills/historial-publicaciones.md` **antes** de proponer nada.
@@ -225,6 +229,7 @@ Frase de entrada:
 - Mete aquí el **concepto despectivo original + "y poco más"** (`global §4.1`). **La región NO se nombra hasta el reveal**: los clichés van todos antes y solos ya la insinúan, igual que en el hook del mapa ("el patio trasero de los Pirineos" nunca dice Navarra).
 - ⛔ **DEL MAPA SE IMPORTA EL CLICHÉ, NO EL SHOCK CONTRA UN PAÍS.** Nada de "exporta más que Bolivia entera" ni ninguna cifra regional. Motivos, por orden: (a) **la prioridad de este pilar son las PERSONAS**, y en el gancho ni se menciona un país, así que meterlo en el cuerpo lo descentra; (b) **canibaliza el mapa** — es su firma, y lo que hace que un mapa y un "Los 10" del mismo territorio no se quemen entre sí es justo que uno pelotea empresas y el otro personas (`historial-publicaciones`); (c) **alarga el cuerpo después de la lista**, que es donde el post ya va cuesta abajo; (d) el **País Vasco 4.81x no llevaba NI UNA cifra regional**. El único dato numérico de este pilar es el **logro de cada persona** en su ficha. Corregido el 2026-07-15: la primera versión de este Paso 3b lo permitía "si tienes el dato verificado" y el usuario lo tumbó.
 - ⚠️ **Nunca en registro de reproche a las empresas** (lo que mató a Cataluña 0.7x). El cliché va contra el tópico de fuera, no contra la empresa que no reconoce a nadie.
+- **⭐ Justo DESPUÉS del reveal, nombra ciudades Y pueblos** (`global §4.1` regla 2b). No solo la capital: es una queja real de nuestros comentarios. **Sácalos de las sedes de tus 10 empresas**, que ya están verificadas, así no inventas nada. Asturias: *"Y no salen todos de Gijón ni de Oviedo. Salen de Tineo, de Llanera, de Castropol y del puerto de Avilés."* Es el mismo hueco donde el mapa pone *"De Pamplona a la Ribera"*.
 
 **Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). **En este pilar va después del REVEAL, no "justo después de las menciones"** (el orden es lista → clichés → reveal → spam ninja → cierre): el reveal es lo que cierra el bloque de la lista, y meter el link antes lo parte. Resumen: máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), colocado **justo después de las menciones** y nunca como última línea. Aquí el giro va al dolor del comercial de la región, no al de la empresa.
 
@@ -246,11 +251,14 @@ cambia del segundo titulo la palabra "vasca" por "XXX" y deja luego el titulo ce
 inserta en los placeholders de las imagenes las fotos de personas en el orden que te paso con sus nombres: XXX solo haz este cambio no suavices las caras ni las deformes insertalas tal cual asegurándote que esta condición se cumple en TODAS las filas ya que sueles insertar las fotos en la primera fila perfectas sin deformar y en la ultima siempre haces lo que quieres (aunque la foto original tenga baja calidad insertala tal cual)
 ```
 
-**Paso 7 — Guía de menciones con enlaces** (mismas reglas de formato que el mapa, §4.2 Paso 10): **bloque cercado de texto plano, NUNCA tabla**, calcando el orden y el formato del bloque de personas del post pero con URLs en vez de nombres. Aquí el orden es **persona primero** (como en el cuerpo, `→ Persona - Empresa`), y **se mantiene el logro** al final: en este pilar el logro SÍ justifica la ficha (es el criterio de selección) y el usuario lo necesita a mano para responder comentarios. Esa es la única diferencia con el mapa, donde no se justifica nada.
+**Paso 7 — Guía de menciones con enlaces** (mismas reglas de formato que el mapa, §4.2 Paso 10): calcando el orden del bloque de personas del post. Aquí el orden es **persona primero** (como en el cuerpo, `→ Persona - Empresa`), y **se mantiene el logro** al final: en este pilar el logro SÍ justifica la ficha (es el criterio de selección) y el usuario lo necesita a mano para responder comentarios. Esa es la única diferencia con el mapa, donde no se justifica nada.
+
+⚠️ **El formato manda desde `§4.2` Paso 10 y NO se reescribe aquí.** Resumen: en el CHAT van **enlaces markdown CLICABLES con `https://`, FUERA de todo bloque cercado**; cercado solo si va a un fichero. **Fallado dos veces (2026-07-15)** por el mismo motivo: este Paso decía "mismas reglas que el mapa" y acto seguido las contradecía con un "bloque cercado", heredado del POST. Son cosas opuestas: **el post va cercado porque se copia y pega en LinkedIn sin markdown** (`working-preferences §1`); **la guía no se pega en ningún sitio, se CLICA**. El texto del enlace es el NOMBRE (legible), el href la URL:
 ```
-→ linkedin.com/in/… - linkedin.com/company/… · logro concreto
-(… 10 líneas, en el orden exacto del post)
+→ [Javier Soto](https://www.linkedin.com/in/javier-soto-639657b3) - [Esnova](https://www.linkedin.com/company/4999804) · de €30M a rozar €100M
+(… 10 líneas, en el orden exacto del post, FUERA de todo bloque cercado)
 ```
+(Ese ejemplo va cercado aquí solo para que veas la sintaxis. En la ENTREGA va suelto, para que se renderice.)
 
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces** · (4) **los 2 PROMPTS de imagen** literales con sus `XXX` rellenos (Paso 6b). **Sin CSV** y sin montar la imagen: eso lo hace el usuario con su plantilla.
 
