@@ -63,6 +63,12 @@ Son artefactos distintos con reglas opuestas. **No apliques la del post a la ima
 
 **Lo que NO se toca: las tildes.** Si escribe `Jose Antonio Garcia` sin tildes, va sin tildes. Así escribe él su nombre y corregírselo es inventar. La incoherencia de tildes no canta; la de MAYÚSCULAS sí.
 
+## 0f · ⛔ LO QUE UN MODELO DE IMAGEN NO PUEDE HACER: PEGAR
+**Un modelo generativo no compone capas, sintetiza píxeles.** No tiene una operación de "pegar esta foto aquí": mira tu foto, la interpreta y **dibuja una parecida**. Por eso, al pedirle que metiera 10 retratos en una plantilla, devolvía caras de otras personas, cambiaba el color de los ojos, suavizaba las fotos malas hasta convertirlas en modelos, metía ruido en los fondos oscuros y descentraba el título. **Todo eso es la MISMA causa y ninguna es un fallo de instrucción.**
+- **No se arregla con prompt.** Cada "no toques" que añades lo alarga y le hace menos caso a todo. Si te ves escribiendo la tercera ronda de "no lo suavices", el problema es la herramienta.
+- **La regla:** si la operación es **determinista** (pegar, recortar, enmascarar, colocar, redimensionar), la hace un **script**; el modelo es para lo que hay que **inventar** (un meme nuevo, una escena). Caso: `scripts/montar-orla.py` (`post-workflow §4.3` Paso 6b) → 0 píxeles de la plantilla tocados, foto idéntica al original.
+- Es la misma lección que el validador de posts y que el sorteo del agradecimiento en `replyGenerator`: **lo que se puede comprobar o ejecutar mecánicamente no se le pide por favor a un modelo.**
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 

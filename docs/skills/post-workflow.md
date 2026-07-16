@@ -237,19 +237,16 @@ Frase de entrada:
 
 **Paso 6 — FOTOS de las 10 personas (en vez del CSV):** para cada persona, saca su **foto de perfil de LinkedIn** vía Unipile (endpoint de perfil de persona → campo de foto de perfil, `profile_picture_url`/`picture_url`), descárgala, y entrega las 10 en un **ZIP/carpeta nombradas en ORDEN de mención**: `01_Nombre-Apellido.jpg`, `02_…`, … `10_…`. (El usuario las coloca en su plantilla; nosotros NO montamos la imagen — imagen = orla de retratos, `images §8`.)
 
-**Paso 6b — LOS 2 PROMPTS DE IMAGEN (output fijo, se entregan SIEMPRE).**
-El usuario monta la imagen con SU plantilla en otra herramienta y le pasa estos dos prompts. **Van literales, palabra por palabra**: no los reescribas, no los "mejores", no los resumas. Lo único que cambia son los `XXX`. Cada uno en su bloque cercado, para copiar de un clic.
-
-- **`XXX` del PROMPT 1 = el GENTILICIO de la región, no su nombre.** La plantilla dice "LA INDUSTRIA VASCA", así que se sustituye adjetivo por adjetivo: Cataluña → `catalana` · Valencia → `valenciana` · Aragón → `aragonesa` · Navarra → `navarra` · Galicia → `gallega` · Andalucía → `andaluza` · Asturias → `asturiana` · Murcia → `murciana`. Poner el nombre daría "LA INDUSTRIA CATALUÑA".
-- **`XXX` del PROMPT 2 = los 10 nombres en ORDEN de mención**, en el mismo orden que el bloque del post y que los ficheros `01_…`-`10_…` del ZIP. **⚠️ Los mismos NO: van NORMALIZADOS** (`images §0e`) — Title Case y nombre completo + PRIMER apellido. El nombre exacto de LinkedIn es obligatorio en la **@ del post**, donde si no coincide la mención muere; en la **imagen** es texto dibujado y manda el diseño. Ojo con los nombres compuestos (`Jose Antonio Garcia`, nunca `Jose Garcia`) y con los campos invertidos (`first_name="OUAZZANI TOUHAMI"` → en la orla `Asma Ouazzani`).
-
+**Paso 6b — LA ORLA: la monta un SCRIPT, no el robot de diseño (2026-07-16).**
 ```
-cambia del segundo titulo la palabra "vasca" por "XXX" y deja luego el titulo centrado ya que la frase será más larga, deja el resto de la imagen intacta solo haz ese cambio
+python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/LOS 10/LOS 10 PLANTILLA DEF.psd"   --fotos "C:/Users/LENOVO/Desktop/los10-<region>"   --fuente "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/Bricolage_Grotesque/static/BricolageGrotesque-ExtraBold.ttf"   --nombres "Nombre 1 | Nombre 2 | … | Nombre 10"   --salida "C:/Users/LENOVO/Desktop/orla-<region>.png"
 ```
-
-```
-inserta en los placeholders de las imagenes las fotos de personas en el orden que te paso con sus nombres: XXX solo haz este cambio no suavices las caras ni las deformes insertalas tal cual asegurándote que esta condición se cumple en TODAS las filas ya que sueles insertar las fotos en la primera fila perfectas sin deformar y en la ultima siempre haces lo que quieres (aunque la foto original tenga baja calidad insertala tal cual)
-```
+**Por qué se cambió, que es lo que no hay que olvidar:** los 2 prompts de imagen que había aquí **NO se podían arreglar escribiéndolos mejor**. Un modelo generativo no pega una foto, la **REDIBUJA**: sintetiza píxeles nuevos en todo el lienzo. Por eso devolvía caras que no eran de esas personas, cambiaba el color de los ojos, convertía las fotos malas en fotos de modelo, metía ruido en el azul del header y lo descentraba. **No era un fallo de prompt: era lo único que sabe hacer.** Cada "no toques" que le añadías alargaba el prompt y le hacía menos caso a todo.
+- El script detecta **solo** los huecos transparentes, escala con Lanczos (que reduce información, no la inventa), recorta centrado y pone la foto **DEBAJO** con la plantilla encima: la máscara del círculo es la que dibujó el diseñador. Los nombres, la fuente, el cuerpo y el color se **leen del propio PSD**, así que si el diseñador cambia el estilo, el script le sigue.
+- **Medido:** 0 píxeles de la plantilla tocados fuera de las cajas de nombre, y dif. media 0.00 entre foto original y círculo. No "parecida": idéntica.
+- **La foto fea se queda fea, y es lo correcto.** Es su foto de LinkedIn. El comercial cuya cara casi no se ve seguirá sin vérsele.
+- **Nombres:** normalizados según `images §0e` (Title Case + nombre completo y PRIMER apellido), no el exacto de LinkedIn (eso es solo para la @ del post).
+- Si algún día la plantilla cambia de huecos o de placeholders, el script **avisa y sale con error** en vez de dibujar de más.
 
 **Paso 7 — Guía de menciones con enlaces** (mismas reglas de formato que el mapa, §4.2 Paso 10): calcando el orden del bloque de personas del post. Aquí el orden es **persona primero** (como en el cuerpo, `→ Persona - Empresa`), y **se mantiene el logro** al final: en este pilar el logro SÍ justifica la ficha (es el criterio de selección) y el usuario lo necesita a mano para responder comentarios. Esa es la única diferencia con el mapa, donde no se justifica nada.
 
