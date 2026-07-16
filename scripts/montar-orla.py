@@ -81,6 +81,69 @@ def buscar_huecos(alpha: np.ndarray) -> list[dict]:
     return huecos
 
 
+MODELO_CARA = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'modelos',
+                           'face_detection_yunet_2023mar.onnx')
+
+
+def detectar_cara(ruta: str):
+    """Devuelve (x, y, w, h, confianza) de la cara más grande, o None.
+
+    YuNet, NO las cascadas Haar. Haar se probó primero y era inservible aquí:
+    en la foto de Alvaro Platero (blanco y negro, poco contraste, él de tres
+    cuartos) devolvió TRES "caras" y las tres eran fondo desenfocado. Como el
+    código cogía la más grande, le recortó la nuca. Peor aún: hizo creer que su
+    cara ocupaba un 15% cuando ocupa un 35%, o sea que casi se "arregla" una
+    foto que estaba perfecta.
+
+    YuNet da confianza (0.89-0.96 en nuestras 10) y encuentra exactamente una
+    cara por foto. Solo LOCALIZA: lo único que se hace con el resultado es
+    recortar. No toca un píxel.
+    """
+    import cv2
+
+    if not os.path.exists(MODELO_CARA):
+        raise FileNotFoundError(
+            f'Falta el modelo de caras en {MODELO_CARA}.\n'
+            'Bájalo (232 KB) del zoo de OpenCV, que lo sirve por Git LFS:\n'
+            '  curl -sL -o scripts/modelos/face_detection_yunet_2023mar.onnx \\\n'
+            '    https://media.githubusercontent.com/media/opencv/opencv_zoo/main/'
+            'models/face_detection_yunet/face_detection_yunet_2023mar.onnx\n'
+            'Ojo: la URL de raw.githubusercontent devuelve un puntero LFS de 131 bytes, no el modelo.'
+        )
+    # cv2.imread se atraganta con las tildes de las rutas en Windows (Menéndez).
+    img = cv2.imdecode(np.fromfile(ruta, dtype=np.uint8), cv2.IMREAD_COLOR)
+    if img is None:
+        return None
+    det = cv2.FaceDetectorYN.create(MODELO_CARA, '', (320, 320), 0.6, 0.3, 5000)
+    det.setInputSize((img.shape[1], img.shape[0]))
+    _, caras = det.detect(img)
+    if caras is None or len(caras) == 0:
+        return None
+    c = max(caras, key=lambda c: c[2] * c[3])
+    return int(c[0]), int(c[1]), int(c[2]), int(c[3]), float(c[-1])
+
+
+def recuadro_hacia_cara(foto: Image.Image, cara, objetivo: float, ancho: int, alto: int):
+    """Recorte, con la proporción del hueco, en el que la cara ocupa `objetivo`.
+
+    Esto NO es un retoque: es el mismo encuadre que haría un humano en Photoshop.
+    No se suaviza, no se deforma, no se inventa un píxel. Solo se elige qué trozo
+    de la foto original se ve.
+    """
+    x, y, w, h = cara[:4]
+    alto_rec = h / objetivo
+    ancho_rec = alto_rec * (ancho / alto)
+    # La cara, un pelín por encima del centro: es como se encuadra un retrato.
+    # Centrada exacta deja demasiado aire arriba y corta el pecho.
+    cx = x + w / 2
+    cy = y + h / 2 - alto_rec * 0.04
+    alto_rec = min(alto_rec, foto.height)
+    ancho_rec = min(ancho_rec, foto.width)
+    x0 = max(0, min(cx - ancho_rec / 2, foto.width - ancho_rec))
+    y0 = max(0, min(cy - alto_rec / 2, foto.height - alto_rec))
+    return foto.crop((round(x0), round(y0), round(x0 + ancho_rec), round(y0 + alto_rec)))
+
+
 def encajar(foto: Image.Image, ancho: int, alto: int) -> Image.Image:
     """Escala para CUBRIR el hueco y recorta el sobrante centrado.
 
@@ -129,6 +192,10 @@ def main() -> int:
     p.add_argument('--salida', required=True, help='PNG de salida')
     p.add_argument('--nombres', help='Los 10 nombres separados por " | ", en orden de mención')
     p.add_argument('--fuente', help='Ruta al .ttf (por defecto, el Bricolage Grotesque ExtraBold del sistema)')
+    p.add_argument('--sin-encuadre', action='store_true',
+                   help='No acercar las caras lejanas: pega cada foto tal cual venga')
+    p.add_argument('--umbral-cara', type=float, default=0.6,
+                   help='Se acerca la cara si baja de este múltiplo de la mediana (0.6 por defecto)')
     a = p.parse_args()
 
     plantilla = Image.open(a.plantilla).convert('RGBA')
@@ -150,16 +217,43 @@ def main() -> int:
     # Las fotos van en una capa DEBAJO; la plantilla se superpone encima y su
     # propio alpha recorta el círculo. Así el aro, el título y el fondo salen
     # bit a bit idénticos: este script no escribe un solo píxel sobre ellos.
+    # Encuadre: hay quien tiene una foto de LinkedIn hecha desde la otra punta de
+    # la sala. En la orla, al lado de 8 primeros planos, no se le ve. Se mide
+    # cuánto ocupa cada cara, y a las que se salen por abajo se les acerca hasta
+    # la MEDIANA del grupo. Solo a esas: al que ya está bien no se le toca.
+    caras, ratios = {}, []
+    if not a.sin_encuadre:
+        for fichero in ficheros:
+            cara = detectar_cara(os.path.join(a.fotos, fichero))
+            caras[fichero] = cara
+            if cara:
+                alto_img = Image.open(os.path.join(a.fotos, fichero)).height
+                ratios.append(cara[3] / alto_img)
+        if ratios:
+            objetivo = float(np.median(ratios))
+            umbral = objetivo * a.umbral_cara
+            print(f'\nencuadre  : cara mediana {objetivo * 100:.1f}% · se acerca por debajo de {umbral * 100:.1f}%')
+
     capa = Image.new('RGBA', plantilla.size, (0, 0, 0, 0))
     print()
     for hueco, fichero in zip(huecos, ficheros):
         ancho = hueco['x1'] - hueco['x0'] + 1
         alto = hueco['y1'] - hueco['y0'] + 1
         foto = Image.open(os.path.join(a.fotos, fichero)).convert('RGBA')
+        nota = ''
+        cara = caras.get(fichero)
+        if cara and ratios:
+            r = cara[3] / foto.height
+            if r < umbral:
+                foto = recuadro_hacia_cara(foto, cara, objetivo, ancho, alto)
+                nota = f'  🔍 cara {r * 100:.0f}%→{objetivo * 100:.0f}%, acercada'
+        elif not a.sin_encuadre and cara is None:
+            nota = '  (sin detectar cara, se deja tal cual)'
         escala = max(ancho / foto.width, alto / foto.height)
-        aviso = '  ⚠️ AMPLIADA, pierde nitidez' if escala > 1 else ''
+        if escala > 1:
+            nota += f'  ⚠️ AMPLIADA x{escala:.2f}, pierde nitidez'
         capa.paste(encajar(foto, ancho, alto), (hueco['x0'], hueco['y0']))
-        print(f"  ({hueco['x0']:4d},{hueco['y0']:4d})  {foto.width}x{foto.height} → {ancho}x{alto}  x{escala:.2f}  {fichero}{aviso}")
+        print(f"  ({hueco['x0']:4d},{hueco['y0']:4d})  {foto.width}x{foto.height} → {ancho}x{alto}  x{escala:.2f}  {fichero}{nota}")
 
     final = Image.alpha_composite(capa, plantilla)
 
