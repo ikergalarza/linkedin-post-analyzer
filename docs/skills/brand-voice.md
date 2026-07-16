@@ -33,7 +33,7 @@ Una única voz de marca para las tres cuentas (Iker, Unai, Asier): la **voz Neet
 | Cuenta | Rol | Registro |
 |---|---|---|
 | **Unai** | **FUNDADOR y CEO.** Firma la casa | **El más sobrio.** Tiene que sonar como el director industrial de ~50 años que nos lee, y que le vea como un IGUAL. Afirma, no exclama. Cero hype, cero jerga de creador, cero caricatura, **nada infantil** |
-| **Asier** | Crea contenido | **Punto medio.** Más sobrio que Iker, menos que Unai. Natural y directo, sin hype |
+| **Asier** | Crea contenido | **Punto medio.** Más sobrio que Iker, menos que Unai. Natural y directo, sin hype. **En memes va con Unai, no con Iker** (`images §0g`) |
 | **Iker** | Crea contenido | **El más cercano**, el que más se permite el guiño. Aun así, **un punto por debajo de lo que era** |
 
 **⚠️ SOBRIO NO ES ACARTONADO.** Los tres siguen siendo naturales, punchy, con clichés y con el formateado de siempre. **Lo que cambia es el volumen, no el idioma.** Un Unai corporativo sería un fallo peor que un Unai informal.

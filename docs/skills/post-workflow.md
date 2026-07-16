@@ -269,7 +269,11 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 
 ### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
-> **⚠️ PREGUNTA TAMBIÉN PARA QUÉ CUENTA ES, y hazlo ANTES de elegir la referencia** (`brand-voice §1b` · `images §0g`): el registro va por persona. **A Unai (el fundador) no le pega nada infantil**: ni dibujos de animales, ni caricaturas monas. No es que no pueda llevar meme (su mejor post, 16.62x, ES un meme: el wojak de la caja de herramientas); es que el wojak es feo y un border collie dibujado es mono. Si la referencia es buenísima pero su imagen es tierna, **va a Iker**. Cambiar de cuenta es gratis; forzar el registro, no.
+> **⚠️ PREGUNTA TAMBIÉN PARA QUÉ CUENTA ES, y hazlo ANTES de elegir la referencia** (`brand-voice §1b` · `images §0g`). **Son dos cajones:**
+> - **Unai y Asier** → meme **inteligente, para industriales, inequívocamente de ventas y NUNCA infantil**. Ni dibujos de animales ni caricaturas monas. No es que no puedan llevar meme (el mejor post de Unai, 16.62x, ES un meme: el wojak); es que el wojak es feo y un border collie dibujado es mono.
+> - **Iker** → **cualquier meme outlier**, con la condición de siempre: adaptado a ventas (`global §2.3`). Sin restricción extra.
+>
+> Si la referencia es buenísima pero su imagen es tierna, **va a Iker**. Cambiar de cuenta es gratis; forzar el registro, no. Y ojo: **"específico de ventas" no es "de nicho"** — `global §2.4` sigue mandando y un meme que solo pilla el 1% no viaja en ninguna cuenta.
 > **Output final:** (1) el **TEXTO** del post copy-ready + (2) un **PROMPT de modificaciones para la foto** (Claude **NO genera la imagen**; el usuario la edita a partir de la referencia).
 > **Prioridad:** la FOTO es el motor. El texto (gancho + cuerpo) va **corto**.
 
