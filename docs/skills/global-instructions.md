@@ -132,6 +132,14 @@ Cuando tengas 2+ frases que sean estructura paralela, enumeración, dato+consecu
 - **Excepción staccato:** 3-5 items MUY cortos (1-3 palabras, sustantivos/adjetivos sin verbo) van pegados en una línea con puntos: "Industrial. SaaS B2B. Servicios. Logística." · "Curiosidad. Deseo. Miedo." Test: item = frase (sujeto+verbo) → línea propia; item = sustantivo/adjetivo pelado → staccato.
 
 ### 3.2 · Bloques en escalera + respiración (regla transversal, NO negociable)
+
+**⭐ EL BLOQUE DE DOS: tiene que HABERLO (2026-07-17).** El ritmo de LinkedIn es **suelta → par → suelta → terna → sueltas**. El par es típico y a mí no me salía nunca: medido el 2026-07-17, el lead magnet de Iker tenía **1 bloque de 3 y 10 líneas sueltas, y CERO pares**; el mapa de Cataluña, lo mismo. Sin pares el post se lee como una lista de frases sueltas.
+- **No te vuelvas loco**: no es "llénalo de pares". Es que **siempre haya alguno**. Un par o dos en un post normal.
+- **Nunca un bloque de 2 pegado a uno de 3, ni al revés.** Después de un bloque de 2 o de 3 va **siempre una línea individual**, y luego lo que quieras. Esto ya lo vigilaba el validador y por eso sí se cumplía — el par no lo vigilaba nadie, y por eso no aparecía. **Lo que no se comprueba, no se hace.**
+- El par también va en **escalera** (recta o invertida), como el de 3.
+- Lo vigila `validar-post.py` (`Al menos un bloque de DOS`).
+
+**⚠️ CONFLICTO ABIERTO CON LOS MEMES.** El check tumba 2 de nuestros 3 mejores memes: el 13.51x y el 16.46x no llevan ni un par. El 16.55x sí, y el mapa de Navarra 7.72x también. Los memes son cortos y puede que el par no sea su forma. **Sin resolver**: está anotado en `scripts/test-validador.py`. Si se confirma, el check se limita a mapa/los10/leadmagnet.
 - **Tamaño de bloque de prosa: MÁXIMO 2 o 3 líneas. NUNCA 4 o 5.** Si tienes 4-5 frases seguidas, pártelas en bloques de 2/3 separados por líneas individuales. (Las listas numeradas de datos y el bloque de empresas son aparte — no cuentan como "bloque de prosa".)
 - **La respiración la dan las LÍNEAS INDIVIDUALES:** después de **CUALQUIER bloque de 2 o de 3, SIEMPRE una línea individual** (sola, con blanco antes y después). Sin excepción.
 - **NUNCA un bloque de 2 pegado a uno de 3** (ni al revés): entre bloque y bloque, SIEMPRE cae una línea individual. La secuencia es `bloque → individual → bloque → individual…`.

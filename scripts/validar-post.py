@@ -289,6 +289,21 @@ def validar(texto, pilar, cuenta=None):
         baja = all(L[j] > L[j + 1] for j in range(len(L) - 1))
         if not (sube or baja):
             zigzag.append(f'bloque {i} {L}')
+    # §3.2 — TIENE que haber al menos un bloque de DOS. El ritmo de LinkedIn es
+    # suelta → par → suelta → terna → sueltas, y sin pares se convierte en una
+    # lista de frases sueltas con algún bloque de 3, que es exactamente lo que
+    # salía: medido el 2026-07-17, el lead magnet de Iker tenía 1 bloque de 3 y
+    # 10 líneas individuales, y CERO pares. El mapa de Cataluña, lo mismo.
+    #
+    # Por qué este check positivo SÍ y el del verbo punchy NO: este es
+    # ESTRUCTURAL, no léxico. Exigir "un bloque de 2" no me empuja a escribir
+    # siempre la misma frase — el contenido sigue siendo libre. Exigir "un verbo
+    # de esta lista" sí, y así nació la muletilla de "En ventas,".
+    pares = [i for i, b in enumerate(bs) if not es_lista(b) and len(b) == 2]
+    chk(bool(pares), 'Al menos un bloque de DOS (§3.2)',
+        'todo son líneas sueltas y bloques de 3: el par es el ritmo típico de LinkedIn y no aparece nunca'
+        if not pares else f'{len(pares)} par(es)')
+
     chk(not zigzag, 'Bloques de 2-3 en escalera, recta o invertida (§3.2)',
         f'{zigzag} → cada línea más larga que la anterior, o cada una más corta' if zigzag else '')
 
