@@ -35,34 +35,53 @@ function esc(s: unknown): string {
     .replace(/'/g, '&#39;');
 }
 
+// Paleta, tarjeta y tipografía: COPIADAS de `neety-gate.zip` (gate.html), que el
+// diseñador de neety-resources extrajo de perfil/index.html. NO se tocan a ojo.
+//
+// ⚠️ LO QUE HABÍA ANTES ERA INVENTADO Y POR ESO SE VEÍA MAL. Escribí --tinta:#0c202e,
+// --crema:#f5f0eb, --naranja:#ee9363 de memoria, sin haber visto un recurso real.
+// Lo gracioso: los colores estaban CASI bien y el error fue INVERTIRLOS — el sitio
+// va en OSCURO (fondo #0A1524, texto #EEF1F6) y yo puse la tinta de texto sobre un
+// crema de fondo. De ahí el "está blanca y tiene la paleta a medias" del usuario.
+// Acertar los hex y fallar cuál es el papel es igual de roto que fallarlos todos.
 const CSS = `
-:root{--tinta:#0c202e;--crema:#f5f0eb;--naranja:#ee9363;--gris:#5b6b76}
+:root{
+  --bg:#0A1524; --bg-2:#0F1D30; --surface:#13243B; --surface-2:#17293F;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.14);
+  --text:#EEF1F6; --text-dim:#A6B0C1; --text-muted:#6D7A8E;
+  --coral:#E89456; --coral-soft:#F0A978; --coral-dim:rgba(232,148,86,.12); --coral-line:rgba(232,148,86,.28);
+  --radius:14px; --radius-lg:22px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--crema);color:var(--tinta);font:16px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:32px 20px 72px}
+body{background:var(--bg);color:var(--text);font:16px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:32px 20px 72px}
 .wrap{max-width:680px;margin:0 auto}
-.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin-bottom:10px}
-h1{font-size:clamp(26px,5vw,38px);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
-h1 em{font-style:normal;color:var(--naranja)}
-.lede{color:var(--gris);margin-bottom:28px;max-width:52ch}
-.card{background:#fff;border:1px solid #e4dcd4;border-radius:14px;padding:20px;margin-bottom:14px}
-.card h2{font-size:17px;margin-bottom:10px;letter-spacing:-.01em}
-.row{display:flex;gap:10px;padding:7px 0;border-top:1px solid #f0eae4}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:clamp(26px,5vw,38px);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
+h1 em{font-style:normal;color:var(--coral)}
+.lede{color:var(--text-dim);margin-bottom:28px;max-width:52ch}
+.card{background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.card h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:17px;margin-bottom:10px;letter-spacing:-.02em}
+.row{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
 .row:first-of-type{border-top:0}
-.k{color:var(--gris);font-size:12px;min-width:104px;flex-shrink:0;padding-top:2px}
-.v{font-size:14px}
+.k{color:var(--text-muted);font-size:12px;min-width:104px;flex-shrink:0;padding-top:2px}
+.v{font-size:14px;color:var(--text-dim)}
+.v q{color:var(--text)}
 .locked{position:relative;overflow:hidden}
-.locked .card{filter:blur(4.5px);opacity:.6;pointer-events:none;user-select:none}
-.gate{background:var(--tinta);color:var(--crema);border-radius:14px;padding:24px;margin:22px 0}
-.gate h2{font-size:19px;margin-bottom:6px}
-.gate p{opacity:.75;font-size:14px;margin-bottom:16px}
+.locked .card{filter:blur(4.5px);opacity:.5;pointer-events:none;user-select:none}
+/* La tarjeta del gate, calcada de .form-card del zip */
+.gate{width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius-lg);padding:36px 32px 32px;margin:22px 0 28px;box-shadow:0 4px 32px rgba(0,0,0,.25),0 0 0 1px var(--line)}
+.gate h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;letter-spacing:-.02em;margin-bottom:6px;text-align:center}
+.gate>p{font-size:14px;color:var(--text-muted);margin:0 0 20px;text-align:center}
 form{display:flex;gap:8px;flex-wrap:wrap}
-input[type=email]{flex:1;min-width:220px;padding:11px 13px;border:0;border-radius:8px;font-size:15px}
-button{background:var(--naranja);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer}
-button:hover{filter:brightness(1.06)}
-.consent{flex-basis:100%;font-size:11px;opacity:.6;display:flex;gap:7px;align-items:flex-start;margin-top:2px}
-.err{color:#ffb4a2;font-size:13px;flex-basis:100%}
-.cierre{border-top:1px solid #e4dcd4;margin-top:32px;padding-top:22px;color:var(--gris);font-size:14px}
-.cta{display:inline-block;margin-top:12px;background:var(--tinta);color:var(--crema);text-decoration:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px}
+input[type=email]{flex:1;min-width:220px;padding:11px 13px;background:var(--bg-2);border:1px solid var(--line-strong);border-radius:8px;font-size:15px;color:var(--text)}
+input[type=email]::placeholder{color:var(--text-muted)}
+input[type=email]:focus{outline:0;border-color:var(--coral-line);box-shadow:0 0 0 3px var(--coral-dim)}
+button{background:var(--coral);color:#0A1524;border:0;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer}
+button:hover{background:var(--coral-soft)}
+.consent{flex-basis:100%;font-size:11px;color:var(--text-muted);display:flex;gap:7px;align-items:flex-start;margin-top:2px}
+.err{color:#F0A978;font-size:13px;flex-basis:100%}
+.cierre{border-top:1px solid var(--line);margin-top:32px;padding-top:22px;color:var(--text-dim);font-size:14px}
+.cta{display:inline-block;margin-top:12px;background:var(--coral);color:#0A1524;text-decoration:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px}
 `;
 
 function hallazgoCard(h: Hallazgo, n: number): string {
@@ -97,6 +116,8 @@ function page(opts: { sector: string; nombre: string | null; senales: Hallazgo[]
   return `<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&display=swap" rel="stylesheet">
 <title>Por qué se van de ${esc(sector)} sin pedirte presupuesto · Neety</title>
 <style>${CSS}</style></head><body><div class="wrap">
   <p class="eyebrow">Neety · auditoría de ${esc(sector)}</p>
