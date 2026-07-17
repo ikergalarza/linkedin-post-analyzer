@@ -860,11 +860,18 @@ function CommenterCard({
   // A reply you've edited is never clobbered.
   const draftedFor = useRef<boolean | null>(null);
   useEffect(() => {
+    // ⛔ El PÚBLICO nunca se autogenera, y no es una preferencia de UI: cada
+    // borrador lee la web del comentarista de verdad y la audita, así que
+    // autogenerar dispararía una lectura y una llamada al modelo por cada
+    // comentario nada más abrir el post, sin que nadie lo haya pedido. En un lead
+    // magnet con 400 comentarios eso es 400 auditorías que quizá no quieras.
+    // Lo pide el usuario y además es lo barato: aquí se genera al pulsar.
+    if (cfg.kind === 'publico') return;
     if (depth !== 'rich' || replySent || replyTouched) return;
     if (draftedFor.current === ownsDm) return;
     draftedFor.current = ownsDm;
     handleAi();
-  }, [depth, replySent, replyTouched, ownsDm]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [depth, replySent, replyTouched, ownsDm, cfg.kind]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReply = async () => {
     if (!reply.trim()) return;
@@ -995,8 +1002,13 @@ function CommenterCard({
               Only on the card that owns it. This person's OTHER matching
               comments get no send box at all: two boxes for one person is
               how you send the resource twice, and the second one would be
-              answering a comment that never asked for it. */}
-          {!ownsDm ? (
+              answering a comment that never asked for it.
+
+              ⛔ En el tipo PÚBLICO no existe: el recurso se entrega en el propio
+              comentario y en la página con gate, así que no hay nada que mandar
+              por privado. Salía igualmente (bug, 2026-07-17) y ofrecía un "Enviar
+              DM" con el topic vacío: "Te dejo el recurso sobre  por aquí:". */}
+          {cfg.kind === 'publico' ? null : !ownsDm ? (
             <p className="mt-3 pt-3 border-t border-border text-[11px] text-text-muted">
               Aquí solo se responde. El recurso se le manda desde su otro comentario, el de la palabra
               clave, y es ahí donde se le avisa del envío.

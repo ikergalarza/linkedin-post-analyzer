@@ -16,14 +16,14 @@
 | Cuenta | MAPAS usados (no repetir en esa cuenta) | "LOS 10" usados | Conceptos gastados por esa cuenta |
 |---|---|---|---|
 | **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra | País Vasco · **Asturias** | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
-| **Unai** | País Vasco · Bizkaia · Álava | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" |
+| **Unai** | País Vasco · Bizkaia · Álava · **Cataluña** | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "última parada antes de Francia" |
 | **Asier** | Aragón | — | "secarral que peina el cierzo" |
 
 **"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.
 **Personas ya mencionadas en "Los 10"** (no repetir NUNCA a la misma persona en otro "Los 10"): las 10 del País Vasco de Iker (Edorta Arriet Azpiroz, Ana Isabel Portilla, Andoni Iriarte, Oscar Urdangarin, Xabier Otaño Eguidazu, Oier Elguezabal, Carlos Muriel, Borja Jareño Irazola, Javier Gomez de Cadiñanos, Fernando Martínez) y **las 10 de Asturias de Iker** (Javier Soto, Alvaro Vallaure Mori, Jose Antonio Garcia Sanchez, OUAZZANI TOUHAMI ASMA, David Menéndez Mozo, Alvaro Platero Alonso, Alfredo Fernández Olano, Alejandro García Menéndez, José Arturo Gutiérrez García, Alfonso Sanchez Miguez).
 
 **Libres para Iker:** Aragón, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
-**Libres para Unai:** Cataluña, Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
+**Libres para Unai:** Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 
 > **El "país inventado" NO cuenta como región gastada** y no está en esta tabla: no es un mapa de peloteo (no menciona a nadie, la imagen es un dibujo y no una captura de PamPam, y el motor es la controversia). Ficha en `context/global-instructions.md §4.1`. Lo hicieron Unai (7.87x, 12-jun) e Iker (1.24x, 23-jun).
 **Libres para Asier:** todas menos Aragón.
@@ -47,6 +47,8 @@
 
 | Semana (lunes) | Cuenta | Día | Categoría | Pilar/formato | Región o tema | Estado | Notas |
 |---|---|---|---|---|---|---|---|
+| 2026-07-17 | Unai | Vie 17/07 | Peloteo | Mapa | Cataluña | publicado | recién subido, sin ratio útil todavía · **16 empresas, no 20**: 4 se cayeron por no poder verificar su sede (Unipile daba Kobe/Berlín/Mansfield, que son oficinas suyas, no la sede) · cero repetidas contra el mapa de Cataluña de Iker (7.11x) ni contra su propio "Los 10" de Cataluña (0.66x), cruzado contra las 83 ya mencionadas · 1er mapa con el shock euro-a-euro (Finlandia) en vez de país exótico |
+| 2026-07-17 | Iker | Vie 17/07 | Lead magnet | Público (comentarios) | — | publicado | recién subido, sin ratio útil todavía · palabra clave `auditoria` · 1er lead magnet con GATE de correo (el 8.52x de "desmonto perfiles" regalaba todo y capturó CERO) · el recurso es una auditoría de SU web, generada leyendo la web de verdad · gate real de neety-resources, correos a su tabla `leads` con resource `auditoria-web` · foto: la selfie del 8.52x, reutilizada |
 | 2026-07-13 | Iker | Jue 16/07 | Peloteo | "Los 10" | Asturias | publicado | recién subido, sin ratio útil todavía · 1er "Los 10" con clichés importados del mapa (post-workflow §4.3 Paso 3b) · orla montada por script, sin robot |
 | 2026-07-13 | Asier | Jue 16/07 | Meme | Motor A · cuerpo/psicológico | remix The Office "El pedido sube. La venta no." | publicado | 1er meme de su cuenta · 1ª aplicación de la regla "el formato se repite, el ángulo se itera" (misma plantilla que el 16.56x de Iker, 2 meses después, otra cuenta, otro ángulo) |
 | 2026-07-13 | Unai | Mié 15/07 | Meme | Motor A/B (2 de 4) | remix del perro "Tu informe de ventas resucita clientes muertos" | publicado | 0.76x a 1 día · avisado como 2/4 motores ANTES de subir · ⚠️ el registro infantil (perro dibujado) es lo que disparó la regla de voz por cuenta (brand-voice §1b · images §0g) |
