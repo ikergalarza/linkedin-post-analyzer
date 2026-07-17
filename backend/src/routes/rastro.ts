@@ -68,15 +68,27 @@ h1 em{font-style:normal;color:var(--coral)}
 .v q{color:var(--text)}
 .locked{position:relative;overflow:hidden}
 .locked .card{filter:blur(4.5px);opacity:.5;pointer-events:none;user-select:none}
-/* La tarjeta del gate, calcada de .form-card del zip. ⚠️ NADA de selectores
+/* La tarjeta del gate. ⚠️ max-width 440px A PROPÓSITO: su .form-card es width:100%
+   y su .nf-input también, así que el campo del correo se estira a lo que le des.
+   Con los 680px del .wrap salía un input de lado a lado que se veía fatal en
+   escritorio. Un formulario compacto y centrado entre tarjetas anchas además hace
+   de foco, que es lo que interesa aquí. NADA de selectores
    desnudos (form/input/button): pisarian el formulario que inyecta SU
    neety-form.js, que es el mismo pecado de las reglas .hs-* de las que avisa su
    README. El CSS del formulario es suyo y viene dentro de su fichero. */
 .hs-form-container{width:100%}
-.gate{width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius-lg);padding:36px 32px 32px;margin:22px 0 28px;box-shadow:0 4px 32px rgba(0,0,0,.25),0 0 0 1px var(--line)}
+.gate{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius-lg);padding:32px 28px 28px;margin:22px auto 28px;box-shadow:0 4px 32px rgba(0,0,0,.25),0 0 0 1px var(--line)}
 .gate h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;letter-spacing:-.02em;margin-bottom:6px;text-align:center}
 .gate>p{font-size:14px;color:var(--text-muted);margin:0 0 20px;text-align:center}
 .cierre{border-top:1px solid var(--line);margin-top:32px;padding-top:22px;color:var(--text-dim);font-size:14px}
+@media(max-width:560px){
+  body{padding:24px 16px 56px}
+  .gate{padding:26px 18px 22px;border-radius:var(--radius)}
+  /* Las filas son flex con .k a 104px fijos: en móvil eso deja a .v sin sitio y
+     parte cada valor en un acordeón de 2 palabras. Apiladas se leen. */
+  .row{flex-direction:column;gap:2px}
+  .k{min-width:0;padding-top:0}
+}
 .cta{display:inline-block;margin-top:12px;background:var(--coral);color:#0A1524;text-decoration:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px}
 `;
 
