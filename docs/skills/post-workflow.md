@@ -222,7 +222,7 @@ Frase de entrada:
 **Paso 1 — HOOK (foco en la persona):**
 - Fórmula = **verbo físico + la herida propia del comercial** para que se IDENTIFIQUE al leerlo ("personas desconocidas quemando el teléfono", "aguantando el no", "marcando nombres que nadie conoce") + `👇`.
 - El comercial anónimo tiene que pensar "ese soy yo". Nada abstracto.
-- **NUNCA crítica ni reproche a las empresas** (eso mató la versión de Cataluña 0.7x y molestó a los mencionados). Este formato PELOTEA a personas y empresas, no las señala.
+- **NUNCA crítica ni reproche a las empresas.** Regla precisa y su evidencia en el **Paso 3d** — no basta con "que no suene mal": lo que se prohíbe es que la **empresa sea el sujeto** que tapa a la persona.
 - **Verbo físico punchy con techo** (`global §2.9`): "quemando el teléfono", "aguantando el no".
 - Aplica el resto de reglas de hook (`global-instructions §2` + `swipe-file §3.1`).
 
@@ -247,8 +247,33 @@ Frase de entrada:
 **Paso 3b — CLICHÉS + REVEAL (importado del mapa, va DESPUÉS de la lista):** el hueco está entre la lista y el reveal, y el 4.81x del País Vasco ya lo usaba (txoko, caserío, cooperativa) pero solo con 2 clichés. **Satúralo con 4-8 tejidos** (`global §4.1` regla 2): el cliché es lo que hace que el local repostee para defender a los suyos, y esa es la carencia medida de este pilar — el "Los 10" del País Vasco sacó **12 reposts** frente a los 46 de Navarra, 60 de Galicia y 90 de Gipuzkoa. Los dos motores no compiten: la identificación del comercial abre el post, el orgullo regional lo reparte.
 - Mete aquí el **concepto despectivo original + "y poco más"** (`global §4.1`). **La región NO se nombra hasta el reveal**: los clichés van todos antes y solos ya la insinúan, igual que en el hook del mapa ("el patio trasero de los Pirineos" nunca dice Navarra).
 - ⛔ **DEL MAPA SE IMPORTA EL CLICHÉ, NO EL SHOCK CONTRA UN PAÍS.** Nada de "exporta más que Bolivia entera" ni ninguna cifra regional. Motivos, por orden: (a) **la prioridad de este pilar son las PERSONAS**, y en el gancho ni se menciona un país, así que meterlo en el cuerpo lo descentra; (b) **canibaliza el mapa** — es su firma, y lo que hace que un mapa y un "Los 10" del mismo territorio no se quemen entre sí es justo que uno pelotea empresas y el otro personas (`historial-publicaciones`); (c) **alarga el cuerpo después de la lista**, que es donde el post ya va cuesta abajo; (d) el **País Vasco 4.81x no llevaba NI UNA cifra regional**. El único dato numérico de este pilar es el **logro de cada persona** en su ficha. Corregido el 2026-07-15: la primera versión de este Paso 3b lo permitía "si tienes el dato verificado" y el usuario lo tumbó.
-- ⚠️ **Nunca en registro de reproche a las empresas** (lo que mató a Cataluña 0.7x). El cliché va contra el tópico de fuera, no contra la empresa que no reconoce a nadie.
+- ⚠️ **Nunca en registro de reproche a las empresas** (lo que mató a Cataluña 0.66x). El cliché va contra el tópico de fuera, no contra la empresa que no reconoce a nadie. Regla exacta y evidencia: **Paso 3d**.
 - **⭐ Justo DESPUÉS del reveal, nombra ciudades Y pueblos** (`global §4.1` regla 2b). No solo la capital: es una queja real de nuestros comentarios. **Sácalos de las sedes de tus 10 empresas**, que ya están verificadas, así no inventas nada. Asturias: *"Y no salen todos de Gijón ni de Oviedo. Salen de Tineo, de Llanera, de Castropol y del puerto de Avilés."* Es el mismo hueco donde el mapa pone *"De Pamplona a la Ribera"*.
+
+### Paso 3d — ⭐ EL SUJETO QUE TAPA A LA PERSONA NUNCA ES LA EMPRESA (2026-07-17)
+
+Este pilar es el único que menciona a alguien **por su mérito personal dentro de una empresa que no es la nuestra**, y eso genera peticiones de retirada por privado. Van 3 posts y 2 peticiones. Lo que sigue sale de comparar los tres, no de lo que suena sensato.
+
+| | 1º País Vasco 4.82x | 2º Cataluña 0.66x | 3º Asturias |
+|---|---|---|---|
+| Quejas | **ninguna** | un trabajador pidió retirar su mención | el CEO pidió retirar empresa Y persona |
+| ¿La empresa tapa a la persona? | no | **sí** | no |
+| Link comercial | **no** | sí | sí |
+
+**LA REGLA (la única que la evidencia soporta).** La persona invisible **sigue siendo el eje** del pilar. Lo que se prohíbe no es la invisibilidad: es que **la empresa sea quien la causa**. El antagonista tiene que ser algo sin ego y sin capacidad de mandarte un DM — la prensa, el titular, la cifra, el foco, o nosotros mismos.
+
+- ✅ *"A una empresa que crece le **hacemos** fotos por fuera"* (nosotros) · *"no sale en la **nota de prensa**"* (la prensa) · *"nunca le **ponen** el nombre delante"* (impersonal) · *"el número sale en la **prensa**. La persona que lo firmó, casi nunca"* · *"Las cifras ya salieron en la prensa. Los nombres los pongo yo."*
+- ⛔ *"El nombre que se dice siempre es **el de la empresa**. Hoy le doy la vuelta."* · *"ninguna empresa vende sola"* · *"el mérito se lo llevan las empresas"* · *"detrás del logo"*.
+
+La diferencia es de sujeto, no de tono. En la columna ✅ la persona no sale por cómo funciona la atención; en la ⛔ hay un despojo con culpable, y el culpable está etiquetado en el post. Lo vigila `validar-post.py --pilar los10` (`EMPRESA_LADRONA`), y los 3 posts están clavados en `scripts/test-validador.py`.
+
+**LO QUE NO SE ARREGLA CON PALABRAS — no lo intentes otra vez:**
+
+1. **La atribución única NO es el problema.** Suena a que sí, y es mentira. El post que más fuerte atribuye a una sola persona (*"las 10 personas que **más han hecho vender**"*, *"esa persona **es la razón por la que la empresa factura** lo que factura"*) es el 4.82x, el único sin una sola queja. El que más suave atribuye (*"los 10 nombres que hay **detrás de** las cifras"*) es el que se comió el DM del CEO. **Anti-correlaciona.** Suavizar la atribución es pagar punchy por nada.
+2. **NO metas el matiz de "esto es trabajo en equipo" en el post.** Ese *"gracias por dar visibilidad, pero esto es trabajo en equipo"* llega en **comentarios**, sobre todo en la 1ª y la 3ª — o sea, en las que funcionan. Es alcance. Escribirlo tú le quita a la audiencia lo que iba a escribir: cambias DMs por comentarios. Evaluado y descartado el 2026-07-17.
+3. **El link se queda.** La única diferencia limpia entre el post sin quejas y los dos con quejas es que aquel no llevaba spam ninja. La lectura probable: un homenaje que acaba en un enlace convierte a la empresa mencionada en decorado de un anuncio, y un CEO que ve el EBITDA de su empresa ahí no está ofendido, está viendo su marca en publicidad de un tercero — por eso lo exige por privado en vez de comentarlo. Es n=3 y confundido (el 2º además flopeó). **Decisión del usuario, 2026-07-17: el link es el negocio y se queda**, asumiendo el peaje. Si algún día hay un 4º "Los 10", esta es la casilla que hay que mirar primero.
+4. **Etiquetamos con @ a la empresa Y a la persona.** Se propuso dejar la empresa en texto plano (etiquetar la página notifica a sus admins, que es la vía por la que llegó el DM) y **el usuario lo tumbó el 2026-07-17**: 2 quejas en 3 posts no justifica tocar un formato que funciona por una inferencia sin medir.
+5. **La tasa de quejas no baja a cero, y perseguirlo cuesta rendimiento.** La premisa del pilar (la persona está en la sombra) selecciona a gente que eligió la sombra, y su éxito garantiza que la dirección de su empresa lo vea. El objetivo no es que nadie escriba: es que **quien escriba lo haga por ego y no porque tenga razón**. Contra el ego no hay redacción que valga, y el usuario ya lo tiene asumido: *"no podemos controlar cómo cada uno percibe una publicación"*.
 
 **Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). **En este pilar va después del REVEAL, no "justo después de las menciones"** (el orden es lista → clichés → reveal → spam ninja → cierre): el reveal es lo que cierra el bloque de la lista, y meter el link antes lo parte. Resumen: máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), colocado **justo después de las menciones** y nunca como última línea. Aquí el giro va al dolor del comercial de la región, no al de la empresa.
 

@@ -61,6 +61,40 @@ CASOS = [
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Línea individual tras cada bloque': 'formateado anterior a §3.2',
     }),
+    # --- "Los 10": los 3 que existen. Se metieron el 2026-07-17, cuando el 3º se comió
+    # un DM de un CEO pidiendo que quitáramos su empresa y a su empleado. Están los tres
+    # a propósito, incluido el que flopeó: el valor de este bloque es que el check nuevo
+    # (EMPRESA_LADRONA) SEPARE al 4.82x sin quejas del 0.66x que sí las tuvo. Un check
+    # que tumbara a los tres, o que no tumbara a ninguno, no mediría nada.
+    ('hacemos fotos por fuera', 'los10', 'Iker', {
+        'Spam ninja presente': (
+            'ESPERADO Y CARGADO DE SENTIDO: este post NO lleva link, y es el único de los '
+            'tres sin una sola queja. Los otros dos sí lo llevan y ambos recibieron petición '
+            'de retirada. n=3 y confundido, pero es la única diferencia limpia que hay. El '
+            'link se queda (decisión del usuario, 2026-07-17: es el negocio). Si algún día '
+            'hay un 4º "Los 10", MIRA ESTA CASILLA antes que ninguna otra.'
+        ),
+        'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
+        'Reveal de región sin el comodín': '"Sí, hablo del País Vasco" — prohibido DESPUÉS, por repetirse 4/4',
+    }),
+    ('le doy la vuelta', 'los10', 'Unai', {
+        'La EMPRESA no es quien tapa a la persona': (
+            'FALLA A PROPÓSITO. Es el 0.66x de Cataluña: flopeó Y un trabajador pidió por '
+            'privado que le quitáramos la mención. "El nombre que se dice siempre es el de '
+            'la empresa. Hoy le doy la vuelta." Si este caso deja de fallar, el check se ha '
+            'roto y no queda nada vigilando lo único que la evidencia soporta.'
+        ),
+        'Spam ninja presente': 'mismo artefacto del lnkd.in que el de Asturias, ver abajo',
+        'Bloques de 2-3 en escalera': 'regla §3.2 afinada después',
+    }),
+    ('comiéndose noes', 'los10', 'Iker', {
+        'Spam ninja presente': (
+            'ARTEFACTO DEL TEST, no un fallo del post: sí lleva spam ninja, pero LinkedIn ya '
+            'reescribió el link a lnkd.in y el check busca "recursos.neety.com". Los borradores '
+            'que valida el script de verdad llevan la URL cruda, así que en uso real no pasa. '
+            'No "arregles" el validador por esto.'
+        ),
+    }),
     ('patio trasero de los Pirineos', 'mapa', 'Iker', {
         'Spam ninja presente': 'este mapa llevaba link de PamPam, no el de agendar',
         'Cifras en dígito': '"Les pasé tres números" — §3.6, coste conocido y documentado',

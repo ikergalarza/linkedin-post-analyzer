@@ -31,7 +31,14 @@ HISTORIAL = os.path.join(RAIZ, 'docs', 'skills', 'historial-publicaciones.md')
 # nuestras.
 #
 # FUERTE = inequívocamente ventas. Nadie más las dice así.
-ANCLA_FUERTE = (r'\b(vender|vendes|vende|vendo|vendiendo|venta|ventas|vendid\w+'
+# OJO con la conjugación: la primera versión listaba formas sueltas (vender|vendes|
+# vende|vendo|vendiendo|vendid\w+) y NO tenía ni un pretérito. "Las empresas que más
+# VENDIERON este año…" — el hook del 4.82x del País Vasco — fallaba el check del ancla.
+# Nuestro mejor "Los 10" no anclaba a ventas según su propio validador (2026-07-17).
+# `vend[eio]\w*` coge la conjugación entera (vende, vendió, vendieron, vendemos,
+# vendedor…) y deja fuera lo que solo se le parece: venda y vendaje (vend+a) y vendrá,
+# que es de venir (vend+r).
+ANCLA_FUERTE = (r'\b(vend[eio]\w*|venta|ventas'
                 r'|comercial|comerciales|cuota|comisi[oó]n|prospectar|deal|deals|propuesta comercial)\b')
 # AMBIGUA = las comparte media empresa. "pedido" lo dicen logística, compras,
 # almacén y producción; "cartera" la dice finanzas; "cliente" y "precio" los dice
@@ -77,6 +84,43 @@ REVEAL_QUEMADO = r'\bs[ií],?\s+hablo\s+d'
 COMODIN_LISTA = r'la gente y las empresas que mueven todo esto'
 # post-workflow §4.2 Paso 3 — el eje "callado" está PROHIBIDO en mapas
 EJE_CALLADO = r'(se vende callad|venden callad|en silencio|no lo cuentan|no lo cuenta|sin hacer ruido|nadie los conoce|no salen en la foto|trabajan callad)'
+
+# post-workflow §4.3 Paso 3d — "Los 10": la EMPRESA no puede ser el sujeto que le
+# quita el sitio a la persona. Es la única diferencia de texto entre el 4.82x del
+# País Vasco (cero quejas) y el 0.66x de Cataluña (un trabajador pidió por privado
+# que le quitáramos la mención):
+#   País Vasco: "le HACEMOS fotos por fuera" (nosotros) · "no sale en la NOTA DE
+#               PRENSA" (la prensa) · "nunca le PONEN el nombre delante" (impersonal)
+#   Asturias:   "el número sale en la PRENSA" · "las cifras ya salieron en la
+#               prensa, los nombres los pongo yo"
+#   Cataluña:   "el nombre que se dice siempre es EL DE LA EMPRESA. Hoy le doy la
+#               vuelta" → ahí hay un despojo con culpable, y el culpable está
+#               etiquetado en el post.
+# La persona invisible SIGUE siendo el eje del pilar (§4.3). Lo que se prohíbe no
+# es la invisibilidad: es que la empresa sea quien la causa. El antagonista tiene
+# que ser la prensa, el titular, la cifra, el foco o nosotros — algo que no tenga
+# ego ni pueda mandarte un DM.
+# Ojo: "ninguna empresa vende sola" NO es el beat de equipo, es su reverso. Dice
+# que la empresa le debe a la persona. El beat de equipo dice que la persona le
+# debe al equipo, que es lo que la audiencia pide en comentarios.
+EMPRESA_LADRONA = (r'((la|las)\s+empresas?[^.\n]{0,40}(se\s+llevan?|acaparan?|roban?|tapan?|esconden?|eclipsan?|oculta)'
+                   r'|el\s+nombre\s+que\s+se\s+dice\s+siempre\s+es\s+el\s+de\s+la\s+empresa'
+                   r'|ninguna\s+empresa\s+vende\s+sola'
+                   r'|el\s+m[eé]rito\s+se\s+lo\s+llevan?\s+(la|las|el|los)'
+                   r'|le\s+doy\s+la\s+vuelta'
+                   r'|detr[aá]s\s+del\s+logo)')
+# NO existe un check de "atribución única", y no es un olvido: los datos lo tumban.
+# El post que MÁS fuerte atribuye a una sola persona ("las 10 personas que más han
+# hecho vender", "esa persona es la razón por la que la empresa factura lo que
+# factura") es el País Vasco 4.82x, el ÚNICO de los tres sin una sola queja. El que
+# más suave atribuye ("los 10 nombres que hay detrás de las cifras") es Asturias, y
+# es el que se comió el DM del CEO. La atribución única ANTI-correlaciona con las
+# quejas. Prohibirla habría sido prohibir las frases de nuestro mejor post de este
+# pilar por una regla que suena sensata y que la evidencia contradice.
+# Y el "gracias, pero esto es trabajo en equipo" que llega en comentarios NO es una
+# queja: es un COMENTARIO, o sea alcance, y sale sobre todo en la 1ª y la 3ª, las dos
+# que funcionan. Meter el matiz del equipo DENTRO del post le quita a la audiencia lo
+# que iba a escribir. Sería cambiar DMs por comentarios. No se hace.
 
 def norm(s):
     return s.replace('\r\n', '\n').replace('\r', '\n').strip('\n')
@@ -246,6 +290,12 @@ def validar(texto, pilar, cuenta=None):
         m = re.search(COMODIN_LISTA, cuerpo, re.I)
         chk(not m, 'Frase de entrada a la lista sin comodín (§4.1)',
             f'"{m.group(0)}" → ya repetida entre mapas' if m else '')
+    if pilar == 'los10':
+        m = re.search(EMPRESA_LADRONA, cuerpo, re.I)
+        chk(not m, 'La EMPRESA no es quien tapa a la persona (§4.3 Paso 3d)',
+            f'"{m.group(0)}" → único rasgo de texto que separa el 4.82x sin quejas del '
+            f'0.66x que sí las tuvo. La persona invisible se queda; el culpable, fuera: '
+            f'que tape la prensa, el titular, la cifra o nosotros' if m else '')
     if pilar == 'mapa':
         m = re.search(EJE_CALLADO, cuerpo, re.I)
         chk(not m, 'Eje "callado" PROHIBIDO en mapas (post-workflow §4.2)',
