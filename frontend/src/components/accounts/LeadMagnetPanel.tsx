@@ -421,7 +421,6 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           </p>
         )}
 
-        {cfg.kind === 'publico' && <PruebaEnSeco postId={post.id} />}
 
         {ready && (
           <div className="flex items-center gap-3 flex-wrap text-xs text-text-secondary pt-1 border-t border-border">
@@ -486,90 +485,6 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 // El selector de tipo. Dos opciones, no un desplegable: con dos, un desplegable
 // esconde la mitad de la decisión detrás de un clic. Cada una dice en una línea
 // qué hace, porque la diferencia entre las dos no es obvia por el nombre.
-// ⭐ PRUEBA EN SECO del lead magnet público (usuario 2026-07-17).
-//
-// EL PROBLEMA QUE RESUELVE: hasta ahora no había forma de comprobar que la
-// auditoría sale bien SIN publicar el post y esperar a que alguien comentara la
-// palabra clave junto a su web. Y esa espera no es un trámite: es apostar el post
-// antes de saber si lo que genera vale. Aquí pegas cualquier web y ves la
-// respuesta exacta que saldría, con el mismo generador y el mismo prompt.
-//
-// NO es una simulación ni una ruta aparte: llama al MISMO endpoint que el botón
-// real. Si esto sale bien, el de verdad sale bien — que es justo lo que hace que
-// la prueba sirva de algo. Lo único de mentira es el nombre de quien comenta.
-//
-// Sí crea una página real en /r/… (el generador la escribe siempre). No molesta a
-// nadie: nadie tiene ese enlace. Ábrela y comprueba también el gate.
-function PruebaEnSeco({ postId }: { postId: string }) {
-  const [web, setWeb] = useState('');
-  const [out, setOut] = useState<{ publicComment: string; shareUrl: string; sector: string } | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const probar = async () => {
-    setLoading(true); setErr(null); setOut(null);
-    try {
-      const r = await apiPost<{ publicComment: string; shareUrl: string; sector: string }>(
-        '/api/accounts/rastro/generate',
-        {
-          // El post REAL que tienes abierto: así el generador coge su texto y la
-          // voz de su autor de la BD, igual que en producción. Con post_id null
-          // firmaría "Neety" y la prueba no probaría la voz, que es media prueba.
-          post_id: postId,
-          // El generador saca la URL del texto del comentario, así que la prueba
-          // le pasa un comentario como el que escribiría una persona de verdad.
-          comment_text: `auditoria ${web.trim()}`,
-          commenter_name: 'Prueba',
-          commenter_headline: null,
-          commenter_profile_id: null,
-        }
-      );
-      setOut(r);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'ha fallado');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="mt-2 pt-2 border-t border-border space-y-1.5">
-      <div className="flex items-center gap-1.5">
-        <span className="text-[11px] font-semibold text-text-secondary">Probar antes de publicar</span>
-        <span className="text-[10px] text-text-muted">— pega una web y mira qué respondería</span>
-      </div>
-      <div className="flex gap-1.5">
-        <input
-          value={web}
-          onChange={(e) => setWeb(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && web.trim() && !loading) probar(); }}
-          placeholder="acme.es"
-          className="flex-1 bg-surface border border-border rounded px-2 py-1 text-xs"
-        />
-        <button
-          onClick={probar}
-          disabled={!web.trim() || loading}
-          className="px-2.5 py-1 text-xs rounded bg-accent text-white disabled:opacity-40"
-        >
-          {loading ? 'Leyendo su web…' : 'Generar'}
-        </button>
-      </div>
-      {err && <p className="text-[11px] text-red-400">⚠️ {err}</p>}
-      {out && (
-        <div className="space-y-1">
-          <p className="text-[10px] text-text-muted">
-            Auditada {out.sector} ·{' '}
-            <a href={out.shareUrl} target="_blank" rel="noreferrer" className="underline">ver su página</a>
-          </p>
-          <pre className="text-[11px] whitespace-pre-wrap bg-surface border border-border rounded p-2 leading-snug">
-            {out.publicComment}
-          </pre>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function KindPicker({ value, onChange }: { value: LmKind; onChange: (k: LmKind) => void }) {
   const OPCIONES: { id: LmKind; titulo: string; sub: string }[] = [
     { id: 'dm', titulo: 'Por privado', sub: 'Comentan la palabra y les mandamos el recurso al DM' },
@@ -946,17 +861,34 @@ function CommenterCard({
                 </span>
               )}
               {aiLoading && <span className="text-[10px] text-text-muted">Escribiendo respuesta…</span>}
+              {/* El texto y el peso dependen de si YA HAY BORRADOR, no del tipo de
+                  comentario. Antes miraba `depth` y ponía "↻ Regenerar" siempre en
+                  los comentarios con chicha, lo cual valía cuando se autogeneraba
+                  al abrir: siempre había algo que regenerar. Al quitar el
+                  autogenerado (el público audita una web de verdad por borrador),
+                  la caja sale vacía y el único botón decía "Regenerar" sobre la
+                  nada. Sin borrador es la acción PRINCIPAL y va destacado. */}
               {!aiLoading && !replySent && (
                 <button
                   onClick={handleAi}
-                  className="text-[10px] text-text-muted hover:text-accent transition-colors ml-auto"
+                  className={
+                    reply.trim()
+                      ? 'text-[10px] text-text-muted hover:text-accent transition-colors ml-auto'
+                      : 'ml-auto text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 transition'
+                  }
                   title={
-                    depth === 'rich'
+                    reply.trim()
                       ? 'Vuelve a redactarla'
-                      : 'Este comentario es solo la palabra clave, pero puedes redactarle una respuesta igualmente'
+                      : cfg.kind === 'publico'
+                        ? 'Lee su web, la audita y le crea su página con el enlace ya dentro'
+                        : 'Redacta la respuesta a este comentario'
                   }
                 >
-                  {depth === 'rich' ? '↻ Regenerar' : '✨ Redactar respuesta'}
+                  {reply.trim()
+                    ? '↻ Regenerar'
+                    : cfg.kind === 'publico'
+                      ? '✨ Generar análisis'
+                      : '✨ Redactar respuesta'}
                 </button>
               )}
             </div>
