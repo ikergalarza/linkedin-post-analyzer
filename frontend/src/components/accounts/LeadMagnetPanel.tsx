@@ -737,7 +737,13 @@ function CommenterCard({
           }
         );
         setReply(r.publicComment);
-        setReplyMsg(`✓ Auditada ${r.sector} · página creada: ${r.shareUrl}`);
+        // Sin shareUrl = web no auditable (youtube y compañía): hay comentario con
+        // gracia pero NO hay página, así que no la anuncies.
+        setReplyMsg(
+          r.shareUrl
+            ? `✓ Auditada ${r.sector} · página creada: ${r.shareUrl}`
+            : `✓ ${r.sector} no es auditable · respuesta con guasa, sin página`
+        );
         return;
       }
 
@@ -899,13 +905,19 @@ function CommenterCard({
                 Mientras genera sí se enseña, para que se vea que está pasando algo. */}
             {replySent ? (
               <p className="text-[11px] text-text-muted">{replyMsg || '✓ Ya respondido'}</p>
-            ) : !reply.trim() && !aiLoading ? (
+            ) : !reply.trim() ? (
+              /* Tampoco mientras genera: una caja vacía que tarda 30s en llenarse
+                 se lee como que está rota. El aviso de arriba ya dice que escribe. */
               <p className="text-[11px] text-text-muted">
-                {replyMsg?.startsWith('✗')
-                  ? 'No se ha podido generar. Mira el error de arriba.'
-                  : cfg.kind === 'publico'
-                    ? 'Dale a Generar análisis: lee su web, la audita y te deja aquí el comentario con su enlace ya dentro.'
-                    : 'Dale a Redactar respuesta.'}
+                {aiLoading
+                  ? cfg.kind === 'publico'
+                    ? 'Leyendo su web y auditándola… tarda un poco, hay que abrir su página de verdad.'
+                    : 'Redactando…'
+                  : replyMsg?.startsWith('✗')
+                    ? 'No se ha podido generar. Mira el error de arriba.'
+                    : cfg.kind === 'publico'
+                      ? 'Dale a Generar análisis: lee su web, la audita y te deja aquí el comentario con su enlace ya dentro.'
+                      : 'Dale a Redactar respuesta.'}
               </p>
             ) : (
               <>
