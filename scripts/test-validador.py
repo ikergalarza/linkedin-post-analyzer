@@ -40,25 +40,9 @@ CREADORES = {
 # (fragmento para localizar el post, pilar, cuenta, fallos ESPERADOS y por qué)
 CASOS = [
     ('pasa factura', 'meme', 'Iker', {
-        'Al menos un bloque de DOS': (
-            'CONFLICTO ANOTADO, no tapado (2026-07-17). La regla del par es del usuario y es '
-            'buena: yo escribia 1 bloque de 3 y 10 lineas sueltas, cero pares. PERO este post es '
-            'un MEME y no tiene ninguno, igual que el otro meme de 16.46x. Los memes son cortos y '
-            'puede que el par no sea su forma. El 16.55x SI lo lleva, y el mapa de Navarra 7.72x '
-            'tambien. Si el patron se confirma, el check hay que limitarlo a mapa/los10/leadmagnet '
-            'y dejar el meme fuera. Pendiente de decidir con el usuario: no lo tapes.'
-        ),
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
     }),
     ('cold calling no ha muerto', 'meme', 'Iker', {
-        'Al menos un bloque de DOS': (
-            'CONFLICTO ANOTADO, no tapado (2026-07-17). La regla del par es del usuario y es '
-            'buena: yo escribia 1 bloque de 3 y 10 lineas sueltas, cero pares. PERO este post es '
-            'un MEME y no tiene ninguno, igual que el otro meme de 16.46x. Los memes son cortos y '
-            'puede que el par no sea su forma. El 16.55x SI lo lleva, y el mapa de Navarra 7.72x '
-            'tambien. Si el patron se confirma, el check hay que limitarlo a mapa/los10/leadmagnet '
-            'y dejar el meme fuera. Pendiente de decidir con el usuario: no lo tapes.'
-        ),
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
         'Hook anclado a VENTAS': (
             'PENDIENTE DE DECIDIR: el hook es "El cold calling no ha muerto", que es '

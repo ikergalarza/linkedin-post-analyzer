@@ -299,10 +299,18 @@ def validar(texto, pilar, cuenta=None):
     # ESTRUCTURAL, no léxico. Exigir "un bloque de 2" no me empuja a escribir
     # siempre la misma frase — el contenido sigue siendo libre. Exigir "un verbo
     # de esta lista" sí, y así nació la muletilla de "En ventas,".
-    pares = [i for i, b in enumerate(bs) if not es_lista(b) and len(b) == 2]
-    chk(bool(pares), 'Al menos un bloque de DOS (§3.2)',
-        'todo son líneas sueltas y bloques de 3: el par es el ritmo típico de LinkedIn y no aparece nunca'
-        if not pares else f'{len(pares)} par(es)')
+    #
+    # ⛔ EL MEME QUEDA FUERA (usuario, 2026-07-17), y no es una excepción de
+    # conveniencia: el meme CALCA SU REFERENCIA y punto, así que su forma la
+    # decide el post que estamos remixando, no nuestro ritmo. La evidencia iba por
+    # delante de la decisión — al meter el check, los 2 memes ganadores (13.51x y
+    # 16.46x) lo fallaron mientras el mapa de Navarra 7.72x lo pasaba. Se anotó
+    # como conflicto sin taparlo y el usuario lo resolvió así.
+    if pilar in ('mapa', 'los10', 'leadmagnet'):
+        pares = [i for i, b in enumerate(bs) if not es_lista(b) and len(b) == 2]
+        chk(bool(pares), 'Al menos un bloque de DOS (§3.2)',
+            'todo son líneas sueltas y bloques de 3: el par es el ritmo típico de LinkedIn y no aparece nunca'
+            if not pares else f'{len(pares)} par(es)')
 
     chk(not zigzag, 'Bloques de 2-3 en escalera, recta o invertida (§3.2)',
         f'{zigzag} → cada línea más larga que la anterior, o cada una más corta' if zigzag else '')
