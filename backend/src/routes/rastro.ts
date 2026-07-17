@@ -53,7 +53,7 @@ const CSS = `
   --radius:14px; --radius-lg:22px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font:16px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:32px 20px 72px}
+body{background:var(--bg);color:var(--text);font:16px/1.55 'Switzer',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:32px 20px 72px}
 .wrap{max-width:680px;margin:0 auto}
 .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
 h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:clamp(26px,5vw,38px);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
@@ -68,18 +68,14 @@ h1 em{font-style:normal;color:var(--coral)}
 .v q{color:var(--text)}
 .locked{position:relative;overflow:hidden}
 .locked .card{filter:blur(4.5px);opacity:.5;pointer-events:none;user-select:none}
-/* La tarjeta del gate, calcada de .form-card del zip */
+/* La tarjeta del gate, calcada de .form-card del zip. ⚠️ NADA de selectores
+   desnudos (form/input/button): pisarian el formulario que inyecta SU
+   neety-form.js, que es el mismo pecado de las reglas .hs-* de las que avisa su
+   README. El CSS del formulario es suyo y viene dentro de su fichero. */
+.hs-form-container{width:100%}
 .gate{width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius-lg);padding:36px 32px 32px;margin:22px 0 28px;box-shadow:0 4px 32px rgba(0,0,0,.25),0 0 0 1px var(--line)}
 .gate h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;letter-spacing:-.02em;margin-bottom:6px;text-align:center}
 .gate>p{font-size:14px;color:var(--text-muted);margin:0 0 20px;text-align:center}
-form{display:flex;gap:8px;flex-wrap:wrap}
-input[type=email]{flex:1;min-width:220px;padding:11px 13px;background:var(--bg-2);border:1px solid var(--line-strong);border-radius:8px;font-size:15px;color:var(--text)}
-input[type=email]::placeholder{color:var(--text-muted)}
-input[type=email]:focus{outline:0;border-color:var(--coral-line);box-shadow:0 0 0 3px var(--coral-dim)}
-button{background:var(--coral);color:#0A1524;border:0;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer}
-button:hover{background:var(--coral-soft)}
-.consent{flex-basis:100%;font-size:11px;color:var(--text-muted);display:flex;gap:7px;align-items:flex-start;margin-top:2px}
-.err{color:#F0A978;font-size:13px;flex-basis:100%}
 .cierre{border-top:1px solid var(--line);margin-top:32px;padding-top:22px;color:var(--text-dim);font-size:14px}
 .cta{display:inline-block;margin-top:12px;background:var(--coral);color:#0A1524;text-decoration:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px}
 `;
@@ -99,25 +95,34 @@ function page(opts: { sector: string; nombre: string | null; senales: Hallazgo[]
   const visibles = abierto ? senales : senales.slice(0, 1);
   const bloqueadas = abierto ? [] : senales.slice(1);
 
+  // El gate es SU fichero, servido desde recursos.neety.com, no una copia.
+  // Aquí solo va el div vacío: neety-form.js lo rellena e inyecta su propio CSS.
+  // El <h2>/<p> son copy nuestro; el formulario, sus dos consentimientos y sus
+  // textos legales son suyos y no se tocan (ver routes/gateProxy.ts).
+  // data-redirect NO se pone: sin él muestra la confirmación inline, que es lo que
+  // queremos porque el contenido vive en esta página.
   const gate = abierto
     ? ''
     : `<div class="gate">
         <h2>Los otros ${total - 1} fallos</h2>
         <p>Déjame el correo y se abren aquí mismo. Acceso inmediato, sin esperar ningún email.</p>
-        <form method="POST" action="/r/${esc(shareId)}">
-          <input type="email" name="email" placeholder="tu@empresa.com" required />
-          <button type="submit">Ver los ${total - 1}</button>
-          ${opts.error ? `<span class="err">${esc(opts.error)}</span>` : ''}
-          <label class="consent"><input type="checkbox" name="rgpd" required />
-            Acepto que Neety guarde mi correo para enviarme contenido sobre ventas B2B. Me puedo dar de baja cuando quiera.</label>
-        </form>
-      </div>`;
+        <div class="hs-form-container">
+          <div data-neety-form data-resource="auditoria-web" data-cta="Ver los ${total - 1} que quedan"></div>
+        </div>
+      </div>
+      <script src="https://recursos.neety.com/assets/neety-form.js" defer></script>
+      <script>
+        // Su gate no recarga: avisa por evento. Recargamos para que el servidor
+        // vuelva a pintar la página ya abierta, que es quien decide qué se ve.
+        document.addEventListener('neety:submitted', function () { location.reload(); });
+      </script>`;
 
   return `<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600,700&display=swap" rel="stylesheet">
 <title>Por qué se van de ${esc(sector)} sin pedirte presupuesto · Neety</title>
 <style>${CSS}</style></head><body><div class="wrap">
   <p class="eyebrow">Neety · auditoría de ${esc(sector)}</p>

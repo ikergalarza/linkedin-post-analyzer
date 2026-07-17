@@ -49,6 +49,12 @@ export function basicAuthMiddleware(): RequestHandler {
     // silencio: el enlace sale igual y nadie puede abrirlo.
     // Solo /r/… — el resto de la app sigue cerrada.
     if (req.path === '/r' || req.path.startsWith('/r/')) return next();
+    // Y /api/submit, que es el proxy del gate de neety-resources. TIENE que ser
+    // público: lo llama el neety-form.js que corre en el navegador del visitante,
+    // que no tiene nuestras credenciales. Y tiene que llamarse exactamente así,
+    // porque el fetch de su fichero es a `/api/submit` RELATIVO (su línea 237) y
+    // no se toca: servimos SU fichero tal cual, sin fork.
+    if (req.path === '/api/submit') return next();
 
     const header = req.headers.authorization || '';
     const [scheme, encoded] = header.split(' ');

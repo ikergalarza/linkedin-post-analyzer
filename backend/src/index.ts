@@ -27,6 +27,7 @@ import reactionsRouter from './routes/reactions';
 import { startPostMonitor } from './services/postMonitor';
 import { basicAuthMiddleware } from './middleware/basicAuth';
 import rastroRouter from './routes/rastro';
+import gateProxyRouter from './routes/gateProxy';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -56,6 +57,9 @@ app.use(basicAuthMiddleware());
 // /r/… va ANTES que nada y fuera del auth: son las páginas públicas del lead
 // magnet, las únicas de toda la app que abre gente de fuera.
 app.use('/r', rastroRouter);
+// Público (ver basicAuth). La ruta es EXACTAMENTE /api/submit porque el fetch de
+// neety-form.js es relativo a eso y su fichero no se toca.
+app.use('/api/submit', gateProxyRouter);
 app.use('/api/creators', creatorsRouter);
 app.use('/api/creators', postsRouter);
 app.use('/api/posts', postsRouter);
