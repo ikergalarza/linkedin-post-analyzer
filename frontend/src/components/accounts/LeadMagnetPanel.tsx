@@ -926,7 +926,12 @@ function CommenterCard({
                   value={reply}
                   onChange={(e) => { setReply(e.target.value); setReplyTouched(true); }}
                   disabled={replySending || aiLoading}
-                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 min-h-[52px] resize-y focus:outline-none focus:border-accent disabled:opacity-50"
+                  /* 52px valia cuando la respuesta era una plantilla de 2 lineas. La del
+                     publico son 8-9 lineas con saltos en blanco: en 52px se lee por
+                     una rendija de 2 lineas y hay que hacer scroll para todo. */
+                  className={`w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 resize-y focus:outline-none focus:border-accent disabled:opacity-50 ${
+                    cfg.kind === 'publico' ? 'min-h-[220px]' : 'min-h-[52px]'
+                  }`}
                 />
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
