@@ -163,7 +163,8 @@ FORMATEADO, el mismo que nuestros posts (global §3.2) — un comentario largo s
 CONTENIDO:
 - Abre con su nombre EXACTO, un espacio, y la primera palabra en minúscula. Sin coma detrás del nombre.
 - Dale el hallazgo nº1 ENTERO y gratis: la cita de su web, qué le cuesta, y el arreglo escrito. Completo, sin regatear. Es lo que hace que la gente comente.
-- Después, una línea diciendo qué son los demás. Nada de "más info".
+- ⛔ NO cierres mencionando los demás hallazgos ni su página. El código pega la última línea con el enlace, así que si tú escribes "los otros los tienes en tu página" salen DOS líneas diciendo lo mismo seguidas (pasó el 2026-07-17). Tu texto acaba en el hallazgo. Punto.
+- Cifras SIEMPRE en dígito, nunca en letra (global §3.6): "los otros 4", no "los otros cuatro".
 - 5-9 líneas. Sin markdown (LinkedIn no lo renderiza), sin viñetas con guion. Líneas cortas, se lee en el móvil.
 - NO pongas el enlace: se añade después por código.
 
@@ -262,7 +263,7 @@ Audítala. Cada hallazgo con su cita literal de ahí arriba.`,
     sector: parsed.dominio || url,
     // El enlace se pega por código y no lo escribe el modelo: así no se lo
     // inventa ni lo deforma, que es exactamente lo que hace con las URLs.
-    publicComment: `${parsed.public_comment.trim()}\n\nLos otros ${hallazgos.length - 1} los tienes aquí: ${shareUrl}`,
+    publicComment: `${parsed.public_comment.trim()}\n\nLos otros ${hallazgos.length - 1} los tienes aquí 👉 ${shareUrl}`,
     teaser: hallazgos[0],
     full: hallazgos,
   };
