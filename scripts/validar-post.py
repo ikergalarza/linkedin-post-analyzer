@@ -65,6 +65,13 @@ NUMERO_EN_LETRA = (r'\b(dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|do
                    r'|sesenta|setenta|ochenta|noventa|cien|ciento|doscientos|trescientos|cuatrocientos'
                    r'|quinientos|seiscientos|setecientos|ochocientos|novecientos)\b')
 
+# §2.3 — "En ventas," de PREFIJO se convirtió en muletilla: 3 hooks seguidos
+# empezando igual. Es ancla legítima (el 16.55x lo usa) pero NO puede ser el
+# reflejo: solo 1 de nuestros 11 ganadores empieza así. El resto ancla por el rol,
+# el oficio, el verbo o la acción. Y ojo: esta muletilla la creó ESTE script — la
+# forma más barata de aprobar el check del ancla es pegar "En ventas," delante.
+MULETILLA_ANCLA = r'^\s*En ventas[,:]'
+
 # §4.1 — comodines de peloteo gastados: 4/4 posts reales los usan LITERAL (working-preferences §4)
 REVEAL_QUEMADO = r'\bs[ií],?\s+hablo\s+d'
 COMODIN_LISTA = r'la gente y las empresas que mueven todo esto'
@@ -149,6 +156,11 @@ def validar(texto, pilar, cuenta=None):
         f'{len(hook)} líneas en el bloque del hook' if len(hook) != 1 else '')
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
+    m = re.search(MULETILLA_ANCLA, hook_txt, re.I)
+    chk(not m, 'Hook sin la muletilla "En ventas," de prefijo (§2.3)',
+        'ancla legítima pero es tu reflejo: 1 de 11 ganadores empieza así. Ancla por el ROL '
+        '("la vida del comercial"), el OFICIO ("el cold calling"), el VERBO ("se vende") o '
+        'métela EMBEBIDA ("Subir en ventas pasa factura")' if m else '')
     fuerte = re.search(ANCLA_FUERTE, hook_txt, re.I)
     ambigua = re.search(ANCLA_AMBIGUA, hook_txt, re.I)
     if fuerte:

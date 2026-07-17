@@ -64,6 +64,19 @@ Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cade
 
 > **Esta lista es CANÓNICA para el hook y gana a cualquier otra.** `brand-voice §2` tenía una lista de "términos naturalizados" (SDR, AE, CRM, B2B, GTM, ICP, outbound…) que decía lo contrario: esa lista es **solo del cuerpo**. El desempate lo da el ICP de `aboutme`: el lector lleva vendiendo **desde antes de que existiera Salesforce**. **CRM y forecast entran en la lista negra el 2026-07-14**: en un hook de meme se coló "Tu CRM…" y el usuario lo tumbó con la razón exacta ("un viejo no va a saber lo que es un CRM"). Alternativas llanas: informe de ventas · parte de visitas · el Excel · la previsión.
 
+**⚠️ ANCLAR NO ES PONER "En ventas," DELANTE (2026-07-17).** Se convirtió en muletilla: 3 hooks seguidos empezando igual. **Y la muletilla la creó el propio validador**: la forma más barata de aprobar el check del ancla es pegar la palabra delante, y en cuanto sale verde se deja de pensar. Es el riesgo de todo check mecánico: optimizas para la comprobación, no para el lector.
+- **Los datos:** solo **1 de nuestros 11 ganadores** empieza por "En ventas" (el 16.55x). Los otros 10 anclan por otro sitio. **Está en el validador.**
+- **LOS ÁNGULOS PARA ANCLAR (rota, no repitas el del post anterior):**
+
+| Ángulo | Validado |
+|---|---|
+| **El ROL** | *"Esta es la vida **del comercial**"* (8.46x) · *"tu comercial"* |
+| **El OFICIO / la actividad** | *"El **cold calling** no ha muerto"* (16.47x) · *"el **cold outbound**"* (9.92x) |
+| **El VERBO** | *"donde mejor **se vende** del mundo"* (7.87x) · *"Ninguna empresa **vende** más por suerte"* |
+| **La ACCIÓN** | *"Hoy **desmonto perfiles**"* (8.53x) |
+| **EMBEBIDO, no de prefijo** | *"Subir **en ventas** siempre pasa factura"* (13.54x) · *"tu informe **de ventas**"* |
+| **El COMPRADOR** | ⭐ **SIN USAR.** Ninguno de los 11 ancla desde el lado del que compra: *"por qué te compran (o no)"*, *"lo que piensa el que firma"*. Hueco libre |
+
 **⚠️ NO TODAS LAS PALABRAS DE VENTAS ANCLAN IGUAL (2026-07-16).** Hay dos clases y confundirlas es lo que produce el post huérfano:
 - **ANCLA FUERTE (inequívoca, nadie más las dice así):** vender · vendes · venta · ventas · comercial · cuota · comisión · prospectar · deal · propuesta comercial.
 - **ANCLA AMBIGUA (la comparte media empresa):** **pedido** (lo dicen logística, compras, almacén, producción) · **cartera** (finanzas) · **cliente**, **precio**, **facturar**, **exportar**, **cerrar** (cualquiera; compras también "cierra pedidos").

@@ -52,6 +52,11 @@ CASOS = [
         ),
     }),
     ('caja de herramientas engorda', 'meme', 'Unai', {
+        'muletilla "En ventas,"': (
+            'ESPERADO: este post la usa y hace 16.55x. No es un bug, es que el check vigila el '
+            'REFLEJO, no la forma. Cuando lo escribió era el primero; el problema es que luego se '
+            'usó 3 veces seguidas. Si algún día vuelve a ser raro, se quita el check.'
+        ),
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Línea individual tras cada bloque': 'formateado anterior a §3.2',
