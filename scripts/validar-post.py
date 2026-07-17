@@ -348,9 +348,18 @@ def validar(texto, pilar, cuenta=None):
             'sin la palabra, la gente no comenta: 20 vs 483 com.' if not m else '')
         m2 = re.search(r'comenta\s+"([^"]+)"', cuerpo, re.I)
         chk(bool(m2), 'CTA con la PALABRA entre comillas (§4.4)', '')
-        chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento)', cuerpo, re.I)),
-            'CTA con "+ tu sector/departamento" (§4.4)',
-            'el "mes de cumpleaños" ya flopeó a 0.57x')
+        # El CTA pide la palabra Y UN SEGUNDO DATO, y cuál es depende del subtipo
+        # (§4.4). En el de DM el dato es el sector/departamento: sirve para
+        # personalizar el recurso. En el PÚBLICO (auditoría de web) el dato es la
+        # URL, porque sin ella no hay nada que analizar y el generador falla a
+        # propósito. Pedir el sector ahí sobra, y pedir un dato que no se usa es
+        # justo lo que hundió el "mes de cumpleaños" a 0.57x: el segundo dato tiene
+        # que ser el que hace falta para responderle, ni uno más.
+        chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento)'
+                           r'|(y|\+)\s+(el\s+enlace\s+de\s+)?(tu|su)\s+(web|p[aá]gina|url|landing)',
+                           cuerpo, re.I)),
+            'CTA con la palabra + el 2º dato (sector si es DM, web si es público) (§4.4)',
+            'el "mes de cumpleaños" ya flopeó a 0.57x: el 2º dato tiene que ser el que necesitas para responderle')
 
     # ---------- CONTRA EL HISTORIAL ----------
     h = leer_historial()
