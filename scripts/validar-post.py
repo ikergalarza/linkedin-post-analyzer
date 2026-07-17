@@ -109,6 +109,31 @@ EMPRESA_LADRONA = (r'((la|las)\s+empresas?[^.\n]{0,40}(se\s+llevan?|acaparan?|ro
                    r'|el\s+m[eé]rito\s+se\s+lo\s+llevan?\s+(la|las|el|los)'
                    r'|le\s+doy\s+la\s+vuelta'
                    r'|detr[aá]s\s+del\s+logo)')
+# post-workflow §4.3 Paso 3e — "Los 10" DEBE conceder que es trabajo en equipo.
+# Decisión del usuario (2026-07-17), que corrige la lectura de este script: yo conté
+# el "gracias por dar visibilidad, PERO esto es trabajo en equipo" como alcance,
+# porque llega en comentarios. Es alcance Y es una crítica: el apoyo la envuelve, y
+# lo que se queda es la crítica. Si no lo decimos nosotros, "se nos van a echar
+# encima". Quien lee los DMs es el usuario.
+#
+# ⚠️ EL SUJETO ES LA PERSONA, NUNCA LA EMPRESA. Aquí está el filo:
+#   ⛔ "una fábrica no factura sola" (1º) · "ninguna empresa vende sola" (2º)
+#      → suenan al matiz, pero dicen que la EMPRESA depende de la persona: es el
+#        marco de despojo de EMPRESA_LADRONA, no la concesión. Apuntan al revés.
+#   ✅ "Ninguno de estos 10 vendió solo" · "Detrás de cada nombre hay una fábrica
+#      entera" · "No lo firmó solo" · "con un taller entero detrás"
+# Por eso el regex exige a la PERSONA de sujeto y no se conforma con "solo" suelto.
+#
+# ⚠️ RIESGO DE MULETILLA, asumido a sabiendas: la forma más barata de aprobar este
+# check es pegar siempre la misma frase, que es exactamente como este script creó el
+# tic de "En ventas," (ver MULETILLA_ANCLA). Mitigación: la lista de abajo tiene 4
+# familias distintas, y `working-preferences §4` obliga a no repetir la formulación
+# del "Los 10" anterior. Si en 3 posts sale la misma frase, el tic ya está aquí.
+BEAT_EQUIPO = (r'((ningun[oa]|nadie|ni\s+uno)\s+de\s+(est[oa]s|ell[oa]s|la\s+lista|los\s+10)[^.\n]{0,40}\bsol[oa]\b'
+               r'|no\s+(l[oa]\s+)?(hizo|hicieron|vendi[oó]|vendieron|firm[oó]|firmaron|cerr[oó]|cerraron|levant[oó]|levantaron)\s+sol[oa]s?\b'
+               r'|detr[aá]s\s+de\s+cada\s+\w+\s+(hay|est[aá])'
+               r'|(equipo|f[aá]brica|plantilla|nave|taller|oficina)\s+(enter[oa]\s+)?detr[aá]s)')
+
 # NO existe un check de "atribución única", y no es un olvido: los datos lo tumban.
 # El post que MÁS fuerte atribuye a una sola persona ("las 10 personas que más han
 # hecho vender", "esa persona es la razón por la que la empresa factura lo que
@@ -291,6 +316,12 @@ def validar(texto, pilar, cuenta=None):
         chk(not m, 'Frase de entrada a la lista sin comodín (§4.1)',
             f'"{m.group(0)}" → ya repetida entre mapas' if m else '')
     if pilar == 'los10':
+        m = re.search(BEAT_EQUIPO, cuerpo, re.I)
+        chk(bool(m), 'Concede que es trabajo en equipo (§4.3 Paso 3e)',
+            'sin esta línea se nos echan encima: el "gracias, PERO esto es trabajo en '
+            'equipo" es la crítica más repetida de este pilar. Sujeto = la PERSONA '
+            '("ninguno de los 10 lo hizo solo"), NUNCA la empresa ("ninguna empresa '
+            'vende sola" es el marco de despojo, apunta al revés)' if not m else '')
         m = re.search(EMPRESA_LADRONA, cuerpo, re.I)
         chk(not m, 'La EMPRESA no es quien tapa a la persona (§4.3 Paso 3d)',
             f'"{m.group(0)}" → único rasgo de texto que separa el 4.82x sin quejas del '

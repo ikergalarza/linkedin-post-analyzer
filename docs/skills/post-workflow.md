@@ -270,10 +270,25 @@ La diferencia es de sujeto, no de tono. En la columna ✅ la persona no sale por
 **LO QUE NO SE ARREGLA CON PALABRAS — no lo intentes otra vez:**
 
 1. **La atribución única NO es el problema.** Suena a que sí, y es mentira. El post que más fuerte atribuye a una sola persona (*"las 10 personas que **más han hecho vender**"*, *"esa persona **es la razón por la que la empresa factura** lo que factura"*) es el 4.82x, el único sin una sola queja. El que más suave atribuye (*"los 10 nombres que hay **detrás de** las cifras"*) es el que se comió el DM del CEO. **Anti-correlaciona.** Suavizar la atribución es pagar punchy por nada.
-2. **NO metas el matiz de "esto es trabajo en equipo" en el post.** Ese *"gracias por dar visibilidad, pero esto es trabajo en equipo"* llega en **comentarios**, sobre todo en la 1ª y la 3ª — o sea, en las que funcionan. Es alcance. Escribirlo tú le quita a la audiencia lo que iba a escribir: cambias DMs por comentarios. Evaluado y descartado el 2026-07-17.
+2. **El beat de equipo SÍ va, y es obligatorio. Ver Paso 3e.** (Aquí estuvo escrito lo contrario durante media hora: que ese *"pero esto es trabajo en equipo"* llega en comentarios, o sea alcance, y que escribirlo nos lo quitaba. **El usuario lo corrigió y tenía razón**: es alcance *y* es la crítica más repetida del pilar. El apoyo la envuelve y lo que se queda es la crítica. Contar comentarios no mide el enfado que hay dentro de ellos.)
 3. **El link se queda.** La única diferencia limpia entre el post sin quejas y los dos con quejas es que aquel no llevaba spam ninja. La lectura probable: un homenaje que acaba en un enlace convierte a la empresa mencionada en decorado de un anuncio, y un CEO que ve el EBITDA de su empresa ahí no está ofendido, está viendo su marca en publicidad de un tercero — por eso lo exige por privado en vez de comentarlo. Es n=3 y confundido (el 2º además flopeó). **Decisión del usuario, 2026-07-17: el link es el negocio y se queda**, asumiendo el peaje. Si algún día hay un 4º "Los 10", esta es la casilla que hay que mirar primero.
 4. **Etiquetamos con @ a la empresa Y a la persona.** Se propuso dejar la empresa en texto plano (etiquetar la página notifica a sus admins, que es la vía por la que llegó el DM) y **el usuario lo tumbó el 2026-07-17**: 2 quejas en 3 posts no justifica tocar un formato que funciona por una inferencia sin medir.
 5. **La tasa de quejas no baja a cero, y perseguirlo cuesta rendimiento.** La premisa del pilar (la persona está en la sombra) selecciona a gente que eligió la sombra, y su éxito garantiza que la dirección de su empresa lo vea. El objetivo no es que nadie escriba: es que **quien escriba lo haga por ego y no porque tenga razón**. Contra el ego no hay redacción que valga, y el usuario ya lo tiene asumido: *"no podemos controlar cómo cada uno percibe una publicación"*.
+
+### Paso 3e — ⭐ CONCEDE QUE ES TRABAJO EN EQUIPO (obligatorio, 2026-07-17)
+
+**Es la crítica más repetida de este pilar**, y viene disfrazada de apoyo: *"gracias por dar visibilidad a las personas, **pero** esto es trabajo en equipo"*. Sale sobre todo en la 1ª y la 3ª — las dos que funcionan. Si no lo decimos nosotros, se nos echan encima. **Una línea en el cuerpo dice que no es solo mérito de esas 10 personas.**
+
+**⚠️ EL SUJETO ES LA PERSONA, NUNCA LA EMPRESA.** Aquí está el filo, y es fino:
+
+- ⛔ *"una fábrica no factura sola"* (1º) · *"ninguna empresa vende sola"* (2º) → **suenan** a la concesión y apuntan al revés: dicen que la EMPRESA depende de la persona. Eso es el despojo del Paso 3d, no la concesión.
+- ✅ *"Ninguno de estos 10 vendió solo."* · *"Detrás de cada nombre hay una fábrica entera."* · *"No lo firmó solo: detrás había un taller entero."* · *"Cada uno tiene una plantilla detrás."*
+
+**Dónde:** en el **setup, antes de la lista**. Ahí enmarca y el lector nunca llega a formular la objeción; después de la lista solo la corrige, y además alarga el tramo donde el post ya va cuesta abajo (Paso 3b). **Nunca de cierre**: el cierre es el bold statement (Paso 5).
+
+**Cómo no perder punchy:** es una concesión, no una disculpa. No pide perdón por publicar el post ni rebaja a los 10 — reconoce al equipo **y sigue defendiendo que alguien dio la cara**. *"Ninguno de estos 10 vendió solo. Pero alguien tuvo que coger el teléfono el día 40."*
+
+Lo vigila `validar-post.py --pilar los10` (`BEAT_EQUIPO`). **Riesgo asumido:** un check positivo se aprueba barato repitiendo una frase, que es como este mismo script creó el tic de *"En ventas,"*. Por eso hay 4 familias arriba y `working-preferences §4` obliga a no repetir la del "Los 10" anterior. **Si en 3 posts sale la misma frase, el tic ya está aquí.**
 
 **Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). **En este pilar va después del REVEAL, no "justo después de las menciones"** (el orden es lista → clichés → reveal → spam ninja → cierre): el reveal es lo que cierra el bloque de la lista, y meter el link antes lo parte. Resumen: máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), colocado **justo después de las menciones** y nunca como última línea. Aquí el giro va al dolor del comercial de la región, no al de la empresa.
 

@@ -76,6 +76,13 @@ CASOS = [
         ),
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Reveal de región sin el comodín': '"Sí, hablo del País Vasco" — prohibido DESPUÉS, por repetirse 4/4',
+        'Concede que es trabajo en equipo': (
+            'ESPERADO: regla §4.3 Paso 3e, adoptada el 2026-07-17. Ninguno de los 3 la '
+            'cumple, y por eso los 3 se comieron el "gracias, PERO esto es trabajo en '
+            'equipo". Ojo: este post dice "una fábrica no factura sola", que SUENA a la '
+            'concesión y no lo es (sujeto = empresa). Que el check no se deje engañar por '
+            'esa frase es justo lo que se está probando aquí.'
+        ),
     }),
     ('le doy la vuelta', 'los10', 'Unai', {
         'La EMPRESA no es quien tapa a la persona': (
@@ -85,6 +92,7 @@ CASOS = [
             'roto y no queda nada vigilando lo único que la evidencia soporta.'
         ),
         'Spam ninja presente': 'mismo artefacto del lnkd.in que el de Asturias, ver abajo',
+        'Concede que es trabajo en equipo': 'regla §4.3 Paso 3e, adoptada el 2026-07-17; ninguno de los 3 la cumple',
         'Bloques de 2-3 en escalera': 'regla §3.2 afinada después',
     }),
     ('comiéndose noes', 'los10', 'Iker', {
@@ -94,6 +102,7 @@ CASOS = [
             'que valida el script de verdad llevan la URL cruda, así que en uso real no pasa. '
             'No "arregles" el validador por esto.'
         ),
+        'Concede que es trabajo en equipo': 'regla §4.3 Paso 3e, adoptada el 2026-07-17; ninguno de los 3 la cumple',
     }),
     ('patio trasero de los Pirineos', 'mapa', 'Iker', {
         'Spam ninja presente': 'este mapa llevaba link de PamPam, no el de agendar',
