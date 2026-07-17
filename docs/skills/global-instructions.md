@@ -106,6 +106,14 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 "Nadie te dice esto, pero…" · "Lo que nadie te cuenta…" · "Me ha costado X años aprender que…" · "Este es el error más grande que…" · "El problema eres tú" · "Y nadie te lo dice" apilado al final · "Si has llegado hasta aquí, déjame un comentario" · "Spoiler:" / "Plot twist:" como cierre. Si la idea tira hacia ahí, parafrasea o cambia de ángulo.
 
 ### 2.9 · Techo de intensidad del verbo
+
+**⭐ UNO, Y QUE CAIGA SOLO (2026-07-17).** El punchy funciona por CONTRASTE: si los tres verbos del gancho son punchy, no lo es ninguno. **Un verbo con techo, y el resto neutros para que ese se oiga**, preferiblemente el último.
+- ⛔ *"Un comprador **aterriza** en tu web, no **pilla** qué vendes y **se pira**"* → tres apilados, se anulan y suena a caricatura.
+- ✅ *"Un comprador **entra** en tu web, no **entiende** qué vendes en 5 segundos y **se pira**"* → dos neutros que preparan la caída, y el punchy solo al final.
+- ⛔ Y el fallo contrario, más común: **ninguno**. *"entra… tarda… se larga"* no tiene ni un verbo flojo de los vetados, y aun así no tiene punchy: "entra" y "tarda" son NEUTROS. Pasar el check de verbo flojo NO es tener punchy.
+- **Sube el punchy con la voz de la cuenta** (`brand-voice §1b`): "se pira" es de Iker (el 2º jefe, el más cercano). Para Unai (1er jefe, sobrio) sería demasiado.
+
+**⚠️ POR QUÉ ESTO NO ESTÁ EN `validar-post.py` y no es un olvido.** El script tiene `VERBO_FLOJO`, que es un check NEGATIVO: veta una lista de verbos flojos. Un check POSITIVO ("el gancho DEBE contener un verbo punchy") necesitaría una lista cerrada de verbos punchy, y eso rompe de dos maneras a la vez: tumbaría ganchos buenos con un verbo que no esté en la lista, y sobre todo **la forma más barata de aprobarlo sería pegar siempre un verbo de la lista** — que es EXACTAMENTE como este script se fabricó la muletilla de "En ventas," (ver `MULETILLA_ANCLA`). Vetar palabras tiene infinitas salidas; exigirlas tiene una. **Esto es criterio y se comprueba en el pase de §8, mirando el gancho y preguntándose cuál es el verbo que frena el scroll. Si no lo encuentras, no lo hay.**
 **⭐ Regla UNIVERSAL: aplica a TODO hook, de TODOS los pilares y TODAS las recetas.** No es del meme ni del lead magnet: es de cualquier post. Está en el pase de validación (§8, check 1) porque es lo que más se escapa.
 **El verbo del gancho tiene un trabajo: frenar el scroll.** Si solo describe, no vale. Delatores de verbo flojo: `se cae`, `hay`, `es`, `tiene`, `pasa`, `ocurre`, `se pierde`, `no funciona`. Sube un peldaño hasta el punto dulce.
 **La familia punchy validada** (roba de aquí, pero NO repitas el que ya usó ese pilar): **quemar · reventar · enterrar · tirar · desmontar · arrancar · comerse · fundir · machacar**. Se pasan de rosca: destripar, descuartizar.
