@@ -137,7 +137,18 @@ Objetivo: 20 empresas industriales B2B de la región, cada una con UNA persona c
 - **Criterios de empresa:** 100-700 empleados (evita megaempresas demasiado corporativas); medianas/grandes, familiares, founder-led o con directivos visibles; sectores industriales (metalurgia, máquina-herramienta, bienes de equipo, automoción, aeronáutica, energía/oil&gas, forja, fundición, calderería, naval/offshore, electrónica, ingeniería, química, caucho, plástico, alimentación industrial…); cubre TODO el territorio (no solo la capital); prioriza exportadoras / presencia internacional. (Para el País Vasco hay una semilla de 346 empresas ICP: `ref_empresas_industriales_pais-vasco.csv` — úsala como punto de partida pero verifica igual con Unipile.)
 - **Persona (en este orden):** 1) CEO / director general / gerente; 2) fundador / presidente / propietario; 3) director comercial / marketing / desarrollo de negocio / export manager.
 - **Actividad (filtro duro):** que en los **últimos 3 meses** haya publicado, comentado o reposteado en LinkedIn. Más de 3 meses inactivo = mención desperdiciada (no nos va a hacer caso) → **descártalo**. Si nadie de la empresa está activo, **descarta esa empresa** y coge otra. Verifica que el cargo sea ACTUAL.
-- **Logo de cada empresa (para el CSV):** para cada una de las 20, saca la **URL de la foto de perfil (logo) de su página de empresa en LinkedIn** vía Unipile: `GET /api/v1/linkedin/company/{identifier}` (con `account_id`) → lee el campo `logoUrl` o `pictureUrl` del JSON. Esa URL va en la columna de imagen del CSV (Paso 8). (No uses favicons de la web oficial — salían en blanco.)
+- **⭐ Logo de cada empresa (para el CSV) — EL CAMPO ES `logo_large`, verificado 2026-07-17:**
+  ```
+  GET {BASE}/api/v1/linkedin/company/{id}?account_id={A}   →   logo_large
+  ```
+  Devuelve una URL de `media.licdn.com/dms/image/…/company-logo_400_400/…`. Esa URL va **tal cual** en la columna **`Media`** del CSV (Paso 8). Medido en Cataluña: **16 de 16**, ninguna en blanco.
+  - **UNA EMPRESA NO SE SACA COMO UNA PERSONA.** Son dos endpoints y dos campos distintos, y confundirlos devuelve vacío:
+    | | endpoint | campo |
+    |---|---|---|
+    | **EMPRESA** | `/api/v1/linkedin/company/{id}` | **`logo_large`** |
+    | **PERSONA** | `/api/v1/users/{id}` | `profile_picture_url_large` |
+  - **⚠️ Este Paso decía `logoUrl` o `pictureUrl` y NINGUNO DE LOS DOS EXISTE.** Por eso el CSV de Cataluña se entregó el 2026-07-17 con la columna `Media` vacía en las 16 filas y lo pilló el usuario: la regla estaba escrita, pero con un nombre de campo inventado, así que cumplirla al pie de la letra daba vacío igual. **Un nombre de campo no se escribe de memoria: se comprueba contra la API y se anota el día que se comprobó.**
+  - No uses favicons de la web oficial: salían en blanco.
 - **Orden:** por probabilidad de interacción (actividad reciente > cercanía industria/territorio/exportación > perfil personal visible > tamaño adecuado).
 - **⚠️ NOMBRES EXACTOS DE LINKEDIN, ni uno retocado.** Copia el campo `name` que devuelve Unipile (empresa y persona) **literal**: mayúsculas, tildes, `S.A.`/`S.A.U.`, y hasta el tagline si la página lo lleva en el nombre (`Cartonajes Barco | Soluciones de embalaje`). **Prohibido "embellecerlos"**: nada de `ARPA EMC` por `ARPA Equipos Móviles de Campaña`, ni `Nurel` por `NUREL`, ni quitar el `S.A.`.
   **Por qué importa (no es cosmético):** el usuario pega las @ a mano y LinkedIn autocompleta **por el nombre exacto**. Si el nombre no coincide, no salta el autocompletado → la mención se queda en texto muerto → esa empresa no recibe notificación → mención perdida y, con ella, el alcance que el mapa presta. Y como LinkedIn inserta el nombre real al mencionar, el post publicado acabaría distinto del que validaste.
@@ -182,7 +193,8 @@ Frase de entrada:
 - **Coordenadas:** formato `"lat, lng"` como string entre comillas, **verificadas** según la dirección real de la sede (se matchea como coordenadas, nunca como dirección, para que Google Places no sobrescriba).
 - **Descripciones:** en español, **una sola frase** por empresa, foco industrial/exportador, sin relleno.
 - **Agrupa por `Section`** en categorías limpias de sector.
-- **Logo (columna de imagen):** rellena la columna de imagen del CSV (en la plantilla de referencia es **`Media`**, la última) con la **URL del logo de LinkedIn** de cada empresa (el `logoUrl`/`pictureUrl` que sacaste en el Paso 4). NO uses favicons de la web (salían en blanco). Si PamPam esperara la imagen en otra columna, ponla ahí; por defecto = `Media`. `Sticker` = 🏢.
+- **⭐ Logo → columna `Media`, la ÚLTIMA, y NUNCA se entrega vacía.** Pega ahí el **`logo_large`** de cada empresa (Paso 4). Es la columna que el usuario mira primero, y **el CSV de Cataluña se entregó con las 16 vacías** (2026-07-17). Referencia real: `mapa_aragon_pampam.csv` en el Escritorio, donde `Media` lleva `https://media.licdn.com/dms/image/v2/…/company-logo_400_400/…`. NO uses favicons de la web (salían en blanco). `Sticker` = 🏢.
+- **Antes de entregar el CSV, cuenta las filas con `Media` no vacío y dilo en la entrega** (`16/16 con logo`). Si alguna se queda sin logo, va marcada y avisada — en Aragón se coló una vacía sin avisar.
 - Incluye TODAS las columnas del archivo de referencia (el Match mode sobrescribe el registro entero).
 
 **Paso 9 — TÍTULO y DESCRIPCIÓN para la web del mapa** (van juntos, los dos siempre):
