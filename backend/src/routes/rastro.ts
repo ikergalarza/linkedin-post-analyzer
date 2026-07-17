@@ -15,15 +15,17 @@ import pool from '../db';
 
 const router = Router();
 
-interface Senal {
+interface Hallazgo {
   titulo: string;
-  que_es: string;
-  donde: string;
-  plazo: string;
+  prioridad: number;
+  lo_que_dice: string;
+  por_que_pierde: string;
+  arreglo: string;
 }
 
-// Escapado obligatorio: `sector`, `titulo` y compañía salen de un modelo y
-// acaban dentro de un HTML que sirve un desconocido. Sin esto es un XSS.
+// Escapado obligatorio, y aquí MÁS que en ningún sitio: `lo_que_dice` es una cita
+// LITERAL de una web cualquiera de internet, elegida por un desconocido, servida
+// dentro de nuestro HTML. Sin esto es un XSS con una vía de entrada regalada.
 function esc(s: unknown): string {
   return String(s ?? '')
     .replace(/&/g, '&amp;')
@@ -63,16 +65,16 @@ button:hover{filter:brightness(1.06)}
 .cta{display:inline-block;margin-top:12px;background:var(--tinta);color:var(--crema);text-decoration:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px}
 `;
 
-function senalCard(s: Senal, n: number): string {
+function hallazgoCard(h: Hallazgo, n: number): string {
   return `<div class="card">
-    <h2>${n}. ${esc(s.titulo)}</h2>
-    <div class="row"><span class="k">Qué es</span><span class="v">${esc(s.que_es)}</span></div>
-    <div class="row"><span class="k">Dónde se ve</span><span class="v">${esc(s.donde)}</span></div>
-    <div class="row"><span class="k">Cuánto tarda</span><span class="v">${esc(s.plazo)}</span></div>
+    <h2>${n}. ${esc(h.titulo)}</h2>
+    <div class="row"><span class="k">Tu web dice</span><span class="v"><q>${esc(h.lo_que_dice)}</q></span></div>
+    <div class="row"><span class="k">Qué te cuesta</span><span class="v">${esc(h.por_que_pierde)}</span></div>
+    <div class="row"><span class="k">Qué poner</span><span class="v">${esc(h.arreglo)}</span></div>
   </div>`;
 }
 
-function page(opts: { sector: string; nombre: string | null; senales: Senal[]; abierto: boolean; shareId: string; error?: string }): string {
+function page(opts: { sector: string; nombre: string | null; senales: Hallazgo[]; abierto: boolean; shareId: string; error?: string }): string {
   const { sector, nombre, senales, abierto, shareId } = opts;
   const total = senales.length;
   const visibles = abierto ? senales : senales.slice(0, 1);
@@ -81,11 +83,11 @@ function page(opts: { sector: string; nombre: string | null; senales: Senal[]; a
   const gate = abierto
     ? ''
     : `<div class="gate">
-        <h2>Las otras ${total - 1} señales</h2>
+        <h2>Los otros ${total - 1} fallos</h2>
         <p>Déjame el correo y se abren aquí mismo. Acceso inmediato, sin esperar ningún email.</p>
         <form method="POST" action="/r/${esc(shareId)}">
           <input type="email" name="email" placeholder="tu@empresa.com" required />
-          <button type="submit">Ver las ${total - 1}</button>
+          <button type="submit">Ver los ${total - 1}</button>
           ${opts.error ? `<span class="err">${esc(opts.error)}</span>` : ''}
           <label class="consent"><input type="checkbox" name="rgpd" required />
             Acepto que Neety guarde mi correo para enviarme contenido sobre ventas B2B. Me puedo dar de baja cuando quiera.</label>
@@ -95,17 +97,17 @@ function page(opts: { sector: string; nombre: string | null; senales: Senal[]; a
   return `<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Las señales de compra en ${esc(sector)} · Neety</title>
+<title>Por qué se van de ${esc(sector)} sin pedirte presupuesto · Neety</title>
 <style>${CSS}</style></head><body><div class="wrap">
-  <p class="eyebrow">Neety · señales de compra</p>
-  <h1>${nombre ? `${esc(nombre.split(' ')[0])}, esto` : 'Esto'} es lo que deja <em>rastro</em> en ${esc(sector)}.</h1>
-  <p class="lede">Hechos públicos, gratis y comprobables que pasan ANTES de que una empresa compre. Ninguno es un secreto: solo hay que saber dónde mirar.</p>
-  ${visibles.map((s, i) => senalCard(s, i + 1)).join('')}
+  <p class="eyebrow">Neety · auditoría de ${esc(sector)}</p>
+  <h1>${nombre ? `${esc(nombre.split(' ')[0])}, esto` : 'Esto'} es lo que le pasa a un comprador en <em>${esc(sector)}</em>.</h1>
+  <p class="lede">Ordenados por lo que te cuestan, no por lo que se ven. Cada uno cita tu propia web: nada de esto es una opinión sobre tu diseño.</p>
+  ${visibles.map((s, i) => hallazgoCard(s, i + 1)).join('')}
   ${gate}
-  ${bloqueadas.length ? `<div class="locked">${bloqueadas.map((s, i) => senalCard(s, i + 2)).join('')}</div>` : ''}
+  ${bloqueadas.length ? `<div class="locked">${bloqueadas.map((s, i) => hallazgoCard(s, i + 2)).join('')}</div>` : ''}
   <div class="cierre">
-    <p>Ya sabes qué mirar. El problema es el otro: mirarlo. Son cientos de empresas y las señales aparecen cualquier día, así que para pillarlas a mano habría que revisar el mercado entero todas las mañanas.</p>
-    <p style="margin-top:10px">Eso es lo que hacemos nosotros: te avisamos de a quién escribir y cuándo, con la señal delante.</p>
+    <p>Arregla esto y el que ya entra en tu web te pedirá presupuesto más veces. Pero seguirás dependiendo de que entre, y eso es lo que no controlas.</p>
+    <p style="margin-top:10px">Eso es lo que hacemos nosotros: te decimos a qué empresa escribir y cuándo, sin esperar a que te encuentre.</p>
     <a class="cta" href="https://recursos.neety.com/agendar/">Ver cómo funciona →</a>
   </div>
 </div></body></html>`;

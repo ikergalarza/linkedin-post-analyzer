@@ -412,10 +412,12 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 
         {cfg.kind === 'publico' && (
           <p className="text-[11px] text-text-muted leading-snug pt-1 border-t border-border">
-            Solo hace falta la palabra clave. Al darle a{' '}
-            <span className="text-text-secondary">Redactar respuesta</span> en cada comentario, se genera el análisis
-            de SU sector, se le crea su propia página y el enlace ya viene dentro del texto. La página enseña 1 señal
-            gratis y pide el correo para ver las demás.
+            Solo hace falta la palabra clave. El post tiene que pedirles que{' '}
+            <span className="text-text-secondary">peguen su web</span> junto a ella. Al darle a{' '}
+            <span className="text-text-secondary">Redactar respuesta</span> en cada comentario, se lee su web de
+            verdad, se audita, se le crea su propia página y el enlace ya viene dentro del texto. El comentario
+            regala el fallo más caro citando su titular, y la página pide el correo para ver los demás. Si el
+            comentario no trae web, avisa y no genera nada.
           </p>
         )}
 
@@ -718,9 +720,10 @@ function CommenterCard({
     setAiLoading(true);
     setReplyMsg(null);
     try {
-      // Camino PÚBLICO: no pasa por el generador de respuestas normal. Este
-      // escribe el análisis de SU sector, le crea su propia página y devuelve
-      // el comentario con el enlace ya dentro.
+      // Camino PÚBLICO: no pasa por el generador de respuestas normal. Este lee
+      // la web que ha pegado, la audita, le crea su propia página y devuelve el
+      // comentario con el enlace ya dentro. Tarda más que el normal (hay que
+      // leer su web de verdad) y falla a propósito si el comentario no trae URL.
       if (cfg.kind === 'publico') {
         const r = await apiPost<{ publicComment: string; shareUrl: string; sector: string }>(
           '/api/accounts/rastro/generate',
@@ -733,7 +736,7 @@ function CommenterCard({
           }
         );
         setReply(r.publicComment);
-        setReplyMsg(`✓ Página creada para «${r.sector}» · ${r.shareUrl}`);
+        setReplyMsg(`✓ Auditada ${r.sector} · página creada: ${r.shareUrl}`);
         return;
       }
 
