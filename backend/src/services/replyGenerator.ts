@@ -136,9 +136,18 @@ function buildPrompt(input: ReplyGenerationInput): string {
     ? `MENTION PREFIX (required): Begin your reply with exactly "${input.commenterName} " — the name verbatim (same casing and spelling) followed by a SINGLE SPACE and NO comma, then continue in lowercase. The backend converts that leading name into a LinkedIn @-mention tag, so any deviation breaks the tag. And never use a "—"/"–" dash anywhere in the reply.`
     : `MENTION PREFIX: Skip — no commenter name available, open naturally (lowercase first word, no "—" dash).`;
 
-  // Per-call variety nudge: pick a random opening MOVE so replies don't
-  // converge on the same shape across comments (RULE 10). Framed as a
-  // preference, not a mandate, so it never forces an awkward fit.
+  // Per-call variety nudge: pick the opening MOVE here, in code, so replies don't
+  // converge on the same shape across comments (RULE 10).
+  //
+  // ⚠️ ESTO YA EXISTÍA Y NO FUNCIONABA, y el motivo importa. Estaba redactado como
+  // preferencia — "lean toward this move IF it fits the comment naturally (don't
+  // force it)" — y esa puerta de salida se la toma el modelo EN CADA LLAMADA: cada
+  // una es independiente, no sabe con qué abrió la anterior, así que "no lo fuerces"
+  // se traduce en volver a su favorito siempre. El usuario acabó viendo respuesta
+  // tras respuesta abierta con "y lo más curioso" (2026-07-17). El THANKS VARIANT de
+  // abajo lleva el mismo mecanismo y sí funciona, porque MANDA en vez de sugerir.
+  // Lección: un sorteo por llamada solo sirve si es obligatorio. Si le das un "si te
+  // encaja", no has sorteado nada.
   const OPENING_MOVES = [
     'agree, then add a specific angle they did NOT mention',
     'build on their point with a concrete example or number',
@@ -147,9 +156,12 @@ function buildPrompt(input: ReplyGenerationInput): string {
     'open with a short punchy reaction line, then one line that expands it',
     'pick up a specific word or phrase THEY used and run with it',
     'drop a tiny relevant anecdote or behind-the-scenes detail',
+    'name the thing they left implicit, the part they did not say out loud',
+    'start from the counterexample: when their point does NOT hold',
+    'go straight into the concrete scene, no preamble at all',
   ];
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
-  const varietyNudge = `VARIETY NUDGE for THIS reply: lean toward this move IF it fits the comment naturally (don't force it): ${move}. The point is variety across replies (RULE 10) — a common opener like "exacto/totalmente" is fine now and then, just not as the default every time.`;
+  const varietyNudge = `OPENING MOVE for THIS reply (RULE 10), decided for you: ${move}. Use THAT one. Only if the comment makes it genuinely impossible, pick a DIFFERENT move from RULE 10 — never fall back to whatever you'd have written anyway. ⛔ BURNT, do not open with these: "y lo más curioso", "lo más curioso es que", "lo curioso es que". They were showing up reply after reply. The same goes for any opener you feel pulled to write on autopilot: that pull IS the tell.`;
 
   // Same per-call trick as OPENING_MOVES, for the same reason. RULE 13 lists the
   // thanks variants but a menu doesn't produce variety: every call is independent,
@@ -171,6 +183,7 @@ function buildPrompt(input: ReplyGenerationInput): string {
   ];
   const thanks = THANKS_VARIANTS[Math.floor(Math.random() * THANKS_VARIANTS.length)];
   const thanksNudge = `THANKS VARIANT for THIS reply (only relevant IF the comment is praise, see RULE 13): use this specific flavour of thanks rather than your usual one: "${thanks}". Adapt the vowel stretch to your voice per RULE 12. If the comment is NOT praise, ignore this line entirely — do not bolt a thanks onto a comment that wasn't complimenting you.`;
+
 
   // Lead magnet DM: this person didn't just comment, they asked for something —
   // and they're getting it by DM right now. The reply must do BOTH jobs.
@@ -199,6 +212,8 @@ ${commenterLine}
 ${mentionInstruction}
 ${leadMagnetInstruction}
 ${varietyNudge}
+${varietyNudge}
+
 ${thanksNudge}
 
 Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;

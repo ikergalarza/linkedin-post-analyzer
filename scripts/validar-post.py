@@ -348,6 +348,21 @@ def validar(texto, pilar, cuenta=None):
             'sin la palabra, la gente no comenta: 20 vs 483 com.' if not m else '')
         m2 = re.search(r'comenta\s+"([^"]+)"', cuerpo, re.I)
         chk(bool(m2), 'CTA con la PALABRA entre comillas (§4.4)', '')
+        # La palabra clave va en MINÚSCULAS y SIN TILDES (§4.4, usuario 2026-07-17).
+        # Minúsculas: un CTA en mayúsculas es el patrón que LinkedIn asocia a spam, y
+        # pedir un comentario masivo ya nos pone a tiro de que nos capen el alcance.
+        # Sin tildes: la escribe a mano gente desde el móvil. Si la palabra lleva
+        # tilde, media lista la comenta sin ella, el filtro no la reconoce y ese lead
+        # se pierde en silencio, que es el peor modo de fallo que hay.
+        if m2:
+            kw = m2.group(1)
+            chk(kw == kw.lower(), 'Palabra clave en MINÚSCULAS (§4.4)',
+                f'"{kw}" → en mayúsculas huele a spam y LinkedIn nos puede capar el alcance'
+                if kw != kw.lower() else '')
+            tildes = [c for c in kw if c in 'áéíóúüñÁÉÍÓÚÜÑ']
+            chk(not tildes, 'Palabra clave SIN tildes (§4.4)',
+                f'"{kw}" lleva {tildes} → quien la comente sin tilde desde el móvil no entra en el filtro'
+                if tildes else '')
         # El CTA pide la palabra Y UN SEGUNDO DATO, y cuál es depende del subtipo
         # (§4.4). En el de DM el dato es el sector/departamento: sirve para
         # personalizar el recurso. En el PÚBLICO (auditoría de web) el dato es la

@@ -294,6 +294,11 @@ Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
 
 ### 4.4 · LEAD MAGNET (comment-gated)
 
+**⭐ LA PALABRA CLAVE: SIEMPRE EN MINÚSCULAS Y SIN TILDES (2026-07-17).**
+- **Minúsculas.** `comenta "auditoria"`, nunca `"AUDITORIA"`. Un CTA en mayúsculas es el patrón que LinkedIn asocia a spam, y un post que pide comentarios masivos ya va de por sí a tiro de que nos capen el alcance. No le regales la señal.
+- **Sin tildes.** La escribe a mano gente desde el móvil. Si la palabra lleva tilde, media lista la comenta sin ella, el filtro de la herramienta no la reconoce y **ese lead se pierde en silencio**, que es el peor modo de fallo posible: no da error, simplemente no aparece. Elige siempre una palabra que no tenga.
+- Lo vigila `validar-post.py --pilar leadmagnet`.
+
 > ## ⭐ LOS 2 SUBTIPOS DE LEAD MAGNET (taxonomía medida, 2026-07-16)
 > Igual que PELOTEO se abre en mapa / "Los 10" y MEME en cuerpo / captura / viñeta, el lead magnet tiene **dos variantes** y no se comportan igual:
 >
