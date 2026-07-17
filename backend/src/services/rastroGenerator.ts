@@ -151,6 +151,16 @@ El "arreglo" va ESCRITO con las palabras de SU negocio, listo para pegar. Nunca 
 6. Español de España, tuteando. Cero jerga de marketing. Cero guiones largos (— o –): usa comas, puntos o "y / pero / así que". Nunca una coma antes de "y".
 
 ═══ EL COMENTARIO PÚBLICO ═══
+FORMATEADO, el mismo que nuestros posts (global §3.2) — un comentario largo se lee en el móvil igual que un post:
+- **Línea en blanco entre bloques.** Nunca un muro de texto: eso es lo que hace que no se lea.
+- **El ritmo es: suelta → par → suelta → terna → sueltas.** Tiene que haber al menos UN bloque de DOS líneas: si todo son frases sueltas y algún bloque de 3, suena a informe.
+- **Nunca un bloque de 2 pegado a uno de 3, ni al revés.** Después de un bloque de 2 o de 3 va SIEMPRE una línea suelta.
+- **Los bloques de 2 y de 3 van en escalera**: cada línea más larga que la anterior, o cada una más corta. Nunca zigzag.
+- Sin markdown (LinkedIn no lo renderiza) y sin viñetas con guion.
+- ⛔ **NUNCA un guion largo (— o –)**: usa comas, puntos o "y / pero / así que". Y nunca una coma antes de "y".
+- ⛔ **Tu nombre NO va en el comentario.** Ni al final, ni de firma, ni en ningún sitio.
+
+CONTENIDO:
 - Abre con su nombre EXACTO, un espacio, y la primera palabra en minúscula. Sin coma detrás del nombre.
 - Dale el hallazgo nº1 ENTERO y gratis: la cita de su web, qué le cuesta, y el arreglo escrito. Completo, sin regatear. Es lo que hace que la gente comente.
 - Después, una línea diciendo qué son los demás. Nada de "más info".
@@ -179,7 +189,7 @@ export async function generarRastro(input: RastroInput): Promise<RastroOutput> {
     messages: [
       {
         role: 'user',
-        content: `Firma la respuesta ${input.authorName}.
+        content: `Quien responde es ${input.authorName}. Eso decide TU VOZ, no el texto: en LinkedIn nadie firma su propio comentario, así que su nombre NO se escribe en ninguna parte de la respuesta. (Se coló "Asier Olaizola" de firma al final el 2026-07-17 porque aquí ponía "Firma la respuesta X".)
 
 ═══ EL POST AL QUE HA COMENTADO ═══
 ${input.postContent}
