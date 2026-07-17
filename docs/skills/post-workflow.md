@@ -46,6 +46,21 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 - **Menciones @:** solo personas con **actividad real reciente** (<3 meses: post/repost/comentarios). Descarta dormidos aunque sean el CEO. Si no puedes comprobar actividad, no la menciones.
 - **Sin web ni fuente disponible** → compórtate como antes (deja el bloque vacío marcado y pídele la fuente al usuario). Mejor vacío que inventado.
 
+### 4.0b · ⭐ MAPA vs "LOS 10": criterios de selección OPUESTOS (2026-07-17)
+> Los dos son PELOTEO y los dos mencionan empresas y personas, así que es fácil mezclarlos. **Lo que se busca en cada uno no se parece.**
+
+| | **MAPA** | **"LOS 10"** |
+|---|---|---|
+| **El protagonista** | La **EMPRESA** | La **PERSONA** |
+| **Criterio** | Que encaje con **nuestro ICP** (`aboutme`): industrial B2B, 100-700 empleados, exportadora | Que su empresa esté **CRECIENDO** en el último año, con logro verificado |
+| **Filtro común** | De esa región · persona **activa** (<3 meses) | De esa región · persona **activa** (<3 meses) |
+| **¿Importa el crecimiento?** | **NO** | **SÍ, es el criterio entero** |
+| **¿Importa el encaje ICP?** | **SÍ, es el criterio entero** | Sí, pero manda el crecimiento |
+
+**⚠️ EL ERROR QUE YA SE COMETIÓ (Cataluña):** llegó un aviso de que Esteban Espuña *"sigue en pérdidas, y mencionarla en un post de empresas que van bien es un riesgo"*, y estuve a punto de cambiarla. **Es aplicarle a un mapa el criterio de "Los 10".** El mapa no dice que vayan bien: dice que **sostienen la industria de esa región**. Una empresa puede tener un mal año y seguir siendo un exportador industrial de manual. Sus cuentas no son el criterio de este pilar.
+- **En el MAPA no se pide ni un logro ni una cifra por empresa.** Por eso su bloque es `→ @Empresa - @Persona`, sin `· logro`: no hay que justificar nada (`§4.2` Paso 10).
+- **En "LOS 10" el logro ES la ficha**, y por eso ahí sí va (`→ @Persona - @Empresa · logro`) y por eso ahí sí se descarta a quien decrece.
+
 ### 4.1 · Esqueleto general (todo post pasa por aquí)
 1. **Input:** pilar · cuenta (Iker/Unai/Asier) · idea semilla · objetivo (`alcance | pipeline`).
 2. **Test gana/pierde + mecánica** (`global-instructions §0`, matriz §4.6) + **chequeo de riesgo** (`working-preferences §2-§3`: región baneada, fatiga de lead magnet, meme sin motor, exclusividad de formato del día). Si hay riesgo → **avisar ANTES** del borrador.
