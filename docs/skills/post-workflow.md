@@ -61,6 +61,23 @@ Antes se dejaban SIEMPRE vacías. **Ya no.** La regla nueva:
 - **En el MAPA no se pide ni un logro ni una cifra por empresa.** Por eso su bloque es `→ @Empresa - @Persona`, sin `· logro`: no hay que justificar nada (`§4.2` Paso 10).
 - **En "LOS 10" el logro ES la ficha**, y por eso ahí sí va (`→ @Persona - @Empresa · logro`) y por eso ahí sí se descarta a quien decrece.
 
+### 4.0c · ⭐ REPETIR REGIÓN: la lista NUNCA repite empresa, y si no llegan 20, van 16 (2026-07-17)
+
+Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una empresa no.**
+
+**LA REGLA.** Si vas a hacer un peloteo de una región que ya hemos tocado, **ninguna empresa ni persona de tu lista puede haber salido en NINGÚN post anterior de esa región**. Cruza contra:
+- los **mapas** anteriores de esa región,
+- los **"Los 10"** anteriores de esa región — **el otro formato también cuenta**,
+- y **todas las cuentas**, no solo la que publica.
+
+**POR QUÉ, que es lo que hace que no se negocie:** el peloteo no existe para tener razón sobre una región, existe para que **empresas NUEVAS de esa región nos conozcan**, porque son clientes potenciales. Repetir empresa es gastar una plaza en alguien que ya nos vio. El post te sale igual de bonito y no te trae a nadie nuevo.
+
+**SI NO LLEGAS A 20, NO RELLENES: BAJA A 16.** Un bloque menos (4×4 en vez de 5×4). Pierdes 4 menciones de alcance y no pasa nada. **Lo que no vale es completar con repetidas, y lo que tampoco vale es no publicar.** Busca las 20 siempre, en serio y con fuentes locales, pero si la región está exprimida, 16 nuevas baten a 20 con 4 recicladas. Y si tampoco llegas a 16, ese es el aviso de que esa región ya está agotada para ese formato: cambia de región.
+
+**CÓMO SE COMPRUEBA (no lo hagas a ojo):** baja los posts de las 3 cuentas, quédate con los que mencionan esa región, saca sus líneas `→` y cruza tu lista **normalizando** — sin acentos, en minúscula y sin sufijos legales (`SA`, `SAU`, `SL`, `Group`, `Grupo`). Sin normalizar se cuela "Bioibérica" contra "Bioiberica" y "Prefabricados Pujol" contra "Prefabricats Pujol". Medido en Cataluña el 2026-07-17: **83 empresas y personas ya mencionadas** entre el mapa de Iker y el "Los 10" de Unai. Eso es lo que hay que esquivar, y a ojo no se esquiva.
+
+**⚠️ Y LO CARO NO ES LA REGLA, ES LA BÚSQUEDA.** Cuando falten empresas, el reflejo es dar la región por agotada. En Cataluña un investigador devolvió *"0 de Girona, ninguna pasó el listón"* y **era falso**: buscando "Cataluña" a nivel autonómico, Barcelona se come los resultados. Atacando fuentes locales (el ranking provincial, el directorio del polígono de Riudellots, la prensa comarcal) salieron 8 gerundinas a la primera. **Antes de bajar a 16, busca por provincia y con prensa local.**
+
 ### 4.1 · Esqueleto general (todo post pasa por aquí)
 1. **Input:** pilar · cuenta (Iker/Unai/Asier) · idea semilla · objetivo (`alcance | pipeline`).
 2. **Test gana/pierde + mecánica** (`global-instructions §0`, matriz §4.6) + **chequeo de riesgo** (`working-preferences §2-§3`: región baneada, fatiga de lead magnet, meme sin motor, exclusividad de formato del día). Si hay riesgo → **avisar ANTES** del borrador.
