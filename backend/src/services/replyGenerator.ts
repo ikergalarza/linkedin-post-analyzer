@@ -114,7 +114,7 @@ ${STRETCH_RULES[voice].r12}
 
 ${STRETCH_RULES[voice].r13}`;
 
-function buildPrompt(input: ReplyGenerationInput): string {
+function buildPrompt(input: ReplyGenerationInput, voice: Voice): string {
   const v = input.authorVoice;
   const voiceBlock = [
     v.voice_style ? `VOICE STYLE: ${v.voice_style}` : null,
@@ -162,6 +162,23 @@ function buildPrompt(input: ReplyGenerationInput): string {
   ];
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
   const varietyNudge = `OPENING MOVE for THIS reply (RULE 10), decided for you: ${move}. Use THAT one. Only if the comment makes it genuinely impossible, pick a DIFFERENT move from RULE 10 — never fall back to whatever you'd have written anyway. ⛔ BURNT, do not open with these: "y lo más curioso", "lo más curioso es que", "lo curioso es que". They were showing up reply after reply. The same goes for any opener you feel pulled to write on autopilot: that pull IS the tell.`;
+
+  // PUNTOS SUSPENSIVOS AL CIERRE (usuario 2026-07-17). Ahora que el 1er jefe (Unai,
+  // sobrio) y el 3º (Asier, medio) bajaron el volumen, les falta el gesto que en el
+  // 2º (Iker) hace el alargamiento de vocal: algo que diga "esto lo digo con media
+  // sonrisa" sin subir el tono. Los puntos suspensivos son eso — el equivalente
+  // contenido del emoji, y por eso van justo en las dos voces sobrias y NO en Iker,
+  // que ya tiene sus recursos.
+  //
+  // ⚠️ Se sortea AQUÍ, y no se le pide al modelo "hazlo a veces", por lo mismo que
+  // OPENING_MOVES: "a veces" no produce "a veces", produce "siempre" o "nunca". Cada
+  // llamada es independiente y no sabe qué hizo la anterior. La frecuencia la decide
+  // el dado, no el modelo.
+  const ELLIPSIS_ODDS: Record<Voice, number> = { sobrio: 0.25, medio: 0.18, cercano: 0 };
+  const useEllipsis = Math.random() < ELLIPSIS_ODDS[voice];
+  const ellipsisNudge = useEllipsis
+    ? `CIERRE DE ESTA RESPUESTA: termínala con puntos suspensivos ("...") en vez de un punto final. Es tu equivalente sobrio del emoji: deja la frase abierta, con media sonrisa o dejando caer lo que no hace falta decir. Tiene que salir natural del contenido — si la última frase no admite quedarse en el aire, reescríbela para que sí. UNA vez, al final, nunca en medio.`
+    : `CIERRE DE ESTA RESPUESTA: acaba con punto normal. NO uses puntos suspensivos en esta.`;
 
   // Same per-call trick as OPENING_MOVES, for the same reason. RULE 13 lists the
   // thanks variants but a menu doesn't produce variety: every call is independent,
@@ -214,6 +231,8 @@ ${leadMagnetInstruction}
 ${varietyNudge}
 ${varietyNudge}
 
+${ellipsisNudge}
+
 ${thanksNudge}
 
 Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;
@@ -228,7 +247,7 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
     model: 'claude-sonnet-4-6',
     max_tokens: 400,
     system: buildSystemPrompt(voice),
-    messages: [{ role: 'user', content: buildPrompt(input) }],
+    messages: [{ role: 'user', content: buildPrompt(input, voice) }],
   });
   const block = message.content.find((b) => b.type === 'text') as { type: 'text'; text: string } | undefined;
   let text = stripLoneSurrogates(block?.text ?? '').trim();
