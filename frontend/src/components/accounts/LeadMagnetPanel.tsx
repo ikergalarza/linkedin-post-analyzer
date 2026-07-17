@@ -892,8 +892,21 @@ function CommenterCard({
                 </button>
               )}
             </div>
+            {/* Sin borrador no hay caja (usuario, 2026-07-17). Una caja vacía con un
+                "Responder" al lado invita a responder a mano lo que se genera solo,
+                y sobre todo NO distingue "aún no has generado" de "se generó vacío".
+                Ese fallo salta a la vista cuando la caja solo existe si hay texto.
+                Mientras genera sí se enseña, para que se vea que está pasando algo. */}
             {replySent ? (
               <p className="text-[11px] text-text-muted">{replyMsg || '✓ Ya respondido'}</p>
+            ) : !reply.trim() && !aiLoading ? (
+              <p className="text-[11px] text-text-muted">
+                {replyMsg?.startsWith('✗')
+                  ? 'No se ha podido generar. Mira el error de arriba.'
+                  : cfg.kind === 'publico'
+                    ? 'Dale a Generar análisis: lee su web, la audita y te deja aquí el comentario con su enlace ya dentro.'
+                    : 'Dale a Redactar respuesta.'}
+              </p>
             ) : (
               <>
                 <textarea
@@ -924,7 +937,15 @@ function CommenterCard({
                       {willMention ? `@${mention.name} ✓` : `@${mention.name} ✗`}
                     </span>
                   )}
-                  {replyMsg && <span className="text-[10px] text-text-muted">{replyMsg}</span>}
+                  {/* Los errores NO pueden ir en gris de 10px como el resto: un
+                      "✗ el generador no devolvió JSON válido" pintado igual que un
+                      "✓ auditada" se lee como que no ha pasado nada, y lo que ves
+                      es una caja vacía sin motivo (usuario, 2026-07-17). */}
+                  {replyMsg && (
+                    <span className={replyMsg.startsWith('✗')
+                      ? 'text-[11px] text-red-400 font-medium'
+                      : 'text-[10px] text-text-muted'}>{replyMsg}</span>
+                  )}
                 </div>
               </>
             )}
