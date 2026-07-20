@@ -1496,16 +1496,23 @@ export default function Accounts() {
                   <div className="flex items-center gap-2 flex-wrap mt-2">
                     <span className="text-xs text-text-muted">Sort:</span>
                     {([
+                      /* Ordenados por utilidad real, no por antigüedad del filtro.
+                         Primero lo que mide INTENCIÓN (outlier, CTR, clics,
+                         guardados, envíos): responde a "¿esto sirvió?".
+                         Luego el ALCANCE bruto. Después las piezas sueltas del
+                         engagement. Engagement compuesto va casi al final porque
+                         es redundante con Outlier, que es lo mismo normalizado
+                         por cuenta — y por tanto más justo. */
                       ['outlier_ratio', '🔥 Outlier'],
-                      ['impressions', '👁 Impressions'],
-                      ['likes', '👍 Likes'],
-                      ['comments', '💬 Comments'],
-                      ['reposts', '🔁 Reposts'],
-                      ['engagement', '⚡ Engagement'],
-                      ['clicks', '🔗 Clics'],
                       ['ctr', '🎯 CTR'],
+                      ['clicks', '🔗 Clics'],
                       ['saves', '🔖 Guardados'],
                       ['sends', '✈️ Envíos'],
+                      ['impressions', '👁 Impressions'],
+                      ['comments', '💬 Comments'],
+                      ['reposts', '🔁 Reposts'],
+                      ['likes', '👍 Likes'],
+                      ['engagement', '⚡ Engagement'],
                       ['recent', '🕐 Recent'],
                     ] as const).map(([key, label]) => (
                       <button
@@ -1550,7 +1557,12 @@ export default function Accounts() {
               ) : (
                 <div className="space-y-2">
                   {filteredTopPosts.slice(0, visibleTop).map((p) => (
-                    <TopPostRow key={p.id} post={p} onOpenChat={() => setChatPostId(p.id)} destacarCtr={topPostsSort === 'ctr'} />
+                    <TopPostRow
+                      key={p.id}
+                      post={p}
+                      onOpenChat={() => setChatPostId(p.id)}
+                      destacar={topPostsSort === 'ctr' ? 'ctr' : topPostsSort === 'outlier_ratio' ? 'outlier' : null}
+                    />
                   ))}
                   {filteredTopPosts.length > visibleTop && (
                     <button
@@ -2188,7 +2200,10 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
 // analytics list. The "Show curve" button pulls archived snapshots for any post
 // that was previously tracked by the monitor, so the data stays consultable after
 // the 7-day live window closes.
-function TopPostRow({ post, onOpenChat, destacarCtr }: { post: TopPost; onOpenChat?: () => void; destacarCtr?: boolean }) {
+function TopPostRow(
+  { post, onOpenChat, destacar }:
+  { post: TopPost; onOpenChat?: () => void; destacar?: 'ctr' | 'outlier' | null }
+) {
   const [open, setOpen] = useState(false);
   // CTR solo tiene sentido si el post llevaba enlace Y sabemos su alcance.
   // Sin las dos cosas no es "0%", es que no hay dato — y pintar un 0% haria
@@ -2216,10 +2231,11 @@ function TopPostRow({ post, onOpenChat, destacarCtr }: { post: TopPost; onOpenCh
               <span>·</span>
               <span>{FORMAT_LABELS[post.content_type] || post.content_type}</span>
             </div>
-            {/* Badge de CTR, al lado del multiplicador. Cuando el usuario ordena
-                por CTR necesita VER el numero por el que se esta ordenando; sin
-                el, el orden parecia arbitrario. Se agranda al ordenar por CTR
-                para que el ojo lo siga por la lista.
+            {/* Badges de cabecera. El del criterio por el que se esta ordenando
+                se agranda, para que el ojo pueda seguir la columna que manda el
+                orden sin tener que leer numero a numero.
+                Las siglas van DENTRO del badge ("0,44% CTR", "8.4x") porque un
+                porcentaje suelto al lado de un multiplicador no dice de que es.
                 ⚠️ CTR solo compara justo posts DEL MISMO pilar: entre pilares
                 miente, porque LinkedIn infla las impresiones del meme
                 (outliers-database §3.11). Por eso el tooltip lo avisa. */}
@@ -2227,7 +2243,7 @@ function TopPostRow({ post, onOpenChat, destacarCtr }: { post: TopPost; onOpenCh
               {ctr != null && (
                 <span
                   className={`rounded font-semibold tabular-nums bg-amber-500/15 text-amber-400 ${
-                    destacarCtr
+                    destacar === 'ctr'
                       ? 'px-2.5 py-1 text-sm ring-1 ring-amber-400/40'
                       : 'px-2 py-0.5 text-xs'
                   }`}
@@ -2238,15 +2254,19 @@ function TopPostRow({ post, onOpenChat, destacarCtr }: { post: TopPost; onOpenCh
                     `\n\nOjo: solo compara justo posts del MISMO pilar.`
                   }
                 >
-                  {ctr.toFixed(2)}%
+                  {ctr.toFixed(2)}% <span className="opacity-70">CTR</span>
                 </span>
               )}
               {post.outlier_ratio != null && (
                 <span
-                  className={`px-2 py-0.5 rounded text-xs font-semibold tabular-nums ${
+                  className={`rounded font-semibold tabular-nums ${
                     post.is_outlier
                       ? 'bg-diamond/15 text-diamond'
                       : 'bg-bg-secondary text-text-muted border border-border'
+                  } ${
+                    destacar === 'outlier'
+                      ? 'px-2.5 py-1 text-sm ring-1 ring-diamond/40'
+                      : 'px-2 py-0.5 text-xs'
                   }`}
                   title="Engagement relative to this creator's average"
                 >
