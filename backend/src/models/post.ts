@@ -11,6 +11,10 @@ export interface Post {
   comments_count: number;
   reposts_count: number;
   impressions_count: number | null;
+  /** LinkedIn Premium: visitas al perfil que vinieron DE ese post. */
+  profile_viewers_count: number | null;
+  /** LinkedIn Premium: seguidores ganados con ese post. */
+  followers_gained_count: number | null;
   engagement_score: number;
   outlier_ratio: number;
   is_outlier: boolean;
@@ -69,7 +73,8 @@ export const PostModel = {
     const { rows } = await pool.query(
       `SELECT id, creator_id, linkedin_post_id, content_text, content_type,
               published_at, likes_count, comments_count, reposts_count,
-              impressions_count, engagement_score, outlier_ratio, is_outlier,
+              impressions_count, profile_viewers_count, followers_gained_count,
+              engagement_score, outlier_ratio, is_outlier,
               hook_text, word_count, char_count, line_break_count,
               has_aggressive_spacing, hook_type, post_structure,
               comment_like_ratio, share_like_ratio, text_tone,
@@ -104,8 +109,9 @@ export const PostModel = {
             has_aggressive_spacing, hook_type, post_structure,
             comment_like_ratio, share_like_ratio, text_tone,
             has_hashtags, hashtags, has_emoji,
-            has_call_to_action, language, post_url, raw_data
-          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)
+            has_call_to_action, language, post_url, raw_data,
+            profile_viewers_count, followers_gained_count
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31)
           ON CONFLICT (linkedin_post_id) DO UPDATE SET
             likes_count = EXCLUDED.likes_count,
             comments_count = EXCLUDED.comments_count,
@@ -122,7 +128,11 @@ export const PostModel = {
             comment_like_ratio = EXCLUDED.comment_like_ratio,
             share_like_ratio = EXCLUDED.share_like_ratio,
             text_tone = EXCLUDED.text_tone,
-            raw_data = EXCLUDED.raw_data`,
+            raw_data = EXCLUDED.raw_data,
+            -- COALESCE: si un re-escaneo viene sin analytics, NO borres lo que ya
+            -- tenias. Unipile no siempre lo devuelve.
+            profile_viewers_count = COALESCE(EXCLUDED.profile_viewers_count, posts.profile_viewers_count),
+            followers_gained_count = COALESCE(EXCLUDED.followers_gained_count, posts.followers_gained_count)`,
           [
             post.creator_id, post.linkedin_post_id, post.content_text, post.content_type,
             post.published_at, post.likes_count || 0, post.comments_count || 0, post.reposts_count || 0,
@@ -133,6 +143,7 @@ export const PostModel = {
             post.has_hashtags || false, post.hashtags || [],
             post.has_emoji || false, post.has_call_to_action || false, post.language, post.post_url,
             post.raw_data ? JSON.stringify(post.raw_data) : null,
+            post.profile_viewers_count ?? null, post.followers_gained_count ?? null,
           ]
         );
       }

@@ -632,6 +632,27 @@ const migration = `
   CREATE UNIQUE INDEX IF NOT EXISTS uq_lead_magnet_sends_person
     ON lead_magnet_sends (post_id, provider_id, kind);
 
+  -- v31: las 2 metricas de LinkedIn PREMIUM que Unipile sí expone, y que
+  -- llevabamos sin usar. Vienen en raw.analytics de cada post.
+  --
+  -- POR QUE IMPORTAN: son lo mas parecido a "esto trajo negocio" que tenemos.
+  -- Medido el 2026-07-20: el mapa convierte a visita de perfil 3,6x mejor que el
+  -- meme (404 visitas sobre 79.224 impresiones = 0,51% contra 125 sobre 86.815 =
+  -- 0,14%), pese a que el meme tuvo MAS impresiones. Sin esto, los dos parecian
+  -- igual de buenos porque solo mirabamos alcance.
+  --
+  -- ⛔ LOS CLICS AL ENLACE NO ESTAN AQUI y no es un olvido: Unipile NO los expone.
+  -- Solo se ven en la interfaz de LinkedIn Premium ("Visits to links from this
+  -- post"). Probadas 4 rutas distintas de su API el 2026-07-20, ninguna los da.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS profile_viewers_count INTEGER;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS followers_gained_count INTEGER;
+  -- Relleno retroactivo: raw_data ya guarda el JSON entero de Unipile, asi que
+  -- los posts ya escaneados tienen el dato dentro sin necesidad de re-escanear.
+  UPDATE posts SET
+    profile_viewers_count  = COALESCE(profile_viewers_count,  (raw_data->'analytics'->>'profile_viewers_from_this_post')::int),
+    followers_gained_count = COALESCE(followers_gained_count, (raw_data->'analytics'->>'followers_gained_from_this_post')::int)
+   WHERE raw_data ? 'analytics';
+
   -- v30: lead magnet PÚBLICO con página personalizada ("rastro").
   -- Cada persona que comenta la palabra clave recibe SU análisis. El comentario
   -- público lleva el enlace a esta fila, y la página pide el correo para enseñar

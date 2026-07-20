@@ -106,6 +106,8 @@ interface TopPost {
   likes_count: number;
   comments_count: number;
   reposts_count: number;
+  profile_viewers_count?: number | null;
+  followers_gained_count?: number | null;
   impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number;
@@ -125,6 +127,8 @@ interface LivePost {
   likes_count: number;
   comments_count: number;
   reposts_count: number;
+  profile_viewers_count?: number | null;
+  followers_gained_count?: number | null;
   impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number | null;
@@ -164,6 +168,8 @@ interface Snapshot {
   likes_count: number;
   comments_count: number;
   reposts_count: number;
+  profile_viewers_count?: number | null;
+  followers_gained_count?: number | null;
 }
 
 interface TypicalBucket {
@@ -1978,6 +1984,18 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             {post.impressions_count != null && (
               <span className="text-accent">👁️ {fmtNum(post.impressions_count)}</span>
             )}
+            {/* LinkedIn Premium. Son lo mas parecido a "esto trajo negocio" que
+                tenemos: el mapa convierte 3,6x mejor que el meme aunque el meme
+                tenga MAS impresiones. Solo se pintan si hay dato. */}
+            {!!post.profile_viewers_count && (
+              <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
+                🧑 {fmtNum(post.profile_viewers_count)}
+              </span>
+            )}
+            {!!post.followers_gained_count && (
+              <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
+                ➕ {fmtNum(post.followers_gained_count)}
+            )}
             <span className="text-accent font-medium">{fmtNum(post.engagement_score)} eng</span>
             <button
               onClick={handleRefresh}
@@ -2085,6 +2103,15 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
             <span>{fmtNum(post.reposts_count)} reposts</span>
             {post.impressions_count != null && (
               <span className="text-accent/80">👁️ {fmtNum(post.impressions_count)}</span>
+            )}
+            {!!post.profile_viewers_count && (
+              <span className="text-emerald-400/90" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
+                🧑 {fmtNum(post.profile_viewers_count)}
+              </span>
+            )}
+            {!!post.followers_gained_count && (
+              <span className="text-emerald-400/70" title="Seguidores ganados con este post (LinkedIn Premium)">
+                ➕ {fmtNum(post.followers_gained_count)}
             )}
             <span className="text-accent font-medium ml-auto">{fmtNum(post.engagement_score)} eng</span>
             {post.published_at && (

@@ -533,6 +533,11 @@ export class UnipileService {
     const comments = raw.comment_counter ?? raw.comments_count ?? 0;
     const reposts = raw.repost_counter ?? raw.reposts_count ?? raw.shares_count ?? 0;
     const impressions = raw.impressions_counter ?? raw.impressions ?? raw.views_count ?? null;
+    // Analitica de LinkedIn PREMIUM (las 3 cuentas lo tienen). Unipile solo
+    // expone estas dos; los clics al enlace NO los da (ver migrate.ts v31).
+    const an = (raw as any).analytics || {};
+    const profileViewers = an.profile_viewers_from_this_post ?? null;
+    const followersGained = an.followers_gained_from_this_post ?? null;
 
     return {
       creator_id: creatorId,
@@ -544,6 +549,8 @@ export class UnipileService {
       comments_count: comments,
       reposts_count: reposts,
       impressions_count: impressions,
+      profile_viewers_count: profileViewers,
+      followers_gained_count: followersGained,
       post_url: raw.url || raw.post_url || this.buildPostUrl(raw) || null,
       raw_data: raw,
     };

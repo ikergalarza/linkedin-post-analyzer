@@ -1124,6 +1124,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
       `SELECT
         p.id, p.content_text, p.content_type, p.published_at,
         p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+        p.profile_viewers_count, p.followers_gained_count,
         p.engagement_score, p.outlier_ratio, p.is_outlier,
         p.post_url, p.hook_text,
         c.name AS creator_name, c.profile_image_url AS creator_image
@@ -1316,6 +1317,8 @@ router.get('/live-posts', async (req: Request, res: Response) => {
        SELECT
          p.id, p.content_text, p.hook_text, p.content_type, p.published_at,
          p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+         p.profile_viewers_count, p.followers_gained_count,
+        p.profile_viewers_count, p.followers_gained_count,
          p.engagement_score, p.outlier_ratio, p.is_outlier, p.post_url,
          c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
          p.snapshot_count,
@@ -1509,6 +1512,9 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
     const postQ = await pool.query(
       `SELECT p.id, p.creator_id, p.content_text, p.hook_text, p.published_at,
               p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
+              p.profile_viewers_count, p.followers_gained_count,
+         p.profile_viewers_count, p.followers_gained_count,
+        p.profile_viewers_count, p.followers_gained_count,
               p.post_url, c.name AS creator_name, c.profile_image_url AS creator_image
        FROM posts p JOIN creators c ON c.id = p.creator_id
        WHERE p.id = $1`,
