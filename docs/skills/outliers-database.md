@@ -373,3 +373,45 @@ En Claude Code local (tu máquina), sin egress restringido, tanto la URL de Post
 - [x] **Split por cuenta Neety** (qué arquetipo rinde mejor en Iker vs Unai vs Asier): RELLENO en §4 con datos en vivo de Railway (2026-07-13). Hallazgo: `curiosity_gap` es el mejor hook por ratio en Iker (2.27x) y Unai (3.15x); `content_with_cta`/`contrarian_proof_reframe` las mejores estructuras; martes mañana el pico. Asier aún sin baseline.
 - [x] **Evidencia externa (guía ColdIQ, 6.750 posts GTM):** destilada en §5 — confirmaciones (5.1), añadidos útiles (5.2) y, sobre todo, los **mitos que chocan con lo nuestro** filtrados y descartados (5.3: links al cuerpo, sin-emoji-hook, infografías, texto-solo-débil, rehook calcado, trigger de lanzamiento IA).
 - [ ] **Refresco periódico:** este snapshot es de 2026-07-09; los ratios decaen. Reexporta el Explorer cuando quieras actualizarlo.
+
+## §3.10 · ⭐ EL UMBRAL DE LAS 3 HORAS Y LOS 3 MOTORES DE ALCANCE (medido 2026-07-20)
+
+Medido con `post_snapshots` (capturas cada 15 min) y con los tipos de reacción de Unipile. **Esto es lo que de verdad decide un post, y no estaba escrito en ninguna parte.**
+
+### El umbral: 1.000 impresiones a las 3 horas
+
+| Post | **a las 3h** | Final |
+|---|---|---|
+| Iker · lead magnet "desmonto" 8.51x | **2.990** | 44.190 |
+| Iker · "Los 10" 2.01x | **1.952** | 20.700 |
+| Asier · meme 1.79x | **1.937** | 22.605 |
+| Unai · lead magnet "última hora" 9.96x | **1.473** | 21.949 |
+| Asier · mapa Aragón 2.84x | **1.021** | 22.442 |
+| — umbral ≈ 1.000 — | | |
+| Unai · mapa Cataluña 0.59x | 565 | 3.018 |
+| Iker · lead magnet web 0.29x | 348 | 1.054 |
+| Asier · lead magnet comité 0.47x | 327 | 1.084 |
+
+**8 de 8, sin una excepción.** Por encima de ~1.000 a las 3h → acaba entre 20.000 y 44.000. Por debajo → acaba entre 1.000 y 3.000. **No hay término medio: el post despega o se queda en el primer círculo.**
+
+**⛔ Y NO ES LA TASA DE ENGAGEMENT.** Es lo contrario de lo que parece: los flops interactúan MEJOR con la poca gente que los ve. El lead magnet del comité tenía **7,6%** de interacción por impresión a las 3h; el meme que llegó a 22.605, **1,1%**. Optimizar "que guste más" no mueve esta aguja.
+
+### Los 3 motores, y cada pilar tiene el suyo
+
+Lo que rompe el primer círculo no es lo mismo en cada pilar. **Medido:**
+
+| Pilar | Motor | Evidencia |
+|---|---|---|
+| **Mapa / "Los 10"** | **REPOSTS** | 24 reposts (mapa Aragón) · 16 ("Los 10") → 22.442 y 20.700. La gente comparte el post donde sale su región o su empresa. |
+| **Meme** | **REACCIÓN DE RISA** | 34% de reacciones `ENTERTAINMENT` (10 de 29). **780 impresiones por reacción**, contra ~200 de los peloteos. Con solo 4 reposts, 11 likes y 7 comentarios llegó a 22.605: el peor engagement de los 6 y el mejor alcance. |
+| **Lead magnet** | **VOLUMEN DE COMENTARIOS** | Los 2 que volaron tienen **483 y 616 comentarios** y solo 6 reposts cada uno. Cada comentario y cada respuesta nuestra es actividad nueva que resucita el post durante días. |
+
+**⚠️ CONSECUENCIA PARA EL LEAD MAGNET, y es el diagnóstico que faltaba:** un lead magnet **no tiene motor de reposts** (nadie comparte "comenta X y te lo paso") **ni de risa** (no es un chiste). **Su único motor es el volumen de comentarios.** Si la petición no genera comentarios en las 3 primeras horas, no hay nada que lo salve, y por eso el pilar cae en vertical en vez de dar 2x: no existe el término medio.
+
+Los 2 que flopearon sacaron **6 y 20 comentarios**. Los 2 que volaron, 483 y 616. **El pilar no está quemado ni el ángulo era genérico: la petición no arrancó el único motor que tiene.**
+
+**Hipótesis NO verificada (n=2, trátala como tal):** la fricción de lo que pides. "Comenta *desmonta* + tu departamento" (483 com.) regala un análisis de TU perfil y cuesta 2 segundos. "Comenta *auditoria* y el enlace de tu web" (6 com.) te obliga a exponer tu web en público delante de todos. Encaja, pero con 2 casos no es un dato.
+
+### Qué mirar a partir de ahora
+1. **A las 3 horas, mira las impresiones.** Si van por debajo de 1.000, ese post ya no despega: no gastes más energía en él, y si era el importante de la semana, aprende de ahí.
+2. **En el pilar que toque, vigila SU motor**, no el engagement general: reposts en peloteo, risas en meme, comentarios en lead magnet.
