@@ -415,3 +415,96 @@ Los 2 que flopearon sacaron **6 y 20 comentarios**. Los 2 que volaron, 483 y 616
 ### Qué mirar a partir de ahora
 1. **A las 3 horas, mira las impresiones.** Si van por debajo de 1.000, ese post ya no despega: no gastes más energía en él, y si era el importante de la semana, aprende de ahí.
 2. **En el pilar que toque, vigila SU motor**, no el engagement general: reposts en peloteo, risas en meme, comentarios en lead magnet.
+
+---
+
+## §3.11 · ⭐ LOS CLICS AL ENLACE, Y POR QUÉ EL CTR MIENTE ENTRE PILARES (medido 2026-07-20)
+
+Desde el 2026-07-20 la herramienta guarda cuatro métricas de LinkedIn Premium que
+antes no teníamos: **clics al enlace, guardados, envíos por privado y clics al
+botón Premium**. Backfill completo de los 229 posts de las 3 cuentas.
+
+### La trampa: NO compares CTR entre pilares
+
+El primer análisis dio esto, y es una conclusión FALSA:
+
+| Post | Impresiones | Clics | CTR |
+|---|---|---|---|
+| Meme iMessage (Iker) | 86.815 | 76 | 0,09% |
+| Mapa "pueblo de 2,2M" (Unai) | 21.071 | 231 | 1,10% |
+
+Leído así parece que el meme no convierte y que el enlace en spam ninja no sirve.
+**Es mentira.** LinkedIn reparte impresiones de forma muy distinta según el
+formato: al meme le regala alcance que nunca se traduce en interacción.
+
+**Engagement por cada 1.000 impresiones (mediana):**
+
+| Pilar | eng/1k imp |
+|---|---|
+| Lead magnet | 27,24 |
+| "otros" | 17,32 |
+| Peloteo (mapa · Los 10) | 12,74 |
+| **Meme** | **8,75** ← el más bajo de todos |
+
+Al meme lo ve muchísima gente que no hace nada. Si el denominador está inflado,
+el CTR sale bajo por construcción, no por culpa del enlace.
+
+### La métrica correcta: clics por cada 100 interacciones
+
+Normalizando por gente que SÍ interactuó, se da la vuelta al resultado:
+
+| Pilar | clics / 100 interacciones | n |
+|---|---|---|
+| **Meme** | **78,4** | 3 |
+| Peloteo | 40,6 | 12 |
+| "otros" | 9,4 | 2 |
+
+Caso a caso: meme de Unai 117,5 · meme de Asier 61,9 · meme iMessage 55,9. Los
+tres por encima de la media del peloteo. El mapa gallego, con 736 interacciones,
+sacó 106 clics (14,4 por 100) — el meme iMessage sacó 76 con solo 136 (55,9).
+
+**El meme convierte casi el doble por persona enganchada.** El spam ninja
+funciona: sigue poniéndose.
+
+⚠️ **n=3 memes con enlace.** La dirección es sólida (los 3 casos apuntan igual)
+pero el número exacto se moverá. Re-medir cuando haya ~10.
+
+### Reglas que salen de esto
+
+1. **Para comparar pilares distintos, usa clics/interacción, nunca CTR.**
+2. **Para comparar dos posts DEL MISMO pilar, el CTR sí vale**: ahí el sesgo de
+   impresiones es parecido y se cancela.
+3. **Guardados y envíos son la señal de valor real** que no teníamos. Un guardado
+   cuesta más que un like y nadie lo hace por compromiso; un envío por privado
+   significa que alguien pensó en una persona concreta. El mapa del "pueblo de
+   7.000 habitantes" tiene **164 guardados y 110 envíos**: eso no lo compra el
+   algoritmo.
+4. **El mejor CTR del histórico es una oferta de empleo** (Full Stack, Asier):
+   1,49% con solo 4.288 impresiones. Audiencia pequeña e híper-intencionada. Ojo
+   con despreciar posts de bajo alcance: alcance e intención no son lo mismo.
+
+---
+
+## §3.12 · CÓMO SE RECONOCE EL PILAR DE UN POST SOLO CON SUS MÉTRICAS
+
+Dictado por Iker el 2026-07-20. **La BD no guarda el pilar**, así que cuando haya
+que clasificar posts a posteriori (para medir un pilar contra otro) se usa esto.
+
+| Pilar | Cómo se reconoce |
+|---|---|
+| **Meme** | Reacciones **FUNNY** disparadas · **impresiones disparadas** pero likes/comentarios/reposts bajos (eng/1k imp ≈ 8,75, el más bajo) · **lo importante está en la FOTO**, el texto es corto |
+| **Lead magnet** | **Comentarios disparados** si va bien · **CTA explícito al final** pidiendo comentar una palabra clave |
+| **Peloteo regional** (mapa · "Los 10") | **Plagado de menciones** de empresas y personas. En texto plano deja un reguero de `→` |
+
+**Los lead magnets son DOS cosas distintas, no una:**
+1. **Público por comentarios** — el recurso se entrega en el propio hilo, a la vista.
+2. **Privado por DM** — se manda el recurso por mensaje. **También** hay que
+   comentar la palabra clave.
+
+No los mezcles al analizar: el motor de alcance es el mismo (volumen de
+comentarios) pero la conversión se mide en sitios distintos.
+
+⚠️ **Aviso sobre la clasificación automática:** el script que separa por `→` y por
+CTA acierta con mapas y lead magnets, pero mete en "meme" cualquier post con foto
+y texto corto. De 229 posts, 143 cayeron en "otros". Los números por pilar de
+§3.11 salen de los que se clasificaron con seguridad, no del total.

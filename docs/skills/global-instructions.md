@@ -285,7 +285,7 @@ Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
 | **C · VIÑETA DIBUJADA** | 1 | **0.76x** | 7.567 | Dibujo/caricatura (el perro). **El único que ha flopeado** |
 
 - **A es el rey y no está cerca:** **2,1× más impresiones y 2× más ratio** que B. Los 3 mejores posts de la casa (16.62x · 16.56x · 13.61x) son **los tres** de subtipo A.
-- **⚠️ Creencia FALSA que hay que enterrar:** "las capturas funcionan mejor que los problemas psicológicos". No. Viene de que el iMessage (8.51x · 86.8K) fue *el TOP en impresiones de SU periodo*, pero los de cuerpo hicieron **168K y 165K**. Se comparó contra una ventana corta, no contra el histórico.
+- **⚠️ Creencia FALSA que hay que enterrar:** "las capturas funcionan mejor que los problemas psicológicos". No. Viene de que el iMessage (8.51x · 86.8K) fue *el TOP en impresiones de SU periodo*, pero los de cuerpo hicieron **168K y 165K**. Se comparó contra una ventana corta, no contra el histórico. **Matiz añadido el 2026-07-20:** ese iMessage sí convierte bien — 76 clics con solo 136 interacciones (55,9 por 100), mejor que cualquier mapa. Su problema nunca fue convertir, era que el subtipo A alcanza el doble.
 - **C está muerto** con n=1, pero el n=1 es un 0.76x y además choca con el registro de Unai/Asier (`images §0g`). No es la vía.
 - **Ángulos de A ya gastados (no repetir el ÁNGULO, sí el subtipo):** escalera de seniority SDR→VP (13.61x, Iker) · par jefe/comercial con la calvicie del jefe (16.56x, Iker) · wojak antes/ahora de la caja de herramientas (16.62x, Unai).
 - **Cambios corporales aún SIN usar por nosotros:** ojeras, peso, encorvamiento, sudor. La calvicie está muy vista en nuestras cuentas; el motor no es la calvicie, es que **duela y sea legible a miniatura**.
