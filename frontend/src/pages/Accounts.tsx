@@ -1550,7 +1550,7 @@ export default function Accounts() {
               ) : (
                 <div className="space-y-2">
                   {filteredTopPosts.slice(0, visibleTop).map((p) => (
-                    <TopPostRow key={p.id} post={p} onOpenChat={() => setChatPostId(p.id)} />
+                    <TopPostRow key={p.id} post={p} onOpenChat={() => setChatPostId(p.id)} destacarCtr={topPostsSort === 'ctr'} />
                   ))}
                   {filteredTopPosts.length > visibleTop && (
                     <button
@@ -2188,8 +2188,15 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
 // analytics list. The "Show curve" button pulls archived snapshots for any post
 // that was previously tracked by the monitor, so the data stays consultable after
 // the 7-day live window closes.
-function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => void }) {
+function TopPostRow({ post, onOpenChat, destacarCtr }: { post: TopPost; onOpenChat?: () => void; destacarCtr?: boolean }) {
   const [open, setOpen] = useState(false);
+  // CTR solo tiene sentido si el post llevaba enlace Y sabemos su alcance.
+  // Sin las dos cosas no es "0%", es que no hay dato — y pintar un 0% haria
+  // parecer un fracaso lo que solo es un post sin enlace.
+  const ctr =
+    post.link_clicks_count != null && post.impressions_count
+      ? (post.link_clicks_count / post.impressions_count) * 100
+      : null;
   return (
     <div className="rounded-lg border border-border/50 bg-bg-primary">
       <div className="flex items-start gap-3 p-3">
@@ -2209,18 +2216,44 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
               <span>·</span>
               <span>{FORMAT_LABELS[post.content_type] || post.content_type}</span>
             </div>
-            {post.outlier_ratio != null && (
-              <span
-                className={`flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold tabular-nums ${
-                  post.is_outlier
-                    ? 'bg-diamond/15 text-diamond'
-                    : 'bg-bg-secondary text-text-muted border border-border'
-                }`}
-                title="Engagement relative to this creator's average"
-              >
-                {post.outlier_ratio.toFixed(1)}x
-              </span>
-            )}
+            {/* Badge de CTR, al lado del multiplicador. Cuando el usuario ordena
+                por CTR necesita VER el numero por el que se esta ordenando; sin
+                el, el orden parecia arbitrario. Se agranda al ordenar por CTR
+                para que el ojo lo siga por la lista.
+                ⚠️ CTR solo compara justo posts DEL MISMO pilar: entre pilares
+                miente, porque LinkedIn infla las impresiones del meme
+                (outliers-database §3.11). Por eso el tooltip lo avisa. */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {ctr != null && (
+                <span
+                  className={`rounded font-semibold tabular-nums bg-amber-500/15 text-amber-400 ${
+                    destacarCtr
+                      ? 'px-2.5 py-1 text-sm ring-1 ring-amber-400/40'
+                      : 'px-2 py-0.5 text-xs'
+                  }`}
+                  title={
+                    `CTR ${ctr.toFixed(2)}% — ${post.link_clicks_count} clics sobre ` +
+                    `${post.impressions_count?.toLocaleString('es-ES')} impresiones` +
+                    (post.link_url ? `\n→ ${post.link_url}` : '') +
+                    `\n\nOjo: solo compara justo posts del MISMO pilar.`
+                  }
+                >
+                  {ctr.toFixed(2)}%
+                </span>
+              )}
+              {post.outlier_ratio != null && (
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-semibold tabular-nums ${
+                    post.is_outlier
+                      ? 'bg-diamond/15 text-diamond'
+                      : 'bg-bg-secondary text-text-muted border border-border'
+                  }`}
+                  title="Engagement relative to this creator's average"
+                >
+                  {post.outlier_ratio.toFixed(1)}x
+                </span>
+              )}
+            </div>
           </div>
           <ExpandablePostText text={post.content_text || post.hook_text} />
           {!NO_MEDIA_TYPES.has(post.content_type) && (
