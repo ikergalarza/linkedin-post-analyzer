@@ -265,6 +265,31 @@ export async function capturePostSnapshot(postId: string): Promise<{
     const normalized = unipileService.normalizePost(raw, target.creator_id);
     const engagement = calculateEngagement(normalized);
 
+    // ⭐ ANALITICA PREMIUM. Aqui SI se pide siempre (a diferencia del tick, que va
+    // acotado a 6): esto lo dispara el boton ↻ Refresh de UN post concreto, o sea
+    // que lo ha pedido una persona y es una sola llamada. Es la unica forma de
+    // forzar el dato sin esperar al monitor.
+    // Va en su propio try: si falla, el snapshot —que es lo importante— sigue.
+    try {
+      const full = await unipileService.getPostById(
+        String(target.linkedin_post_id), target.unipile_account_id
+      );
+      const an = full?.analytics || {};
+      const pv = an.profile_viewers_from_this_post ?? null;
+      const fg = an.followers_gained_from_this_post ?? null;
+      if (pv != null || fg != null) {
+        await pool.query(
+          `UPDATE posts SET
+             profile_viewers_count  = COALESCE($2, profile_viewers_count),
+             followers_gained_count = COALESCE($3, followers_gained_count)
+           WHERE id = $1`,
+          [target.id, pv, fg]
+        );
+      }
+    } catch (e: any) {
+      console.warn('[capturePostSnapshot] analytics failed:', e?.message);
+    }
+
     // Defensive: if Unipile returned impressions=0/null but the most recent
     // prior snapshot had a real value, that's almost certainly a transient
     // upstream glitch (rate limit, throttling, missing analytics access on
