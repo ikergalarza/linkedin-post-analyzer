@@ -1990,14 +1990,14 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
                 Son lo mas parecido a "esto trajo negocio" que tenemos:
                 el mapa convierte 3,6x mejor que el meme aunque el meme tenga MAS
                 impresiones. Solo se pintan si hay dato. */}
-            {!!post.profile_viewers_count && (
-              <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                {fmtNum(post.profile_viewers_count)} visitas al perfil
-              </span>
-            )}
             {!!post.followers_gained_count && (
               <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
                 +{fmtNum(post.followers_gained_count)} seguidores
+              </span>
+            )}
+            {!!post.profile_viewers_count && (
+              <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
+                {fmtNum(post.profile_viewers_count)} visitas perfil
               </span>
             )}
             <button
@@ -2114,14 +2114,14 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
                 Son lo mas parecido a "esto trajo negocio" que tenemos:
                 el mapa convierte 3,6x mejor que el meme aunque el meme tenga MAS
                 impresiones. Solo se pintan si hay dato. */}
-            {!!post.profile_viewers_count && (
-              <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                {fmtNum(post.profile_viewers_count)} visitas al perfil
-              </span>
-            )}
             {!!post.followers_gained_count && (
               <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
                 +{fmtNum(post.followers_gained_count)} seguidores
+              </span>
+            )}
+            {!!post.profile_viewers_count && (
+              <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
+                {fmtNum(post.profile_viewers_count)} visitas perfil
               </span>
             )}
             {post.published_at && (
