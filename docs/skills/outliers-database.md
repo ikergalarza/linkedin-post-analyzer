@@ -573,3 +573,51 @@ ser una página de conversión.
 
 **Con solo 9 posts apuntando a casa (todos de julio 2026), cualquier media es
 provisional.** No tomes decisiones de calendario con esto todavía.
+
+---
+
+## §3.15 · 🚨 EL RATIO BAJA AUNQUE MEJORES: NO LEAS TENDENCIAS CON OUTLIER_RATIO (2026-07-20)
+
+**El error más caro que hemos cometido midiendo.** La rutina de pilares nuevos
+del 20-jul concluyó que el meme y el lead magnet estaban "CAYENDO" en las dos
+cuentas con histórico, y propuso reemplazar el meme. **Era falso.**
+
+### Por qué el ratio miente con el tiempo
+
+`outlier_ratio` se calcula **contra la media de la propia cuenta**
+(`services/outliers.ts`). Esa media **sube según publicas**. Consecuencia: el
+mismo post exacto saca un ratio cada vez menor con el paso de los meses.
+
+**Iker, mismo pilar, mismos meses:**
+
+| Periodo | Impresiones (mediana) | Baseline de la cuenta | Ratio medio |
+|---|---|---|---|
+| 2026-01 | 870 | 3.104 | 0.22 |
+| 2026-04 | 10.191 | 4.977 | 2.51 |
+| **2026-07** | **20.700** | **10.276** | 2.89 |
+
+La baseline se **triplicó en seis meses**. Las impresiones medianas se
+multiplicaron por **veinte** desde enero. Un post que en enero habría dado 3x,
+hoy con las mismas impresiones da 1x.
+
+**Y hay un efecto peor: cada viral se autocanibaliza.** El 16.45x de mayo subió
+la media de Iker y con ello hundió el ratio de TODO lo publicado después. Cuanto
+mejor lo haces, más difícil es volver a parecerlo.
+
+### Lo que pasa de verdad con el meme, medido en absoluto
+
+| Cuenta | Memes 1ª mitad (media imp) | 2ª mitad | Veredicto |
+|---|---|---|---|
+| **Unai** | 9.254 | **15.326** | **SUBEN** (ratio 1.15 → 2.16) |
+| Iker | 81.247 | 40.471 | Sin señal: varianza de 1.827 a 168.926 con n=9. Su último meme hizo **86.815 imp y 8.45x** |
+
+### Reglas
+
+1. **Para TENDENCIA en el tiempo, usa impresiones y likes ABSOLUTOS.** Nunca
+   ratio.
+2. **El ratio solo vale para comparar posts de la MISMA época y cuenta.** Para eso
+   sí es la mejor métrica que tenemos, porque normaliza por tamaño de audiencia.
+3. **Un ratio que baja mientras las impresiones suben es una cuenta que CRECE**,
+   no un pilar que muere.
+4. Al leer cualquier informe con "pendiente" o "cayendo": **comprueba si está
+   calculado sobre ratio.** Si lo está, no vale.
