@@ -436,7 +436,14 @@ export default function Accounts() {
   // Sort key for the Top posts list. Defaults to outlier ratio (the headline
   // signal) but the user can re-rank by raw engagement metrics to see e.g.
   // "highest impressions regardless of multiplier".
-  type TopPostsSortKey = 'outlier_ratio' | 'impressions' | 'likes' | 'comments' | 'reposts' | 'engagement' | 'recent';
+  // 'clicks' / 'saves' / 'sends' son metricas de LinkedIn Premium (v32). Valen
+  // mas que el alcance para juzgar un post: el meme de 86.815 impresiones tiene
+  // 0,09% de CTR y un mapa de 21.071 tiene 1,10% — doce veces mejor con cuatro
+  // veces menos alcance. 'ctr' ordena por eso mismo, clics entre impresiones,
+  // que es lo unico que compara posts de tamaños distintos de forma justa.
+  type TopPostsSortKey =
+    | 'outlier_ratio' | 'impressions' | 'likes' | 'comments' | 'reposts'
+    | 'engagement' | 'clicks' | 'ctr' | 'saves' | 'sends' | 'recent';
   const [topPostsSort, setTopPostsSort] = useState<TopPostsSortKey>('outlier_ratio');
   const [chatPostId, setChatPostId] = useState<string | null>(null);
   // Top-level tab. BI is the original Accounts dashboard; Replies is the
@@ -617,6 +624,26 @@ export default function Accounts() {
         break;
       case 'engagement':
         list.sort((a, b) => b.engagement_score - a.engagement_score);
+        break;
+      case 'clicks':
+        list.sort((a, b) => num(b.link_clicks_count) - num(a.link_clicks_count));
+        break;
+      case 'ctr': {
+        // Solo posts que llevaban enlace Y tienen alcance medido: un CTR sobre 0
+        // impresiones no es "malo", es que no hay dato. Los demas caen al final
+        // en vez de ensuciar la cabeza del ranking con divisiones raras.
+        const ctr = (p: typeof list[number]) =>
+          p.link_clicks_count != null && p.impressions_count
+            ? p.link_clicks_count / p.impressions_count
+            : -Infinity;
+        list.sort((a, b) => ctr(b) - ctr(a));
+        break;
+      }
+      case 'saves':
+        list.sort((a, b) => num(b.saves_count) - num(a.saves_count));
+        break;
+      case 'sends':
+        list.sort((a, b) => num(b.sends_count) - num(a.sends_count));
         break;
       case 'recent':
         list.sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime());
@@ -1443,6 +1470,10 @@ export default function Accounts() {
                       comments: 'Sorted by comments',
                       reposts: 'Sorted by reposts',
                       engagement: 'Sorted by engagement score',
+                      clicks: 'Ordenado por clics al enlace (solo posts que llevaban enlace)',
+                      ctr: 'Ordenado por CTR: clics ÷ impresiones. Compara justo posts de tamaños distintos',
+                      saves: 'Ordenado por guardados. Cuesta más que un like y nadie guarda por compromiso',
+                      sends: 'Ordenado por envíos por privado. Alguien se lo mandó a otra persona',
                       recent: 'Sorted by most recent',
                     }[topPostsSort]}
                   </p>
@@ -1455,6 +1486,10 @@ export default function Accounts() {
                       ['comments', '💬 Comments'],
                       ['reposts', '🔁 Reposts'],
                       ['engagement', '⚡ Engagement'],
+                      ['clicks', '🔗 Clics'],
+                      ['ctr', '🎯 CTR'],
+                      ['saves', '🔖 Guardados'],
+                      ['sends', '✈️ Envíos'],
                       ['recent', '🕐 Recent'],
                     ] as const).map(([key, label]) => (
                       <button
@@ -2177,20 +2212,52 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
               <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={post.post_url} />
             </div>
           )}
-          <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
-            <span>{fmtNum(post.likes_count)} likes</span>
-            <span>{fmtNum(post.comments_count)} comments</span>
-            <span>{fmtNum(post.reposts_count)} reposts</span>
+          {/* Misma franja que en Live posts, a proposito: son la misma cosa vista
+              en dos sitios y tenerlas distintas obligaba a re-aprender la lectura
+              al cambiar de seccion. Las acciones van agrupadas en su propio div
+              con ml-auto para que queden pegadas a la derecha; sueltas se metian
+              en medio de los numeros en cuanto la fila hacia wrap. */}
+          <div className="flex items-center gap-x-3 gap-y-1 text-xs text-text-muted mt-1.5 flex-wrap">
+            <span className="inline-flex items-center gap-1" title="Reacciones">
+              <MetricIcon d={ICON_LIKE} /> {fmtNum(post.likes_count)}
+            </span>
+            <span className="inline-flex items-center gap-1" title="Comentarios">
+              <MetricIcon d={ICON_COMMENT} /> {fmtNum(post.comments_count)}
+            </span>
+            <span className="inline-flex items-center gap-1" title="Republicaciones">
+              <MetricIcon d={ICON_REPOST} /> {fmtNum(post.reposts_count)}
+            </span>
             {post.impressions_count != null && (
-              <span className="text-accent/80">👁️ {fmtNum(post.impressions_count)}</span>
-
+              <span className="inline-flex items-center gap-1 text-accent/80" title="Impresiones">
+                <MetricIcon d={ICON_EYE} /> {fmtNum(post.impressions_count)}
+              </span>
             )}
-            {/* LinkedIn Premium. Cierran la franja: el usuario quito el
-                engagement en bruto (2026-07-20) porque su version util ya esta
-                arriba en el multiplicador, y ademas normalizada por cuenta.
-                Son lo mas parecido a "esto trajo negocio" que tenemos:
-                el mapa convierte 3,6x mejor que el meme aunque el meme tenga MAS
-                impresiones. Solo se pintan si hay dato. */}
+
+            {(!!post.saves_count || !!post.sends_count || !!post.link_clicks_count) && (
+              <span className="text-text-muted/40 select-none">·</span>
+            )}
+            {!!post.saves_count && (
+              <span className="inline-flex items-center gap-1" title="Guardados. Cuesta mas que un like y nadie guarda por compromiso.">
+                <MetricIcon d={ICON_SAVE} /> {fmtNum(post.saves_count)}
+              </span>
+            )}
+            {!!post.sends_count && (
+              <span className="inline-flex items-center gap-1" title="Enviados por privado a otra persona">
+                <MetricIcon d={ICON_SEND} /> {fmtNum(post.sends_count)}
+              </span>
+            )}
+            {!!post.link_clicks_count && (
+              <span
+                className="inline-flex items-center gap-1 text-amber-400 font-medium"
+                title={`Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`}
+              >
+                <MetricIcon d={ICON_LINK} /> {fmtNum(post.link_clicks_count)}
+              </span>
+            )}
+
+            {(!!post.followers_gained_count || !!post.profile_viewers_count) && (
+              <span className="text-text-muted/40 select-none">·</span>
+            )}
             {!!post.followers_gained_count && (
               <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
                 +{fmtNum(post.followers_gained_count)} seguidores
@@ -2198,31 +2265,34 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
             )}
             {!!post.profile_viewers_count && (
               <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                {fmtNum(post.profile_viewers_count)} visitas perfil
+                {fmtNum(post.profile_viewers_count)} al perfil
               </span>
             )}
-            {post.published_at && (
-              <button
-                onClick={() => setOpen((v) => !v)}
-                className="text-accent hover:text-accent-light"
-              >
-                {open ? 'Hide stats' : 'Show stats'}
-              </button>
-            )}
-            {post.post_url && (
-              <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
-                View on LinkedIn →
-              </a>
-            )}
-            {onOpenChat && (
-              <button
-                onClick={onOpenChat}
-                className="text-accent hover:text-accent-light"
-                title="Enviar a Google Chat con comentarios sugeridos"
-              >
-                🐝 Chat
-              </button>
-            )}
+
+            <span className="ml-auto flex items-center gap-3">
+              {post.published_at && (
+                <button
+                  onClick={() => setOpen((v) => !v)}
+                  className="text-accent hover:text-accent-light"
+                >
+                  {open ? 'Hide stats' : 'Show stats'}
+                </button>
+              )}
+              {post.post_url && (
+                <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light">
+                  View on LinkedIn →
+                </a>
+              )}
+              {onOpenChat && (
+                <button
+                  onClick={onOpenChat}
+                  className="text-accent hover:text-accent-light"
+                  title="Enviar a Google Chat con comentarios sugeridos"
+                >
+                  🐝 Chat
+                </button>
+              )}
+            </span>
           </div>
         </div>
       </div>
