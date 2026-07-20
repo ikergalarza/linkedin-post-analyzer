@@ -297,6 +297,22 @@ const ICON_SEND = 'M14.5 1.5 1 7.2l4.6 1.6L13 3.4 7.6 10v4.5l2.2-3.3 3.1 1.1z';
 const ICON_LINK = 'M6.9 9.1a2.6 2.6 0 0 0 3.7 0l2.2-2.2a2.6 2.6 0 0 0-3.7-3.7l-1 1 1 1 1-1a1.2 1.2 0 0 1 1.7 1.7L9.6 8.1a1.2 1.2 0 0 1-1.7 0zM9.1 6.9a2.6 2.6 0 0 0-3.7 0L3.2 9.1a2.6 2.6 0 0 0 3.7 3.7l1-1-1-1-1 1a1.2 1.2 0 0 1-1.7-1.7l2.2-2.2a1.2 1.2 0 0 1 1.7 0z';
 const ICON_EYE = 'M8 3C4.7 3 2 5.5 1 8c1 2.5 3.7 5 7 5s6-2.5 7-5c-1-2.5-3.7-5-7-5zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0-1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z';
 
+/**
+ * Nombre de cuenta recortado a nombre + primer apellido.
+ * LinkedIn guarda el nombre legal completo ("Iker Galarza Rodríguez"), y en una
+ * lista de tarjetas eso descuadra las columnas y encima deja a un jefe con dos
+ * apellidos y a otro con uno, segun como tenga puesto su perfil. Con dos
+ * palabras los tres se ven igual.
+ *
+ * OJO: solo para las CUENTAS propias (los tres founders). No usar con nombres de
+ * comentaristas: hay gente con nombre compuesto ("José Arturo Gutiérrez") a la
+ * que esto dejaria en "José Arturo", que no es su apellido.
+ */
+function nombreCuenta(n: string | null | undefined): string {
+  if (!n) return 'Unknown';
+  return n.trim().split(/\s+/).slice(0, 2).join(' ');
+}
+
 function MetricIcon({ d }: { d: string }) {
   return (
     <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" aria-hidden="true" className="shrink-0">
@@ -706,7 +722,7 @@ export default function Accounts() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-text-primary truncate">{c.name || 'Unknown'}</div>
+                    <div className="text-sm font-medium text-text-primary truncate">{nombreCuenta(c.name)}</div>
                     <div className="text-xs text-text-muted truncate">{c.headline || '—'}</div>
                   </div>
                 </label>
@@ -738,7 +754,7 @@ export default function Accounts() {
                           {(a.name || '?')[0]}
                         </div>
                       )}
-                      <div className="text-sm text-text-primary w-40 truncate">{a.name || 'Unknown'}</div>
+                      <div className="text-sm text-text-primary w-40 truncate">{nombreCuenta(a.name)}</div>
                       <input
                         type="text"
                         value={current}
@@ -819,7 +835,7 @@ export default function Accounts() {
             >
               <option value="all">All managed accounts</option>
               {accounts?.map((a) => (
-                <option key={a.id} value={a.id}>{a.name || 'Unknown'}</option>
+                <option key={a.id} value={a.id}>{nombreCuenta(a.name)}</option>
               ))}
             </select>
           </div>
@@ -1430,7 +1446,7 @@ export default function Accounts() {
                                     {(a.name || '?')[0]}
                                   </div>
                                 )}
-                                <span className="text-text-primary">{a.name || 'Unknown'}</span>
+                                <span className="text-text-primary">{nombreCuenta(a.name)}</span>
                               </div>
                             </td>
                             <td className="py-2 px-3 text-right text-text-primary">{a.posts}</td>
@@ -2009,7 +2025,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-xs text-text-muted mb-1 flex-wrap">
-            <span className="text-text-secondary font-medium">{post.creator_name}</span>
+            <span className="text-text-secondary font-medium">{nombreCuenta(post.creator_name)}</span>
             <span>·</span>
             <span title={new Date(post.published_at).toLocaleString()}>{fmtPublishedAt(post.published_at)}</span>
             {(() => {
@@ -2187,7 +2203,7 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="flex items-center gap-2 text-xs text-text-muted flex-wrap min-w-0">
-              <span className="text-text-secondary font-medium">{post.creator_name}</span>
+              <span className="text-text-secondary font-medium">{nombreCuenta(post.creator_name)}</span>
               <span>·</span>
               <span title={post.published_at ? new Date(post.published_at).toLocaleString() : ''}>{post.published_at ? fmtPublishedAt(post.published_at) : '—'}</span>
               <span>·</span>
