@@ -546,3 +546,30 @@ intermedio que publica bate a un CEO dormido, y esto lo confirma con números.
 saberse por qué esas empresas no contestaron cuando en Aragón sí. **Cataluña no
 se quema como región:** el primer mapa de Cataluña (Iker) hizo 7.11x y es de los
 mejores de la casa.
+
+---
+
+## §3.14 · ⚠️ UN CLIC A UNA WEB AJENA NO ES UN CLIC NUESTRO (2026-07-20)
+
+Al medir CTR, **filtra siempre por destino del enlace** (`posts.link_url`). Los
+números más altos del histórico no valen para nada:
+
+| Destino | CTR | Post | ¿Nos sirve? |
+|---|---|---|---|
+| forms.fillout.com | 1,49% | oferta Full Stack | No — es contratar, no vender |
+| **pampam.city** | 1,10% | mapa Euskadi (Unai), 231 clics | **NO — es web ajena** |
+| **pampam.city** | 0,91% | mapa Andalucía (Iker), 270 clics | **NO** |
+| **pampam.city** | 0,29% | mapa Navarra (Iker), 226 clics | **NO** |
+| recursos.neety.com/agendar | 0,11-0,44% | los de julio 2026 | **Sí** |
+
+Los mapas de PamPam mandaban a la gente a **la web de otro**. 727 clics regalados.
+Desde julio 2026 el spam ninja apunta siempre a `recursos.neety.com/agendar`, que
+es un buscador de clientes ideales en vivo desde el que se agenda reunión.
+
+**Al comparar CTR entre épocas, el cambio de destino es una ruptura**: los CTR de
+antes de julio 2026 en mapas no son comparables con los de después. Bajaron, pero
+no porque el post fuera peor — porque el enlace dejó de ser un juguete y pasó a
+ser una página de conversión.
+
+**Con solo 9 posts apuntando a casa (todos de julio 2026), cualquier media es
+provisional.** No tomes decisiones de calendario con esto todavía.

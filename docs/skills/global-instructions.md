@@ -298,7 +298,7 @@ Un meme solo viaja con MOTOR A o MOTOR B. Corre el MOTOR CHECK primero.
   - Cambios que NO (probados y flopearon): canas (no duele — lee como madurez/sabiduría; y no es legible a miniatura). Sospecha de la misma familia: barba encaneciendo, gafas de leer, "aire distinguido".
   - Los 4 ingredientes: (1) jerarquía/cadena de roles B2B en una imagen (no timeline de una persona), (2) cambio corporal universal dibujado que DUELE + es LEGIBLE, (3) punchline tipográfica citable ("Nadie. Llamó. Al. Cliente."), (4) el chiste INCLUYE al lector, no le ataca.
 - **MOTOR B — screenshot documental creíble** (parece 100% real: factura, banco, iMessage, calendario, CRM) que carga una CIFRA-deseo o una tensión personal + un giro/punchline.
-  - Validados: factura Claude 5.000€ (6.8x), iMessage "El de Ventas" con "5,3M visualizaciones" + "te arruino el trimestre" (7.9x · 80.9K — TOP en imps del periodo, y llevaba link de agendar en spam ninja sin matar alcance), "49€ vs Claude" captura de banco (3.92x).
+  - Validados: factura Claude 5.000€ (6.8x), iMessage "El de Ventas" con "5,3M visualizaciones" + "te arruino el trimestre" (7.9x · 80.9K — TOP en imps del periodo, y llevaba link de agendar en spam ninja sin matar alcance — y ADEMAS convirtio: 76 clics, 55,9 por 100 interacciones, mejor que cualquier mapa), "49€ vs Claude" captura de banco (3.92x).
   - La credibilidad está en que el FORMATO calca una pantalla real reconocible, NO en que el dato sea literalmente cierto (la métrica del iMessage era inventada).
   - Un screenshot SIN cifra/tensión es un anuncio → techo de producto ~0.4x (captura de UI de producto 0.4x).
 
@@ -358,6 +358,32 @@ Corre estas puertas EN ORDEN:
 | Insight / evento / otros con cuerpo | ✅ | Donde el chiste caiga natural |
 | Vídeo (caption) | ✅ | Regla de comercio, no de formato → aplica (`video §0`) |
 | **LEAD MAGNET** | ❌ **NUNCA** | Ver la excepción abajo |
+
+**📊 CUÁNTO RINDE, MEDIDO (2026-07-20 · solo posts con NUESTRO enlace):**
+
+⚠️ **Solo cuentan los clics a `recursos.neety.com`.** Los CTR más altos del
+histórico son basura para nosotros porque el enlace iba fuera: 1,49% a un
+formulario de empleo, 1,10% y 0,91% a **mapas de PamPam** (web ajena). El mapa de
+Euskadi de Unai tiene 231 clics al 1,10%, y ni uno llegó a nuestra web. Desde
+julio 2026 el spam ninja apunta **siempre** a `agendar`, que es un buscador de
+clientes ideales en vivo desde el que se agenda reunión.
+
+| Pilar | CTR medio | **Clics / 100 interacciones** | Clics medios/post | n |
+|---|---|---|---|---|
+| **MEME** | 0,17% | **78,4** | **56** | 3 |
+| Peloteo (mapa · Los 10) | 0,26% | 21,2 | 44 | 5 |
+
+**El meme es donde MEJOR convierte el spam ninja, no donde peor.** En CTR bruto
+parece al revés, y por eso la intuición engaña: el meme tiene las impresiones
+infladas por LinkedIn (`outliers-database §3.11`). Midiendo por gente que de
+verdad interactúa, convierte casi 4x mejor que un mapa — y en clics absolutos
+también gana.
+
+**Consecuencia práctica:** el spam ninja en memes NO es un "por si acaso salta un
+outlier". Es el pilar donde más rinde. Nunca publiques un meme sin él.
+
+⚠️ **n=3 memes y n=5 peloteo.** La dirección es consistente (los 3 memes están por
+encima de todos los mapas) pero los números se moverán. Re-medir a ~10 por pilar.
 
 **⚠️ MAPA y "LOS 10" colocan el reveal al revés, y eso mueve el spam ninja** (verificado contra los 4 posts reales de la BD el 2026-07-15, no de memoria):
 | Pilar | Orden real medido |
