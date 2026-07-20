@@ -50,7 +50,10 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
     const { rows: candidates } = await pool.query(
       `SELECT p.id, p.linkedin_post_id, p.published_at,
               c.id AS creator_id, c.linkedin_id, c.unipile_account_id,
-              (SELECT MAX(s.captured_at) FROM post_snapshots s WHERE s.post_id = p.id) AS last_snapshot_at
+              (SELECT MAX(s.captured_at) FROM post_snapshots s WHERE s.post_id = p.id) AS last_snapshot_at,
+              -- La analitica Premium se pide de una en una, asi que solo para los
+              -- que aun no la tienen (ver el bloque de analytics mas abajo).
+              (p.profile_viewers_count IS NULL) AS needs_analytics
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
        WHERE c.is_managed = TRUE
@@ -84,6 +87,10 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
     }
 
     const touchedCreators = new Set<string>();
+    // Tope de llamadas de analitica por vuelta. Cada una es una peticion extra a
+    // Unipile, y el rate limit de LinkedIn se paga en TODO el scraping, no solo aqui.
+    const ANALYTICS_PER_TICK = 6;
+    let analyticsFetched = 0;
 
     for (const [creatorId, posts] of byCreator.entries()) {
       const first = posts[0];
@@ -113,6 +120,41 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
              VALUES ($1, $2, $3, $4, $5)`,
             [target.id, normalized.impressions_count, normalized.likes_count, normalized.comments_count, normalized.reposts_count]
           );
+
+          // ⭐ ANALITICA DE LINKEDIN PREMIUM (visitas al perfil / seguidores
+          // ganados). NO viene en el feed: `getPosts` (la lista) no incluye
+          // `analytics`, solo `getPostById` (post suelto). Verificado el
+          // 2026-07-20 comparando los campos de los dos endpoints — por eso el
+          // relleno retroactivo desde raw_data no encontro nada.
+          //
+          // Se pide de UNO EN UNO, asi que va acotado: solo los posts a los que
+          // aun les falta el dato, y como mucho ANALYTICS_PER_TICK por vuelta.
+          // Unipile devuelve listas vacias cuando LinkedIn le mete rate limit, y
+          // pasarse aqui nos deja sin scraping en todo lo demas.
+          if (analyticsFetched < ANALYTICS_PER_TICK && target.needs_analytics) {
+            analyticsFetched++;
+            try {
+              const full = await unipileService.getPostById(
+                String(target.linkedin_post_id), first.unipile_account_id
+              );
+              const an = full?.analytics || {};
+              const pv = an.profile_viewers_from_this_post ?? null;
+              const fg = an.followers_gained_from_this_post ?? null;
+              if (pv != null || fg != null) {
+                await pool.query(
+                  `UPDATE posts SET
+                     profile_viewers_count  = COALESCE($2, profile_viewers_count),
+                     followers_gained_count = COALESCE($3, followers_gained_count)
+                   WHERE id = $1`,
+                  [target.id, pv, fg]
+                );
+              }
+            } catch (e: any) {
+              // Que falle la analitica NO puede tumbar el snapshot, que es lo
+              // importante de este tick.
+              console.warn(`[postMonitor] analytics failed for ${target.id}:`, e?.message);
+            }
+          }
 
           // Only touch the live counters. outlier_ratio/is_outlier are recomputed
           // per-creator below once all posts are in so the multipliers don't drift to 0.

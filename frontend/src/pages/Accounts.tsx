@@ -1992,12 +1992,12 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
                 impresiones. Solo se pintan si hay dato. */}
             {!!post.profile_viewers_count && (
               <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                🧑 {fmtNum(post.profile_viewers_count)}
+                {fmtNum(post.profile_viewers_count)} visitas al perfil
               </span>
             )}
             {!!post.followers_gained_count && (
               <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
-                ➕ {fmtNum(post.followers_gained_count)}
+                +{fmtNum(post.followers_gained_count)} seguidores
               </span>
             )}
             <button
@@ -2116,12 +2116,12 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
                 impresiones. Solo se pintan si hay dato. */}
             {!!post.profile_viewers_count && (
               <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                🧑 {fmtNum(post.profile_viewers_count)}
+                {fmtNum(post.profile_viewers_count)} visitas al perfil
               </span>
             )}
             {!!post.followers_gained_count && (
               <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
-                ➕ {fmtNum(post.followers_gained_count)}
+                +{fmtNum(post.followers_gained_count)} seguidores
               </span>
             )}
             {post.published_at && (
