@@ -1983,11 +1983,11 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             <span>{fmtNum(post.reposts_count)} reposts</span>
             {post.impressions_count != null && (
               <span className="text-accent">👁️ {fmtNum(post.impressions_count)}</span>
-
             )}
-            <span className="text-accent font-medium">{fmtNum(post.engagement_score)} eng</span>
-            {/* LinkedIn Premium, DESPUES del engagement (posicion pedida por el
-                usuario). Son lo mas parecido a "esto trajo negocio" que tenemos:
+            {/* LinkedIn Premium. Cierran la franja: el usuario quito el
+                engagement en bruto (2026-07-20) porque su version util ya esta
+                arriba en el multiplicador, y ademas normalizada por cuenta.
+                Son lo mas parecido a "esto trajo negocio" que tenemos:
                 el mapa convierte 3,6x mejor que el meme aunque el meme tenga MAS
                 impresiones. Solo se pintan si hay dato. */}
             {!!post.profile_viewers_count && (
@@ -2108,8 +2108,10 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
               <span className="text-accent/80">👁️ {fmtNum(post.impressions_count)}</span>
 
             )}
-            {/* LinkedIn Premium, DESPUES del engagement (posicion pedida por el
-                usuario). Son lo mas parecido a "esto trajo negocio" que tenemos:
+            {/* LinkedIn Premium. Cierran la franja: el usuario quito el
+                engagement en bruto (2026-07-20) porque su version util ya esta
+                arriba en el multiplicador, y ademas normalizada por cuenta.
+                Son lo mas parecido a "esto trajo negocio" que tenemos:
                 el mapa convierte 3,6x mejor que el meme aunque el meme tenga MAS
                 impresiones. Solo se pintan si hay dato. */}
             {!!post.profile_viewers_count && (
@@ -2122,7 +2124,6 @@ function TopPostRow({ post, onOpenChat }: { post: TopPost; onOpenChat?: () => vo
                 ➕ {fmtNum(post.followers_gained_count)}
               </span>
             )}
-            <span className="text-accent font-medium ml-auto">{fmtNum(post.engagement_score)} eng</span>
             {post.published_at && (
               <button
                 onClick={() => setOpen((v) => !v)}
