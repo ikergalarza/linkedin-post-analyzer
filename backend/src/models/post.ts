@@ -84,6 +84,7 @@ export const PostModel = {
       `SELECT id, creator_id, linkedin_post_id, content_text, content_type,
               published_at, likes_count, comments_count, reposts_count,
               impressions_count, profile_viewers_count, followers_gained_count,
+              saves_count, sends_count, link_clicks_count, premium_button_clicks, link_url,
               engagement_score, outlier_ratio, is_outlier,
               hook_text, word_count, char_count, line_break_count,
               has_aggressive_spacing, hook_type, post_structure,
