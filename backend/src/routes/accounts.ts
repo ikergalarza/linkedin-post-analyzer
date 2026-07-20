@@ -15,6 +15,7 @@ import { generateReply } from '../services/replyGenerator';
 import { roastProfile } from '../services/roaster';
 import { generarRastro } from '../services/rastroGenerator';
 import { runFollowerSync, getFollowerSyncProgress } from '../services/followerSync';
+import { fetchPremiumAnalytics, savePremiumAnalytics } from '../services/premiumAnalytics';
 
 const router = Router();
 
@@ -1125,6 +1126,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
         p.id, p.content_text, p.content_type, p.published_at,
         p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
         p.profile_viewers_count, p.followers_gained_count,
+              p.saves_count, p.sends_count, p.link_clicks_count, p.premium_button_clicks, p.link_url,
         p.engagement_score, p.outlier_ratio, p.is_outlier,
         p.post_url, p.hook_text,
         c.name AS creator_name, c.profile_image_url AS creator_image
@@ -1318,6 +1320,7 @@ router.get('/live-posts', async (req: Request, res: Response) => {
          p.id, p.content_text, p.hook_text, p.content_type, p.published_at,
          p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
          p.profile_viewers_count, p.followers_gained_count,
+              p.saves_count, p.sends_count, p.link_clicks_count, p.premium_button_clicks, p.link_url,
          p.engagement_score, p.outlier_ratio, p.is_outlier, p.post_url,
          c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
          p.snapshot_count,
@@ -1512,6 +1515,7 @@ router.get('/posts/:id/snapshots', async (req: Request, res: Response) => {
       `SELECT p.id, p.creator_id, p.content_text, p.hook_text, p.published_at,
               p.likes_count, p.comments_count, p.reposts_count, p.impressions_count,
               p.profile_viewers_count, p.followers_gained_count,
+              p.saves_count, p.sends_count, p.link_clicks_count, p.premium_button_clicks, p.link_url,
               p.post_url, c.name AS creator_name, c.profile_image_url AS creator_image
        FROM posts p JOIN creators c ON c.id = p.creator_id
        WHERE p.id = $1`,
@@ -2734,6 +2738,68 @@ router.get('/followers/organic-history', async (req: Request, res: Response) => 
     res.json({ points: rows });
   } catch (err: any) {
     console.error('[accounts/followers/organic-history]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Relleno retroactivo de la analitica Premium (clics al enlace, guardados,
+ * envios...) de los posts que ya teniamos guardados.
+ *
+ * Va POR LOTES a proposito. Es una peticion a LinkedIn por post, y hacer 229 de
+ * golpe significa dos cosas malas: la peticion HTTP se muere por timeout, y
+ * LinkedIn nos mete rate limit, que en Unipile no se ve como error sino como
+ * listas vacias — o sea que envenenaria TODO el scraping, no solo esto.
+ * Se llama repetidamente hasta que `restantes` sea 0.
+ */
+router.post('/backfill-premium-analytics', async (req: Request, res: Response) => {
+  const lote = Math.min(Number(req.body?.limit) || 20, 40);
+  try {
+    const { rows: pendientes } = await pool.query(
+      `SELECT p.id, p.linkedin_post_id, c.unipile_account_id, c.name AS creador
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE
+          AND c.unipile_account_id IS NOT NULL
+          AND p.linkedin_post_id IS NOT NULL
+          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.premium_analytics_at IS NULL
+        ORDER BY p.published_at DESC
+        LIMIT $1`,
+      [lote]
+    );
+
+    const resultados: any[] = [];
+    for (const p of pendientes) {
+      try {
+        const a = await fetchPremiumAnalytics(String(p.linkedin_post_id), p.unipile_account_id);
+        if (a) {
+          await savePremiumAnalytics(pool, p.id, a);
+          resultados.push({ id: p.id, creador: p.creador, clics: a.linkClicks, guardados: a.saves, envios: a.sends });
+        } else {
+          // Marcamos el intento igualmente: si no, el siguiente lote vuelve a
+          // pedir los mismos posts rotos y el backfill no avanza nunca.
+          await pool.query(`UPDATE posts SET premium_analytics_at = NOW() WHERE id = $1`, [p.id]);
+          resultados.push({ id: p.id, creador: p.creador, error: 'sin datos (post viejo o no accesible)' });
+        }
+      } catch (e: any) {
+        resultados.push({ id: p.id, creador: p.creador, error: e?.message });
+      }
+      // Respiro entre posts. Sin esto LinkedIn corta y empieza a devolver vacio.
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+
+    const { rows: quedan } = await pool.query(
+      `SELECT COUNT(*)::int AS n
+         FROM posts p JOIN creators c ON c.id = p.creator_id
+        WHERE c.is_managed = TRUE AND c.unipile_account_id IS NOT NULL
+          AND p.linkedin_post_id IS NOT NULL AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND p.premium_analytics_at IS NULL`
+    );
+
+    res.json({ procesados: resultados.length, restantes: quedan[0].n, resultados });
+  } catch (err: any) {
+    console.error('[backfill-premium-analytics]', err);
     res.status(500).json({ error: err.message });
   }
 });

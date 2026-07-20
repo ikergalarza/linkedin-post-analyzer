@@ -15,6 +15,16 @@ export interface Post {
   profile_viewers_count: number | null;
   /** LinkedIn Premium: seguidores ganados con ese post. */
   followers_gained_count: number | null;
+  /** LinkedIn Premium: veces que alguien guardo el post. */
+  saves_count: number | null;
+  /** LinkedIn Premium: veces que alguien lo mando por privado. */
+  sends_count: number | null;
+  /** LinkedIn Premium: clics al enlace externo. El numero del lead magnet. */
+  link_clicks_count: number | null;
+  /** LinkedIn Premium: clics al boton de accion del perfil. */
+  premium_button_clicks: number | null;
+  /** A donde apuntaba el enlace (para saber que se medía). */
+  link_url: string | null;
   engagement_score: number;
   outlier_ratio: number;
   is_outlier: boolean;

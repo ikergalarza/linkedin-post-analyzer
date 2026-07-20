@@ -4,6 +4,7 @@ import { calculateEngagement } from './engagement';
 import { recalcCreatorOutliers } from './outliers';
 import { captureAccountSnapshots } from './accountSnapshots';
 import { runFollowerSync } from './followerSync';
+import { fetchPremiumAnalytics, savePremiumAnalytics } from './premiumAnalytics';
 
 // Phase-based snapshot cadence for LinkedIn posts.
 // The algorithm distributes posts in waves, so we sample densely in the golden hour
@@ -51,9 +52,13 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
       `SELECT p.id, p.linkedin_post_id, p.published_at,
               c.id AS creator_id, c.linkedin_id, c.unipile_account_id,
               (SELECT MAX(s.captured_at) FROM post_snapshots s WHERE s.post_id = p.id) AS last_snapshot_at,
-              -- La analitica Premium se pide de una en una, asi que solo para los
-              -- que aun no la tienen (ver el bloque de analytics mas abajo).
-              (p.profile_viewers_count IS NULL) AS needs_analytics
+              -- La analitica Premium se pide de una en una, asi que va racionada
+              -- (ver el bloque de analytics mas abajo). Se re-pide cada 6h en vez
+              -- de una sola vez porque los clics al enlace SIGUEN SUBIENDO
+              -- mientras el post vive: capturarlos una vez daria una foto de la
+              -- primera hora, no el total.
+              (p.premium_analytics_at IS NULL
+               OR p.premium_analytics_at < NOW() - INTERVAL '6 hours') AS needs_analytics
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
        WHERE c.is_managed = TRUE
@@ -121,34 +126,21 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
             [target.id, normalized.impressions_count, normalized.likes_count, normalized.comments_count, normalized.reposts_count]
           );
 
-          // ⭐ ANALITICA DE LINKEDIN PREMIUM (visitas al perfil / seguidores
-          // ganados). NO viene en el feed: `getPosts` (la lista) no incluye
-          // `analytics`, solo `getPostById` (post suelto). Verificado el
-          // 2026-07-20 comparando los campos de los dos endpoints — por eso el
-          // relleno retroactivo desde raw_data no encontro nada.
+          // ⭐ ANALITICA DE LINKEDIN PREMIUM: clics al enlace, guardados, envios,
+          // visitas al perfil y seguidores ganados. Nada de esto viene en el feed.
+          // Se lee del HTML de la pagina de analiticas (ver premiumAnalytics.ts).
           //
-          // Se pide de UNO EN UNO, asi que va acotado: solo los posts a los que
-          // aun les falta el dato, y como mucho ANALYTICS_PER_TICK por vuelta.
-          // Unipile devuelve listas vacias cuando LinkedIn le mete rate limit, y
-          // pasarse aqui nos deja sin scraping en todo lo demas.
+          // Es UNA peticion por post, asi que va acotado: como mucho
+          // ANALYTICS_PER_TICK por vuelta. Unipile devuelve listas vacias cuando
+          // LinkedIn le mete rate limit, y pasarse aqui nos deja sin scraping en
+          // todo lo demas.
           if (analyticsFetched < ANALYTICS_PER_TICK && target.needs_analytics) {
             analyticsFetched++;
             try {
-              const full = await unipileService.getPostById(
+              const a = await fetchPremiumAnalytics(
                 String(target.linkedin_post_id), first.unipile_account_id
               );
-              const an = full?.analytics || {};
-              const pv = an.profile_viewers_from_this_post ?? null;
-              const fg = an.followers_gained_from_this_post ?? null;
-              if (pv != null || fg != null) {
-                await pool.query(
-                  `UPDATE posts SET
-                     profile_viewers_count  = COALESCE($2, profile_viewers_count),
-                     followers_gained_count = COALESCE($3, followers_gained_count)
-                   WHERE id = $1`,
-                  [target.id, pv, fg]
-                );
-              }
+              if (a) await savePremiumAnalytics(pool, target.id, a);
             } catch (e: any) {
               // Que falle la analitica NO puede tumbar el snapshot, que es lo
               // importante de este tick.
@@ -271,21 +263,10 @@ export async function capturePostSnapshot(postId: string): Promise<{
     // forzar el dato sin esperar al monitor.
     // Va en su propio try: si falla, el snapshot —que es lo importante— sigue.
     try {
-      const full = await unipileService.getPostById(
+      const a = await fetchPremiumAnalytics(
         String(target.linkedin_post_id), target.unipile_account_id
       );
-      const an = full?.analytics || {};
-      const pv = an.profile_viewers_from_this_post ?? null;
-      const fg = an.followers_gained_from_this_post ?? null;
-      if (pv != null || fg != null) {
-        await pool.query(
-          `UPDATE posts SET
-             profile_viewers_count  = COALESCE($2, profile_viewers_count),
-             followers_gained_count = COALESCE($3, followers_gained_count)
-           WHERE id = $1`,
-          [target.id, pv, fg]
-        );
-      }
+      if (a) await savePremiumAnalytics(pool, target.id, a);
     } catch (e: any) {
       console.warn('[capturePostSnapshot] analytics failed:', e?.message);
     }

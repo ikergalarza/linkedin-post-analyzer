@@ -108,6 +108,11 @@ interface TopPost {
   reposts_count: number;
   profile_viewers_count?: number | null;
   followers_gained_count?: number | null;
+  saves_count?: number | null;
+  sends_count?: number | null;
+  link_clicks_count?: number | null;
+  premium_button_clicks?: number | null;
+  link_url?: string | null;
   impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number;
@@ -129,6 +134,11 @@ interface LivePost {
   reposts_count: number;
   profile_viewers_count?: number | null;
   followers_gained_count?: number | null;
+  saves_count?: number | null;
+  sends_count?: number | null;
+  link_clicks_count?: number | null;
+  premium_button_clicks?: number | null;
+  link_url?: string | null;
   impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number | null;
@@ -170,6 +180,11 @@ interface Snapshot {
   reposts_count: number;
   profile_viewers_count?: number | null;
   followers_gained_count?: number | null;
+  saves_count?: number | null;
+  sends_count?: number | null;
+  link_clicks_count?: number | null;
+  premium_button_clicks?: number | null;
+  link_url?: string | null;
 }
 
 interface TypicalBucket {
@@ -267,6 +282,27 @@ const CHART_TOOLTIP_STYLE = {
 function fmtNum(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return n.toString();
+}
+
+/* Iconos de la franja de metricas de cada post.
+   Son los MISMOS glifos que usa LinkedIn en su panel de analiticas, para que se
+   reconozcan sin leer. Van en SVG monocromo (heredan el color del texto con
+   currentColor) en vez de emoji: el emoji se pinta multicolor, cambia de forma
+   segun el sistema operativo y no se puede teñir para resaltar los clics. */
+const ICON_LIKE = 'M12.9 5.5H9.4l.6-2.2c.2-.9-.3-1.8-1.2-2-.6-.2-1.3.1-1.6.6L4.8 5.5H3a1 1 0 0 0-1 1v5.6a1 1 0 0 0 1 1h8.4a1.7 1.7 0 0 0 1.7-1.4l.8-4.6a1.4 1.4 0 0 0-1-1.6z';
+const ICON_COMMENT = 'M8 2a6 6 0 0 0-6 6c0 1.2.4 2.3 1 3.2L2.3 14l2.9-.7c.8.5 1.8.7 2.8.7a6 6 0 1 0 0-12z';
+const ICON_REPOST = 'M11 3.5 13.5 6 11 8.5V7H5.5A1.5 1.5 0 0 0 4 8.5v1H2.5v-1A3 3 0 0 1 5.5 5.5H11zM5 12.5 2.5 10 5 7.5V9h5.5A1.5 1.5 0 0 0 12 7.5v-1h1.5v1a3 3 0 0 1-3 3H5z';
+const ICON_SAVE = 'M4 2h8a1 1 0 0 1 1 1v11l-5-3.2L3 14V3a1 1 0 0 1 1-1z';
+const ICON_SEND = 'M14.5 1.5 1 7.2l4.6 1.6L13 3.4 7.6 10v4.5l2.2-3.3 3.1 1.1z';
+const ICON_LINK = 'M6.9 9.1a2.6 2.6 0 0 0 3.7 0l2.2-2.2a2.6 2.6 0 0 0-3.7-3.7l-1 1 1 1 1-1a1.2 1.2 0 0 1 1.7 1.7L9.6 8.1a1.2 1.2 0 0 1-1.7 0zM9.1 6.9a2.6 2.6 0 0 0-3.7 0L3.2 9.1a2.6 2.6 0 0 0 3.7 3.7l1-1-1-1-1 1a1.2 1.2 0 0 1-1.7-1.7l2.2-2.2a1.2 1.2 0 0 1 1.7 0z';
+const ICON_EYE = 'M8 3C4.7 3 2 5.5 1 8c1 2.5 3.7 5 7 5s6-2.5 7-5c-1-2.5-3.7-5-7-5zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0-1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z';
+
+function MetricIcon({ d }: { d: string }) {
+  return (
+    <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" aria-hidden="true" className="shrink-0">
+      <path d={d} />
+    </svg>
+  );
 }
 
 function fmtDay(iso: string): string {
@@ -1977,19 +2013,60 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
               <MediaViewer postId={post.id} contentType={post.content_type} linkedinUrl={post.post_url} />
             </div>
           )}
-          <div className="flex items-center gap-4 text-xs text-text-muted mt-1.5 flex-wrap">
-            <span>{fmtNum(post.likes_count)} likes</span>
-            <span>{fmtNum(post.comments_count)} comments</span>
-            <span>{fmtNum(post.reposts_count)} reposts</span>
+          {/* Franja de metricas. Iconos calcados de LinkedIn (mismo glifo, mismo
+              significado) para los conceptos que TIENEN icono propio alli: asi no
+              hay que leer, se reconocen. Los dos que LinkedIn NO iconiza
+              —seguidores y visitas al perfil— van con palabra, porque cualquier
+              icono de "persona" chocaria con el ojo de impresiones y con el otro.
+              Agrupado en tres bloques separados por un punto para que no sea una
+              lista plana de siete numeros. */}
+          <div className="flex items-center gap-x-3 gap-y-1 text-xs text-text-muted mt-1.5 flex-wrap">
+            <span className="inline-flex items-center gap-1" title="Reacciones">
+              <MetricIcon d={ICON_LIKE} /> {fmtNum(post.likes_count)}
+            </span>
+            <span className="inline-flex items-center gap-1" title="Comentarios">
+              <MetricIcon d={ICON_COMMENT} /> {fmtNum(post.comments_count)}
+            </span>
+            <span className="inline-flex items-center gap-1" title="Republicaciones">
+              <MetricIcon d={ICON_REPOST} /> {fmtNum(post.reposts_count)}
+            </span>
             {post.impressions_count != null && (
-              <span className="text-accent">👁️ {fmtNum(post.impressions_count)}</span>
+              <span className="inline-flex items-center gap-1 text-accent" title="Impresiones">
+                <MetricIcon d={ICON_EYE} /> {fmtNum(post.impressions_count)}
+              </span>
             )}
-            {/* LinkedIn Premium. Cierran la franja: el usuario quito el
-                engagement en bruto (2026-07-20) porque su version util ya esta
-                arriba en el multiplicador, y ademas normalizada por cuenta.
-                Son lo mas parecido a "esto trajo negocio" que tenemos:
-                el mapa convierte 3,6x mejor que el meme aunque el meme tenga MAS
-                impresiones. Solo se pintan si hay dato. */}
+
+            {/* LinkedIn Premium: lo mas parecido a "esto trajo negocio" que
+                tenemos. Solo se pintan si hay dato, para no ensuciar los posts
+                antiguos que nunca llegaron a tenerlo. */}
+            {(!!post.saves_count || !!post.sends_count || !!post.link_clicks_count) && (
+              <span className="text-text-muted/40 select-none">·</span>
+            )}
+            {!!post.saves_count && (
+              <span className="inline-flex items-center gap-1" title="Guardados. Cuesta mas que un like y nadie guarda por compromiso.">
+                <MetricIcon d={ICON_SAVE} /> {fmtNum(post.saves_count)}
+              </span>
+            )}
+            {!!post.sends_count && (
+              <span className="inline-flex items-center gap-1" title="Enviados por privado a otra persona">
+                <MetricIcon d={ICON_SEND} /> {fmtNum(post.sends_count)}
+              </span>
+            )}
+            {/* El numero que justifica todo esto: sin el, un lead magnet solo se
+                podia juzgar por comentarios, que miden ruido y no intencion.
+                Va resaltado y con la URL en el tooltip. */}
+            {!!post.link_clicks_count && (
+              <span
+                className="inline-flex items-center gap-1 text-amber-400 font-medium"
+                title={`Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`}
+              >
+                <MetricIcon d={ICON_LINK} /> {fmtNum(post.link_clicks_count)}
+              </span>
+            )}
+
+            {(!!post.followers_gained_count || !!post.profile_viewers_count) && (
+              <span className="text-text-muted/40 select-none">·</span>
+            )}
             {!!post.followers_gained_count && (
               <span className="text-emerald-400/80" title="Seguidores ganados con este post (LinkedIn Premium)">
                 +{fmtNum(post.followers_gained_count)} seguidores
@@ -1997,7 +2074,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             )}
             {!!post.profile_viewers_count && (
               <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                {fmtNum(post.profile_viewers_count)} visitas perfil
+                {fmtNum(post.profile_viewers_count)} al perfil
               </span>
             )}
             <button

@@ -641,9 +641,7 @@ const migration = `
   -- 0,14%), pese a que el meme tuvo MAS impresiones. Sin esto, los dos parecian
   -- igual de buenos porque solo mirabamos alcance.
   --
-  -- ⛔ LOS CLICS AL ENLACE NO ESTAN AQUI y no es un olvido: Unipile NO los expone.
-  -- Solo se ven en la interfaz de LinkedIn Premium ("Visits to links from this
-  -- post"). Probadas 4 rutas distintas de su API el 2026-07-20, ninguna los da.
+  -- Sobre los clics al enlace: ver v32, se resolvieron leyendo la pagina web.
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS profile_viewers_count INTEGER;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS followers_gained_count INTEGER;
   -- Relleno retroactivo: raw_data ya guarda el JSON entero de Unipile, asi que
@@ -679,6 +677,26 @@ const migration = `
   );
   CREATE INDEX IF NOT EXISTS idx_rastro_share ON rastro_analysis (share_id);
   CREATE INDEX IF NOT EXISTS idx_rastro_email ON rastro_analysis (email) WHERE email IS NOT NULL;
+
+  -- v32: las metricas Premium que la API de Unipile NO da, leidas del HTML de
+  -- linkedin.com/analytics/post-summary/ (ver services/premiumAnalytics.ts).
+  --
+  -- link_clicks_count es LA razon de todo esto: sin el, un lead magnet solo se
+  -- podia juzgar por comentarios, y eso mide ruido, no intencion. Con 26 clics
+  -- sobre 22.420 impresiones ya se puede calcular conversion de verdad.
+  --
+  -- saves/sends nunca los habiamos medido. Un guardado o un envio por privado
+  -- valen mas que un like: cuestan mas y nadie los hace por compromiso.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS saves_count INTEGER;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS sends_count INTEGER;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_clicks_count INTEGER;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS premium_button_clicks INTEGER;
+  -- A donde apuntaba el enlace. Sirve para saber que se estaba midiendo y para
+  -- decidir en el frontend si enseñar el icono de clics.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_url TEXT;
+  -- Cuando se leyo por ultima vez. Permite reintentar los que fallaron sin
+  -- confundirlos con los que de verdad tienen 0 clics.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS premium_analytics_at TIMESTAMPTZ;
 `;
 
 export async function runMigrations() {
