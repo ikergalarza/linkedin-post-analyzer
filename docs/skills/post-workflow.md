@@ -518,6 +518,26 @@ El playbook dice "output = acción ejecutada o HTML estudio". Para posts **no**:
 ---
 
 ## 8 · EL WORKFLOW REAL: planificador semanal de las 3 cuentas
+
+### ⭐ LA VENTANA DE PUBLICACIÓN: 10:00-13:00, hora de España (medido 2026-07-20)
+
+Medido sobre **44 posts de pilar** de las 3 cuentas, con la hora real (`published_at` de la BD, en UTC → +2 en verano, +1 en invierno).
+
+**LOS 10 POSTS NUESTROS QUE HAN PASADO DE 6x ESTÁN TODOS ENTRE LAS 10:00 Y LAS 13:00. Los 10. Sin una sola excepción.**
+
+| Franja | n | Mediana | Techo alcanzado |
+|---|---|---|---|
+| antes de 11h | 16 | **2.79x** | 16.44x |
+| 11:00-12:30 | 14 | 2.02x | 7.10x |
+| 12:30-14:00 | 11 | **2.72x** | 16.45x |
+| después de 14h | 3 | 1.79x | 2.24x |
+
+**⚠️ LA HORA ES UN TECHO, NO UN SUELO. Este matiz es todo:**
+- **Publicar después de las 13:00 te quita el hit.** De 7 posts publicados pasadas las 13:00, el mejor hizo 3.57x. Ninguno ha roto nunca esa barrera.
+- **Publicar en la ventana buena NO te salva el post.** Dentro de las 10:00-13:00 hay un 0.18x, un 0.21x, un 0.37x y un 0.47x. La hora no arregla un ángulo malo.
+- **Conclusión operativa:** si un post sale a las 15:00 y hace 0.29x, la hora explica que no llegara a 8x, **pero NO explica el 0.29x**. Buscar ahí la causa del flop es mirar donde no está. Con la hora se pierde el techo; el suelo lo pone el ángulo.
+
+**Regla:** publicar entre las **10:00 y las 13:00**. Si se pasa de las 13:00, sabes que ese día no habrá hit — decide si compensa publicar igual (normalmente sí: 2x es mejor que 0) pero no gastes ahí el post que más trabajo ha costado.
 > Este es el objetivo de todo lo anterior: **UN solo workflow complejo** que planifica y produce la semana entera para las 3 cuentas a la vez. NO uno por pilar. Los runbooks de §4 son las piezas que este planificador ensambla.
 
 **Por qué se planifican juntas:** Iker, Unai y Asier son fundadores/cofundadores de la MISMA empresa (Neety), sobre el MISMO sector (ventas B2B), con la MISMA voz y los MISMOS pilares. El contenido es prácticamente el mismo entre las 3 siguiendo los mismos outliers → por eso se planifican en bloque y se **intercalan** para no pisarse.
