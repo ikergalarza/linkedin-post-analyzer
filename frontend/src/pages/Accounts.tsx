@@ -1560,7 +1560,6 @@ export default function Accounts() {
                     <TopPostRow
                       key={p.id}
                       post={p}
-                      onOpenChat={() => setChatPostId(p.id)}
                       destacar={topPostsSort === 'ctr' ? 'ctr' : topPostsSort === 'outlier_ratio' ? 'outlier' : null}
                     />
                   ))}
@@ -2201,8 +2200,8 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
 // that was previously tracked by the monitor, so the data stays consultable after
 // the 7-day live window closes.
 function TopPostRow(
-  { post, onOpenChat, destacar }:
-  { post: TopPost; onOpenChat?: () => void; destacar?: 'ctr' | 'outlier' | null }
+  { post, destacar }:
+  { post: TopPost; destacar?: 'ctr' | 'outlier' | null }
 ) {
   const [open, setOpen] = useState(false);
   // CTR solo tiene sentido si el post llevaba enlace Y sabemos su alcance.
@@ -2352,15 +2351,9 @@ function TopPostRow(
                   View on LinkedIn →
                 </a>
               )}
-              {onOpenChat && (
-                <button
-                  onClick={onOpenChat}
-                  className="text-accent hover:text-accent-light"
-                  title="Enviar a Google Chat con comentarios sugeridos"
-                >
-                  🐝 Chat
-                </button>
-              )}
+              {/* Sin boton de Chat a proposito: mandar comentarios sugeridos solo
+                  tiene sentido sobre un post vivo, y para eso ya esta en Live
+                  posts. Aqui son posts historicos, muchos de hace meses. */}
             </span>
           </div>
         </div>
