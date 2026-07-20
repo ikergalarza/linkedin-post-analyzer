@@ -2125,7 +2125,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             )}
             {!!post.profile_viewers_count && (
               <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                {fmtNum(post.profile_viewers_count)} al perfil
+                {fmtNum(post.profile_viewers_count)} visitas perfil
               </span>
             )}
             <button
@@ -2314,7 +2314,7 @@ function TopPostRow({ post, onOpenChat, destacarCtr }: { post: TopPost; onOpenCh
             )}
             {!!post.profile_viewers_count && (
               <span className="text-emerald-400" title="Visitas a tu PERFIL que salieron de este post (LinkedIn Premium)">
-                {fmtNum(post.profile_viewers_count)} al perfil
+                {fmtNum(post.profile_viewers_count)} visitas perfil
               </span>
             )}
 
