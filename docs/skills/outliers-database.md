@@ -508,3 +508,41 @@ comentarios) pero la conversión se mide en sitios distintos.
 CTA acierta con mapas y lead magnets, pero mete en "meme" cualquier post con foto
 y texto corto. De 229 posts, 143 cayeron en "otros". Los números por pilar de
 §3.11 salen de los que se clasificaron con seguridad, no del total.
+
+---
+
+## §3.13 · EN UN MAPA NO IMPORTA A CUÁNTOS MENCIONAS, SINO CUÁNTOS TE CONTESTAN (medido 2026-07-20)
+
+Tras el flop del mapa de Cataluña de Unai (0.59x) la hipótesis era: *se cayeron 4
+empresas y quedaron 16 menciones en vez de 20, por eso rindió menos*.
+
+**Medido: no se sostiene.** Correlación menciones↔impresiones en 29 posts con
+menciones: r=0,61 — pero es un espejismo, mezcla mapas con posts que solo llevan
+flechas decorativas. Dentro de los mapas de verdad no explica nada:
+
+| Menciones | Impresiones | Ratio | Post |
+|---|---|---|---|
+| 16 | 48.866 | **7.10x** | Cataluña (Iker) |
+| 16 | 3.018 | **0.59x** | Cataluña (Unai) |
+| 20 | 10.266 | 1.00x | Lanzadera (Iker) |
+| 19 | 112.667 | 12.90x | pueblo de 7.000 (Iker) |
+
+Mismo número de menciones y 16x de diferencia. Un mapa con las 20 completas hizo
+1.00x.
+
+**Lo que sí correlaciona es la RESPUESTA de los mencionados:**
+
+| Mapa | Comentarios | De fuera | Resultado |
+|---|---|---|---|
+| Aragón (Asier) | 19 | 15 + 4 mencionados dando las gracias | 2.91x |
+| Cataluña (Unai) | 4 | **0** — los 4 del propio equipo | 0.59x |
+
+**Regla:** no persigas llegar a 20. Persigue que contesten. Vale más un mapa de
+16 con gente que responde que uno de 20 mudo. Al elegir, prioriza personas con
+actividad reciente real (`aboutme` · filtro de 3 meses de Unipile): un mando
+intermedio que publica bate a un CEO dormido, y esto lo confirma con números.
+
+⚠️ Esto NO cierra el caso del flop de Cataluña. Explica una parte. Sigue sin
+saberse por qué esas empresas no contestaron cuando en Aragón sí. **Cataluña no
+se quema como región:** el primer mapa de Cataluña (Iker) hizo 7.11x y es de los
+mejores de la casa.
