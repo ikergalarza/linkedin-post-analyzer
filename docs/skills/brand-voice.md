@@ -40,7 +40,12 @@ Una única voz de marca para las tres cuentas (Iker, Unai, Asier): la **voz Neet
 
 **Lo que dicen los datos, y matiza la regla (medido el 2026-07-16):** el mejor post de la historia de Unai (**16.62x**) abre con *"En ventas, cada año la caja de herramientas engorda pero el comercial cierra menos"*. **Ese texto YA es sobrio**: suena a industrial, no a creador. Lo infantil estaba en la **imagen** (un wojak), no en el texto.
 - **Conclusión:** ponerle voz sobria a Unai **no le cuesta su mejor pilar**. La restricción cae en el **registro de la imagen** (`images §0g`), no en el meme como formato.
-- **⚠️ El peaje que sí existe, dicho en voz alta:** su **2º mejor (9.93x)** es *"🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound"*. Eso es lo contrario de sobrio. Con esta regla, ese post no se le vuelve a escribir a Unai. Si algún día hace falta ese registro, va en la cuenta de Iker.
+- **⚠️ EL PEAJE QUE CREÍAMOS QUE HABÍA: NO EXISTE. Resuelto por el usuario el 2026-07-20.** Aquí ponía que *"🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound"* (9.96x, el 2º mejor de Unai) era lo contrario de sobrio, que con la regla de la voz no se le volvía a escribir, y que ese registro debía irse a Iker. **Estaba mal planteado, y encima al revés de los datos**: en Unai hizo 9.96x y 2.72x, y el único de Iker hizo 0.70x.
+
+**⭐ LA REGLA BUENA: LA SOBRIEDAD VIVE EN EL CUERPO, NO EN EL GANCHO.** El gancho es un mecanismo de atención y **es el mismo para las 3 cuentas**, igual que el gancho del mapa (*"la ven como X… y exporta más que Y"*) se usa en las tres sin que nadie lo discuta. Lo que sube y baja con la cuenta es el **tono del cuerpo**: el volumen, los alargamientos de vocal, los emojis, el guiño.
+- **Si un gancho funciona, se usa en las tres.** `🚨 ÚLTIMA HORA` incluido.
+- Lo que NO se comparte: el registro del cuerpo (`§1b`) y el de la imagen (`images §0g`).
+- Corolario práctico: no descartes nunca un gancho ganador "porque esa cuenta es sobria". Si lo dudas, el filtro es el cuerpo.
 
 **Dónde vive esto en el código** (no es solo doctrina): `backend/src/services/replyGenerator.ts` (`voiceForAuthor` → `sobrio`/`medio`/`cercano`, RULE 0/12/13) y su gemelo `frontend/src/components/accounts/leadMagnetCopy.ts` (`voiceFor`). Un desconocido cae en `medio`: una cuenta nueva nunca hereda en silencio la voz de otro. Además, en las voces sobrias **el backend colapsa por código** cualquier racha de 3+ letras iguales (`síííí` → `síí`), porque el prompt es una petición y la voz una promesa.
 

@@ -566,6 +566,10 @@ El playbook dice "output = acción ejecutada o HTML estudio". Para posts **no**:
 - **Las 13:00 NO son la muerte.** A esa hora están el **8.45x** (86.815 impresiones) y el **7.82x** (78.711). Si un post publicado a las 13:30 hace 0.59x, **la hora no lo explica**: a esa misma hora hemos hecho 8x.
 - **El VIERNES no es mal día.** Medido sobre **20 viernes**: nuestros **dos mejores posts de la historia** (16.45x y 16.44x, ~166.000 impresiones cada uno) son los dos de viernes, y uno de ellos a las 13h. La primera versión decía n=3 porque el filtro roto se comía los memes, que era justo lo que se publicaba los viernes.
 
+**EL VIERNES Y EL MEME (decisión del usuario, 2026-07-20 — NO se hardcodea):** los datos dicen que viernes + meme es nuestra combinación más potente (16.45x y 16.44x, ~166.000 impresiones cada uno). **Aun así NO se convierte en regla**, y el motivo es de planificación, no de rendimiento: **las 3 cuentas no pueden publicar el mismo pilar el mismo día** (exclusividad de categoría por día, §8). Si el viernes fuera "día de meme", o lo monopoliza una cuenta o las tres hacen lo mismo, que es justo lo que se quiere evitar con 3 cuentas.
+- **Lo que sí vale:** recomendar el viernes-meme **a UNA cuenta concreta** (p. ej. Iker) y dejar el resto libre.
+- **Lo que no vale:** escribirlo como regla general para las tres.
+
 **Regla operativa:** apunta a **10:00-11:00** si puedes, porque es donde está el doble de alcance. Pasadas las **14:00**, sabes que vas con la muestra en contra. Entre medias, la hora **no** es una explicación válida de un flop: busca la causa en el ángulo o en el motor del pilar (`outliers-database §3.10`).
 
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
