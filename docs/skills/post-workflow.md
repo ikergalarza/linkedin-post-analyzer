@@ -450,6 +450,32 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **PROMPT de modificaciones de la foto**. Sin CSV ni menciones (eso es del mapa).
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
+
+#### ⭐ 4.5.0 · EL HOOK "ÚLTIMA HORA" (medido, y NO estaba en esta receta hasta el 2026-07-20)
+
+Nuestros 2 mejores lead magnets usan la misma estructura de gancho y **la receta no la recogía**: solo aparecía como ejemplo suelto en `swipe-file`. Por eso se dejó de usar sin que nadie lo decidiera. **Sin usar desde el 2026-05-15.**
+
+**LO QUE DECIDE NO ES EL TEMA, ES EL SUJETO DE LA FRASE.** Verificado sobre 5 posts nuestros:
+
+| Sujeto | Post | Resultado |
+|---|---|---|
+| ✅ **lo que le pasa a TU TRABAJO** | "🚨 ÚLTIMA HORA: Claude acaba de matar **el cold outbound**" | **9.96x · 632 com.** |
+| ✅ **lo que le pasa a TU TRABAJO** | "🚨 ÚLTIMA HORA: Claude ha reducido **toda mi prospección** a una frase" | **2.72x · 167 com.** |
+| ⛔ el MODELO | "🚨 ÚLTIMA HORA: **Claude Opus 4.7** acaba de romper las…" | 0.70x |
+| ⛔ el MODELO | "**Hoy ha salido Sonnet 4.5.** Y no es una actualización…" | 0.22x |
+| ⛔ el MODELO | "🚨 URGENTE: **El nuevo Claude** acaba de tachar…" | 0.23x |
+
+Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es la EXCUSA para escribir; el sujeto del titular es siempre el trabajo del lector.
+
+**Variantes del disparador de urgencia** (para no repetir el mismo literal, `working-preferences §4`). "ÚLTIMA HORA" es la que tiene los datos y es la traducción que decidimos para el *breaking* inglés — **nunca dejarlo en inglés**, nuestro lector es un director industrial español:
+- `🚨 ÚLTIMA HORA:` ← la probada, 9.96x y 2.72x
+- `🚨 Acaba de pasar:`
+- `🚨 Esto cambió ayer:`
+- `🚨 Nadie lo ha contado todavía:`
+- `🚨 Llevo 24 horas dándole vueltas a esto:`
+
+**⚠️ CONFLICTO SIN RESOLVER, no lo tapes:** `brand-voice §1b` dice que este registro es lo contrario de sobrio y que "si hace falta, va en la cuenta de Iker". Pero los datos dicen lo contrario: en **Unai** hizo 9.96x y 2.72x, y el único de **Iker** hizo 0.70x. Puede ser el sujeto de la frase y no la cuenta (el de Iker hablaba del modelo). **n=1 por cuenta: no está decidido.** Si se vuelve a usar, decidir a conciencia y anotar el resultado.
+
 > Se reconoce el outlier de lead magnet en la DB porque **se disparan los COMENTARIOS** (vibe prospecting 632 · desmonto perfiles 483). El objetivo del formato es EL comentario.
 > **⛔ Diferencia clave con los otros pilares: NO lleva spam ninja. Es la ÚNICA excepción y no se "arregla".** El CTA de comentar ES el cierre (regla del UNO). Meter el link de agendar aquí **apila dos CTAs**: el lector que iba a comentar duda entre comentar o clicar, y el conteo de comentarios —que es TODO el motor del formato (632 com. vibe prospecting · 483 desmonto perfiles)— se hunde. El resto de reglas de spam ninja viven en `global-instructions §4.4b`; aquí NO aplica ninguna. Si algún día se prueba, es un A/B consciente con expectativa de caída, no el default.
 > **Output (TRES piezas, no una):** (1) el **TEXTO** copy-ready · (2) una **recomendación de imagen** (registro personal/founder: **foto natural real, selfie o foto en grupo con compañeros** — NO caricatura ni diseño elaborado; `images §3`. El mejor del histórico, 8.52x, lleva un selfie de oficina) · (3) el **PROMPT PARA EL PROGRAMADOR** con el gate y el recurso de `recursos.neety.com` → **carga la skill `lead-magnet-web` y sigue su §5**. Sin CSV, sin ZIP, sin spam ninja.
