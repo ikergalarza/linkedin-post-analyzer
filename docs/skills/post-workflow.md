@@ -545,28 +545,28 @@ El playbook dice "output = acción ejecutada o HTML estudio". Para posts **no**:
 
 ## 8 · EL WORKFLOW REAL: planificador semanal de las 3 cuentas
 
-### ⭐ LA VENTANA DE PUBLICACIÓN: 10:00-13:00, hora de España (medido 2026-07-20)
+### ⭐ LA VENTANA DE PUBLICACIÓN (CORREGIDO 2026-07-20, la 1ª versión estaba MAL)
 
-Medido sobre **44 posts de pilar** de las 3 cuentas, con la hora real (`published_at` de la BD, en UTC → +2 en verano, +1 en invierno).
+**⚠️ AVISO SOBRE LA VERSIÓN ANTERIOR.** Aquí ponía *"los 10 posts que han pasado de 6x están todos entre las 10:00 y las 13:00"* y *"después de las 13:00 nada ha pasado de 3.57x"*. **Las dos frases eran FALSAS.** Salieron de un análisis cuyo filtro de pilares **no reconocía los memes**, así que tiraba a la basura justo los posts de más alcance. Corregido sobre los **90 posts desde abril de 2026**, sin filtrar por pilar.
 
-**LOS 10 POSTS NUESTROS QUE HAN PASADO DE 6x ESTÁN TODOS ENTRE LAS 10:00 Y LAS 13:00. Los 10. Sin una sola excepción.**
+| Franja | n | Mediana | Media | **Impresiones medianas** |
+|---|---|---|---|---|
+| antes de 10h | 4 | 0.70x | 1.07x | 4.475 |
+| **10:00-11:00** | 25 | **1.29x** | **3.38x** | **11.065** |
+| 11:00-12:00 | 10 | 1.02x | 2.39x | 5.221 |
+| 12:00-13:00 | 29 | 0.72x | 2.79x | 4.082 |
+| 13:00-14:00 | 16 | 0.69x | 1.87x | 5.247 |
+| 14:00+ | 6 | 0.48x | 0.92x | 3.611 |
 
-| Franja | n | Mediana | Techo alcanzado |
-|---|---|---|---|
-| antes de 11h | 16 | **2.79x** | 16.44x |
-| 11:00-12:30 | 14 | 2.02x | 7.10x |
-| 12:30-14:00 | 11 | **2.72x** | 16.45x |
-| después de 14h | 3 | 1.79x | 2.24x |
+**LO QUE SÍ SE SOSTIENE:**
+- **La franja 10:00-11:00 es la mejor**, y por bastante: sus impresiones medianas (11.065) **doblan a las de cualquier otra franja**. Ahí están el 16.44x, el 12.90x, el 9.96x y el 8.51x.
+- **Después de las 14:00 no hemos hecho nada bueno nunca**: n=6, el mejor 2.16x. Muestra pequeña, pero es lo único que hay.
 
-**⚠️ LA HORA ES UN TECHO, NO UN SUELO. Este matiz es todo:**
-- **Publicar después de las 13:00 te quita el hit.** De 7 posts publicados pasadas las 13:00, el mejor hizo 3.57x. Ninguno ha roto nunca esa barrera.
-- **Publicar en la ventana buena NO te salva el post.** Dentro de las 10:00-13:00 hay un 0.18x, un 0.21x, un 0.37x y un 0.47x. La hora no arregla un ángulo malo.
-- **Conclusión operativa:** si un post sale a las 15:00 y hace 0.29x, la hora explica que no llegara a 8x, **pero NO explica el 0.29x**. Buscar ahí la causa del flop es mirar donde no está. Con la hora se pierde el techo; el suelo lo pone el ángulo.
+**⛔ LO QUE NO SE SOSTIENE Y NO SE PUEDE USAR DE EXCUSA:**
+- **Las 13:00 NO son la muerte.** A esa hora están el **8.45x** (86.815 impresiones) y el **7.82x** (78.711). Si un post publicado a las 13:30 hace 0.59x, **la hora no lo explica**: a esa misma hora hemos hecho 8x.
+- **El VIERNES no es mal día.** Medido sobre **20 viernes**: nuestros **dos mejores posts de la historia** (16.45x y 16.44x, ~166.000 impresiones cada uno) son los dos de viernes, y uno de ellos a las 13h. La primera versión decía n=3 porque el filtro roto se comía los memes, que era justo lo que se publicaba los viernes.
 
-**Regla:** publicar entre las **10:00 y las 13:00**. Si se pasa de las 13:00, sabes que ese día no habrá hit — decide si compensa publicar igual (normalmente sí: 2x es mejor que 0) pero no gastes ahí el post que más trabajo ha costado.
-> Este es el objetivo de todo lo anterior: **UN solo workflow complejo** que planifica y produce la semana entera para las 3 cuentas a la vez. NO uno por pilar. Los runbooks de §4 son las piezas que este planificador ensambla.
-
-**Por qué se planifican juntas:** Iker, Unai y Asier son fundadores/cofundadores de la MISMA empresa (Neety), sobre el MISMO sector (ventas B2B), con la MISMA voz y los MISMOS pilares. El contenido es prácticamente el mismo entre las 3 siguiendo los mismos outliers → por eso se planifican en bloque y se **intercalan** para no pisarse.
+**Regla operativa:** apunta a **10:00-11:00** si puedes, porque es donde está el doble de alcance. Pasadas las **14:00**, sabes que vas con la muestra en contra. Entre medias, la hora **no** es una explicación válida de un flop: busca la causa en el ángulo o en el motor del pilar (`outliers-database §3.10`).
 
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
 - **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).
