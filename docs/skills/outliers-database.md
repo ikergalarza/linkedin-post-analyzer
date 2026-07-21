@@ -225,6 +225,31 @@ Es el paso que más se falla y el que convierte el robo en algo original. Robar 
 
 ---
 
+
+## ⭐ 3.16 · LA HORA DE PUBLICAR: LAS 10:00, Y LAS 9:00 ES UN ERROR (medido 2026-07-21)
+
+230 posts de las tres cuentas con hora y `outlier_ratio`:
+
+| Hora | n | Mediana | >2x | >4x | Impresiones (mediana) |
+|---|---|---|---|---|---|
+| 8:00 | 35 | 0,50 | 1 | 0 | 2.740 |
+| 9:00 | 23 | 0,57 | **1** | **0** | 3.332 |
+| **10:00** | 36 | **0,78** | **11** | **7** | **5.311** |
+| 11:00 | 21 | 0,57 | 4 | 2 | 3.148 |
+| 12:00 | 40 | 0,59 | 10 | 7 | 3.760 |
+| 13:00 | 29 | 0,47 | 6 | 2 | 3.628 |
+| 14-16 | 24 | 0,42 | 4 | — | — |
+| 17-19 | 12 | 0,59 | **0** | 0 | — |
+
+**Las 10:00 es la hora.** Mejor mediana y **el doble de impresiones** que cualquier otra franja. De los 18 posts historicos por encima de 4x, **catorce salieron a las 10 o a las 12**.
+
+**🔴 Las 9:00 NO es "casi las 10": rinde como las 8:00.** Una sola publicacion por encima de 2x en 23 intentos, y ninguna por encima de 4x. La explicacion que da Iker encaja con el dato: a las nueve la gente esta llegando, abriendo el correo y entrando a reuniones, no esta en el movil. **La clave es adelantarse al pico de las 11, no madrugar.**
+
+**Segunda opcion: las 12:00.** Peor mediana que las 10, pero mismos siete posts por encima de 4x. Sirve para la segunda cuenta del dia.
+
+**Sobre la tarde, matiz importante:** publicar de tarde **no mata un post** — el 17% de los de 14-16 pasan de 2x, contra el 20-23% de la mañana. **Lo que si mata es la franja 17-19: 0 de 12.** Por eso un pilar cuyo motor son los comentarios (lead magnet) **no se publica despues de comer**: sus 3 horas criticas caerian justo ahi. Un meme aguanta mejor, porque su motor es la reaccion inmediata.
+
+
 ## 4 · Histórico destilado, cuenta a cuenta (refrescado con export real abr-jul 2026)
 
 > Datos reales del export "Top posts (50)" por cuenta (primeros ~4 meses publicando). Los **textos completos** de estos ejemplos, anotados por estructura, están en la skill **`swipe-file`** — cárgala al escribir hooks/cuerpos. Aquí viven los números; allí la anatomía.
