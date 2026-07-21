@@ -378,6 +378,15 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > **El caso real (2026-07-14):** la referencia del meme del perro venía **sin un solo salto de línea**, ocho líneas seguidas de corrido. Calcarla al pie de la letra habría sido entregar un parrafazo ilegible. Se calcó su esqueleto (`Realidad: / LinkedIn: / Traducción: / Pero hey… / PD:`) y se le metieron **nuestros** saltos: el bloque de etiquetas junto (es enumeración paralela, `§3.3` unidad c) y aire entre secciones.
 >
 > **La pregunta que lo resuelve siempre:** ¿esto que estoy copiando es lo que hizo volar al post, o es solo cómo lo tecleó su autor? Lo primero se calca. Lo segundo, ni de broma.
+>
+> ## EL ORDEN IMPORTA: PRIMERO CALCAR, DESPUES MEJORAR (Iker, 2026-07-20)
+> **Calcar un outlier no es la meta, es el suelo.** El objetivo minimo es estar a la altura del original; si se puede mejorar, se mejora. Pero **en ese orden**: primero se calca la mecanica entera (gancho, imagen, esqueleto del cuerpo), y solo entonces se pasa el envase por nuestras reglas.
+>
+> **Los BLOQUES DE DOS tambien aplican al meme.** El 20-jul se entrego un meme con todo el cuerpo en lineas sueltas porque la referencia iba asi. Mal: el formateado es nuestro (`global §3.2`). Al meterle un bloque de dos en las lineas de Ferran Torres, la anafora ("El que fallaba los faciles / El que se comia las criticas") gano un ritmo que en linea corrida se perdia.
+>
+> **⚠️ Con una condicion: solo si MEJORA.** No metas un bloque de dos por cumplir. La enumeracion paralela (la escalera de 6 roles) es una unidad y se queda junta. Si partir algo lo hace mas pesado en vez de mas ritmico, no lo partas.
+>
+> **Y el cierre punchy es SIEMPRE una linea.** Dos oraciones largas al final diluyen el remate: un cierre no admite explicacion detras.
 
 **Paso 0 — Conseguir la referencia:** accede al enlace y extrae (a) el **TEXTO** del post (gancho/1ª línea + cuerpo) y (b) la **FOTO**.
 
@@ -388,7 +397,16 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 - **Método:** escribe en una frase QUÉ hace el gancho original (su mecánica), y reprodúcela. Ej. real: *"LinkedIn es mágico ✨"* = **afirmación corta, irónica, sobre la herramienta, que monta el marco sin destripar el chiste**. El remix mantiene esa mecánica (corta + irónica + sobre la herramienta) y cambia la piel a ventas: *"Tu CRM resucita clientes muertos ✨"*.
 - **Mismo o mejor, nunca distinto.** "Mejor" = el verbo sube un peldaño (`global §2.9`) y se ancla a ventas (`§2.3`). "Distinto" = un gancho tuyo pegado a una foto ajena.
 - ❌ **Fallo real (2026-07-14):** referencia con gancho *"LinkedIn es mágico ✨"* y el remix salió *"Tu cliente no te cogió el teléfono. El CRM lo asciende a oportunidad en fase avanzada 👇"*. Largo, específico, destripa el chiste que cuenta la foto y no se parece en nada al original. El validador dio 17/17 porque **esto el script no lo ve**: es criterio.
-- **Si el gancho original no lleva 👇** (muchos memes cierran con un emoji irónico o un punto), no se lo metas a la fuerza: la fidelidad manda sobre la convención. Validado: "Subir en ventas siempre pasa factura." (13.52x) cierra con punto.
+- **EL 👇 VA SIEMPRE, aunque la referencia no lo lleve** (corregido 2026-07-20 con datos, antes decia lo contrario).
+  Aqui ponia que no se lo metieras a la fuerza si el original no lo tenia, citando "Subir en ventas siempre pasa factura." (13.51x) como validacion. **Generalizaba desde UN caso.** Mirando los 3 memes grandes de Iker:
+
+  | Hook | lleva 👇 | Ratio |
+  |---|---|---|
+  | "El cold calling no ha muerto. Lo hemos enterrado en vida **👇**" | Si | **16.44x** |
+  | "Esta es la vida del comercial **👇**" | Si | 8.45x |
+  | "Subir en ventas siempre pasa factura." | No | 13.51x |
+
+  **Dos de tres lo llevan, incluido el mejor.** Y hay un motivo mecanico: el 👇 marca el punto donde el lector decide pulsar "ver mas", justo antes del corte de la vista previa. El emoji es NUESTRA convencion y va en el envase, no en el motor: se calca la mecanica del gancho, no su puntuacion final.
 - **Itera VERBOS** hasta el más punchy **sin perder el significado original** (escalera y techo: `global-instructions §2.9`).
 - Aplica TODAS las reglas de hook (`global-instructions §2` + `swipe-file`): bloque único ≤210, imagen mental, ≤1 número, corto.
 - **Ancla a VENTAS siempre**, aunque la referencia no vaya de ventas: desde el lado de vender, del cliente o del comercial. Amplifica el alcance al máximo sin perder la esencia de ventas.
