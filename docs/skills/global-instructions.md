@@ -344,6 +344,20 @@ Corre estas puertas EN ORDEN:
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
+### 2.5b · LAS CIFRAS DEL HOOK, IMPARES Y CUMPLIBLES (Iker, 2026-07-21)
+
+**Impares.** Esta medido fuera que los numeros impares generan mas clics que los redondos: 25 se lee como una cuenta real, 50 como una estimacion de marketing. `§2.5` limitaba a UNA cifra en el hook pero no decia nada de que cifra. **No lo teniamos escrito en ninguna receta.**
+
+**Y cumplibles.** La cifra del hook es una PROMESA operativa, no un adorno:
+- Si prometes 50 y en el sector mas pobre salen 18, **el post ha mentido** y lo descubre justo quien te comento.
+- Antes de fijar el numero, calcula cuanto tarda producirlo. Referencia real: un mapa de 20 empresas **verificando ademas personas y su actividad en LinkedIn** lleva cerca de media hora. Sin ese filtro, solo empresas que encajen, es una busqueda y ya.
+- **Elige el numero que puedas cumplir en el PEOR caso**, no en el mejor.
+
+❌ 2026-07-21: primer borrador con "las 50 empresas". Par, y encima 50 listas por sector con Unipile no salen en un dia.
+✅ Corregido a **25**: impar, creible, y producible sin que Unipile se atragante.
+
+---
+
 ### 2.3b · EL ANCLA VA EN EL HOOK, LA ESPECIFICIDAD EN EL CUERPO (Iker, 2026-07-21)
 
 **El hook ancla a ventas AMPLIFICANDO el alcance al maximo. No al reves.** `§2.3` pide el ancla, pero no decia hasta donde apretar, y por ahi se cuela el error de siempre.
