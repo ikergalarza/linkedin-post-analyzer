@@ -344,15 +344,38 @@ Corre estas puertas EN ORDEN:
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
-### 2.10 · EL HOOK NUNCA PASA DE DOS ORACIONES (Iker, 2026-07-20)
+### 2.10 · UNA O DOS ORACIONES EN EL HOOK, NUNCA TRES (medido 2026-07-20 sobre 224 posts)
 
-**Nunca hemos publicado un hook de tres frases.** Solo hay dos formas validas:
-1. **UNA oracion larga con conjuncion en medio** — *"Todo comercial quiere serlo pero nadie quiere tragarse los 90 minutos de antes"*.
-2. **DOS oraciones con punto en medio**, que hace de pausa dramatica — *"El tiburon nos corono campeones del mundo. Todo comercial quiere serlo…"*.
+**Medido, no opinado.** Tasa de outlier (ratio >= 3) segun cuantas oraciones tiene el hook:
 
-❌ **Caso real:** *"Un tiburon nos corono campeones del mundo. Todo comercial quiere ser ese tiburon. Ninguno quiere los 90 minutos de antes."* Tres frases. El validador daba 20/20 porque **esto el script no lo ve**: cuenta caracteres y saltos, no oraciones. Es criterio.
+| Oraciones | Posts | Outliers | Tasa |
+|---|---|---|---|
+| 1 | 166 | 14 | 8,4% |
+| **2** | 53 | 9 | **17,0%** |
+| **3** | 5 | **0** | **0%** |
 
-La combinacion que mejor funciona es **las dos a la vez**: punto de pausa y conjuncion en la segunda. Y ojo con las repeticiones — en ese caso "tiburon" salia tres veces en dos lineas y desgastaba el remate del cuerpo.
+**Las dos primeras valen. La tercera no ha funcionado nunca.** Cero outliers en cinco intentos.
+
+**Por que tres es jugartela:** el hook tiene que caber entero en la vista previa de LinkedIn, en movil Y en escritorio, antes del "ver mas". Con dos oraciones vas holgado; con tres te comes el corte y el lector no llega al gancho. No es una regla estetica, es el limite fisico de lo que se lee.
+
+**Los ganadores son MUCHO mas cortos que el tope.** El maximo tecnico son 210 caracteres, pero la mediana de nuestros outliers es **75 caracteres** (hook de 1 oracion) y **93** (de 2). Los mejores:
+
+| Ratio | Oraciones | Caracteres | Hook |
+|---|---|---|---|
+| 16.4x | 2 | 59 | "El cold calling no ha muerto. Lo hemos enterrado en vida 👇" |
+| 15.0x | 1 | 48 | "Tu informe de ventas resucita clientes muertos ✨" |
+| 13.5x | 1 | 37 | "Subir en ventas siempre pasa factura." |
+| 8.4x | 1 | 32 | "Esta es la vida del comercial 👇" |
+
+**Si tu hook pasa de ~110 caracteres, sospecha.** No lo prohibe nadie (el 12.9x tiene 115), pero estas fuera de donde vive lo que funciona.
+
+**Las dos formas validas:**
+1. **UNA oracion corta y punchy** — *"Subir en ventas siempre pasa factura."* Es la mitad de nuestros outliers.
+2. **DOS oraciones con punto en medio**, que hace de pausa dramatica, y conjuncion en la segunda si hace falta — *"El tiburon nos corono campeones del mundo. Todo comercial quiere serlo pero nadie quiere tragarse los 90 minutos de antes"*.
+
+❌ **Caso real (2026-07-20):** *"Un tiburon nos corono campeones del mundo. Todo comercial quiere ser ese tiburon. Ninguno quiere los 90 minutos de antes."* Tres frases, 121 caracteres. **El validador dio 20/20** porque cuenta caracteres y saltos, no oraciones: esto es criterio, no script. Ademas repetia "tiburon" tres veces en dos lineas y desgastaba el remate del cuerpo.
+
+**La mano abajo cierra bien** (`post-workflow §4.4` Paso 2): 2 de los 3 memes grandes de Iker la llevan, incluido el 16.4x, y marca justo donde el lector decide pulsar "ver mas". No es obligatoria si el hook cierra con otro emoji que funcione (el 15.0x cierra con ✨), pero es la opcion por defecto.
 
 ---
 
