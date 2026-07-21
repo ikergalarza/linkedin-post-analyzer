@@ -344,6 +344,21 @@ Corre estas puertas EN ORDEN:
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
+### 2.3b · EL ANCLA VA EN EL HOOK, LA ESPECIFICIDAD EN EL CUERPO (Iker, 2026-07-21)
+
+**El hook ancla a ventas AMPLIFICANDO el alcance al maximo. No al reves.** `§2.3` pide el ancla, pero no decia hasta donde apretar, y por ahi se cuela el error de siempre.
+
+**El ejemplo que lo explica (Iker):** si pones *futbol* en el gancho, te limitas a quien le gusta el futbol. Si pones *deportes*, contienes a los del futbol Y a todos los demas. **Misma vinculacion, barrera de entrada mas baja, publico potencial mucho mayor.** Eso es lo que siempre buscamos.
+
+❌ **Caso real (2026-07-21):** hook de lead magnet *"La lista definitiva de las 50 empresas industriales a las que vender…"*. "Industriales" sobra: fuera queda todo comercial que no venda a industria, y no gana nada a cambio.
+✅ **Corregido:** *"La lista definitiva de las 50 empresas a las que vender este mes en tu sector"*. Ancla igual de fuerte ("vender"), alcance mucho mayor, y **"tu sector" hace que cada lector lo rellene con el suyo**.
+
+**De donde viene el error, para no repetirlo:** nuestro ICP es industrial, asi que el reflejo es meter "industrial" en todo. Pero **el ICP define a quien queremos VENDER, no a cuanta gente queremos que le LLEGUE el post**. En el hook manda lo segundo. El industrial que lea "empresas" se da por aludido igual; el que vende software o servicios tambien, y ese ya no se pierde.
+
+**Regla operativa:** despues de escribir el hook, coge cada adjetivo y pregunta *"¿esto deja fuera a alguien sin ganar nada?"*. Si la respuesta es si, fuera. La especificidad de sector, de region y de nicho **va en el cuerpo**, donde ya no cuesta alcance porque el lector ya ha entrado.
+
+---
+
 ### 2.9b · LA CONJUGACION TAMBIEN SE ITERA, NO SOLO EL VERBO (Iker, 2026-07-20)
 
 `§2.9` manda iterar el verbo hasta el mas punchy. **Faltaba la mitad: el TIEMPO VERBAL cambia el impacto tanto como el verbo.** Nunca lo habiamos iterado.
