@@ -483,6 +483,24 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 
+#### ⭐ 4.5.-1 · LA IMAGEN DEL LEAD MAGNET: CALCAR SI, PERO NO COMO EN EL MEME (Iker, 2026-07-21)
+
+**La diferencia que hay que tener clara:** en el meme **la foto ES el motor**, asi que se calca si o si (`§4.4`). En el lead magnet **el motor es el volumen de comentarios**, no la imagen. Por eso aqui la imagen es opcional y se decide mirando la referencia.
+
+**Regla de decision:**
+1. **¿La referencia lleva imagen y es buena?** → cálcala con todo lo de `§4.4` Paso 6 (inventario primero, un solo parrafo, contencion partida, `images §0h`).
+2. **¿No lleva imagen, o la que lleva es mala?** → no la copies. Publica sin foto o con una nuestra.
+
+**⭐ LO QUE HAY QUE MIRAR: QUE ENSEÑA ESA IMAGEN.** Caso real, Guillermo Flor 12.3x: su imagen **no es una foto suya, es una captura de la propia lista** — la tabla entera con nombres reconocibles a la vista (Naval Ravikant, Mark Cuban, Sam Altman, Peter Thiel). **La imagen es la PRUEBA de que el recurso existe y de que es bueno.** Eso vale muchisimo mas que un selfie, y encima resuelve el problema de las cuentas que no tienen fotos naturales.
+
+**Consecuencia practica:** en un lead magnet de lista o plantilla, **enseña el artefacto**, no tu cara. Y las filas de esa captura **tienen que ser reales**: si alguien busca una y no existe, se cae el post entero (`aboutme`: nunca inventar).
+
+**Lo que se calca y lo que no** (igual que en meme): se calca el layout, la estructura de columnas y la mecanica de "aqui esta lo que vas a recibir". **Manda lo nuestro** en paleta (Alabastro + naranja), tipografia (Bricolage + Switzer), formato 1:1 y **cero footer y cero logos** (`images §0h` regla 3) — Guillermo lleva una franja de marca abajo y **se quita**.
+
+**El titulo de la imagen** cumple lo mismo que en cualquier otro pilar (`images §0h` y `§1b`): corto, verbo punchy, anclado a ventas y **sin repetir el hook**. Caso real: hook *"La lista definitiva de 25 empresas activas a las que vender"* → titulo de imagen *"Vender sin llamar a ciegas"*.
+
+
+
 #### ⭐ 4.5.0 · EL HOOK "ÚLTIMA HORA" (medido, y NO estaba en esta receta hasta el 2026-07-20)
 
 Nuestros 2 mejores lead magnets usan la misma estructura de gancho y **la receta no la recogía**: solo aparecía como ejemplo suelto en `swipe-file`. Por eso se dejó de usar sin que nadie lo decidiera. **Sin usar desde el 2026-05-15.**
