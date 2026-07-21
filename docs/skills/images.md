@@ -91,6 +91,14 @@ Son artefactos distintos con reglas opuestas. **No apliques la del post a la ima
 - ❌ **Caso real:** el hook se corrigió a *"En ventas, el pedido encoge…"* porque "pedido" es ancla ambigua… y el título de la imagen se quedó en **"LA VIDA DE UN PEDIDO"**, igual de genérico. Lo puede firmar un jefe de logística. Se arregló el hook y se dejó el mismo agujero al lado.
 - ✅ **Corregido a "EL PEDIDO SUBE. LA VENTA NO."** — ancla fuerte ("VENTA") y encima cuenta el chiste.
 
+**1b · ⭐ EL TÍTULO ES UN SEGUNDO GANCHO: CORTO, PUNCHY Y GENERICO** (Iker, 2026-07-20).
+No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que al gancho del post**, porque compite con el en la misma pantalla:
+- **CORTO.** 3-5 palabras. Si necesita una subordinada, no es un titulo, es una frase.
+- **VERBO PUNCHY** (`global §2.9`). Un verbo de estado ("se parece", "es", "tiene") mata el titulo aunque el concepto sea bueno.
+- **GENERICO DE VENTAS, no jerga interna.** "Cierre de trimestre", "forecast", "pipeline QoQ" estrechan: los entiende un SDR, no un director industrial de 50 (`global §2.3`). El ancla tiene que ser de ventas Y universal.
+- ❌ **Caso real (meme del Mundial):** primer titulo *"Una final se parece mucho a un cierre de trimestre"*. Largo, verbo de estado, y "cierre de trimestre" es jerga.
+- ✅ **Corregido a "Cerrar cuesta pelo".** Tres palabras, verbo con techo, "cerrar" ancla a ventas sin ser jerga, y cuenta el chiste del grafico.
+
 **2 · EL TÍTULO NO REPITE EL HOOK.** Si el hook ya dice *"En ventas, el pedido encoge cada vez que sube un piso"*, la imagen **no lo vuelve a decir**: el lector lee lo mismo dos veces y la foto no aporta nada. El título de la imagen es **otra frase** del mismo chiste, no un eco.
 
 **3 · ⛔ SIN FOOTER, NUNCA.** Aunque la referencia lleve una franja inferior (la del meme de The Office llevaba *"BREAKING NEWS: 99% OF DEALS DIE OF OVER-COMMUNICATION"*), **se quita**. Queda fatal. La imagen termina en la última fila. Es de las cosas que se calcan NO (`§4.4`: el formato es nuestro, no el suyo).

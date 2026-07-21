@@ -416,9 +416,17 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 - Adaptado a ventas B2B (`§2.3`), pero sin destripar el chiste que cuenta la foto: el texto monta el marco, la foto remata.
 - **Roles de trabajadores:** sin anglicismos ni títulos complejos. Español genérico que un **industrial de 50+ entienda** (comercial, jefe de ventas, director comercial, gerente…) — lo más genérico = más alcance. (Mismo criterio en la foto, Paso 6.)
 
+**Paso 3b — SI EL MEME VA DE ACTUALIDAD, DOS COSAS OBLIGATORIAS** (Iker, 2026-07-20):
+1. **DESVELA a la persona o la referencia dentro del cuerpo.** Si el hook usa un apodo, una cara o un guiño ("el tiburon"), **siempre habra alguien que no lo pille**, y ese se va. Una linea basta, y encima puede hacer doble trabajo: *"Ferran Torres. El que fallaba los faciles."* resuelve quien es Y monta la historia.
+2. **Robale al peloteo regional su cliche de orgullo** cuando el tema lo permita. El mecanismo del mapa (*"toro, txistorra y poco mas"* → giro) funciona igual aqui: *"Nos ven como siesta y sangria. Y la estrella la mete el que todos daban por amortizado."* Ojo, solo si hay paralelismo real — ahi lo habia (a España la infravaloran, a el tambien). Forzado queda pegote.
+
 **Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). Máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), nunca última línea. Aquí no hay menciones, así que va en el punto más natural del cuerpo — y ojo: el cuerpo del meme es de 3-6 líneas, así que el spam ninja **no puede comerse el post**. Validado: el iMessage "El de Ventas" (7.9x · 80.9K) llevaba link de agendar en spam ninja sin matar alcance.
 
-**Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs). Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
+**Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs).
+
+> **⛔ SI HAY SPAM NINJA, EL CIERRE NO PUEDE SER OTRO CTA** (Iker, 2026-07-20). Nada de "Etiqueta al compi que…" ni "Comenta X". Aunque `global §4.4b` diga que el spam ninja no consume la regla del UNO, **en la practica compite**: el lector que iba a clicar el enlace se va a comentar, y la prioridad es el clic. El cierre es un **bold statement de UNA linea**, y punto.
+>
+> ⚠️ **Tiene un coste y hay que saberlo:** la referencia de la calvicie hizo 13.51x cerrando con "Etiqueta al compi que ya empezo a mirar champus anticaida", y el etiquetado es motor de alcance en memes. Se cambia alcance por intencion **a proposito**, no por descuido. Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
 
 **Paso 6a — ⭐ INVENTARIO DE LA IMAGEN (antes de escribir una sola línea del prompt).**
 > **El objetivo es UN prompt que salga a la primera, no una cadena de prompts de edición.** Cuando hacen falta 3 rondas, el fallo casi nunca es del diseñador: es que el primer prompt pedía mal las cosas.

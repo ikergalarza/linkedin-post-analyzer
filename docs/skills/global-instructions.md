@@ -344,6 +344,18 @@ Corre estas puertas EN ORDEN:
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
+### 2.10 · EL HOOK NUNCA PASA DE DOS ORACIONES (Iker, 2026-07-20)
+
+**Nunca hemos publicado un hook de tres frases.** Solo hay dos formas validas:
+1. **UNA oracion larga con conjuncion en medio** — *"Todo comercial quiere serlo pero nadie quiere tragarse los 90 minutos de antes"*.
+2. **DOS oraciones con punto en medio**, que hace de pausa dramatica — *"El tiburon nos corono campeones del mundo. Todo comercial quiere serlo…"*.
+
+❌ **Caso real:** *"Un tiburon nos corono campeones del mundo. Todo comercial quiere ser ese tiburon. Ninguno quiere los 90 minutos de antes."* Tres frases. El validador daba 20/20 porque **esto el script no lo ve**: cuenta caracteres y saltos, no oraciones. Es criterio.
+
+La combinacion que mejor funciona es **las dos a la vez**: punto de pausa y conjuncion en la segunda. Y ojo con las repeticiones — en ese caso "tiburon" salia tres veces en dos lineas y desgastaba el remate del cuerpo.
+
+---
+
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
