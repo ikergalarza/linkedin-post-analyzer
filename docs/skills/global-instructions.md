@@ -344,6 +344,18 @@ Corre estas puertas EN ORDEN:
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
+### 2.9b · LA CONJUGACION TAMBIEN SE ITERA, NO SOLO EL VERBO (Iker, 2026-07-20)
+
+`§2.9` manda iterar el verbo hasta el mas punchy. **Faltaba la mitad: el TIEMPO VERBAL cambia el impacto tanto como el verbo.** Nunca lo habiamos iterado.
+
+- **El presente AFIRMA, el condicional PROPONE.** Para un hook, el presente suele ganar en rotundidad: enuncia un hecho general, no una hipotesis.
+- **Salvo cuando el presente crea AMBIGUEDAD, y entonces gana la claridad.** Caso real: *"Todo comercial firma por serlo"* se puede leer literal (firmar un contrato) en un post lleno de cierres y contratos. *"Firmaria"* lo desambigua y ademas es lo idiomatico: en español nadie dice "firmo por eso", todos decimos "firmaria por eso".
+- **Mezclar tiempos NO es un error si cada uno hace un trabajo distinto.** *"Todo comercial firmaria por serlo pero nadie quiere tragarse los 90 minutos"*: condicional = disposicion hipotetica, presente = hecho. Forzar la coherencia daria *"ninguno querria"*, que es feo y mas debil.
+
+**El metodo:** una vez elegido el verbo, prueba sus conjugaciones en voz alta antes de cerrar el hook. Y vigila las repeticiones — el mismo verbo dos veces en un hook corto (*"quiere serlo pero nadie quiere tragarse"*) desgasta las dos apariciones.
+
+---
+
 ### 2.10 · UNA O DOS ORACIONES EN EL HOOK, NUNCA TRES (medido 2026-07-20 sobre 224 posts)
 
 **Medido, no opinado.** Tasa de outlier (ratio >= 3) segun cuantas oraciones tiene el hook:

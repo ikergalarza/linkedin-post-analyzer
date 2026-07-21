@@ -215,14 +215,36 @@ def validar(texto, pilar, cuenta=None):
     hook = bs[0] if bs else []
     hook_txt = ' '.join(hook)
     cuerpo = texto
-    r = []          # (ok, nombre, detalle)
-    def chk(ok, nombre, detalle=''):
-        r.append((ok, nombre, detalle))
+    r = []          # (ok, nombre, detalle, es_aviso)
+    def chk(ok, nombre, detalle='', aviso=False):
+        # aviso=True: se imprime pero NO cuenta en el marcador. Es para lo que
+        # es SOSPECHOSO pero no prohibido — mezclarlo con las reglas duras
+        # vaciaria de significado el "20/20", que es justo lo que pasa cuando
+        # un post con 20/20 esta mal por criterio.
+        r.append((ok, nombre, detalle, aviso))
 
     # ---------- UNIVERSALES ----------
     chk(len(hook_txt) <= 210, 'Hook ≤210 caracteres (§2.1)', f'{len(hook_txt)} caracteres')
     chk(len(hook) == 1, 'Hook es UN bloque, sin salto dentro (§2.1)',
         f'{len(hook)} líneas en el bloque del hook' if len(hook) != 1 else '')
+    # §2.10 — UNA O DOS ORACIONES, NUNCA TRES. Medido sobre 224 posts el
+    # 2026-07-20: 1 oracion -> 8,4% de outliers · 2 -> 17,0% · 3 -> 0 de 5.
+    # Ninguna de tres ha volado jamas. Y el motivo es fisico: con tres te comes
+    # el corte de la vista previa de LinkedIn y el lector no llega al gancho.
+    # Se colo un hook de tres frases con 20/20 porque el script contaba
+    # caracteres, no oraciones.
+    _h = re.sub(r'https?://\S+', '', hook_txt)
+    _orac = [t for t in re.split(r'(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ¿¡])', _h) if len(t.strip()) > 3]
+    chk(len(_orac) <= 2, 'Hook de 1 o 2 oraciones, nunca 3 (§2.10)',
+        f'{len(_orac)} oraciones. Ninguna de 3 ha sido outlier (0 de 5)' if len(_orac) > 2 else '')
+
+    # §2.10 — la ZONA donde vive lo que funciona. El tope de 210 es el maximo
+    # tecnico, pero la mediana de nuestros outliers es 75 (hook de 1 oracion) y
+    # 93 (de 2). Aviso, no prohibicion: el mapa de 12.9x tiene 115.
+    chk(len(hook_txt) <= 110, 'Hook en la zona de los outliers, ≤110 (§2.10)',
+        f'{len(hook_txt)} car. Los ganadores viven en 75-93; el mas largo que ha '
+        f'funcionado tiene 115' if len(hook_txt) > 110 else '', aviso=True)
+
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
     m = re.search(MULETILLA_ANCLA, hook_txt, re.I)
@@ -331,6 +353,22 @@ def validar(texto, pilar, cuenta=None):
                     chk(len(b) == 1, 'Las 2 líneas del spam ninja van separadas (§4.4b)',
                         f'{len(b)} líneas pegadas en el mismo bloque' if len(b) != 1 else '')
                     break
+            # post-workflow §4.4 Paso 5 — SI HAY SPAM NINJA, EL CIERRE NO ES OTRO CTA.
+            # Aunque global §4.4b diga que el spam ninja no consume la regla del UNO,
+            # en la practica compite: el que iba a clicar se va a comentar, y la
+            # prioridad es el clic. El cierre es un bold statement, no otro CTA.
+            m = re.search(r'(etiqueta|etiquetad|menciona|comenta|comparte)\w*', cuerpo, re.I)
+            chk(not m, 'Con spam ninja, el cierre NO es otro CTA (§4.4 Paso 5)',
+                f'"{m.group(0)}" apila un 2o CTA sobre el enlace. Cierra con bold statement'
+                if m else '')
+
+    # global §2.10 — EL CIERRE PUNCHY ES UNA SOLA LINEA. Dos oraciones largas al
+    # final diluyen el remate: un cierre no admite explicacion detras.
+    _ult = [l for l in cuerpo.splitlines() if l.strip()][-1] if cuerpo.strip() else ''
+    _uo = [t for t in re.split(r'(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ¿¡])', _ult) if len(t.strip()) > 3]
+    chk(len(_uo) <= 1 or len(_ult) <= 90, 'Cierre punchy de UNA linea (§2.10)',
+        f'{len(_uo)} oraciones y {len(_ult)} car. en el cierre' if len(_uo) > 1 and len(_ult) > 90 else '')
+
     if pilar in ('mapa', 'los10'):
         m = re.search(REVEAL_QUEMADO, cuerpo, re.I)
         chk(not m, 'Reveal de región sin el comodín "Sí, hablo de" (§4.1)',
@@ -425,14 +463,23 @@ def main():
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
     res = validar(texto, a.pilar, a.cuenta)
-    ok = sum(1 for x in res if x[0])
+    # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
+    # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
+    # que se pega en la entrega.
+    duras = [x for x in res if not x[3]]
+    ok = sum(1 for x in duras if x[0])
     print(f"\n  VALIDADOR — pilar={a.pilar}" + (f" cuenta={a.cuenta}" if a.cuenta else "") + "\n")
-    for bien, nombre, det in res:
-        print(f"  {'OK  ' if bien else 'FALLA'} {nombre}")
+    for bien, nombre, det, es_aviso in res:
+        etiqueta = ('OK  ' if bien else 'AVISO') if es_aviso else ('OK  ' if bien else 'FALLA')
+        print(f"  {etiqueta} {nombre}")
         if det:
             print(f"        └─ {det}")
-    print(f"\n  {ok}/{len(res)} checks\n")
-    sys.exit(0 if ok == len(res) else 1)
+    avisos = [x for x in res if x[3] and not x[0]]
+    print(f"\n  {ok}/{len(duras)} checks" + (f" · {len(avisos)} aviso(s) que NO cuentan" if avisos else "") + "\n")
+    if avisos:
+        print("  Los avisos no bloquean, pero míralos: son cosas que han funcionado")
+        print("  alguna vez y aun así están fuera de donde vive lo que gana.\n")
+    sys.exit(0 if ok == len(duras) else 1)
 
 if __name__ == '__main__':
     main()
