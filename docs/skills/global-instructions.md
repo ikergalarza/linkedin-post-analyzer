@@ -358,6 +358,44 @@ Corre estas puertas EN ORDEN:
 
 ---
 
+### 2.2b · COMO SE ROBA UN OUTLIER: VEHICULO vs CONTENIDO, Y SER EL SEGUNDO MEJOR (Iker, 2026-07-21)
+> **Esto aplica a TODOS los pilares, no solo al meme.** Estaba escrito solo en `post-workflow §4.4` y por eso en un lead magnet se rompio cuatro veces seguidas el mismo dia.
+
+**Buscamos outliers para extraer su vector viral, copiarlo, adaptarlo a ventas y MEJORARLO. No para inspirarnos.** El objetivo no es ser el primero en inventar algo: es ser **el segundo mejor**, que llega despues y lo hace mejor.
+
+#### El paso que se falla siempre: separar VEHICULO de CONTENIDO
+
+| | Que es | Se hace con el |
+|---|---|---|
+| **VEHICULO** | El mecanismo que hace que funcione. No dice nada por si solo | **Se mantiene INTACTO** |
+| **CONTENIDO** | Lo que se cuenta o se regala dentro | **Se cambia por su equivalente en ventas** |
+
+**Meme de la calvicie (16.4x → remix del Mundial):**
+- Vehiculo = la progresion visual de deterioro (los calvos). Sirve para cualquier tema, no significa nada solo. **Se mantuvo entero.**
+- Contenido = subir de rol. **Se cambio** por los minutos de la final.
+
+**Lead magnet de Guillermo Flor (12.3x → remix de la lista):**
+- Vehiculo = *"te doy los nombres, ya filtrados, con su LinkedIn para escribirles"*. **Se mantiene entero.**
+- Contenido = inversores (lo que necesita SU lector). **Se cambia** por empresas a las que vender (lo que necesita el nuestro).
+
+**La pregunta que lo resuelve:** *¿esto que estoy copiando funcionaria igual con otro tema encima?* Si si, es vehiculo y no se toca. Si no, es contenido y hay que traducirlo.
+
+#### Los 4 fallos reales del 2026-07-21, todos el mismo dia
+
+1. **Diluir el contenido en una abstraccion.** Su lista de inversores la converti en "9 cargos que deciden una compra". Cargos genericos no son nombres. **El motor de ese outlier son los NOMBRES REALES**, y sin ellos no queda nada.
+2. **Inventar lo que no estaba.** Meti "una provincia que nadie prospecta" cuando el original no habla de regiones. Si no esta en el original, no es la esencia: es mio.
+3. **Sobre-especificar el ancla.** "50 empresas INDUSTRIALES" (ver `§2.3b`).
+4. **Perder el punch del original sin poner el nuestro.** El suyo tenia tres golpes en 49 caracteres (*Ultimate · Active · Angel*); el mio tenia uno en 79.
+
+#### Donde se SUPERA al original
+
+**Se le gana en el punto donde el es debil, no añadiendo cosas al azar.**
+- El manda **la misma lista a todos**. Nosotros la montamos **por sector, con Unipile**. Ahi esta la mejora, y es la misma palanca que hizo funcionar el 8.52x (critica personalizada de perfiles).
+- Ojo con el reves: el flop del traductor de LinkedIn tambien era "personalizado" y no aporto nada. **Personalizar solo gana si lo personalizado tiene valor de verdad.**
+- Y siempre se le gana en el envase: nuestro formateado, nuestros verbos, nuestras cifras impares, cero negrita Unicode. **Calcar es el suelo, nunca el techo.**
+
+---
+
 ### 2.3b · EL ANCLA VA EN EL HOOK, LA ESPECIFICIDAD EN EL CUERPO (Iker, 2026-07-21)
 
 **El hook ancla a ventas AMPLIFICANDO el alcance al maximo. No al reves.** `§2.3` pide el ancla, pero no decia hasta donde apretar, y por ahi se cuela el error de siempre.
