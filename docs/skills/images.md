@@ -106,6 +106,22 @@ No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que 
 
 **4 · SE TRADUCE **TODO** EL TEXTO DE LA IMAGEN, no solo las etiquetas.** Si el post se traduce, la imagen también. **Mira los rincones**, que es donde se queda el inglés: badges, botones, estados y micro-copia de las capturas. Caso real: se tradujeron las 6 etiquetas grandes y la columna derecha entera se quedó en inglés (`Delivered`, `Pending`, `Subject: Following up…`, `Send`). Traducciones: Delivered → Entregado · Pending → Pendiente · Send → Enviar · Subject → Asunto.
 
+
+## ⭐ 0i · DESPUES DE CADA PROMPT, LA LISTA DE ADJUNTOS (Iker, 2026-07-21)
+
+**El prompt ya no se basta solo.** Desde que decimos "calca esta referencia" y "te adjunto los instaladores de las fuentes", el prompt **da por hecho ficheros que van aparte**. Si Iker esta despistado y manda solo el texto, el diseñador no tiene ni la referencia ni las fuentes, y devuelve algo que no se parece a nada.
+
+**Regla: cada vez que entregues un prompt de diseñador, debajo y FUERA del bloque, va una lista corta de lo que hay que adjuntar.** Solo lo que viaja aparte — no repitas colores, tipografia ni formato, que ya van dentro del prompt.
+
+Lo que suele entrar en esa lista:
+- **La referencia**, siempre que el prompt diga "calca" (meme casi siempre, lead magnet cuando la referencia tiene imagen buena — `post-workflow §4.5.-1`).
+- **Los instaladores de las fuentes**, siempre que el prompt las nombre (`§0h`: si las nombras, di que las adjuntas).
+- **Los datos reales** que el diseñador tendria que inventarse si no se los das: nombres de empresas de una tabla, cifras de un grafico, nombres de personas. **Este es el critico**: si no llegan, el diseñador rellena con inventado y publicamos algo falso (`aboutme`: nunca inventar).
+- **Fotos de producto o logos**, si el prompt los menciona.
+
+Marca cual es el que tumba el post si falta. No todos pesan igual: sin fuentes sale feo, con datos inventados se cae la publicacion entera.
+
+
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
 
