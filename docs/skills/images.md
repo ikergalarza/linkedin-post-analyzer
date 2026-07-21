@@ -107,6 +107,14 @@ No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que 
 **4 · SE TRADUCE **TODO** EL TEXTO DE LA IMAGEN, no solo las etiquetas.** Si el post se traduce, la imagen también. **Mira los rincones**, que es donde se queda el inglés: badges, botones, estados y micro-copia de las capturas. Caso real: se tradujeron las 6 etiquetas grandes y la columna derecha entera se quedó en inglés (`Delivered`, `Pending`, `Subject: Following up…`, `Send`). Traducciones: Delivered → Entregado · Pending → Pendiente · Send → Enviar · Subject → Asunto.
 
 
+## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
+
+**Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
+
+**Y todo lo que el diseñador tiene que LEER va DENTRO del mismo bloque**, en un solo pegado: la orden y, debajo, los datos que tenga que transcribir (la lista de empresas, las cifras de un grafico, los nombres de una tabla). **Nunca el prompt en un bloque y la lista en otro** — son dos pegados y una ocasion de que se le olvide el segundo.
+
+Fuera del bloque solo queda **lo que se adjunta como fichero** (`§0i`): la referencia, las fuentes, los logos, las fotos. Eso no se pega, se arrastra.
+
 ## ⭐ 0i · DESPUES DE CADA PROMPT, LA LISTA DE ADJUNTOS (Iker, 2026-07-21)
 
 **El prompt ya no se basta solo.** Desde que decimos "calca esta referencia" y "te adjunto los instaladores de las fuentes", el prompt **da por hecho ficheros que van aparte**. Si Iker esta despistado y manda solo el texto, el diseñador no tiene ni la referencia ni las fuentes, y devuelve algo que no se parece a nada.
