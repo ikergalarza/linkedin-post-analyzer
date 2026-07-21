@@ -175,8 +175,10 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Los prompts largos y con puntuacion rara fallan.** Medido el 2026-07-21: un prompt de edicion con parentesis numerados, comillas y frases encadenadas dio error de generacion tres veces seguidas. La version corta y hablada paso a la primera.
 
-**Como se escribe:**
-- **Frases cortas, una orden por linea, con una linea en blanco entre orden y orden.** Nada de encadenar seis cambios con puntos y coma.
+**⚠️ Lo que NO cambia nunca, por corto que sea el prompt** (`§0h`): abre con **SOLO HAZ LO QUE TE PIDO en mayusculas**, cierra con **deja todo lo demas intacto y no toques nada que no te he pedido**, y va **todo en UN SOLO PARRAFO**. Nada de listas ni de lineas sueltas separadas por blancos: eso ya se probo el 2026-07-21 y **no es lo que arregla el error**. Lo que lo arregla es la puntuacion y la longitud, no el maquetado.
+
+**Lo que si cambia:**
+- **Frases cortas y seguidas, una orden por frase.** Nada de encadenar seis cambios con puntos y coma dentro de la misma frase.
 - **Cero parentesis, cero comillas, cero numeracion tipo (1) (2).** Si hay que numerar, se dice "cinco cosas" al principio y ya.
 - **Lenguaje hablado.** "Que ahora no se lee" en vez de "el contraste actual es insuficiente". "Pegalos al nombre" en vez de "reposicionalos adyacentemente".
 - **Se dice lo que se quiere ver, no como hacerlo.** El generador no ejecuta especificaciones, interpreta descripciones.
