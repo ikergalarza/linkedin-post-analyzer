@@ -171,6 +171,21 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Y en el prompt, la frase que evita el rechazo sin mentir:** *"lo que estas maquetando es una tabla de datos publicos, asi que tratalo como una maquetacion tipografica: el resultado es texto sobre fondo, sin ilustraciones, sin iconos y sin ningun logotipo"*. Describe la tarea de verdad y le quita al generador la parte que dispara el filtro.
 
+## ⭐ 0i-3 · EL PROMPT SE ESCRIBE COMO SE LE HABLA A UN AMIGO (Iker, 2026-07-21, ya avisado antes)
+
+**Los prompts largos y con puntuacion rara fallan.** Medido el 2026-07-21: un prompt de edicion con parentesis numerados, comillas y frases encadenadas dio error de generacion tres veces seguidas. La version corta y hablada paso a la primera.
+
+**Como se escribe:**
+- **Frases cortas, una orden por linea, con una linea en blanco entre orden y orden.** Nada de encadenar seis cambios con puntos y coma.
+- **Cero parentesis, cero comillas, cero numeracion tipo (1) (2).** Si hay que numerar, se dice "cinco cosas" al principio y ya.
+- **Lenguaje hablado.** "Que ahora no se lee" en vez de "el contraste actual es insuficiente". "Pegalos al nombre" en vez de "reposicionalos adyacentemente".
+- **Se dice lo que se quiere ver, no como hacerlo.** El generador no ejecuta especificaciones, interpreta descripciones.
+- **Cierre en una linea:** "Lo demas dejalo igual".
+
+**Contraste medido ese dia:** la version que fallaba ocupaba un parrafo de 15 lineas con seis parentesis y ocho comillas. La que funciono son siete lineas sueltas y ni un simbolo.
+
+⚠️ **Esto choca con el formato antiguo de `§0h`** (parrafo unico, apertura en mayusculas, cierre de prohibiciones en minusculas). **Ese formato se mantiene solo para prompts de generacion desde cero y siempre que no de error.** En cuanto un prompt falla, se reescribe hablado. Y para prompts de EDICION sobre una imagen ya generada, se usa siempre el formato hablado.
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
