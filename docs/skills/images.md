@@ -119,6 +119,16 @@ No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que 
 
 **Reparto de trabajo, calcado del original:** el **titulo** nombra el artefacto, el **subtitulo** lo cuantifica y lo acota ("25 empresas de tu sector que estan comprando ahora"), y **las filas dan la prueba**. Tres capas, cada una con su funcion.
 
+## ⭐ 0h-3 · TITULO LARGO: SE PARTE EN ESCALERA, Y SIEMPRE ASCENDENTE (Iker, 2026-07-21)
+
+La escalera estaba escrita para el cuerpo del post (`global §3.2`) y para el titular de la web (`lead-magnet-web`), pero **no para el titulo de una imagen**. Va aqui.
+
+**Hasta ~40 caracteres, una sola linea.** Es lo que hacen las referencias que funcionan: Guillermo Flor titula *"The Angel Investor List"*, 23 caracteres, una linea. **Partir un titulo que cabe rompe el calco** y le da al diseñador una decision que no tiene que tomar — el prompt debe decir explicitamente "en una sola linea", o la parte por su cuenta.
+
+**Por encima de ~40, se parte en dos, en escalera ASCENDENTE**: linea 1 mas corta que la linea 2, ratio linea1/linea2 entre **0,65 y 0,80**, el mismo que ya usamos en el titular de la web. El corte va en la pausa natural de la frase, no donde toque por longitud.
+
+**⚠️ Si al partir por su pausa natural la escalera sale INVERTIDA, no la partas: reescribe la frase.** Una escalera al reves es el mismo zigzag que `§3.2` prohibe en el cuerpo, y en un titulo se ve el triple porque son solo dos lineas. Caso real de ese dia: *"Tu lista de empresas, no la de todos"* corta en 21/14 — descendente. Como cabia en una linea (36 caracteres), se dejo en una. Si no hubiera cabido, habria tocado reescribirla, no partirla mal.
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
