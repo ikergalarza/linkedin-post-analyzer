@@ -453,9 +453,10 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 - **⬛ SIEMPRE `en formato cuadrado 1:1`**, aunque la referencia sea vertical (`images §0b`). LinkedIn recorta arriba y abajo en el feed. 19 de 20 de nuestros outliers son 1:1. El formato es NUESTRO: se calca la esencia, no el encuadre.
 - **UN párrafo, CORTO y en lenguaje llano.** Lo lee un diseñador que va a tardar en montarlo: cada frase de más le cuesta tiempo. Claro y corto bate a exhaustivo.
 - **⭐ LA CONTENCION VA PARTIDA: ORDEN AL PRINCIPIO, PROHIBICIONES AL FINAL** (Iker, 2026-07-20).
-  - **Abre** solo con: `SOLO HAZ LO QUE TE PIDO.`
-  - **Cierra** con el bloque entero de contencion, literal:
-    `DEJA TODO LO DEMAS INTACTO. NO HAGAS NADA QUE NO TE HE PEDIDO, NI TOQUES COLORES NI SUAVICES CARAS NI DEFORMES.`
+  - **Abre** en MAYUSCULAS y con dos puntos: `SOLO HAZ LO QUE TE PIDO:`
+  - **Cierra** en minusculas (solo la inicial en mayuscula), literal:
+    `Deja todo lo demas intacto. No hagas nada que no te he pedido, ni toques colores ni suavices caras ni deformes.`
+  - **Las mayusculas van solo en la apertura.** Gritar tambien el cierre reparte el enfasis entre dos sitios y ninguno destaca; en minusculas se lee como la coletilla que es, sin competir con la orden de entrada.
   - **Por que partido:** las herramientas de imagen pesan mas la ULTIMA instruccion. Metiendo "deja todo lo demas intacto" al principio, queda enterrada bajo los cambios que vienen despues; al final es lo ultimo que lee. Y agrupar ahi TODAS las prohibiciones (colores, caras, deformar) evita el goteo de "ah, y tampoco…" que alarga el prompt y se pierde.
 - **Di "calca esta referencia".** Así, con esas palabras. Nada de "parte de la imagen de referencia y mantén el layout, los paneles, la línea divisoria…": eso es hablar complicado para decir "calca".
 - **⛔ NUNCA enumeres lo que se queda igual.** Es el error que más engorda el prompt. el bloque de contencion del final **ya lo cubre entero**. Listar "los dos paneles, la línea divisoria, el fondo de papel, la etiqueta negra, el encuadre, el estilo de dibujo…" no añade precisión: añade ruido y esconde los cambios de verdad entre la paja.
