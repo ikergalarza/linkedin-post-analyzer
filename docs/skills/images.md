@@ -165,6 +165,10 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 - **A · Sin logos.** La tabla va solo con texto. Es lo mas limpio, sale a la primera, y **la credibilidad la dan los nombres reales leidos** — Gestamp o Naturgy se reconocen sin logo. Se pierde calco, se gana que funcione.
 - **B · Hueco gris y los pega Iker.** El generador deja un circulo vacio por fila y los logos se pegan encima en Canva. Salen nitidos y sin deformar, que es como deberian ir. Cuesta cinco minutos.
 
+  **⚠️ En la opcion B el generador NO ve los logos, ni en ZIP ni sueltos.** Lo que dispara el filtro es la marca ajena, no el formato del adjunto: pasarlos de uno en uno da el mismo error. Al generador solo se le adjuntan la referencia y las fuentes. El ZIP se queda para Canva.
+
+  El prompt le pide **circulos grises lisos y vacios** en el sitio de las fotos, con un "no pongas nada dentro de los circulos" en el cierre — si no, los rellena con algo inventado.
+
 **Y en el prompt, la frase que evita el rechazo sin mentir:** *"lo que estas maquetando es una tabla de datos publicos, asi que tratalo como una maquetacion tipografica: el resultado es texto sobre fondo, sin ilustraciones, sin iconos y sin ningun logotipo"*. Describe la tarea de verdad y le quita al generador la parte que dispara el filtro.
 
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
