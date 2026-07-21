@@ -129,6 +129,20 @@ La escalera estaba escrita para el cuerpo del post (`global §3.2`) y para el ti
 
 **⚠️ Si al partir por su pausa natural la escalera sale INVERTIDA, no la partas: reescribe la frase.** Una escalera al reves es el mismo zigzag que `§3.2` prohibe en el cuerpo, y en un titulo se ve el triple porque son solo dos lineas. Caso real de ese dia: *"Tu lista de empresas, no la de todos"* corta en 21/14 — descendente. Como cabia en una linea (36 caracteres), se dejo en una. Si no hubiera cabido, habria tocado reescribirla, no partirla mal.
 
+## ⭐ 0i-1 · VARIOS ASSETS: VAN EN UN ZIP, Y SE PROHIBE REDIBUJARLOS (Iker, 2026-07-21)
+
+**Iker genera las imagenes con ChatGPT.** Dos limitaciones medidas el 2026-07-21, y las dos se arreglan en el prompt.
+
+**1. Con imagenes sueltas no lee el nombre del fichero.** Da igual lo bien numeradas que esten: subidas una a una, el nombre se pierde y no puede emparejar `03-grupo-antolin.jpg` con la fila de Antolin. **Solucion: un ZIP.** ChatGPT lo descomprime con el interprete de codigo y **ahi si ve los nombres**. Y de paso evita subir quince adjuntos.
+
+Por eso, **a partir de 3-4 assets, van en ZIP con el nombre numerado igual que la lista de datos del prompt**, y el prompt le dice explicitamente que lo descomprima y empareje por ese numero.
+
+**2. 🔴 REDIBUJA LOS LOGOS EN VEZ DE PEGARLOS.** Es el riesgo grande: el generador no compone con los ficheros, los reinterpreta, y salen quince marcas reales con el logo deformado. Se ve a la primera y queda entre chapucero y falso.
+
+**El prompt tiene que llevar esta prohibicion, en el cierre en minusculas** (`§0h`): *"no vuelvas a dibujar ni a reinterpretar ningun logo: los logos se pegan tal cual vienen en el ZIP, y si alguno no lo puedes pegar, deja esa celda sin logo antes que dibujarlo tu"*. La segunda mitad es la importante — **darle una salida** para que no rellene inventando, igual que con los datos.
+
+**Y en la entrega hay que avisar a Iker de que revise los logos uno a uno antes de publicar.** Vale para cualquier asset de marca ajena: logos, capturas de producto, packshots. **Mejor sin logos que con logos mal.**
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
