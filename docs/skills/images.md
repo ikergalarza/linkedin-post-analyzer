@@ -107,6 +107,18 @@ No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que 
 **4 · SE TRADUCE **TODO** EL TEXTO DE LA IMAGEN, no solo las etiquetas.** Si el post se traduce, la imagen también. **Mira los rincones**, que es donde se queda el inglés: badges, botones, estados y micro-copia de las capturas. Caso real: se tradujeron las 6 etiquetas grandes y la columna derecha entera se quedó en inglés (`Delivered`, `Pending`, `Subject: Following up…`, `Send`). Traducciones: Delivered → Entregado · Pending → Pendiente · Send → Enviar · Subject → Asunto.
 
 
+## ⭐ 0h-2 · EN UN LEAD MAGNET, EL TITULO DE LA IMAGEN NOMBRA EL ARTEFACTO (Iker, 2026-07-21)
+
+**El titulo de la imagen NO siempre busca punch.** En meme si: la imagen es el motor y el titulo remata el chiste (`§0h`, `§1b`). **En un lead magnet la imagen es la PRUEBA del recurso**, y entonces el titulo tiene un trabajo distinto: **decir que es lo que estas viendo**.
+
+**La evidencia:** Guillermo Flor, 12.3x. Su titulo es *"The Angel Investor List"* — **descriptivo, sin un solo verbo, cero punch**. Funciona porque nombra el artefacto, y el punch de esa imagen lo ponen el "1,000" del subtitulo y las caras reconocibles de la tabla. **El punch ya lo lleva el gancho del texto; repetirlo en la imagen desperdicia el unico sitio donde se puede dar claridad.**
+
+**Regla: en lead magnet, el titulo de la imagen tiene que contener la palabra que nombra el recurso** (lista, plantilla, guion, calendario). Si el titulo es punchy pero no dice que hay dentro, **esta mal**, por bueno que suene. Fallo real de ese dia: *"Vender sin llamar a ciegas"* — mejor frase que la suya y peor titulo, porque no nombraba la lista.
+
+**Donde se le gana** (`global §2.2b`, ser el segundo mejor): nombras el artefacto igual que el, y añades en el mismo titulo la mejora que traemos. Titulo final: *"Tu lista de empresas, no la de todos"* — nombra la lista **y** dice en cuatro palabras que la suya es para todos y la nuestra es tuya.
+
+**Reparto de trabajo, calcado del original:** el **titulo** nombra el artefacto, el **subtitulo** lo cuantifica y lo acota ("25 empresas de tu sector que estan comprando ahora"), y **las filas dan la prueba**. Tres capas, cada una con su funcion.
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
