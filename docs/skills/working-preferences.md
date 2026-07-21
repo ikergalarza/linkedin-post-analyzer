@@ -23,6 +23,24 @@
 
 ---
 
+
+## ⭐ 1c · SI UN HALLAZGO CAMBIA UN ENTREGABLE YA DADO, REDALO ENTERO (Iker, 2026-07-21)
+
+**El fallo:** entregado un prompt de diseñador, hice una investigacion posterior que obligaba a cambiarle una columna. Explique el cambio y **no volvi a dar el prompt**. Iker se quedo con un prompt caduco y un parrafo diciendole que estaba caduco.
+
+**Regla: cuando algo que descubres invalida un entregable que ya has dado — prompt, post, lista, ruta de fichero — no describas el cambio: vuelve a dar el entregable entero y corregido, en el mismo turno.** El resumen explica el porque; el bloque trae la version buena. Nunca al reves, y nunca solo una de las dos.
+
+Vale para todo lo que se copia y pega: un prompt de diseñador, el texto de un post, un comando. **Si Iker tiene que reconstruirlo el juntando tu explicacion con la version vieja, esta mal entregado.** Es exactamente el mismo criterio que `§1` (el post siempre completo dentro del bloque, nunca "cambia esta linea").
+
+**Y antes de cerrar el turno, comprueba hacia atras:** ¿algo de lo que acabo de descubrir toca un bloque que ya le di? Si toca, ese bloque se rehace.
+
+## ⭐ 1d · LOS AVISOS CRITICOS VAN MARCADOS EN ROJO (Iker, 2026-07-21)
+
+El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacion o hacerle perder tiempo empieza por 🔴**. Iker lee en diagonal cuando va rapido y un parrafo de texto plano se le pasa.
+
+Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo falso, cosas que faltan por adjuntar y sin las cuales el entregable no funciona, y contradicciones entre lo que dice el texto y lo que enseña la imagen. **No se marca** lo que es solo una opinion o una mejora opcional — si se marca todo, deja de destacar nada.
+
+
 ## 2 · Valida de forma proactiva (no esperes a que pregunte)
 
 - Antes de entregar cualquier borrador, corre en silencio el **pase de validación** contra toda la stack de reglas (`global-instructions`, `brand-voice`, mecánicas, RECENT_DIAGNOSIS, datos de la cuenta).
