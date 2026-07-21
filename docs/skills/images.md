@@ -143,6 +143,16 @@ Por eso, **a partir de 3-4 assets, van en ZIP con el nombre numerado igual que l
 
 **Y en la entrega hay que avisar a Iker de que revise los logos uno a uno antes de publicar.** Vale para cualquier asset de marca ajena: logos, capturas de producto, packshots. **Mejor sin logos que con logos mal.**
 
+## ⭐ 0h-4 · LA CIFRA DE LA IMAGEN Y LA DEL TEXTO SON LA MISMA (Iker, 2026-07-21)
+
+**Si la imagen enseña filas contables, el numero del gancho tiene que ser EXACTAMENTE el numero de filas.** Guillermo Flor puede decir "1,000" y enseñar 35 filas porque nadie espera ver mil; **entre 25 y 15 se cuenta a ojo**, y el lector que las cuenta descubre que le prometes mas de lo que enseñas. En un lead magnet, donde lo unico que vendes es la credibilidad del recurso, eso lo mata.
+
+Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el texto a 15, no subiendo la imagen. **Enseñar la lista ENTERA es mas creible que enseñar una muestra**, y de paso la imagen queda mas minimalista y el recurso se monta en la mitad de tiempo.
+
+**Los tres sitios que tienen que decir el mismo numero:** el gancho, la linea del entregable en el cuerpo, y el subtitulo de la imagen. **Si cambias uno, cambias los tres.** Y el numero sigue siendo impar (`global §2.5b`).
+
+**Y ajusta la densidad de la tabla al numero real de filas:** si la referencia trae treinta y tu llevas quince, el prompt tiene que pedir mas aire entre filas, o la tabla queda apelotonada arriba y medio cuadrado vacio.
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
