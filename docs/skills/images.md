@@ -153,6 +153,20 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Y ajusta la densidad de la tabla al numero real de filas:** si la referencia trae treinta y tu llevas quince, el prompt tiene que pedir mas aire entre filas, o la tabla queda apelotonada arriba y medio cuadrado vacio.
 
+## ⭐ 0i-2 · LOGOS DE TERCEROS: EL GENERADOR LOS RECHAZA, Y SE SACAN DE LA IMAGEN (Iker, 2026-07-21)
+
+**Medido el 2026-07-21:** un prompt que pedia colocar quince logos de empresas reales hizo que ChatGPT devolviera *"se ha producido un error en la herramienta de generacion"*. Es el filtro de marcas de terceros, y **no se arregla insistiendo ni reformulando el prompt**.
+
+**Lo que NO se hace: dar a entender que las marcas son nuestras para que el filtro pase.** Es mentirle a la herramienta, y si alguien pregunta de donde salen esos logos la respuesta es que la engañamos. El uso real es legitimo — una tabla de datos publicos — pero la salida no es disfrazarlo.
+
+**Lo que si se hace, y ademas resuelve el otro problema:** que el generador no toque los logos. Recuerda que **de todas formas los redibuja** (`§0i-1`), asi que sacarlos de la imagen elimina dos riesgos de una vez.
+
+**Dos opciones, por orden:**
+- **A · Sin logos.** La tabla va solo con texto. Es lo mas limpio, sale a la primera, y **la credibilidad la dan los nombres reales leidos** — Gestamp o Naturgy se reconocen sin logo. Se pierde calco, se gana que funcione.
+- **B · Hueco gris y los pega Iker.** El generador deja un circulo vacio por fila y los logos se pegan encima en Canva. Salen nitidos y sin deformar, que es como deberian ir. Cuesta cinco minutos.
+
+**Y en el prompt, la frase que evita el rechazo sin mentir:** *"lo que estas maquetando es una tabla de datos publicos, asi que tratalo como una maquetacion tipografica: el resultado es texto sobre fondo, sin ilustraciones, sin iconos y sin ningun logotipo"*. Describe la tarea de verdad y le quita al generador la parte que dispara el filtro.
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
