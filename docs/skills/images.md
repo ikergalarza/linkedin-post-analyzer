@@ -121,6 +121,12 @@ Lo que suele entrar en esa lista:
 
 Marca cual es el que tumba el post si falta. No todos pesan igual: sin fuentes sale feo, con datos inventados se cae la publicacion entera.
 
+**⭐ Si la referencia lleva fotos o logos en las filas, descargalos y adjuntalos.** Guillermo Flor lleva la foto de cada inversor; nuestro equivalente es el logo de LinkedIn de cada empresa, y Unipile lo da en `logo_large` (`GET /api/v1/linkedin/company/{slug}` → descargar la URL). Se numeran igual que la lista de datos (`01-gestamp.jpg`, `02-…`) para que el diseñador no tenga que emparejar nada. Van al Escritorio, **nunca al repo** (`CLAUDE.md`: los binarios no se commitean).
+
+Dos trampas medidas el 2026-07-21: **vienen en JPEG aunque la URL diga `.png`** (renombra la extension o algunas herramientas los rechazan), y **no todas las empresas tienen 400x400** — Ormazabal, Porcelanosa e Indra solo tienen 100 o 200 px y LinkedIn no sirve nada mayor. A tamaño de fila da igual, pero el prompt tiene que decir **que no los amplie**, o el diseñador los escala y salen pixelados.
+
+Y verifica siempre el slug: `GET company/{slug}` devuelve **homonimas de otros paises** sin avisar. Ese dia "acs-group" devolvio una consultora de 18 empleados en Bothell y "caf" el banco de desarrollo de America Latina. Comprueba sede y numero de empleados antes de dar un nombre por bueno.
+
 
 ## 1 · Formato de salida
 UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nombra (tejido natural, en este orden): **sujeto principal · acción/expresión · prop clave · texto overlay (con la palabra EXACTA que va en naranja) · layout/composición · mapeo de roles de color.** Sin bullets, sin headers, sin "concepto alternativo" salvo que se pida.
