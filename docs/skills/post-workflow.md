@@ -654,3 +654,22 @@ El sistema no termina al entregar el post. Para que mejore con el tiempo:
 2. **Destilar el aprendizaje:** si un post **rompe** (muy por encima) o **flopea** (muy por debajo) de lo esperado, saca UNA frase de aprendizaje y proponla para la skill que toque (`outliers-database §4` si es un ratio/patrón, `swipe-file` si es un molde de texto, `global-instructions` si es una regla nueva). No lo dejes solo en la memoria de la conversación.
 3. **Persistir:** el aprendizaje solo cuenta si se guarda en el archivo y se **commitea**. Memoria ≠ archivo (ver README, flujo de actualización).
 4. **Refrescar los ratios:** cada 1-2 meses, reexporta "Top posts" y el Explorer y actualiza §4 y §3 — los ratios decaen y las mecánicas se queman.
+
+---
+
+## ⚙️ EL CRUCE DE MENCIONES (añadido 2026-07-20)
+
+`§4.0c` prohíbe repetir empresa o persona entre posts de la misma región, contando
+las TRES cuentas y los DOS formatos. A ojo no escala: en Cataluña había **83
+entidades ya mencionadas** entre el mapa de Iker y el "Los 10" de Unai.
+
+**Ahora lo comprueba el validador.** Fuente: `docs/skills/menciones-usadas.json`
+(518 entidades de 22 posts de peloteo), con normalización que caza `Bioibérica`
+contra `Bioiberica` y `Prefabricados Pujol` contra `Prefabricats Pujol`.
+
+```
+node scripts/extraer-menciones.mjs     # regenerar tras publicar un peloteo
+```
+
+⚠️ **Regenéralo DESPUÉS de publicar, no antes.** Si lo regeneras con el borrador
+ya publicado dentro, al revalidar ese mismo post se detectará a sí mismo.

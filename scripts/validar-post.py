@@ -24,6 +24,46 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HISTORIAL = os.path.join(RAIZ, 'docs', 'skills', 'historial-publicaciones.md')
 
 # --- vocabularios (de docs/skills/) -----------------------------------------
+# ============ REGLAS AÑADIDAS EN LA AUDITORIA DEL 2026-07-20 ============
+# Salieron de leer las 6 skills enteras buscando lo que estaba escrito pero
+# nadie comprobaba. Criterio de admision: dato detras Y cero ambiguedad. Lo que
+# dependia de la POLARIDAD de una frase (pinchar una region, criticar al lector)
+# se descarto: un falso positivo enseña a ignorar el validador.
+
+# brand-voice §3 — tabla de AI-tells, "en cuanto uno aparezca en un borrador,
+# cambialo antes de entregar". Lista literal cerrada.
+AI_TELLS = (r'(lo m[aá]s importante|lo fundamental|lo esencial|es (fundamental|crucial|clave) que'
+            r'|hoy en d[ií]a|en la actualidad|en el mundo actual|sin embargo|no obstante|asimismo'
+            r'|por lo tanto|en consecuencia|de esta manera|posibilita|optimizar|maximizar|potenciar'
+            r'|numerosos|en definitiva|en resumen|en conclusi[oó]n|la clave est[aá] en|el secreto es)')
+
+# global §2.8 y §6 — cierres quemados. El validador ya miraba OPENERS; estos
+# viven al FINAL y no los veia nadie.
+CIERRE_QUEMADO = r'^\s*(spoiler|plot twist|p\.?\s?d\.?|posdata)\s*:'
+
+# global §6 — listicles con negrita Unicode. El check de markdown NO los caza:
+# no son asteriscos, son otro bloque Unicode (Mathematical Alphanumeric Symbols).
+NEGRITA_UNICODE = r'[𝐀-𝟿]'
+
+# post-workflow §4.5 Paso 2 — el entregable generico esta MUERTO.
+# Medido: "biblia de ventas" 1.2x · 2.3K impresiones, contra 8.52x y 9.85x de
+# los entregables de UNA cosa concreta.
+ENTREGABLE_GENERICO = (r'(biblia|todo mi material|todos mis recursos|toda mi (caja|carpeta|colecci[oó]n)'
+                       r'|en una caja|el pack completo|arsenal)')
+
+# post-workflow §4.5 puerta 4 — CTA implicita DEPRECADA: "hundieron el conteo de
+# comentarios en dos A/B independientes".
+CTA_IMPLICITA = r'(d[ií]melo abajo|levanto la mano|aqu[ií] abajo|te leo abajo)'
+
+# post-workflow §4.5.0 — en el hook de ULTIMA HORA el sujeto es el TRABAJO del
+# lector, nunca el modelo. Es el dato mas fuerte de todo el corpus: mismo hook,
+# mismo emoji, mismo mes, 40x de diferencia.
+#   trabajo -> 9.96x (632 com.) y 2.72x (167 com.)
+#   modelo  -> 0.70x, 0.23x, 0.22x
+SUJETO_ES_MODELO = (r'(claude\s*(opus|sonnet|haiku)?\s*\d|gpt-?\d|gemini\s*\d'
+                    r'|el nuevo claude|ha salido \w+ ?\d|sonnet|opus)')
+
+
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 # §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
 # "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
@@ -179,6 +219,34 @@ def es_lista(bloque):
     if sum(1 for l in lineas if l.rstrip().endswith(':')) >= 2:
         return True
     return sum(1 for l in lineas if re.match(r'\s*[^:\n]{2,28}:\s+\S', l)) >= 2
+
+
+def leer_menciones_usadas():
+    """Entidades ya mencionadas en posts de peloteo, de las TRES cuentas.
+    Se regenera con `node scripts/extraer-menciones.mjs`. Si no existe, el
+    check se salta en vez de fallar: no tener el fichero no es un error del post.
+    """
+    import json
+    f = os.path.join(RAIZ, 'docs', 'skills', 'menciones-usadas.json')
+    if not os.path.exists(f):
+        return None
+    try:
+        return json.load(io.open(f, encoding='utf-8'))
+    except Exception:
+        return None
+
+
+def normalizar_entidad(x):
+    """Misma normalizacion que extraer-menciones.mjs. Sin ella se cuela
+    'Bioiberica' contra 'Bioiberica' y 'Prefabricados Pujol' contra
+    'Prefabricats Pujol', que es el fallo real documentado en §4.0c."""
+    import unicodedata
+    x = unicodedata.normalize('NFD', x or '')
+    x = ''.join(c for c in x if unicodedata.category(c) != 'Mn').lower()
+    x = re.sub(r'(s\.?a\.?u?\.?|s\.?l\.?u?\.?|group|grupo|holding|company)', '', x)
+    x = re.sub(r'[^a-z0-9ñ ]', ' ', x)
+    return re.sub(r'\s+', ' ', x).strip()
+
 
 def leer_historial():
     if not os.path.exists(HISTORIAL):
@@ -337,6 +405,50 @@ def validar(texto, pilar, cuenta=None):
     chk(not zigzag, 'Bloques de 2-3 en escalera, recta o invertida (§3.2)',
         f'{zigzag} → cada línea más larga que la anterior, o cada una más corta' if zigzag else '')
 
+    # ---------- AUDITORIA 2026-07-20: lo que estaba escrito y nadie miraba ----------
+    m = re.search(AI_TELLS, cuerpo, re.I)
+    chk(not m, 'Sin AI-tells de la tabla (brand-voice §3)',
+        f'"{m.group(0)}" — la tabla dice "cambialo antes de entregar"' if m else '')
+
+    _ultimas = [l for l in cuerpo.splitlines() if l.strip()][-3:]
+    m = next((re.search(CIERRE_QUEMADO, l, re.I) for l in _ultimas
+              if re.search(CIERRE_QUEMADO, l, re.I)), None)
+    chk(not m, 'Sin cierres quemados: Spoiler / Plot twist / P.D. (§2.8, §6)',
+        f'"{m.group(0)}" al final' if m else '')
+
+    m = re.search(NEGRITA_UNICODE, cuerpo)
+    chk(not m, 'Sin negrita Unicode tipo 𝗟𝗮𝘀 𝟭𝟬 (§6)',
+        'el check de markdown no la caza: es otro bloque Unicode' if m else '')
+
+    # brand-voice §4.5 — el nombre del founder gana al del producto. Como mucho
+    # UNA vez y nunca en el hook. El check viejo solo miraba el spam ninja.
+    _neety = len(re.findall(r'Neety', cuerpo, re.I))
+    chk(_neety <= 1, 'Neety se nombra como mucho UNA vez (brand-voice §4.5)',
+        f'{_neety} veces' if _neety > 1 else '')
+    chk(not re.search(r'Neety', hook_txt, re.I), 'Neety NUNCA en el hook (brand-voice §4.5)',
+        'el post vende al pensador, no al producto' if re.search(r'Neety', hook_txt, re.I) else '')
+
+    # global §4.4b + outliers §3.14 — el link va SIEMPRE a agendar. Los CTR mas
+    # altos del historico no valian: iban a pampam.city, web ajena. 727 clics
+    # regalados entre tres mapas.
+    _urls = re.findall(r'https?://\S+|[\w.-]+\.(?:com|es|city|io)\S*', cuerpo)
+    _fuera = [u for u in _urls if 'recursos.neety.com' not in u and 'linkedin.com' not in u]
+    chk(not _fuera, 'El enlace apunta a recursos.neety.com, no fuera (outliers §3.14)',
+        f'{_fuera[:2]} — un clic a web ajena no es un clic nuestro' if _fuera else '')
+
+    # global §2.10 — la mano abajo. DURA en peloteo (su formula de hook la lleva
+    # literal), AVISO en meme y lead magnet: 2 de 3 memes grandes la llevan pero
+    # el 15.0x cierra con ✨ y funciona igual. Y forzarla en todo es como se
+    # fabrico la muletilla "En ventas,".
+    _mano = hook_txt.rstrip().endswith('👇')
+    if pilar in ('mapa', 'los10'):
+        chk(_mano, 'El hook cierra con 👇 (§4.2/§4.3, formula del pilar)',
+            'en peloteo la formula del hook lo lleva literal' if not _mano else '')
+    elif pilar in ('meme', 'leadmagnet'):
+        chk(_mano, 'El hook cierra con 👇 (§2.10)',
+            'no es obligatorio (el 15.0x cierra con ✨) pero es la opcion por defecto'
+            if not _mano else '', aviso=True)
+
     # ---------- POR PILAR ----------
     tiene_link = 'recursos.neety.com' in cuerpo
     if pilar in ('mapa', 'los10', 'meme'):
@@ -436,6 +548,89 @@ def validar(texto, pilar, cuenta=None):
                            cuerpo, re.I)),
             'CTA con la palabra + el 2º dato (sector si es DM, web si es público) (§4.4)',
             'el "mes de cumpleaños" ya flopeó a 0.57x: el 2º dato tiene que ser el que necesitas para responderle')
+
+    # ---------- AUDITORIA 2026-07-20 · POR PILAR ----------
+    _flechas = [l for l in cuerpo.splitlines() if re.match(r'^\s*→\s', l)]
+
+    if pilar in ('mapa', 'los10') and _flechas:
+        # §4.2/§4.3 — la frase de entrada va SOLA. Pegada a la lista, el bloque
+        # se lee como un muro.
+        _lineas = cuerpo.splitlines()
+        _i = next(i for i, l in enumerate(_lineas) if re.match(r'^\s*→\s', l))
+        chk(_i > 0 and not _lineas[_i - 1].strip(),
+            'Linea en blanco antes de la primera → (§4.2 Paso 4)',
+            'pegada a la entrada, la lista se lee como un muro' if _i > 0 and _lineas[_i-1].strip() else '')
+
+        # §4.0c — ni una entidad repetida de posts anteriores. El cruce cuenta
+        # las TRES cuentas y los DOS formatos: en Cataluña habia 83 ya usadas
+        # entre el mapa de Iker y el "Los 10" de Unai. El objetivo es traer
+        # clientes NUEVOS, no repetir a los de siempre.
+        _mm = leer_menciones_usadas()
+        if _mm:
+            _rep = []
+            for l in _flechas:
+                for e in l.replace('→', '').split('·')[0].split(' - '):
+                    e = e.strip()
+                    if len(e) < 3:
+                        continue
+                    k = normalizar_entidad(e)
+                    if k in _mm.get('entidades', {}):
+                        _rep.append(f"{e} ({', '.join(_mm['entidades'][k]['posts'][:2])})")
+            chk(not _rep, 'Ninguna empresa ni persona repetida (§4.0c)',
+                f"{len(_rep)} repetida(s): {'; '.join(_rep[:3])}" if _rep else
+                f"cruzado contra {_mm.get('total', 0)} ya mencionadas")
+
+    if pilar == 'mapa':
+        # §4.2 Paso 4 — 20 en 5x4, o 16 en 4x4 si no llegas. Nunca otra cifra.
+        chk(len(_flechas) in (16, 20), 'Mapa con 16 o 20 menciones (§4.0c)',
+            f'{len(_flechas)}. Si no llegas a 20 baja a 16, no rellenes' if len(_flechas) not in (16, 20) else '')
+        # §4.0b — en el mapa la ficha NO lleva logro. Ese es el formato de "Los 10".
+        _con_logro = [l for l in _flechas if '·' in l]
+        chk(not _con_logro, 'Mapa sin logro en la ficha (§4.0b)',
+            f'{len(_con_logro)} llevan "·": eso es formato de "Los 10"' if _con_logro else '')
+
+    if pilar == 'los10':
+        chk(len(_flechas) == 10, '"Los 10" con exactamente 10 fichas (§4.3 Paso 2)',
+            f'{len(_flechas)}' if len(_flechas) != 10 else '')
+        _sin_logro = [l for l in _flechas if '·' not in l]
+        chk(not _sin_logro, 'Cada ficha lleva su logro tras "·" (§4.3 Paso 2)',
+            f'{len(_sin_logro)} sin logro' if _sin_logro else '')
+        # §4.3 Paso 3b — el unico numero del pilar es el logro. El 4.81x del Pais
+        # Vasco no llevaba NI UNA cifra regional: descentra el post de las
+        # personas y canibaliza el mapa.
+        _fuera = [l for l in cuerpo.splitlines()
+                  if l.strip() and not re.match(r'^\s*→\s', l) and re.search(r'\d', l)
+                  and 'recursos.neety.com' not in l]
+        chk(not _fuera, 'Sin cifras regionales fuera de las fichas (§4.3 Paso 3b)',
+            f'{len(_fuera)}: "{_fuera[0][:52]}"' if _fuera else '')
+        # §4.3 Paso 3e — el beat de equipo va en el SETUP, antes de la lista.
+        # Despues solo corrige la objecion; antes, la evita.
+        _mb = re.search(BEAT_EQUIPO, cuerpo, re.I)
+        if _mb and _flechas:
+            _pos_beat = cuerpo.index(_mb.group(0))
+            _pos_lista = cuerpo.index(_flechas[0])
+            chk(_pos_beat < _pos_lista, 'El beat de equipo va ANTES de la lista (§4.3 Paso 3e)',
+                'despues de la lista solo corrige la objecion; antes la evita' if _pos_beat > _pos_lista else '')
+
+    if pilar == 'leadmagnet':
+        m = re.search(ENTREGABLE_GENERICO, cuerpo, re.I)
+        chk(not m, 'Entregable UNO y concreto, no generico (§4.5 Paso 2)',
+            f'"{m.group(0)}" — la biblia hizo 1.2x · 2.3K' if m else '')
+        m = re.search(CTA_IMPLICITA, cuerpo, re.I)
+        chk(not m, 'CTA explicita, nunca implicita (§4.5 puerta 4)',
+            f'"{m.group(0)}" hundio comentarios en dos A/B' if m else '')
+        # §4.5.0 — el sujeto es el TRABAJO del lector, nunca el modelo. 40x.
+        if re.search(r'(ÚLTIMA HORA|ULTIMA HORA|URGENTE|Acaba de pasar)', hook_txt, re.I):
+            m = re.search(SUJETO_ES_MODELO, hook_txt, re.I)
+            chk(not m, 'El sujeto es el TRABAJO del lector, no el modelo (§4.5.0)',
+                f'"{m.group(0)}" — sujeto=trabajo 9.96x vs sujeto=modelo 0.70x. 40x' if m else '')
+        # §4.5 Paso 5 — la palabra del CTA remata la gracia del hook.
+        m2 = re.search(r'comenta\s+"([^"]+)"', cuerpo, re.I)
+        if m2:
+            _raiz = normalizar_entidad(m2.group(1))[:5]
+            chk(bool(_raiz) and _raiz in normalizar_entidad(hook_txt),
+                'La palabra del CTA reconecta con el hook (§4.5 Paso 5)',
+                f'"{m2.group(1)}" no aparece en el hook' if _raiz not in normalizar_entidad(hook_txt) else '')
 
     # ---------- CONTRA EL HISTORIAL ----------
     h = leer_historial()
