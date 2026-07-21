@@ -452,11 +452,15 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 **Cómo se escribe el prompt (técnica validada por el usuario, funciona):**
 - **⬛ SIEMPRE `en formato cuadrado 1:1`**, aunque la referencia sea vertical (`images §0b`). LinkedIn recorta arriba y abajo en el feed. 19 de 20 de nuestros outliers son 1:1. El formato es NUESTRO: se calca la esencia, no el encuadre.
 - **UN párrafo, CORTO y en lenguaje llano.** Lo lee un diseñador que va a tardar en montarlo: cada frase de más le cuesta tiempo. Claro y corto bate a exhaustivo.
-- **Empieza en MAYÚSCULAS con la orden de contención:** `SOLO HAZ LO QUE TE PIDO Y DEJA TODO LO DEMÁS INTACTO.` Es lo que más reduce que la herramienta se invente cosas.
+- **⭐ LA CONTENCION VA PARTIDA: ORDEN AL PRINCIPIO, PROHIBICIONES AL FINAL** (Iker, 2026-07-20).
+  - **Abre** solo con: `SOLO HAZ LO QUE TE PIDO.`
+  - **Cierra** con el bloque entero de contencion, literal:
+    `DEJA TODO LO DEMAS INTACTO. NO HAGAS NADA QUE NO TE HE PEDIDO, NI TOQUES COLORES NI SUAVICES CARAS NI DEFORMES.`
+  - **Por que partido:** las herramientas de imagen pesan mas la ULTIMA instruccion. Metiendo "deja todo lo demas intacto" al principio, queda enterrada bajo los cambios que vienen despues; al final es lo ultimo que lee. Y agrupar ahi TODAS las prohibiciones (colores, caras, deformar) evita el goteo de "ah, y tampoco…" que alarga el prompt y se pierde.
 - **Di "calca esta referencia".** Así, con esas palabras. Nada de "parte de la imagen de referencia y mantén el layout, los paneles, la línea divisoria…": eso es hablar complicado para decir "calca".
-- **⛔ NUNCA enumeres lo que se queda igual.** Es el error que más engorda el prompt. `SOLO HAZ LO QUE TE PIDO Y DEJA TODO LO DEMÁS INTACTO` **ya lo cubre entero**. Listar "los dos paneles, la línea divisoria, el fondo de papel, la etiqueta negra, el encuadre, el estilo de dibujo…" no añade precisión: añade ruido y esconde los cambios de verdad entre la paja.
+- **⛔ NUNCA enumeres lo que se queda igual.** Es el error que más engorda el prompt. el bloque de contencion del final **ya lo cubre entero**. Listar "los dos paneles, la línea divisoria, el fondo de papel, la etiqueta negra, el encuadre, el estilo de dibujo…" no añade precisión: añade ruido y esconde los cambios de verdad entre la paja.
 - **Pide SOLO los cambios exactos**, numerados dentro del párrafo (1), (2), (3). Y en cada uno, solo lo que cambia: no repitas "con la misma pose, el mismo encuadre y el mismo tratamiento", que también es decir lo que NO cambia.
-- **Cierra con las prohibiciones, cortas:** `No suavices ni deformes las caras. No añadas nada más.` Lo de las caras solo si las hay, y va literal: las herramientas suelen clavar la primera fila y hacer lo que quieren en la última.
+- **Las prohibiciones ya van todas en el bloque de cierre de arriba.** No las repartas por el prompt: las herramientas suelen clavar la primera fila y hacer lo que quieren en la ultima, asi que la contencion tiene que ser lo ultimo que lean.
 - **La tipografía SOLO si la imagen lleva texto.** Si no lleva, no la menciones: le estás dando una instrucción sin objeto y la puede usar de excusa para añadir texto que nadie pidió.
 - **Regla de pulgar:** si una frase describe algo que ya está en la referencia y no cambia, **bórrala**.
 - **🎯 NUNCA le digas "céntralo"** (`images §0c`). Es un juicio y la herramienta no mide, mueve: falla siempre. Dale la operación: `aprovecha el espacio que tiene a la izquierda para que quede centrado`. Validado.
