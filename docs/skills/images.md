@@ -175,7 +175,7 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Los prompts largos y con puntuacion rara fallan.** Medido el 2026-07-21: un prompt de edicion con parentesis numerados, comillas y frases encadenadas dio error de generacion tres veces seguidas. La version corta y hablada paso a la primera.
 
-**⚠️ Lo que NO cambia nunca, por corto que sea el prompt** (`§0h`): abre con **SOLO HAZ LO QUE TE PIDO en mayusculas**, cierra con **deja todo lo demas intacto y no toques nada que no te he pedido**, y va **todo en UN SOLO PARRAFO**. Nada de listas ni de lineas sueltas separadas por blancos: eso ya se probo el 2026-07-21 y **no es lo que arregla el error**. Lo que lo arregla es la puntuacion y la longitud, no el maquetado.
+**⚠️ Lo que NO cambia nunca, por corto que sea el prompt** (`§0h`): abre con **SOLO HAZ LO QUE TE PIDO en mayusculas**, cierra con **deja todo lo demas intacto y no toques nada que no te he pedido**, y va **todo en UN SOLO PARRAFO**. **Y tras la apertura, la orden va directa: nada de "coge esta imagen y..." ni preambulos de relleno.** El generador ya tiene la imagen delante; se le dice lo que se quiere, no que la coja. Ej: *"SOLO HAZ LO QUE TE PIDO: los titulos de las columnas ponlos en negrita..."*, no *"SOLO HAZ LO QUE TE PIDO: coge esta imagen y ponle..."*. Nada de listas ni de lineas sueltas separadas por blancos: eso ya se probo el 2026-07-21 y **no es lo que arregla el error**. Lo que lo arregla es la puntuacion y la longitud, no el maquetado.
 
 **Lo que si cambia:**
 - **Frases cortas y seguidas, una orden por frase.** Nada de encadenar seis cambios con puntos y coma dentro de la misma frase.
