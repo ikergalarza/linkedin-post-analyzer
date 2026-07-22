@@ -357,6 +357,8 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 
 ### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
+>
+> 🔴 **NUNCA propongas un meme sin referencia real validada (Iker, 2026-07-22).** Un formato de meme genérico "que funciona en internet" (distracted boyfriend, midwit, drake…) **NO vale**: si no está validado como OUTLIER en un post real de LinkedIn (nuestro o de otro creador), no es un dato, es una apuesta, y no nos la jugamos. **Todo meme que entregues lleva el ENLACE al post de referencia y su ratio.** Si no encuentras una referencia real potente (p.ej. el banco de inspiración no tiene un meme de ventas fuerte), **DILO y pídele una a Iker** — no rellenes con un template genérico. "Siempre subimos cosas basadas en datos."
 > **⚠️ PREGUNTA TAMBIÉN PARA QUÉ CUENTA ES, y hazlo ANTES de elegir la referencia** (`brand-voice §1b` · `images §0g`). **Son dos cajones:**
 > - **Unai y Asier** → meme **inteligente, para industriales, inequívocamente de ventas y NUNCA infantil**. Ni dibujos de animales ni caricaturas monas. No es que no puedan llevar meme (el mejor post de Unai, 16.62x, ES un meme: el wojak); es que el wojak es feo y un border collie dibujado es mono.
 > - **Iker** → **cualquier meme outlier**, con la condición de siempre: adaptado a ventas (`global §2.3`). Sin restricción extra.
