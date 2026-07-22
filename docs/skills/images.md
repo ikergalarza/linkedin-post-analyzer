@@ -188,6 +188,19 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 ⚠️ **Esto choca con el formato antiguo de `§0h`** (parrafo unico, apertura en mayusculas, cierre de prohibiciones en minusculas). **Ese formato se mantiene solo para prompts de generacion desde cero y siempre que no de error.** En cuanto un prompt falla, se reescribe hablado. Y para prompts de EDICION sobre una imagen ya generada, se usa siempre el formato hablado.
 
+## ⭐ 0h-5 · UNA TABLA SE LEE EN EL FEED, NO SE ADMIRA (Iker, 2026-07-21)
+
+Cuando el remix es una tabla de datos (lista, comparativa, ranking), **el objetivo NO es que sea bonita, es que se lea sin zoom en el movil**. LinkedIn no deja ampliar la imagen del feed. La referencia de Guillermo Flor es mas bonita que la nuestra y **no se lee una sola fila** — ahi es exactamente donde se le gana (`global §2.2b`, batir al original en su punto debil): mas retencion, la gente para a leer en vez de pasar de largo.
+
+**Dos enemigos de la legibilidad, los dos medidos el 2026-07-21:**
+
+1. **El gris claro, mas que el grosor.** Lo que emborrona un texto pequeño no es que sea fino, es que sea gris claro con poco contraste. **Un gris oscuro fino se lee mejor que un gris claro grueso.** Antes de engordar nada, oscurece.
+
+2. **La compresion de la red.** LinkedIn recomprime toda imagen subida. **Una tabla con texto fino y bordes es el peor caso para JPG**: el algoritmo emborrona justo los cantos de las letras. **Se sube en PNG**, que mantiene el texto limpio. Si el generador la da en JPG, se reguarda como PNG antes de publicar.
+
+**⚠️ Legibilidad SIN aplanar.** Subir el peso de todo el texto a negrita mata la jerarquia: si actividad, empleados y zona pesan igual que el nombre, el nombre deja de mandar y la tabla queda plana — el problema de Guillermo por el otro lado. **La negrita se reserva para lo que importa de cada fila** (el nombre de la empresa); el resto sube a peso medio y a gris oscuro, no a negrita.
+
+
 ## ⭐ 0i-0 · EL PROMPT VA SIEMPRE EN UN BLOQUE CERCADO, Y COMPLETO (Iker, 2026-07-21)
 
 **Todo prompt de diseñador se entrega en un bloque cercado**, igual que el texto de un post (`working-preferences §1`). Iker lo copia con el boton y lo pega. En cita o en parrafo tiene que seleccionarlo a mano, y ahi es donde se pierde media frase.
