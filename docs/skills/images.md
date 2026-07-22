@@ -281,7 +281,7 @@ La referencia manda: layout, nº de paneles, escena, expresiones, lenguaje corpo
 1. **Remapea los colores** a la paleta Neety **y añade detalles de marca** (no solo recolorear): corbatas naranjas, patrones, siluetas, props narrativos en naranja.
 2. **Textos:** si los hay, tradúcelos al español (adaptados a ventas) en Bricolage Grotesque (títulos) + Switzer (cuerpo) con la regla de la palabra naranja.
 3. **Props específicos:** conserva el elemento pero varía el detalle (café → otro café, avión → otro avión).
-4. **Roles de trabajadores:** en español genérico, sin anglicismos ni títulos complejos, entendibles por un industrial de 50+.
+4. **Roles de trabajadores Y CUALQUIER etiqueta de la imagen:** en español genérico, **sin anglicismos ni jerga** (stack, pipeline, CRM, lead…), entendibles por un industrial de 50+. No es solo para los roles: es para TODO texto que vaya en la foto. Fallo real (Iker, 2026-07-22): una etiqueta decía *"Tu stack de ventas"* y un jefe de ventas de 55 no tiene por qué saber qué es un "stack". Se cambió a *"Tu comercial como lo pintan"* (dicho que sí se pilla) vs *"Tu comercial de verdad"*.
 Todo lo demás de la referencia se preserva. No fuerces el uniforme camisa-blanca+corbata-naranja ni el grid simétrico si la referencia no los tiene. (Runbook operativo completo en `post-workflow §4.4`.)
 
 ### (B-fallback) MEME SIN REFERENCIA → sistema meme desde cero (§6)
