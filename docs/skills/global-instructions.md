@@ -522,6 +522,7 @@ Navarra 7.72x (reveal l.28 → lista), Galicia 7.28x (l.23 → lista) y Aragón 
 5. **Que tenga GRACIA.** Es un chiste que gira el concepto contra el dolor del lector, no una cuña publicitaria.
 6. **Dolor concreto + diferenciador ATERRIZADO** (`aboutme §1b`: contacto por señal, listado con confianza). Nada de "IA para ventas" en abstracto: el director comercial tiene que VER el cambio (500 llamadas frías → entrar solo en la que va a comprar). En mapas, aterrízalo en el dolor del industrial de ESA región.
 7. **Nunca venta directa ni frase corporativa**, y en mapas **nunca el link de PamPam** (es el de agendar).
+8. **El enlace SIEMPRE con `https://` delante en el texto del post** (Iker, 2026-07-22): `https://recursos.neety.com/agendar`, no `recursos.neety.com/agendar` a secas. Sin el protocolo LinkedIn puede no detectarlo como enlace clicable. Mismo criterio que en los DMs (`leadMagnetCopy`). Lo comprueba el validador.
 
 **Ejemplo validado (variar siempre, nunca copiar literal):**
 ```

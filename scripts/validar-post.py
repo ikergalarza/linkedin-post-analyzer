@@ -454,6 +454,11 @@ def validar(texto, pilar, cuenta=None):
     if pilar in ('mapa', 'los10', 'meme'):
         chk(tiene_link, 'Spam ninja presente (§4.4b)', 'falta el link de agendar' if not tiene_link else '')
         if tiene_link:
+            # El enlace SIEMPRE con https:// delante, o LinkedIn puede no detectarlo
+            # como clicable (Iker, 2026-07-22). Mismo criterio que los DMs.
+            _bare_link = re.search(r'(?<!https://)recursos\.neety\.com', cuerpo)
+            chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
+                'falta https:// delante de recursos.neety.com' if _bare_link else '')
             chk('Neety' not in cuerpo.split('recursos.neety.com')[0].split('\n')[-1],
                 'Spam ninja NO nombra a Neety (§4.4b)', 'nombrar la marca = publicidad encubierta')
             lineas = [l for l in cuerpo.split('\n') if l.strip()]
