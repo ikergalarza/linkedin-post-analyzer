@@ -42,14 +42,15 @@ Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo
 
 ## ⭐ 1e · TODA ENTREGA DE UN POST LLEVA LA COMPARATIVA ORIGINAL vs EL MIO (Iker, 2026-07-22)
 
-En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además del texto, el prompt y los avisos, va **siempre una sección de comparativa**: a la izquierda/arriba el **post original de referencia**, a la derecha/abajo **el mío**. Sirve para ver de un vistazo cómo se ha robado la esencia.
+En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además del texto, el prompt y los avisos, va **siempre una sección de comparativa**: el **post original de referencia** y **el mío**, **en la misma fila, lado a lado, dos columnas** (izquierda = original, derecha = el mío). Sirve para ver de un vistazo cómo se ha robado la esencia.
 
 **El formato, exacto (Iker es tiquismiquis con esto):**
-- Los dos van en **un bloque cercado cada uno**, tal cual el formateado normal del texto de un post. **NADA de tabla, nada de floritura, nada de "cosas raras".**
-- Cada bloque etiquetado por fuera: **Original** (con creador y ratio si es una referencia) y **El mío** (con la cuenta).
-- El "original" es el texto del post de referencia tal cual; el mío, el que entrego. Si el original está en inglés, va en inglés (es el original, no se traduce en la comparativa).
+- **Dos columnas EN LA MISMA FILA**, no dos bloques apilados. Se monta en **un solo bloque cercado monoespaciado**: cada línea = columna izquierda (rellenada a ancho fijo) + hueco + columna derecha, alineadas arriba. **NADA de tabla, nada de floritura, nada de "cosas raras".**
+- Cabecera dentro del bloque: **ORIGINAL** (creador + ratio si es referencia) a la izquierda, **EL MÍO** (cuenta) a la derecha.
+- El "original" es el texto de la referencia tal cual; si está en inglés, va en inglés (no se traduce en la comparativa). El mío, el que entrego.
+- **Cómo generarlo sin errores de alineación:** con un script que hace word-wrap de cada columna a su ancho (izq ~34, der ~52) y hace zip fila a fila, rellenando la izquierda con `padEnd`. La derecha va la última, así que un emoji ahí no descuadra nada. (El bloque de `node -e` que se usó el 2026-07-22 sirve de plantilla.)
 
-Esto es la vista que pidió el 2026-07-22, tras rechazar un primer intento "super feo": lo quiere en el mismo formato en que doy el texto de un post, ni más ni menos.
+Esto es la vista que pidió el 2026-07-22, tras rechazar dos intentos: uno "super feo" y otro en bloques apilados. Lo quiere en columnas lado a lado, monoespaciado, ni tabla ni apilado.
 
 
 ## 2 · Valida de forma proactiva (no esperes a que pregunte)
