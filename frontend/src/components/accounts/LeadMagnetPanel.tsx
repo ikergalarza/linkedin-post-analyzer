@@ -830,13 +830,14 @@ function CommenterCard({
   // A reply you've edited is never clobbered.
   const draftedFor = useRef<boolean | null>(null);
   useEffect(() => {
-    // ⛔ El PÚBLICO nunca se autogenera, y no es una preferencia de UI: cada
-    // borrador lee la web del comentarista de verdad y la audita, así que
-    // autogenerar dispararía una lectura y una llamada al modelo por cada
-    // comentario nada más abrir el post, sin que nadie lo haya pedido. En un lead
-    // magnet con 400 comentarios eso es 400 auditorías que quizá no quieras.
-    // Lo pide el usuario y además es lo barato: aquí se genera al pulsar.
-    if (cfg.kind === 'publico') return;
+    // ⛔ Ni el PÚBLICO ni la LISTA se autogeneran, y no es preferencia de UI:
+    // cada borrador dispara trabajo real por comentario (el público audita la web
+    // del comentarista; la lista busca empresas en Unipile con su sector). Como el
+    // comentario de la lista SIEMPRE lleva sector tras la palabra ("lista ventas
+    // B2B" → cuenta como 'rich'), autogenerar lanzaría una respuesta —y a un clic
+    // la búsqueda— en TODOS los comentarios al abrir el post, sin pedirlo. El
+    // usuario quiere ir uno por uno: aquí se genera SOLO al pulsar.
+    if (cfg.kind === 'publico' || cfg.kind === 'lista') return;
     if (depth !== 'rich' || replySent || replyTouched) return;
     if (draftedFor.current === ownsDm) return;
     draftedFor.current = ownsDm;
