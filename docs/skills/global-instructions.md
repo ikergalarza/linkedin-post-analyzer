@@ -571,7 +571,8 @@ Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección d
 ## 7 · Timing
 
 - **Mejores días:** martes (mayor outlier ratio), miércoles y jueves cerca. Lunes tibio. Viernes y fin de semana: evitar (feed de ocio).
-- **Mejores horas (hora local de la audiencia):** 11:00-12:00 (pico mañanero), 14:00-15:00 (sobremesa), 18:00-19:00 (perfiles internacionales).
+- **Mejores horas — MANDA LO MEDIDO (`outliers-database §3.16`, 230 posts de las 3 cuentas):** **las 10:00** (mejor mediana y el doble de impresiones que cualquier franja; 14 de los 18 posts >4x salieron a las 10 o las 12), segunda opción **las 12:00**. 🔴 **Las 9:00 es un error** (1 de 23 pasó de 2x, rinde como las 8:00): la clave es adelantarse al pico de las 11, no madrugar. **La tarde no mata un post, pero la franja 17-19 va 0 de 12** → un lead magnet (motor = comentarios) NO se publica después de comer. *(El viejo "11-12 / 14-15 / 18-19" era folklore sin medir; queda anulado por esto.)*
+  > **Criterio general:** cuando dos reglas de estas skills se contradicen, **manda SIEMPRE la basada en datos actuales de nuestras cuentas** sobre la intuición o el folklore heredado (mismo principio que `outliers-database §4` manda sobre `§3`).
 - **Cadencia:** por defecto **3 posts/semana por cuenta** (≈9/semana entre las 3); máx. 1/día por cuenta (dos el mismo día se canibalizan). Mínimo absoluto: 1/semana/cuenta. Exclusividad de CATEGORÍA por día entre las 3 cuentas (peloteo / lead magnet / meme intercalados) — lógica completa en `post-workflow §8`.
 - **Ventana de oro:** primeros 60 min tras publicar. Si no hay 5+ likes / 1-2 comentarios en la primera hora, LinkedIn deja de distribuir.
 - **Palanca de las 3 cuentas (interna, gratis):** somos 3 fundadores de la MISMA empresa → Iker, Unai y Asier **se comentan y repostean entre sí** en los primeros 30 min de cada post (comentario sustancioso, no "🔥"). Es el motor de arranque más fiable que tenemos y no cuesta nada.
