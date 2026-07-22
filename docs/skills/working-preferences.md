@@ -40,6 +40,17 @@ El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacio
 
 Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo falso, cosas que faltan por adjuntar y sin las cuales el entregable no funciona, y contradicciones entre lo que dice el texto y lo que enseña la imagen. **No se marca** lo que es solo una opinion o una mejora opcional — si se marca todo, deja de destacar nada.
 
+## ⭐ 1e · TODA ENTREGA DE UN POST LLEVA LA COMPARATIVA ORIGINAL vs EL MIO (Iker, 2026-07-22)
+
+En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además del texto, el prompt y los avisos, va **siempre una sección de comparativa**: a la izquierda/arriba el **post original de referencia**, a la derecha/abajo **el mío**. Sirve para ver de un vistazo cómo se ha robado la esencia.
+
+**El formato, exacto (Iker es tiquismiquis con esto):**
+- Los dos van en **un bloque cercado cada uno**, tal cual el formateado normal del texto de un post. **NADA de tabla, nada de floritura, nada de "cosas raras".**
+- Cada bloque etiquetado por fuera: **Original** (con creador y ratio si es una referencia) y **El mío** (con la cuenta).
+- El "original" es el texto del post de referencia tal cual; el mío, el que entrego. Si el original está en inglés, va en inglés (es el original, no se traduce en la comparativa).
+
+Esto es la vista que pidió el 2026-07-22, tras rechazar un primer intento "super feo": lo quiere en el mismo formato en que doy el texto de un post, ni más ni menos.
+
 
 ## 2 · Valida de forma proactiva (no esperes a que pregunte)
 
