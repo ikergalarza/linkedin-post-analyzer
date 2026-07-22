@@ -35,9 +35,9 @@ Neety construye **sistemas de outbound operativo con IA** para **empresas indust
 > Esta sección es la munición contra los cuerpos genéricos. Cuando un post toca "cómo vende Neety" o el dolor del comprador, aterrízalo en estos pilares y contrastes concretos en vez de hablar de "IA para ventas" en abstracto. (Fuente: documento interno "Propuesta de valor vs. landing", jul 2026.)
 
 ### Los 3 pilares (lo que de verdad nos separa del resto)
-1. **Listados con confianza, no listas.** No es "una lista de empresas": es **segmentación técnica profunda** (materiales, procesos, certificaciones, señales a favor y en contra) que da un **% de confianza** alto de que cada empresa encaja. El punto de partida es la **calidad** del listado, no el volumen.
-2. **Contacto por señal, no por secuencia.** No contactamos a 500 personas porque "toca" en una cadencia. Neety **monitoriza señales** y solo actúa cuando hay motivo. Contactar por señal dispara la respuesta y la conversión muy por encima del envío a lista fría.
-3. **El comercial enseña; la herramienta replica.** Hay automatización del envío, **pero el comercial valida cada comunicación y da feedback**, y Neety aprende su lenguaje técnico por público e interlocutor. Entrega **tareas accionables ya redactadas por IA, listas para confirmar**. Cuanto más lo usa, más se parece a él.
+1. **Listados con confianza, no listas.** No es "una lista de empresas": es **segmentación técnica profunda** (materiales, procesos, certificaciones, señales a favor y en contra) que da un **% de confianza** alto de que cada empresa encaja. Dos matices del deck que lo afilan: (a) **los mejores clientes no salen en ningún filtro** — son los poco digitalizados o mal etiquetados, y por eso "descargar 2.000 empresas" no es prospección; (b) **cada empresa llega con su PRUEBA**: la frase literal de su web o su LinkedIn que demuestra que cumple el criterio, con el enlace para comprobarlo ("la prueba, no la etiqueta"). Y el **interlocutor con email y teléfono verificados**. El punto de partida es la **calidad**, no el volumen.
+2. **Contacto por señal, no por secuencia — "de metralleta a francotirador".** No contactamos a 500 personas porque "toca" en una cadencia (eso quema el mercado y hunde la respuesta). Neety **espera a que pase algo que justifique escribir** y entonces avisa y propone el acercamiento **con contexto**. Contactar por señal dispara la respuesta y la conversión muy por encima de la lista fría.
+3. **El comercial enseña; la herramienta replica — "propone, tú confirmas".** Hay automatización del envío, **pero el comercial valida cada comunicación y da feedback**, y Neety aprende **por comercial** (qué empresa acepta o descarta, qué mensaje corrige, qué señal le vale). Entrega **tareas accionables ya redactadas por IA, listas para confirmar**; el tono lo decide el comercial. Cuanto más lo usa, más se parece a él — "se vuelve vuestro".
 
 ### Qué NO somos (posicionamiento — lo que hay que romper en la cabeza del lector)
 - **NO** una agencia que prospecta por ti.
@@ -57,7 +57,16 @@ Neety construye **sistemas de outbound operativo con IA** para **empresas indust
 | Cazamos y tú solo cierras (saca al comercial) | El comercial valida y enseña; la herramienta replica su voz técnica |
 
 ### Las señales concretas (el motor de conversión — buenas para cuerpos y ejemplos)
-Interacción en LinkedIn · cambio de puesto · nueva planta o inversión · noticia relevante del sector · feria. Cuando hay señal, hay motivo → por eso la conversión sube frente a la lista fría.
+Interacción en LinkedIn · cambio de puesto · **nueva planta / ampliación / inversión** · noticia relevante del sector · **un premio** · **una visita a tu web** · feria. Cuando hay señal, hay motivo → por eso la conversión sube frente a la lista fría. (La "visita a tu web" y el "premio" salen del deck de propuesta de valor, jul 2026.)
+
+### Frases-ancla del pitch (del deck "Propuesta de valor Neety", jul 2026 — usar para hooks, cuerpos y spam ninja, variando)
+- **"Tu próximo cliente no está en un filtro."** (el titular del deck — pilar 1)
+- **"Lo caro no es la lista. Es todo lo que viene después."** (el reto: depurar 2.000 a 40, dar con el interlocutor, no quemar el mensaje — pilar 1)
+- **"De metralleta a francotirador."** (pilar 2, el diferenciador)
+- **"La prueba, no la etiqueta"** / **"cada empresa, con su porqué"** (pilar 1, la evidencia)
+- **"Neety propone, tú confirmas"** / **"tú, al mando"** (pilar 3, el control se queda en el comercial)
+- **"Software propio, no una agencia."** (posicionamiento — enlaza con "qué NO somos")
+> ⚠️ Son el ANCLA de valor, no eslóganes para soltar tal cual en cada post (`§1b` regla de oro: la diferencia se demuestra, no se afirma). Y nunca las cruces con "sin esfuerzo / lo hace por ti / tú solo cierras".
 
 ### Encuadre CRÍTICO sobre el público (no confundir en los posts)
 - **El público / comprador de Neety** son **empresas de industria y servicios** → es a **ellos** a quien se le habla.
