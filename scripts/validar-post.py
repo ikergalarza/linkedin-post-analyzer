@@ -462,8 +462,12 @@ def validar(texto, pilar, cuenta=None):
                 'el cierre va después' if idx == len(lineas) - 1 else '')
             for i, b in enumerate(bs):
                 if any('recursos.neety.com' in l for l in b):
-                    chk(len(b) == 1, 'Las 2 líneas del spam ninja van separadas (§4.4b)',
-                        f'{len(b)} líneas pegadas en el mismo bloque' if len(b) != 1 else '')
+                    # El spam ninja va FUSIONADO: la broma pegada al CTA + enlace,
+                    # máx 2 líneas (Iker, 2026-07-22). Antes se exigía separarlas
+                    # con un blanco; ahora se permite el bloque de 2 (broma / CTA+link)
+                    # y también el de 1. Lo que NO vale es un bloque de 3+.
+                    chk(len(b) <= 2, 'Spam ninja máx 2 líneas (§4.4b)',
+                        f'{len(b)} líneas en el bloque del spam ninja, máx 2' if len(b) > 2 else '')
                     break
             # post-workflow §4.4 Paso 5 — SI HAY SPAM NINJA, EL CIERRE NO ES OTRO CTA.
             # Aunque global §4.4b diga que el spam ninja no consume la regla del UNO,
