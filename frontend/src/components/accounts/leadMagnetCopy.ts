@@ -371,9 +371,25 @@ export interface ListaInput {
   rng?: () => number;
 }
 
+// El "spam ninja" del DM. El lead magnet "lista" NO crea web ni gate, así que el
+// DM es el único sitio donde capturar hacia producto: sin esto regalamos la
+// lista y no llevamos a nadie a ningún lado (el error del 8.52x "desmonto
+// perfiles" — se hizo viral y capturó CERO). Apunta a `agendar`, el destino
+// canónico del spam ninja (global §4.4b).
+//
+// Diferencia clave con el POST: en el post público el lead magnet NO lleva spam
+// ninja (apilaría CTAs y hundiría los comentarios, global §4.4b). Aquí es un DM
+// PRIVADO a alguien que ya comentó y ya tiene su recurso, así que un funnel al
+// final no compite con nada. Y nombrar Neety SÍ vale: es un mensaje personal,
+// no un post (donde la marca delataría el guiño). Una sola mención, sin vender
+// (brand-voice §4). Cierra el "a quién" que da la lista con el "cuándo" que es
+// justo lo que hace el producto.
+const NINJA_DM =
+  'PD: la lista es a quién vender. El cuándo, sin buscarlo tú, lo hace Neety. Si quieres verlo funcionando: recursos.neety.com/agendar';
+
 // El DM con la lista entera, para 1er grado. Abre con el saludo regional (mismo
-// que buildDm), dice el número REAL de empresas (no "15" fijo) y lista cada una
-// con su zona y su LinkedIn en su propia línea.
+// que buildDm), dice el número REAL de empresas (no "15" fijo), lista cada una
+// con su zona y su LinkedIn, y cierra con el spam ninja hacia agendar.
 export function buildListaDm(input: ListaInput): string {
   const rng = input.rng ?? Math.random;
   const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
@@ -388,7 +404,7 @@ export function buildListaDm(input: ListaInput): string {
     .map((c) => `→ ${c.name}${c.zona ? ` · ${c.zona}` : ''}\n   ${prettyUrl(c.linkedinUrl)}`)
     .join('\n');
   const close = 'Escríbeles por lo que venden, no por el nombre: es lo que abre la puerta.';
-  return `${intro}\n\n${lines}\n\n${close}`;
+  return `${intro}\n\n${lines}\n\n${close}\n\n${NINJA_DM}`;
 }
 
 // La nota de invitación, para quien no es 1er grado.

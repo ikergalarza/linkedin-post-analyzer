@@ -483,6 +483,21 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 
+#### 🔴 4.5.-2 · TODO LEAD MAGNET TIENE QUE CAPTURAR ALGO — AVISO OBLIGATORIO AL ITERAR IDEAS (Iker, 2026-07-22)
+
+**El objetivo NO es solo que se haga viral. Es que se haga viral Y capture, porque vendemos un producto de IA y hay que llevar a la gente hacia comprar.** Un lead magnet que se hace viral y no captura nada es **regalar valor como quien regala calabazas**: el peor resultado, porque gastas el mejor alcance en cero pipeline.
+
+**Caso que no se repite:** "desmonto perfiles" 8.52x · 483 comentarios · **capturó CERO** (regalaba todo, sin gate, sin funnel). Alcance de lujo tirado.
+
+**REGLA DE TRABAJO (esto es un aviso que doy YO, sin que Iker lo pida):** cada vez que se **itere una idea de lead magnet**, antes de escribir nada, comprobar: **si esta idea se hace viral, ¿capturamos algo — correo, lead o demo?** Si la respuesta es no, **AVISAR a Iker con esas palabras** ("esto, si pega, no captura nada") y proponer cómo cerrarlo, ANTES del borrador. No esperar a que pregunte.
+
+**Las tres vías de captura (al menos una, siempre):**
+1. **Gate de correo** en una web de recurso (`lead-magnet-web`) → captura email. El caso del recurso público.
+2. **Funnel a `agendar`** dentro del entregable → demo/lead. En un lead magnet que entrega por DM y NO crea web ni gate (la lista de empresas), el DM cierra con spam ninja a agendar (`global §4.4b`, matiz del DM privado). Sin esto el DM captura cero.
+3. **El propio DM/relación** como puerta comercial, si además lleva el funnel de (2).
+
+**Ojo:** el aviso vale para CUALQUIER pilar viral, no solo el lead magnet — un meme que se dispara sin su spam ninja también es alcance tirado (`global §4.4b`). Pero en el lead magnet es donde más duele, porque ahí el alcance es escaso y caro y el objetivo declarado es pipeline.
+
 #### ⭐ 4.5.-1 · LA IMAGEN DEL LEAD MAGNET: CALCAR SI, PERO NO COMO EN EL MEME (Iker, 2026-07-21)
 
 **La diferencia que hay que tener clara:** en el meme **la foto ES el motor**, asi que se calca si o si (`§4.4`). En el lead magnet **el motor es el volumen de comentarios**, no la imagen. Por eso aqui la imagen es opcional y se decide mirando la referencia.
