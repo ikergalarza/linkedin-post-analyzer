@@ -155,6 +155,67 @@ export function normalizeReactionValue(raw: unknown): LinkedinReactionType | nul
 // normalise uppercase→lowercase on read (normalizeReactionValue). Do NOT
 // uppercase on send — it 400s ("Expected kind 'StringEnum'").
 
+// ───────────────── búsqueda de empresas (lead magnet "lista") ─────────────────
+// Señales de que la sede es española. El geo 105646813 (España) de la búsqueda
+// clásica NO basta: LinkedIn casa el facet contra oficinas, así que cuela
+// Italia, California o una Córdoba argentina. Este segundo filtro, sobre el
+// texto de `location`, deja fuera lo que no es España. Sesgo deliberado: mejor
+// tirar una española de más que colar una extranjera (el comercial que la
+// reciba no la quiere). Por eso las provincias que chocan fuerte con LATAM
+// (córdoba, león, santiago) NO están abajo: solo pasan si el location trae
+// además su CCAA ("Córdoba, Andalusia") o el país.
+const ES_REGIONS = new Set([
+  'espana', 'spain',
+  // CCAA (en español y como las escribe LinkedIn en inglés)
+  'andalucia', 'andalusia', 'aragon', 'asturias', 'principado de asturias',
+  'cantabria', 'castilla-la mancha', 'castile-la mancha', 'castilla la mancha',
+  'castilla y leon', 'castile and leon', 'cataluna', 'catalunya', 'catalonia',
+  'extremadura', 'galicia', 'galiza', 'la rioja', 'rioja', 'madrid',
+  'comunidad de madrid', 'community of madrid', 'murcia', 'region de murcia',
+  'region of murcia', 'navarra', 'navarre', 'comunidad foral de navarra',
+  'pais vasco', 'euskadi', 'basque country', 'comunidad valenciana',
+  'comunitat valenciana', 'valencian community', 'valencia', 'canarias',
+  'canary islands', 'islas canarias', 'baleares', 'islas baleares',
+  'balearic islands', 'illes balears', 'ceuta', 'melilla',
+  // provincias y grandes ciudades (sin las de choque fuerte con LATAM)
+  'alava', 'araba', 'albacete', 'alicante', 'alacant', 'almeria', 'avila',
+  'badajoz', 'barcelona', 'bizkaia', 'vizcaya', 'burgos', 'caceres', 'cadiz',
+  'castellon', 'castello', 'ciudad real', 'cuenca', 'gipuzkoa', 'guipuzcoa',
+  'girona', 'gerona', 'granada', 'guadalajara', 'huelva', 'huesca', 'jaen',
+  'a coruna', 'la coruna', 'coruna', 'las palmas', 'lleida', 'lerida', 'lugo',
+  'malaga', 'ourense', 'orense', 'palencia', 'pontevedra', 'salamanca',
+  'tenerife', 'santa cruz de tenerife', 'segovia', 'sevilla', 'soria',
+  'tarragona', 'teruel', 'toledo', 'valladolid', 'zamora', 'zaragoza', 'bilbao',
+  'donostia', 'san sebastian', 'vitoria', 'gasteiz', 'palma', 'mallorca',
+  'gijon', 'vigo',
+]);
+// Señales explícitas de FUERA de España: si aparece una, se descarta aunque
+// también haya un nombre que suene español.
+const NON_ES = new Set([
+  'argentina', 'mexico', 'chile', 'colombia', 'venezuela', 'carabobo', 'peru',
+  'uruguay', 'ecuador', 'bolivia', 'paraguay', 'panama', 'guatemala',
+  'costa rica', 'republica dominicana', 'dominican republic', 'united states',
+  'usa', 'california', 'texas', 'florida', 'new york', 'new jersey', 'illinois',
+  'italy', 'italia', 'france', 'francia', 'germany', 'alemania', 'deutschland',
+  'netherlands', 'holanda', 'groningen', 'portugal', 'united kingdom', 'england',
+  'london', 'brasil', 'brazil', 'morocco', 'marruecos',
+]);
+
+function normLoc(s: string): string {
+  return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+// ¿La `location` de una empresa es española? Trocea "Ciudad, Región" por comas
+// y barras y comprueba cada trozo: si alguno es de fuera, fuera; si alguno es
+// una región/ciudad española, dentro; si solo hay nombres ambiguos, fuera.
+export function esEspanola(location: string | null | undefined): boolean {
+  if (!location) return false;
+  const segs = normLoc(location).split(/[,/|]/).map((x) => x.trim()).filter(Boolean);
+  if (segs.length === 0) return false;
+  if (segs.some((s) => NON_ES.has(s))) return false;
+  return segs.some((s) => ES_REGIONS.has(s));
+}
+
 export class UnipileService {
   private apiKey: string;
   private baseUrl: string;
@@ -241,6 +302,73 @@ export class UnipileService {
 
     console.log(`[Unipile] Profile fetched. provider_id: ${profile.provider_id}, id: ${profile.id}, name: ${profile.name || profile.first_name}`);
     return profile;
+  }
+
+  /**
+   * Búsqueda clásica de EMPRESAS por sector, para el lead magnet "lista".
+   *
+   * Devuelve empresas reales españolas del sector con nombre, zona, industria y
+   * su LinkedIn. Verificado en crudo el 2026-07-22.
+   *
+   * Dos cosas que NO son opcionales (medidas ese día):
+   * - `location:["105646813"]` (geo España). Sin él la búsqueda devuelve medio
+   *   mundo (Nueva York, Cracovia, Bengaluru) porque el keyword casa global.
+   * - `esEspanola(location)` encima: el geo aún cuela alguna de Italia o
+   *   California, así que se filtra el `location` de cada resultado.
+   *
+   * Pagina con el cursor hasta reunir `limit` empresas españolas (o agotar
+   * `maxPages`), deduplicando por id. Devuelve MENOS de `limit` si el sector no
+   * da para más — el llamador dice el número real, nunca rellena.
+   */
+  async searchCompanies(
+    sector: string,
+    opts: { limit?: number; maxPages?: number; accountIdOverride?: string } = {}
+  ): Promise<{ name: string; zona: string | null; sector: string; linkedinUrl: string }[]> {
+    const accountId = opts.accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for company search');
+    const limit = opts.limit ?? 15;
+    const maxPages = opts.maxPages ?? 4;
+
+    const out: { name: string; zona: string | null; sector: string; linkedinUrl: string }[] = [];
+    const seen = new Set<string>();
+    let cursor: string | undefined;
+
+    for (let page = 0; page < maxPages && out.length < limit; page++) {
+      const body: Record<string, unknown> = {
+        api: 'classic',
+        category: 'companies',
+        keywords: sector,
+        location: ['105646813'], // geo urn de España
+      };
+      if (cursor) body.cursor = cursor;
+
+      const res = await this.request<{ items?: any[]; cursor?: string; paging?: { cursor?: string } }>(
+        `/api/v1/linkedin/search?account_id=${encodeURIComponent(accountId)}`,
+        { method: 'POST', body: JSON.stringify(body) }
+      );
+
+      const items = (res.items || []).filter((it) => it && it.type === 'COMPANY' && it.profile_url);
+      for (const it of items) {
+        const id = String(it.id || it.profile_url);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        if (!esEspanola(it.location)) continue;
+        out.push({
+          name: String(it.name || '').trim(),
+          zona: it.location ? String(it.location).trim() : null,
+          sector: it.industry ? String(it.industry).trim() : '',
+          linkedinUrl: String(it.profile_url).replace(/\/$/, ''),
+        });
+        if (out.length >= limit) break;
+      }
+
+      cursor = res.cursor || res.paging?.cursor;
+      if (!cursor) break;
+      await new Promise((r) => setTimeout(r, 300)); // pacing entre páginas
+    }
+
+    console.log(`[Unipile] searchCompanies("${sector}") → ${out.length} empresas españolas`);
+    return out;
   }
 
   /**

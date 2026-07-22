@@ -2572,6 +2572,43 @@ router.get('/lead-magnet/commenter', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/accounts/lead-magnet/lista
+// Body: { creator_id, sector }
+//
+// El recurso del lead magnet "lista": 15 empresas reales españolas del sector
+// que ha comentado la persona, con zona y su LinkedIn. NO redacta el texto —
+// devuelve las empresas estructuradas y el front las formatea en la voz de la
+// cuenta (leadMagnetCopy.buildListaDm), igual que el resto del panel.
+//
+// Todo sale de Unipile y es real. Si el sector no da 15, devuelve las que haya
+// (el front dice el número real). Nunca se rellena para llegar a 15.
+router.post('/lead-magnet/lista', async (req: Request, res: Response) => {
+  try {
+    const { creator_id, sector } = req.body || {};
+    const sectorClean = String(sector || '').trim();
+    if (!creator_id || !sectorClean) {
+      return res.status(400).json({ error: 'creator_id and sector required' });
+    }
+
+    const { rows } = await pool.query(
+      `SELECT unipile_account_id FROM creators WHERE id = $1`,
+      [creator_id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Creator not found' });
+    const accountId = rows[0].unipile_account_id;
+    if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const companies = await unipileService.searchCompanies(sectorClean, {
+      limit: 15,
+      accountIdOverride: accountId,
+    });
+    res.json({ sector: sectorClean, companies });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/lista]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/accounts/lead-magnet/send
 // Body: { post_id, comment_id, provider_id, kind: 'dm'|'invite', text }
 //

@@ -324,6 +324,86 @@ export function buildInviteNote(input: DmInput): string {
   return `${open} Comentaste en mi post, te dejo el recurso: ${input.link}`.slice(0, 300);
 }
 
+// ──────────────────────────── lista personalizada ───────────────────────────
+//
+// El lead magnet "lista": la persona comenta «lista» + su sector, y le mandamos
+// por DM una lista de empresas reales de ese sector. El backend
+// (/lead-magnet/lista) trae las empresas reales; aquí se extrae el sector del
+// comentario y se formatea el DM en la voz de la cuenta, como el resto del panel.
+
+export interface ListaCompany {
+  name: string;
+  zona: string | null;
+  linkedinUrl: string;
+}
+
+// "lista automoción porfa" → "automoción". Quita la palabra clave y el relleno,
+// deja lo que la persona escribió como sector. Conserva acentos (usa la palabra
+// original, no la normalizada) porque la búsqueda de Unipile los tolera y se ve
+// mejor en el DM. Vacío si solo comentó la palabra clave.
+export function extractSector(text: string, keyword: string): string {
+  const k = normalize(keyword).trim();
+  const raw = (text || '').trim();
+  if (!raw) return '';
+  const kept = raw.split(/\s+/).filter((w) => {
+    const n = normalize(w).replace(/[^\p{L}\p{N}]/gu, '');
+    if (!n) return false;
+    if (n === k) return false;
+    return !FILLER.has(n);
+  });
+  // Deja letras/números/espacios y los separadores que un sector real puede
+  // llevar ("i+d", "auto-moción"); fuera emoji y puntuación suelta.
+  return kept.join(' ').replace(/[^\p{L}\p{N}\s+.&/-]/gu, '').replace(/\s+/g, ' ').trim();
+}
+
+// "https://www.linkedin.com/company/gestamp/" → "linkedin.com/company/gestamp",
+// que es como se lee un enlace en un DM sin ocupar dos líneas.
+function prettyUrl(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+}
+
+export interface ListaInput {
+  name: string | null;
+  sector: string;
+  companies: ListaCompany[];
+  location?: string | null;
+  voice?: Voice;
+  rng?: () => number;
+}
+
+// El DM con la lista entera, para 1er grado. Abre con el saludo regional (mismo
+// que buildDm), dice el número REAL de empresas (no "15" fijo) y lista cada una
+// con su zona y su LinkedIn en su propia línea.
+export function buildListaDm(input: ListaInput): string {
+  const rng = input.rng ?? Math.random;
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
+  const name = firstName(input.name);
+  const open = name ? `${g} ${name}!` : `${g}!`;
+  const n = input.companies.length;
+  const cuenta = n === 1
+    ? '1 empresa activa a la que puedes vender, con dónde está y su LinkedIn'
+    : `${n} empresas activas a las que puedes vender, con dónde están y su LinkedIn`;
+  const intro = `${open} Aquí tienes tu lista de ${input.sector}.\n${cuenta}:`;
+  const lines = input.companies
+    .map((c) => `→ ${c.name}${c.zona ? ` · ${c.zona}` : ''}\n   ${prettyUrl(c.linkedinUrl)}`)
+    .join('\n');
+  const close = 'Escríbeles por lo que venden, no por el nombre: es lo que abre la puerta.';
+  return `${intro}\n\n${lines}\n\n${close}`;
+}
+
+// La nota de invitación, para quien no es 1er grado: la lista no cabe en los 300
+// caracteres, así que se promete y se manda entera por DM cuando acepten.
+export function buildListaInvite(
+  input: { name: string | null; sector: string; location?: string | null; voice?: Voice; rng?: () => number }
+): string {
+  const rng = input.rng ?? Math.random;
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
+  const name = firstName(input.name);
+  const open = name ? `${g} ${name}!` : `${g}!`;
+  const note = `${open} Te monto la lista de ${input.sector} que pediste. Acéptame y te la paso por aquí mismo.`;
+  return note.length <= 300 ? note : note.slice(0, 300);
+}
+
 // Words that are NOT content: someone typing "MAPA porfa gracias!!" wrote the
 // keyword and nothing else, however many words it technically is.
 const FILLER = new Set([

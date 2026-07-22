@@ -1,6 +1,12 @@
 # Lead magnet «Lista personalizada» — diseño
 
-> Fecha: 2026-07-22 · Autor: Iker (+ Claude) · Estado: aprobado pendiente de revisión
+> Fecha: 2026-07-22 · Autor: Iker (+ Claude) · Estado: **implementado y verificado**
+>
+> Verificación (2026-07-22): backend `tsc` limpio; frontend sin errores nuevos
+> (los 15 del baseline no están en estos ficheros); camino real de Unipile
+> probado con automoción/logística/software/maquinaria industrial → 15 empresas
+> españolas cada uno, el filtro deja fuera California/Groningen; `extractSector`
+> y `buildListaDm` renderizan correcto.
 
 ## Problema
 

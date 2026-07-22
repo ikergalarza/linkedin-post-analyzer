@@ -2,8 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApi, apiPost, apiGet } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
-import { buildDm, buildInviteNote, buildReply, commentDepth, matchesKeyword, voiceFor } from './leadMagnetCopy';
-import type { Voice } from './leadMagnetCopy';
+import {
+  buildDm, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
+  commentDepth, extractSector, matchesKeyword, voiceFor,
+} from './leadMagnetCopy';
+import type { ListaCompany, Voice } from './leadMagnetCopy';
 
 // LeadMagnetPanel — the "Lead Magnet" sub-tab.
 //
@@ -82,7 +85,7 @@ interface SendRecord {
 // regalaba TODO y no capturó ni un correo. Por eso el público NO pide campos: su
 // generador (/api/accounts/rastro/generate) escribe el análisis, le crea su
 // página con gate de correo y devuelve el comentario con el enlace ya dentro.
-export type LmKind = 'dm' | 'publico';
+export type LmKind = 'dm' | 'publico' | 'lista';
 
 interface LmConfig {
   kind: LmKind;
@@ -98,7 +101,8 @@ function loadConfig(postId: string): LmConfig {
     if (!raw) return emptyConfig;
     const p = JSON.parse(raw);
     return {
-      kind: p.kind === 'publico' ? 'publico' : 'dm', // los configs viejos no tienen kind
+      // los configs viejos no tienen kind
+      kind: p.kind === 'publico' ? 'publico' : p.kind === 'lista' ? 'lista' : 'dm',
       keyword: p.keyword || '',
       link: p.link || '',
       topic: p.topic || '',
@@ -256,8 +260,11 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // Cada tipo necesita campos distintos, así que "listo" no es el mismo.
   // En PÚBLICO solo hace falta la palabra clave: el generador pone el análisis,
   // la página y el enlace. En DM siguen haciendo falta el enlace y el tema.
+  // El público y la lista solo necesitan la palabra clave: cada tarjeta genera
+  // su recurso (el análisis o la lista de empresas del sector). El DM sí sigue
+  // necesitando el enlace fijo y el tema.
   const ready =
-    cfg.kind === 'publico'
+    cfg.kind === 'publico' || cfg.kind === 'lista'
       ? !!cfg.keyword.trim()
       : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim());
 
@@ -410,6 +417,16 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           )}
         </div>
 
+        {cfg.kind === 'lista' && (
+          <p className="text-[11px] text-text-muted leading-snug pt-1 border-t border-border">
+            Solo hace falta la palabra clave. El post les pide comentar{' '}
+            <span className="text-text-secondary">«{cfg.keyword.trim() || 'lista'}» + su sector</span>. En cada
+            comentario se lee el sector, y al darle a <span className="text-text-secondary">Generar lista</span> se
+            buscan empresas reales españolas de ese sector con su zona y su LinkedIn, y se rellena el DM. A 1er grado
+            va la lista entera; a los demás, una invitación y la lista al aceptar.
+          </p>
+        )}
+
         {cfg.kind === 'publico' && (
           <p className="text-[11px] text-text-muted leading-snug pt-1 border-t border-border">
             Solo hace falta la palabra clave. El post tiene que pedirles que{' '}
@@ -437,7 +454,9 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 
       {!ready && (
         <p className="text-center text-text-muted text-sm py-10">
-          Rellena la palabra clave, el enlace y el tema para ver a quién hay que mandarle el recurso.
+          {cfg.kind === 'dm'
+            ? 'Rellena la palabra clave, el enlace y el tema para ver a quién hay que mandarle el recurso.'
+            : 'Escribe la palabra clave para ver a quién hay que mandarle el recurso.'}
         </p>
       )}
 
@@ -489,13 +508,14 @@ function KindPicker({ value, onChange }: { value: LmKind; onChange: (k: LmKind) 
   const OPCIONES: { id: LmKind; titulo: string; sub: string }[] = [
     { id: 'dm', titulo: 'Por privado', sub: 'Comentan la palabra y les mandamos el recurso al DM' },
     { id: 'publico', titulo: 'En comentarios', sub: 'Les damos el valor en público y el enlace pide el correo' },
+    { id: 'lista', titulo: 'Lista personalizada', sub: 'Comentan «lista» + su sector y les montamos la lista de su sector' },
   ];
   return (
     <div>
       <label className="block text-[11px] font-medium text-text-secondary mb-1.5">
         Tipo de lead magnet
       </label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {OPCIONES.map((o) => {
           const on = value === o.id;
           return (
@@ -678,10 +698,22 @@ function CommenterCard({
   // location arrives or the topic changes.
   const [msgTouched, setMsgTouched] = useState(false);
   useEffect(() => {
+    // La LISTA no se autoredacta: su recurso son 15 empresas que hay que ir a
+    // buscar a Unipile con el sector del comentario. Se genera al pulsar el
+    // botón (handleLista), no al montar la tarjeta.
+    if (cfg.kind === 'lista') return;
     if (msgTouched || alreadySent || !ownsDm) return;
     const input = { name: thread.author.name, location, topic: cfg.topic, link: cfg.link, voice };
     setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
-  }, [location, cfg.topic, cfg.link, kind, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
+  }, [location, cfg.topic, cfg.link, cfg.kind, kind, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
+
+  // ── lista state (solo tipo 'lista') ──
+  // El sector se prerrellena con lo que la persona escribió tras la palabra
+  // clave ("lista automoción" → "automoción"); si solo comentó la palabra, sale
+  // vacío y se escribe a mano.
+  const [sector, setSector] = useState<string>(() => extractSector(thread.text || '', cfg.keyword));
+  const [listaLoading, setListaLoading] = useState(false);
+  const [listaMsg, setListaMsg] = useState<string | null>(null);
 
   const [msgSending, setMsgSending] = useState(false);
   const [msgResult, setMsgResult] = useState<{ status: 'sent' | 'failed'; error: string | null } | null>(
@@ -754,7 +786,11 @@ function CommenterCard({
           commenter_name: thread.author.name,
           commenter_headline: thread.author.headline,
           commenter_profile_id: thread.author.profile_id,
-          lead_magnet_topic: ownsDm ? cfg.topic : undefined,
+          lead_magnet_topic: ownsDm
+            ? (cfg.kind === 'lista'
+                ? (sector.trim() ? `la lista de ${sector.trim()}` : 'la lista')
+                : cfg.topic)
+            : undefined,
         }
       );
       setReply(res.reply);
@@ -809,6 +845,38 @@ function CommenterCard({
       setReplyMsg(`✗ ${e.message}`);
     } finally {
       setReplySending(false);
+    }
+  };
+
+  // Genera la lista de empresas del sector y la deja en la caja del DM. Busca en
+  // Unipile (empresas reales españolas del sector), y formatea en la voz de la
+  // cuenta: la lista entera si es DM (1er grado), la nota corta si es invitación
+  // (la lista no cabe en 300 caracteres, va cuando acepten).
+  const handleLista = async () => {
+    const s = sector.trim();
+    if (!s) { setListaMsg('Escribe el sector'); return; }
+    setListaLoading(true);
+    setListaMsg(null);
+    try {
+      const r = await apiPost<{ sector: string; companies: ListaCompany[] }>(
+        '/api/accounts/lead-magnet/lista',
+        { creator_id: creatorId, sector: s }
+      );
+      if (!r.companies || r.companies.length === 0) {
+        setListaMsg('No encuentro empresas de ese sector. Prueba a reescribirlo.');
+        return;
+      }
+      setMessage(
+        kind === 'dm'
+          ? buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice })
+          : buildListaInvite({ name: thread.author.name, sector: r.sector, location, voice })
+      );
+      setMsgTouched(true); // ya es un mensaje real; que ningún efecto lo pise
+      setListaMsg(`${r.companies.length} empresa${r.companies.length === 1 ? '' : 's'}${r.companies.length < 15 ? ' (no hay más de ese sector)' : ''}`);
+    } catch (e: any) {
+      setListaMsg(`✗ ${e.message}`);
+    } finally {
+      setListaLoading(false);
     }
   };
 
@@ -987,7 +1055,9 @@ function CommenterCard({
           <div className="mt-3 pt-3 border-t border-border space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-medium text-text-secondary">
-                {kind === 'dm' ? 'Mensaje privado con el recurso' : 'Invitación con el recurso en la nota'}
+                {cfg.kind === 'lista'
+                  ? (kind === 'dm' ? 'Lista de empresas por privado' : 'Invitación (la lista va al aceptar)')
+                  : (kind === 'dm' ? 'Mensaje privado con el recurso' : 'Invitación con el recurso en la nota')}
               </span>
               {kind === 'invite' && (
                 <span className="text-[10px] text-text-muted tabular-nums">
@@ -995,6 +1065,38 @@ function CommenterCard({
                 </span>
               )}
             </div>
+
+            {/* Tipo LISTA: el sector (prerrellenado del comentario, editable) y el
+                botón que busca las empresas y rellena la caja. La lista completa
+                solo va por DM; a una invitación se le manda la nota corta y la
+                lista entera cuando la persona acepte. */}
+            {cfg.kind === 'lista' && (
+              <div className="flex items-end gap-2 flex-wrap">
+                <div className="flex-1 min-w-[140px]">
+                  <label className="block text-[10px] font-medium text-text-secondary mb-1">Sector</label>
+                  <input
+                    value={sector}
+                    onChange={(e) => setSector(e.target.value)}
+                    disabled={listaLoading}
+                    placeholder="automoción, logística…"
+                    className="w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent disabled:opacity-50"
+                  />
+                </div>
+                <button
+                  onClick={handleLista}
+                  disabled={listaLoading || !sector.trim()}
+                  className="text-[11px] font-medium px-2.5 py-1.5 rounded bg-accent text-white hover:brightness-110 disabled:opacity-50 transition whitespace-nowrap"
+                  title="Busca empresas reales españolas del sector y rellena el mensaje"
+                >
+                  {listaLoading ? 'Buscando…' : message.trim() ? '↻ Regenerar' : '✨ Generar lista'}
+                </button>
+                {listaMsg && (
+                  <span className={`text-[10px] ${listaMsg.startsWith('✗') ? 'text-red-400 font-medium' : 'text-text-muted'}`}>
+                    {listaMsg}
+                  </span>
+                )}
+              </div>
+            )}
 
             {noProfileId ? (
               <p className="text-[11px] text-text-muted">
@@ -1015,7 +1117,7 @@ function CommenterCard({
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={handleSendResource}
-                    disabled={msgSending || !message.trim() || !cfg.link.trim()}
+                    disabled={msgSending || !message.trim() || (cfg.kind === 'dm' && !cfg.link.trim())}
                     className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
                   >
                     {msgSending ? 'Enviando…' : kind === 'dm' ? 'Enviar DM' : 'Invitar con nota'}
