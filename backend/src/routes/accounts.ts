@@ -2077,16 +2077,28 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
 // GET /api/accounts/comments/pending — the unified inbox: every UNANSWERED
 // top-level comment across recent posts, grouped by post, for ALL managed
 // accounts. The frontend fetches this ONCE and filters by account
-// client-side (instant switching, no re-scan). We scan the most recent
-// MAX_POSTS_PER_CREATOR posts of EACH creator (ROW_NUMBER per creator) so
-// a client-side single-account filter still has full coverage — not just
-// whichever creator happened to dominate a global top-N. Each group
-// carries creator_id for that filtering. Posts with zero pending omitted.
+// client-side (instant switching, no re-scan). We scan the last month of
+// posts per creator (with a floor of the last 10 and a cap of 30 — see the
+// window constants below), via ROW_NUMBER per creator, so a client-side
+// single-account filter still has full coverage — not just whichever creator
+// happened to dominate a global top-N. Each group carries creator_id for that
+// filtering. Posts with zero pending omitted.
 // (creator_id query param still supported for any server-side caller.)
 router.get('/comments/pending', async (req: Request, res: Response) => {
   try {
     const creatorId = (req.query.creator_id as string) || null;
-    const MAX_POSTS_PER_CREATOR = 10; // recent window per account
+    // Ventana de comentarios a revisar por cuenta. Antes eran "las 10 últimas
+    // publicaciones" (por número), y se perdían comentarios sin responder en
+    // posts de hace 1-2 meses (Iker, 2026-07-22). Ahora es por TIEMPO — el
+    // último mes — con dos topes:
+    //  · SUELO (MIN_POSTS): siempre al menos las 10 últimas, aunque la cuenta
+    //    haya publicado poco en el mes → nunca muestra menos que antes.
+    //  · TECHO (MAX_POSTS): nunca más de 30, para no disparar las llamadas a
+    //    Unipile (una por post) si una cuenta publica a diario.
+    // Contestar comentarios de hace meses no aporta; el mes es el punto dulce.
+    const RECENT_DAYS = 30;
+    const MIN_POSTS = 10;
+    const MAX_POSTS = 30;
     const params: any[] = [];
     let creatorFilter = '';
     if (creatorId && creatorId !== 'all') {
@@ -2109,8 +2121,10 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
             AND p.published_at IS NOT NULL
             ${creatorFilter}
        )
-       SELECT * FROM ranked WHERE rn <= ${MAX_POSTS_PER_CREATOR}
-       ORDER BY published_at DESC`,
+       SELECT * FROM ranked
+        WHERE (published_at >= NOW() - INTERVAL '1 day' * ${RECENT_DAYS} OR rn <= ${MIN_POSTS})
+          AND rn <= ${MAX_POSTS}
+        ORDER BY published_at DESC`,
       params
     );
 
