@@ -153,6 +153,18 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Y ajusta la densidad de la tabla al numero real de filas:** si la referencia trae treinta y tu llevas quince, el prompt tiene que pedir mas aire entre filas, o la tabla queda apelotonada arriba y medio cuadrado vacio.
 
+## ⭐ 0i-2b · MEME SOBRE PELÍCULA O FAMOSO: NO SE GENERA CON IA, SE MONTA POR ENCIMA (Iker, 2026-07-22)
+
+**Medido el 2026-07-22:** el meme del Aquaman/rastrillo (referencia real, 10.4x) hizo que ChatGPT devolviera *"la imagen podría infringir nuestras normas relativas a la similitud con contenido de terceros"*. Es el filtro de **copyright + parecido con persona real** (Aquaman = película de Warner; Jason Momoa = actor real), más duro que el de los logos. **No se salta.**
+
+**Lo que NO se hace:** ni decir "la imagen es de nuestra propiedad" (es FALSO, no es nuestra), ni cambiar el modo de generación para colarlo. Es la misma mentira que con los logos (`§0i-2`), y además generar con IA un póster de peli y la cara de un actor para un post de marca es justo lo que el filtro bloquea con razón.
+
+**Lo que SÍ se hace: el meme sobre una imagen con copyright NO se genera con IA, se monta por ENCIMA de la plantilla que ya existe** — que es como se hacen los memes: la imagen se usa tal cual de plantilla y solo se le cambia el texto. Publicar un meme de foto de peli es práctica normal (el original hizo 10.4x); lo que es estricto es el *generador* de IA, no el publicar. Dos vías:
+- **Canva/Photoshop:** coger la plantilla (imgflip, "Aquaman rake meme") y poner nuestras etiquetas con Bricolage. Cero IA, cero filtro.
+- **Script (Pillow):** overlay directo sobre la imagen de referencia — cajas oscuras que tapan el texto original + etiquetas en español (Impact blanco con borde, la palabra clave en naranja `#ee9363`), cuadrado 1:1, tapando la marca de agua. Validado el 2026-07-22 (`meme-stack-asier.png`).
+
+**Consecuencia para elegir referencia (`post-workflow §4.4`):** al bajar por Inspiration, si el meme outlier se monta sobre un **fotograma de película / cara de famoso**, sé consciente de que **la imagen NO la va a generar la IA** — se hará por overlay. No es motivo para descartarla (el motor sigue siendo válido), pero sí para avisar y montarla a mano.
+
 ## ⭐ 0i-2 · LOGOS DE TERCEROS: EL GENERADOR LOS RECHAZA, Y SE SACAN DE LA IMAGEN (Iker, 2026-07-21)
 
 **Medido el 2026-07-21:** un prompt que pedia colocar quince logos de empresas reales hizo que ChatGPT devolviera *"se ha producido un error en la herramienta de generacion"*. Es el filtro de marcas de terceros, y **no se arregla insistiendo ni reformulando el prompt**.
