@@ -117,6 +117,7 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
   - **⚠️ Las VOCALES ALARGADAS ("graciaaas") son solo para sus RESPUESTAS a comentarios** (que escribe Mario a mano, la herramienta NO las toca), **NUNCA para el cuerpo de los posts.**
   - **⛔ El cuerpo de Mario lleva TODO el formateado de siempre**, aunque el tono sea más joven: bloques de 2/3 (con anáfora), líneas sueltas, cortas, **una frase por línea**, escalera (`global §3.2-3.3`), y las reglas mecánicas intactas (gancho ≤210 y ≤1 número, cero guion largo, cero coma antes de "y", 👇). El tono es joven; el formateado y la puntuación anti-IA no se relajan. Emojis con moderación, sí.
 - **Público de Mario: MARKETING, no ventas.** Aunque por dentro hable de ventas, su cuenta se ancla a **marketing / contenido / growth / redes sociales** — es la red que está construyendo (manda solicitudes a gente de marketing de otras empresas). Pelotea a gente y empresas de marketing, y los temas van por ahí.
+- **Ángulos ya usados por Mario (no repetir, como los conceptos del mapa):** 1er post = *"crecer en LinkedIn no es suerte + 1.000.000 de impresiones en 2 meses sin haber tocado la plataforma"*. Cada post nuevo, ángulo nuevo — aunque el tema (contenido, growth) se repita.
 
 ---
 
