@@ -384,8 +384,12 @@ export interface ListaInput {
 // no un post (donde la marca delataría el guiño). Una sola mención, sin vender
 // (brand-voice §4). Cierra el "a quién" que da la lista con el "cuándo" que es
 // justo lo que hace el producto.
+// El enlace va con https:// (no la versión "bonita" sin protocolo): LinkedIn
+// solo genera la tarjeta de preview del recurso si el enlace lleva https. Los 15
+// de las empresas van SIN protocolo a propósito (prettyUrl), para que no compitan
+// por la preview y la tarjeta que salga sea la de señales.
 const NINJA_DM =
-  'PD: la lista es a quién vender. Cuándo escribirle a cada una (la señal que dispara la compra) lo tienes aquí: recursos.neety.com/senales';
+  'PD: la lista es a quién vender. Cuándo escribirle a cada una (la señal que dispara la compra) lo tienes aquí: https://recursos.neety.com/senales';
 
 // El DM con la lista entera, para 1er grado. Abre con el saludo regional (mismo
 // que buildDm), dice el número REAL de empresas (no "15" fijo), lista cada una
