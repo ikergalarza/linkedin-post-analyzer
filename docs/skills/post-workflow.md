@@ -643,6 +643,9 @@ El playbook dice "output = acción ejecutada o HTML estudio". Para posts **no**:
 
 **Regla operativa:** apunta a **10:00-11:00** si puedes, porque es donde está el doble de alcance. Pasadas las **14:00**, sabes que vas con la muestra en contra. Entre medias, la hora **no** es una explicación válida de un flop: busca la causa en el ángulo o en el motor del pilar (`outliers-database §3.10`).
 
+### ⭐ 8.0 · LA 4ª CUENTA OPCIONAL: MARIO (marketing) — Iker, 2026-07-22
+Al planificar, además de las 3 de founder (Iker/Unai/Asier), considera **opcionalmente ~1 post/semana para Mario** (Growth & Marketing, ficha completa en `aboutme §2`). **NO entra en el cuadro latino 3×3** ni en la exclusividad de categoría de las 3 founder: es un **EXTRA**, unas semanas sí y otras no → **pregunta a Iker si esta semana toca Mario**. Reusa los mismos pilares que funcionan (mapa / meme / "Los 10") pero **anclados a MARKETING** (pelotea a gente y empresas de marketing, no industriales), con las **menciones obligatorias** (`@neety` + `@Unai` + `@Iker` + `@Asier`) y, si es post de resultados, **calcando el dashboard de analíticas de LinkedIn** (no un diseño). Su parte de comentarios/analíticas es **manual** (no está en Unipile). Y es buen sitio para **estrenar pilares nuevos de marketing**.
+
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
 - **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).
 - **LEAD MAGNET** (comment-gated).

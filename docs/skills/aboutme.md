@@ -105,6 +105,16 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 > ⚠️ **Arranque de la cuenta de Asier:** empezó en jul 2026 sin histórico → **el outlier ratio aún NO significa nada** en su cuenta (necesita ~4-6 semanas de posts para que LinkedIn fije una baseline). Durante ese periodo, júzgalo por **consistencia y engagement absoluto**, no por el ratio (que puede salir ~1x aunque el post sea bueno). No descartes un formato en su cuenta por un ratio bajo temprano.
 
+### 👤 Mario Carrillo Ramírez — Growth & Marketing (4ª cuenta, DISTINTA a las 3 de founder)
+- Rol: **responsable de Growth y Marketing** de Neety — la persona que lleva la estrategia DETRÁS de las 3 cuentas de founder (es quien escribe/planifica todo esto). Headline: *Growth & Content Marketing @ Neety | Traduzco atención en clientes B2B con contenido e IA*. LinkedIn: `in/mario-carrillo-ramirez`.
+- **Por qué existe (Mario/Iker, 2026-07-22):** (a) darle **reconocimiento público** a Mario como estratega, y (b) un **empleado que habla bien de la empresa y la pelotea** es advocacy auténtico que beneficia a Neety. Doble win.
+- 🔴 **NO está conectada a Unipile y NO tiene Premium.** La herramienta **no** le trae comentarios ni analíticas: sus posts, respuestas y menciones se hacen **A MANO**. No la metas en los flujos automáticos de Accounts (buzón, lead magnet, etc.).
+- **Frecuencia: OPCIONAL, ideal ~1/semana** (unas semanas sí, otras no). Se decide al planificar (`post-workflow §8`), como un extra a las 3 de founder, no en su rotación.
+- **⭐ ANCLA A MARKETING, no a ventas.** Los mismos pilares que funcionan (mapa, meme, "Los 10") pero **peloteando a gente y empresas de MARKETING** en vez de industriales/comerciales. Abierto a **pilares nuevos específicos de marketing**.
+- **⛔ MENCIONES OBLIGATORIAS en TODOS los posts de Mario:** `@neety` (la empresa) + los 3 jefes `@Unai`, `@Iker`, `@Asier`. **Es la excepción consciente a la regla de "no nombrar Neety"** (`§4`, `global §4.4b`): esa es para los founders (sus posts deben leerse a thought leadership); el de Mario es **advocacy explícito de empleado**, donde nombrar a la empresa y etiquetar a los jefes es natural y es el punto. Deja los `@` como placeholders para que él los teclee.
+- **⭐ Imagen de posts de resultados/métricas: se CALCA el dashboard de analíticas OFICIAL de LinkedIn** (la pantalla de "analíticas del post" que sale al publicar), NO un diseño propio. El 1er post de Mario falló por hacer un diseño en vez de falsificar ese dashboard: el dashboard real es más creíble y reconocible. (Registro visual: `images` — mismo criterio que el screenshot documental.)
+- **Voz:** la misma voz Neety (`brand-voice`), pero puede ser un pelín más personal ("nuestros primeros meses", "lo que estamos montando") porque es un empleado contando desde dentro.
+
 ---
 
 ## 3 · Una sola voz para los tres: "voz Neety"
