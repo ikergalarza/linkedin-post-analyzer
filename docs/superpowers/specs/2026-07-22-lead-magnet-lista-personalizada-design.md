@@ -122,9 +122,13 @@ empresa trae lo que necesitamos:
   ```
   - `<saludo>` = nombre de pila si lo hay, si no vacío.
   - `<N>` = `companies.length` real (no la palabra "15" fija).
-- `buildListaInvite({ name, sector, voice })` → nota corta **≤ 300 car**, porque
-  la lista no cabe en los 300 de una invitación: *"<saludo>, te monto la lista de
-  <sector> que pediste. Acéptame y te la paso por aquí mismo."*
+- `buildListaInvite({ name, sector, companies, voice })` → nota **≤ 300 car**. La
+  lista entera no cabe (tope de LinkedIn a la nota, **no** el InMail de pago), así
+  que la nota lleva un **adelanto real**: se meten nombres mientras quepan y el
+  resto se cuenta (*"Aquí va tu lista de <sector>: E1, E2, E3 y N más. Acéptame y
+  te la mando entera con su LinkedIn."*). La lista completa va por DM cuando la
+  persona acepte y pase a 1er grado. Si ni un nombre cabe, cae a la nota sin
+  adelanto.
 
 **Sin cambios de BD.** El envío usa `lead_magnet_sends` como el resto; la lista
 generada no se persiste (se regenera si hace falta).

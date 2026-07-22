@@ -391,16 +391,49 @@ export function buildListaDm(input: ListaInput): string {
   return `${intro}\n\n${lines}\n\n${close}`;
 }
 
-// La nota de invitación, para quien no es 1er grado: la lista no cabe en los 300
-// caracteres, así que se promete y se manda entera por DM cuando acepten.
+// La nota de invitación, para quien no es 1er grado.
+//
+// La lista ENTERA no cabe: LinkedIn corta la nota a 300 caracteres (es su tope,
+// NO el InMail de pago — la solicitud con nota es gratis y sin cupo con Premium).
+// Así que la nota lleva un ADELANTO real (los primeros nombres + "y N más") y la
+// lista completa se manda por DM en cuanto la persona acepte y sea 1er grado.
+//
+// El adelanto se llena avaramente: se meten nombres reales mientras quepan bajo
+// 300 con el cierre, y el resto se cuenta ("y 12 más"). Si ni un nombre cabe
+// (sector con nombres larguísimos), cae a la nota sin adelanto.
 export function buildListaInvite(
-  input: { name: string | null; sector: string; location?: string | null; voice?: Voice; rng?: () => number }
+  input: { name: string | null; sector: string; companies: ListaCompany[]; location?: string | null; voice?: Voice; rng?: () => number }
 ): string {
   const rng = input.rng ?? Math.random;
   const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
   const name = firstName(input.name);
   const open = name ? `${g} ${name}!` : `${g}!`;
-  const note = `${open} Te monto la lista de ${input.sector} que pediste. Acéptame y te la paso por aquí mismo.`;
+  const total = input.companies.length;
+
+  const head = `${open} Aquí va tu lista de ${input.sector}: `;
+  const cierre = (resto: number) =>
+    resto > 0
+      ? ` y ${resto} más. Acéptame y te la mando entera con su LinkedIn.`
+      : `. Acéptame y te la mando entera con su LinkedIn.`;
+
+  const nombres: string[] = [];
+  let usado = head.length;
+  for (const c of input.companies) {
+    const trozo = (nombres.length ? ', ' : '') + c.name;
+    // Reserva sitio para el cierre con el número de "más" que quedaría.
+    if (usado + trozo.length + cierre(total - nombres.length - 1).length > 300) break;
+    nombres.push(c.name);
+    usado += trozo.length;
+  }
+
+  // Ni un nombre cabe → nota sin adelanto (sigue siendo gratis y honesta).
+  if (nombres.length === 0) {
+    const plana = `${open} Te monto la lista de ${input.sector} que pediste. Acéptame y te la paso entera por aquí.`;
+    return plana.slice(0, 300);
+  }
+
+  const resto = total - nombres.length;
+  const note = head + nombres.join(', ') + cierre(resto);
   return note.length <= 300 ? note : note.slice(0, 300);
 }
 

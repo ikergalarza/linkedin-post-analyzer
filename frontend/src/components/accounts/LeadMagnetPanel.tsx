@@ -869,7 +869,7 @@ function CommenterCard({
       setMessage(
         kind === 'dm'
           ? buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice })
-          : buildListaInvite({ name: thread.author.name, sector: r.sector, location, voice })
+          : buildListaInvite({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice })
       );
       setMsgTouched(true); // ya es un mensaje real; que ningún efecto lo pise
       setListaMsg(`${r.companies.length} empresa${r.companies.length === 1 ? '' : 's'}${r.companies.length < 15 ? ' (no hay más de ese sector)' : ''}`);
