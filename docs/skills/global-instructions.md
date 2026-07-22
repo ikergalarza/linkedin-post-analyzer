@@ -93,6 +93,7 @@ El claim (el shock, la tensión, el reframe) debe aterrizar para CUALQUIERA cerc
 
 ### 2.5 · Densidad de números en el hook
 **Como mucho UN dato numérico** en el hook. Cero o uno es el punto dulce; dos o más cifras en la primera línea es NO. (Verificado en los top hooks: 50% cero números, 50% exactamente uno, 0% dos o más.) Los números se acumulan en el CUERPO.
+- **⭐ Un PORCENTAJE suelto de gancho («el 99% de…», «el 80% de…») suena a FAKE / clickbait (Iker, 2026-07-22).** No es solo densidad: una cifra-titular sin más se lee a anuncio. **Prefiere SIEMPRE un CONCEPTO original / metáfora que frene el scroll** (como el «desierto» del mapa), y si hay dato, que sea concreto y en el cuerpo. Ej: en vez de *"El 99% de las empresas te regala LinkedIn"* → *"LinkedIn no es una lotería. Es un laboratorio"* (concepto: suerte vs medir/mejorar). El gancho se gana con una imagen mental, no con una estadística.
 
 ### 2.6 · Transición hook → cuerpo
 La(s) línea(s) justo después del hook son make-or-break: el lector acaba de darle a "ver más" y el loop necesita descarga parcial YA.
