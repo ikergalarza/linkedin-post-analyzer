@@ -98,7 +98,7 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
 > **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
-> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción de 2 líneas** para la web del mapa · (4) la **guía de menciones** (en el chat: enlaces CLICABLES fuera de cercado, Paso 10) · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
+> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción** para la web del mapa — la descripción va en **UN SOLO PÁRRAFO, sin saltos de línea** (Iker, 2026-07-22), y **tanto el título como la descripción se entregan cada uno en su bloque cercado** para poder copiarlos con el botón (igual que el texto del post) · (4) la **guía de menciones** (en el chat: enlaces CLICABLES fuera de cercado, Paso 10) · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
 > **Ojo, son DOS imágenes distintas y solo una la das tú:**
 > - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.)
 > - **Foto de portada de la WEB del mapa** = foto de la región → **la entrega el workflow** (Paso 11).
