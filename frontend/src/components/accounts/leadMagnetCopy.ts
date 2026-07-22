@@ -385,7 +385,7 @@ export interface ListaInput {
 // (brand-voice §4). Cierra el "a quién" que da la lista con el "cuándo" que es
 // justo lo que hace el producto.
 const NINJA_DM =
-  'PD: la lista es a quién vender. El cuándo, sin buscarlo tú, lo hace Neety. Si quieres verlo funcionando: recursos.neety.com/agendar';
+  'PD: la lista es a quién vender. Cuándo escribirle a cada una (la señal que dispara la compra) lo tienes aquí: recursos.neety.com/senales';
 
 // El DM con la lista entera, para 1er grado. Abre con el saludo regional (mismo
 // que buildDm), dice el número REAL de empresas (no "15" fijo), lista cada una

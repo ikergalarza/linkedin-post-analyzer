@@ -236,6 +236,19 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   const [cfg, setCfg] = useState<LmConfig>(() => loadConfig(post.id));
   useEffect(() => { saveConfig(post.id, cfg); }, [post.id, cfg]);
 
+  // Si la palabra clave es «lista», ES el lead magnet de la lista: cambia solo al
+  // tipo «Lista personalizada» para no pedir enlace ni tema y generar el DM con
+  // la lista + su spam ninja (Iker, 2026-07-22). Una sola vez, y solo desde el
+  // tipo por defecto: si luego el usuario elige otro tipo a mano, no se lo pisa.
+  const autoLista = useRef(false);
+  useEffect(() => {
+    if (autoLista.current) return;
+    if (cfg.kind === 'dm' && cfg.keyword.trim().toLowerCase() === 'lista') {
+      autoLista.current = true;
+      setCfg((c) => ({ ...c, kind: 'lista' }));
+    }
+  }, [cfg.kind, cfg.keyword]);
+
   const { data, loading, error, refetch } = useApi<CommentsResponse>(
     `/api/accounts/posts/${post.id}/comments`
   );
