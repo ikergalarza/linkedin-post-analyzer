@@ -182,14 +182,16 @@ Frase de entrada:
 - **URLs de LinkedIn:** al sacar cada empresa+persona, captura también la **URL de LinkedIn de la empresa** (su página) y la **URL del perfil de la persona**. Sirven para la guía de menciones del output (Paso 10).
 - **Menciones:** las @-menciones reales las pone el usuario a mano en LinkedIn (copiar/pegar no arrastra los tags). El workflow entrega los NOMBRES en el bloque del cuerpo **y, aparte, la guía de menciones con los enlaces** (Paso 10) para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 
-**Paso 5 — SPAM NINJA (link de agendar) — NO es el cierre:**
-> **Las 7 reglas duras están en `global-instructions §4.4b` y son de obligado cumplimiento. Léelas ahí, no de memoria.** Aquí solo lo específico del mapa:
+**Paso 5 — CTA AL MAPA (link a `recursos.neety.com/mapas/{región}`) — NO es el cierre:**
+> **Las 7 reglas de forma del bloque están en `global-instructions §4.4b` (posición, máx 2 líneas, `https://` delante). Léelas ahí, no de memoria.** Aquí lo específico del mapa:
+- **⚠️ EL ENLACE DEL MAPA VA A `recursos.neety.com/mapas/{región}/`, NO a agendar** (Iker, 2026-07-23). El jefe ya pagó PamPam, así que la web de recursos **embebe el mapa completo** de esa región. Se enlaza ESO. El CTA a `/agendar/` se olía a venta ("te decimos en cuál sembrar y cuándo" = demo); el enlace al mapa se lee como **recurso**, que es lo que el lector ya venía a buscar, y captura igual (la propia página de recursos lleva su gate/CTA a agendar). El slug es la región en minúscula y sin tildes: `/mapas/murcia/`, `/mapas/aragon/`, `/mapas/pais-vasco/`. **Verifica que la página existe antes de entregar** (WebFetch a `recursos.neety.com/mapas`); si aún no está subida, va como `[PENDIENTE · subir el mapa a recursos]`.
 - **Colocación fija: justo DESPUÉS del bloque de menciones.** En este pilar no es "donde quede coherente".
-- **Aterriza el dolor en el industrial de ESA región** con un diferenciador de `aboutme §1b`, y gira la palabra del hook para nombrarlo. Validado (Aragón, hook de "secarral"): *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."*
+- **Framing de recurso, no de anuncio.** Molde validado (los mapas con más clics: Galicia, Valencia, Bizkaia): *"Aquí tienes el mapa completo, empresa por empresa: {link}"*. NO "te decimos", NO "reserva", NO "agenda".
+- **Mantén el chiste del hook DELANTE del link.** El dolor aterriza en el industrial de ESA región con un diferenciador de `aboutme §1b`, girando la palabra del hook. Validado (Murcia, hook del desierto): *"Picar 500 puertas frías para sacar uno. Eso es sembrar en el desierto. / Aquí tienes el mapa completo, empresa por empresa: https://recursos.neety.com/mapas/murcia/"*.
 
 **Paso 6 — CIERRE del post:** una **frase punchy tipo bold statement** que remate el post. **NO** pide comentarios, **NO** hace pregunta, **NO** repite el link. Es un claim fuerte que cierra (p. ej. "Al final las que más venden son las que menos lo cuentan.").
 
-**Paso 7 — Ensamblar el TEXTO** copy-ready, en este orden: **gancho → cuerpo (3 datos + clichés + reveal) → 20 empresas en 5×4 → spam ninja (link agendar) → cierre punchy**. Corre el pase de validación (§8) en silencio.
+**Paso 7 — Ensamblar el TEXTO** copy-ready, en este orden: **gancho → cuerpo (3 datos + clichés + reveal) → 20 empresas en 5×4 → CTA al mapa (link `recursos.neety.com/mapas/{región}`, NO agendar) → cierre punchy**. Corre el pase de validación (§8) en silencio.
 
 **Paso 8 — CSV para PamPam** (clonar `ref_import_navarra.csv`, en esta misma carpeta — plantilla de referencia sobre Navarra):
 - **Cálcalo tal cual:** misma estructura de columnas, mismo orden, mismas comillas, mismo formato (incluida la columna `Section` que aparece DOS veces — se mantiene). Cambia solo la info por ser otra ubicación.

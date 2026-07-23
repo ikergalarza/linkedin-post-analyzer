@@ -428,9 +428,12 @@ def validar(texto, pilar, cuenta=None):
     chk(not re.search(r'Neety', hook_txt, re.I), 'Neety NUNCA en el hook (brand-voice §4.5)',
         'el post vende al pensador, no al producto' if re.search(r'Neety', hook_txt, re.I) else '')
 
-    # global §4.4b + outliers §3.14 — el link va SIEMPRE a agendar. Los CTR mas
-    # altos del historico no valian: iban a pampam.city, web ajena. 727 clics
-    # regalados entre tres mapas.
+    # global §4.4b + outliers §3.14 — el link va SIEMPRE a recursos.neety.com
+    # (dominio propio), nunca a web ajena. Los CTR mas altos del historico no
+    # valian: iban a pampam.city. 727 clics regalados entre tres mapas.
+    # Desde 2026-07-23 el mapa enlaza a recursos.neety.com/mapas/{region} (la web
+    # embebe el mapa completo, el jefe ya pago PamPam) en vez de a /agendar/:
+    # ambos son recursos.neety.com, asi que este check los acepta igual.
     _urls = re.findall(r'https?://\S+|[\w.-]+\.(?:com|es|city|io)\S*', cuerpo)
     _fuera = [u for u in _urls if 'recursos.neety.com' not in u and 'linkedin.com' not in u]
     chk(not _fuera, 'El enlace apunta a recursos.neety.com, no fuera (outliers §3.14)',

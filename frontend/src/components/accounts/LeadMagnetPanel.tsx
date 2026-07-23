@@ -1101,8 +1101,10 @@ function CommenterCard({
             {/* Tipo LISTA: el sector (prerrellenado del comentario, editable) y el
                 botón que busca las empresas y rellena la caja. La lista completa
                 solo va por DM; a una invitación se le manda la nota corta y la
-                lista entera cuando la persona acepte. */}
-            {cfg.kind === 'lista' && (
+                lista entera cuando la persona acepte.
+                Una vez enviado el recurso, la lista ya está generada y mandada:
+                el botón "Generar lista" NO debe seguir ahí (Iker, 2026-07-23). */}
+            {cfg.kind === 'lista' && !noProfileId && msgResult?.status !== 'sent' && (
               <div className="flex items-end gap-2 flex-wrap">
                 <div className="flex-1 min-w-[140px]">
                   <label className="block text-[10px] font-medium text-text-secondary mb-1">Sector</label>
