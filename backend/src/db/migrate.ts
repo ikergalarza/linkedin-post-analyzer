@@ -697,6 +697,19 @@ const migration = `
   -- Cuando se leyo por ultima vez. Permite reintentar los que fallaron sin
   -- confundirlos con los que de verdad tienen 0 clics.
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS premium_analytics_at TIMESTAMPTZ;
+
+  -- v33: SEGUIMIENTO del lead magnet "lista" para quien NO es 1er grado.
+  -- A esa gente se le manda una INVITACIÓN con nota (la lista entera no cabe en
+  -- 300 car.), prometiéndole la lista al aceptar. El problema: cuando aceptan,
+  -- hay que mandarles la lista completa por DM, y regenerarla entonces es rehacer
+  -- el trabajo (y otra búsqueda a Unipile). Solución: al ENVIAR la invitación,
+  -- pre-generamos y GUARDAMOS aquí la lista completa (followup_text). Cuando
+  -- aceptan, el follow-up es pulsar enviar — sin regenerar, sin leer su chat.
+  -- provider_name se guarda para pintar la lista de seguimientos sin una llamada
+  -- a Unipile por fila; el sector, por referencia.
+  ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS followup_text TEXT;
+  ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS sector TEXT;
+  ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS provider_name TEXT;
 `;
 
 export async function runMigrations() {

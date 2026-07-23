@@ -2637,7 +2637,10 @@ router.post('/lead-magnet/lista', async (req: Request, res: Response) => {
 // already invited), not a server error. The UI shows the reason on the card.
 router.post('/lead-magnet/send', async (req: Request, res: Response) => {
   try {
-    const { post_id, comment_id, provider_id, kind, text } = req.body || {};
+    // followup_text / sector / provider_name: solo llegan en la INVITACIÓN de una
+    // lista, para guardar la lista completa que se manda cuando la persona acepte
+    // (ver /lead-magnet/followups). En un DM normal no vienen y se ignoran.
+    const { post_id, comment_id, provider_id, kind, text, followup_text, sector, provider_name } = req.body || {};
     if (!post_id || !comment_id || !provider_id) {
       return res.status(400).json({ error: 'post_id, comment_id and provider_id required' });
     }
@@ -2684,13 +2687,17 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     // the earlier failure.
     try {
       await pool.query(
-        `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error, followup_text, sector, provider_name)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
          ON CONFLICT (post_id, provider_id, kind)
          DO UPDATE SET status = EXCLUDED.status, text = EXCLUDED.text,
                        error = EXCLUDED.error, created_at = NOW(),
-                       comment_social_id = EXCLUDED.comment_social_id`,
-        [post_id, comment_id, provider_id, kind, status, body, error]
+                       comment_social_id = EXCLUDED.comment_social_id,
+                       followup_text = COALESCE(EXCLUDED.followup_text, lead_magnet_sends.followup_text),
+                       sector = COALESCE(EXCLUDED.sector, lead_magnet_sends.sector),
+                       provider_name = COALESCE(EXCLUDED.provider_name, lead_magnet_sends.provider_name)`,
+        [post_id, comment_id, provider_id, kind, status, body, error,
+         followup_text || null, sector || null, provider_name || null]
       );
     } catch (storeErr: any) {
       console.warn('[accounts/lead-magnet/send] persist failed:', storeErr?.message);
@@ -2699,6 +2706,91 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     res.json({ ok: status === 'sent', kind, status, error, result });
   } catch (err: any) {
     console.error('[accounts/lead-magnet/send]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/lead-magnet/followups?creator_id=xxx
+//
+// Los SEGUIMIENTOS pendientes del lead magnet "lista": gente a la que se le mandó
+// una INVITACIÓN con la lista completa ya pre-generada y guardada (followup_text),
+// y a la que TODAVÍA no se le ha mandado esa lista por DM. Cuando aceptan la
+// invitación se les manda con /lead-magnet/send (kind='dm', text = followup_text)
+// y desaparecen de aquí. No lee ninguna conversación: solo saca lo guardado al
+// invitar. Omite las que ya recibieron el DM (NOT EXISTS).
+router.get('/lead-magnet/followups', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || null;
+    const params: any[] = [];
+    let creatorFilter = '';
+    if (creatorId && creatorId !== 'all') {
+      params.push(creatorId);
+      creatorFilter = `AND c.id = $${params.length}`;
+    }
+    const { rows } = await pool.query(
+      `SELECT s.post_id, s.provider_id, s.provider_name, s.sector, s.followup_text,
+              s.comment_social_id, s.created_at,
+              p.hook_text, p.content_text, c.id AS creator_id, c.name AS creator_name
+         FROM lead_magnet_sends s
+         JOIN posts p ON p.id = s.post_id
+         JOIN creators c ON c.id = p.creator_id
+        WHERE s.kind = 'invite' AND s.status = 'sent'
+          AND s.followup_text IS NOT NULL
+          ${creatorFilter}
+          AND NOT EXISTS (
+            SELECT 1 FROM lead_magnet_sends d
+             WHERE d.post_id = s.post_id AND d.provider_id = s.provider_id
+               AND d.kind = 'dm' AND d.status = 'sent'
+          )
+        ORDER BY s.created_at DESC`,
+      params
+    );
+    res.json({ followups: rows });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/followups]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/lead-magnet/check-accepted
+// Body: { creator_id, provider_ids: [...] }
+//
+// ¿Quién de los invitados ya me ha ACEPTADO? No lee su chat: recomprueba el grado
+// de red de cada uno con Unipile (getProfile → network_distance). Si ahora es 1er
+// grado, la invitación se aceptó y ya se le puede mandar la lista por DM. Una
+// llamada por persona con pausa; cap de 40 para no tocar el rate limit.
+router.post('/lead-magnet/check-accepted', async (req: Request, res: Response) => {
+  try {
+    const { creator_id, provider_ids } = req.body || {};
+    if (!creator_id || !Array.isArray(provider_ids)) {
+      return res.status(400).json({ error: 'creator_id and provider_ids[] required' });
+    }
+    const { rows } = await pool.query(`SELECT unipile_account_id FROM creators WHERE id = $1`, [creator_id]);
+    if (rows.length === 0) return res.status(404).json({ error: 'Creator not found' });
+    const accountId = rows[0].unipile_account_id;
+    if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const isFirstDegree = (profile: any): boolean => {
+      const nd = profile?.network_distance ?? profile?.distance ?? profile?.network_info?.distance;
+      if (nd == null) return false;
+      const s = String(nd).toUpperCase();
+      return s === '1' || s.includes('DISTANCE_1') || s === 'FIRST_DEGREE' || s === 'FIRST';
+    };
+
+    const results: { provider_id: string; accepted: boolean }[] = [];
+    for (const pid of provider_ids.slice(0, 40)) {
+      try {
+        const profile = await unipileService.getProfile(String(pid), accountId);
+        results.push({ provider_id: String(pid), accepted: isFirstDegree(profile) });
+      } catch (err: any) {
+        console.warn(`[check-accepted] ${pid} failed:`, err?.message);
+        results.push({ provider_id: String(pid), accepted: false });
+      }
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    res.json({ results });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/check-accepted]', err);
     res.status(500).json({ error: err.message });
   }
 });

@@ -465,6 +465,10 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
         )}
       </div>
 
+      {/* Seguimientos: invitados (2º grado+) que esperan la lista, a los que se
+          les manda por DM en cuanto aceptan. Solo en el tipo lista. */}
+      {cfg.kind === 'lista' && <Seguimientos post={post} creatorId={creatorId} />}
+
       {!ready && (
         <p className="text-center text-text-muted text-sm py-10">
           {cfg.kind === 'dm'
@@ -727,6 +731,11 @@ function CommenterCard({
   const [sector, setSector] = useState<string>(() => extractSector(thread.text || '', cfg.keyword));
   const [listaLoading, setListaLoading] = useState(false);
   const [listaMsg, setListaMsg] = useState<string | null>(null);
+  // La lista COMPLETA, guardada aparte cuando la persona NO es 1er grado: la
+  // invitación manda solo la nota, pero pre-generamos la lista entera y la
+  // guardamos (se envía al backend con la invitación) para mandarla por DM en
+  // cuanto acepten, sin regenerarla (ver la sección Seguimientos).
+  const [followupText, setFollowupText] = useState<string>('');
 
   const [msgSending, setMsgSending] = useState(false);
   const [msgResult, setMsgResult] = useState<{ status: 'sent' | 'failed'; error: string | null } | null>(
@@ -880,11 +889,15 @@ function CommenterCard({
         setListaMsg('No encuentro empresas de ese sector. Prueba a reescribirlo.');
         return;
       }
-      setMessage(
-        kind === 'dm'
-          ? buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice })
-          : buildListaInvite({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice })
-      );
+      const listaEntera = buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice });
+      if (kind === 'dm') {
+        setMessage(listaEntera);
+      } else {
+        // Invitación: la caja lleva la nota corta, pero guardamos la lista ENTERA
+        // para mandarla por DM cuando la persona acepte (sección Seguimientos).
+        setMessage(buildListaInvite({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice }));
+        setFollowupText(listaEntera);
+      }
       setMsgTouched(true); // ya es un mensaje real; que ningún efecto lo pise
       setListaMsg(`${r.companies.length} empresa${r.companies.length === 1 ? '' : 's'}${r.companies.length < 15 ? ' (no hay más de ese sector)' : ''}`);
     } catch (e: any) {
@@ -906,6 +919,11 @@ function CommenterCard({
           provider_id: thread.author.profile_id,
           kind,
           text: message.trim(),
+          // Solo en la INVITACIÓN de una lista: guarda la lista entera + el sector
+          // + el nombre, para el follow-up por DM cuando la persona acepte.
+          ...(cfg.kind === 'lista' && kind === 'invite' && followupText
+            ? { followup_text: followupText, sector: sector.trim(), provider_name: thread.author.name }
+            : {}),
         }
       );
       setMsgResult({ status: res.status, error: res.error });
@@ -1152,6 +1170,126 @@ function CommenterCard({
           </div>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+interface FollowupRow {
+  post_id: string;
+  provider_id: string;
+  provider_name: string | null;
+  sector: string | null;
+  followup_text: string;
+  comment_social_id: string;
+}
+
+// La sección de SEGUIMIENTOS del tipo "lista": los invitados (2º grado o más) a
+// los que ya se les mandó la invitación con la lista completa GUARDADA, y que
+// esperan a recibirla por DM en cuanto acepten. El botón recomprueba el grado de
+// red con Unipile (NO lee su chat); a los que ya te aceptaron, un clic les manda
+// la lista guardada sin regenerarla. Se ocultan solas al recibirla (el backend
+// las excluye en cuanto hay un DM enviado a esa persona en ese post).
+function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }) {
+  const { data, loading } = useApi<{ followups: FollowupRow[] }>(
+    `/api/accounts/lead-magnet/followups?creator_id=${creatorId}`
+  );
+  const followups = useMemo(
+    () => (data?.followups ?? []).filter((f) => f.post_id === post.id),
+    [data, post.id]
+  );
+  const [accepted, setAccepted] = useState<Record<string, boolean>>({});
+  const [checking, setChecking] = useState(false);
+  const [sending, setSending] = useState<string | null>(null);
+  const [sentIds, setSentIds] = useState<Set<string>>(new Set());
+  const [err, setErr] = useState<string | null>(null);
+
+  // Nada que seguir → no metas ruido en la pantalla.
+  if (loading || followups.length === 0) return null;
+
+  const check = async () => {
+    setChecking(true);
+    setErr(null);
+    try {
+      const r = await apiPost<{ results: { provider_id: string; accepted: boolean }[] }>(
+        '/api/accounts/lead-magnet/check-accepted',
+        { creator_id: creatorId, provider_ids: followups.map((f) => f.provider_id) }
+      );
+      const m: Record<string, boolean> = {};
+      for (const x of r.results) m[x.provider_id] = x.accepted;
+      setAccepted(m);
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const sendList = async (f: FollowupRow) => {
+    setSending(f.provider_id);
+    setErr(null);
+    try {
+      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null }>(
+        '/api/accounts/lead-magnet/send',
+        { post_id: f.post_id, comment_id: f.comment_social_id, provider_id: f.provider_id, kind: 'dm', text: f.followup_text }
+      );
+      if (res.status === 'sent') setSentIds((s) => new Set(s).add(f.provider_id));
+      else setErr(res.error || 'LinkedIn rechazó el DM');
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setSending(null);
+    }
+  };
+
+  return (
+    <div className="bg-bg-card border border-accent/30 rounded-xl p-4 space-y-3">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-sm font-medium">Seguimientos</span>
+        <span className="text-[11px] text-text-muted">
+          · {followups.length} invitado{followups.length === 1 ? '' : 's'} esperan la lista
+        </span>
+        <button
+          onClick={check}
+          disabled={checking}
+          className="ml-auto text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 disabled:opacity-50 transition whitespace-nowrap"
+          title="Recomprueba en LinkedIn quién ya te ha aceptado (no lee su chat)"
+        >
+          {checking ? 'Comprobando…' : '¿Quién me ha aceptado?'}
+        </button>
+      </div>
+      <p className="text-[11px] text-text-muted leading-snug">
+        A estos les mandaste la invitación con la lista ya guardada. En cuanto te acepten, un clic se la manda entera por DM.
+      </p>
+      {err && <p className="text-[11px] text-red-400 font-medium">✗ {err}</p>}
+      <div className="space-y-1">
+        {followups.map((f) => {
+          const ok = accepted[f.provider_id];
+          const done = sentIds.has(f.provider_id);
+          return (
+            <div key={f.provider_id} className="flex items-center gap-2 flex-wrap text-sm border-t border-border pt-2">
+              <span className="font-medium">{f.provider_name || 'Sin nombre'}</span>
+              {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
+              <span className="ml-auto">
+                {done ? (
+                  <span className="text-[11px] text-accent">✓ Lista enviada</span>
+                ) : ok ? (
+                  <button
+                    onClick={() => sendList(f)}
+                    disabled={sending === f.provider_id}
+                    className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition"
+                  >
+                    {sending === f.provider_id ? 'Enviando…' : 'Enviar la lista completa'}
+                  </button>
+                ) : ok === false ? (
+                  <span className="text-[11px] text-text-muted">aún no te ha aceptado</span>
+                ) : (
+                  <span className="text-[11px] text-text-muted">pendiente de comprobar</span>
+                )}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
