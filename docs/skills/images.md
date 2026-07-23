@@ -200,7 +200,13 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 ⚠️ **Esto choca con el formato antiguo de `§0h`** (parrafo unico, apertura en mayusculas, cierre de prohibiciones en minusculas). **Ese formato se mantiene solo para prompts de generacion desde cero y siempre que no de error.** En cuanto un prompt falla, se reescribe hablado. Y para prompts de EDICION sobre una imagen ya generada, se usa siempre el formato hablado.
 
-**🔴 DECIDE PRIMERO: ¿edicion o calca-de-cero? (Iker, 2026-07-23, me equivoque en esto).** Si el usuario YA te ha pasado una version generada de la imagen, el prompt es de **EDICION sobre ESA**: solo los cambios ("cambiame esta frase por esta otra, no toques nada mas"), NUNCA re-describas la calca entera de la referencia. El "calca esta referencia desde cero" (`§0h`/`§4.4` Paso 6b) es SOLO para la primera version, cuando aun no hay imagen. Di el mismo prompt-de-calca por segunda vez y le haces re-generar de cero lo que ya tenia bien (colores, maqueta, fuentes). Antes de escribir el prompt: ¿hay ya una imagen? → edicion. ¿No la hay? → calca.
+**🔴 DECIDE PRIMERO: ¿edicion o calca-de-cero? (Iker, 2026-07-23, me equivoque en esto).** Si el usuario YA te ha pasado una version generada de la imagen, el prompt es de **EDICION sobre ESA**: solo los cambios, NUNCA re-describas la calca entera de la referencia. El "calca esta referencia desde cero" (`§0h`/`§4.4` Paso 6b) es SOLO para la primera version, cuando aun no hay imagen. Di el mismo prompt-de-calca por segunda vez y le haces re-generar de cero lo que ya tenia bien (colores, maqueta, fuentes). Antes de escribir el prompt: ¿hay ya una imagen? → edicion. ¿No la hay? → calca.
+
+**FORMATO EXACTO del prompt de EDICION (Iker, 2026-07-23):**
+- **Empieza SIEMPRE con `SOLO HAZ LO QUE TE PIDO:` en MAYUSCULAS.** El apertura de contencion va tambien en los prompts de edicion, no solo en los de calca.
+- **Hablale DIRECTO con los cambios, en imperativo** (`cambia la frase X por Y`). **NUNCA digas "sobre esta imagen"** ni "en esta imagen": se le habla directamente, como si la tuviera delante.
+- **Cierra con la contencion:** `No toques nada mas: ni colores, ni maquetacion, ni fuentes, ni el resto de textos e iconos.`
+- Entre medias, los cambios en frases habladas (sin parentesis numerados ni simbolos raros, `§0i-3`).
 
 ## ⭐ 0h-5 · UNA TABLA SE LEE EN EL FEED, NO SE ADMIRA (Iker, 2026-07-21)
 
