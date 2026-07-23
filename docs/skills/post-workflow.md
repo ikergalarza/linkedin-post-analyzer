@@ -125,6 +125,11 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 2. Lista los países que exportan **un poco MENOS** que esa cifra → candidatos a "XXX exporta más que [país] entero". Para cada candidato: **nombre, cifra y año**.
 3. **Elige el país que MÁS frene el scroll** para nuestra audiencia (director industrial español de 50-60): prioriza países **conocidos** y que **sorprendan** (que parezcan "más grandes/importantes" que una provincia — Bolivia, Croacia, Portugal, Luxemburgo, Honduras, Italia han funcionado). Itera varios y quédate con el más impactante.
 4. **INNEGOCIABLE — el dato tiene que ser real y verificable, con fuente.** Nunca sacrifiques veracidad por impacto: un dato mal → el primer comentario de un local corrigiéndote hunde el post (de 6x a 0.5x). Entre dos países igual de impactantes, el de dato más sólido.
+5. **⚠️ VERIFICACIÓN DE LA COMPARACIÓN-PAÍS — la más traicionera** (auditoría 2026-07-23: se colaron DOS falsas en posts publicados). Reglas duras:
+   - **Mercancías contra mercancías, mismo año.** Compara exportación de BIENES de la región contra exportación de BIENES del país (OEC/COMTRADE/Eurostat), no contra su PIB ni sus exportaciones de servicios. "Andalucía más que Italia" era falso (Italia ~600.000M€ vs Andalucía ~40.000M€, 15x). "Álava más que Honduras" era falso (Honduras ~10.200M€ > Álava 9.151M€).
+   - **La fuente tiene que publicar ese país.** Citamos "(EUSTAT)" para un dato de Honduras que EUSTAT no publica jamás. La fuente del país es Banco Mundial/OEC/COMTRADE, y va citada como tal.
+   - **Exige MARGEN, no empate.** Si el país queda a menos de ~15% por debajo, un comentarista con otra fuente (WITS vs COMTRADE dan cifras distintas) te lo invierte. Navarra vs Bolivia quedó casi en empate: evita esos. Elige un país claramente por debajo.
+   - **Re-verifica al REUTILIZAR el mapa** (para la web u otra cuenta): las cifras caducan. Varias regiones publicaron un total de exportación que ya no cuadra con el último año oficial (Cataluña, Aragón, Navarra, Álava, Bizkaia). Antes de reciclar, recomprueba el último dato.
 
 **Paso 3 — CUERPO** (fiel a `swipe-file §2.1` + voz `brand-voice`, VARIANDO expresiones):
 1. Setup corto justo tras el gancho (sin preámbulo en la línea 2).
