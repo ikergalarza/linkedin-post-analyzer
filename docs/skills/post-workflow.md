@@ -369,6 +369,16 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces** · (4) **los 2 PROMPTS de imagen** literales con sus `XXX` rellenos (Paso 6b). **Sin CSV** y sin montar la imagen: eso lo hace el usuario con su plantilla.
 
 ### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
+
+> **⭐ EL FLUJO EN 5 PASOS (la intuición, antes de los detalles). Costó 8 iteraciones sacarlo el 2026-07-23; que no vuelva a costar:**
+> 1. **REFERENCIA = meme de VERDAD.** Riesgo de risa 25-56% (`GET /posts/{id}/reactions`, `ENTERTAINMENT`), ≥100 likes. **Viral aunque NO sea de ventas** — el dolor psicológico es universal y ya lo adaptamos. Mira la imagen antes de elegir.
+> 2. **CALCA LA ESENCIA ENTERA**, no media: la mecánica del gancho, la estructura del cuerpo (flechas, numerada, dos cajas…), la longitud, la mecánica de la imagen **y el TIEMPO VERBAL** (si promete en futuro, tú en futuro). Fidelidad > "corto y punchy".
+> 3. **ADÁPTALO A VENTAS** en el texto y en la imagen (`§2.3`), sin destripar el chiste que remata la foto.
+> 4. **MEJÓRALO** (el paso que más olvido): verbo con techo (`§2.9`), **sin repetir verbo**, formato más limpio. Igualar el original es el SUELO; superarlo es la meta.
+> 5. **VALIDA:** mecánico 30/30 (`validar-post.py --pilar meme`) + pase de criterio (`§8`). Entrega con comparativa (texto verbatim, dos columnas, `working-preferences §1e`).
+>
+> Los pasos 2-4 son la cadena que se me escapa: calco medio, olvido el tiempo verbal, o no mejoro el punch. Léelos SIEMPRE.
+
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
 >
 > 🔴 **NUNCA propongas un meme sin referencia real validada (Iker, 2026-07-22).** Un formato de meme genérico "que funciona en internet" (distracted boyfriend, midwit, drake…) **NO vale**: si no está validado como OUTLIER en un post real de LinkedIn (nuestro o de otro creador), no es un dato, es una apuesta, y no nos la jugamos. **Todo meme que entregues lleva el ENLACE al post de referencia y su ratio.** Si no encuentras una referencia real potente (p.ej. el banco de inspiración no tiene un meme de ventas fuerte), **DILO y pídele una a Iker** — no rellenes con un template genérico. "Siempre subimos cosas basadas en datos."
