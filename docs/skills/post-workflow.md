@@ -553,10 +553,13 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **Variantes del disparador de urgencia** (para no repetir el mismo literal, `working-preferences §4`). "ÚLTIMA HORA" es la que tiene los datos y es la traducción que decidimos para el *breaking* inglés — **nunca dejarlo en inglés**, nuestro lector es un director industrial español:
 - `🚨 ÚLTIMA HORA:` ← la probada, 9.96x y 2.72x
+- `⚰️ D.E.P.` ← el R.I.P. en español. Nuestro (Iker, 21/05: *"⚰️ D.E.P. prospección a ciegas"*) y el que **acaba de usar Martina Arosa** (2026-07-23). Mata algo que el lector hace mal (una práctica, no el modelo).
 - `🚨 Acaba de pasar:`
 - `🚨 Esto cambió ayer:`
 - `🚨 Nadie lo ha contado todavía:`
 - `🚨 Llevo 24 horas dándole vueltas a esto:`
+
+**🔴 ES OBLIGATORIO, COMO "EXPORTA" EN LOS MAPAS (Iker, 2026-07-23).** No es "una opción que va bien": el hook del lead magnet **abre siempre** con el disparador de última hora + emoji de alarma (🚨 o ⚰️). **El validador lo comprueba** (`--pilar leadmagnet`). Por qué ahora es regla dura: la lista de Unai (22/07) se lo saltó y arrancó fría (0 comentarios ajenos el día 1; despegó el día 2 a ~4.000 imp cuando llegaron comentarios reales). **Validación externa:** Guillermo Flor y Martina Arosa —los dos referentes que SIEMPRE publican lead magnets— abren SIEMPRE con este gancho. Es su firma, y es la de nuestros dos mejores. Cuando Iker pase el enlace del post de Martina, añádelo aquí con su ratio.
 
 **⚠️ CONFLICTO SIN RESOLVER, no lo tapes:** `brand-voice §1b` dice que este registro es lo contrario de sobrio y que "si hace falta, va en la cuenta de Iker". Pero los datos dicen lo contrario: en **Unai** hizo 9.96x y 2.72x, y el único de **Iker** hizo 0.70x. Puede ser el sujeto de la frase y no la cuenta (el de Iker hablaba del modelo). **n=1 por cuenta: no está decidido.** Si se vuelve a usar, decidir a conciencia y anotar el resultado.
 

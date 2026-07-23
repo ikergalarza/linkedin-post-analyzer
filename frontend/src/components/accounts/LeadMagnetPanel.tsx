@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useApi, apiPost, apiGet } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
@@ -896,14 +896,15 @@ function CommenterCard({
         setListaMsg('No encuentro empresas de ese sector. Prueba a reescribirlo.');
         return;
       }
-      const listaEntera = buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: isListaFollowup });
       if (kind === 'dm') {
-        setMessage(listaEntera);
+        setMessage(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: isListaFollowup }));
       } else {
         // Invitación: la caja lleva la nota corta, pero guardamos la lista ENTERA
-        // para mandarla por DM cuando la persona acepte (sección Seguimientos).
+        // para mandarla por DM cuando la persona acepte (sección Seguimientos). Esa
+        // copia guardada se ENVÍA siempre como follow-up, así que se monta ya con
+        // `followup: true` (sin saludo de cero: entrega lo prometido).
         setMessage(buildListaInvite({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice }));
-        setFollowupText(listaEntera);
+        setFollowupText(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: true }));
       }
       setMsgTouched(true); // ya es un mensaje real; que ningún efecto lo pise
       setListaMsg(`${r.companies.length} empresa${r.companies.length === 1 ? '' : 's'}${r.companies.length < 15 ? ' (no hay más de ese sector)' : ''}`);
@@ -1090,6 +1091,16 @@ function CommenterCard({
               Aquí solo se responde. El recurso se le manda desde su otro comentario, el de la palabra
               clave, y es ahí donde se le avisa del envío.
             </p>
+          ) : isListaFollowup ? (
+            /* Follow-up: la persona ACEPTÓ la invitación. Su cuadro completo (la
+               lista guardada, editable y lista para enviar) vive ARRIBA en
+               Seguimientos, para no perderlo entre los comentarios (Iker,
+               2026-07-23). Aquí solo el puntero. */
+            <p className="mt-3 pt-3 border-t border-border text-[11px] text-accent leading-snug">
+              ✓ Te aceptó la invitación. Su lista ya te espera montada arriba, en{' '}
+              <span className="font-semibold">Seguimientos</span>: revísala y mándasela por DM desde ahí. Aquí no,
+              para que no se pierda entre los comentarios.
+            </p>
           ) : (
           <div className="mt-3 pt-3 border-t border-border space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
@@ -1104,17 +1115,6 @@ function CommenterCard({
                 </span>
               )}
             </div>
-
-            {/* Por qué esta tarjeta reaparece ya en modo DM: la persona era 2º
-                grado, le mandamos la invitación con la lista prometida, y al
-                ACEPTAR pasó a 1er grado. Ahora se le entrega la lista entera por
-                DM (lo que le prometiste), no otra nota. */}
-            {isListaFollowup && (
-              <p className="text-[11px] text-accent bg-accent/10 border border-accent/30 rounded-md px-2.5 py-2 leading-snug">
-                ✓ Te aceptó la invitación, ya es 1er grado. Le prometiste la lista en la nota: genérala y mándasela entera
-                por DM. La copia ya no le saluda de cero, entrega directamente lo prometido.
-              </p>
-            )}
 
             {/* Tipo LISTA: el sector (prerrellenado del comentario, editable) y el
                 botón que busca las empresas y rellena la caja. La lista completa
@@ -1228,11 +1228,12 @@ function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }
   const [sending, setSending] = useState<string | null>(null);
   const [sentIds, setSentIds] = useState<Set<string>>(new Set());
   const [err, setErr] = useState<string | null>(null);
+  // El texto por persona, editable, precargado con la lista que guardamos al
+  // invitar (ya montada con la copia de follow-up, sin saludo de cero).
+  const [texts, setTexts] = useState<Record<string, string>>({});
 
-  // Nada que seguir → no metas ruido en la pantalla.
-  if (loading || followups.length === 0) return null;
-
-  const check = async () => {
+  const check = useCallback(async () => {
+    if (followups.length === 0) return;
     setChecking(true);
     setErr(null);
     try {
@@ -1248,15 +1249,30 @@ function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }
     } finally {
       setChecking(false);
     }
-  };
+  }, [creatorId, followups]);
+
+  // Se comprueba UNA vez al cargar, para que quien ya te aceptó suba arriba con su
+  // cuadro sin que tengas que pulsar nada (el usuario lo quería así: que se lo
+  // recuerde). El botón queda para volver a comprobar a mano.
+  const autoChecked = useRef(false);
+  useEffect(() => {
+    if (autoChecked.current || followups.length === 0) return;
+    autoChecked.current = true;
+    check();
+  }, [followups.length, check]);
+
+  // Nada que seguir → no metas ruido en la pantalla.
+  if (loading || followups.length === 0) return null;
 
   const sendList = async (f: FollowupRow) => {
+    const text = (texts[f.provider_id] ?? f.followup_text).trim();
+    if (!text) return;
     setSending(f.provider_id);
     setErr(null);
     try {
       const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null }>(
         '/api/accounts/lead-magnet/send',
-        { post_id: f.post_id, comment_id: f.comment_social_id, provider_id: f.provider_id, kind: 'dm', text: f.followup_text }
+        { post_id: f.post_id, comment_id: f.comment_social_id, provider_id: f.provider_id, kind: 'dm', text }
       );
       if (res.status === 'sent') setSentIds((s) => new Set(s).add(f.provider_id));
       else setErr(res.error || 'LinkedIn rechazó el DM');
@@ -1267,50 +1283,80 @@ function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }
     }
   };
 
+  // Los que ya te aceptaron y esperan el envío van ARRIBA (son los accionables);
+  // luego los pendientes de aceptar; al final los ya enviados.
+  const rank = (f: FollowupRow) => (sentIds.has(f.provider_id) ? 2 : accepted[f.provider_id] ? 0 : 1);
+  const orden = [...followups].sort((a, b) => rank(a) - rank(b));
+  const listos = followups.filter((f) => accepted[f.provider_id] && !sentIds.has(f.provider_id)).length;
+
   return (
     <div className="bg-bg-card border border-accent/30 rounded-xl p-4 space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-sm font-medium">Seguimientos</span>
         <span className="text-[11px] text-text-muted">
-          · {followups.length} invitado{followups.length === 1 ? '' : 's'} esperan la lista
+          · {followups.length} invitado{followups.length === 1 ? '' : 's'}
+          {listos > 0 ? ` · ${listos} listo${listos === 1 ? '' : 's'} para enviar` : ''}
         </span>
         <button
           onClick={check}
           disabled={checking}
           className="ml-auto text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 disabled:opacity-50 transition whitespace-nowrap"
-          title="Recomprueba en LinkedIn quién ya te ha aceptado (no lee su chat)"
+          title="Vuelve a comprobar en LinkedIn quién ya te ha aceptado (no lee su chat)"
         >
-          {checking ? 'Comprobando…' : '¿Quién me ha aceptado?'}
+          {checking ? 'Comprobando…' : '↻ Volver a comprobar'}
         </button>
       </div>
       <p className="text-[11px] text-text-muted leading-snug">
-        A estos les mandaste la invitación con la lista ya guardada. En cuanto te acepten, un clic se la manda entera por DM.
+        Quien te acepta sube aquí arriba con su lista ya montada: la revisas y se la mandas por DM de un tiro. Los que aún no te han aceptado quedan en espera.
       </p>
       {err && <p className="text-[11px] text-red-400 font-medium">✗ {err}</p>}
-      <div className="space-y-1">
-        {followups.map((f) => {
+      <div className="space-y-2">
+        {orden.map((f) => {
           const ok = accepted[f.provider_id];
           const done = sentIds.has(f.provider_id);
+          if (done) {
+            return (
+              <div key={f.provider_id} className="flex items-center gap-2 flex-wrap text-sm border-t border-border pt-2">
+                <span className="font-medium">{f.provider_name || 'Sin nombre'}</span>
+                {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
+                <span className="ml-auto text-[11px] text-accent">✓ Lista enviada</span>
+              </div>
+            );
+          }
+          // ACEPTADO y sin enviar → el cuadro COMPLETO, arriba: la lista guardada,
+          // editable, y el botón de mandarla. Es lo que el usuario pedía: que el
+          // follow-up no viva perdido entre los comentarios, sino aquí.
+          if (ok) {
+            const val = texts[f.provider_id] ?? f.followup_text;
+            return (
+              <div key={f.provider_id} className="border-t border-border pt-2 space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-medium text-sm">{f.provider_name || 'Sin nombre'}</span>
+                  {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30">✓ te aceptó</span>
+                </div>
+                <textarea
+                  value={val}
+                  onChange={(e) => setTexts((t) => ({ ...t, [f.provider_id]: e.target.value }))}
+                  disabled={sending === f.provider_id}
+                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 min-h-[240px] resize-y focus:outline-none focus:border-accent disabled:opacity-50"
+                />
+                <button
+                  onClick={() => sendList(f)}
+                  disabled={sending === f.provider_id || !val.trim()}
+                  className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
+                >
+                  {sending === f.provider_id ? 'Enviando…' : 'Enviar la lista completa por DM'}
+                </button>
+              </div>
+            );
+          }
           return (
             <div key={f.provider_id} className="flex items-center gap-2 flex-wrap text-sm border-t border-border pt-2">
               <span className="font-medium">{f.provider_name || 'Sin nombre'}</span>
               {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
-              <span className="ml-auto">
-                {done ? (
-                  <span className="text-[11px] text-accent">✓ Lista enviada</span>
-                ) : ok ? (
-                  <button
-                    onClick={() => sendList(f)}
-                    disabled={sending === f.provider_id}
-                    className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition"
-                  >
-                    {sending === f.provider_id ? 'Enviando…' : 'Enviar la lista completa'}
-                  </button>
-                ) : ok === false ? (
-                  <span className="text-[11px] text-text-muted">aún no te ha aceptado</span>
-                ) : (
-                  <span className="text-[11px] text-text-muted">pendiente de comprobar</span>
-                )}
+              <span className="ml-auto text-[11px] text-text-muted">
+                {ok === false ? 'aún no te ha aceptado' : 'comprobando…'}
               </span>
             </div>
           );

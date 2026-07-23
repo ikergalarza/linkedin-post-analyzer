@@ -526,6 +526,16 @@ def validar(texto, pilar, cuenta=None):
             chk(all(len(b) == 4 for b in menciones), 'Menciones en bloques de 4 (5×4)',
                 f'bloques de {[len(b) for b in menciones]}')
     if pilar == 'leadmagnet':
+        # El gancho abre SIEMPRE con el disparador de última hora + emoji de alarma
+        # (post-workflow §4.5.0). Es la estructura de nuestros 2 mejores (9.96x y
+        # 2.72x) y la que usan SIN FALTA Guillermo Flor y Martina Arosa. Como
+        # "exporta" en los mapas: obligatorio, no decorativo (Iker, 2026-07-23). La
+        # lista de Unai (22/07) arrancó fría por saltárselo.
+        h = hook_txt.strip()
+        alarma = h.startswith('🚨') or h.startswith('⚰') or h.startswith('⚰️')
+        chk(alarma, 'Hook abre con alarma de última hora 🚨/⚰️ (§4.5.0)',
+            'los 2 mejores lead magnets abren con "🚨 ÚLTIMA HORA:" / "⚰️ D.E.P."; '
+            'sin el disparador el post arranca frío' if not alarma else '')
         chk(not tiene_link, 'Lead magnet SIN spam ninja (§4.4b, única excepción)',
             'el link apila un 2º CTA y hunde los comentarios' if tiene_link else '')
         m = re.search(r'\bcomenta\b', cuerpo, re.I)
