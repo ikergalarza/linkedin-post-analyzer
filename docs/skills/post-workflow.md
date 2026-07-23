@@ -403,6 +403,8 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 >
 > **⚠️ Con una condicion: solo si MEJORA.** No metas un bloque de dos por cumplir. La enumeracion paralela (la escalera de 6 roles) es una unidad y se queda junta. Si partir algo lo hace mas pesado en vez de mas ritmico, no lo partas.
 >
+> **⭐ MEJORAR = VERBOS PUNCHY Y SIN REPETIR (Iker, 2026-07-23).** Calcar y adaptar a ventas es el suelo; el plus es que el resultado sea MÁS punchy que el original. Dos fallos que lo tiran: (1) **verbo flojo** (`global §2.9`, escalera y techo) — sube el verbo un peldaño; (2) **repetir el mismo verbo** en el hook. Ej. real que se rechazó: hook *"Te venden que vender es mandar la oferta y cerrar"* — `venden`+`vender` pegados, queda fatal. Arreglado: *"Te pintan la venta como una línea recta"* (`pintan` punchy, un solo `venta`, y encima monta la imagen del zigzag). Antes de entregar el hook, léelo en alto: si un verbo se repite o suena plano, otra pasada.
+>
 > **Y el cierre punchy es SIEMPRE una linea.** Dos oraciones largas al final diluyen el remate: un cierre no admite explicacion detras.
 
 **Paso 0 — Conseguir la referencia:** accede al enlace y extrae (a) el **TEXTO** del post (gancho/1ª línea + cuerpo) y (b) la **FOTO**.

@@ -369,6 +369,11 @@ export interface ListaInput {
   location?: string | null;
   voice?: Voice;
   rng?: () => number;
+  // true cuando este DM es el SEGUIMIENTO de una invitación ya aceptada: la
+  // persona comentó, le respondimos y le mandamos la nota prometiéndole la lista
+  // al aceptar. Ahora que es 1er grado, el DM ENTREGA lo prometido — no reabre la
+  // conversación con un saludo de cero (ya la tuvimos).
+  followup?: boolean;
 }
 
 // El "spam ninja" del DM. El lead magnet "lista" NO crea web ni gate, así que el
@@ -403,7 +408,13 @@ export function buildListaDm(input: ListaInput): string {
   const cuenta = n === 1
     ? '1 empresa activa a la que puedes vender, con dónde está y su LinkedIn'
     : `${n} empresas activas a las que puedes vender, con dónde están y su LinkedIn`;
-  const intro = `${open} Aquí tienes tu lista de ${input.sector}.\n${cuenta}:`;
+  // Follow-up: no se re-saluda. Entrega lo prometido en la nota, referenciándolo
+  // ("la que te prometí"), que es lo que hace que se lea como continuación y no
+  // como un mensaje frío nuevo. Cold (1er grado directo, sin invitación previa):
+  // saludo normal, es el primer contacto por privado.
+  const intro = input.followup
+    ? `${name ? name + ', ' : ''}aquí va la lista de ${input.sector} que te prometí.\n${cuenta}:`
+    : `${open} Aquí tienes tu lista de ${input.sector}.\n${cuenta}:`;
   const lines = input.companies
     .map((c) => `→ ${c.name}${c.zona ? ` · ${c.zona}` : ''}\n   ${prettyUrl(c.linkedinUrl)}`)
     .join('\n');

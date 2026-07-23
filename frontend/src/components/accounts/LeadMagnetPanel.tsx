@@ -664,6 +664,13 @@ function CommenterCard({
   const priorSend = sends.find((s) => s.kind === kind) ?? null;
   const alreadySent = priorSend?.status === 'sent';
 
+  // ¿Ya le mandamos una invitación (era 2º grado y le prometimos la lista al
+  // aceptar)? Si ahora aparece como 1er grado (kind === 'dm'), es que ACEPTÓ: este
+  // DM es el SEGUIMIENTO. Se usa para (a) explicar en la tarjeta por qué reaparece
+  // y por qué ahora es DM y no nota, y (b) que la copia no le salude de cero.
+  const wasInvited = sends.some((s) => s.kind === 'invite');
+  const isListaFollowup = cfg.kind === 'lista' && kind === 'dm' && wasInvited && !alreadySent;
+
   // 'plain' → they dropped the keyword and nothing else; the template IS the
   // answer. 'rich' → they wrote something real, and "remitido!" would be
   // throwing away the best comment on the post.
@@ -889,7 +896,7 @@ function CommenterCard({
         setListaMsg('No encuentro empresas de ese sector. Prueba a reescribirlo.');
         return;
       }
-      const listaEntera = buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice });
+      const listaEntera = buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: isListaFollowup });
       if (kind === 'dm') {
         setMessage(listaEntera);
       } else {
@@ -1098,6 +1105,17 @@ function CommenterCard({
               )}
             </div>
 
+            {/* Por qué esta tarjeta reaparece ya en modo DM: la persona era 2º
+                grado, le mandamos la invitación con la lista prometida, y al
+                ACEPTAR pasó a 1er grado. Ahora se le entrega la lista entera por
+                DM (lo que le prometiste), no otra nota. */}
+            {isListaFollowup && (
+              <p className="text-[11px] text-accent bg-accent/10 border border-accent/30 rounded-md px-2.5 py-2 leading-snug">
+                ✓ Te aceptó la invitación, ya es 1er grado. Le prometiste la lista en la nota: genérala y mándasela entera
+                por DM. La copia ya no le saluda de cero, entrega directamente lo prometido.
+              </p>
+            )}
+
             {/* Tipo LISTA: el sector (prerrellenado del comentario, editable) y el
                 botón que busca las empresas y rellena la caja. La lista completa
                 solo va por DM; a una invitación se le manda la nota corta y la
@@ -1146,7 +1164,12 @@ function CommenterCard({
                   value={message}
                   onChange={(e) => { setMessage(e.target.value); setMsgTouched(true); }}
                   disabled={msgSending}
-                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 min-h-[68px] resize-y focus:outline-none focus:border-accent disabled:opacity-50"
+                  /* La lista son 15 empresas con zona y LinkedIn: en 68px se leía por
+                     una rendija. Alta por defecto en lista para poder leerla y hacer
+                     scroll cómodo; el resto de mensajes son cortos y no la necesitan. */
+                  className={`w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 resize-y focus:outline-none focus:border-accent disabled:opacity-50 ${
+                    cfg.kind === 'lista' ? 'min-h-[240px]' : 'min-h-[80px]'
+                  }`}
                 />
                 <div className="flex items-center gap-2 flex-wrap">
                   <button

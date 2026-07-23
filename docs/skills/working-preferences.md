@@ -49,6 +49,7 @@ En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además de
 - Cabecera dentro del bloque: **ORIGINAL** (creador + ratio si es referencia) a la izquierda, **EL MÍO** (cuenta) a la derecha.
 - El "original" es el texto de la referencia tal cual; si está en inglés, va en inglés (no se traduce en la comparativa). El mío, el que entrego.
 - **SOLO EL TEXTO del post (hook, cuerpo, spam ninja, cierre). NADA de la imagen** (Iker, 2026-07-23). La comparativa es para ver cómo se robó la esencia del TEXTO; el concepto de imagen va en su prompt aparte, no en la tabla. Nada de una fila `IMAGEN:`.
+- **TEXTO VERBATIM, línea a línea, NO troceado en secciones** (Iker, 2026-07-23). Se pega el texto real del post tal cual (el original en su columna, el mío en la suya), envuelto al ancho. **NADA de etiquetar `HOOK:` / `CUERPO:` / `CIERRE:`** ni resumir cada parte: eso es mi lectura del post, no el post. Si el original es muy largo (essay), se pega su parte comparable y se avisa en una línea de que sigue.
 - **Cómo generarlo sin errores de alineación:** con un script que hace word-wrap de cada columna a su ancho (izq ~34, der ~52) y hace zip fila a fila, rellenando la izquierda con `padEnd`. La derecha va la última, así que un emoji ahí no descuadra nada. (El bloque de `node -e` que se usó el 2026-07-22 sirve de plantilla.)
 
 **El esqueleto, para no volver a fallar (Iker, 2026-07-23: lo entregué apilado OTRA VEZ):**
