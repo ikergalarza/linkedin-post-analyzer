@@ -270,6 +270,17 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     return m;
   }, [sendsData]);
 
+  // Comentarios que YA tienen una invitación enviada, por comment_social_id. Se
+  // usa el id del COMENTARIO (estable) y NO el provider_id: cuando la persona
+  // acepta y pasa a 1er grado, LinkedIn puede devolver otro provider_id, así que
+  // el sends-por-persona no casa y la tarjeta volvía a enseñar los controles de
+  // envío — el riesgo de mandar la lista DOS veces que avisó Iker (2026-07-23). A
+  // esta gente se la gestiona SOLO arriba en Seguimientos.
+  const invitedCommentIds = useMemo(
+    () => new Set((sendsData?.sends ?? []).filter((s) => s.kind === 'invite').map((s) => s.comment_social_id)),
+    [sendsData]
+  );
+
   // Cada tipo necesita campos distintos, así que "listo" no es el mismo.
   // En PÚBLICO solo hace falta la palabra clave: el generador pone el análisis,
   // la página y el enlace. En DM siguen haciendo falta el enlace y el tema.
@@ -499,6 +510,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           creatorId={creatorId}
           cfg={cfg}
           sends={t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []}
+          invitedCommentIds={invitedCommentIds}
           ownsDm={dmOwnerByPerson.get(t.author.profile_id ?? '') === t.id}
           voice={voice}
           initialReply={takeVariant}
@@ -636,6 +648,7 @@ function CommenterCard({
   creatorId,
   cfg,
   sends,
+  invitedCommentIds,
   ownsDm,
   voice,
   initialReply,
@@ -646,6 +659,9 @@ function CommenterCard({
   creatorId: string;
   cfg: LmConfig;
   sends: SendRecord[];
+  // Ids de comentario que ya tienen invitación enviada → su follow-up se gestiona
+  // arriba en Seguimientos, no aquí.
+  invitedCommentIds: Set<string>;
   // True on the ONE card per person that carries the resource. False on that
   // person's other keyword-matching comments, which show only a reply — the
   // resource goes out once, from the comment that actually asked for it.
@@ -664,12 +680,11 @@ function CommenterCard({
   const priorSend = sends.find((s) => s.kind === kind) ?? null;
   const alreadySent = priorSend?.status === 'sent';
 
-  // ¿Ya le mandamos una invitación (era 2º grado y le prometimos la lista al
-  // aceptar)? Si ahora aparece como 1er grado (kind === 'dm'), es que ACEPTÓ: este
-  // DM es el SEGUIMIENTO. Se usa para (a) explicar en la tarjeta por qué reaparece
-  // y por qué ahora es DM y no nota, y (b) que la copia no le salude de cero.
-  const wasInvited = sends.some((s) => s.kind === 'invite');
-  const isListaFollowup = cfg.kind === 'lista' && kind === 'dm' && wasInvited && !alreadySent;
+  // ¿Esta persona ya recibió la invitación con la lista prometida? Se mira por el
+  // id del comentario (estable), NO por el provider_id (cambia al pasar a 1er
+  // grado). Si es así, su seguimiento se gestiona ARRIBA en Seguimientos y esta
+  // tarjeta NO muestra controles de envío — así no se manda la lista dos veces.
+  const handledInSeguimientos = cfg.kind === 'lista' && invitedCommentIds.has(thread.id);
 
   // 'plain' → they dropped the keyword and nothing else; the template IS the
   // answer. 'rich' → they wrote something real, and "remitido!" would be
@@ -897,7 +912,9 @@ function CommenterCard({
         return;
       }
       if (kind === 'dm') {
-        setMessage(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: isListaFollowup }));
+        // Aquí solo llega un 1er grado que NUNCA fue invitado (a los invitados los
+        // gestiona Seguimientos): primer contacto por privado, saludo normal.
+        setMessage(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: false }));
       } else {
         // Invitación: la caja lleva la nota corta, pero guardamos la lista ENTERA
         // para mandarla por DM cuando la persona acepte (sección Seguimientos). Esa
@@ -1091,15 +1108,14 @@ function CommenterCard({
               Aquí solo se responde. El recurso se le manda desde su otro comentario, el de la palabra
               clave, y es ahí donde se le avisa del envío.
             </p>
-          ) : isListaFollowup ? (
-            /* Follow-up: la persona ACEPTÓ la invitación. Su cuadro completo (la
-               lista guardada, editable y lista para enviar) vive ARRIBA en
-               Seguimientos, para no perderlo entre los comentarios (Iker,
-               2026-07-23). Aquí solo el puntero. */
+          ) : handledInSeguimientos ? (
+            /* Ya invitada: su seguimiento (mandarle la lista entera al aceptar)
+               vive ARRIBA en Seguimientos. Aquí NO se enseñan controles de envío,
+               para no mandar la lista dos veces (Iker, 2026-07-23). Solo el puntero. */
             <p className="mt-3 pt-3 border-t border-border text-[11px] text-accent leading-snug">
-              ✓ Te aceptó la invitación. Su lista ya te espera montada arriba, en{' '}
-              <span className="font-semibold">Seguimientos</span>: revísala y mándasela por DM desde ahí. Aquí no,
-              para que no se pierda entre los comentarios.
+              ✓ Ya le mandaste la invitación. Su lista se gestiona arriba, en{' '}
+              <span className="font-semibold">Seguimientos</span>: cuando te acepte, se la mandas entera por DM desde
+              ahí. Aquí no, para no mandarla dos veces.
             </p>
           ) : (
           <div className="mt-3 pt-3 border-t border-border space-y-2">
