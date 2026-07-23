@@ -50,7 +50,16 @@ En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además de
 - El "original" es el texto de la referencia tal cual; si está en inglés, va en inglés (no se traduce en la comparativa). El mío, el que entrego.
 - **Cómo generarlo sin errores de alineación:** con un script que hace word-wrap de cada columna a su ancho (izq ~34, der ~52) y hace zip fila a fila, rellenando la izquierda con `padEnd`. La derecha va la última, así que un emoji ahí no descuadra nada. (El bloque de `node -e` que se usó el 2026-07-22 sirve de plantilla.)
 
-Esto es la vista que pidió el 2026-07-22, tras rechazar dos intentos: uno "super feo" y otro en bloques apilados. Lo quiere en columnas lado a lado, monoespaciado, ni tabla ni apilado.
+**El esqueleto, para no volver a fallar (Iker, 2026-07-23: lo entregué apilado OTRA VEZ):**
+```
+✅ BIEN — UN bloque, dos columnas    │ ❌ MAL — dos bloques apilados
+ORIGINAL — creador (ratio) │ EL MÍO   │  ``` bloque 1: original ```
+Hook: …                    │ Hook: …  │  ``` bloque 2: el mío  ```
+Cuerpo: …                  │ Cuerpo: … │  (esto es lo que NO se hace)
+```
+La columna izquierda y la derecha comparten CADA fila. Si entregas dos ```bloques``` seguidos, está MAL aunque el contenido sea idéntico. Un solo bloque, un separador `│` por línea.
+
+Esto es la vista que pidió el 2026-07-22, tras rechazar dos intentos: uno "super feo" y otro en bloques apilados. Lo quiere en columnas lado a lado, monoespaciado, ni tabla ni apilado. **Reincidí el 2026-07-23 (dos bloques): por eso el esqueleto de arriba.**
 
 
 ## 2 · Valida de forma proactiva (no esperes a que pregunte)
