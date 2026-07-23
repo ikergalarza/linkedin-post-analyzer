@@ -48,6 +48,7 @@ En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además de
 - **Dos columnas EN LA MISMA FILA**, no dos bloques apilados. Se monta en **un solo bloque cercado monoespaciado**: cada línea = columna izquierda (rellenada a ancho fijo) + hueco + columna derecha, alineadas arriba. **NADA de tabla, nada de floritura, nada de "cosas raras".**
 - Cabecera dentro del bloque: **ORIGINAL** (creador + ratio si es referencia) a la izquierda, **EL MÍO** (cuenta) a la derecha.
 - El "original" es el texto de la referencia tal cual; si está en inglés, va en inglés (no se traduce en la comparativa). El mío, el que entrego.
+- **SOLO EL TEXTO del post (hook, cuerpo, spam ninja, cierre). NADA de la imagen** (Iker, 2026-07-23). La comparativa es para ver cómo se robó la esencia del TEXTO; el concepto de imagen va en su prompt aparte, no en la tabla. Nada de una fila `IMAGEN:`.
 - **Cómo generarlo sin errores de alineación:** con un script que hace word-wrap de cada columna a su ancho (izq ~34, der ~52) y hace zip fila a fila, rellenando la izquierda con `padEnd`. La derecha va la última, así que un emoji ahí no descuadra nada. (El bloque de `node -e` que se usó el 2026-07-22 sirve de plantilla.)
 
 **El esqueleto, para no volver a fallar (Iker, 2026-07-23: lo entregué apilado OTRA VEZ):**
