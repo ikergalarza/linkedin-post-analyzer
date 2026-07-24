@@ -64,7 +64,7 @@ function funnyPct(mix: Record<string, number> | null): number | null {
 // La señal del LEAD MAGNET, análoga al % de risa del meme: es comment-gated, así
 // que recibe MUCHÍSIMOS más comentarios que reacciones (la gente comenta la
 // palabra para pillar el recurso, no da like). Lo normal es comentarios ≪
-// reacciones; los lead magnets de Martina/Guillermo/Luna Chen tienen 3-37x más
+// reacciones; los lead magnets de Martín Arosa/Guillermo/Luna Chen tienen 3-37x más
 // comentarios que likes (Luna: 9.631 com / 2.999 likes). Ratio > 1 = comment-gated.
 function commentGatedRatio(p: { comments_count: number; likes_count: number }): number {
   const r = p.likes_count || 0;
@@ -795,7 +795,7 @@ export default function Inspiration() {
                   ? 'border-orange-400/60 bg-orange-400/15 text-orange-300'
                   : 'border-border bg-bg-secondary text-text-muted hover:border-orange-400/30'
               }`}
-              title="Filtra a los lead magnets: posts con MÁS comentarios que reacciones (comment-gated). La gente comenta la palabra clave para pillar el recurso. Es como Martina/Guillermo/Luna Chen."
+              title="Filtra a los lead magnets: posts con MÁS comentarios que reacciones (comment-gated). La gente comenta la palabra clave para pillar el recurso. Es como Martín Arosa/Guillermo/Luna Chen."
             >
               💬 Solo lead magnets ({leadMagnetCount})
             </button>

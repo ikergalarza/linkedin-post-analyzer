@@ -316,10 +316,10 @@ def validar(texto, pilar, cuenta=None, generico=False):
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
     if generico:
-        # Los hooks de Martina Rosa y Guillermo Flor son CORTOS y SIN cifras
+        # Los hooks de Martín Arosa y Guillermo Flor son CORTOS y SIN cifras
         # (`§4.5.0b`). Iker NUNCA quiere cifras en el hook y los suyos son de pocas
         # palabras; las cifras (60%, 100.000€) van al CUERPO.
-        chk(len(nums) == 0, 'GENÉRICO: hook SIN cifras (Martina/Guillermo, §4.5.0b)',
+        chk(len(nums) == 0, 'GENÉRICO: hook SIN cifras (Martín Arosa/Guillermo, §4.5.0b)',
             f'{len(nums)} cifra(s) {nums} — al hook no; van al cuerpo' if nums else '')
         chk(len(hook_txt) <= 90, 'GENÉRICO: hook CORTO ≤90 car (§4.5.0b)',
             f'{len(hook_txt)} car — los suyos son de pocas palabras, corta' if len(hook_txt) > 90 else '')
@@ -342,7 +342,7 @@ def validar(texto, pilar, cuenta=None, generico=False):
     else:
         detalle = 'NINGUNA palabra de ventas en el hook → lo podría subir cualquier cuenta'
     # En el modelo GENÉRICO no se fuerza el ancla de ventas: los hooks ganadores
-    # de Martina/Guillermo van de IA/tendencia, no de "ventas" (§4.5.0b).
+    # de Martín Arosa/Guillermo van de IA/tendencia, no de "ventas" (§4.5.0b).
     if not generico:
         chk(bool(fuerte or ambigua), 'Hook anclado a VENTAS (§2.3)', detalle)
     m = re.search(VERBO_FLOJO, hook_txt, re.I)
@@ -539,7 +539,7 @@ def validar(texto, pilar, cuenta=None, generico=False):
     if pilar == 'leadmagnet':
         # El gancho abre SIEMPRE con el disparador de última hora + emoji de alarma
         # (post-workflow §4.5.0). Es la estructura de nuestros 2 mejores (9.96x y
-        # 2.72x) y la que usan SIN FALTA Guillermo Flor y Martina Arosa. Como
+        # 2.72x) y la que usan SIN FALTA Guillermo Flor y Martín Arosa. Como
         # "exporta" en los mapas: obligatorio, no decorativo (Iker, 2026-07-23). La
         # lista de Unai (22/07) arrancó fría por saltárselo.
         h = hook_txt.strip()
@@ -548,7 +548,7 @@ def validar(texto, pilar, cuenta=None, generico=False):
             'los 2 mejores lead magnets abren con "🚨 ÚLTIMA HORA:" / "⚰️ D.E.P."; '
             'sin el disparador el post arranca frío' if not alarma else '')
         if generico:
-            # La vara de medir de este pilar es Martina Rosa y Guillermo Flor (los
+            # La vara de medir de este pilar es Martín Arosa y Guillermo Flor (los
             # que MÁS comentarios sacan del sector), NO nuestro historial de flops
             # —que no vale, salvo el 9.85x de Unai, que además usó ESTE formato—.
             # Su cuerpo SIEMPRE lleva una LISTA NUMERADA de lo que hay dentro del
@@ -590,7 +590,7 @@ def validar(texto, pilar, cuenta=None, generico=False):
         # propósito. Pedir el sector ahí sobra, y pedir un dato que no se usa es
         # justo lo que hundió el "mes de cumpleaños" a 0.57x: el segundo dato tiene
         # que ser el que hace falta para responderle, ni uno más.
-        # ⚠️ SOLO en el modelo PERSONALIZADO. El modelo GENÉRICO (Martina Rosa /
+        # ⚠️ SOLO en el modelo PERSONALIZADO. El modelo GENÉRICO (Martín Arosa /
         # Guillermo Flor, los que MÁS comentarios sacan del sector: 1.033 y 788 en
         # <24h, 2.014 el de Guillermo) NO pide 2º dato: una palabra IGUAL para todos
         # y un recurso GENÉRICO (una guía), y la captura la hace la LANDING con gate
@@ -682,7 +682,7 @@ def validar(texto, pilar, cuenta=None, generico=False):
         if m2:
             _raiz = normalizar_entidad(m2.group(1))[:5]
             # En el GENÉRICO la palabra no tiene por qué estar en el hook: la de
-            # Martina es "agente" (el tema del recurso) y su hook es "⚰️ D.E.P.
+            # Martín Arosa es "agente" (el tema del recurso) y su hook es "⚰️ D.E.P.
             # prospección manual" — no reconectan literal (§4.5.0b).
             if not generico:
                 chk(bool(_raiz) and _raiz in normalizar_entidad(hook_txt),
@@ -713,7 +713,7 @@ def main():
                     choices=['mapa', 'los10', 'meme', 'leadmagnet', 'entregable'])
     ap.add_argument('--cuenta', default=None)
     ap.add_argument('--generico', action='store_true',
-                    help='Lead magnet modelo GENÉRICO (Martina/Guillermo): una palabra igual para '
+                    help='Lead magnet modelo GENÉRICO (Martín Arosa/Guillermo): una palabra igual para '
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
