@@ -279,9 +279,26 @@ const CHART_TOOLTIP_STYLE = {
   fontSize: '12px',
 };
 
+// Cifra ENTERA con separador de miles en punto (2.036.300). Es el formato por
+// defecto en tarjetas KPI, tabla y métricas de cada post: un número completo
+// impacta más que "2036.3K" y ahí hay sitio de sobra (Iker, 2026-07-24).
+// En GRÁFICAS NO se usa esto — ahí manda fmtCompact, para que los ejes no se
+// amontonen. El agrupado es manual (no toLocaleString) a propósito: en es-ES
+// el navegador NO agrupa los de 4 dígitos ("1700"), y quedaba incoherente con
+// "44.800". Regex: mete un punto cada 3 dígitos desde la derecha. Math.round
+// porque queremos enteros, no "220,7".
 function fmtNum(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return n.toString();
+  const r = Math.round(n);
+  return (r < 0 ? '-' : '') + Math.abs(r).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// Compacto (K/M), SOLO para ejes y etiquetas de barra de gráficas, donde una
+// cifra entera repetida en cada tick amontona el eje. Añade M para millones
+// (antes solo hacía K, y 2 millones salían como "2036.3K", ilegible).
+function fmtCompact(n: number): string {
+  if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (Math.abs(n) >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return Math.round(n).toString();
 }
 
 /* Iconos de la franja de metricas de cada post.
@@ -1402,7 +1419,7 @@ export default function Accounts() {
                       return [`avg ${fmtNum(row.avg_engagement)} · ${row.count} posts`, row.hook_type];
                     }}
                   />
-                  <Bar dataKey="avg_engagement" fill="#e8935a" radius={[0, 6, 6, 0]} label={{ position: 'right', fill: '#9ca3af', fontSize: 11, formatter: (v: any) => fmtNum(v) }} />
+                  <Bar dataKey="avg_engagement" fill="#e8935a" radius={[0, 6, 6, 0]} label={{ position: 'right', fill: '#9ca3af', fontSize: 11, formatter: (v: any) => fmtCompact(v) }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -1845,7 +1862,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
                 <XAxis {...xAxisProps} />
-                <YAxis tick={{ fill: '#7dd3fc', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
+                <YAxis tick={{ fill: '#7dd3fc', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtCompact(Number(v))} />
                 <Tooltip
                   contentStyle={CHART_TOOLTIP_STYLE}
                   content={({ active, payload }: any) => {
@@ -1924,7 +1941,7 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2e3348" />
                 <XAxis {...xAxisProps} />
-                <YAxis tick={{ fill: '#e8935a', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtNum(Number(v))} />
+                <YAxis tick={{ fill: '#e8935a', fontSize: 11 }} axisLine={{ stroke: '#2e3348' }} tickFormatter={(v) => fmtCompact(Number(v))} />
                 <Tooltip
                   contentStyle={CHART_TOOLTIP_STYLE}
                   content={({ active, payload }: any) => {
