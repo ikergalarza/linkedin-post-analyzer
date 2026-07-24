@@ -61,6 +61,19 @@ function funnyPct(mix: Record<string, number> | null): number | null {
   return funny / total;
 }
 
+// La señal del LEAD MAGNET, análoga al % de risa del meme: es comment-gated, así
+// que recibe MUCHÍSIMOS más comentarios que reacciones (la gente comenta la
+// palabra para pillar el recurso, no da like). Lo normal es comentarios ≪
+// reacciones; los lead magnets de Martina/Guillermo/Luna Chen tienen 3-37x más
+// comentarios que likes (Luna: 9.631 com / 2.999 likes). Ratio > 1 = comment-gated.
+function commentGatedRatio(p: { comments_count: number; likes_count: number }): number {
+  const r = p.likes_count || 0;
+  // Pisos: pocos comentarios o pocas reacciones no son señal fiable de nada.
+  if (p.comments_count < 100 || r < 20) return 0;
+  return p.comments_count / r;
+}
+const LEADMAGNET_RATIO_THRESHOLD = 1.0;
+
 interface InspirationData {
   outliers: OutlierPost[];
   total: number;
@@ -241,6 +254,14 @@ function OutlierCard({ post, onSteal }: { post: OutlierPost; onSteal: (post: Out
         <span>👍 {formatNum(post.likes_count)}</span>
         <span>💬 {formatNum(post.comments_count)}</span>
         <span>🔁 {formatNum(post.reposts_count)}</span>
+        {commentGatedRatio(post) > LEADMAGNET_RATIO_THRESHOLD && (
+          <span
+            className="text-[10px] font-semibold text-orange-300"
+            title="Comentarios muy por encima de las reacciones: es un lead magnet (la gente comenta la palabra para pillar el recurso)"
+          >
+            💬 lead magnet · {commentGatedRatio(post).toFixed(1)}x
+          </span>
+        )}
         {post.post_url && (
           <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-light ml-auto">
             View on LinkedIn ↗
@@ -288,6 +309,10 @@ export default function Inspiration() {
   // audience-driven meme signal, independent of the AI topic classifier.
   const [onlyMemes, setOnlyMemes] = useState(false);
   const MEME_FUNNY_THRESHOLD = 0.25;
+  // "Solo lead magnets" — posts con los comentarios disparados respecto a las
+  // reacciones (comment-gated). El equivalente al filtro de memes, pero para el
+  // pilar de lead magnet. Signo de la audiencia, no del clasificador.
+  const [onlyLeadMagnets, setOnlyLeadMagnets] = useState(false);
   // Free-text search across hook + content + creator name. Case-insensitive
   // substring match — supports finding things like "CLAUDE", "outbound", etc.
   // across the whole corpus regardless of how the AI classified the topic.
@@ -395,13 +420,14 @@ export default function Inspiration() {
   // calculaban siempre sobre todos los outliers, así que al filtrar memes los
   // números de las chips seguían siendo los globales y no cuadraban con la lista.
   const contentTypes = useMemo(() => {
-    const universo = onlyMemes
-      ? outliers.filter((p) => (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD)
-      : outliers;
+    const universo = outliers.filter((p) =>
+      (!onlyMemes || (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD) &&
+      (!onlyLeadMagnets || commentGatedRatio(p) > LEADMAGNET_RATIO_THRESHOLD)
+    );
     const counts = new Map<string, number>();
     universo.forEach((p) => counts.set(p.content_type || 'text', (counts.get(p.content_type || 'text') || 0) + 1));
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  }, [outliers, onlyMemes]);
+  }, [outliers, onlyMemes, onlyLeadMagnets]);
 
   const filtered = useMemo(() => {
     let list = [...outliers];
@@ -411,6 +437,7 @@ export default function Inspiration() {
     if (filterCreator) list = list.filter((p) => p.creator_name === filterCreator);
     if (filterContentType) list = list.filter((p) => (p.content_type || 'text') === filterContentType);
     if (onlyMemes) list = list.filter((p) => (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD);
+    if (onlyLeadMagnets) list = list.filter((p) => commentGatedRatio(p) > LEADMAGNET_RATIO_THRESHOLD);
 
     // Free-text search: case-insensitive substring across content + hook + creator.
     const q = searchQuery.trim().toLowerCase();
@@ -431,11 +458,16 @@ export default function Inspiration() {
       default: list.sort((a, b) => b.outlier_ratio - a.outlier_ratio);
     }
     return list;
-  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, onlyMemes, sortBy, searchQuery]);
+  }, [outliers, filterTopic, filterHook, filterStructure, filterCreator, filterContentType, onlyMemes, onlyLeadMagnets, sortBy, searchQuery]);
 
   // How many outliers cross the meme threshold — drives the toggle label.
   const memeCount = useMemo(
     () => outliers.filter((p) => (funnyPct(p.reaction_mix) ?? 0) > MEME_FUNNY_THRESHOLD).length,
+    [outliers]
+  );
+  // Cuántos outliers son lead magnets (comentarios disparados) — etiqueta del toggle.
+  const leadMagnetCount = useMemo(
+    () => outliers.filter((p) => commentGatedRatio(p) > LEADMAGNET_RATIO_THRESHOLD).length,
     [outliers]
   );
 
@@ -751,6 +783,21 @@ export default function Inspiration() {
               title="Filtra a los posts cuya audiencia reaccionó con >25% 😂, según el reaction mix real. Es la señal de meme de la audiencia, no del clasificador."
             >
               😂 Solo memes ({memeCount})
+            </button>
+
+            {/* LEAD MAGNETS — el equivalente al de memes, pero por comentarios
+                disparados (comment-gated). La gente comenta la palabra para pillar
+                el recurso, así que comentarios ≫ reacciones. Señal de la audiencia. */}
+            <button
+              onClick={() => { setOnlyLeadMagnets((v) => !v); setFilterContentType(''); }}
+              className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
+                onlyLeadMagnets
+                  ? 'border-orange-400/60 bg-orange-400/15 text-orange-300'
+                  : 'border-border bg-bg-secondary text-text-muted hover:border-orange-400/30'
+              }`}
+              title="Filtra a los lead magnets: posts con MÁS comentarios que reacciones (comment-gated). La gente comenta la palabra clave para pillar el recurso. Es como Martina/Guillermo/Luna Chen."
+            >
+              💬 Solo lead magnets ({leadMagnetCount})
             </button>
           </div>
 
