@@ -90,6 +90,10 @@ ANCLA_AMBIGUA = (r'\b(cliente|clientes|cerrar|cierras|cierra|cierro|cerrand\w+|c
                  r'|comprando|precio|precios|facturar|factura|facturas|facturaci[oó]n|exportar|exporta'
                  r'|exportas|exportaci[oó]n|cartera|pedido|pedidos)\b')
 ANCLA_VENTAS = f'({ANCLA_FUERTE}|{ANCLA_AMBIGUA})'
+# La cuenta de Mario NO es de ventas: es la de MARKETING/growth (aboutme §2). Su
+# hook ancla en marketing, no en "vender". Sin esto, todo post suyo falla el ancla.
+MARKETING_ANCLA = (r'\b(marketing|contenido|redes|crecer|crecimiento|alcance|impresiones'
+                   r'|audiencia|viral|engagement|seguidores|marca personal|perfil|linkedin)\b')
 # §2.3 — estrechan el alcance, FUERA del hook. Lista canónica: gana a la de
 # "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
 # aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
@@ -341,9 +345,16 @@ def validar(texto, pilar, cuenta=None, generico=False):
                    f'ventas? Si cuela en otra, añade "ventas"/"comercial" (§2.3)')
     else:
         detalle = 'NINGUNA palabra de ventas en el hook → lo podría subir cualquier cuenta'
-    # En el modelo GENÉRICO no se fuerza el ancla de ventas: los hooks ganadores
-    # de Martín Arosa/Guillermo van de IA/tendencia, no de "ventas" (§4.5.0b).
-    if not generico:
+    # Mario = cuenta de MARKETING: ancla en marketing, no en ventas. El resto de
+    # cuentas (Iker/Unai/Asier) sí anclan a ventas. En el GENÉRICO no se fuerza
+    # ancla (los hooks de Martín/Guillermo van de IA/tendencia, §4.5.0b).
+    _es_mario = (cuenta or '').strip().lower() == 'mario'
+    if _es_mario:
+        _mk = re.search(MARKETING_ANCLA, hook_txt, re.I)
+        chk(bool(_mk), 'Hook anclado a MARKETING (cuenta Mario, aboutme §2)',
+            'Mario es la cuenta de marketing/growth: el hook ancla en contenido/redes/marketing, '
+            'no en "vender"' if not _mk else f'ancla marketing: "{_mk.group(0)}"')
+    elif not generico:
         chk(bool(fuerte or ambigua), 'Hook anclado a VENTAS (§2.3)', detalle)
     m = re.search(VERBO_FLOJO, hook_txt, re.I)
     chk(not m, 'Hook sin verbo flojo (§2.9)',
@@ -689,6 +700,31 @@ def validar(texto, pilar, cuenta=None, generico=False):
                     'La palabra del CTA reconecta con el hook (§4.5 Paso 5)',
                     f'"{m2.group(1)}" no aparece en el hook' if _raiz not in normalizar_entidad(hook_txt) else '')
 
+    if pilar == 'historia':
+        # Pilar HISTORIA PERSONAL / ANÉCDOTA (§4.6). Vara: Josh Braun (39x, 29x),
+        # Daniel Disney (16 outliers). NO es autoridad ("mira qué importante soy"):
+        # es una anécdota REAL en primera persona, frases cortas, mucho aire, y
+        # remate con una LECCIÓN corta. En la BD se eligen por likes >> comentarios
+        # (si comentarios > likes es un lead magnet disfrazado, no una historia).
+        h = hook_txt.strip()
+        chk(not (h.startswith('🚨') or h.startswith('⚰')),
+            'HISTORIA: el hook NO abre con alarma 🚨/⚰️ (§4.6)',
+            'eso es lead magnet; una historia abre con una ESCENA personal, no gritando')
+        _personal = re.search(r'(^|\s)(yo|mi|mis|me|nunca|cuando|hace \w+|aquel\w*|la primera vez|acab[eé]|sub[ií]|di mi|ten[ií]a|hab[ií]a|recuerdo|empec[eé]|\bi\b|\bmy\b)(\s|,|\.)', ' '+h.lower())
+        chk(bool(_personal), 'HISTORIA: hook personal, en primera persona (§4.6)',
+            'la vara abre "I [algo que me pasó]" / "Cuando…" / "Nunca…": una escena TUYA, no un claim ni un dato')
+        _ls = [l for l in cuerpo.splitlines() if l.strip()]
+        _media = sum(len(l) for l in _ls)/max(len(_ls), 1)
+        chk(len(_ls) >= 8 and _media <= 78,
+            'HISTORIA: ritmo de historia (frases cortas, mucho aire) (§4.6)',
+            f'{len(_ls)} líneas, media {int(_media)} car — va en líneas cortas de una frase, no en párrafos densos')
+        chk(bool(_ls) and len(_ls[-1]) <= 78,
+            'HISTORIA: cierra con una LECCIÓN corta y punchy (§4.6)',
+            (f'la última línea {len(_ls[-1])} car' if _ls else 'sin cuerpo') + ' — la moraleja es corta ("Moments do", "El método sirve para cualquiera")')
+        chk(not re.search(r'comenta\s+"', cuerpo, re.I),
+            'HISTORIA: sin comment-gate — no pide comentar una palabra (§4.6)',
+            'pedir "comenta X" la convierte en lead magnet; la historia cierra en la lección o lleva un CTA suave')
+
     # ---------- CONTRA EL HISTORIAL ----------
     h = leer_historial()
     if h:
@@ -710,7 +746,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('fichero')
     ap.add_argument('--pilar', required=True,
-                    choices=['mapa', 'los10', 'meme', 'leadmagnet', 'entregable'])
+                    choices=['mapa', 'los10', 'meme', 'leadmagnet', 'historia', 'entregable'])
     ap.add_argument('--cuenta', default=None)
     ap.add_argument('--generico', action='store_true',
                     help='Lead magnet modelo GENÉRICO (Martín Arosa/Guillermo): una palabra igual para '

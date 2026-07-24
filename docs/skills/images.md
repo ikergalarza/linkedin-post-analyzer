@@ -208,6 +208,8 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 - **Cierra con la contencion:** `No toques nada mas: ni colores, ni maquetacion, ni fuentes, ni el resto de textos e iconos.`
 - Entre medias, los cambios en frases habladas (sin parentesis numerados ni simbolos raros, `§0i-3`).
 
+**⭐ TODA imagen se CALCA de un outlier REAL con su ENLACE — de CUALQUIER pilar, no solo del meme (Iker, 2026-07-24).** Nunca un diseño generico "de cero" ni "estilo Anthropic" sacado de la manga: si no hay una referencia validada con datos, no vale. Orden: primero outliers de OTROS creadores (mejor de otro sector, para remixear); cuando tengamos, los nuestros. Toda propuesta de imagen lleva el ENLACE a la referencia + su ratio/comentarios. Fallo real: propuse la portada de la guia del lead magnet "estilo Anthropic" sin referencia — no valia. La buena es la **portada de guia en PDF de Martin Arosa (2.089 com):** `https://www.linkedin.com/posts/martinarosaotero_la-gu%C3%ADa-oficial-de-linkedin-claude-2026-activity-7480512271941722112-yiqy` — se calca ESA y se le cambia el contenido a lo nuestro.
+
 ## ⭐ 0h-5 · UNA TABLA SE LEE EN EL FEED, NO SE ADMIRA (Iker, 2026-07-21)
 
 Cuando el remix es una tabla de datos (lista, comparativa, ranking), **el objetivo NO es que sea bonita, es que se lea sin zoom en el movil**. LinkedIn no deja ampliar la imagen del feed. La referencia de Guillermo Flor es mas bonita que la nuestra y **no se lee una sola fila** — ahi es exactamente donde se le gana (`global §2.2b`, batir al original en su punto debil): mas retencion, la gente para a leer en vez de pasar de largo.

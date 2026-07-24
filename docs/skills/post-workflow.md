@@ -608,6 +608,20 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
    - **Para NOSOTROS:** portada de guía ("El 60% de tu IA subvencionado · SPRI · Euskadi") con índice de los 5 puntos, crema/serif, logos legítimos (Claude, SPRI/Gobierno Vasco), enseñada como PDF con sus miniaturas. Reutilizable entre posts de subvención.
 7. **REPITE lo que funciona.** Si un tema+hook peta, se vuelve a hacer a las 1-2 semanas con cambios mínimos. No hace falta reinventar cada vez.
 
+#### ⭐⭐ 4.6 · Runbook HISTORIA PERSONAL / ANÉCDOTA (Iker, 2026-07-24)
+
+Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA real con una lección**. **No tenemos datos propios; la vara es de fuera** (como el lead magnet). Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
+
+**Referentes (de nuestra BD, `/api/ideas/inspiration`):** **Josh Braun** (39x *"My mom died yesterday"*, 29x *"When I was younger in sales, I'd get on a plane…"*), **Daniel Disney** (16 outliers: *"I hired the smartest person in the room once"*, *"I had a manager who would scream at the sales floor"*). **Se eligen por `hook_type` story/confesión + LIKES ≫ comentarios** (si comentarios > likes, es un lead magnet disfrazado de historia, no una historia).
+
+1. **HOOK:** primera persona, una ESCENA/anécdota concreta (*"I [algo que me pasó]"*, *"Cuando…"*, *"Nunca…"*), vulnerable o intrigante. **NO alarma, NO claim, NO dato.** Corto.
+2. **CUERPO:** ritmo de historia — frases cortas, UNA por línea, MUCHO aire. Detalles sensoriales concretos (las botas amarillas, los calcetines: la concreción da credibilidad). Arco: escena → momento → desenlace. Luego un REFRAME/contraste (antes vs ahora). Y una **LECCIÓN corta y universal al final** (*"Moments do"*, *"It can't create a memory"*). La lección ata a tu tema (ventas/marketing) por la HISTORIA, no por el pitch.
+3. **FOTO:** texto puro O una foto **REAL/candid** (un momento de verdad), NUNCA un gráfico diseñado (lo opuesto al lead magnet). Muchos de sus outliers son **text-only** (Josh Braun top).
+4. **CTA:** NO comment-gate. Cierra en la lección; como mucho un PD/spam ninja suave a un recurso.
+5. **Cuenta de Mario = ancla de MARKETING**, no de ventas (`aboutme §2`); el validador lo contempla con `--cuenta Mario`.
+
+> **📌 VISIÓN DE FUTURO (Iker, 2026-07-24; NO actuar aún, solo registrar):** el plan es **dejar de publicar los mismos 3 pilares en las mismas 3 cuentas cada semana**. La audiencia se está dando cuenta y el rendimiento baja porque **los 3 founders (Iker/Unai/Asier) comparten red** (misma empresa, todos del País Vasco): dos mapas la misma semana en dos cuentas se solapan. Descubrir y validar pilares nuevos (como este de historia) es parte de diversificar. Cada pilar nuevo, **siempre desde datos de outliers de otros primero** (texto entero: gancho+cuerpo, Y foto), hasta tener datos propios.
+
 **⚠️ CONFLICTO SIN RESOLVER, no lo tapes:** `brand-voice §1b` dice que este registro es lo contrario de sobrio y que "si hace falta, va en la cuenta de Iker". Pero los datos dicen lo contrario: en **Unai** hizo 9.96x y 2.72x, y el único de **Iker** hizo 0.70x. Puede ser el sujeto de la frase y no la cuenta (el de Iker hablaba del modelo). **n=1 por cuenta: no está decidido.** Si se vuelve a usar, decidir a conciencia y anotar el resultado.
 
 > Se reconoce el outlier de lead magnet en la DB porque **se disparan los COMENTARIOS** (vibe prospecting 632 · desmonto perfiles 483). El objetivo del formato es EL comentario.
