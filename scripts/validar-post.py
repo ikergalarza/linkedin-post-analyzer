@@ -315,6 +315,14 @@ def validar(texto, pilar, cuenta=None, generico=False):
 
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
+    if generico:
+        # Los hooks de Martina Rosa y Guillermo Flor son CORTOS y SIN cifras
+        # (`§4.5.0b`). Iker NUNCA quiere cifras en el hook y los suyos son de pocas
+        # palabras; las cifras (60%, 100.000€) van al CUERPO.
+        chk(len(nums) == 0, 'GENÉRICO: hook SIN cifras (Martina/Guillermo, §4.5.0b)',
+            f'{len(nums)} cifra(s) {nums} — al hook no; van al cuerpo' if nums else '')
+        chk(len(hook_txt) <= 90, 'GENÉRICO: hook CORTO ≤90 car (§4.5.0b)',
+            f'{len(hook_txt)} car — los suyos son de pocas palabras, corta' if len(hook_txt) > 90 else '')
     m = re.search(MULETILLA_ANCLA, hook_txt, re.I)
     chk(not m, 'Hook sin la muletilla "En ventas," de prefijo (§2.3)',
         'ancla legítima pero es tu reflejo: 1 de 11 ganadores empieza así. Ancla por el ROL '
@@ -333,7 +341,10 @@ def validar(texto, pilar, cuenta=None, generico=False):
                    f'ventas? Si cuela en otra, añade "ventas"/"comercial" (§2.3)')
     else:
         detalle = 'NINGUNA palabra de ventas en el hook → lo podría subir cualquier cuenta'
-    chk(bool(fuerte or ambigua), 'Hook anclado a VENTAS (§2.3)', detalle)
+    # En el modelo GENÉRICO no se fuerza el ancla de ventas: los hooks ganadores
+    # de Martina/Guillermo van de IA/tendencia, no de "ventas" (§4.5.0b).
+    if not generico:
+        chk(bool(fuerte or ambigua), 'Hook anclado a VENTAS (§2.3)', detalle)
     m = re.search(VERBO_FLOJO, hook_txt, re.I)
     chk(not m, 'Hook sin verbo flojo (§2.9)',
         f'verbo flojo: "{m.group(0)}" → sube un peldaño (criticar→desmontar)' if m else '')
@@ -656,9 +667,13 @@ def validar(texto, pilar, cuenta=None, generico=False):
         m2 = re.search(r'comenta\s+"([^"]+)"', cuerpo, re.I)
         if m2:
             _raiz = normalizar_entidad(m2.group(1))[:5]
-            chk(bool(_raiz) and _raiz in normalizar_entidad(hook_txt),
-                'La palabra del CTA reconecta con el hook (§4.5 Paso 5)',
-                f'"{m2.group(1)}" no aparece en el hook' if _raiz not in normalizar_entidad(hook_txt) else '')
+            # En el GENÉRICO la palabra no tiene por qué estar en el hook: la de
+            # Martina es "agente" (el tema del recurso) y su hook es "⚰️ D.E.P.
+            # prospección manual" — no reconectan literal (§4.5.0b).
+            if not generico:
+                chk(bool(_raiz) and _raiz in normalizar_entidad(hook_txt),
+                    'La palabra del CTA reconecta con el hook (§4.5 Paso 5)',
+                    f'"{m2.group(1)}" no aparece en el hook' if _raiz not in normalizar_entidad(hook_txt) else '')
 
     # ---------- CONTRA EL HISTORIAL ----------
     h = leer_historial()
