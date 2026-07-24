@@ -547,6 +547,20 @@ def validar(texto, pilar, cuenta=None, generico=False):
         chk(alarma, 'Hook abre con alarma de última hora 🚨/⚰️ (§4.5.0)',
             'los 2 mejores lead magnets abren con "🚨 ÚLTIMA HORA:" / "⚰️ D.E.P."; '
             'sin el disparador el post arranca frío' if not alarma else '')
+        if generico:
+            # La vara de medir de este pilar es Martina Rosa y Guillermo Flor (los
+            # que MÁS comentarios sacan del sector), NO nuestro historial de flops
+            # —que no vale, salvo el 9.85x de Unai, que además usó ESTE formato—.
+            # Su cuerpo SIEMPRE lleva una LISTA NUMERADA de lo que hay dentro del
+            # recurso, y es LARGO (setup + malo/bueno + lista + ancla de valor). El
+            # nuestro se quedaba corto (`§4.5.0b`).
+            _numerados = re.findall(r'^\s*\d+[.)]\s', cuerpo, re.M)
+            chk(len(_numerados) >= 3, 'GENÉRICO: lista numerada de lo que hay dentro (§4.5.0b)',
+                f'{len(_numerados)} ítems numerados — ellos enumeran los componentes del recurso, mínimo 3'
+                if len(_numerados) < 3 else '')
+            chk(len(cuerpo) >= 320, 'GENÉRICO: cuerpo LARGO como el suyo (§4.5.0b)',
+                f'{len(cuerpo)} car — el suyo es largo (setup + malo/bueno + lista + ancla de valor); no te quedes corto'
+                if len(cuerpo) < 320 else '')
         chk(not tiene_link, 'Lead magnet SIN spam ninja (§4.4b, única excepción)',
             'el link apila un 2º CTA y hunde los comentarios' if tiene_link else '')
         m = re.search(r'\bcomenta\b', cuerpo, re.I)
