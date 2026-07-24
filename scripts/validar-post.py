@@ -390,6 +390,27 @@ def validar(texto, pilar, cuenta=None, generico=False):
     chk(not fallos, 'Línea individual tras cada bloque de 2-3 (§3.2)',
         f'bloque pegado a otro bloque en posición {fallos}' if fallos else '')
 
+    # ── menciones: colocación y unicidad (transversal, Iker 2026-07-24) ──
+    # mapa/los10 quedan fuera: sus 20 fichas ya son empresas distintas por
+    # construcción, y sus @ multi-palabra ("@Grupo X / @Grupo Y") darían falso
+    # positivo. En los pilares de prosa (historia, leadmagnet) las menciones se
+    # tejen, y ahí es donde muerden estas dos reglas.
+    if pilar not in ('meme', 'mapa', 'los10'):
+        # 1) NUNCA una @ pegada al gancho: el bloque justo tras el hook es para
+        # la tensión de la historia o el claim, no para etiquetar. Una @ ahí se
+        # lee como cebo de engagement; las menciones van tejidas más adelante.
+        if len(bs) >= 2:
+            _tras = ' '.join(bs[1])
+            chk('@' not in _tras, 'Ninguna mención pegada al gancho (menciones §2.9)',
+                'hay una @ en el bloque justo tras el hook: téjela más adelante' if '@' in _tras else '')
+        # 2) cada persona/marca se menciona UNA sola vez: repetir el mismo @
+        # (p.ej. @Iker arriba y otra vez en la línea de resultados) gasta alcance
+        # y suena a peloteo. Token = @ + primer run de letras.
+        _ats = [a.lower() for a in re.findall(r'@([A-Za-zÁÉÍÓÚÑÜáéíóúñü]+)', cuerpo)]
+        _dups = sorted({a for a in _ats if _ats.count(a) > 1})
+        chk(not _dups, 'Cada persona se menciona UNA sola vez (menciones §2.9)',
+            f'repetidas: {_dups} → una mención por persona' if _dups else '')
+
     # escalera: todo bloque de prosa de 2-3 líneas va en longitud monótona,
     # recta (corta→larga) o invertida (larga→corta). Zigzag = no hay escalera (§3.2)
     zigzag = []
