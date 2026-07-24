@@ -48,7 +48,8 @@ Orquestación:
 **Unipile** — empresas, personas, actividad reciente, logos y fotos de LinkedIn. `UNIPILE_API_KEY`, `UNIPILE_BASE_URL`, `UNIPILE_ACCOUNT_ID`. ✅ Verificado 2026-07-14.
 - `GET {BASE}/api/v1/linkedin/company/{identificador}?account_id=…` → `name` (el exacto para la mención), `logo_large`, `locations`
 - `GET {BASE}/api/v1/users/{identificador}?account_id=…` → nombre exacto y `provider_id`
-- `GET {BASE}/api/v1/users/{provider_id}/posts?account_id=…` → última actividad (filtro duro de 3 meses)
+- `GET {BASE}/api/v1/users/{provider_id}/posts?account_id=…` → sus publicaciones/reposts
+- `GET {BASE}/api/v1/users/{provider_id}/comments?account_id=…` → **los comentarios que HA HECHO en posts de otros, con fecha.** Es el filtro DURO de las menciones: solo se menciona a quien haya COMENTADO a alguien en los últimos 3 meses (el que solo publica en su perfil no nos comenta). Ordena por recencia del último comentario (`post-workflow §4.2 Paso 4`).
 - `POST {BASE}/api/v1/linkedin/search?account_id=…` con `{"api":"classic","category":"people","company":["{id}"]}` → directivos de una empresa
 - `GET {BASE}/api/v1/posts/{linkedin_post_id}/comments?account_id=…&limit=50` → **el texto de los comentarios de cualquier post** (la BD no los guarda). Es la prueba del lead magnet: si una palabra sale en ≥50-60% de los comentarios, es comment-gated (`outliers-database §3.9b`).
 
