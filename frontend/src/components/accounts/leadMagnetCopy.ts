@@ -44,6 +44,35 @@ export function matchesKeyword(text: string, keyword: string): boolean {
   }
 }
 
+// ─────────────────────── recursos por palabra clave ───────────────────────
+//
+// La palabra clave que pides comentar YA dice qué recurso hay que mandar:
+// "subvencion" solo puede llevar a la guía de la subvención. Así el panel no
+// pide un campo de enlace a mano (un sitio menos donde pegar el link mal ni el
+// tema): tú escribes la palabra y el DM sale con su enlace y su tema resueltos.
+//
+// La clave se normaliza (sin tildes, minúsculas) igual que matchesKeyword, así
+// que "Subvención", "subvencion" y "SUBVENCION" resuelven el mismo recurso.
+// Añadir una campaña nueva = una línea aquí, nada de tocar la UI.
+export interface Recurso {
+  link: string;
+  // Rellena "el recurso sobre {t}" en el DM.
+  topic: string;
+}
+
+const RECURSOS: Record<string, Recurso> = {
+  subvencion: {
+    link: 'https://recursos.neety.com/subvencion-euskadi/',
+    topic: 'la subvención de IA para industria vasca',
+  },
+};
+
+// El recurso de una palabra clave, o null si esa palabra no tiene uno mapeado
+// todavía (entonces el panel avisa en vez de mandar un DM sin enlace).
+export function recursoFor(keyword: string): Recurso | null {
+  return RECURSOS[normalize(keyword).trim()] ?? null;
+}
+
 // ──────────────────────────── name extraction ────────────────────────────
 
 // "Mario Carrillo Pérez" → "Mario". The DM opens with the first name, never

@@ -4,7 +4,7 @@ import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
   buildDm, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
-  commentDepth, extractSector, matchesKeyword, voiceFor,
+  commentDepth, extractSector, matchesKeyword, recursoFor, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 
@@ -12,9 +12,9 @@ import type { ListaCompany, Voice } from './leadMagnetCopy';
 //
 // The job: a lead magnet post tells people to comment a keyword, and in
 // exchange we send them a resource by DM. This tab does that end to end —
-// pick the account, pick the post, type the keyword + link + topic, and get
-// one card per person who commented it, each with the reply and the DM
-// already drafted.
+// pick the account, pick the post, type the keyword (the keyword alone
+// resolves which resource to send, see recursoFor), and get one card per
+// person who commented it, each with the reply and the DM already drafted.
 //
 // Three things worth knowing before reading on:
 //
@@ -281,16 +281,14 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     [sendsData]
   );
 
-  // Cada tipo necesita campos distintos, así que "listo" no es el mismo.
-  // En PÚBLICO solo hace falta la palabra clave: el generador pone el análisis,
-  // la página y el enlace. En DM siguen haciendo falta el enlace y el tema.
-  // El público y la lista solo necesitan la palabra clave: cada tarjeta genera
-  // su recurso (el análisis o la lista de empresas del sector). El DM sí sigue
-  // necesitando el enlace fijo y el tema.
-  const ready =
-    cfg.kind === 'publico' || cfg.kind === 'lista'
-      ? !!cfg.keyword.trim()
-      : !!(cfg.keyword.trim() && cfg.link.trim() && cfg.topic.trim());
+  // Ya solo hace falta la PALABRA CLAVE, en los tres tipos. El público y la
+  // lista generan su recurso por tarjeta (el análisis o la lista de empresas);
+  // el DM resuelve enlace y tema desde la propia palabra (recursoFor), así que
+  // no se pide ningún campo de enlace a mano. Si la palabra del DM no tiene
+  // recurso mapeado, la tarjeta ya avisa y el botón de enviar se bloquea.
+  const ready = !!cfg.keyword.trim();
+  // El recurso que resuelve la palabra clave (solo aplica al DM).
+  const recurso = recursoFor(cfg.keyword);
 
   // Keyword filter, client-side: the comment list is already in memory, so
   // changing the keyword re-filters instantly instead of hitting LinkedIn
@@ -418,26 +416,22 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             onChange={(v) => setCfg((c) => ({ ...c, keyword: v }))}
             placeholder="MAPA"
           />
-          {/* El DM necesita saber QUÉ se manda y ADÓNDE. El público no: el
-              generador escribe el análisis y le crea su propia página, así que
-              pedirle un enlace fijo aquí sería pedirle algo que no existe. */}
-          {cfg.kind === 'dm' && (
-            <Field
-              label="Enlace del recurso"
-              hint="El de recursos.neety.com que va en el mensaje"
-              value={cfg.link}
-              onChange={(v) => setCfg((c) => ({ ...c, link: v }))}
-              placeholder="https://recursos.neety.com/…"
-            />
-          )}
-          {cfg.kind === 'dm' && (
-            <Field
-              label="Tema"
-              hint="Rellena «el recurso sobre…»"
-              value={cfg.topic}
-              onChange={(v) => setCfg((c) => ({ ...c, topic: v }))}
-              placeholder="el mapa de logística de Bizkaia"
-            />
+          {/* El DM ya no pide enlace ni tema: la propia palabra clave los
+              resuelve (recursoFor). Aquí solo confirmamos qué recurso saldrá,
+              o avisamos si esa palabra no tiene ninguno mapeado todavía. */}
+          {cfg.kind === 'dm' && cfg.keyword.trim() && (
+            recurso ? (
+              <p className="text-[11px] text-text-muted leading-snug">
+                Mandará el recurso: <span className="text-text">{recurso.topic}</span>
+                <br />
+                <span className="text-accent break-all">{recurso.link}</span>
+              </p>
+            ) : (
+              <p className="text-[11px] text-amber-500 leading-snug">
+                La palabra «{cfg.keyword.trim()}» no tiene recurso asignado. Añádela en
+                <span className="font-mono"> RECURSOS</span> (leadMagnetCopy.ts) y el DM saldrá solo.
+              </p>
+            )
           )}
         </div>
 
@@ -742,9 +736,14 @@ function CommenterCard({
     // botón (handleLista), no al montar la tarjeta.
     if (cfg.kind === 'lista') return;
     if (msgTouched || alreadySent || !ownsDm) return;
-    const input = { name: thread.author.name, location, topic: cfg.topic, link: cfg.link, voice };
+    // Enlace y tema salen de la palabra clave (recursoFor). Si la palabra no
+    // tiene recurso, no hay nada que mandar: se deja el mensaje vacío y el
+    // botón queda bloqueado, en vez de redactar un DM con un enlace en blanco.
+    const recurso = recursoFor(cfg.keyword);
+    if (!recurso) { setMessage(''); return; }
+    const input = { name: thread.author.name, location, topic: recurso.topic, link: recurso.link, voice };
     setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
-  }, [location, cfg.topic, cfg.link, cfg.kind, kind, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
+  }, [location, cfg.keyword, cfg.kind, kind, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
 
   // ── lista state (solo tipo 'lista') ──
   // El sector se prerrellena con lo que la persona escribió tras la palabra
@@ -833,7 +832,7 @@ function CommenterCard({
           lead_magnet_topic: ownsDm
             ? (cfg.kind === 'lista'
                 ? (sector.trim() ? `la lista de ${sector.trim()}` : 'la lista')
-                : cfg.topic)
+                : (recursoFor(cfg.keyword)?.topic ?? ''))
             : undefined,
         }
       );
@@ -1190,7 +1189,7 @@ function CommenterCard({
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={handleSendResource}
-                    disabled={msgSending || !message.trim() || (cfg.kind === 'dm' && !cfg.link.trim())}
+                    disabled={msgSending || !message.trim() || (cfg.kind === 'dm' && !recursoFor(cfg.keyword))}
                     className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
                   >
                     {msgSending ? 'Enviando…' : kind === 'dm' ? 'Enviar DM' : 'Invitar con nota'}
