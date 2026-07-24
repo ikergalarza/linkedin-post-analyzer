@@ -275,7 +275,7 @@ def validar_entregable(texto):
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r
 
-def validar(texto, pilar, cuenta=None):
+def validar(texto, pilar, cuenta=None, generico=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -565,11 +565,17 @@ def validar(texto, pilar, cuenta=None):
         # propósito. Pedir el sector ahí sobra, y pedir un dato que no se usa es
         # justo lo que hundió el "mes de cumpleaños" a 0.57x: el segundo dato tiene
         # que ser el que hace falta para responderle, ni uno más.
-        chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento)'
-                           r'|(y|\+)\s+(el\s+enlace\s+de\s+)?(tu|su)\s+(web|p[aá]gina|url|landing)',
-                           cuerpo, re.I)),
-            'CTA con la palabra + el 2º dato (sector si es DM, web si es público) (§4.4)',
-            'el "mes de cumpleaños" ya flopeó a 0.57x: el 2º dato tiene que ser el que necesitas para responderle')
+        # ⚠️ SOLO en el modelo PERSONALIZADO. El modelo GENÉRICO (Martina Rosa /
+        # Guillermo Flor, los que MÁS comentarios sacan del sector: 1.033 y 788 en
+        # <24h, 2.014 el de Guillermo) NO pide 2º dato: una palabra IGUAL para todos
+        # y un recurso GENÉRICO (una guía), y la captura la hace la LANDING con gate
+        # de correo, no el comentario (`§4.5.1`). Con --generico este check se salta.
+        if not generico:
+            chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento)'
+                               r'|(y|\+)\s+(el\s+enlace\s+de\s+)?(tu|su)\s+(web|p[aá]gina|url|landing)',
+                               cuerpo, re.I)),
+                'CTA con la palabra + el 2º dato (sector si es DM, web si es público) (§4.4)',
+                'el "mes de cumpleaños" ya flopeó a 0.57x: el 2º dato tiene que ser el que necesitas para responderle')
 
     # ---------- AUDITORIA 2026-07-20 · POR PILAR ----------
     _flechas = [l for l in cuerpo.splitlines() if re.match(r'^\s*→\s', l)]
@@ -677,9 +683,12 @@ def main():
     ap.add_argument('--pilar', required=True,
                     choices=['mapa', 'los10', 'meme', 'leadmagnet', 'entregable'])
     ap.add_argument('--cuenta', default=None)
+    ap.add_argument('--generico', action='store_true',
+                    help='Lead magnet modelo GENÉRICO (Martina/Guillermo): una palabra igual para '
+                         'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
-    res = validar(texto, a.pilar, a.cuenta)
+    res = validar(texto, a.pilar, a.cuenta, a.generico)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.
