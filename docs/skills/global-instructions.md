@@ -476,6 +476,11 @@ Corre estas puertas EN ORDEN:
 
 **Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
 
+> **🚨 EL ENLACE VA EN EL POST ORIGINAL. Si lo metes o lo cambias EDITANDO el post ya publicado, LinkedIn NO cuenta ni un clic — nunca (Iker, 2026-07-24).**
+> LinkedIn ata el enlace a su tracking (`lnkd.in/xxxx`) **en el momento de publicar**. Editado después, el enlace funciona y lleva bien a la web, pero la analítica se queda en 0 para siempre: en la página de analíticas del post **no aparece ninguna URL registrada**, solo un 0 pelado.
+> **Evidencia (medida el 2026-07-24 sobre los mapas de Iker):** Navarra → `pampam.city/...` **230 clics** · Galicia → `pampam.city/...` **107** · agendar → `recursos.neety.com/agendar/` **76** · Murcia **0 sin URL registrada** · Valencia **0 sin URL registrada**. Mismo formato, misma línea del post (60 de 64), mismo tipo de enlace y dominios que en otros posts SÍ cuentan, y el acortador de Murcia lleva bien a la web (comprobado por Iker). Descartado que sea el sitio, la colocación, el dominio o el enlace roto. **La explicación que encaja con todo lo medido es que en esos dos el enlace no iba en la publicación original** (pendiente de que Iker confirme si los editó); el patrón está verificado, la causa es inferida.
+> **Qué hacer:** deja el enlace definitivo escrito ANTES de darle a publicar. Si te das cuenta tarde, asume que ese post ya no medirá clics (o republica). Y al leer la herramienta, un `🔗 0` en un post con enlace es la señal de esto, no de que la gente no pinche.
+
 **Dónde va (por pilar):**
 | Pilar | Lleva spam ninja | Colocación |
 |---|---|---|
