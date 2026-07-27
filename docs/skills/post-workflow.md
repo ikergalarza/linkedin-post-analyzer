@@ -379,6 +379,12 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > 5. **VALIDA:** mecánico 30/30 (`validar-post.py --pilar meme`) + pase de criterio (`§8`). Entrega con comparativa (texto verbatim, dos columnas, `working-preferences §1e`).
 >
 > Los pasos 2-4 son la cadena que se me escapa: calco medio, olvido el tiempo verbal, o no mejoro el punch. Léelos SIEMPRE.
+>
+> **⭐ PASO 0 — ELIGE LA CUENTA QUE AGUANTA EL MEME, NO REBAJES EL MEME PARA LA CUENTA (Iker, 2026-07-27).** El nivel de burrada del original es parte del motor: si lo suavizas para que encaje en una cuenta sobria, te quedas con el tema y sin el chiste.
+> - **Iker (2º jefe) = memes BRUTOS o informales.** Le da igual el registro mientras el post viaje.
+> - **Unai (1º) y Asier (3º) = memes de ventas más normalitos y sobrios.** Y sí, eso les cuesta alcance: es una decisión asumida, no un descuido.
+> - **El caso que lo demostró (0,31x, 1.003 impresiones):** el original de Gavin Fernand (corporatedudes, 425 reacciones, 45% risas) traducía **"I just shit my pants"** al lenguaje corporativo de LinkedIn. Nosotros, para que encajara en la cuenta sobria de Unai, pusimos arriba *"El cliente me dijo que no"* → *"Oportunidad en pausa estratégica"*. **La caja de arriba ya era corporativa, así que no había caída y no había chiste.** El motor de ese meme es la DISTANCIA entre la vulgaridad y el eufemismo. Ese meme tenía que haber ido en Iker, tal cual de bruto.
+> - **Regla:** mide primero cuánto de bruto es el original. Si no cabe en la cuenta que te tocaba, **cambia de cuenta**, no de chiste.
 
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
 >
@@ -725,6 +731,17 @@ El playbook dice "output = acción ejecutada o HTML estudio". Para posts **no**:
 ### ⭐ 8.0 · LA 4ª CUENTA OPCIONAL: MARIO (marketing) — Iker, 2026-07-22
 Al planificar, además de las 3 de founder (Iker/Unai/Asier), considera **opcionalmente ~1 post/semana para Mario** (Growth & Marketing, ficha completa en `aboutme §2`). **NO entra en el cuadro latino 3×3** ni en la exclusividad de categoría de las 3 founder: es un **EXTRA**, unas semanas sí y otras no → **pregunta a Iker si esta semana toca Mario**. Reusa los mismos pilares que funcionan (mapa / meme / "Los 10") pero **anclados a MARKETING** (pelotea a gente y empresas de marketing, no industriales), con las **menciones obligatorias** (`@neety` + `@Unai` + `@Iker` + `@Asier`) y, si es post de resultados, **calcando el dashboard de analíticas de LinkedIn** (no un diseño). Su parte de comentarios/analíticas es **manual** (no está en Unipile). Y es buen sitio para **estrenar pilares nuevos de marketing**.
 
+### 8.0 · ⭐ LEE EL PILAR ANTES DE SACAR CONCLUSIONES (Iker, 2026-07-27)
+Cada post lleva ahora su **etiqueta de PILAR** en la herramienta (chapa de color arriba en la tarjeta, junto al multiplicador; la calcula `backend/src/services/pillar.ts`): `peloteo_mapa · peloteo_los10 · lead_magnet · meme · historia · otro`.
+
+**Compara SIEMPRE dentro del mismo pilar.** Sin la etiqueta se sacaban conclusiones falsas: mirando la tabla en crudo parecía que *"los posts cortos van mal"*, cuando lo corto eran los **memes** (cortos por diseño, el motor es la imagen) y los **lead magnets** (que acaban en "comenta X"). De hecho **los dos mejores posts de la historia son cortos** (16,37x y 15,64x). La longitud no explica nada; el pilar sí.
+
+**Y cada pilar se juzga con su propia vara:**
+- **Peloteo (mapa / los 10):** el pilar de ALCANCE. Se le exige multiplicador alto (histórico 3-8x).
+- **Meme:** alcance disparado y **reacciones de risa**, no me-gusta.
+- **Lead magnet:** se juzga por **comentarios y leads, NUNCA por ratio de outlier**. Un lead magnet ronda 1x por naturaleza (los últimos: 28L/39C y 30L/34C, más comentarios que likes, que es exactamente el gate funcionando). Medirlo con la vara del mapa lleva a "arreglar" lo que no está roto.
+- **Historia:** likes muy por encima de comentarios.
+
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
 - **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).
 - **LEAD MAGNET** (comment-gated).
@@ -745,12 +762,15 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
 - **Días/horas por defecto:** martes-jueves; 11:00-12:00 y 14:00-15:00 (hora local). Configurable.
 - **Rota semana a semana** quién hace qué (que no salga idéntico).
 - **⭐ Dentro de PELOTEO, cada cuenta ALTERNA semana a semana: mapa → "Los 10" → mapa → "Los 10"…** Si la semana pasada esa cuenta sacó mapa, esta semana le toca "Los 10", y al revés. **Esa alternancia ES lo que produce el espaciado de ≥2 semanas entre mapas** (§8.3): no hay que calcularlo aparte, sale solo. Cambia siempre región/tema.
-- **La única regla dura entre semanas es POR CUENTA: que no repita el mismo pilar que ella misma sacó la semana pasada.** No hay regla de "una sola cuenta por pilar y semana".
-- **SÍ pueden coincidir dos cuentas en el mismo pilar la MISMA semana** (p. ej. Unai y Asier con "Los 10"). Con 3 cuentas alternando es inevitable y **no pasa nada**: lo que está prohibido es coincidir el mismo **DÍA** en la misma **categoría**, y de eso ya se encarga el cuadro latino (peloteo es una sola categoría, así que dos peloteos caen por fuerza en días distintos). Si dos cuentas hacen "Los 10" esa semana, que sean **regiones distintas** y **personas distintas**.
+- **⛔ REGLA DURA (Iker, 2026-07-27) — UN SOLO MAPA Y UN SOLO "LOS 10" POR SEMANA, CONTANDO LAS TRES CUENTAS.** En una misma semana, **solo una cuenta** publica mapa y **solo otra cuenta** publica "Los 10". La tercera cuenta se queda **sin peloteo** esa semana (hasta que exista el tercer formato de peloteo, §8.1b). Esto ANULA lo que decía antes esta línea ("sí pueden coincidir dos cuentas en el mismo pilar la misma semana"), que era falso y nos costó caro.
+  - **Por qué, con datos (medido 2026-07-27):** entre el 14 y el 23 de julio salieron **4 peloteos en 10 días** entre las tres cuentas, y el pilar se hundió: Iker pasó de **7,68x (563 likes) el 30-jun** a **2,69x (176)** y **1,23x (95)**; Unai de **2,92x (287)** a **0,71x (55)**. En junio, con la mitad de densidad, todos rendían 5-7x.
+  - **No es el tamaño de la región,** que era la excusa fácil: **Navarra (660.000 habitantes) hizo 7,68x y Murcia (1,5 millones) hizo 1,23x**. La región pequeña ganó a la grande. Lo que cambió fue la **frecuencia**.
+  - **La causa:** las tres cuentas son la misma empresa, comparten público objetivo y se comparten entre ellas. Aunque cada cuenta respete su espaciado individual, **el formato se quema a nivel COLECTIVO**. El espaciado por cuenta no basta.
+  - Y como siempre: regiones distintas y personas distintas, y **nunca repetir el concepto**.
 
 ### 8.3 · Guardarraíles de espaciado (entre semanas) → vía el HISTORIAL
 > **Todo se mide POR CUENTA.** Ninguna de estas reglas es global entre cuentas.
-- **Mapa:** ≥2 semanas entre mapas de la MISMA cuenta — **lo cumple solo si respetas la alternancia mapa/"Los 10" de §8.2**, no hace falta contar nada. Nunca dos semanas seguidas de mapa en la misma cuenta. **No repetir región EN ESA CUENTA** (la cobertura por cuenta está en `docs/skills/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
+- **Mapa (dos guardarraíles, y hay que pasar los DOS):** (1) ≥2 semanas entre mapas de la MISMA cuenta, que sale solo con la alternancia de §8.2; y (2) **el tope COLECTIVO de §8.2: un solo mapa y un solo "Los 10" por semana entre las tres cuentas.** El segundo es el que de verdad protege el pilar, porque la audiencia es compartida. Nunca dos semanas seguidas de mapa en la misma cuenta. **No repetir región EN ESA CUENTA** (la cobertura por cuenta está en `docs/skills/historial-publicaciones.md`; entre cuentas sí se puede repetir región, pero nunca el concepto).
 - **Lead magnet: NO hay espaciado.** ⚠️ Aquí ponía "≥2 semanas por cuenta; nunca dos seguidos" y **es falso** (se corrigió en `global §4.4` y `§4.5` el 2026-07-14 pero esta línea se quedó sin tocar). **La fatiga de lead magnet no existe:** Iker publicó uno el **27-may (0.59x)** y otro el **28-may (8.52x, el 2º mejor post del histórico)**, días consecutivos y en la misma cuenta. La única diferencia fue el CTA ("Comenta" explícito), no el calendario. **Si un lead magnet flopea, mira el ángulo y el CTA, nunca la fecha.** Lo único que se mantiene: no solapar dos cuentas el MISMO día, que ya lo impide el cuadro latino.
 - **Mecanismo:** el planificador LEE el archivo **`historial-publicaciones.md`** (registro vivo) al empezar, respeta el espaciado a partir de él, y **añade la semana nueva** cuando la apruebas. Hay que **commitear** ese archivo cada vez que cambie para que el historial no se pierda. Si el historial está vacío o desactualizado, el workflow **te pregunta** qué hizo cada cuenta las últimas 2 semanas antes de asignar.
 
