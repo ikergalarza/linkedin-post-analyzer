@@ -31,7 +31,9 @@
 
 - **La sobriedad vive en el CUERPO, no en el asunto** (misma regla que el gancho de posts, `brand-voice §1b`): un asunto ganador vale para cualquier remitente; lo que cambia con el remitente es el tono del cuerpo.
 - **Cada semana cambia el remitente** (rotación), y el tema va atado al ángulo del remitente: no le pongas a Asier un email de cierre comercial ni a Iker uno de arquitectura.
-- **Kaixito NO vende.** Sus emails son de relación y producto (novedades, historias internas, encuestas "respóndeme"). El CTA de Kaixito es suave o inexistente. Si la novedad merece demo, el CTA lo lleva otro remitente otro día.
+- **Kaixito no CIERRA, pero SÍ siembra (decidido el 2026-07-27, tras mirar Duolingo y Alan).** Sus emails son de relación y producto (novedades, historias internas, encuestas "respóndeme"), y su CTA natural es la **derivación en personaje**: *"yo no vendo, que para eso está Iker: responde DEMO y te lo enseña él."* El CTA fuerte de demo lo firma siempre un founder: cerrar una demo B2B pide una autoridad que una mascota no tiene, pero prohibirle vender del todo era tirar su capacidad de convicción (abre puertas y pasa el testigo).
+- **Kaixito tiene que EXISTIR antes de remitir:** primer email de presentación (quién es y por qué te escribe), avatar consistente y **humor blanco de adulto, nunca infantil** (la misma línea del registro de Unai en `images §0g`). La evidencia de que mascota y compra seria conviven: **Alan** (salud/seguros para empresas, ~41.000 empresas según su web) tiene su marmota por toda la web; **Duolingo** manda emails firmados por personajes a usuarios de pago de todas las edades. En herramientas de prospección B2B no lo hace nadie: es HUECO, no ridículo, mientras el humor sea de sector y no de guardería. Ojo: los personajes de Duolingo funcionan porque su universo ya existe en la app; Kaixito necesita su presentación (y idealmente asomar antes en LinkedIn/web).
+- **Se mide, no se discute:** en las primeras 2-3 tandas, opens/respuestas/bajas de Kaixito contra los founders, por segmento. Si abre más, gana papel; si el segmento industrial senior responde mal, se le acota la lista (p. ej. solo clientes, como los VIP de Runner Pro).
 - Firma humana al final: nombre + rol real ("Iker, cofundador de Neety"). Kaixito firma como "Kaixito, la mascota de Neety".
 
 ---
@@ -124,7 +126,7 @@ En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, 
 | **Caso de uso / prueba** | Antes/después REAL con Neety. Si no hay caso potente: prueba lógica (proceso, flujo, captura) | Iker / Asier | Fuerte |
 | **Técnico / por dentro** | Cómo está construido algo (señales, el aprendizaje por comercial) aterrizado en el beneficio de ventas | Asier | Suave |
 | **Diagnóstico / demo** | Invitación directa con el valor de la reunión explícito | Iker | Fuerte |
-| **Novedades / programa** | Lo nuevo del producto contado con humor, entre bastidores | **Kaixito** | Relación / ninguno |
+| **Novedades / programa** | Lo nuevo del producto contado con humor, entre bastidores | **Kaixito** | Relación, o derivación a founder ("responde DEMO y te lo enseña Iker") |
 
 - **Mini-campañas de 3 emails** sobre el mismo ángulo para empujar demos: (1) problema + insight + CTA demo · (2) caso/ejemplo + CTA suave · (3) diagnóstico directo + P.S. bajando fricción. Separados varios días, cada uno con ángulo nuevo, jamás el mismo mensaje repetido. Si no responde → vuelve al nurture normal.
 - **Echo marketing:** los emails se escriben con las palabras del comprador, no las nuestras. Frases reales de llamadas, objeciones frecuentes ("ya hacemos LinkedIn", "la IA no me da confianza", "no es prioridad") y preguntas de demos se convierten en asuntos y cuerpos. Pídele a Iker el porqué real de cada demo agendada: ese dolor es el próximo email.
