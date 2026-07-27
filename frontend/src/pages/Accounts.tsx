@@ -113,6 +113,7 @@ interface TopPost {
   link_clicks_count?: number | null;
   premium_button_clicks?: number | null;
   link_url?: string | null;
+  pillar?: string | null;
   impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number;
@@ -139,6 +140,7 @@ interface LivePost {
   link_clicks_count?: number | null;
   premium_button_clicks?: number | null;
   link_url?: string | null;
+  pillar?: string | null;
   impressions_count: number | null;
   engagement_score: number;
   outlier_ratio: number | null;
@@ -185,6 +187,7 @@ interface Snapshot {
   link_clicks_count?: number | null;
   premium_button_clicks?: number | null;
   link_url?: string | null;
+  pillar?: string | null;
 }
 
 interface TypicalBucket {
@@ -290,6 +293,54 @@ const CHART_TOOLTIP_STYLE = {
 function fmtNum(n: number): string {
   const r = Math.round(n);
   return (r < 0 ? '-' : '') + Math.abs(r).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+/* PILAR de contenido: qué formato de la parrilla es el post.
+   Lo calcula el backend (services/pillar.ts) y lo guarda en `pillar`. Aquí solo
+   se pinta. Sirve para no comparar peras con manzanas al leer la tabla: un meme
+   es corto por diseño y vive de la imagen, un mapa son 2.000 caracteres, y
+   mezclarlos daba conclusiones falsas (Iker, 2026-07-27). */
+const PILAR_META: Record<string, { etiqueta: string; clase: string; ayuda: string }> = {
+  peloteo_mapa: {
+    etiqueta: 'peloteo · mapa',
+    clase: 'bg-emerald-500/15 text-emerald-400',
+    ayuda: 'Peloteo regional en formato MAPA (foto del mapa + ~20 menciones)',
+  },
+  peloteo_los10: {
+    etiqueta: 'peloteo · los 10',
+    clase: 'bg-emerald-500/15 text-emerald-400',
+    ayuda: 'Peloteo regional en formato LOS 10 (foto "los 10" + ~10 menciones)',
+  },
+  lead_magnet: {
+    etiqueta: 'lead magnet',
+    clase: 'bg-sky-500/15 text-sky-400',
+    ayuda: 'Pide comentar una palabra para entregar el recurso por privado',
+  },
+  meme: {
+    etiqueta: 'meme',
+    clase: 'bg-accent/15 text-accent',
+    ayuda: 'El motor es la imagen y las reacciones de risa se disparan (>25%)',
+  },
+  historia: {
+    etiqueta: 'historia',
+    clase: 'bg-purple-500/15 text-purple-400',
+    ayuda: 'Anécdota personal en primera persona',
+  },
+  otro: {
+    etiqueta: 'otro',
+    clase: 'bg-bg-secondary border border-border text-text-muted',
+    ayuda: 'Sin pilar claro. Ante la duda se deja en "otro" en vez de inventar etiqueta',
+  },
+};
+
+function PilarBadge({ pillar }: { pillar?: string | null }) {
+  if (!pillar) return null;
+  const m = PILAR_META[pillar] || PILAR_META.otro;
+  return (
+    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${m.clase}`} title={m.ayuda}>
+      {m.etiqueta}
+    </span>
+  );
 }
 
 /* ¿El cuerpo del post lleva un enlace?
@@ -2121,6 +2172,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
                 {post.outlier_ratio.toFixed(1)}x
               </span>
             )}
+            <PilarBadge pillar={post.pillar} />
             <span
               className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]"
               title={post.last_snapshot_at ? `Last capture ${fmtAge(post.last_snapshot_at)}` : 'No captures yet'}
@@ -2345,6 +2397,7 @@ function TopPostRow(
                   {post.outlier_ratio.toFixed(1)}x
                 </span>
               )}
+              <PilarBadge pillar={post.pillar} />
             </div>
           </div>
           <ExpandablePostText text={post.content_text || post.hook_text} />

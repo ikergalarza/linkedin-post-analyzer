@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { unipileService } from '../services/unipile';
+import { classifyPillar } from '../services/pillar';
 import pool from '../db';
 
 function paramId(req: Request): string {
@@ -9,6 +10,41 @@ function paramId(req: Request): string {
 }
 
 const router = Router();
+
+// POST /api/posts/classify-pillars — rellena `pillar` en TODO el historico.
+//
+// Es idempotente y barato (una lectura + un UPDATE por post), asi que se puede
+// relanzar tras tocar las reglas de services/pillar.ts. Por defecto reclasifica
+// todo; con ?only_missing=true solo toca los que no tienen pilar todavia.
+router.post('/classify-pillars', async (req: Request, res: Response) => {
+  try {
+    const soloVacios = req.query.only_missing === 'true';
+    const { rows } = await pool.query(
+      `SELECT id, content_text, reaction_mix, content_type
+         FROM posts
+        WHERE linkedin_post_id <> 'DEMO_LIVE_POST'
+          ${soloVacios ? 'AND pillar IS NULL' : ''}`
+    );
+
+    const conteo: Record<string, number> = {};
+    let escritos = 0;
+    for (const r of rows) {
+      const pilar = classifyPillar({
+        content_text: r.content_text,
+        reaction_mix: r.reaction_mix,
+        content_type: r.content_type,
+      });
+      conteo[pilar] = (conteo[pilar] || 0) + 1;
+      await pool.query('UPDATE posts SET pillar = $2 WHERE id = $1', [r.id, pilar]);
+      escritos++;
+    }
+
+    res.json({ ok: true, revisados: rows.length, escritos, por_pilar: conteo });
+  } catch (err: any) {
+    console.error('classify-pillars error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // GET /api/creators/:id/posts
 router.get('/:id/posts', async (req: Request, res: Response) => {

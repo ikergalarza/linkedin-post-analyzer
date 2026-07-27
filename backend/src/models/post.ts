@@ -1,4 +1,5 @@
 import pool from '../db';
+import { classifyPillar } from '../services/pillar';
 
 export interface Post {
   id: string;
@@ -84,7 +85,7 @@ export const PostModel = {
       `SELECT id, creator_id, linkedin_post_id, content_text, content_type,
               published_at, likes_count, comments_count, reposts_count,
               impressions_count, profile_viewers_count, followers_gained_count,
-              saves_count, sends_count, link_clicks_count, premium_button_clicks, link_url,
+              saves_count, sends_count, link_clicks_count, premium_button_clicks, link_url, pillar,
               engagement_score, outlier_ratio, is_outlier,
               hook_text, word_count, char_count, line_break_count,
               has_aggressive_spacing, hook_type, post_structure,
@@ -121,8 +122,8 @@ export const PostModel = {
             comment_like_ratio, share_like_ratio, text_tone,
             has_hashtags, hashtags, has_emoji,
             has_call_to_action, language, post_url, raw_data,
-            profile_viewers_count, followers_gained_count
-          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31)
+            profile_viewers_count, followers_gained_count, pillar
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32)
           ON CONFLICT (linkedin_post_id) DO UPDATE SET
             likes_count = EXCLUDED.likes_count,
             comments_count = EXCLUDED.comments_count,
@@ -143,7 +144,12 @@ export const PostModel = {
             -- COALESCE: si un re-escaneo viene sin analytics, NO borres lo que ya
             -- tenias. Unipile no siempre lo devuelve.
             profile_viewers_count = COALESCE(EXCLUDED.profile_viewers_count, posts.profile_viewers_count),
-            followers_gained_count = COALESCE(EXCLUDED.followers_gained_count, posts.followers_gained_count)`,
+            followers_gained_count = COALESCE(EXCLUDED.followers_gained_count, posts.followers_gained_count),
+            -- El pilar que ya estaba MANDA: aqui se calcula sin reaction_mix
+            -- (las reacciones llegan despues), asi que un re-escaneo degradaria
+            -- un meme ya identificado a 'otro'. El pase autoritativo es
+            -- POST /api/posts/classify-pillars, que si ve las reacciones.
+            pillar = COALESCE(posts.pillar, EXCLUDED.pillar)`,
           [
             post.creator_id, post.linkedin_post_id, post.content_text, post.content_type,
             post.published_at, post.likes_count || 0, post.comments_count || 0, post.reposts_count || 0,
@@ -155,6 +161,7 @@ export const PostModel = {
             post.has_emoji || false, post.has_call_to_action || false, post.language, post.post_url,
             post.raw_data ? JSON.stringify(post.raw_data) : null,
             post.profile_viewers_count ?? null, post.followers_gained_count ?? null,
+            classifyPillar({ content_text: post.content_text ?? null, content_type: post.content_type ?? null }),
           ]
         );
       }

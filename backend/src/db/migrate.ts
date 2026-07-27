@@ -710,6 +710,16 @@ const migration = `
   ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS followup_text TEXT;
   ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS sector TEXT;
   ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS provider_name TEXT;
+
+  -- v26: PILAR de contenido (a que formato de la parrilla pertenece el post).
+  -- hook_type/post_structure dicen COMO esta escrito; esto dice QUE ES:
+  -- peloteo_mapa · peloteo_los10 · lead_magnet · meme · historia · otro.
+  -- Sin esto se comparaban memes (cortos por diseño, viven de la imagen) con
+  -- mapas (2.000 caracteres) y salian conclusiones falsas al leer la tabla.
+  -- Lo rellena services/pillar.ts, y se recalcula en lote desde
+  -- POST /api/posts/classify-pillars.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS pillar TEXT;
+  CREATE INDEX IF NOT EXISTS idx_posts_pillar ON posts (pillar) WHERE pillar IS NOT NULL;
 `;
 
 export async function runMigrations() {
