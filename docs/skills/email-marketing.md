@@ -105,6 +105,7 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 - **Lo que NO se copia de Duolingo:** su correo es 100% imágenes (14 PNGs) porque llevan años de reputación de dominio. El nuestro sigue siendo texto dominante + un solo GIF, sobre todo con el dominio frío.
 - **Dato que corrige una creencia:** Duolingo NO rota remitentes (los 13 correos salen de "Duolingo <hello@duolingo.com>"); el personaje vive en asunto y cuerpo. Nuestra rotación de remitentes-persona es un diferencial propio, no un calco.
 - **Biblioteca de gags de Kaixito** (recursos de cómic que funcionan en flat y a miniatura): garabatos/squiggles de estrés sobre la cabeza, gotas de sudor, signos de interrogación flotando, bombilla, hojear el libro frenético, mirar a cámara con el libro del revés, esconderse tras el libro, apuntar algo y que se le caiga el boli.
+- **Producción del GIF (flujo de Mario, 2026-07-27):** el diseño de la mascota SE MANTIENE tal cual (el logo con ojos, brazos y libro: es marca en cada gag, no se rediseña). El prompt al generador es **UN párrafo** que pide **UN solo archivo** con **fondo magenta liso** (sin sombras ni degradados): Mario recorta el fondo él mismo. Siempre: personaje entero y centrado, estilo plano sin 3D, loop perfecto 2-3 s.
 
 ## 4 · CTA: uno, claro, y del tamaño del calor del lead
 
