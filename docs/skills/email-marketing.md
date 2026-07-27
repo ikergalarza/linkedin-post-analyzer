@@ -220,7 +220,26 @@ Carmen lleva la newsletter de Runner Pro (B2C) entera desde Claude Code con un p
 - **Mario pasa un ZIP de .eml cada pocas semanas** (el conector de Gmail solo admite una cuenta y es la de trabajo de Iker; el reenvío se descartó para no llenarle el buzón). Claude criba (fuera verificaciones y no-newsletters), inventaría por remitente y guarda las observaciones aquí.
 - **El análisis cruzado gordo se hace con ~2-3 meses acumulados**, no antes: los patrones se confirman con repetición, como los outliers. Cada análisis actualiza ESTA sección.
 - **Inventario a 2026-07-27 (ZIP "hasta 27 julio", 34 correos, 8 fuentes):** RunnerPro (7, el sistema de Carmen en vivo: 300-450 palabras, bienvenida con descuento día 0) · **BOGA/EDEM (2, la más cercana a nuestro género: curiosidad pura en primera persona + storytelling ~1.000 palabras)** · Cosas de Freelance (6, **bienvenida NUMERADA [1/10]…: la secuencia como producto con barra de progreso — patrón robable**) · Singularu (12, e-commerce puro: contraste, no modelo; su "chica Singularu" = truco de tribu) · lemlist (2, competencia: vigilar su discurso de señales) · Kieran Flanagan (4, ensayos 4-5k palabras: otro género) · **Aprilynne Alter (7, ZIP del 27-jul): asuntos TODOS en minúsculas y sin gancho de venta ("are creator conferences worth it?", mediana ~40 chars: valida el estilo del correo 0 desde otro nicho) · P.S. en el 100% · cuerpos educativos de 1.200-2.600 palabras con ~7 imágenes (género ensayo visual, no nuestro formato)**.
-- **Faltan por suscribirse (prioridad):** Isra Bravo (motivante.com) · Lavender (lavender.ai) · CustomerTop.
+- **Faltan por suscribirse (prioridad):** ~~Isra Bravo · Lavender · CustomerTop~~ → suscrito el 2026-07-27, llegarán en el próximo ZIP.
+
+### 8b · ⭐ SALES HACKERS — la referencia MÁS cercana que tenemos (50 correos, jun 2025 - jul 2026, analizado el 2026-07-27)
+Javi Consuegra (`javi@saleshackers.es`, herramienta: beehiiv/Encharge) vende formación y consultoría de **IA para ventas B2B en español**: nuestro sector EXACTO y nuestro mismo comprador. Los 6 correos con "Fwd:" del ZIP los reenvió Unai, no son otra fuente.
+
+**Sus números, y el contraste con Timepack:**
+| | Sales Hackers (B2B) | Timepack (B2C) |
+|---|---|---|
+| Asunto | **mediana 29,5 chars / 5 palabras** | 43 chars / 8 palabras |
+| Cuerpo | mediana 698 palabras | 356 |
+| Enlaces | mediana 6, **0 correos sin enlace** | 0,8, el 47% sin ninguno |
+| P.D. | 22% | 86% |
+| Imágenes | 2-12 por correo (HTML pesado) | ~0 |
+
+- **⭐ EL HALLAZGO: su cuerpo ES nuestro formateado de posts de LinkedIn.** Una frase por línea, bloques paralelos con anáfora y escalera, líneas cortas, remate seco. Literal de *"Vi tu post y pensé en esto..."*: `Lo frío habla de ti. / Lo cálido habla de ellos.` → `Lo frío suena a copia/pega. / Lo cálido se nota que va con intención.` → `Lo frío se ignora. / Lo cálido recibe respuesta.` **Confirma desde nuestro propio sector la decisión de §3 (el email hereda el formateado del post).**
+- **Asuntos aún MÁS cortos que Timepack (5 palabras).** Y el mejor truco: asuntos que imitan un correo 1-a-1 (*"Vi tu post y pensé en esto..."*, *"Re: Herramienta para automatizar Linkedin"*, *"Te escribo desde el South Summit"*). ⚠️ El *"Re:"* falso es engañoso: NO lo copiamos (quema confianza y es justo lo que nos separa del spam).
+- **Firma-mantra confirmada como patrón:** cierra con *"Buenas ventas, Javi Consuegra"* igual que Timepack con *"Que el tiempo te acompañe"*. Es la 2ª fuente: refuerza que tengamos la nuestra (`§3.7`, pendiente).
+- **Su P.D. hace CROSS-SELL** (el cuerpo enseña, la P.D. vende otra cosa: un evento, un descuento). Uso distinto al de Timepack (referidos). Los dos valen; elegir por objetivo.
+- **Ángulos que le funcionan y son nuestros:** "las llamadas/emails en frío ya no funcionan, lo que funciona son las señales" (= nuestro pilar 2), "¿cuántas herramientas sobran en tu empresa?", "quieres IA y tu CRM apesta", "outbound como el 2016", "vender ya no va de números". **Ojo: es competencia de atención**, así que el ángulo se remixea, nunca se calca.
+- **Lo que NO copiamos:** 6 enlaces y hasta 12 imágenes por correo (nuestro dominio está frío y eso es riesgo de spam directo), ni sus asuntos con corchetes tipo `[NUEVO CONTENIDO]`.
 
 ---
 
