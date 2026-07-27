@@ -154,6 +154,7 @@ Carmen lleva la newsletter de Runner Pro (B2C) entera desde Claude Code con un p
 5. **Métricas que mandan:** respuestas y demos agendadas > clics > aperturas (open rate >30% está bien como referencia, pero no se optimiza para abrir, se optimiza para conversar). Medir por segmento y por pilar; replicar los formatos que agendan.
 6. **Días de envío:** empezar martes-jueves por la mañana y MEDIR. Si un día flojea sistemáticamente (a Runner Pro le pasó con los sábados), se salta ese día. No adivinar: mirar los datos propios.
 7. **Entregabilidad:** dominio calentado ANTES de la primera tanda (no pasar de 0 a 1.000 envíos), baja fácil y visible, pocos enlaces, solo texto, limpiar dormidos. Las bajas son limpieza, no fracaso.
+8. **Programar por API NO penaliza (aclarado el 2026-07-27).** En LinkedIn publicamos a mano porque hay un algoritmo de alcance que castiga la publicación por herramientas de terceros; en email NO existe ese algoritmo: existen filtros de spam, y les da igual si la campaña se escribió en el editor o la programó Claude por API, porque sale idéntica del mismo servidor de la herramienta. Lo que decide el inbox es la reputación del dominio, la autenticación, el engagement y la lista limpia (punto 7). Carmen manda todo por Claude→API de Klaviyo con open rate >30%. La revisión humana del punto 3 se mantiene igual.
 
 ---
 
