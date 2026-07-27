@@ -6,10 +6,11 @@
 
 ---
 
-## 0b · ⭐ RESUMEN AL FINAL, SIEMPRE (2026-07-16)
-**Cada respuesta termina con un `## Resumen` de 2-4 líneas.** Sin excepción, aunque la respuesta sea corta.
-- **Por qué:** "me pones mucho texto y no me entero". El resumen no es un adorno: es lo que el usuario lee primero y a veces lo único que lee.
-- **Qué va dentro:** qué he hecho o qué he decidido, y **qué necesito de él**. Nada de repetir el razonamiento.
+## 0b · ⭐ RESUMEN AL FINAL, SIEMPRE — Y EN BULLETS, NO EN PÁRRAFOS (2026-07-16 · reforzado 2026-07-27)
+**Cada respuesta termina con un `## Resumen` en BULLET POINTS cortos.** Sin excepción, aunque la respuesta sea corta.
+- **Por qué:** "me pones mucho texto y no me entero". Reincidí el 2026-07-27: entregué el resumen como párrafo corrido en una respuesta larga y me lo devolvió ("si no es imposible entenderte"). El resumen en prosa NO cuenta como resumen.
+- **Qué va dentro, en este orden:** bullets de **qué he hecho/decidido** + bullets de **PENDIENTES** (qué falta y qué necesito de él). Un bullet = una cosa, una línea.
+- **Cuanta más información tenga la respuesta, más obligatorio es esto.** En respuestas largas, además: menos parrafazos arriba (bloques cortos, listas), que el resumen no sea el único sitio legible.
 - **Lo demás va arriba y más corto.** El resumen no es la excusa para escribir 30 líneas antes.
 
 ## 1 · Formato de entrega
