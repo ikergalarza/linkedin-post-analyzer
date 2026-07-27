@@ -19,6 +19,12 @@ El análisis real de outliers se calcula en vivo desde la base de datos (secció
 
 **Para refrescar:** consulta esos endpoints y vuelca los números a §3/§4 (los ratios decaen; refresca cada 1-2 meses). Si el acceso vuelve a caer, la vía manual de siempre (pegar el export del Explorer) sigue valiendo.
 
+**⭐ Cómo se DESCUBREN creators nuevos para la BD (validado 2026-07-27, tanda de marketing/marca personal):**
+1. **Añadirlos es gratis y automático:** `POST /api/creators` con `{"linkedin_url": "..."}` — el backend saca el perfil por Unipile, scrapea su histórico de posts y calcula outliers solo. Apify solo hace falta para DESCUBRIR quién añadir.
+2. **La búsqueda por keyword NO funciona para España:** el actor de Apify `harvestapi/linkedin-post-search` (pago por resultado, ~0,002$/post, sin suscripción) con queries en español devolvió 2/400 posts en español. No repetir esa vía.
+3. **La vía que SÍ funciona — el ecosistema de un creator semilla:** con un creator bueno ya localizado (ej. Miriam Collado), pedir al actor los posts que le MENCIONAN (`mentioningMember`, ventana 3 meses). De ahí salen dos listas de oro: los AUTORES de posts virales que le mencionan, y los CO-ETIQUETADOS recurrentes (los "7 creadores a seguir" — quien sale etiquetado 10+ veces junto a la semilla es del mismo ecosistema y nivel).
+4. Filtrar: español, nicho correcto (fuera sectores ajenos aunque sean virales), no estar ya en la BD, y persona (no empresa). Añadir la shortlist y dejar que el cálculo de outliers de la propia BD sea el juez final.
+
 Usa el **snapshot cross-creator** (§3), la **taxonomía** (§1) y el **histórico Neety** (§4). Los ratios cambian con cada scrape: trátalos como órdenes de magnitud, no como cifras exactas, hasta refrescar.
 
 ---
