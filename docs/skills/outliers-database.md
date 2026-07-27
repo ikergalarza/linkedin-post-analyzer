@@ -24,6 +24,16 @@ El análisis real de outliers se calcula en vivo desde la base de datos (secció
 2. **La búsqueda por keyword NO funciona para España:** el actor de Apify `harvestapi/linkedin-post-search` (pago por resultado, ~0,002$/post, sin suscripción) con queries en español devolvió 2/400 posts en español. No repetir esa vía.
 3. **La vía que SÍ funciona — el ecosistema de un creator semilla:** con un creator bueno ya localizado (ej. Miriam Collado), pedir al actor los posts que le MENCIONAN (`mentioningMember`, ventana 3 meses). De ahí salen dos listas de oro: los AUTORES de posts virales que le mencionan, y los CO-ETIQUETADOS recurrentes (los "7 creadores a seguir" — quien sale etiquetado 10+ veces junto a la semilla es del mismo ecosistema y nivel).
 4. Filtrar: español, nicho correcto (fuera sectores ajenos aunque sean virales), no estar ya en la BD, y persona (no empresa). Añadir la shortlist y dejar que el cálculo de outliers de la propia BD sea el juez final.
+5. **Ser muy co-etiquetado mide popularidad en el gremio, NO viralidad.** Caso real: Ana Díaz del Río salía 10 veces co-etiquetada con Miriam y tenía 922 posts con **0 outliers** y engagement medio 3. Se borró.
+
+**⭐ PODA — cómo limpiar cuentas que solo hacen ruido (Iker, 2026-07-27):**
+Un `total_outliers = 0` NO significa lo mismo en todas. Antes de borrar, mira SIEMPRE el engagement medio junto al número de posts:
+- **BORRAR — plana de verdad:** muestra grande (20+ posts) **y** media baja. Nunca despega y ensucia los filtros de Inspiration. (Borradas el 2026-07-27: Ana Díaz del Río 922p/avg 3 · Ryan Brancheau 105p/avg 29 · Elliott Azoulay 81p/avg 162 · Jaume Iglesias 23p/avg 54 · Dhruvi S. 22p/avg 47.)
+- **BORRAR — perfil duplicado:** la misma persona metida dos veces; se queda el que tiene histórico y outliers. (Borrados: el clon de Kevin French con 1 post y el de Adam Ali con 9.)
+- **🚫 NO BORRAR — falso negativo del método:** cuentas con **media estratosférica** (Adam Grant avg 15.509 · Jasmin Alić 5.486 · Lara Acosta 3.089). El outlier es relativo a SU media (≥3x), así que quien es viral SIEMPRE nunca marca 3x sobre sí mismo: su media ya es un outlier del sector. Son swipe material de élite; borrarlas sería el peor error de la limpieza.
+- **🚫 NO BORRAR — muestra insuficiente:** menos de ~15 posts scrapeados. No hay datos para juzgar; re-scrapea antes de sentenciar.
+
+**Recordatorio del cálculo (auditado 2026-07-27):** el outlier se computa sobre el **histórico COMPLETO** del creator, sin ninguna ventana de 6 meses ni de ningún tipo (`backend/src/services/outliers.ts`). Dashboard/descubiertos: `≥3x su media` **y** `≥200 de engagement absoluto`. Cuentas managed con impresiones reales: híbrido `MAX(ratio engagement, ratio impresiones) ≥ 3x`, sin suelo absoluto.
 
 Usa el **snapshot cross-creator** (§3), la **taxonomía** (§1) y el **histórico Neety** (§4). Los ratios cambian con cada scrape: trátalos como órdenes de magnitud, no como cifras exactas, hasta refrescar.
 
