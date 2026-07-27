@@ -216,10 +216,11 @@ Carmen lleva la newsletter de Runner Pro (B2C) entera desde Claude Code con un p
 - El cierre de carrito a las 23:59 con precio tachado: un SaaS con demo y ciclo de venta largo no puede abrir y cerrar el producto.
 - El volumen diario con 60% de storytelling personal: exige un personaje-founder a tiempo completo. Nosotros: 2-3/semana con 4 remitentes.
 
-**Cómo se alimenta el corpus (tarea viva):**
-- Suscripciones activas a newsletters de referencia (Runner Pro, DEM/Demium, competencia B2B…) que van llegando poco a poco.
-- **Gmail:** el conector de Gmail de esta sesión da acceso al buzón de Iker. Para que el análisis periódico funcione: etiquetar toda newsletter entrante con una etiqueta `newsletters` (como hacía Carmen con su correo de trabajo) y pedir aquí un análisis cruzado cada X semanas: asuntos, cuerpos, ganchos, psicología, formateo, comparando newsletters entre sí y contra Timepack.
-- Cada análisis nuevo actualiza ESTA sección (patrones que se confirman, patrones nuevos), igual que `outliers-database` se refresca con el Explorer.
+**Cómo se alimenta el corpus (flujo real desde el 2026-07-27):**
+- **Mario pasa un ZIP de .eml cada pocas semanas** (el conector de Gmail solo admite una cuenta y es la de trabajo de Iker; el reenvío se descartó para no llenarle el buzón). Claude criba (fuera verificaciones y no-newsletters), inventaría por remitente y guarda las observaciones aquí.
+- **El análisis cruzado gordo se hace con ~2-3 meses acumulados**, no antes: los patrones se confirman con repetición, como los outliers. Cada análisis actualiza ESTA sección.
+- **Inventario a 2026-07-27 (ZIP "hasta 27 julio", 34 correos, 8 fuentes):** RunnerPro (7, el sistema de Carmen en vivo: 300-450 palabras, bienvenida con descuento día 0) · **BOGA/EDEM (2, la más cercana a nuestro género: curiosidad pura en primera persona + storytelling ~1.000 palabras)** · Cosas de Freelance (6, **bienvenida NUMERADA [1/10]…: la secuencia como producto con barra de progreso — patrón robable**) · Singularu (12, e-commerce puro: contraste, no modelo; su "chica Singularu" = truco de tribu) · lemlist (2, competencia: vigilar su discurso de señales) · Kieran Flanagan (4, ensayos 4-5k palabras: otro género) · Aprilynne Alter (1).
+- **Faltan por suscribirse (prioridad):** Isra Bravo (motivante.com) · Lavender (lavender.ai) · CustomerTop.
 
 ---
 
