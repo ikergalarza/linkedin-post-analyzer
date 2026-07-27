@@ -292,6 +292,34 @@ function fmtNum(n: number): string {
   return (r < 0 ? '-' : '') + Math.abs(r).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+/* ¿El cuerpo del post lleva un enlace?
+   LinkedIn reescribe TODO enlace del cuerpo a su acortador `lnkd.in/xxxx`, así
+   que ese es el patrón que más veces casa; se aceptan también http(s) y www
+   por si el texto llega sin reescribir. Da igual si el enlace va en una línea
+   suelta o dentro de un bloque de 2 o 3: se busca en el texto entero. */
+const RE_ENLACE = /\b(?:https?:\/\/|lnkd\.in\/|www\.)\S+/i;
+function tieneEnlaceEnCuerpo(text: string | null | undefined): boolean {
+  return !!text && RE_ENLACE.test(text);
+}
+
+/* ¿Enseño la chapa de clics al enlace?
+   SÍ siempre que el post tenga enlace en el cuerpo, aunque los clics sean 0.
+   Antes esto era `!!post.link_clicks_count` y un 0 es falsy, así que la chapa
+   desaparecía entera: un post con enlace y 0 clics se veía IGUAL que uno sin
+   medición, y parecía que la herramienta no medía (caso real: el mapa de Murcia,
+   con lnkd.in en el cuerpo y 0 clics reportados por LinkedIn; Iker, 2026-07-24).
+   Con esto quedan tres estados distinguibles: sin enlace → nada · con enlace y
+   dato → la cifra (incluido 0) · con enlace y sin dato aún → "—".
+
+   NO basta con `link_clicks_count != null`: LinkedIn devuelve la fila a 0 para
+   TODOS los posts, también los que no llevan enlace (un lead magnet de comentario,
+   por ejemplo), y entonces salía un "🔗 0" de adorno en medio post de la cuenta.
+   El disparador es el ENLACE. El `> 0` de después es solo una red: si algún día
+   hay clics pero el enlace no se detecta en el texto, la cifra se enseña igual. */
+function mostrarClics(post: { link_clicks_count?: number | null; content_text: string | null }): boolean {
+  return tieneEnlaceEnCuerpo(post.content_text) || (post.link_clicks_count ?? 0) > 0;
+}
+
 // Compacto (K/M), SOLO para ejes y etiquetas de barra de gráficas, donde una
 // cifra entera repetida en cada tick amontona el eje. Añade M para millones
 // (antes solo hacía K, y 2 millones salían como "2036.3K", ilegible).
@@ -2118,7 +2146,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             {/* LinkedIn Premium: lo mas parecido a "esto trajo negocio" que
                 tenemos. Solo se pintan si hay dato, para no ensuciar los posts
                 antiguos que nunca llegaron a tenerlo. */}
-            {(!!post.saves_count || !!post.sends_count || !!post.link_clicks_count) && (
+            {(!!post.saves_count || !!post.sends_count || mostrarClics(post)) && (
               <span className="text-text-muted/40 select-none">·</span>
             )}
             {!!post.saves_count && (
@@ -2133,13 +2161,19 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             )}
             {/* El numero que justifica todo esto: sin el, un lead magnet solo se
                 podia juzgar por comentarios, que miden ruido y no intencion.
-                Va resaltado y con la URL en el tooltip. */}
-            {!!post.link_clicks_count && (
+                Va resaltado y con la URL en el tooltip. Se enseña SIEMPRE que el
+                post lleve enlace, aunque sea 0 (ver mostrarClics). */}
+            {mostrarClics(post) && (
               <span
                 className="inline-flex items-center gap-1 text-amber-400 font-medium"
-                title={`Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`}
+                title={
+                  post.link_clicks_count != null
+                    ? `Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`
+                    : 'El post lleva enlace, pero LinkedIn aún no ha dado los clics'
+                }
               >
-                <MetricIcon d={ICON_LINK} /> {fmtNum(post.link_clicks_count)}
+                <MetricIcon d={ICON_LINK} />{' '}
+                {post.link_clicks_count != null ? fmtNum(post.link_clicks_count) : '—'}
               </span>
             )}
 
@@ -2318,7 +2352,7 @@ function TopPostRow(
               </span>
             )}
 
-            {(!!post.saves_count || !!post.sends_count || !!post.link_clicks_count) && (
+            {(!!post.saves_count || !!post.sends_count || mostrarClics(post)) && (
               <span className="text-text-muted/40 select-none">·</span>
             )}
             {!!post.saves_count && (
@@ -2331,12 +2365,17 @@ function TopPostRow(
                 <MetricIcon d={ICON_SEND} /> {fmtNum(post.sends_count)}
               </span>
             )}
-            {!!post.link_clicks_count && (
+            {mostrarClics(post) && (
               <span
                 className="inline-flex items-center gap-1 text-amber-400 font-medium"
-                title={`Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`}
+                title={
+                  post.link_clicks_count != null
+                    ? `Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`
+                    : 'El post lleva enlace, pero LinkedIn aún no ha dado los clics'
+                }
               >
-                <MetricIcon d={ICON_LINK} /> {fmtNum(post.link_clicks_count)}
+                <MetricIcon d={ICON_LINK} />{' '}
+                {post.link_clicks_count != null ? fmtNum(post.link_clicks_count) : '—'}
               </span>
             )}
 
