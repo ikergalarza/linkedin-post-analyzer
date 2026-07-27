@@ -136,6 +136,16 @@ Día 0: entrega del lead magnet prometido · Día 1-2: quiénes somos y qué pro
 - **Sin doble flujo:** mientras un lead está DENTRO de la bienvenida (días 0-14) NO recibe la newsletter normal. Al terminar la secuencia pasa al nurture semanal. Nunca los dos a la vez.
 - **Referenciar el origen:** el email de día 0-2 SÍ nombra el recurso que se descargó ("la guía de X que te llevaste"); a partir de ahí, genérico, porque en la lista conviven leads de magnets distintos. Si un envío va filtrado a UN magnet concreto, se referencia; si va mezclado, no se asume ninguno.
 
+### 5c-0 · Correo 0: el segmentador por respuesta (diseñado el 2026-07-27, pendiente de enviar)
+El primer correo del sistema no vende: **segmenta la base mezclada por RESPUESTAS** y de paso entrena la entregabilidad (cada respuesta le dice a Gmail que somos legítimos, justo cuando el dominio está frío).
+- **Asunto:** informal, en minúsculas, corto, sin emojis, estilo *"¿tú y yo de qué nos conocemos?"*. El susto lo desactiva el From visible ("Iker · Neety"): sin remitente claro parecería phishing.
+- **Remitente: IKER** (decidido por Mario: Unai y Asier son demasiado sobrios para esta broma). **NO Kaixito** aunque sea el más gracioso: la premisa es "nos conocemos de algo" y a la mascota no la ha conocido nadie todavía (además §1: Kaixito no existe hasta su email de presentación).
+- **Cuerpo:** línea 1 desactiva la broma ("era broma, tranquilo"), quiénes somos en UNA frase, por qué te llega este correo (web / evento / LinkedIn / webinar / referido: todas las vías), y **UNA pregunta de respuesta de una palabra**: *"contéstame con una sola palabra: web, linkedin, evento, webinar o ni idea"*. La opción "ni idea" hace gracia Y también segmenta.
+- **El objetivo es la RESPUESTA, no el clic:** este correo va SIN enlaces (mejora la entrega en frío) y su métrica es cuántos contestan. Cada respuesta = un contacto segmentado + activo confirmado.
+- **A quién:** SOLO al segmento de origen desconocido. Los que tienen origen claro (p. ej. los ~40 de recursos) NO lo reciben: a ellos se les escribe referenciando su origen cuando toque.
+- **Purga:** los rebotados/direcciones rotas se borran YA. Los que no abren NO se tocan tras un correo: los opens son poco fiables (Apple los distorsiona), se juzga tras 4-6 correos por clics + respuestas.
+- **Envío escalonado** en tandas pequeñas repartidas en días: hace a la vez de calentamiento del dominio.
+
 ### 5c · Segmentación (antes de enviar nada)
 No se dispara lo mismo a toda la base. Mínimo separar por: **origen** (lead magnet / newsletter / webinar / LinkedIn / contacto comercial), **rol** (founder / director comercial / marketing / agencia) y **temperatura** (abrió, clicó, respondió, dormido >3 meses). Los dormidos NO reciben la campaña normal: reciben la de reactivación (recordar por qué están en la lista + una idea útil + opción clara de baja). Lista pequeña y viva > lista grande y muerta.
 
