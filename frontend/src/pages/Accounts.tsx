@@ -320,6 +320,23 @@ function mostrarClics(post: { link_clicks_count?: number | null; content_text: s
   return tieneEnlaceEnCuerpo(post.content_text) || (post.link_clicks_count ?? 0) > 0;
 }
 
+/* ¿Ese 0 es "nadie pinchó" o "LinkedIn no lo está midiendo"?
+   Cuando LinkedIn mide un enlace, en la página de analíticas del post pone su URL
+   de destino junto a la métrica, y eso es lo que guardamos en `link_url`. Cuando
+   NO lo mide, no hay URL: solo un 0 pelado. Así que enlace en el cuerpo + 0 clics
+   + sin `link_url` = no está midiendo, y ese 0 no significa falta de interés.
+   Medido el 2026-07-24: Navarra 230 y Galicia 107 traen su URL de pampam.city;
+   Murcia y Valencia salen a 0 sin URL, con el enlace funcionando y sin haber
+   editado el post (global §4.4b). Se pinta apagado y con "sin medir" para que no
+   se lea como un fracaso del CTA. */
+function sinMedicion(post: {
+  link_clicks_count?: number | null;
+  link_url?: string | null;
+  content_text: string | null;
+}): boolean {
+  return tieneEnlaceEnCuerpo(post.content_text) && post.link_clicks_count === 0 && !post.link_url;
+}
+
 // Compacto (K/M), SOLO para ejes y etiquetas de barra de gráficas, donde una
 // cifra entera repetida en cada tick amontona el eje. Añade M para millones
 // (antes solo hacía K, y 2 millones salían como "2036.3K", ilegible).
@@ -2165,15 +2182,20 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
                 post lleve enlace, aunque sea 0 (ver mostrarClics). */}
             {mostrarClics(post) && (
               <span
-                className="inline-flex items-center gap-1 text-amber-400 font-medium"
+                className={`inline-flex items-center gap-1 font-medium ${
+                  sinMedicion(post) ? 'text-text-muted' : 'text-amber-400'
+                }`}
                 title={
-                  post.link_clicks_count != null
-                    ? `Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`
-                    : 'El post lleva enlace, pero LinkedIn aún no ha dado los clics'
+                  sinMedicion(post)
+                    ? 'LinkedIn no ha registrado este enlace en la analitica del post (no aparece su URL), asi que este 0 no quiere decir que nadie pinche: es que no lo esta midiendo'
+                    : post.link_clicks_count != null
+                      ? `Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`
+                      : 'El post lleva enlace, pero LinkedIn aún no ha dado los clics'
                 }
               >
                 <MetricIcon d={ICON_LINK} />{' '}
                 {post.link_clicks_count != null ? fmtNum(post.link_clicks_count) : '—'}
+                {sinMedicion(post) && <span className="text-[10px]">sin medir</span>}
               </span>
             )}
 
@@ -2367,15 +2389,20 @@ function TopPostRow(
             )}
             {mostrarClics(post) && (
               <span
-                className="inline-flex items-center gap-1 text-amber-400 font-medium"
+                className={`inline-flex items-center gap-1 font-medium ${
+                  sinMedicion(post) ? 'text-text-muted' : 'text-amber-400'
+                }`}
                 title={
-                  post.link_clicks_count != null
-                    ? `Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`
-                    : 'El post lleva enlace, pero LinkedIn aún no ha dado los clics'
+                  sinMedicion(post)
+                    ? 'LinkedIn no ha registrado este enlace en la analitica del post (no aparece su URL), asi que este 0 no quiere decir que nadie pinche: es que no lo esta midiendo'
+                    : post.link_clicks_count != null
+                      ? `Clics al enlace${post.link_url ? ` → ${post.link_url}` : ''}`
+                      : 'El post lleva enlace, pero LinkedIn aún no ha dado los clics'
                 }
               >
                 <MetricIcon d={ICON_LINK} />{' '}
                 {post.link_clicks_count != null ? fmtNum(post.link_clicks_count) : '—'}
+                {sinMedicion(post) && <span className="text-[10px]">sin medir</span>}
               </span>
             )}
 
