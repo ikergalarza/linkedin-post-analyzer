@@ -19,11 +19,15 @@ Skills de artefacto (cargar según el post lo pida):
 8b. **lead-magnet-web** — el TERCER artefacto del lead magnet: el gate y el recurso de `recursos.neety.com`. Ni todo ni nada en el gate (regala una muestra, pide el correo), el recurso resuelve el paso 1 y vende el resto. Output = prompt para el programador. Obligatoria en todo lead magnet.
 8. **video** — el vídeo es OTRO artefacto: 3 piezas (caption / texto en pantalla / spoken hook), 6 patrones de gancho hablado y el playbook de 36 puntos. Cargar solo en modo vídeo; reemplaza las reglas de hook de texto.
 
+Otro canal:
+8c. **email-marketing** — la newsletter de Neety: asunto = hook del inbox (corpus Timepack, 353 correos analizados), cuerpo con el formateado de posts, 4 remitentes rotativos (Iker/Asier/Unai/Kaixito), sistema de tandas de 2 semanas (método Carmen/Runner Pro) y validador propio (`scripts/validar-email.py`). Cargar en cualquier tarea de email/newsletter en vez de `global-instructions` §1-2 (el resto de la stack aplica igual).
+
 Orquestación:
 9. **post-workflow** — cómo montar el workflow, la RECETA cronológica por pilar, y **§8 el workflow real: planificador semanal de las 3 cuentas** (categorías peloteo/lead magnet/meme, intercalado 3×3, pregunta previa). Adapta el marco de workflows del playbook interno sin pisar las skills de datos.
 
 Estado (no doctrina):
 10. **historial-publicaciones** — registro vivo de lo que publica cada cuenta cada semana. Lo LEE el planificador (§8.3) para respetar el espaciado y lo ACTUALIZA tras aprobar la semana. Hay que **commitearlo** cada vez que cambie.
+11. **historial-newsletter** — lo mismo para el email: envíos, rotación de remitentes, palabras de CTA-respuesta y ángulos usados. Lo lee y actualiza el planificador de tandas (`email-marketing §6`).
 
 ## Dónde vive cada cosa
 - **`docs/skills/`** (esta carpeta) = todo el cerebro. Doctrina + el historial.

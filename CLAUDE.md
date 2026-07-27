@@ -25,6 +25,10 @@ Skills de artefacto, solo si el post lo pide:
 Orquestación:
 - `post-workflow.md` — cómo montar el workflow y la RECETA cronológica por pilar (§4), más el planificador semanal de las 3 cuentas (§8). **El runbook del pilar manda sobre lo que creas recordar: léelo entero antes de escribir, aunque el post parezca sencillo.**
 
+## Si la tarea es de EMAIL MARKETING (newsletter, secuencia de bienvenida, campaña a la base)
+
+Carga `docs/skills/email-marketing.md` **más** `aboutme.md`, `brand-voice.md` y `working-preferences.md` (el cuerpo del email hereda el formateado de `global-instructions §3`). Los 4 remitentes (Iker/Asier/Unai/Kaixito), el asunto como hook, el sistema de tandas de 2 semanas y los patrones del corpus Timepack viven ahí. Los innegociables de abajo aplican IGUAL (en email tampoco se inventan casos de éxito, diga lo que diga la referencia B2C). **Validador: `python scripts/validar-email.py <fichero.txt>`** y pega su resultado en la entrega, como con los posts. El estado (qué se envió, rotación, palabras usadas) vive en `docs/skills/historial-newsletter.md`: léelo antes de planificar y actualízalo al aprobar.
+
 **ESTADO (no es doctrina, cambia cada semana):**
 - `docs/skills/historial-publicaciones.md` — qué publicó cada cuenta y cuándo, más la **cobertura de regiones POR CUENTA**. LÉELO antes de planificar (espaciado, no repetir región en esa cuenta, exclusividad de categoría por día) y **ACTUALÍZALO y commitéalo** cuando se apruebe o publique algo. Si le falta un dato, PREGUNTA. No lo adivines.
 
