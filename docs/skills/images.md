@@ -35,6 +35,13 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 - La **regla de la palabra naranja se mantiene**, solo cambia el tono exacto.
 - **Tipografía sin cambios:** Bricolage Grotesque en títulos, botones y textos cortos; Switzer en texto corrido y anotaciones (pág. 19-20).
 
+## ⭐ 0a-sexta · EL TITULAR EN UNA LINEA SI LA LETRA SIGUE GRANDE (aprobado por Iker, 2026-07-27)
+
+**El criterio NO es el numero de lineas: es el tamano de la letra.**
+- **Una linea** siempre que quepa sin encoger el texto. Se lee de un golpe, sin el micro-salto de vista que obliga a dar el segundo renglon, y **el espacio vertical que libera se lo queda el contenido**, que es la prueba del recurso. Caso real: *"Todos avisan antes de comprar"* (29 caracteres) paso de dos lineas a una y la tabla gano sitio para leerse comoda.
+- **Dos lineas** en cuanto juntarlo en una obligue a reducir el cuerpo de letra. Un titular largo metido a la fuerza en una linea se lee peor en el feed que el mismo titular partido y grande.
+- Sale del mismo sitio que `§0a-quater`: en el movil manda la legibilidad, no la simetria.
+
 ## 🔴 0a-penta · DESPUES DE TODO PROMPT DE IMAGEN, EL RECORDATORIO DE POSTPRODUCCION (Iker, 2026-07-27)
 
 **Siempre que entregues un prompt de imagen — de calca, de edicion, de cero, de cualquier pilar — justo DEBAJO del bloque del prompt va este aviso en rojo, sin excepcion:**
