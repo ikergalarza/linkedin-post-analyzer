@@ -25,38 +25,99 @@ anterior: despliega y vuelve a intentarlo.
 
 ### 2. Compilar
 
+Requiere **Node 18 o superior** (el servidor usa `fetch` nativo).
+
+**macOS / Linux:**
+
 ```bash
-cd mcp
+cd /ruta/al/repo/mcp
 npm install
 npm run build
+pwd            # apunta esta ruta: la necesitas en el paso 3
 ```
 
-### 3. Registrarlo en el cliente
+**Windows** (`cmd` o PowerShell):
 
-**Claude Code** — desde la raíz del repo:
-
-```bash
-claude mcp add neety -- node /ruta/absoluta/al/repo/mcp/dist/index.js
+```
+cd C:\ruta\al\repo\mcp
+npm install
+npm run build
+cd             :: apunta esta ruta: la necesitas en el paso 3
 ```
 
-y añade las variables de entorno con `-e`:
+Al terminar tiene que existir `dist/index.js`. Ese fichero es lo que ejecuta Claude.
+
+### 3. Registrarlo en Claude Code
+
+**macOS / Linux** (el `\` parte la línea; también vale todo seguido):
 
 ```bash
-claude mcp add neety \
+claude mcp add neety --scope user \
   -e NEETY_API_URL=https://TU-BACKEND.up.railway.app \
-  -e APP_BASIC_USER=... \
-  -e APP_BASIC_PASS=... \
+  -e APP_BASIC_USER=USUARIO \
+  -e APP_BASIC_PASS=CONTRASEÑA \
   -- node /ruta/absoluta/al/repo/mcp/dist/index.js
 ```
 
-**Claude Desktop** — en `claude_desktop_config.json`:
+Ejemplo real con una ruta de macOS:
+
+```bash
+claude mcp add neety --scope user \
+  -e NEETY_API_URL=https://linkedin-post-analyzer.up.railway.app \
+  -e APP_BASIC_USER=neety \
+  -e APP_BASIC_PASS='la-de-railway' \
+  -- node /Users/iker/repos/linkedin-post-analyzer/mcp/dist/index.js
+```
+
+**Windows** — en `cmd` y PowerShell el `\` NO parte líneas, así que va todo en una:
+
+```
+claude mcp add neety --scope user -e NEETY_API_URL=https://TU-BACKEND.up.railway.app -e APP_BASIC_USER=USUARIO -e APP_BASIC_PASS=CONTRASEÑA -- node C:\ruta\al\repo\mcp\dist\index.js
+```
+
+#### Tres detalles que rompen la instalación
+
+1. **`--scope user` no es opcional en la práctica.** El scope por defecto es `local`, que registra el
+   servidor **solo para el directorio desde el que lo lanzaste**. Como el MCP se usa desde cualquier
+   conversación —incluida una en la que estés escribiendo un post y no tocando este repo—, lo
+   quieres a nivel de usuario.
+2. **La ruta del `.js` tiene que ser absoluta.** Es la que ejecuta Claude, y no corre desde el
+   directorio del repo. Nada de `./dist/index.js` ni de `~/...` sin expandir.
+3. **La contraseña, entre comillas simples** si lleva caracteres raros (`$`, `!`, espacios). En
+   macOS y Linux la shell se los come; en PowerShell, comillas simples también.
+
+### 4. Comprobar que ha entrado
+
+```
+claude mcp list
+```
+
+Y dentro de Claude, la primera llamada siempre es la misma:
+
+```
+neety_estado
+```
+
+Te dice las tres cosas que pueden fallar por separado: a qué backend apunta, si las credenciales
+valen y si las rutas `/api/outliers` están desplegadas.
+
+### Claude Desktop (alternativa)
+
+El fichero de configuración es `claude_desktop_config.json`:
+
+| Sistema | Dónde está |
+|---|---|
+| **macOS** | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| **Windows** | `%APPDATA%\Claude\claude_desktop_config.json` |
+
+**macOS:**
 
 ```json
 {
   "mcpServers": {
     "neety": {
       "command": "node",
-      "args": ["/ruta/absoluta/al/repo/mcp/dist/index.js"],
+      "args": ["/Users/TU-USUARIO/repos/linkedin-post-analyzer/mcp/dist/index.js"],
       "env": {
         "NEETY_API_URL": "https://TU-BACKEND.up.railway.app",
         "APP_BASIC_USER": "...",
@@ -67,6 +128,27 @@ claude mcp add neety \
 }
 ```
 
+**Windows** — misma estructura, pero la ruta lleva **barras dobles**:
+
+```json
+{
+  "mcpServers": {
+    "neety": {
+      "command": "node",
+      "args": ["C:\\Users\\TU-USUARIO\\repos\\linkedin-post-analyzer\\mcp\\dist\\index.js"],
+      "env": {
+        "NEETY_API_URL": "https://TU-BACKEND.up.railway.app",
+        "APP_BASIC_USER": "...",
+        "APP_BASIC_PASS": "..."
+      }
+    }
+  }
+}
+```
+
+Con barra simple el JSON no parsea y el servidor no arranca sin decir por qué. En los dos sistemas
+hay que **reiniciar Claude Desktop** después de tocar el fichero: no lo relee solo.
+
 ### Variables de entorno
 
 | Variable | Obligatoria | Qué es |
@@ -76,6 +158,25 @@ claude mcp add neety \
 | `NEETY_TIMEOUT_MS` | no | Por defecto 15 min, porque `neety_refrescar` escanea LinkedIn y tarda |
 
 Las credenciales van en la config del cliente, **nunca en el repo**.
+
+### Si algo falla
+
+Llama primero a `neety_estado`: separa los tres fallos posibles en vez de dejarte adivinando.
+
+| Síntoma | Causa | Solución |
+|---|---|---|
+| El servidor no aparece en `claude mcp list` | Se registró con scope `local` desde otro directorio | Vuelve a añadirlo con `--scope user` |
+| `Salud: FALLA — No se pudo conectar` | `NEETY_API_URL` mal, o el backend caído | Comprueba la URL en el navegador (`/api/health`) |
+| `El backend ha devuelto 401` | Faltan o no valen `APP_BASIC_USER` / `APP_BASIC_PASS` | Cópialas tal cual de Railway |
+| `Rutas /api/outliers: NO disponibles` | El backend está vivo pero es una versión anterior | Despliega `main` |
+| `Cannot find module .../dist/index.js` | No se compiló, o la ruta no es absoluta | `npm run build` y revisa la ruta |
+| `neety_digest` dice "sin novedades" varios días | `outlier_events` está vacía: nadie ha refrescado | Corre `neety_refrescar` |
+
+Para cambiar una variable después de instalarlo, lo más rápido es borrar y volver a añadir:
+
+```bash
+claude mcp remove neety --scope user
+```
 
 ---
 
