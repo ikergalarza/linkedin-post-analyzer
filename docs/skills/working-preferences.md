@@ -45,7 +45,10 @@ Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo
 
 En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además del texto, el prompt y los avisos, va **siempre una sección de comparativa**: el **post original de referencia** y **el mío**, **en la misma fila, lado a lado, dos columnas** (izquierda = original, derecha = el mío). Sirve para ver de un vistazo cómo se ha robado la esencia.
 
+**⭐ EL ORDEN DE LA ENTREGA (Iker, 2026-07-27):** primero **mi post** en su bloque cercado listo para copiar; **justo debajo, el post ORIGINAL entero en OTRO bloque cercado igual** (también copiable, mismo formateado); y **después** la vista comparativa. Sin el original suelto no se puede leer de dónde sale lo nuestro.
+
 **El formato, exacto (Iker es tiquismiquis con esto):**
+- **LOS DOS TEXTOS VAN ENTEROS, sin resumir ni poner `[lo malo]` ni recortes.** Una comparativa "general" con etiquetas no vale: se comparan las publicaciones completas, palabra por palabra.
 - **Dos columnas EN LA MISMA FILA**, no dos bloques apilados. Se monta en **un solo bloque cercado monoespaciado**: cada línea = columna izquierda (rellenada a ancho fijo) + hueco + columna derecha, alineadas arriba. **NADA de tabla, nada de floritura, nada de "cosas raras".**
 - Cabecera dentro del bloque: **ORIGINAL** (creador + ratio si es referencia) a la izquierda, **EL MÍO** (cuenta) a la derecha.
 - El "original" es el texto de la referencia tal cual; si está en inglés, va en inglés (no se traduce en la comparativa). El mío, el que entrego.
