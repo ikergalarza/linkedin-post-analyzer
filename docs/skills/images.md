@@ -198,11 +198,16 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Contraste medido ese dia:** la version que fallaba ocupaba un parrafo de 15 lineas con seis parentesis y ocho comillas. La que funciono son siete lineas sueltas y ni un simbolo.
 
-⚠️ **Esto choca con el formato antiguo de `§0h`** (parrafo unico, apertura en mayusculas, cierre de prohibiciones en minusculas). **Ese formato se mantiene solo para prompts de generacion desde cero y siempre que no de error.** En cuanto un prompt falla, se reescribe hablado. Y para prompts de EDICION sobre una imagen ya generada, se usa siempre el formato hablado.
+✅ **RESUELTO — NO HAY DOS FORMATOS, HAY UNO SOLO (Iker, 2026-07-27).** Aqui ponia que esto "chocaba" con `§0h` y que el parrafo unico era solo para generacion desde cero. **Esa ambiguedad era el bug:** al no saber cual tocaba, acabe entregando un prompt con numeracion `(1) (2) (3)`, que es justo lo que prohibe el punto de arriba. **El formato es UNO y vale para CUALQUIER prompt de imagen: de calca, de edicion, de cero, y de cualquier pilar (mapa, meme, lead magnet, historia, lo que sea).**
+- Abre con **SOLO HAZ LO QUE TE PIDO** en mayusculas.
+- **UN SOLO PARRAFO**, siempre. Nada de listas, nada de lineas sueltas, nada de `(1) (2) (3)`, cero parentesis y cero comillas.
+- Dentro, frases cortas y habladas, una orden por frase, encadenadas en el mismo parrafo.
+- Cierra en minusculas con **deja todo lo demas intacto y no toques nada que no te he pedido**.
+Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque rojo de abajo), no COMO se le escribe.
 
 **🔴 DECIDE PRIMERO: ¿edicion o calca-de-cero? (Iker, 2026-07-23, me equivoque en esto).** Si el usuario YA te ha pasado una version generada de la imagen, el prompt es de **EDICION sobre ESA**: solo los cambios, NUNCA re-describas la calca entera de la referencia. El "calca esta referencia desde cero" (`§0h`/`§4.4` Paso 6b) es SOLO para la primera version, cuando aun no hay imagen. Di el mismo prompt-de-calca por segunda vez y le haces re-generar de cero lo que ya tenia bien (colores, maqueta, fuentes). Antes de escribir el prompt: ¿hay ya una imagen? → edicion. ¿No la hay? → calca.
 
-**FORMATO EXACTO del prompt de EDICION (Iker, 2026-07-23):**
+**FORMATO EXACTO (vale para EDICION y para CALCA; lo unico que cambia es el contenido):**
 - **Empieza SIEMPRE con `SOLO HAZ LO QUE TE PIDO:` en MAYUSCULAS.** El apertura de contencion va tambien en los prompts de edicion, no solo en los de calca.
 - **Hablale DIRECTO con los cambios, en imperativo** (`cambia la frase X por Y`). **NUNCA digas "sobre esta imagen"** ni "en esta imagen": se le habla directamente, como si la tuviera delante.
 - **Cierra con la contencion:** `No toques nada mas: ni colores, ni maquetacion, ni fuentes, ni el resto de textos e iconos.`
