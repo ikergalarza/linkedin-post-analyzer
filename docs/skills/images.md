@@ -19,6 +19,22 @@ Una vez publicado un post con foto, la foto **NO se puede cambiar** (habría que
 
 **3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
 
+## ⭐ 0a-ter · PALETA NUEVA (Brandbook 2026_Saiabera, Iker 2026-07-27) — MANDA SOBRE LA ANTIGUA
+
+Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. **Sustituye al crema/azul-marino/coral de antes en TODA imagen nueva, de cualquier pilar.**
+
+| Uso en la imagen | Color | Hex |
+|---|---|---|
+| **Fondo** (el que hace de blanco) | Mint claro | `#ebfff6` |
+| **Títulos y texto oscuro** | Berenjena | `#431b44` |
+| **LA palabra destacada del titular** | Naranja (persian orange) | `#fe8238` |
+| Apoyo / acentos suaves | Azul bebé | `#a7c5f9` |
+
+- El **alabastro/crema ya NO se usa**: el blanco de la marca es ahora el **mint claro `#ebfff6`**.
+- El oscuro dejo de ser azul marino: es **berenjena `#431b44`**.
+- La **regla de la palabra naranja se mantiene**, solo cambia el tono exacto.
+- **Tipografía sin cambios:** Bricolage Grotesque en títulos, botones y textos cortos; Switzer en texto corrido y anotaciones (pág. 19-20).
+
 ## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
 > Aplica a **los 4 pilares y a cualquier foto que publiquemos**: meme, mapa, "Los 10", lead magnet, evento. Es lo primero que se comprueba y lo último que se negocia.
 
