@@ -720,6 +720,71 @@ const migration = `
   -- POST /api/posts/classify-pillars.
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS pillar TEXT;
   CREATE INDEX IF NOT EXISTS idx_posts_pillar ON posts (pillar) WHERE pillar IS NOT NULL;
+
+  -- v34: CICLO DE VIDA DEL OUTLIER.
+  --
+  -- El problema: is_outlier es un booleano que se recalcula ENTERO en cada
+  -- refresco contra la MEDIA MOVIL del creador (services/outliers.ts). Un post
+  -- puede volverse outlier meses despues porque la media bajo, y un outlier
+  -- real puede dejar de serlo al subir la media — las dos cosas en silencio.
+  -- Sin registrar la transicion no existe la pregunta "¿que es NUEVO?", y sin
+  -- esa pregunta no hay resumen diario posible: o repites los mismos posts
+  -- cada dia o te saltas los que tardan tres dias en despegar.
+  --
+  -- became_outlier_at: cuando cruzo el umbral por primera vez.
+  -- peak_outlier_ratio: su techo historico (el ratio vivo baja al subir la media).
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS became_outlier_at TIMESTAMPTZ;
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS peak_outlier_ratio FLOAT;
+
+  CREATE TABLE IF NOT EXISTS outlier_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    -- nuevo:     entro siendo un post reciente (creció de verdad)
+    -- promovido: post viejo que cruzo el umbral porque se movio la media
+    -- degradado: salio de outlier
+    evento TEXT NOT NULL CHECK (evento IN ('nuevo', 'promovido', 'degradado')),
+    ratio_antes FLOAT,
+    ratio_despues FLOAT,
+    motivo TEXT,
+    detectado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- Idempotencia del digest: se sella al mandarlo para no repetirlo manana.
+    enviado_en TIMESTAMPTZ
+  );
+  CREATE INDEX IF NOT EXISTS idx_outlier_events_detectado
+    ON outlier_events (detectado_en DESC);
+  CREATE INDEX IF NOT EXISTS idx_outlier_events_pendientes
+    ON outlier_events (detectado_en DESC) WHERE enviado_en IS NULL;
+  -- Un evento por post, tipo y dia. El recalculo corre en cada tick del
+  -- monitor (cada 15 min): sin esto, un post que oscila alrededor del umbral
+  -- generaria decenas de eventos identicos en una tarde.
+  -- AT TIME ZONE 'UTC' en vez de ::date a secas porque el cast directo depende
+  -- del TimeZone de la sesion y entonces el indice no seria inmutable.
+  CREATE UNIQUE INDEX IF NOT EXISTS uq_outlier_event_dia
+    ON outlier_events (post_id, evento, ((detectado_en AT TIME ZONE 'UTC')::date));
+
+  -- Indices del buscador de outliers. Los que habia cubrian el filtrado
+  -- (is_outlier, published_at, creator_id) pero ninguno el ORDEN, que es como
+  -- se consulta siempre: "los N mejores de X".
+  CREATE INDEX IF NOT EXISTS idx_posts_ratio ON posts (outlier_ratio DESC);
+  CREATE INDEX IF NOT EXISTS idx_posts_creator_ratio ON posts (creator_id, outlier_ratio DESC);
+  CREATE INDEX IF NOT EXISTS idx_posts_outlier_fecha
+    ON posts (published_at DESC) WHERE is_outlier = TRUE;
+`;
+
+/**
+ * Migracion OPCIONAL: busqueda por texto.
+ *
+ * Va aparte y con su propio try/catch porque CREATE EXTENSION exige permisos
+ * que el usuario de la BD puede no tener. Si falla, el buscador sigue
+ * funcionando con ILIKE (mas lento, mismos resultados) en vez de tumbar el
+ * arranque entero del backend por un indice.
+ */
+const migracionTexto = `
+  CREATE EXTENSION IF NOT EXISTS pg_trgm;
+  CREATE INDEX IF NOT EXISTS idx_posts_texto_trgm
+    ON posts USING GIN (content_text gin_trgm_ops);
+  CREATE INDEX IF NOT EXISTS idx_posts_hook_trgm
+    ON posts USING GIN (hook_text gin_trgm_ops);
 `;
 
 export async function runMigrations() {
@@ -732,6 +797,19 @@ export async function runMigrations() {
     throw err;
   } finally {
     client.release();
+  }
+
+  // Best-effort: un fallo aqui degrada el buscador a ILIKE, no rompe el boot.
+  const clienteTexto = await pool.connect();
+  try {
+    await clienteTexto.query(migracionTexto);
+    console.log('Migration (texto/pg_trgm) completed successfully');
+  } catch (err: any) {
+    console.warn(
+      `[migrate] pg_trgm no disponible (${err?.message}). El buscador usara ILIKE sin indice.`
+    );
+  } finally {
+    clienteTexto.release();
   }
 }
 

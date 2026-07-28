@@ -2,7 +2,12 @@
 
 > Deep-dive del bloque B de `docs/mcp-plan.md`. Aquí vive el objetivo real del MCP:
 > **consultar y analizar outliers en masa para decidir qué contenido hacer**, no escribir posts.
-> Estado: propuesta. Fecha: 2026-07-28.
+> Fecha: 2026-07-28.
+>
+> **ESTADO: la fase 1 está construida.** Los pasos 1-4 y 7-9 de §6 son código en este repo
+> (`backend/src/routes/outliers.ts`, `backend/src/services/outlier*.ts`, `mcp/`). Lo que sigue en
+> propuesta: la capa `post_labels` (§2.1), el vocabulario cerrado de temas (§2.2), los embeddings
+> (§2.3b) y `neety_leadmagnets` (§3.7). Cada sección marca lo que ya existe.
 
 ---
 
@@ -387,6 +392,12 @@ junto a `startPostMonitor()`. Recomiendo **lo segundo para el refresco** (es inf
 correr aunque nadie abra un chat) y **lo primero para el digest** (así el resumen lo redacta el
 modelo con el criterio de las skills, en vez de una plantilla fija).
 
+> ⚠️ **Lo construido llega hasta aquí y no más.** `POST /api/outliers/refresh` y la tool
+> `neety_refrescar` existen y funcionan, pero **nada los llama solo**: de momento el refresco es
+> manual (tú, o el modelo cuando se lo pides). Enchufar el `setInterval` es un cambio de diez
+> líneas en `index.ts`, y lo he dejado fuera a propósito: arrancar un job que consume cuota de
+> Unipile en cada despliegue es una decisión tuya, no un efecto colateral de instalar el MCP.
+
 ---
 
 ## 5 · Comparar entre creadores sin mentir
@@ -405,23 +416,35 @@ escala común: son dos métodos distintos (§1.6) y dos tamaños de audiencia di
 
 ## 6 · Qué hay que construir, en orden
 
-| # | Trabajo | Desbloquea | Tamaño |
+| # | Trabajo | Desbloquea | Estado |
 |---|---|---|---|
-| 1 | **`neety_outliers_salud`** + las queries de cobertura | Saber de qué partimos. Sin esto el resto se diseña a ciegas | S |
-| 2 | Índices: GIN `tsvector` español + `pg_trgm`, y compuestos `(is_outlier, published_at DESC)`, `(creator_id, outlier_ratio DESC)` | Que el buscador no haga *seq scan* | S |
-| 3 | **`GET /api/posts/search`** con los filtros de §3.1 → `neety_outliers_buscar` + `neety_outliers_valores` | El 80% del valor del motor | **L** |
-| 4 | `became_outlier_at`, `peak_outlier_ratio`, `ratio_al_cierre`, tabla `outlier_events` + emisión en `recalcCreatorOutliers` | La rutina diaria. **Nada del digest funciona sin esto** | M |
-| 5 | Persistir `driver`; re-ejecutar `classifyPillar` tras las reacciones; quitar el `COALESCE` que congela el pilar malo | Que las categorías dejen de mentir | S |
-| 6 | `post_labels` + vocabulario cerrado de `tema` (fusionando los `topic` actuales) + pasada LLM sobre no-outliers | Filtrado por tema fiable y con denominador | **L** |
-| 7 | `neety_outliers_agrupar`, `_comparar`, `_terminos` | Las decisiones estratégicas | M |
-| 8 | Job de refresco de competencia con presupuesto de llamadas | Corpus fresco | M |
-| 9 | `neety_digest` sobre `googleChat.ts` + idempotencia | El resumen diario | M |
-| 10 | `lm_palabra` / `lm_pct_gate` al cerrar el post → `neety_leadmagnets` | Analizar el pilar de lead magnet | M |
-| 11 | `pgvector` + embeddings → `neety_outliers_similares` | Buscar sin categorías | M |
+| 1 | **`neety_outliers_salud`** + las queries de cobertura | Saber de qué partimos. Sin esto el resto se diseña a ciegas | ✅ hecho |
+| 2 | Índices: `pg_trgm` sobre texto y hook, y de orden `(creator_id, outlier_ratio DESC)`, `(published_at DESC) WHERE is_outlier` | Que el buscador no haga *seq scan* | ✅ hecho |
+| 3 | **`GET /api/outliers/buscar`** con los filtros de §3.1 → `neety_outliers_buscar` + `neety_outliers_valores` | El 80% del valor del motor | ✅ hecho |
+| 4 | `became_outlier_at`, `peak_outlier_ratio`, tabla `outlier_events` + emisión en `recalcCreatorOutliers` | La rutina diaria. **Nada del digest funciona sin esto** | ✅ hecho |
+| 5 | Persistir `driver`; re-ejecutar `classifyPillar` tras las reacciones; quitar el `COALESCE` que congela el pilar malo | Que las categorías dejen de mentir | pendiente |
+| 6 | `post_labels` + vocabulario cerrado de `tema` (fusionando los `topic` actuales) + pasada LLM sobre no-outliers | Filtrado por tema fiable y con denominador | pendiente |
+| 7 | `neety_outliers_agrupar`, `_comparar` | Las decisiones estratégicas | ✅ hecho |
+| 7b | `neety_outliers_terminos` (n-gramas con elevación) | La palabra caliente del mes | pendiente |
+| 8 | Job de refresco de competencia con presupuesto de llamadas | Corpus fresco | ✅ hecho |
+| 9 | `neety_digest` + idempotencia | El resumen diario | ✅ hecho |
+| 10 | `lm_palabra` / `lm_pct_gate` al cerrar el post → `neety_leadmagnets` | Analizar el pilar de lead magnet | pendiente |
+| 11 | `pgvector` + embeddings → `neety_outliers_similares` | Buscar sin categorías | pendiente |
 
-**Los pasos 1-4 son el mínimo viable** y ya cambian cómo trabajas: buscador real y digest diario.
-Del 5 al 7 es donde la categorización deja de ser un problema. El 11 es el que hace que deje de
+**Los pasos 1-4 eran el mínimo viable** y ya están: buscador real y digest diario.
+Del 5 al 6 es donde la categorización deja de ser un problema. El 11 es el que hace que deje de
 importar del todo.
+
+### Lo que quedó fuera de la primera entrega, y por qué
+
+- **`ratio_al_cierre`** (congelar el multiplicador a los 7 días): `peak_outlier_ratio` ya da una
+  referencia estable para el histórico, y añadir la segunda columna sin haber medido si la primera
+  basta era construir a ciegas.
+- **`neety_outliers_terminos`**: es la única tool del catálogo que necesita tokenizar en español
+  dentro de Postgres. Se puede hacer, pero no comparte nada con el resto del buscador y alargaba la
+  entrega sin desbloquear el flujo diario.
+- **El cron del refresco**: el endpoint y la tool existen, pero **nadie los llama solo todavía**.
+  Ver el aviso de §4.2.
 
 ---
 

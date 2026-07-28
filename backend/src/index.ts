@@ -28,6 +28,7 @@ import { startPostMonitor } from './services/postMonitor';
 import { basicAuthMiddleware } from './middleware/basicAuth';
 import rastroRouter from './routes/rastro';
 import gateProxyRouter from './routes/gateProxy';
+import outliersRouter from './routes/outliers';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -72,6 +73,7 @@ app.use('/api/ideas', ideasRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/usage', usageRouter);
 app.use('/api/reactions', reactionsRouter);
+app.use('/api/outliers', outliersRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

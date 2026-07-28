@@ -1,8 +1,12 @@
 # PLAN — Servidor MCP de Neety
 
-> Estado: **propuesta, nada implementado todavía.** Este documento es el catálogo de endpoints
-> (tools MCP) posibles, de dónde sale cada uno y en qué orden construirlos.
+> Catálogo de endpoints (tools MCP) posibles, de dónde sale cada uno y en qué orden construirlos.
 > Fecha: 2026-07-28.
+>
+> **ESTADO: el bloque B (outliers) está construido y es instalable** — servidor en `mcp/`,
+> instrucciones en `mcp/README.md`. Doce tools: refresco, digest diario, buscador, facetas,
+> agregados, comparación de ventanas, detalle de post, cuentas, salud y diagnóstico. El resto del
+> catálogo sigue en propuesta.
 
 ---
 
