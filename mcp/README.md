@@ -26,33 +26,56 @@ validador, el historial de publicaciones), que por definición no pueden vivir e
 
 No hay nada que clonar ni compilar: el servidor ya va dentro del backend, en `/mcp`.
 
+Necesitas dos datos, los dos de Railway → el servicio → **Variables**:
+
+| Dato | Variable | Dónde se usa |
+|---|---|---|
+| Usuario | `APP_BASIC_USER` | Es `Neety`, con mayúscula |
+| Contraseña | `APP_BASIC_PASS` | La misma que te pide el navegador al abrir la app |
+
+Y la URL del backend: `https://linkedin-post-analyzer-production.up.railway.app`
+
 ### 1. Codifica las credenciales
 
-El MCP se autentica con el **mismo Basic Auth que el resto de la app** — las credenciales que ya
-tienes en Railway, no unas nuevas. Hay que pasarlas en base64:
+El MCP se autentica con el **mismo Basic Auth que el resto de la app** — no hay credenciales
+nuevas que crear. Van en base64, en una sola cadena `usuario:contraseña`.
 
-**macOS / Linux:**
+**macOS / Linux** (Terminal):
 
 ```bash
-echo -n 'USUARIO:CONTRASEÑA' | base64
+echo -n 'Neety:TU-CONTRASEÑA' | base64
 ```
 
-**Windows (PowerShell):**
+**Windows** (PowerShell):
 
 ```powershell
-[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('USUARIO:CONTRASEÑA'))
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('Neety:TU-CONTRASEÑA'))
 ```
 
-El `-n` de macOS no es opcional: sin él, `base64` mete un salto de línea en la cadena y el backend
-devuelve 401.
+Devuelve una cadena tipo `TmVldHk6...=`. Cópiala entera, incluido el `=` final.
+
+> **El `-n` de macOS no es opcional.** Sin él, `echo` añade un salto de línea, entra en el base64 y
+> el backend responde **401**. En PowerShell no aplica: `GetBytes` no añade nada.
+
+> **Comillas simples**, no dobles. Si la contraseña lleva `$`, `!` o espacios, con comillas dobles
+> la shell se los come antes de codificar y el base64 sale mal sin avisar.
 
 ### 2. Registra el servidor
 
-Sustituye la URL y el resultado del paso anterior. Es el mismo comando en los dos sistemas (en
-Windows, todo en una línea):
+Sustituye solo `EL-BASE64-DEL-PASO-1`. Es el mismo comando en los dos sistemas, todo en una línea:
 
 ```bash
-claude mcp add --transport http --scope user neety https://TU-BACKEND.up.railway.app/mcp --header "Authorization: Basic EL-BASE64-DEL-PASO-1"
+claude mcp add --transport http --scope user neety https://linkedin-post-analyzer-production.up.railway.app/mcp --header "Authorization: Basic EL-BASE64-DEL-PASO-1"
+```
+
+Tiene que responder algo así:
+
+```
+Added HTTP MCP server neety with URL: https://linkedin-post-analyzer-production.up.railway.app/mcp to user config
+Headers: {
+  "Authorization": "[REDACTED]"
+}
+File modified: /Users/TU-USUARIO/.claude.json
 ```
 
 **El orden importa y no es el que parece.** `--header` admite varios valores, así que va **el
@@ -72,8 +95,13 @@ Los otros dos detalles que rompen la instalación:
 claude mcp list
 ```
 
-Tiene que salir `neety: https://… (HTTP) - √ Connected`. Después reinicia Claude Code —no recoge
-servidores nuevos en una sesión ya abierta— y pídele:
+Tiene que aparecer con **`✔ Connected`**:
+
+```
+neety: https://linkedin-post-analyzer-production.up.railway.app/mcp (HTTP) - ✔ Connected
+```
+
+Después reinicia Claude Code —no recoge servidores nuevos en una sesión ya abierta— y pídele:
 
 ```
 usa neety_cuentas
@@ -90,13 +118,15 @@ Mismo servidor, otra sintaxis. En `claude_desktop_config.json`:
 | **macOS** | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | **Windows** | `%APPDATA%\Claude\claude_desktop_config.json` |
 
+Mismo JSON en los dos sistemas (aquí no hay rutas locales, así que no hay barras que escapar):
+
 ```json
 {
   "mcpServers": {
     "neety": {
       "type": "http",
-      "url": "https://TU-BACKEND.up.railway.app/mcp",
-      "headers": { "Authorization": "Basic EL-BASE64" }
+      "url": "https://linkedin-post-analyzer-production.up.railway.app/mcp",
+      "headers": { "Authorization": "Basic EL-BASE64-DEL-PASO-1" }
     }
   }
 }
@@ -104,17 +134,27 @@ Mismo servidor, otra sintaxis. En `claude_desktop_config.json`:
 
 Hay que **reiniciar Claude Desktop** después de tocarlo: no relee el fichero solo.
 
+### Y ahora, los tres primeros comandos
+
+```
+usa neety_outliers_salud     ← cuánto corpus está sin etiquetar: míralo ANTES de fiarte de un agregado
+usa neety_refrescar          ← la primera vuelta. Hasta que la corras no hay eventos que contar
+usa neety_digest             ← ya con datos
+```
+
 ### Si algo falla
 
 | Síntoma | Causa | Solución |
 |---|---|---|
 | `missing required argument 'commandOrUrl'` | `--header` va antes de la URL y se la traga | Pon `--header` **el último** |
-| `401` | El base64 está mal o lleva un salto de línea | Rehaz el paso 1 **con `-n`** |
+| `401` | El base64 está mal o lleva un salto de línea | Rehaz el paso 1 **con `-n`** (macOS) y con comillas simples |
 | `404` | Falta `/mcp` al final de la URL | Corrígela |
 | Responde HTML | La URL apunta al frontend, no al backend | Usa la URL del servicio de Railway |
 | `405` | Estás haciendo GET | El transporte usa POST; el cliente ya lo hace solo |
 | No aparece en `claude mcp list` | Se registró con scope `local` desde otro directorio | Vuelve a añadirlo con `--scope user` |
 | Las tools existen pero fallan | El backend es una versión anterior a `/api/outliers` | Despliega `main` |
+| `Failed to connect` justo después de un deploy | Railway aún está construyendo | Espera un par de minutos y repite `claude mcp list` |
+| `403` desde una sesión **remota** de Claude Code | La network policy del entorno bloquea el host de Railway | Funciona desde tu equipo; para remoto hay que añadir el dominio a la allowlist del entorno |
 
 Para cambiar algo, lo más rápido es borrar y volver a añadir:
 
@@ -128,6 +168,9 @@ claude mcp remove neety --scope user
 
 Para apuntar a un backend en `localhost` o si prefieres que el proceso corra en tu equipo.
 
+> **Si ya tienes la vía A instalada, regístralo con otro nombre** (`neety-local` en vez de
+> `neety`): dos servidores con el mismo nombre se pisan y acabas sin saber a cuál estás llamando.
+
 ### 1. Compilar
 
 Requiere **Node 18 o superior** (el servidor usa `fetch` nativo).
@@ -138,7 +181,7 @@ Requiere **Node 18 o superior** (el servidor usa `fetch` nativo).
 cd /ruta/al/repo/mcp
 npm install
 npm run build
-pwd            # apunta esta ruta: la necesitas en el paso 3
+pwd            # apunta esta ruta: la necesitas en el paso 2
 ```
 
 **Windows** (`cmd` o PowerShell):
@@ -147,7 +190,7 @@ pwd            # apunta esta ruta: la necesitas en el paso 3
 cd C:\ruta\al\repo\mcp
 npm install
 npm run build
-cd             :: apunta esta ruta: la necesitas en el paso 3
+cd             :: apunta esta ruta: la necesitas en el paso 2
 ```
 
 Al terminar tiene que existir `dist/index.js`. Ese fichero es lo que ejecuta Claude.
@@ -158,8 +201,8 @@ Al terminar tiene que existir `dist/index.js`. Ese fichero es lo que ejecuta Cla
 
 ```bash
 claude mcp add neety --scope user \
-  -e NEETY_API_URL=https://TU-BACKEND.up.railway.app \
-  -e APP_BASIC_USER=USUARIO \
+  -e NEETY_API_URL=https://linkedin-post-analyzer-production.up.railway.app \
+  -e APP_BASIC_USER=Neety \
   -e APP_BASIC_PASS=CONTRASEÑA \
   -- node /ruta/absoluta/al/repo/mcp/dist/index.js
 ```
@@ -168,8 +211,8 @@ Ejemplo real con una ruta de macOS:
 
 ```bash
 claude mcp add neety --scope user \
-  -e NEETY_API_URL=https://linkedin-post-analyzer.up.railway.app \
-  -e APP_BASIC_USER=neety \
+  -e NEETY_API_URL=https://linkedin-post-analyzer-production.up.railway.app \
+  -e APP_BASIC_USER=Neety \
   -e APP_BASIC_PASS='la-de-railway' \
   -- node /Users/iker/repos/linkedin-post-analyzer/mcp/dist/index.js
 ```
@@ -177,7 +220,7 @@ claude mcp add neety --scope user \
 **Windows** — en `cmd` y PowerShell el `\` NO parte líneas, así que va todo en una:
 
 ```
-claude mcp add neety --scope user -e NEETY_API_URL=https://TU-BACKEND.up.railway.app -e APP_BASIC_USER=USUARIO -e APP_BASIC_PASS=CONTRASEÑA -- node C:\ruta\al\repo\mcp\dist\index.js
+claude mcp add neety --scope user -e NEETY_API_URL=https://linkedin-post-analyzer-production.up.railway.app -e APP_BASIC_USER=Neety -e APP_BASIC_PASS=CONTRASEÑA -- node C:\ruta\al\repo\mcp\dist\index.js
 ```
 
 #### Tres detalles que rompen la instalación
@@ -224,7 +267,7 @@ El fichero de configuración es `claude_desktop_config.json`:
       "command": "node",
       "args": ["/Users/TU-USUARIO/repos/linkedin-post-analyzer/mcp/dist/index.js"],
       "env": {
-        "NEETY_API_URL": "https://TU-BACKEND.up.railway.app",
+        "NEETY_API_URL": "https://linkedin-post-analyzer-production.up.railway.app",
         "APP_BASIC_USER": "...",
         "APP_BASIC_PASS": "..."
       }
@@ -242,7 +285,7 @@ El fichero de configuración es `claude_desktop_config.json`:
       "command": "node",
       "args": ["C:\\Users\\TU-USUARIO\\repos\\linkedin-post-analyzer\\mcp\\dist\\index.js"],
       "env": {
-        "NEETY_API_URL": "https://TU-BACKEND.up.railway.app",
+        "NEETY_API_URL": "https://linkedin-post-analyzer-production.up.railway.app",
         "APP_BASIC_USER": "...",
         "APP_BASIC_PASS": "..."
       }
