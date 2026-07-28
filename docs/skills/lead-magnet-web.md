@@ -55,6 +55,10 @@ El error de bulto va en las dos direcciones y las dos matan:
 - **UNA sola acción principal:** dejar el correo. Sin botones que distraigan.
 - **CTA nunca "Enviar".** ✅ "Quiero mi auditoría gratis" · "Descargar checklist" · "Ver mi diagnóstico" · "Recibir la guía".
 - **Formulario mínimo.** Si el recurso es simple, **solo email**. Si hay que cualificar, email + 1-2 campos clave como mucho. Formulario largo con valor percibido bajo = nadie lo rellena.
+- **⭐ EL ESTÁNDAR POR DEFECTO ES **NOMBRE + CORREO**, y nada más (Iker, 2026-07-27).** La fricción se reduce al máximo, pero el **nombre SÍ se pide siempre**: sin él no se pueden personalizar las campañas de email marketing (`email-marketing`), y un correo sin nombre nace muerto para la secuencia.
+  - **La EMPRESA no se pide salvo que haga falta de verdad**, porque **se deduce del dominio del correo**. Pedir un campo que ya sabes es fricción regalada.
+  - Cuándo sí pedirla: cuando el recurso se personaliza por empresa o cuando el equipo comercial va a llamar y necesita cualificar antes. Si dudas, no la pidas.
+  - Ojo, el histórico no está unificado: el gate de `subvencion-euskadi` pide nombre, email **y empresa**. Es la excepción heredada, no el patrón a copiar.
 - **Di qué pasa después** de dejar el correo: qué recibe (PDF / web personalizada / plantilla / auditoría / vídeo) y **cuándo**. *"Te enviaremos el diagnóstico en menos de 5 minutos."*
 - **Entrega inmediata.** Cuanto más tarde, menos satisfacción.
 - **Prueba social** si la hay: testimonios, resultados, logos (`aboutme §1`: +200 PYMEs, +40% de conversión). Si no la hay, ejemplos concretos de lo que recibirá.
@@ -131,9 +135,10 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
   BLOQUEADO EN BORROSO, no se cuenta: contar lo que hay detrás es débil,
   enseñarlo bloqueado es fuerte. Reutiliza el .finder-card-locked de agendar
   (blur 4.5px + opacidad 0.6), no inventes otro.
-- Formulario: se hereda assets/neety-form.js TAL CUAL, no se toca. Los dos
-  consentimientos son obligatorios por RGPD: "solo pedimos el email" significa
-  un campo, no quitar los consentimientos.
+- Formulario: se hereda assets/neety-form.js TAL CUAL, no se toca. Campos:
+  NOMBRE + CORREO, y nada más (la empresa se deduce del dominio del correo; solo
+  se pide si el recurso la necesita de verdad). Los dos consentimientos son
+  obligatorios por RGPD: quitar un campo NO es quitar los consentimientos.
 - CTA del botón: "[texto, nunca 'Enviar']"
 - Qué pasa después: ACCESO INMEDIATO. El sistema NO envía correos.
 
