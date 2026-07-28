@@ -35,6 +35,14 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 - La **regla de la palabra naranja se mantiene**, solo cambia el tono exacto.
 - **Tipografía sin cambios:** Bricolage Grotesque en títulos, botones y textos cortos; Switzer en texto corrido y anotaciones (pág. 19-20).
 
+## 🔴 0a-penta · DESPUES DE TODO PROMPT DE IMAGEN, EL RECORDATORIO DE POSTPRODUCCION (Iker, 2026-07-27)
+
+**Siempre que entregues un prompt de imagen — de calca, de edicion, de cero, de cualquier pilar — justo DEBAJO del bloque del prompt va este aviso en rojo, sin excepcion:**
+
+> 🔴 **Acuérdate, Mario, de aplicar el desenfoque de superficie en Photoshop y de exportar con "Exportar como" sin metadatos.**
+
+Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: el **desenfoque de superficie** le quita el acabado de render a la imagen generada, y **exportar sin metadatos** borra la firma del generador (`Exportar como…` o `Guardar para web`, con **Metadatos: Ninguno`; NUNCA `Guardar como`, que los arrastra). Ojo tambien con las **Content Credentials de Adobe (C2PA)**: van por un canal aparte y el "Metadatos: Ninguno" no las toca, hay que desactivarlas en `Ventana > Content Credentials`.
+
 ## ⭐ 0a-quater · EL TEXTO DE LA IMAGEN SIEMPRE LEGIBLE (Iker, 2026-07-27)
 
 **Todo texto que metamos en una foto tiene que leerse comodo EN EL FEED Y EN EL MOVIL**, que es donde entra la mayoria. No vale que se lea bien en el fichero a tamano completo: la imagen se ve reducida y a un pulgar de distancia.
