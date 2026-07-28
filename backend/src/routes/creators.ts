@@ -4,6 +4,7 @@ import { PostModel } from '../models/post';
 import { unipileService, scanMediaSignalsImpl } from '../services/unipile';
 import { enrichPost } from '../services/engagement';
 import { recalcCreatorOutliers } from '../services/outliers';
+import { scrapeCreatorPosts } from '../services/creatorScrape';
 import { normalizeLinkedInUrl, isValidLinkedInUrl } from '../utils/linkedin';
 import { estimateTimezone } from '../utils/timezone';
 import pool from '../db';
@@ -334,65 +335,5 @@ function detectContentTypeFromRaw(raw: any): string {
 // Shared media-signal scanner lives in the unipile service so live scraping and
 // reclassify stay in sync. Handles LinkedIn CDN URLs without file extensions.
 const scanMediaSignals = scanMediaSignalsImpl;
-
-// Background scraping function
-async function scrapeCreatorPosts(creatorId: string, linkedinIdentifier: string) {
-  console.log(`Scraping posts for creator ${creatorId}...`);
-
-  // INCREMENTAL: if we already have posts for this creator, pass their ids
-  // so pagination stops at the first one we already stored (LinkedIn is
-  // newest-first). The very first scrape has none → full history; every
-  // refresh after that only pulls genuinely new posts. This is what makes
-  // a 120-creator refresh-all go from ~40 min to ~1-2 min without losing
-  // any history (it's already persisted from the first pass).
-  const { rows: knownRows } = await pool.query(
-    `SELECT linkedin_post_id FROM posts
-      WHERE creator_id = $1 AND linkedin_post_id IS NOT NULL`,
-    [creatorId]
-  );
-  const knownIds = new Set<string>(knownRows.map((r: any) => r.linkedin_post_id));
-
-  const rawPosts = await unipileService.getPosts(
-    linkedinIdentifier,
-    undefined,
-    undefined,
-    knownIds
-  );
-  console.log(`Fetched ${rawPosts.length} ${knownIds.size > 0 ? 'new ' : ''}posts from Unipile`);
-
-  // Filter out reposts — only keep original content
-  const originalPosts = rawPosts.filter((raw) => {
-    if (raw.type === 'repost' || raw.type === 'RESHARE' || raw.type === 'reshare') return false;
-    if (raw.is_repost || raw.is_reshare) return false;
-    if (raw.reshared_post || raw.original_post) return false;
-    return true;
-  });
-  console.log(`Filtered to ${originalPosts.length} original posts (removed ${rawPosts.length - originalPosts.length} reposts)`);
-
-  // Normalize, enrich and upsert any NEW posts (may be none on an
-  // incremental refresh — that's the fast path).
-  const posts = originalPosts.map((raw) => {
-    const normalized = unipileService.normalizePost(raw, creatorId);
-    const enriched = enrichPost(normalized);
-    return { ...normalized, ...enriched };
-  });
-  if (posts.length > 0) {
-    await PostModel.bulkUpsert(posts);
-  }
-
-  // Always recompute outlier flags over the creator's FULL stored set —
-  // not just this batch. An incremental batch has a meaningless local
-  // average, so the scoring must run against every post the creator has.
-  // recalcCreatorOutliers picks the method by account type: engagement-RATE
-  // (eng/impressions) for managed accounts where impressions are real,
-  // absolute engagement for discovered profiles. Set-based, cheap even on a
-  // first full-history scrape, and keeps the floor consistent for creators
-  // with zero new posts this round.
-  await recalcCreatorOutliers(creatorId);
-
-  await CreatorModel.update(creatorId, { last_scraped_at: new Date() } as any);
-
-  console.log(`Saved ${posts.length} posts for creator ${creatorId}`);
-}
 
 export default router;
