@@ -41,6 +41,12 @@ El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacio
 
 Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo falso, cosas que faltan por adjuntar y sin las cuales el entregable no funciona, y contradicciones entre lo que dice el texto y lo que enseña la imagen. **No se marca** lo que es solo una opinion o una mejora opcional — si se marca todo, deja de destacar nada.
 
+## ⭐ 0c · MIS DEDUCCIONES NO ENTRAN EN LAS RECETAS SIN QUE IKER LAS APRUEBE (Iker, 2026-07-27)
+
+**El fallo real:** el 21-jul observé que un prompt de imagen que funcionó estaba escrito en líneas sueltas, deduje que ESA era la forma correcta y lo escribí en `images §0i-3` **junto a las reglas de Iker, como si fuera una de ellas**. Encima creé una contradicción con su regla de siempre (párrafo único) que arrastré seis días. Cuando lo vio: *"yo eso no te lo he dicho en la vida, ¿alguien ha hecho un commit?"*.
+
+**La regla:** en las recetas solo entra lo que Iker ha dicho o lo que está **medido con datos**. Una conclusión mía sacada de observar un resultado es una **hipótesis**, y va: (a) propuesta en el chat para que él la apruebe, o (b) escrita marcada explícitamente como deducción sin verificar. **Nunca mezclada con sus instrucciones.** Un dato medido se cita con su medición; una regla suya se cita con su fecha; lo mío, si entra, entra etiquetado.
+
 ## ⭐ 1d-bis · SI DAS REFERENCIA DE IMAGEN, DAS TAMBIEN EL PROMPT DEL DISEÑADOR (Iker, 2026-07-27)
 
 Describir el concepto de la imagen y enlazar la referencia **no es la entrega**: falta lo único que el diseñador puede ejecutar. En **cada** entrega que lleve imagen van las tres cosas juntas: (1) el **concepto**, (2) la **referencia real con su enlace** (outlier validado, `images.md`), y (3) el **prompt cerrado para el diseñador**, en su propio bloque copiable. Si falta el prompt, la entrega está a medias y hay que volver a pedirlo.
