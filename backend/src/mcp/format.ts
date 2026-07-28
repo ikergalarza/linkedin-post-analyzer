@@ -85,18 +85,30 @@ export function tabla(
  */
 export function pie(opciones: {
   devueltos: number;
-  total: number;
+  /** null en las páginas siguientes: el total solo se cuenta en la primera. */
+  total?: number | null;
   hay_mas?: boolean;
   mezclaMetodos?: boolean;
   sinEtiqueta?: number;
   nota?: string;
+  cursor?: string | null;
 }): string {
-  const partes = [`${opciones.devueltos} de ${opciones.total}`];
-  if (opciones.hay_mas) partes.push('hay más (sube `limit` o usa `offset`)');
+  const partes = [
+    opciones.total != null ? `${opciones.devueltos} de ${opciones.total}` : `${opciones.devueltos} más`,
+  ];
   if (opciones.sinEtiqueta) partes.push(`${opciones.sinEtiqueta} sin tema asignado`);
   if (opciones.mezclaMetodos) {
     partes.push('* = ratio híbrido (cuenta propia, cuenta el alcance) — no comparable con el resto en crudo');
   }
   if (opciones.nota) partes.push(opciones.nota);
-  return `\n— ${partes.join(' · ')}`;
+
+  let s = `\n— ${partes.join(' · ')}`;
+  // El cursor va en su propia línea y con la instrucción al lado: si se mete
+  // entre los demás avisos, se lee como metadato y no como "sigue por aquí".
+  if (opciones.hay_mas && opciones.cursor) {
+    s += `\n— HAY MÁS. Para la siguiente página, repite la búsqueda con cursor: ${opciones.cursor}`;
+  } else if (opciones.hay_mas) {
+    s += '\n— Hay más resultados (sube `limit`).';
+  }
+  return s;
 }

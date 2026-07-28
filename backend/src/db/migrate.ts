@@ -769,6 +769,41 @@ const migration = `
   CREATE INDEX IF NOT EXISTS idx_posts_creator_ratio ON posts (creator_id, outlier_ratio DESC);
   CREATE INDEX IF NOT EXISTS idx_posts_outlier_fecha
     ON posts (published_at DESC) WHERE is_outlier = TRUE;
+
+  -- v35: REFRESCOS EN SEGUNDO PLANO.
+  --
+  -- El refresco era sincrono: la peticion no respondia hasta terminar. Con 145
+  -- creadores a unos segundos cada uno son ~10 minutos, y el timeout de una
+  -- tool MCP son 60 segundos. Resultado: el cliente se rendia, el servidor
+  -- seguia trabajando y nadie sabia si habia acabado, fallado o seguia vivo.
+  --
+  -- Ahora el trabajo corre en segundo plano y su estado vive aqui, no en una
+  -- variable del proceso. En Postgres y no en memoria por dos motivos: el
+  -- estado sobrevive a un redeploy de Railway a mitad de vuelta, y la guarda
+  -- de "no lanzar dos a la vez" funciona aunque haya varias instancias detras
+  -- del balanceador (una variable en memoria solo protege a su propio proceso).
+  CREATE TABLE IF NOT EXISTS refresh_jobs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    ambito TEXT NOT NULL,
+    estado TEXT NOT NULL CHECK (estado IN ('en_curso', 'terminado', 'fallido', 'abandonado')),
+    total INTEGER NOT NULL DEFAULT 0,
+    procesados INTEGER NOT NULL DEFAULT 0,
+    ok INTEGER NOT NULL DEFAULT 0,
+    con_error INTEGER NOT NULL DEFAULT 0,
+    posts_nuevos INTEGER NOT NULL DEFAULT 0,
+    creador_actual TEXT,
+    errores JSONB NOT NULL DEFAULT '[]'::jsonb,
+    empezado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- Se toca despues de cada creador. Si se queda atras, el proceso murio:
+    -- es lo unico que distingue "sigue trabajando" de "lo mato un redeploy".
+    latido_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    terminado_en TIMESTAMPTZ,
+    error TEXT
+  );
+  CREATE INDEX IF NOT EXISTS idx_refresh_jobs_empezado
+    ON refresh_jobs (empezado_en DESC);
+  CREATE INDEX IF NOT EXISTS idx_refresh_jobs_en_curso
+    ON refresh_jobs (latido_en DESC) WHERE estado = 'en_curso';
 `;
 
 /**

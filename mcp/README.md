@@ -142,6 +142,56 @@ usa neety_refrescar          ← la primera vuelta. Hasta que la corras no hay e
 usa neety_digest             ← ya con datos
 ```
 
+---
+
+## Dos cosas que tardan y cómo se manejan
+
+### El refresco NO es instantáneo, y por eso no bloquea
+
+Reescanear 145 creadores contra LinkedIn son varios minutos. El timeout de una tool MCP es de
+**60 segundos**, así que esperar al final garantizaba que nunca vieras el resultado.
+
+Por eso `neety_refrescar` **arranca el trabajo y vuelve en el acto** con un `job_id`. Para saber
+cómo va:
+
+```
+usa neety_refrescar_estado
+```
+
+Te dice cuántos creadores lleva, cuánto queda, a cuántos segundos por creador va, qué eventos ha
+generado y qué creadores han fallado. Llámalo las veces que quieras.
+
+- **No relances `neety_refrescar` para "ver si terminó"**: no lo acelera y te dirá que ya hay uno
+  en curso (con su progreso, eso sí).
+- **Solo corre uno a la vez.** La guarda vive en Postgres, no en memoria, así que vale aunque
+  Railway levante varias instancias.
+- **Si Railway hace deploy a mitad**, el job queda marcado como `abandonado` en cuanto se le pasa
+  el latido: lo procesado hasta ahí está guardado, y solo hay que volver a lanzarlo.
+- El `limite` por defecto es 25 y el máximo 500, así que **cabe el corpus entero de una vez**.
+  Aun así, empieza siempre por los creadores más rancios: si lanzas vueltas de 25 varias veces,
+  acabas recorriéndolo todo sin picos de cuota de Unipile.
+
+### Para recorrer TODO el corpus, usa el cursor
+
+`neety_outliers_buscar` devuelve como mucho 100 filas. Cuando hay más, el pie de la respuesta
+termina así:
+
+```
+— HAY MÁS. Para la siguiente página, repite la búsqueda con cursor: eyJ2Ijo2Ljkz...
+```
+
+Repites la misma búsqueda añadiendo ese `cursor` y sigue exactamente donde se quedó. Cuando ya no
+haya más, deja de devolverlo.
+
+**Por qué cursor y no `offset`:** con offset, un refresco corriendo a la vez cambia el
+`outlier_ratio` de medio corpus, las filas se desplazan entre dos páginas y acabas repitiendo unas
+y saltándote otras sin enterarte. El cursor pagina por clave, así que cada página continúa donde
+acabó la anterior. Verificado sobre 250 posts con multiplicadores repetidos: 250 filas, 250 únicas,
+ninguna perdida.
+
+Dos avisos: **no cambies el `orden` a mitad de paginación** (la tool te avisa y corta), y el
+`total` solo se cuenta en la primera página — en las siguientes sale como "N más".
+
 ### Si algo falla
 
 | Síntoma | Causa | Solución |

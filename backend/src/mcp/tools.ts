@@ -7,7 +7,13 @@ import {
   saludCorpus,
   FiltrosOutliers,
 } from '../services/outlierQuery';
-import { refrescarOutliers, AmbitoRefresco } from '../services/outlierRefresh';
+import {
+  arrancarRefresco,
+  estadoRefresco,
+  contarCreadores,
+  AmbitoRefresco,
+  EstadoRefresco,
+} from '../services/outlierRefresh';
 import {
   novedadesOutliers,
   marcarEventosEnviados,
@@ -92,65 +98,157 @@ const filtrosBase = {
   excluir: z.string().optional(),
 };
 
-/** Registra las 11 tools sobre un McpServer ya creado. */
+function minutos(seg: number | null): string {
+  if (seg == null) return '—';
+  if (seg < 90) return `${seg}s`;
+  return `${Math.round(seg / 60)} min`;
+}
+
+/** El progreso de un refresco, en texto. */
+function renderEstado(e: EstadoRefresco): string {
+  const pct = e.total ? Math.round((e.procesados / e.total) * 100) : 0;
+  const cabecera: Record<string, string> = {
+    en_curso: `⏳ En curso — ${e.procesados}/${e.total} creadores (${pct}%)`,
+    terminado: `✅ Terminado — ${e.procesados}/${e.total} creadores`,
+    fallido: `❌ Falló — ${e.procesados}/${e.total} creadores procesados antes de caerse`,
+    abandonado: `⚠️ Abandonado — ${e.procesados}/${e.total}. El proceso murió (redeploy o caída); lo procesado se guardó`,
+  };
+
+  const lineas = [
+    cabecera[e.estado] || e.estado,
+    '',
+    `Ámbito: ${e.ambito} · lleva ${minutos(e.segundos_transcurridos)}` +
+      (e.segundos_por_creador != null ? ` · ${e.segundos_por_creador}s por creador` : ''),
+  ];
+
+  if (e.estado === 'en_curso') {
+    lineas.push(
+      `Quedan ~${minutos(e.segundos_restantes_estimados)}` +
+        (e.creador_actual ? ` · ahora mismo: ${e.creador_actual}` : '')
+    );
+  }
+
+  lineas.push(
+    '',
+    `Posts nuevos: ${e.posts_nuevos}`,
+    `Eventos: ${e.eventos.nuevo} nuevos · ${e.eventos.promovido} promovidos · ${e.eventos.degradado} degradados`
+  );
+
+  if (e.con_error > 0) {
+    lineas.push('', `Creadores con error: ${e.con_error}`);
+    for (const err of (e.errores || []).slice(0, 8)) {
+      lineas.push(`  · ${err.nombre || '?'}: ${err.error}`);
+    }
+  }
+  if (e.error) lineas.push('', `Error del job: ${e.error}`);
+
+  if (e.estado === 'terminado' && e.eventos.nuevo + e.eventos.promovido > 0) {
+    lineas.push('', 'Ya puedes llamar a neety_digest para el resumen de lo más viral.');
+  }
+  if (e.eventos.promovido > 0) {
+    lineas.push(
+      '',
+      '"Promovido" = post viejo que cruzó el umbral porque bajó la media del creador, no porque ' +
+        'le haya pasado nada nuevo. Trátalo distinto de un "nuevo".'
+    );
+  }
+  return lineas.join('\n');
+}
+
+/** Registra las tools sobre un McpServer ya creado. */
 export function registrarTools(servidor: McpServer): void {
   // --- refrescar -----------------------------------------------------------
 
   servidor.registerTool(
     'neety_refrescar',
     {
-      title: 'Refrescar la base de outliers',
+      title: 'Arrancar el refresco de la base de outliers',
       description:
-        'Reescanea creadores contra LinkedIn, recalcula los outliers y registra qué ha entrado y ' +
-        'qué ha salido. Empieza por los creadores que llevan más tiempo sin escanearse, con un ' +
-        'presupuesto de llamadas: en varias vueltas se recorre todo el corpus sin reventar la ' +
-        'cuota de Unipile. Devuelve el resumen de lo que ha cambiado. Después, neety_digest.',
+        'Lanza el reescaneo de creadores contra LinkedIn y VUELVE EN EL ACTO — el trabajo sigue ' +
+        'en segundo plano porque con muchos creadores tarda minutos, bastante más que el timeout ' +
+        'de una tool. NO vuelvas a llamar a esta tool para ver si terminó: usa ' +
+        'neety_refrescar_estado, que te da el progreso y el tiempo que queda. Empieza por los ' +
+        'creadores que llevan más tiempo sin escanearse, así que en varias vueltas se recorre ' +
+        'todo el corpus sin reventar la cuota de Unipile.',
       inputSchema: {
         ambito: z
           .enum(['competencia', 'propias', 'todas'])
           .optional()
           .describe('Por defecto competencia: las propias ya las vigila el monitor cada 15 min'),
-        limite: z.number().optional().describe('Creadores por vuelta (1-60, por defecto 15)'),
+        limite: z
+          .number()
+          .optional()
+          .describe('Creadores en esta vuelta (por defecto 25, máximo 500). Cabe el corpus entero'),
         creator_ids: z.array(z.string()).optional(),
       },
       annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
     },
     async (args) => {
       try {
-        const r = await refrescarOutliers({
+        const conteo = await contarCreadores();
+        const r = await arrancarRefresco({
           ambito: args.ambito as AmbitoRefresco,
           limite: args.limite,
           creator_ids: args.creator_ids,
         });
 
-        if (r.saltado_por_concurrencia) {
-          return texto('Ya hay un refresco en curso. Espera a que acabe — no se lanzan dos a la vez.');
-        }
-
-        const errores = r.detalle.filter((d) => d.estado !== 'ok');
-        const lineas = [
-          `Refresco (${r.ambito}) terminado.`,
-          '',
-          `Creadores refrescados: ${r.creadores_refrescados}` +
-            (r.creadores_con_error ? ` · con error: ${r.creadores_con_error}` : ''),
-          `Posts nuevos: ${r.posts_nuevos}`,
-          `Eventos: ${r.eventos.nuevo} nuevos · ${r.eventos.promovido} promovidos · ${r.eventos.degradado} degradados`,
-        ];
-        if (r.eventos.promovido > 0) {
-          lineas.push(
-            '',
-            '"Promovido" = post viejo que ha cruzado el umbral porque bajó la media del creador, ' +
-              'no porque le haya pasado nada nuevo. Trátalo distinto de un "nuevo".'
+        if (r.ya_habia_uno) {
+          const e = await estadoRefresco(r.job.id);
+          return texto(
+            'Ya hay un refresco en curso, no se ha lanzado otro.\n\n' +
+              (e ? renderEstado(e) : '') +
+              '\n\nUsa neety_refrescar_estado para seguirlo.'
           );
         }
-        if (errores.length) {
-          lineas.push('', 'Con error:');
-          for (const e of errores.slice(0, 10)) lineas.push(`  · ${e.nombre || e.id}: ${e.estado}`);
+
+        if (r.job.total === 0) {
+          return texto(
+            `No hay creadores que refrescar en el ámbito "${r.job.ambito}".\n\n` +
+              `Disponibles: ${conteo.competencia} de competencia · ${conteo.propias} propias.`
+          );
         }
-        if (r.eventos.nuevo + r.eventos.promovido > 0) {
-          lineas.push('', 'Llama a neety_digest para el resumen de lo más viral del momento.');
-        }
-        return texto(lineas.join('\n'));
+
+        // Sin historial no hay con qué estimar; en cuanto haya un job cerrado,
+        // estadoRefresco da segundos_por_creador reales.
+        const estimado = Math.round((r.job.total * 4) / 60);
+        return texto(
+          [
+            `Refresco arrancado (${r.job.ambito}).`,
+            '',
+            `Creadores en esta vuelta: ${r.job.total} de ${conteo.total} en total` +
+              (conteo.sin_escanear ? ` · ${conteo.sin_escanear} sin escanear nunca` : ''),
+            `Estimado: ~${estimado} min (a ojo, hasta que haya medidas reales)`,
+            `job_id: ${r.job.id}`,
+            '',
+            'Corre en segundo plano. Llama a neety_refrescar_estado dentro de un rato para ver ' +
+              'cómo va — no vuelvas a llamar a neety_refrescar, eso no lo acelera y te dirá que ' +
+              'ya hay uno en curso.',
+          ].join('\n')
+        );
+      } catch (e) {
+        return error(e);
+      }
+    }
+  );
+
+  servidor.registerTool(
+    'neety_refrescar_estado',
+    {
+      title: 'Cómo va el refresco',
+      description:
+        'El progreso del refresco en curso (o el resultado del último): cuántos creadores lleva, ' +
+        'cuánto queda, qué eventos de outlier ha generado y qué creadores han fallado. Es la ' +
+        'forma de saber si terminó — la tool que lo arranca vuelve antes de que acabe.',
+      inputSchema: {
+        job_id: z.string().optional().describe('Por defecto, el refresco más reciente'),
+      },
+      annotations: { readOnlyHint: true },
+    },
+    async ({ job_id }) => {
+      try {
+        const e = await estadoRefresco(job_id);
+        if (!e) return texto('No se ha lanzado ningún refresco todavía.');
+        return texto(renderEstado(e));
       } catch (e) {
         return error(e);
       }
@@ -330,18 +428,33 @@ export function registrarTools(servidor: McpServer): void {
           .optional()
           .describe('Por defecto ratio. Usa `percentil` cuando mezcles propias y competencia'),
         limit: z.number().optional().describe('1-100, por defecto 25'),
-        offset: z.number().optional(),
+        cursor: z
+          .string()
+          .optional()
+          .describe(
+            'Para recorrer TODO el corpus: pasa aquí el `cursor` que devolvió la llamada ' +
+              'anterior. Continúa exactamente donde se quedó, aunque haya un refresco corriendo. ' +
+              'No cambies el `orden` a mitad de paginación'
+          ),
+        offset: z
+          .number()
+          .optional()
+          .describe('Salto directo a una posición. Para recorrer todo usa `cursor`, es más fiable'),
       },
       annotations: { readOnlyHint: true },
     },
     async (args) => {
       try {
-        const { filas, total, orden } = await buscarOutliers(args as FiltrosOutliers);
+        const { filas, total, orden, cursor_siguiente } = await buscarOutliers(
+          args as FiltrosOutliers
+        );
         if (!filas.length) {
           return texto(
-            'Sin resultados.\n\nAntes de dar la búsqueda por vacía: si filtraste por `tema` o ' +
-              '`pilar`, mira qué valores existen con neety_outliers_valores — las etiquetas están ' +
-              'incompletas. Con `q` buscas en el texto y te saltas ese problema.'
+            args.cursor
+              ? 'Fin de la lista: no quedan más resultados.'
+              : 'Sin resultados.\n\nAntes de dar la búsqueda por vacía: si filtraste por `tema` o ' +
+                  '`pilar`, mira qué valores existen con neety_outliers_valores — las etiquetas ' +
+                  'están incompletas. Con `q` buscas en el texto y te saltas ese problema.'
           );
         }
         const mezcla = new Set(filas.map((f) => f.metodo)).size > 1;
@@ -351,10 +464,11 @@ export function registrarTools(servidor: McpServer): void {
             pie({
               devueltos: filas.length,
               total,
-              hay_mas: (args.offset || 0) + filas.length < total,
+              hay_mas: cursor_siguiente !== null,
               mezclaMetodos: mezcla,
               sinEtiqueta: sinTema,
               nota: `orden: ${orden}`,
+              cursor: cursor_siguiente,
             })
         );
       } catch (e) {

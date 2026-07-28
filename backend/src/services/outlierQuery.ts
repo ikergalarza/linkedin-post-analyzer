@@ -63,6 +63,8 @@ export interface FiltrosOutliers {
   orden?: string;
   limit?: number;
   offset?: number;
+  /** Paginación por clave. Devuelto por la llamada anterior como `cursor_siguiente`. */
+  cursor?: string;
 }
 
 export interface FilaOutlier {
@@ -94,21 +96,68 @@ export interface FilaOutlier {
   url: string | null;
 }
 
-// Whitelist estricta: el `orden` viaja desde el cliente y se interpola en el
-// SQL, asi que nunca puede salir de aqui.
-const ORDENES: Record<string, string> = {
-  ratio: 'p.outlier_ratio DESC NULLS LAST',
-  percentil: 'pct.percentil DESC NULLS LAST',
-  likes: 'p.likes_count DESC',
-  comentarios: 'p.comments_count DESC',
-  reposts: 'p.reposts_count DESC',
-  impresiones: 'p.impressions_count DESC NULLS LAST',
-  engagement: 'p.engagement_score DESC',
-  fecha: 'p.published_at DESC NULLS LAST',
-  fecha_asc: 'p.published_at ASC NULLS LAST',
-  debate: 'p.comment_like_ratio DESC',
-  utilidad: 'p.share_like_ratio DESC',
+/**
+ * Whitelist estricta de ordenaciones: el `orden` viaja desde el cliente y se
+ * interpola en el SQL, asi que nunca puede salir de aqui.
+ *
+ * Cada una define una EXPRESION SIN NULOS (con COALESCE donde la columna los
+ * admite) porque es la clave del cursor: con NULOS por medio, la comparacion
+ * por filas `(expr, id) < (valor, id)` deja de funcionar y la paginacion se
+ * salta registros en silencio. El COALESCE a un valor extremo mantiene ademas
+ * el mismo orden que tenia el NULLS LAST anterior.
+ */
+interface Ordenacion {
+  expr: string;
+  dir: 'ASC' | 'DESC';
+  tipo: 'float' | 'timestamptz';
+}
+
+const ORDENES: Record<string, Ordenacion> = {
+  ratio: { expr: 'COALESCE(p.outlier_ratio, 0)', dir: 'DESC', tipo: 'float' },
+  percentil: { expr: 'COALESCE(pct.percentil, -1)', dir: 'DESC', tipo: 'float' },
+  likes: { expr: 'COALESCE(p.likes_count, 0)', dir: 'DESC', tipo: 'float' },
+  comentarios: { expr: 'COALESCE(p.comments_count, 0)', dir: 'DESC', tipo: 'float' },
+  reposts: { expr: 'COALESCE(p.reposts_count, 0)', dir: 'DESC', tipo: 'float' },
+  impresiones: { expr: 'COALESCE(p.impressions_count, -1)', dir: 'DESC', tipo: 'float' },
+  engagement: { expr: 'COALESCE(p.engagement_score, 0)', dir: 'DESC', tipo: 'float' },
+  fecha: { expr: `COALESCE(p.published_at, '1970-01-01'::timestamptz)`, dir: 'DESC', tipo: 'timestamptz' },
+  fecha_asc: { expr: `COALESCE(p.published_at, '2999-01-01'::timestamptz)`, dir: 'ASC', tipo: 'timestamptz' },
+  debate: { expr: 'COALESCE(p.comment_like_ratio, 0)', dir: 'DESC', tipo: 'float' },
+  utilidad: { expr: 'COALESCE(p.share_like_ratio, 0)', dir: 'DESC', tipo: 'float' },
 };
+
+/**
+ * El cursor es opaco a proposito: quien lo usa solo tiene que devolverlo tal
+ * cual. Dentro va el valor de la clave de orden y el id de la ultima fila —
+ * paginacion por CLAVE, no por OFFSET.
+ *
+ * Importa la diferencia: con offset, un refresco corriendo a la vez (que
+ * cambia outlier_ratio de medio corpus) desplaza las filas entre dos paginas y
+ * acabas repitiendo unas y saltandote otras sin enterarte. Con clave, cada
+ * pagina continua exactamente donde acabo la anterior.
+ */
+export function codificarCursor(valor: unknown, id: string, orden: string): string {
+  return Buffer.from(JSON.stringify({ v: valor, id, o: orden })).toString('base64url');
+}
+
+function decodificarCursor(cursor: string, orden: string): { v: unknown; id: string } {
+  let d: any;
+  try {
+    d = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8'));
+  } catch {
+    throw new Error('cursor ilegible. Usa el `cursor_siguiente` que devuelve la búsqueda anterior.');
+  }
+  if (!d?.id) throw new Error('cursor incompleto.');
+  if (d.o && d.o !== orden) {
+    // Cambiar de orden a mitad de paginacion daria una lista incoherente:
+    // mejor decirlo que devolver algo raro.
+    throw new Error(
+      `el cursor es de un orden distinto ("${d.o}") al pedido ("${orden}"). ` +
+        'Si cambias de orden, empieza la paginación de cero.'
+    );
+  }
+  return { v: d.v, id: d.id };
+}
 
 export const ORDENES_VALIDOS = Object.keys(ORDENES);
 
@@ -258,27 +307,52 @@ const CTES = `
   )
 `;
 
-export async function buscarOutliers(
-  f: FiltrosOutliers
-): Promise<{ filas: FilaOutlier[]; total: number; orden: string }> {
+export async function buscarOutliers(f: FiltrosOutliers): Promise<{
+  filas: FilaOutlier[];
+  total: number | null;
+  orden: string;
+  cursor_siguiente: string | null;
+}> {
   const { where, params } = construirWhere(f);
   const orden = ORDENES[f.orden || 'ratio'] ? f.orden || 'ratio' : 'ratio';
+  const ord = ORDENES[orden];
   const limit = Math.min(Math.max(1, f.limit || 25), LIMITE_MAXIMO);
-  const offset = Math.max(0, f.offset || 0);
+  const offset = f.cursor ? 0 : Math.max(0, f.offset || 0);
+
+  // Comparacion por FILAS: `(clave, id) < (valor, id)` continua exactamente
+  // donde acabo la pagina anterior. El id desempata para que dos posts con el
+  // mismo ratio no se pisen ni se pierdan.
+  if (f.cursor) {
+    const { v, id } = decodificarCursor(f.cursor, orden);
+    params.push(v);
+    const pv = params.length;
+    params.push(id);
+    const pi = params.length;
+    where.push(
+      `(${ord.expr}, p.id) ${ord.dir === 'DESC' ? '<' : '>'} ($${pv}::${ord.tipo}, $${pi}::uuid)`
+    );
+  }
 
   const sqlWhere = where.join(' AND ');
 
-  const { rows: conteo } = await pool.query(
-    `SELECT COUNT(*)::int AS total
-       FROM posts p
-       JOIN creators c ON c.id = p.creator_id
-      WHERE ${sqlWhere}`,
-    params
-  );
+  // El COUNT solo en la primera pagina: es la parte cara de la consulta y en
+  // las siguientes ya se sabe el total.
+  let total: number | null = null;
+  if (!f.cursor) {
+    const { rows: conteo } = await pool.query(
+      `SELECT COUNT(*)::int AS total
+         FROM posts p
+         JOIN creators c ON c.id = p.creator_id
+        WHERE ${sqlWhere}`,
+      params
+    );
+    total = conteo[0]?.total ?? 0;
+  }
 
   const { rows } = await pool.query(
     `${CTES}
-     SELECT p.id, p.creator_id, c.name AS creador,
+     SELECT ${ord.expr} AS __clave,
+            p.id, p.creator_id, c.name AS creador,
             COALESCE(c.is_managed, FALSE) AS es_gestionada,
             COALESCE(c.followers_count, 0) AS seguidores,
             p.published_at, p.pillar AS pilar, p.topic AS tema,
@@ -297,12 +371,22 @@ export async function buscarOutliers(
        LEFT JOIN metodo m ON m.creator_id = p.creator_id
        LEFT JOIN pct ON pct.id = p.id
       WHERE ${sqlWhere}
-      ORDER BY ${ORDENES[orden]}
-      LIMIT ${limit} OFFSET ${offset}`,
+      ORDER BY ${ord.expr} ${ord.dir}, p.id ${ord.dir}
+      LIMIT ${limit + 1} OFFSET ${offset}`,
     params
   );
 
-  return { filas: rows as FilaOutlier[], total: conteo[0]?.total || 0, orden };
+  // Se pide UNA fila de mas que el limite y se descarta: es lo que permite
+  // decir "hay mas" sin contar el total en cada pagina, y evita entregar un
+  // cursor que apunte a una pagina vacia cuando la ultima venia justa.
+  const hayMas = rows.length > limit;
+  const visibles = hayMas ? rows.slice(0, limit) : rows;
+  const ultima = visibles[visibles.length - 1];
+  const cursorSiguiente =
+    hayMas && ultima ? codificarCursor(ultima.__clave, ultima.id, orden) : null;
+
+  const filas = visibles.map(({ __clave, ...resto }: any) => resto) as FilaOutlier[];
+  return { filas, total, orden, cursor_siguiente: cursorSiguiente };
 }
 
 // --- facetas ---------------------------------------------------------------
