@@ -302,32 +302,40 @@ function fmtNum(n: number): string {
    mezclarlos daba conclusiones falsas (Iker, 2026-07-27). */
 const PILAR_META: Record<string, { etiqueta: string; clase: string; ayuda: string }> = {
   peloteo_mapa: {
-    etiqueta: 'peloteo · mapa',
+    etiqueta: 'Peloteo Regional (mapa)',
     clase: 'bg-emerald-500/15 text-emerald-400',
     ayuda: 'Peloteo regional en formato MAPA (foto del mapa + ~20 menciones)',
   },
   peloteo_los10: {
-    etiqueta: 'peloteo · los 10',
+    etiqueta: 'Peloteo Regional (los 10)',
     clase: 'bg-emerald-500/15 text-emerald-400',
     ayuda: 'Peloteo regional en formato LOS 10 (foto "los 10" + ~10 menciones)',
   },
+  // Tercer formato de peloteo (Iker, 2026-07-27): el foco es un OBJETO
+  // reconocible despiezado en las empresas de la region que fabrican cada
+  // pieza. Aun sin publicar; la etiqueta ya existe para cuando salga.
+  peloteo_objeto: {
+    etiqueta: 'Peloteo Regional (objeto)',
+    clase: 'bg-emerald-500/15 text-emerald-400',
+    ayuda: 'Peloteo regional por OBJETO: un objeto cotidiano despiezado en las empresas que lo fabrican',
+  },
   lead_magnet: {
-    etiqueta: 'lead magnet',
+    etiqueta: 'Lead Magnet',
     clase: 'bg-sky-500/15 text-sky-400',
     ayuda: 'Pide comentar una palabra para entregar el recurso por privado',
   },
   meme: {
-    etiqueta: 'meme',
+    etiqueta: 'Meme',
     clase: 'bg-accent/15 text-accent',
     ayuda: 'El motor es la imagen y las reacciones de risa se disparan (>25%)',
   },
   historia: {
-    etiqueta: 'historia',
+    etiqueta: 'Historia',
     clase: 'bg-purple-500/15 text-purple-400',
     ayuda: 'Anécdota personal en primera persona',
   },
   otro: {
-    etiqueta: 'otro',
+    etiqueta: 'Otro',
     clase: 'bg-bg-secondary border border-border text-text-muted',
     ayuda: 'Sin pilar claro. Ante la duda se deja en "otro" en vez de inventar etiqueta',
   },
@@ -2148,40 +2156,41 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-xs text-text-muted mb-1 flex-wrap">
-            <span className="text-text-secondary font-medium">{nombreCuenta(post.creator_name)}</span>
-            <span>·</span>
-            <span title={new Date(post.published_at).toLocaleString()}>{fmtPublishedAt(post.published_at)}</span>
-            {(() => {
-              const meta = PHASE_META[post.phase] || PHASE_META.closed;
-              return (
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${meta.bg} ${meta.text}`}>
-                  {meta.label}
-                </span>
-              );
-            })()}
-            {post.outlier_ratio != null && (
+          {/* Cabecera: a la izquierda quien y cuando; a la derecha, en grande,
+              PILAR + multiplicador — misma jerarquia visual que las tarjetas de
+              "Top posts", para que las dos secciones se lean igual (Iker,
+              2026-07-27). La chapa de FASE (hot/tail/...) se quito: nadie la
+              miraba y daba una precision que no tenemos. */}
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2 text-xs text-text-muted flex-wrap min-w-0">
+              <span className="text-text-secondary font-medium">{nombreCuenta(post.creator_name)}</span>
+              <span>·</span>
+              <span title={new Date(post.published_at).toLocaleString()}>{fmtPublishedAt(post.published_at)}</span>
               <span
-                className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                  post.is_outlier
-                    ? 'bg-diamond/15 text-diamond'
-                    : 'bg-bg-secondary border border-border text-text-muted'
-                }`}
-                title="Engagement relative to this creator's average"
+                className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]"
+                title={post.last_snapshot_at ? `Last capture ${fmtAge(post.last_snapshot_at)}` : 'No captures yet'}
               >
-                {post.outlier_ratio.toFixed(1)}x
+                {post.snapshot_count} snap{post.snapshot_count === 1 ? '' : 's'}
+                {post.last_snapshot_at && post.snapshot_count > 0 && (
+                  <span className="ml-1 opacity-60">· {fmtAge(post.last_snapshot_at)}</span>
+                )}
               </span>
-            )}
-            <PilarBadge pillar={post.pillar} />
-            <span
-              className="px-1.5 py-0.5 rounded bg-bg-secondary border border-border text-text-muted text-[10px]"
-              title={post.last_snapshot_at ? `Last capture ${fmtAge(post.last_snapshot_at)}` : 'No captures yet'}
-            >
-              {post.snapshot_count} snap{post.snapshot_count === 1 ? '' : 's'}
-              {post.last_snapshot_at && post.snapshot_count > 0 && (
-                <span className="ml-1 opacity-60">· {fmtAge(post.last_snapshot_at)}</span>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <PilarBadge pillar={post.pillar} />
+              {post.outlier_ratio != null && (
+                <span
+                  className={`px-2.5 py-1 rounded text-sm font-semibold tabular-nums ${
+                    post.is_outlier
+                      ? 'bg-diamond/15 text-diamond ring-1 ring-diamond/40'
+                      : 'bg-bg-secondary border border-border text-text-muted'
+                  }`}
+                  title="Engagement relative to this creator's average"
+                >
+                  {post.outlier_ratio.toFixed(1)}x
+                </span>
               )}
-            </span>
+            </div>
           </div>
           <ExpandablePostText text={post.content_text || post.hook_text} />
           {!NO_MEDIA_TYPES.has(post.content_type) && (
