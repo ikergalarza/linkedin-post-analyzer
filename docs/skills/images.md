@@ -11,6 +11,14 @@ Una vez publicado un post con foto, la foto **NO se puede cambiar** (habría que
 
 ---
 
+## ⭐ 0a-bis · NUNCA NUESTRA MARCA EN LA IMAGEN, Y LA IMAGEN COMPLEMENTA AL POST (Iker, 2026-07-27)
+
+**1. Ni el logo ni el nombre de Neety van dentro de la foto.** Aunque la referencia que calcamos lo lleve (Beeze lo pone arriba y abajo). En cuanto el lector ve una marca en la imagen, **entiende que le estan vendiendo algo** y baja la guardia del contenido. La foto tiene que parecer una pieza util, no una creatividad de empresa. Fuera tambien los subtitulos de cabecera tipo `SEÑALES DE COMPRA 2026`: ocupan sitio y no aportan.
+
+**2. La imagen COMPLEMENTA al post, y su titular ECHA EL GANCHO.** Si el post abre con *"la prospeccion manual ha muerto"*, el titulo de la imagen no puede ser *"Las 7 señales"*: son dos promesas distintas y el lector no las une. El titular de la imagen repite o continua el gancho; el contenido de la imagen es la prueba de lo que el gancho promete.
+
+**3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
+
 ## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
 > Aplica a **los 4 pilares y a cualquier foto que publiquemos**: meme, mapa, "Los 10", lead magnet, evento. Es lo primero que se comprueba y lo último que se negocia.
 
