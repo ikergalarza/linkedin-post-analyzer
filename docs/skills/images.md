@@ -48,6 +48,8 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 
 > 🔴 **Acuérdate Mario de aplicar el desenfoque de superficie en Photoshop y de exportar sin metadatos con Exportar como.**
 
+**⛔ UNICA EXCEPCION: el pilar "LOS 10" (Iker, 2026-07-28).** Ahi la imagen NO la genera una IA: la **compone `scripts/montar-orla.py`** pegando las fotos de LinkedIn sobre la plantilla que pasa Iker, pixel a pixel. No hay acabado de render que suavizar ni metadatos de generador que borrar, asi que **en "Los 10" NO se pone el aviso**. En todos los demas pilares si, porque la imagen sale de un generador.
+
 Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: el **desenfoque de superficie** le quita el acabado de render a la imagen generada, y **exportar sin metadatos** borra la firma del generador (`Exportar como…` o `Guardar para web`, con **Metadatos: Ninguno`; NUNCA `Guardar como`, que los arrastra). Ojo tambien con las **Content Credentials de Adobe (C2PA)**: van por un canal aparte y el "Metadatos: Ninguno" no las toca, hay que desactivarlas en `Ventana > Content Credentials`.
 
 ## ⭐ 0a-quater · EL TEXTO DE LA IMAGEN SIEMPRE LEGIBLE (Iker, 2026-07-27)
