@@ -137,8 +137,12 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
   (blur 4.5px + opacidad 0.6), no inventes otro.
 - Formulario: se hereda assets/neety-form.js TAL CUAL, no se toca. Campos:
   NOMBRE + CORREO, y nada más (la empresa se deduce del dominio del correo; solo
-  se pide si el recurso la necesita de verdad). Los dos consentimientos son
-  obligatorios por RGPD: quitar un campo NO es quitar los consentimientos.
+  se pide si el recurso la necesita de verdad). **Los dos campos van EN LA MISMA
+  FILA, en dos columnas**, para que el formulario ocupe una línea y no dos: con
+  dos campos apilados el gate se estira y pierde compacidad. En móvil se apilan
+  solos. Copia la maqueta de un gate que ya lo tenga, no la inventes. Los dos
+  consentimientos son obligatorios por RGPD: quitar un campo NO es quitar los
+  consentimientos.
 - CTA del botón: "[texto, nunca 'Enviar']"
 - Qué pasa después: ACCESO INMEDIATO. El sistema NO envía correos.
 
@@ -169,7 +173,16 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
   gates la usan). NUNCA en enumeraciones.
 - Ninguna cifra sin fuente verificada.
 
-5. NO ME DIGAS QUE ESTÁ TERMINADO SIN PASAR LA CHECKLIST del playbook §19 (18
+5. REVISIÓN VISUAL EN LOS DOS TAMAÑOS, con el gate Y el recurso ya terminados.
+   No vale medir solo el titular: hay que MIRAR las dos páginas enteras en
+   escritorio (1440) y en móvil (360), de arriba abajo. En móvil el criterio es
+   COMPACIDAD: nada desbordado, nada con scroll horizontal, los dos campos del
+   formulario apilados y bien, el artefacto asomando al entrar, y sin huecos
+   muertos entre bloques. La mayoría entra desde LinkedIn con el móvil, así que
+   si en móvil se ve estirado, está mal aunque en escritorio se vea perfecto.
+   Mándame una captura de cada una en los dos tamaños.
+
+6. NO ME DIGAS QUE ESTÁ TERMINADO SIN PASAR LA CHECKLIST del playbook §19 (18
    puntos). Pégamela con el resultado de cada uno.
 ```
 
