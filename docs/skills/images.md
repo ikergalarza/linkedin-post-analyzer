@@ -39,7 +39,7 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 
 **Siempre que entregues un prompt de imagen — de calca, de edicion, de cero, de cualquier pilar — justo DEBAJO del bloque del prompt va este aviso en rojo, sin excepcion:**
 
-> 🔴 **Acuérdate, Mario, de aplicar el desenfoque de superficie en Photoshop y de exportar con "Exportar como" sin metadatos.**
+> 🔴 **Acuérdate Mario de aplicar el desenfoque de superficie en Photoshop y de exportar sin metadatos con Exportar como.**
 
 Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: el **desenfoque de superficie** le quita el acabado de render a la imagen generada, y **exportar sin metadatos** borra la firma del generador (`Exportar como…` o `Guardar para web`, con **Metadatos: Ninguno`; NUNCA `Guardar como`, que los arrastra). Ojo tambien con las **Content Credentials de Adobe (C2PA)**: van por un canal aparte y el "Metadatos: Ninguno" no las toca, hay que desactivarlas en `Ventana > Content Credentials`.
 
