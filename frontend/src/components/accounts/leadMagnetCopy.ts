@@ -65,6 +65,10 @@ const RECURSOS: Record<string, Recurso> = {
     link: 'https://recursos.neety.com/subvencion-euskadi/',
     topic: 'la subvención de IA para industria vasca',
   },
+  manual: {
+    link: 'https://recursos.neety.com/prospeccion-manual/',
+    topic: 'las señales que avisan de que una empresa va a comprar',
+  },
 };
 
 // El recurso de una palabra clave, o null si esa palabra no tiene uno mapeado
