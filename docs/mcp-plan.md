@@ -25,6 +25,11 @@ las consultas de la receta (`post-workflow §4`) en herramientas tipadas que cua
 `SYSTEM_PROMPT` de `chat.ts` siguen siendo la fuente de verdad de *cómo se escribe*. El MCP sirve
 **datos, estado y verificación**, no criterio.
 
+**Y el objetivo principal no es escribir un post, es decidir cuál escribir.** Consultar outliers en
+masa, cruzarlos por formato y por fecha, ver qué está subiendo y qué se está fatigando, y recibir
+cada mañana un resumen de las novedades. Ese bloque tiene documento propio:
+**[`docs/mcp-outliers-engine.md`](./mcp-outliers-engine.md)**.
+
 ---
 
 ## 1 · Los 3 consumidores (y por qué importan al diseño)
@@ -97,14 +102,28 @@ Leyenda de origen: **[E]** existe ya en el backend · **[N]** hay que construirl
 | `neety_crecimiento` | `cuenta`, `metrica: seguidores\|impresiones\|visitas_perfil`, `granularidad` | Serie temporal | **[E]** `follower-history` · `follower-monthly` · `impressions-monthly` · `profile-view-history` | 2 |
 | `neety_posts_vivos` | `cuenta?` | Posts de las últimas 48-72h con su curva de snapshots (lo que está corriendo ahora) | **[E]** `GET /api/accounts/live-posts` | 2 |
 
-### B · Outliers y patrones — la evidencia
+### B · Outliers y patrones — **el motor** → [`docs/mcp-outliers-engine.md`](./mcp-outliers-engine.md)
 
-| Tool | Input | Devuelve | Origen | Fase |
-|---|---|---|---|---|
-| `neety_outliers` | `ambito: propios\|competencia`, `pilar?`, `min_ratio?`, `limit≤30` | Top outliers ordenados por `outlier_ratio`: hook · ratio · pilar · creador · `post_id`. **Sin** `ai_explanation` (eso se pide por post) | **[R]** `getTopOutliersGlobal` / `GET /api/analysis/cross-creators` en modo compacto | 1 |
-| `neety_patrones` | `ambito`, `cuenta?` | Los patrones agregados: mejor hora, longitud, tipo de hook, estructura, tono, arquetipos | **[E]** `getCrossCreatorPatterns` · `detectPatterns` · `detectArchetypes` | 2 |
-| `neety_por_que_funciono` | `post_id` | El diagnóstico de un post concreto: `detectViralityDriver` + `generatePostExplanation` + `analyzeNarrativeRhythm` | **[E]** `patterns.ts` | 2 |
-| `neety_stats` | `creator_id` | Totales, mediana, desviación, ventana temporal del creador | **[E]** `GET /api/analysis/:id/stats` | 3 |
+> Este es el objetivo real del MCP (analizar outliers en masa y decidir con ellos), y el bloque con
+> más trabajo por delante: hay **tres taxonomías que no se hablan** y **no existe el concepto de
+> "outlier nuevo"**, así que tiene documento propio con el diagnóstico, el modelo de datos que falta
+> y la rutina diaria. Aquí solo va el índice de tools.
+
+| Tool | Devuelve | Fase |
+|---|---|---|
+| `neety_outliers_buscar` | El buscador: ~35 filtros en 5 grupos (quién · cuándo · cuánto · qué · texto), orden configurable, salida de una línea por post | 1 |
+| `neety_outliers_valores` | Facetas con recuento: qué temas/pilares/drivers existen **de verdad** antes de filtrar por uno | 1 |
+| `neety_outliers_salud` | Cobertura de etiquetas y frescura del corpus. **Lo primero que hay que construir** | 1 |
+| `neety_outliers_similares` | Los N outliers más parecidos a uno dado, por embedding — buscar sin depender de la categoría | 3 |
+| `neety_outliers_agrupar` | Group-by genérico (dimensión × métrica) con `n` siempre visible | 2 |
+| `neety_outliers_comparar` | Ventana A vs ventana B: "¿los lead magnets funcionan peor que antes?" | 2 |
+| `neety_outliers_terminos` | N-gramas sobreexpresados en un grupo frente al resto | 2 |
+| `neety_leadmagnets` | El embudo por post: palabra del gate · % de comentarios con la palabra · clics · envíos | 2 |
+| `neety_refrescar` | Refresca la competencia con presupuesto de llamadas y emite eventos de outlier | 2 |
+| `neety_digest` | El resumen diario de novedades para marketing y growth (canal: `googleChat.ts`) | 2 |
+| `neety_patrones` | Patrones agregados: hora, longitud, hook, estructura, tono, arquetipos — **[E]** `getCrossCreatorPatterns` | 2 |
+| `neety_por_que_funciono` | Diagnóstico de un post: `detectViralityDriver` + `generatePostExplanation` + `analyzeNarrativeRhythm` — **[E]** | 2 |
+| `neety_stats` | Totales, mediana, desviación y ventana temporal de un creador — **[E]** `GET /api/analysis/:id/stats` | 3 |
 
 ### C · Verificación — Unipile (el filtro duro de menciones)
 
@@ -213,21 +232,29 @@ Las tools son verbos. MCP también sirve **resources** (contexto que el cliente 
 
 De todo el catálogo, esto es lo que **no existe** y hay que picar:
 
-1. **`GET /api/posts/search`** — búsqueda de texto sobre el corpus (propios + competencia), con
-   filtros de pilar, cuenta, `is_outlier` y rango de fechas. Hoy solo existe el `ILIKE` privado de
-   `getBrainstormContext`. Es la tool más usada del MCP y no tiene endpoint.
-   → Con `pg_trgm` + índice GIN sobre `content_text`; el `ILIKE %x%` actual no escala a 2.000 posts
-   con la tabla creciendo.
-2. **Filtro por `pillar` y por rango de fechas en `PostModel.findByCreator`** — la columna `pillar`
-   existe desde la migración v-final pero `PostFilters` no la contempla.
-3. **Modo compacto de `/api/analysis/cross-creators`** — hoy hace N+1 queries (un
+1. **`GET /api/posts/search`** — el buscador de outliers con los ~35 filtros del §3.1 del deep-dive.
+   Hoy solo existe el `ILIKE` privado de `getBrainstormContext` y `getTopOutliersGlobal(500)` sin un
+   solo filtro. Es la tool más usada del MCP y no tiene endpoint.
+   → Con `tsvector` español + `pg_trgm` + índices compuestos; el `ILIKE %x%` actual no escala.
+2. **El modelo de datos de "outlier nuevo"** — `became_outlier_at`, `peak_outlier_ratio`,
+   `ratio_al_cierre` y la tabla `outlier_events`, con emisión desde `recalcCreatorOutliers`.
+   **Sin esto no hay rutina diaria posible.** Detalle y porqué en el deep-dive §4.1.
+3. **La capa de etiquetas** — tabla `post_labels` (eje · valor · fuente · confianza · versión), en
+   vez de seguir añadiendo columnas sueltas. Arregla de paso los tres bugs de clasificación del
+   deep-dive §1: el pilar que se congela en el ingest sin reacciones, el `driver` que no se guarda
+   nunca, y el `topic` que solo existe para outliers.
+4. **Filtro por `pillar` y por rango de fechas en `PostModel.findByCreator`** — la columna `pillar`
+   existe pero `PostFilters` no la contempla.
+5. **Modo compacto de `/api/analysis/cross-creators`** — hoy hace N+1 queries (un
    `findByCreator(limit: 10000)` por creador) y enriquece 500 posts. Para MCP hace falta
    `?format=compact&limit=30` que no cargue el mundo entero.
-4. **`GET /api/unipile/person/:id/activity?months=3`** — el filtro duro de menciones, con caché en
+6. **`GET /api/unipile/person/:id/activity?months=3`** — el filtro duro de menciones, con caché en
    Postgres. Es la pieza con más ahorro de trabajo manual de todo el plan.
-5. **Parser de `historial-publicaciones.md`** — leer la tabla de cobertura y las filas de forma
+7. **Job de refresco de la competencia** — `postMonitor` solo vigila cuentas gestionadas y solo 7
+   días; la competencia hoy se refresca a mano. Con presupuesto de llamadas a Unipile.
+8. **Parser de `historial-publicaciones.md`** — leer la tabla de cobertura y las filas de forma
    estructurada, y añadir filas sin romper el formato.
-6. **Wrapper de los validadores** — ejecutar `validar-post.py` / `validar-email.py` sobre un texto
+9. **Wrapper de los validadores** — ejecutar `validar-post.py` / `validar-email.py` sobre un texto
    en memoria y devolver su salida y su exit code.
 
 ---
@@ -237,9 +264,9 @@ De todo el catálogo, esto es lo que **no existe** y hay que picar:
 | Fase | Qué entra | Por qué primero |
 |---|---|---|
 | **F0 · Esqueleto** | `@modelcontextprotocol/sdk` en `backend`, `/mcp` con auth por `MCP_TOKEN`, servidor `stdio` local, 1 tool de humo (`neety_cuentas`) | Verificar transporte y auth antes de escribir 25 tools |
-| **F1 · Escribir un post sin curl** (12 tools) | `neety_cuentas`, `neety_posts`, `neety_post`, `neety_buscar`, `neety_outliers`, `neety_persona`, `neety_persona_activa`, `neety_empresa`, `neety_comentarios_post`, `neety_historial`, `neety_menciones_cruzar`, `neety_validar_post` + los resources de skills | Cubre la receta del mapa y de "Los 10" de punta a punta. **Aquí ya se nota** |
-| **F2 · Diagnóstico y creación** | `neety_analytics`, `neety_crecimiento`, `neety_posts_vivos`, `neety_patrones`, `neety_por_que_funciono`, `neety_comentarios_analisis`, `neety_brainstorm`, `neety_roaster`, `neety_validar_email` + los prompts | Responder "¿por qué funcionó?" y "¿qué escribo?" sin salir del chat |
-| **F3 · Estado y pipeline** | `neety_historial_anotar`, `neety_stats`, `neety_ideas_kanban`, `neety_rastro`, `neety_lm_comentaristas`, bloque F (competencia) | Primeras escrituras, todas reversibles |
+| **F1 · El motor de outliers + escribir un post sin curl** | `neety_outliers_salud` → índices → `neety_outliers_buscar` + `neety_outliers_valores` → el modelo de "outlier nuevo". Más `neety_cuentas`, `neety_posts`, `neety_post`, `neety_persona`, `neety_persona_activa`, `neety_empresa`, `neety_comentarios_post`, `neety_historial`, `neety_menciones_cruzar`, `neety_validar_post` + los resources de skills | Las dos mitades del valor: **consultar el corpus con filtros de verdad**, y la receta del mapa y de "Los 10" de punta a punta |
+| **F2 · Análisis en masa, rutina diaria y creación** | `neety_outliers_agrupar`, `_comparar`, `_terminos`, `neety_leadmagnets`, `neety_refrescar`, `neety_digest` + `neety_analytics`, `neety_crecimiento`, `neety_posts_vivos`, `neety_patrones`, `neety_por_que_funciono`, `neety_brainstorm`, `neety_roaster`, `neety_validar_email` + los prompts | Decidir con datos qué contenido hacer, y que el resumen diario salga solo |
+| **F3 · Estado, pipeline y búsqueda semántica** | `neety_outliers_similares` (pgvector), `neety_historial_anotar`, `neety_stats`, `neety_ideas_kanban`, `neety_rastro`, `neety_lm_comentaristas`, bloque F (competencia) | Buscar sin depender de la categoría; primeras escrituras, todas reversibles |
 | **F4 · Acciones sobre LinkedIn** | `neety_lm_enviar`, `neety_comentario_responder`, `neety_comentario_reaccionar` | Lo irreversible va al final y con `dry_run` |
 
 ---
@@ -267,7 +294,10 @@ De todo el catálogo, esto es lo que **no existe** y hay que picar:
 1. **¿Servidor único remoto o el par remoto+local?** El plan asume el par, porque el validador y el
    historial viven en el repo. La alternativa (subir el historial a Postgres y tener un solo servidor
    remoto) es más limpia a largo plazo pero mueve el estado fuera de git, donde hoy se versiona.
-2. **¿Se expone el corpus de competencia entero (1.894 outliers) o solo el top?** Afecta al diseño de
-   `neety_outliers` y `neety_buscar`.
-3. **¿`neety_historial_anotar` commitea y pushea, o solo edita el fichero?** El plan propone lo
+2. **¿`neety_historial_anotar` commitea y pushea, o solo edita el fichero?** El plan propone lo
    segundo (el commit lo decide quien aprueba el post).
+3. **Las cuatro del motor de outliers** (vocabulario de temas, canal del digest, presupuesto de
+   refresco, si se etiquetan los no-outliers) → deep-dive §7. La primera bloquea la fase 1.
+
+> El corpus de competencia deja de ser una decisión abierta: con el buscador paginado y la salida de
+> una línea por post, se expone **entero pero por consulta**, nunca volcado.
