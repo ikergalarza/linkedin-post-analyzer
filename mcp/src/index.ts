@@ -20,6 +20,50 @@ function error(e: unknown) {
   return { content: [{ type: 'text' as const, text: msg }], isError: true };
 }
 
+function minutos(seg: number | null): string {
+  if (seg == null) return '—';
+  return seg < 90 ? `${seg}s` : `${Math.round(seg / 60)} min`;
+}
+
+/** El progreso de un refresco, en texto. */
+function renderEstado(e: any): string {
+  const pct = e.total ? Math.round((e.procesados / e.total) * 100) : 0;
+  const cabecera: Record<string, string> = {
+    en_curso: `⏳ En curso — ${e.procesados}/${e.total} creadores (${pct}%)`,
+    terminado: `✅ Terminado — ${e.procesados}/${e.total} creadores`,
+    fallido: `❌ Falló — ${e.procesados}/${e.total} procesados antes de caerse`,
+    abandonado: `⚠️ Abandonado — ${e.procesados}/${e.total}. El proceso murió; lo procesado se guardó`,
+  };
+  const lineas = [
+    cabecera[e.estado] || e.estado,
+    '',
+    `Ámbito: ${e.ambito} · lleva ${minutos(e.segundos_transcurridos)}` +
+      (e.segundos_por_creador != null ? ` · ${e.segundos_por_creador}s por creador` : ''),
+  ];
+  if (e.estado === 'en_curso') {
+    lineas.push(
+      `Quedan ~${minutos(e.segundos_restantes_estimados)}` +
+        (e.creador_actual ? ` · ahora mismo: ${e.creador_actual}` : '')
+    );
+  }
+  lineas.push(
+    '',
+    `Posts nuevos: ${e.posts_nuevos}`,
+    `Eventos: ${e.eventos.nuevo} nuevos · ${e.eventos.promovido} promovidos · ${e.eventos.degradado} degradados`
+  );
+  if (e.con_error > 0) {
+    lineas.push('', `Creadores con error: ${e.con_error}`);
+    for (const err of (e.errores || []).slice(0, 8)) {
+      lineas.push(`  · ${err.nombre || '?'}: ${err.error}`);
+    }
+  }
+  if (e.error) lineas.push('', `Error del job: ${e.error}`);
+  if (e.estado === 'terminado' && e.eventos.nuevo + e.eventos.promovido > 0) {
+    lineas.push('', 'Ya puedes llamar a neety_digest para el resumen de lo más viral.');
+  }
+  return lineas.join('\n');
+}
+
 // Los filtros del buscador, compartidos por buscar / valores / agrupar /
 // comparar. Se declaran una vez para que las cuatro tools acepten exactamente
 // lo mismo y no haya que recordar cual soporta que.
@@ -80,56 +124,80 @@ const filtrosBase = {
 servidor.registerTool(
   'neety_refrescar',
   {
-    title: 'Refrescar la base de outliers',
+    title: 'Arrancar el refresco de la base de outliers',
     description:
-      'Reescanea creadores contra LinkedIn, recalcula los outliers y registra qué ha entrado y ' +
-      'qué ha salido. Empieza por los creadores que llevan más tiempo sin escanearse, con un ' +
-      'presupuesto de llamadas: en varias vueltas se recorre todo el corpus sin reventar la ' +
-      'cuota de Unipile. Devuelve el resumen de lo que ha cambiado. Después, neety_digest.',
+      'Lanza el reescaneo de creadores contra LinkedIn y VUELVE EN EL ACTO — el trabajo sigue en ' +
+      'segundo plano porque con muchos creadores tarda minutos, bastante más que el timeout de ' +
+      'una tool. NO vuelvas a llamar a esta tool para ver si terminó: usa neety_refrescar_estado.',
     inputSchema: {
       ambito: z
         .enum(['competencia', 'propias', 'todas'])
         .optional()
-        .describe('Por defecto competencia: las cuentas propias ya las vigila el monitor cada 15 min'),
-      limite: z.number().optional().describe('Creadores a refrescar en esta vuelta (1-60, por defecto 15)'),
-      creator_ids: z.array(z.string()).optional().describe('Refrescar unos concretos, saltándose el orden'),
+        .describe('Por defecto competencia: las propias ya las vigila el monitor cada 15 min'),
+      limite: z
+        .number()
+        .optional()
+        .describe('Creadores en esta vuelta (por defecto 25, máximo 500)'),
+      creator_ids: z.array(z.string()).optional(),
     },
     annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
   },
   async (args) => {
     try {
+      const conteo: any = await api.get('/api/outliers/creadores/conteo');
       const r: any = await api.post('/api/outliers/refresh', args);
 
-      if (r.saltado_por_concurrencia) {
-        return texto('Ya hay un refresco en curso. Espera a que acabe — no se lanzan dos a la vez.');
-      }
-
-      const errores = r.detalle.filter((d: any) => d.estado !== 'ok');
-      const lineas = [
-        `Refresco (${r.ambito}) terminado.`,
-        '',
-        `Creadores refrescados: ${r.creadores_refrescados}` +
-          (r.creadores_con_error ? ` · con error: ${r.creadores_con_error}` : ''),
-        `Posts nuevos: ${r.posts_nuevos}`,
-        `Eventos: ${r.eventos.nuevo} nuevos · ${r.eventos.promovido} promovidos · ${r.eventos.degradado} degradados`,
-      ];
-
-      if (r.eventos.promovido > 0) {
-        lineas.push(
-          '',
-          '"Promovido" = post viejo que ha cruzado el umbral porque bajó la media del creador, ' +
-            'no porque le haya pasado nada nuevo. Trátalo distinto de un "nuevo".'
+      if (r.ya_habia_uno) {
+        const e: any = await api.get(`/api/outliers/refresh/estado${qs({ job_id: r.job.id })}`);
+        return texto(
+          'Ya hay un refresco en curso, no se ha lanzado otro.\n\n' +
+            renderEstado(e) +
+            '\n\nUsa neety_refrescar_estado para seguirlo.'
         );
       }
-      if (errores.length) {
-        lineas.push('', 'Con error:');
-        for (const e of errores.slice(0, 10)) lineas.push(`  · ${e.nombre || e.id}: ${e.estado}`);
-      }
-      if (r.eventos.nuevo + r.eventos.promovido > 0) {
-        lineas.push('', 'Llama a neety_digest para el resumen de lo más viral del momento.');
+      if (r.job.total === 0) {
+        return texto(
+          `No hay creadores que refrescar en el ámbito "${r.job.ambito}".\n\n` +
+            `Disponibles: ${conteo.competencia} de competencia · ${conteo.propias} propias.`
+        );
       }
 
-      return texto(lineas.join('\n'));
+      const estimado = Math.round((r.job.total * 4) / 60);
+      return texto(
+        [
+          `Refresco arrancado (${r.job.ambito}).`,
+          '',
+          `Creadores en esta vuelta: ${r.job.total} de ${conteo.total} en total` +
+            (conteo.sin_escanear ? ` · ${conteo.sin_escanear} sin escanear nunca` : ''),
+          `Estimado: ~${estimado} min (a ojo, hasta que haya medidas reales)`,
+          `job_id: ${r.job.id}`,
+          '',
+          'Corre en segundo plano. Llama a neety_refrescar_estado dentro de un rato para ver cómo ' +
+            'va — no vuelvas a llamar a neety_refrescar, eso no lo acelera.',
+        ].join('\n')
+      );
+    } catch (e) {
+      return error(e);
+    }
+  }
+);
+
+servidor.registerTool(
+  'neety_refrescar_estado',
+  {
+    title: 'Cómo va el refresco',
+    description:
+      'El progreso del refresco en curso (o el resultado del último): cuántos creadores lleva, ' +
+      'cuánto queda, qué eventos ha generado y qué creadores han fallado. Es la forma de saber ' +
+      'si terminó — la tool que lo arranca vuelve antes de que acabe.',
+    inputSchema: { job_id: z.string().optional().describe('Por defecto, el más reciente') },
+    annotations: { readOnlyHint: true },
+  },
+  async ({ job_id }) => {
+    try {
+      const e: any = await api.get(`/api/outliers/refresh/estado${qs({ job_id })}`);
+      if (!e || e.estado === null) return texto('No se ha lanzado ningún refresco todavía.');
+      return texto(renderEstado(e));
     } catch (e) {
       return error(e);
     }
@@ -318,7 +386,14 @@ servidor.registerTool(
         .optional()
         .describe('Por defecto ratio. Usa `percentil` cuando mezcles cuentas propias y competencia'),
       limit: z.number().optional().describe('1-100, por defecto 25'),
-      offset: z.number().optional(),
+      cursor: z
+        .string()
+        .optional()
+        .describe(
+          'Para recorrer TODO el corpus: pasa aquí el `cursor` de la llamada anterior. Continúa ' +
+            'donde se quedó aunque haya un refresco corriendo. No cambies el `orden` a mitad'
+        ),
+      offset: z.number().optional().describe('Salto directo. Para recorrer todo usa `cursor`'),
     },
     annotations: { readOnlyHint: true },
   },
@@ -327,9 +402,11 @@ servidor.registerTool(
       const r: any = await api.get(`/api/outliers/buscar${qs(args)}`);
       if (!r.filas.length) {
         return texto(
-          'Sin resultados.\n\nAntes de dar la búsqueda por vacía: si filtraste por `tema` o ' +
-            '`pilar`, mira qué valores existen con neety_outliers_valores — las etiquetas están ' +
-            'incompletas. Con `q` buscas en el texto y te saltas ese problema.'
+          args.cursor
+            ? 'Fin de la lista: no quedan más resultados.'
+            : 'Sin resultados.\n\nAntes de dar la búsqueda por vacía: si filtraste por `tema` o ' +
+                '`pilar`, mira qué valores existen con neety_outliers_valores — las etiquetas ' +
+                'están incompletas. Con `q` buscas en el texto y te saltas ese problema.'
         );
       }
 
@@ -345,6 +422,7 @@ servidor.registerTool(
             mezclaMetodos: mezcla,
             sinEtiqueta: sinTema,
             nota: `orden: ${r.orden}`,
+            cursor: r.cursor_siguiente,
           })
       );
     } catch (e) {

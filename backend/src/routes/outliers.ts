@@ -9,7 +9,12 @@ import {
   EJES_VALIDOS,
   DIMENSIONES_VALIDAS,
 } from '../services/outlierQuery';
-import { refrescarOutliers, AmbitoRefresco } from '../services/outlierRefresh';
+import {
+  arrancarRefresco,
+  estadoRefresco,
+  contarCreadores,
+  AmbitoRefresco,
+} from '../services/outlierRefresh';
 import {
   novedadesOutliers,
   marcarEventosEnviados,
@@ -77,6 +82,7 @@ function filtrosDeQuery(q: any): FiltrosOutliers {
     orden: q.orden || undefined,
     limit: num(q.limit),
     offset: num(q.offset),
+    cursor: q.cursor || undefined,
   };
 }
 
@@ -85,7 +91,7 @@ function filtrosDeQuery(q: any): FiltrosOutliers {
 router.get('/buscar', async (req: Request, res: Response) => {
   try {
     const filtros = filtrosDeQuery(req.query);
-    const { filas, total, orden } = await buscarOutliers(filtros);
+    const { filas, total, orden, cursor_siguiente } = await buscarOutliers(filtros);
     res.json({
       filas,
       total,
@@ -93,7 +99,8 @@ router.get('/buscar', async (req: Request, res: Response) => {
       orden,
       // Sin esto, una respuesta corta se lee como "no hay mas" cuando en
       // realidad es que el limite corto la lista.
-      hay_mas: (filtros.offset || 0) + filas.length < total,
+      hay_mas: cursor_siguiente !== null,
+      cursor_siguiente,
       ordenes_validos: ORDENES_VALIDOS,
     });
   } catch (err: any) {
@@ -194,8 +201,10 @@ router.get('/salud', async (_req: Request, res: Response) => {
 });
 
 // --- POST /api/outliers/refresh --------------------------------------------
-// Dispara el refresco. Sincrono a proposito: quien lo llama (una tool del MCP
-// o un cron) quiere el resumen de lo que ha cambiado, no un 202 y a mirar.
+// Arranca el refresco y vuelve EN EL ACTO con un id. El trabajo sigue por su
+// cuenta: 145 creadores son ~10 minutos y el timeout de una tool MCP son 60
+// segundos, asi que esperar aqui garantizaba que quien lo lanzo nunca viera
+// el final. Se pregunta por el en GET /refresh/estado.
 
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
@@ -203,10 +212,34 @@ router.post('/refresh', async (req: Request, res: Response) => {
     const limite = num(req.body?.limite ?? req.query.limite);
     const creator_ids = lista(req.body?.creator_ids ?? req.query.creator_ids);
 
-    const resultado = await refrescarOutliers({ ambito, limite, creator_ids });
-    res.json(resultado);
+    const r = await arrancarRefresco({ ambito, limite, creator_ids });
+    res.status(r.arrancado ? 202 : 409).json(r);
   } catch (err: any) {
     console.error('[outliers/refresh]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- GET /api/outliers/refresh/estado --------------------------------------
+// Como va (o como fue) un refresco. Sin job_id, el mas reciente.
+
+router.get('/refresh/estado', async (req: Request, res: Response) => {
+  try {
+    const estado = await estadoRefresco(req.query.job_id as string | undefined);
+    if (!estado) return res.json({ estado: null, mensaje: 'No se ha lanzado ningún refresco todavía.' });
+    res.json(estado);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- GET /api/outliers/creadores/conteo ------------------------------------
+// Cuantos creadores hay por ambito, para dimensionar la vuelta antes de lanzarla.
+
+router.get('/creadores/conteo', async (_req: Request, res: Response) => {
+  try {
+    res.json(await contarCreadores());
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
