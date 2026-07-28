@@ -42,6 +42,7 @@ El error de bulto va en las dos direcciones y las dos matan:
 - **Formatos que suenan accionables** (usa estas palabras, evita abstracciones): checklist · plantilla · diagnóstico · calculadora · auditoría · playbook · guía paso a paso · framework · mapa · score.
 - **Personalizado > genérico.** Un diagnóstico sobre SU caso convierte mucho más que un PDF igual para todos. Es lo que ya sabemos del post: la entrega LIVE (8.52x · 483 com.) bate al PDF. Lo mismo aplica a la web.
 - **El título vende el RESULTADO, no el formato.** ❌ "PDF gratuito" · ✅ *"Checklist para detectar si tus mensajes de LinkedIn parecen automatizados"*.
+- **⭐ EL TÍTULO DEL RECURSO Y EL H1 DEL GATE SON EL GANCHO DEL POST, CASI PALABRA POR PALABRA (Iker, 2026-07-27).** Quien aterriza en el gate viene de leer el post y de comentar la palabra: tiene que **reconocer la misma frase** en la primera línea. Un título descriptivo y neutro ("La rutina de prospección industrial que no depende de una herramienta") rompe la promesa y hace dudar de si ha llegado al sitio correcto. Si el post dice *"la prospección manual ha muerto buscando"*, el gate abre con *"La prospección manual ha muerto buscando clientes."* La palabra del gate (`manual`) va además en el `<em>` coral, y así gancho, palabra clave y titular son la misma cosa.
 
 ---
 
