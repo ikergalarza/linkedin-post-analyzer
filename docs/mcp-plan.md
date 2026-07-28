@@ -3,10 +3,13 @@
 > Catálogo de endpoints (tools MCP) posibles, de dónde sale cada uno y en qué orden construirlos.
 > Fecha: 2026-07-28.
 >
-> **ESTADO: el bloque B (outliers) está construido y es instalable** — servidor en `mcp/`,
-> instrucciones en `mcp/README.md`. Doce tools: refresco, digest diario, buscador, facetas,
-> agregados, comparación de ventanas, detalle de post, cuentas, salud y diagnóstico. El resto del
-> catálogo sigue en propuesta.
+> **ESTADO: el bloque B (outliers) está construido y es instalable.** Instrucciones en
+> `mcp/README.md`. Once tools: refresco, digest diario, buscador, facetas, agregados, comparación
+> de ventanas, detalle de post, cuentas y salud. **Los dos transportes del §2 existen**: el
+> Streamable HTTP montado en el backend (`/mcp`, `backend/src/mcp/`) es la vía principal —se
+> conecta con un comando desde Claude Code local o remoto, claude.ai o el móvil, sin clonar nada—
+> y el stdio de `mcp/` queda para apuntar a un `localhost`. El resto del catálogo sigue en
+> propuesta.
 
 ---
 
@@ -44,11 +47,18 @@ cada mañana un resumen de las novedades. Ese bloque tiene documento propio:
 | **claude.ai / móvil** (escribir un post desde el sofá) | **HTTP remoto obligatorio** | Solo lectura + generación. Nada que toque el repo |
 | **Automatizaciones** (cron: "resume la semana", monitor de outliers) | HTTP remoto | Lectura + escritura acotada |
 
-**Decisión recomendada:** un solo servidor **Streamable HTTP montado en el propio backend Express**
-(`/mcp`), porque cubre a los tres y hereda despliegue, Postgres y credenciales de Unipile que ya
-están en Railway. Para las tools que tocan el repo (validador, historial) se añade **un segundo
-servidor `stdio` mínimo** que corre local, porque el fichero `historial-publicaciones.md` y
+**Decisión recomendada, y ya implementada:** un servidor **Streamable HTTP montado en el propio
+backend Express** (`/mcp`), porque cubre a los tres y hereda despliegue, Postgres y credenciales de
+Unipile que ya están en Railway. Para las tools que tocan el repo (validador, historial) hace falta
+**un segundo servidor `stdio`** que corra local, porque `historial-publicaciones.md` y
 `scripts/validar-post.py` viven en el working copy, no en el server.
+
+> **Lección de la primera entrega:** el stdio se construyó primero por ser más simple, y fue un
+> error de orden. Ninguna de las once tools de outliers toca el repo —todas consultan Postgres— así
+> que el stdio era un intermediario de algo que ya vivía en Railway, y encima dejaba fuera los tres
+> sitios desde los que más se consulta: una sesión remota de Claude Code, claude.ai y el móvil.
+> **El stdio solo se justifica cuando una tool necesita ficheros del working copy.** Hoy ninguna lo
+> hace; llegará con el validador y el historial.
 
 ```
 ┌─ Railway (backend Express) ──────────────┐     ┌─ Portátil ────────────────┐

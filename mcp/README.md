@@ -1,29 +1,134 @@
 # neety-mcp — el corpus de outliers como herramientas
 
-Servidor MCP que expone la base de outliers de Neety (las 3 cuentas propias + la competencia)
-para consultarla, analizarla en masa y refrescarla desde cualquier cliente MCP: Claude Code,
-Claude Desktop o un cron.
+Expone la base de outliers de Neety (las 3 cuentas propias + la competencia) para consultarla,
+analizarla en masa y refrescarla desde cualquier cliente MCP.
 
 No escribe posts. Sirve **datos, agregados y refresco** — el criterio de escritura sigue en
 `docs/skills/`.
 
+## Hay dos formas de conectarlo. Elige una
+
+| | **A · Remoto (HTTP)** ← empieza por aquí | **B · Local (stdio)** |
+|---|---|---|
+| Dónde corre | En el backend de Railway, ya desplegado | Un proceso en tu máquina |
+| Qué necesitas | Una URL y una cabecera | El repo clonado, Node y compilar |
+| Funciona desde | Claude Code local **y remoto**, claude.ai, el móvil | Solo el equipo donde lo instalaste |
+| Instalación | **Un comando** | Clonar + `npm install` + `npm run build` + registrar |
+| Código | `backend/src/mcp/` | Esta carpeta |
+
+**La A vale para casi todo el mundo.** La B tiene sentido si quieres apuntar a un backend en
+`localhost` mientras desarrollas, o si algún día se añaden tools que lean ficheros del repo (el
+validador, el historial de publicaciones), que por definición no pueden vivir en Railway.
+
 ---
 
-## Instalación
+# A · Remoto por HTTP (recomendado)
 
-### 1. Requisito previo: el backend
+No hay nada que clonar ni compilar: el servidor ya va dentro del backend, en `/mcp`.
 
-El MCP no habla con Postgres, habla con el backend. Necesita una versión desplegada que incluya
-las rutas `/api/outliers` (las añade esta misma rama). Para comprobarlo, una vez instalado:
+### 1. Codifica las credenciales
+
+El MCP se autentica con el **mismo Basic Auth que el resto de la app** — las credenciales que ya
+tienes en Railway, no unas nuevas. Hay que pasarlas en base64:
+
+**macOS / Linux:**
+
+```bash
+echo -n 'USUARIO:CONTRASEÑA' | base64
+```
+
+**Windows (PowerShell):**
+
+```powershell
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('USUARIO:CONTRASEÑA'))
+```
+
+El `-n` de macOS no es opcional: sin él, `base64` mete un salto de línea en la cadena y el backend
+devuelve 401.
+
+### 2. Registra el servidor
+
+Sustituye la URL y el resultado del paso anterior. Es el mismo comando en los dos sistemas (en
+Windows, todo en una línea):
+
+```bash
+claude mcp add --transport http --scope user neety https://TU-BACKEND.up.railway.app/mcp --header "Authorization: Basic EL-BASE64-DEL-PASO-1"
+```
+
+**El orden importa y no es el que parece.** `--header` admite varios valores, así que va **el
+último**: puesto antes de la URL se la traga como si fuera otra cabecera y el CLI corta con
+`missing required argument 'commandOrUrl'`. El resto de opciones, delante del nombre.
+
+Los otros dos detalles que rompen la instalación:
+
+- **`/mcp` al final de la URL.** Sin eso apuntas al frontend y te devuelve HTML.
+- **`--scope user`** no es opcional en la práctica: el scope por defecto es `local` y registra el
+  servidor solo para el directorio desde el que lanzaste el comando. El MCP se usa desde cualquier
+  conversación, no solo desde este repo.
+
+### 3. Comprueba
+
+```bash
+claude mcp list
+```
+
+Tiene que salir `neety: https://… (HTTP) - √ Connected`. Después reinicia Claude Code —no recoge
+servidores nuevos en una sesión ya abierta— y pídele:
 
 ```
-neety_estado
+usa neety_cuentas
 ```
 
-Si responde `Rutas /api/outliers: NO disponibles`, el backend está vivo pero es una versión
-anterior: despliega y vuelve a intentarlo.
+Si te devuelve la tabla de las 3 cuentas, está conectado de verdad.
 
-### 2. Compilar
+### Claude Desktop
+
+Mismo servidor, otra sintaxis. En `claude_desktop_config.json`:
+
+| Sistema | Dónde está el fichero |
+|---|---|
+| **macOS** | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| **Windows** | `%APPDATA%\Claude\claude_desktop_config.json` |
+
+```json
+{
+  "mcpServers": {
+    "neety": {
+      "type": "http",
+      "url": "https://TU-BACKEND.up.railway.app/mcp",
+      "headers": { "Authorization": "Basic EL-BASE64" }
+    }
+  }
+}
+```
+
+Hay que **reiniciar Claude Desktop** después de tocarlo: no relee el fichero solo.
+
+### Si algo falla
+
+| Síntoma | Causa | Solución |
+|---|---|---|
+| `missing required argument 'commandOrUrl'` | `--header` va antes de la URL y se la traga | Pon `--header` **el último** |
+| `401` | El base64 está mal o lleva un salto de línea | Rehaz el paso 1 **con `-n`** |
+| `404` | Falta `/mcp` al final de la URL | Corrígela |
+| Responde HTML | La URL apunta al frontend, no al backend | Usa la URL del servicio de Railway |
+| `405` | Estás haciendo GET | El transporte usa POST; el cliente ya lo hace solo |
+| No aparece en `claude mcp list` | Se registró con scope `local` desde otro directorio | Vuelve a añadirlo con `--scope user` |
+| Las tools existen pero fallan | El backend es una versión anterior a `/api/outliers` | Despliega `main` |
+
+Para cambiar algo, lo más rápido es borrar y volver a añadir:
+
+```bash
+claude mcp remove neety --scope user
+```
+
+---
+
+# B · Local por stdio
+
+Para apuntar a un backend en `localhost` o si prefieres que el proceso corra en tu equipo.
+
+### 1. Compilar
 
 Requiere **Node 18 o superior** (el servidor usa `fetch` nativo).
 
@@ -47,7 +152,7 @@ cd             :: apunta esta ruta: la necesitas en el paso 3
 
 Al terminar tiene que existir `dist/index.js`. Ese fichero es lo que ejecuta Claude.
 
-### 3. Registrarlo en Claude Code
+### 2. Registrarlo en Claude Code
 
 **macOS / Linux** (el `\` parte la línea; también vale todo seguido):
 
@@ -86,7 +191,7 @@ claude mcp add neety --scope user -e NEETY_API_URL=https://TU-BACKEND.up.railway
 3. **La contraseña, entre comillas simples** si lleva caracteres raros (`$`, `!`, espacios). En
    macOS y Linux la shell se los come; en PowerShell, comillas simples también.
 
-### 4. Comprobar que ha entrado
+### 3. Comprobar que ha entrado
 
 ```
 claude mcp list
@@ -101,7 +206,7 @@ neety_estado
 Te dice las tres cosas que pueden fallar por separado: a qué backend apunta, si las credenciales
 valen y si las rutas `/api/outliers` están desplegadas.
 
-### Claude Desktop (alternativa)
+### Claude Desktop (con stdio)
 
 El fichero de configuración es `claude_desktop_config.json`:
 
@@ -149,34 +254,19 @@ El fichero de configuración es `claude_desktop_config.json`:
 Con barra simple el JSON no parsea y el servidor no arranca sin decir por qué. En los dos sistemas
 hay que **reiniciar Claude Desktop** después de tocar el fichero: no lo relee solo.
 
-### Variables de entorno
+### Variables de entorno (solo modo local)
 
 | Variable | Obligatoria | Qué es |
 |---|---|---|
 | `NEETY_API_URL` | sí | La URL del backend. Por defecto `http://localhost:3001` |
-| `APP_BASIC_USER` / `APP_BASIC_PASS` | sí en producción | Las mismas del Basic Auth del backend. Sin ellas, todo devuelve 401 |
+| `APP_BASIC_USER` / `APP_BASIC_PASS` | sí contra producción | Las mismas del Basic Auth del backend |
 | `NEETY_TIMEOUT_MS` | no | Por defecto 15 min, porque `neety_refrescar` escanea LinkedIn y tarda |
 
 Las credenciales van en la config del cliente, **nunca en el repo**.
 
-### Si algo falla
-
-Llama primero a `neety_estado`: separa los tres fallos posibles en vez de dejarte adivinando.
-
-| Síntoma | Causa | Solución |
-|---|---|---|
-| El servidor no aparece en `claude mcp list` | Se registró con scope `local` desde otro directorio | Vuelve a añadirlo con `--scope user` |
-| `Salud: FALLA — No se pudo conectar` | `NEETY_API_URL` mal, o el backend caído | Comprueba la URL en el navegador (`/api/health`) |
-| `El backend ha devuelto 401` | Faltan o no valen `APP_BASIC_USER` / `APP_BASIC_PASS` | Cópialas tal cual de Railway |
-| `Rutas /api/outliers: NO disponibles` | El backend está vivo pero es una versión anterior | Despliega `main` |
-| `Cannot find module .../dist/index.js` | No se compiló, o la ruta no es absoluta | `npm run build` y revisa la ruta |
-| `neety_digest` dice "sin novedades" varios días | `outlier_events` está vacía: nadie ha refrescado | Corre `neety_refrescar` |
-
-Para cambiar una variable después de instalarlo, lo más rápido es borrar y volver a añadir:
-
-```bash
-claude mcp remove neety --scope user
-```
+En modo local hay una tool extra, **`neety_estado`**, que diagnostica la conexión: a qué backend
+apunta, si las credenciales valen y si las rutas `/api/outliers` están desplegadas. En modo remoto
+no hace falta — si no conectas, el propio cliente te lo dice.
 
 ---
 
