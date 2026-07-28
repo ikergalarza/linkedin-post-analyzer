@@ -113,6 +113,11 @@ PALABRA DEL GATE (la que comentan en LinkedIn): "[X]"
 CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
 - Lee docs/lead-magnet-playbook.md entero. Los recursos ya publicados son la
   especificación: no inventes CSS ni patrones nuevos, reutiliza los suyos.
+- LOS COMPORTAMIENTOS COMUNES SE HEREDAN, Y VAN NOMBRADOS UNO A UNO porque
+  "reutiliza los patrones" a secas se salta: el HEADER STICKY, el SCROLL
+  SUAVIZADO y las ANIMACIONES DE ENTRADA de los bloques al hacer scroll. Cópialos
+  de un recurso ya publicado, con los mismos tiempos y curvas: si el recurso
+  nuevo se comporta distinto al resto, canta aunque el copy sea perfecto.
 - MIDE, NO ESTIMES. Levanta un estático y mide los gates que ya existen. El
   número de caracteres NO es la restricción: lo es el número de LÍNEAS
   RENDERIZADAS (57 caracteres cabían en 2 líneas y 61 no). Mide contenido a
