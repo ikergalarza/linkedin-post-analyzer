@@ -35,6 +35,15 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 - La **regla de la palabra naranja se mantiene**, solo cambia el tono exacto.
 - **Tipografía sin cambios:** Bricolage Grotesque en títulos, botones y textos cortos; Switzer en texto corrido y anotaciones (pág. 19-20).
 
+## ⭐ 0a-quater · EL TEXTO DE LA IMAGEN SIEMPRE LEGIBLE (Iker, 2026-07-27)
+
+**Todo texto que metamos en una foto tiene que leerse comodo EN EL FEED Y EN EL MOVIL**, que es donde entra la mayoria. No vale que se lea bien en el fichero a tamano completo: la imagen se ve reducida y a un pulgar de distancia.
+
+- **Al generar, pidelo explicitamente**: que el texto de dentro (cabeceras, filas, etiquetas) sea grande y comodo de leer en movil.
+- **Si no cabe, el sitio se saca de los margenes y del interlineado**, y si hace falta se baja el titular. Lo que NO se hace es encoger el contenido: el contenido ES la prueba del recurso.
+- Al pedirlo, dale una **operacion y un espacio** (`§0c`), nunca un juicio: *"agranda el texto de la tabla y aprovecha el espacio que sobra a los lados"*, no *"que se vea mejor"*.
+- Caso real (lead magnet de prospeccion manual, 2026-07-27): el titular se comia el protagonismo y la tabla quedaba pequena. Se agrando la tabla usando margenes e interlineado y se bajo el titular: quedo legible sin perder ninguna fila.
+
 ## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
 > Aplica a **los 4 pilares y a cualquier foto que publiquemos**: meme, mapa, "Los 10", lead magnet, evento. Es lo primero que se comprueba y lo último que se negocia.
 
