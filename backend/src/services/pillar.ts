@@ -112,7 +112,12 @@ function contarPiezas(texto: string): number {
  */
 function pareceMeme(texto: string): boolean {
   const lineas = texto.split('\n').filter((l) => l.trim()).length;
-  if (texto.length > 700 || lineas > 16) return false;
+  // 850/18 medido contra los memes REALES de las 3 cuentas (Iker, 2026-07-29),
+  // no elegido a ojo. Con 700 se quedaba fuera el meme del tiburon (750 car,
+  // 13 lineas, 1.63x), que es el mas largo que hemos publicado. El siguiente
+  // post por encima de ese umbral ya NO es meme: el "pais inventado" de Unai
+  // (885 car), que es su propio formato con dibujo. La linea cae en ese hueco.
+  if (texto.length > 850 || lineas > 18) return false;
   const arranque = texto.slice(0, 60).toUpperCase();
   if (arranque.includes('🚨') || arranque.includes('ÚLTIMA HORA') || arranque.includes('ULTIMA HORA')) return false;
   return true;
