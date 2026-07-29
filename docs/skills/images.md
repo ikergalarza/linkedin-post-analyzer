@@ -355,6 +355,12 @@ Fuera del bloque solo queda **lo que se adjunta como fichero** (`§0i`): la refe
 
 **Regla: cada vez que entregues un prompt de diseñador, debajo y FUERA del bloque, va una lista corta de lo que hay que adjuntar.** Solo lo que viaja aparte — no repitas colores, tipografia ni formato, que ya van dentro del prompt.
 
+**⚠️ EN LOS DE EDICION TAMBIEN, Y CON EL EMOJI DE ALERTA (Iker, 2026-07-29).** Aqui ponia "prompt de diseñador" y yo lo lei como "prompt de calca", asi que en los de EDICION solte la ruta del fichero en una linea suelta, sin aviso y sin destacar. **Vale exactamente igual para los dos.** Un prompt de edicion pide adjuntos constantemente: la foto de perfil que hay que meter, un logo, una fuente, una captura nueva. Y si falta, el generador se inventa una cara, que es peor que en la calca, no mejor.
+
+**El formato, siempre el mismo:** justo debajo del bloque cercado, fuera de el, una linea que empieza por **⚠️** con la **ruta completa del fichero**. Si son varios, un ⚠️ y debajo la lista. Y si alguno tumba la pieza si falta, se dice en esa misma linea.
+
+> ⚠️ **Adjunta al prompt:** `C:\Users\LENOVO\Documents\Mario\LINKEDIN GROWTH\unai.jpeg`. Sin esta foto el generador se inventa la cara del avatar.
+
 Lo que suele entrar en esa lista:
 - **La referencia**, siempre que el prompt diga "calca" (meme casi siempre, lead magnet cuando la referencia tiene imagen buena — `post-workflow §4.5.-1`).
 - **Los instaladores de las fuentes**, siempre que el prompt las nombre (`§0h`: si las nombras, di que las adjuntas).
