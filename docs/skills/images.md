@@ -304,6 +304,16 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 - Cierra en minusculas con **deja todo lo demas intacto y no toques nada que no te he pedido**.
 Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque rojo de abajo), no COMO se le escribe.
 
+**🚨 CHEQUEO OBLIGATORIO ANTES DE PEGAR CUALQUIER PROMPT DE IMAGEN (Iker, 2026-07-29).** La regla llevaba escrita desde el 27 y aun asi entregue un prompt con `UNO, DOS, TRES`, ocho comillas y la contencion AL PRINCIPIO. **No fallo la receta, falle yo por no releerla.** Asi que ahora se relee esto, literal, antes de pegar el prompt en la respuesta. Los cinco puntos, uno por uno:
+
+1. **¿Empieza por `SOLO HAZ LO QUE TE PIDO:`?** Si empieza por cualquier otra cosa, esta mal. Nada de "edita esta imagen", nada de "coge esta imagen".
+2. **¿La contencion esta AL FINAL?** `deja todo lo demas intacto y no toques nada que no te he pedido` va **en la ultima frase**. Ponerla al principio la convierte en ruido que el generador se come antes de leer las ordenes.
+3. **¿Cero simbolos raros?** Ni `UNO, DOS, TRES`, ni `(1)`, ni comillas, ni barras `/`, ni parentesis. Si hay que citar un texto literal, se dice **sin comillas**: *cambia la hora de las 10:46 a las 09:47*.
+4. **¿Es CORTO?** Una orden por frase, frases cortas, todo del tirado en un parrafo. Si ocupa mas de 10 lineas, sobra la mitad.
+5. **¿Repite algo que la imagen ya tiene bien?** Si es de EDICION, fuera. Solo van los cambios.
+
+**La forma de fallar este chequeo es no hacerlo.** Si el prompt anterior salio bien, este sale igual: se copia el molde, no se improvisa.
+
 **🔴 DECIDE PRIMERO: ¿edicion o calca-de-cero? (Iker, 2026-07-23, me equivoque en esto).** Si el usuario YA te ha pasado una version generada de la imagen, el prompt es de **EDICION sobre ESA**: solo los cambios, NUNCA re-describas la calca entera de la referencia. El "calca esta referencia desde cero" (`§0h`/`§4.4` Paso 6b) es SOLO para la primera version, cuando aun no hay imagen. Di el mismo prompt-de-calca por segunda vez y le haces re-generar de cero lo que ya tenia bien (colores, maqueta, fuentes). Antes de escribir el prompt: ¿hay ya una imagen? → edicion. ¿No la hay? → calca.
 
 **FORMATO EXACTO (vale para EDICION y para CALCA; lo unico que cambia es el contenido):**
