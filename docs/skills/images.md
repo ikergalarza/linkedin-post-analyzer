@@ -76,6 +76,15 @@ Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo m
 
 **La prueba para no dudar:** si al quitar ese elemento el chiste sigue funcionando, es un detalle y se cambia. Si al quitarlo el chiste se cae, es la esencia y se respeta.
 
+### 0a-septima-bis · LA PERSPECTIVA DEL PANTALLAZO (Iker, 2026-07-29)
+
+Antes de repartir nombres y fotos, **decide desde qué bandeja se ve la captura**, porque de eso depende quién es quién. Y esa decisión la manda el CUERPO del post, no la referencia.
+
+- **Si el post está escrito en primera persona activa** (*"a mí no me dejan en visto"*, *"lo que yo hago es…"*) → la captura es de **ENVIADOS**. El dueño de la cuenta es el remitente (`me`), su foto va en el avatar, y el destinatario es el cliente: solo su nombre, sin foto.
+- **Si el post está escrito en primera persona receptora** (*"me llegó esto"*, *"mira lo que me contestaron"*) → la captura es de **RECIBIDOS**. El dueño de la cuenta **NO puede aparecer como remitente**, porque nadie se manda correos a sí mismo. El remitente es otra persona: nombre vasco de la lista de rotación y, como cara, **una foto de stock libre de derechos** de un empresario de 20-30 años que dé el pego en el País Vasco. Nunca la cara de un cliente real ni la de un tercero identificable.
+
+**El error que hay que evitar:** heredar la bandeja de la referencia sin mirar si el cuerpo que hemos escrito va en esa dirección. Si no cuadran, la imagen desmiente al texto en el primer segundo.
+
 ## ⭐ 0a-sexta-bis · LA PALETA DE MARCA NO SE APLICA A LOS SCREENSHOTS DOCUMENTALES (Iker, 2026-07-29)
 
 La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infografías, orlas, portadas de guía, carteles. **NO se aplica cuando la imagen IMITA UNA PANTALLA REAL** (un correo de Gmail, un chat de LinkedIn, la app del banco, un CRM, un panel de analíticas).
