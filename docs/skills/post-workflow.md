@@ -669,6 +669,10 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
 **Referentes (de nuestra BD, `/api/ideas/inspiration`):** **Josh Braun** (39x *"My mom died yesterday"*, 29x *"When I was younger in sales, I'd get on a plane…"*), **Daniel Disney** (16 outliers: *"I hired the smartest person in the room once"*, *"I had a manager who would scream at the sales floor"*). **Se eligen por `hook_type` story/confesión + LIKES ≫ comentarios** (si comentarios > likes, es un lead magnet disfrazado de historia, no una historia).
 
 1. **HOOK:** primera persona, una ESCENA/anécdota concreta (*"I [algo que me pasó]"*, *"Cuando…"*, *"Nunca…"*), vulnerable o intrigante. **NO alarma, NO claim, NO dato.** Corto.
+1b. **⭐ LA LINEA 2 SITUA LA ESCENA: QUIEN Y DONDE (Iker, 2026-07-29).** El hook puede dejar el sujeto implicito, pero **la linea siguiente no**. Si el lector tiene que deducir quien habla justo cuando esta decidiendo si sigue leyendo, se le enfria la escena. En esa linea van **la persona y el sitio**: *"Me lo solto el cliente en mitad de la reunion"*.
+   - **La palabra es "cliente".** `lead` es jerga que un director de 55 anos no usa, y "posible cliente" alarga sin anadir nada. Aunque tecnicamente aun no haya comprado, en boca de un comercial "cliente" es lo natural y lo entiende todo el mundo.
+   - **Y di donde pasa** (una reunion, una llamada, una comida). Sin sitio no hay escena, hay un resumen.
+
 2. **CUERPO:** ritmo de historia — frases cortas, UNA por línea, MUCHO aire. Detalles sensoriales concretos (las botas amarillas, los calcetines: la concreción da credibilidad). Arco: escena → momento → desenlace. Luego un REFRAME/contraste (antes vs ahora). Y una **LECCIÓN corta y universal al final** (*"Moments do"*, *"It can't create a memory"*). La lección ata a tu tema (ventas/marketing) por la HISTORIA, no por el pitch.
 3. **FOTO:** texto puro O una foto **REAL/candid** (un momento de verdad), NUNCA un gráfico diseñado (lo opuesto al lead magnet). Muchos de sus outliers son **text-only** (Josh Braun top).
 4. **CTA:** NO comment-gate. Cierra en la lección; como mucho un PD/spam ninja suave a un recurso.
