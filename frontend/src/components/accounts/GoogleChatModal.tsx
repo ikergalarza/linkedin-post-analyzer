@@ -35,13 +35,19 @@ function pick<T>(xs: T[]): T {
 // producía "NUEVO LOS 10" y "HISTORIA NUEVO", porque el género y el número
 // cambian con el pilar. Escribirlas enteras cuesta tres líneas más y no
 // puede desconcordar.
+//
+// MAYÚSCULAS SOLO DONDE PESAN (Iker, 2026-07-29): en versales van únicamente
+// el FORMATO (MEME, HISTORIA, TOP 10, LEAD MAGNET) y el NOMBRE de la cuenta,
+// que es lo que el compañero necesita leer de un vistazo en la notificación.
+// "Nuevo" lleva solo la inicial y las preposiciones van en minúscula. Todo en
+// versales gritaba y aplanaba: si todo destaca, no destaca nada.
 const CABECERAS: Record<string, string[]> = {
-  meme: ['NUEVO MEME DE {N}', 'NUEVO MEMEEE DE {N}', 'MEMAZO NUEVO DE {N}', '{N} TIENE MEME NUEVO', 'NUEVO MEME {N}'],
-  peloteo_mapa: ['NUEVO MAPA DE {N}', 'NUEVO MAPAAA DE {N}', 'MAPA NUEVO DE {N}', '{N} TIENE MAPA NUEVO'],
-  peloteo_los10: ['NUEVOS 10 DE {N}', 'NUEVO TOP 10 DE {N}', 'LOS 10 DE {N}, RECIÉN SALIDOS', '{N} TIENE TOP 10 NUEVO'],
-  lead_magnet: ['NUEVO LEAD MAGNET DE {N}', 'NUEVO LEAD MAGNEEET DE {N}', 'LEAD MAGNET NUEVO DE {N}', '{N} TIENE LEAD MAGNET NUEVO'],
-  historia: ['NUEVA HISTORIA DE {N}', 'NUEVA HISTORIAAA DE {N}', 'HISTORIA NUEVA DE {N}', '{N} TIENE HISTORIA NUEVA'],
-  otro: ['NUEVO POST DE {N}', 'NUEVO POOOST DE {N}', 'POST NUEVO DE {N}', '{N} TIENE POST NUEVO', 'NUEVO POST {N}'],
+  meme: ['Nuevo MEME de {N}', 'Nuevo MEMEEE de {N}', 'MEMAZO nuevo de {N}', '{N} tiene MEME nuevo', 'Nuevo MEME {N}'],
+  peloteo_mapa: ['Nuevo MAPA de {N}', 'Nuevo MAPAAA de {N}', 'MAPA nuevo de {N}', '{N} tiene MAPA nuevo'],
+  peloteo_los10: ['Nuevo TOP 10 de {N}', 'Nuevos 10 de {N}', 'LOS 10 de {N}, recién salidos', '{N} tiene TOP 10 nuevo'],
+  lead_magnet: ['Nuevo LEAD MAGNET de {N}', 'Nuevo LEAD MAGNEEET de {N}', 'LEAD MAGNET nuevo de {N}', '{N} tiene LEAD MAGNET nuevo'],
+  historia: ['Nueva HISTORIA de {N}', 'Nueva HISTORIAAA de {N}', 'HISTORIA nueva de {N}', '{N} tiene HISTORIA nueva'],
+  otro: ['Nuevo POST de {N}', 'Nuevo POOOST de {N}', 'POST nuevo de {N}', '{N} tiene POST nuevo', 'Nuevo POST {N}'],
 };
 
 function buildHeader(creatorName: string | null, url: string | null, pillar: string | null): string {

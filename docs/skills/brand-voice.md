@@ -185,5 +185,7 @@ Los que genera el botón **Enviar a Google Chat** de Accounts, para que los comp
 
 **La cabecera y el recordatorio del mensaje también rotan** (`frontend/src/components/accounts/GoogleChatModal.tsx`). La cabecera usa el **pilar ya etiquetado** del post (`NUEVO MEMEEE DE UNAI`, `NUEVA HISTORIA DE IKER`, `NUEVOS 10 DE ASIER`), que es lo que Iker venía corrigiendo a mano cada día, y el recordatorio sortea entre 7 formas distintas de pedir las cuatro acciones. **Frases completas por pilar, nunca ensambladas**: componer "NUEVO" + etiqueta daba `NUEVO LOS 10` y `HISTORIA NUEVO`, porque género y número cambian con el pilar.
 
+**Y las MAYÚSCULAS solo donde pesan** (Iker, 2026-07-29): en versales van únicamente **el FORMATO** (MEME, HISTORIA, TOP 10, LEAD MAGNET, con las vocales alargadas cuando toque) **y el NOMBRE de la cuenta**, que es lo que el compañero necesita leer de un vistazo en la notificación del móvil. **"Nuevo" lleva solo la inicial y las preposiciones van en minúscula.** La versión anterior iba entera en versales y aplanaba el aviso: si todo destaca, no destaca nada. Queda `🐝 Nuevo MEMEEE de UNAI:` en vez de `🐝 NUEVO MEMEEE DE UNAI:`.
+
 ### 7.3 · Qué SÍ es fiable (recordatorio)
 Lo reconstruido en §1-§6 (voz founder-trincheras, regla de audiencia, tabla anti-IA, palancas de posicionamiento) y los **diferenciadores de `aboutme §1b`** son la base sólida de la voz. El perfil literal "Voz Neety" de la DB, no: si algo de él choca con §1-§6 o con 7.1/7.2, gana lo de aquí.
