@@ -41,7 +41,7 @@ CREADORES = {
 CASOS = [
     ('pasa factura', 'meme', 'Iker', {
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
-    }),
+    }, ['--referencia-fuera']),  # referencia extranjera: su autor no comparte audiencia
     ('cold calling no ha muerto', 'meme', 'Iker', {
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
         'Hook anclado a VENTAS': (
@@ -50,7 +50,7 @@ CASOS = [
             '§2.3 veta "cold email" en el hook. O la lista se queda corta, o la regla '
             'se contradice con nuestro mejor post. Sin resolver: no lo tapes.'
         ),
-    }),
+    }, ['--referencia-fuera']),  # referencia extranjera: su autor no comparte audiencia
     ('caja de herramientas engorda', 'meme', 'Unai', {
         'muletilla "En ventas,"': (
             'ESPERADO: este post la usa y hace 16.55x. No es un bug, es que el check vigila el '
@@ -60,7 +60,7 @@ CASOS = [
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Línea individual tras cada bloque': 'formateado anterior a §3.2',
-    }, ['--meme-sobrio']),  # <- sobrio POR DISENO, y por eso es el meme que SI encaja en Unai: sin
+    }, ['--meme-sobrio', '--referencia-fuera']),  # <- sobrio POR DISENO, y por eso es el meme que SI encaja en Unai: sin
        # ridiculo personal, sin nada que nadie pueda creerse literal. Es la vara de lo permitido ahi.
     # --- "Los 10": los 3 que existen. Se metieron el 2026-07-17, cuando el 3º se comió
     # un DM de un CEO pidiendo que quitáramos su empresa y a su empleado. Están los tres

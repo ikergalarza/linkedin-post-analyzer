@@ -424,6 +424,24 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **El caso que lo demostró (0,31x, 1.003 impresiones):** el original de Gavin Fernand (corporatedudes, 425 reacciones, 45% risas) traducía **"I just shit my pants"** al lenguaje corporativo de LinkedIn. Nosotros, para que encajara en la cuenta sobria de Unai, pusimos arriba *"El cliente me dijo que no"* → *"Oportunidad en pausa estratégica"*. **La caja de arriba ya era corporativa, así que no había caída y no había chiste.** El motor de ese meme es la DISTANCIA entre la vulgaridad y el eufemismo. Ese meme tenía que haber ido en Iker, tal cual de bruto.
 > - **Regla:** mide primero cuánto de bruto es el original. Si no cabe en la cuenta que te tocaba, **cambia de cuenta**, no de chiste.
 >
+> ### ©️ 4.4-CREDITO · SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS, SE ACREDITA (Iker, 2026-07-29)
+> **Qué pasó.** El meme del tatuaje hizo casi 30.000 impresiones en menos de una hora, **y el autor original lo vio**. Bloqueó la cuenta de Unai. **Bloquear es el aviso barato: el caro es un reporte por copia.** Mismo patrón que el "Andalucía es más grande que Italia", que también nos costó insultos y también acabó en una regla dura del runbook del mapa.
+>
+> **La regla.** Si la referencia que calcamos es **ESPAÑOLA Y del sector de VENTAS**, va **una línea suelta en el cuerpo mencionando al autor con @**. Ese es justo el caso en el que el autor comparte audiencia con nosotros y va a verlo. Si la referencia es de fuera o de otro sector, no hace falta (el validador acepta `--referencia-fuera` para dejarlo por escrito).
+>
+> **⭐ Y el arreglo de verdad no es el crédito, es la MENCIÓN.** La diferencia entre que el autor se sienta copiado y que se sienta citado **es la notificación**. Un creador al que le llega un aviso de que has partido de su idea suele comentar o compartir, porque le confirma que su chiste funciona. A Félix se lo hicimos a su espalda, y por eso lo vivió como un robo. **Menciónalo con @, no lo nombres en texto plano.**
+>
+> **DÓNDE VA, que es lo delicado:**
+> - **NUNCA en el gancho ni justo después.** Ahí matas el chiste antes de contarlo: el lector aún no se ha reído y ya le has dicho que no es tuyo.
+> - **NUNCA de última línea.** Se come el bold statement del cierre, que es lo que da la fuerza final.
+> - **VA EN MEDIO, después de que el chiste haya aterrizado y ANTES del spam ninja.** Para entonces el lector ya se ha reído y el crédito se lee como clase, no como disculpa.
+>
+> **Cómo se escribe:** con naturalidad y sin sonar a nota legal. *"Esto se lo vi a @Nombre y me lo he traído a mi terreno."* Nada de "créditos a" ni "fuente:". **Y que no nos reste**: no vale *"lo contó mucho mejor @Nombre"*.
+>
+> **Dónde está la frontera con otros pilares:** se acredita cuando lo que calcamos es **RECONOCIBLE como suyo** (el chiste concreto, la imagen concreta). Una mecánica genérica que usa medio LinkedIn (la escalera de calvicie, el wojak, un antes/después) no tiene autor identificable y no se acredita. El lead magnet calca **estructura**, no una pieza reconocible, así que tampoco.
+>
+> **Mecanizado:** `validar-post.py --pilar meme` **falla** si no encuentra línea de crédito, salvo que se pase `--referencia-fuera`. Y si la encuentra, comprueba **que no esté ni en las 2 primeras líneas ni en la última**.
+>
 > ### 🚫🚫 4.4-STOP · MEME CONTROVERSIAL EN UNAI: PROHIBIDO (Iker, 2026-07-29)
 >
 > **Lo de arriba ya estaba escrito y aun así recomendé el meme del tatuaje para Unai. Pasó lo que tenía que pasar.** El meme se viralizó (14.000 impresiones en horas) **y un directivo nos insultó CON SU NOMBRE REAL**, porque se creyó que el tatuaje era de verdad. Unai es el **FUNDADOR y CEO**: firma la casa, y lo que le llega a él no se borra con un buen ratio.

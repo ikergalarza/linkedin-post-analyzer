@@ -279,7 +279,7 @@ def validar_entregable(texto):
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r
 
-def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -769,6 +769,37 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False):
     # creyéndose que el tatuaje era de verdad. La doctrina ya lo decía
     # (post-workflow §4.4, brand-voice §1b) y aun así se publicó, así que
     # deja de ser doctrina y pasa a ser un check que hay que desactivar a mano.
+    # ------------------------------------------------------------------
+    # MEME: creditos al autor de la referencia (Iker, 2026-07-29)
+    # El meme del tatuaje se viralizo Y el autor original lo vio: bloqueo la
+    # cuenta de Unai. Bloquear es el aviso barato; el caro es un reporte por
+    # copia. Mismo blindaje que se le puso al dato regional de los mapas
+    # despues del "Andalucia es mas grande que Italia".
+    if pilar == 'meme':
+        cred = re.search(
+            r'(se lo (?:vi|rob[eé])|idea (?:original )?de|el original es de|visto en|gracias a|'
+            r'v[ií] esto en|me lo (?:encontr[eé]|top[eé]) en|cr[eé]dito)\s*@?',
+            cuerpo, re.I)
+        lineas_ne = [l for l in cuerpo.splitlines() if l.strip()]
+        pos = None
+        if cred:
+            linea_cred = cuerpo[:cred.start()].count('\n')
+            todas = cuerpo.splitlines()
+            texto_cred = todas[linea_cred] if linea_cred < len(todas) else ''
+            pos = next((i for i, l in enumerate(lineas_ne) if l == texto_cred), None)
+        chk(bool(cred) or ref_fuera,
+            'MEME: da CRÉDITO al autor de la referencia (§4.4-CREDITO)',
+            'si la referencia es ESPAÑOLA y de VENTAS, el autor te va a ver. Mencionalo con @ '
+            'en una linea suelta del cuerpo. Si la referencia es de fuera o de otro sector, '
+            'pasa --referencia-fuera.' if not cred else 'linea de credito presente')
+        if cred and pos is not None and lineas_ne:
+            ok_pos = 2 <= pos <= len(lineas_ne) - 2
+            chk(ok_pos,
+                'MEME: el crédito NO va ni al principio ni de cierre (§4.4-CREDITO)',
+                f'esta en la linea {pos + 1} de {len(lineas_ne)}. No puede ir en el gancho ni justo '
+                'despues (mata el chiste antes de contarlo) ni en la ultima linea (se come el '
+                'bold statement). Va en medio, despues de que el chiste haya aterrizado.')
+
     if pilar == 'meme' and (cuenta or '').strip().lower() == 'unai':
         chk(meme_sobrio,
             'MEME en Unai: confirmado que NO es controversial (§4.4)',
@@ -790,12 +821,16 @@ def main():
                          'que alguien se crea que paso de verdad; hay un acto ridiculo o humillante '
                          'atribuido al que publica; alguien podria insultarnos por creerselo; hay '
                          'tacos, escatologia, sexo, politica o religion; se rie de un colectivo.')
+    ap.add_argument('--referencia-fuera', action='store_true', dest='ref_fuera',
+                    help='La referencia del meme NO es española ni del sector de ventas, asi que su '
+                         'autor no comparte audiencia con nosotros y no hace falta acreditarlo en el '
+                         'cuerpo. Si es española Y de ventas, NO pases este flag: acredita.')
     ap.add_argument('--generico', action='store_true',
                     help='Lead magnet modelo GENÉRICO (Martín Arosa/Guillermo): una palabra igual para '
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
-    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio)
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.
