@@ -686,6 +686,19 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 #### ⭐⭐ 4.6 · Runbook HISTORIA PERSONAL / ANÉCDOTA (Iker, 2026-07-24)
 
+> ### 🎯 4.6-OBJETIVO · ESTE PILAR NO VA DE VIRALIDAD (Iker, 2026-07-29)
+> **Léelo antes de escribir uno y antes de juzgar el resultado de uno.** Los demás pilares buscan alcance. **Este busca cercanía y naturalidad con la audiencia**, y son cosas distintas. Medir una historia por el multiplicador es medirla con la regla de otro pilar y concluir siempre que va mal.
+>
+> **Las dos ÚNICAS condiciones bajo las que una historia personal sí viaja** (apuntes de expertos que pasó Iker):
+> 1. **Que seas conocido o autoridad.** Si lo eres, a la gente le interesa hasta lo que desayunas. Si no lo eres, a nadie le importa tu anécdota por sí sola. **Nosotros todavía no lo somos**, así que no contamos con esta.
+> 2. **Que le haya pasado a muchísima gente.** Identificación masiva: el lector se ve a sí mismo, lo comparte con un amigo, comenta su propia versión y se monta debate. **Esta es la única palanca que está en nuestra mano**, y por eso la historia se elige por cuánta gente ha vivido eso, no por cuánto nos marcó a nosotros.
+>
+> **Cómo se juzga un post de este pilar, entonces:** no por impresiones ni por ratio, sino por **calidad de conversación**. Comentarios en los que alguien cuenta SU caso · respuestas largas en vez de emojis sueltos · mensajes privados · guardados. Un 1x con quince comentarios personales ha cumplido su objetivo; un 3x con cero conversación, no.
+>
+> **Y no se mata el pilar por un mal ratio.** n=1 por cuenta. Se sigue probando **de vez en cuando, por variedad**, que es justo lo que pide la visión de futuro de aquí abajo (dejar de repetir los mismos 3 pilares en las mismas 3 cuentas). No es el caballo ganador y no tiene que serlo.
+>
+> **Registro del 29/07 (Iker, historia + peloteo):** apostado deliberadamente por la condición 2. El dolor elegido, *que te juzguen por ser joven*, lo ha vivido media audiencia, y el peloteo a 5 clientes reales aportaba la prueba que a nosotros nos falta por no ser conocidos todavía. **Es la mejor tirada posible con las cartas que tenemos.** Anota el resultado en `historial-publicaciones` mirando conversación, no solo el multiplicador.
+
 Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA real con una lección**. **No tenemos datos propios; la vara es de fuera** (como el lead magnet). Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
 
 **Referentes (de nuestra BD, `/api/ideas/inspiration`):** **Josh Braun** (39x *"My mom died yesterday"*, 29x *"When I was younger in sales, I'd get on a plane…"*), **Daniel Disney** (16 outliers: *"I hired the smartest person in the room once"*, *"I had a manager who would scream at the sales floor"*). **Se eligen por `hook_type` story/confesión + LIKES ≫ comentarios** (si comentarios > likes, es un lead magnet disfrazado de historia, no una historia).
