@@ -446,7 +446,21 @@ UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nomb
 ---
 
 ## 4 · Constraints de marca (SIEMPRE, en cualquier variante)
-- **Paleta (solo estas tres):** Alabastro `#f9f3ef` (fondo dominante — todas las imágenes se apoyan en esta superficie clara) · Dark Blue `#0c202e` (títulos, texto, linework — la "tinta") · Persian Orange `#ee9363` (highlight / scroll-stop — a cuentagotas, a la palabra o elemento más importante).
+
+> ## ⭐ 4.0 · PALETA NUEVA — BRANDBOOK 2026 (incorporada el 2026-07-29)
+> Fuente: `docs/brandbook-neety-2026.pdf`, p. 23 ("Paleta cromática"). **Manda sobre la paleta vieja de abajo**, que se conserva porque es la de todos los outliers ya publicados.
+>
+> | Nombre oficial | HEX | Para qué |
+> |---|---|---|
+> | **Naranja** | `#fe8238` | El naranja de marca. Sustituye al Persian Orange `#ee9363` (es el mismo sitio, un pelín más vivo y saturado) |
+> | **Berenjena** | `#431b44` | El ÚNICO oscuro de la paleta nueva: tinta, linework y masas oscuras. Ocupa el hueco del Dark Blue `#0c202e` |
+> | **Azul bebé** | `#a7c5f9` | Claro. Superficies, detalles y contrapunto frío |
+> | **Mint claro** | `#ebfff6` | Casi blanco. Fondo alternativo al Alabastro |
+>
+> **⚠️ Los dos claros NO valen como masa sobre fondo claro.** Azul bebé y Mint claro tienen muy poco contraste contra Alabastro/Mint (ratio ~1,6:1): a tamaño miniatura se disuelven. Van como **detalle o superficie interior**, nunca como la forma principal que tiene que leerse pequeña. La masa oscura es **siempre Berenjena**.
+> **El brandbook también confirma la tipografía:** Bricolage Grotesque + Switzer (las mismas de §4).
+
+- **Paleta VIEJA (la de los outliers publicados):** Alabastro `#f9f3ef` (fondo dominante — todas las imágenes se apoyan en esta superficie clara) · Dark Blue `#0c202e` (títulos, texto, linework — la "tinta") · Persian Orange `#ee9363` (highlight / scroll-stop — a cuentagotas, a la palabra o elemento más importante).
 - **Tipografía (solo si la imagen lleva texto):** Bricolage Grotesque para títulos (bold, display) · Switzer para cuerpo. Ninguna otra fuente bajo ningún concepto.
   - ⭐ **Y SIEMPRE que las nombres en un prompt, añade que le adjuntas los instaladores** (Iker, 2026-07-20): `Te adjunto los dos archivos instaladores de las fuentes.` Los manda Iker junto al prompt. Nombrar una fuente que el diseñador no tiene instalada es pedirle que improvise: acaba usando la que mas se le parezca y la imagen sale fuera de marca.
 - **Regla de la palabra naranja:** cuando hay texto, la ÚNICA palabra más importante va en Persian Orange; el resto en Dark Blue sobre Alabastro. Elígela deliberadamente (es el scroll-stop) y nómbrala explícitamente en el párrafo.
