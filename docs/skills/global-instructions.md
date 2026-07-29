@@ -487,6 +487,26 @@ Corre estas puertas EN ORDEN:
 > - **Y varía la frase.** Se estaba repitiendo el mismo molde ("perseguir al que no contesta", "te decimos a cuál llamar"). El ninja **sigue el hilo del gancho de ESE post**, así que si el gancho cambia, la frase cambia.
 > - Ej. bueno (meme de la propuesta en visto): *"Lo caro no es el que calla. Es dar con el que decide. / Eso son meses a mano y nosotros te lo damos hecho:"*.
 
+> ### ⭐⭐ 4.4b-ORDEN · IDENTIFICACIÓN ABRE, SEÑAL CIERRA (Iker, 2026-07-29, charla BIND de Unai)
+> **Teníamos tres fuentes diciendo cosas distintas y el choque era real, no semántico:** el **PDF de propuesta de valor** pone la señal como diferencial (*"de metralleta a francotirador"*), el **informe de 50 demos** dice que la señal es secundaria y que compran la identificación, y la **charla BIND de Unai** vuelve a poner la señal como *"el gran diferencial"*. Resuelto así, y esto manda:
+>
+> - **La IDENTIFICACIÓN abre.** Es el dolor que el cliente dice en voz alta y **lo mide en MESES**. Es lo único que hace que te lea alguien que aún no te conoce. **Va en el hook y en el spam ninja.**
+> - **La SEÑAL cierra.** Es la respuesta a *"¿y por qué no me compro una base de datos y ya está?"*. Justifica el precio **cuando ya te quieren**, no antes. **Va en el recurso, en la demo y en la landing, nunca en el gancho.**
+>
+> **No compiten: van en ORDEN.** Las tres fuentes son correctas, cada una describe un momento distinto del embudo. **El lead magnet del 28/07 se quedó en 0,66x porque abrió con la señal**, que es el argumento del segundo tiempo.
+>
+> **Banco de ángulos nuevos, sacados de la charla de Unai** (usar variando, nunca dos veces el mismo molde):
+> - **Definición por negación**, que es la más fuerte que tenemos: *"No es otro CRM. No es otra base de datos. No es otra herramienta de prospección."* Sirve para desactivar el "ya tengo eso".
+> - **La tríada del orden:** *"En B2B no gana quien contacta a más empresas. Gana quien llega antes. Gana quien llega con contexto."* Anáfora ya montada, encaja tal cual en un bloque de 3.
+> - **Las tres preguntas:** a quién vender · cuándo · qué hacer después. Buen esqueleto para un cuerpo entero.
+> - **El coste que nadie contabiliza:** ferias, viajes, bases de datos, CRM… y seguir sin saber a quién llamar hoy. Ataca al que YA gasta, que es nuestro ICP.
+>
+> **⭐ CIFRAS REALES NUESTRAS (por fin tenemos), de la charla de Unai en BIND Demo Day:**
+> - **Arania: identifica hasta el 45% de las empresas que muestran interés en su web.** Es nuestra primera cifra-resultado propia y verificable, y vale oro porque hasta ahora todas las varas eran de fuera.
+> - **⚠️ El "hasta" no se borra.** `hasta el 45%` es un techo, no un típico. Si se publica, va con el "hasta" o no va: quitarlo lo convierte en un dato inflado y eso es justo lo que prohíbe la regla de las cifras creíbles de arriba.
+> - **Betsaide: llegar directamente al decisor**, sin pasar por la investigación manual. Encaja exacto con el eje de identificación.
+> - **⚠️ En los apuntes pone "Caso Beside" y está MAL ESCRITO.** El nombre real, verificado en LinkedIn el 2026-07-29, es **BETSAIDE SAL**. Nunca escribas "Beside" en un post: es un cliente real y equivocarle el nombre es peor que no nombrarlo.
+
 > **🚨 UN `🔗 0` EN UN POST CON ENLACE NO SIGNIFICA "NADIE PINCHA": a veces LinkedIn no mide ese enlace (Iker, 2026-07-24).**
 > **Cómo distinguirlo:** en la página de analíticas del post, cuando LinkedIn SÍ está midiendo, junto a "Visits to links from this post" aparece **la URL de destino registrada**. Cuando no mide, no aparece **ninguna URL**, solo un 0 pelado. La herramienta guarda esa URL en `link_url`: **enlace en el cuerpo + `link_url` vacío + 0 clics = LinkedIn no lo está midiendo**, y ese 0 no es un dato de interés real.
 > **Evidencia (medida el 2026-07-24 sobre los mapas de Iker):** Navarra → `pampam.city/...` **230 clics** · Galicia → `pampam.city/...` **107** · agendar → `recursos.neety.com/agendar/` **76 / 28 / 7 / 4** · Murcia **0 sin URL registrada** · Valencia **0 sin URL registrada**.
