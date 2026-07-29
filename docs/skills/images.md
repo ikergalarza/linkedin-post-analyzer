@@ -101,6 +101,16 @@ La interfaz que imitamos **está en español entera**, incluidas las palabras de
 - WhatsApp: `online` → **`en línea`** · `typing…` → **`escribiendo…`**
 - LinkedIn: `Connect` → **`Conectar`** · `followers` → **`seguidores`**
 
+### 0a-septima-quinquies · EL TEXTO DENTRO DE UN PANTALLAZO (Iker, 2026-07-29)
+
+Tres defectos que salieron en la segunda pasada del meme del tatuaje y que **tenian que haber ido ya en el primer prompt**. Van los tres, siempre, desde la version uno:
+
+1. **TILDES Y EÑES, SIEMPRE, aunque la referencia no las lleve.** El generador escribe *habeis, tatuo, veia, adelante, Inaki* porque copia la falta del original. **Nosotros copiamos y MEJORAMOS:** el original tenia faltas y nosotros no. Y los **signos de apertura** tambien: `¿` y `¡` se le pierden solos. Repasa palabra por palabra antes de dar el prompt.
+2. **La frase literal de la referencia se REESCRIBE, no se calca.** No basta con cambiar nombres, hora y foto (`§0a-septima`): **el texto tambien delata**. En el tatuaje deje *¿esto lo habeis pausado o ha muerto del todo?* practicamente igual que el original. Se mantiene la esencia (la pregunta binaria pasivo-agresiva) y se cambia la redaccion: *¿esto sigue en pie o lo doy por muerto?*
+3. **Interlineado y tamaño.** El generador separa los parrafos con el doble de aire del que tiene un correo real y a veces cambia el cuerpo de la ultima frase. Se pide siempre: **junta un poco los parrafos, que ahora hay demasiado espacio en blanco, y que todas las frases tengan el mismo tamaño de letra y la misma altura de linea.**
+
+**El objetivo es que la version UNO ya salga perfecta.** Cada pasada extra es tiempo del diseñador y riesgo de que se rompa algo que ya estaba bien.
+
 ### 0a-septima-quater · REENCUADRE Y AIRE (Iker, 2026-07-29)
 
 Dos defectos que salen solos al pasar una referencia **vertical a cuadrada** y hay que pedir siempre a mano:
