@@ -84,6 +84,8 @@ Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo m
 
 **Regla:** la marca ajena que aparece dentro de la esencia va **pixelada o irreconocible**, nunca sustituida por la nuestra. Nuestra marca no entra en la imagen (`§0a-bis`); entra en el spam ninja y en el enlace.
 
+**Corolario, porque la duda salio dos veces el mismo dia:** una vez decidido que va pixelado, **lo que haya debajo es irrelevante, porque no se ve**. No merece la pena otra pasada para que el borron sea "algo de ventas". Y si se hiciera reconocible, seria peor: la censura solo tiene sentido tapando una **marca real**; censurar un icono generico hace que el lector se pregunte por que lo tapas y se le cae la ilusion. **El contexto ya lo dice**: la frase de al lado nombra el logo del cliente, la imagen no tiene que repetirlo.
+
 ### 0a-septima-bis · LA PERSPECTIVA DEL PANTALLAZO (Iker, 2026-07-29)
 
 Antes de repartir nombres y fotos, **decide desde qué bandeja se ve la captura**, porque de eso depende quién es quién. Y esa decisión la manda el CUERPO del post, no la referencia.
