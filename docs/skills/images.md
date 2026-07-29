@@ -76,6 +76,14 @@ Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo m
 
 **La prueba para no dudar:** si al quitar ese elemento el chiste sigue funcionando, es un detalle y se cambia. Si al quitarlo el chiste se cae, es la esencia y se respeta.
 
+**⚠️ LA TENTACION DE METER NUESTRO LOGO EN LA ESENCIA (Iker, 2026-07-29).** Cuando la esencia viral es un objeto que lleva una marca (el tatuaje del logo del cliente, una taza, una camiseta, un cartel), sale sola la idea de **poner ahi el logo de Neety**. Suena a originalidad y es lo contrario:
+
+- **Se cae la frase.** El chiste era *me tatuo el logo del CLIENTE al cerrar un trato*. Con el nuestro no hay chiste, hay un tio con un tatuaje.
+- **Se cae la credibilidad.** La pieza vive de que el lector se crea dos segundos que eso paso de verdad (`§0a-sexta-bis`). Un logo nuestro nitido dice "anuncio" antes de que lea el texto.
+- **El pixelado es parte del gag, no un defecto.** Una persona real tapa el logo de su cliente para no exponerlo. Ese gesto es lo que lo hace autentico.
+
+**Regla:** la marca ajena que aparece dentro de la esencia va **pixelada o irreconocible**, nunca sustituida por la nuestra. Nuestra marca no entra en la imagen (`§0a-bis`); entra en el spam ninja y en el enlace.
+
 ### 0a-septima-bis · LA PERSPECTIVA DEL PANTALLAZO (Iker, 2026-07-29)
 
 Antes de repartir nombres y fotos, **decide desde qué bandeja se ve la captura**, porque de eso depende quién es quién. Y esa decisión la manda el CUERPO del post, no la referencia.
