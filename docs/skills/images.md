@@ -55,6 +55,11 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 - **Debajo de CADA prompt de imagen** va el aviso, tal cual, aunque sea la quinta pasada. Junto al ⚠️ de adjuntos (`§0i`), primero los adjuntos y despues este.
 - **Y cuando la imagen se da por DEFINITIVA** — se apruebe con prompt o sin el, aunque no haya mas edicion que entregar — el aviso se repite **solo, en su propio bloque**, con la frase de por que: sin el desenfoque la imagen conserva el acabado de render y los metadatos del generador, y se nota que es IA.
 
+**Por que en TODOS y no solo en el ultimo (Iker, 2026-07-29):** desde fuera **no hay forma de saber cual es la ultima pasada**. Iker lo sabe cuando ve la imagen, yo no. Asi que va en todos por si acaso, y cambia el TONO segun el momento:
+
+- **Mientras se itera** → en modo **recordatorio**, seco y de una linea. Que no estorbe.
+- **Cuando Iker dice explicitamente que la imagen esta perfecta o la da por buena** → en modo **alerta final**, en su propio bloque, con el porque y con el detalle de las Content Credentials. Ese es el momento en que se ejecuta de verdad.
+
 **El disparador no es "he escrito un prompt", es "esta imagen se va a subir".** Si la imagen se cierra sin que haya un prompt de por medio, el aviso va igual.
 
 Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: el **desenfoque de superficie** le quita el acabado de render a la imagen generada, y **exportar sin metadatos** borra la firma del generador (`Exportar como…` o `Guardar para web`, con **Metadatos: Ninguno`; NUNCA `Guardar como`, que los arrastra). Ojo tambien con las **Content Credentials de Adobe (C2PA)**: van por un canal aparte y el "Metadatos: Ninguno" no las toca, hay que desactivarlas en `Ventana > Content Credentials`.
