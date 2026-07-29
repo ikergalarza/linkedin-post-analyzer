@@ -479,6 +479,8 @@ Corre estas puertas EN ORDEN:
 
 **Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
 
+> **⭐ LAS CIFRAS REDONDAS Y PERFECTAS NO SE CREEN: DEJA MARGEN DE FALLO (Iker, 2026-07-29).** Un `100%` no lo tiene nadie, "ni el más listo", y ademas huele a IA y a vendehumos. **Baja a un numero imperfecto** que deje su margen: `95%`. Vale para cualquier cifra nuestra que sea una promesa y no un dato medido — tasas de respuesta, de acierto, de entrega. Caso real: el meme de la propuesta en visto pasó de *"tiene un 100% de respuesta"* a *"un 95%"*, y se cree mucho más. **Si la cifra SÍ está medida y sale redonda, se publica tal cual y se cita la fuente**: esto va de no inflar, no de maquillar.
+
 > **🔴 EL NINJA APUNTA A LA IDENTIFICACIÓN, NO A LA SEÑAL (Iker, 2026-07-29, con el informe de 50 demos).** Medido en `aboutme §1b`: la señal convence a un nivel **secundario** (objeción en 8 empresas), y lo que compran es **saber a quién vender y quién decide dentro**, que a mano *"puede ser un trabajo de meses"*. **Cambia el eje del ninja a eso.**
 > - **Y varía la frase.** Se estaba repitiendo el mismo molde ("perseguir al que no contesta", "te decimos a cuál llamar"). El ninja **sigue el hilo del gancho de ESE post**, así que si el gancho cambia, la frase cambia.
 > - Ej. bueno (meme de la propuesta en visto): *"Lo caro no es el que calla. Es dar con el que decide. / Eso son meses a mano y nosotros te lo damos hecho:"*.

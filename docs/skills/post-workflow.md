@@ -412,6 +412,8 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 >
 > Los pasos 2-4 son la cadena que se me escapa: calco medio, olvido el tiempo verbal, o no mejoro el punch. Léelos SIEMPRE.
 >
+> **⭐ EN EL MEME, UNA BROMA YA VALIDADA DENTRO DE VENTAS BATE AL REMIX DE OTRO SECTOR (Iker, 2026-07-29).** La norma general es robar outliers de otro sector y traerlos al nuestro, porque el ángulo llega fresco. **En el meme es al revés:** si existe una broma universal que YA ha funcionado dentro de ventas, tiene más garantía, porque **el sector ya te la ha comprado** y no hay que traducir el dolor. Caso: el email del tatuaje de Félix Fernández (59% de risas, 3,38x) es dolor puro de ventas, y el remix salió redondo sin forzar la adaptación.
+>
 > **⭐ PASO 0 — ELIGE LA CUENTA QUE AGUANTA EL MEME, NO REBAJES EL MEME PARA LA CUENTA (Iker, 2026-07-27).** El nivel de burrada del original es parte del motor: si lo suavizas para que encaje en una cuenta sobria, te quedas con el tema y sin el chiste.
 > - **Iker (2º jefe) = memes BRUTOS o informales.** Le da igual el registro mientras el post viaje.
 > - **Unai (1º) y Asier (3º) = memes de ventas más normalitos y sobrios.** Y sí, eso les cuesta alcance: es una decisión asumida, no un descuido.
