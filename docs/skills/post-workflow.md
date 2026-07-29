@@ -618,6 +618,17 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **⭐ SHOW DON'T TELL + RETRASA EL DESVELAMIENTO, como en los mapas (Iker, 2026-07-24).** El hook de última hora **NO cuenta toda la historia de cabeza.** Da el SHOCK (el dato, la subvención) pero **retrasa el "quién/dónde" al cuerpo** — igual que el mapa no dice la región hasta tarde (`§4.2` reveal tardío). Fallo real: *"🚨 en Euskadi subvencionan el 60% de tu IA…"* soltaba **Euskadi en la línea 1** (como cantar la región en un mapa). Arreglado: *"🚨 hay una subvención que te paga el 60% de tu IA para vender más. Y casi nadie la pide 👇"* — el shock (subvención 60%) + intriga ("casi nadie la pide"), y **"Euskadi / SPRI / industria vasca" se revela ya dentro del cuerpo**. Es regla de hook GENERAL (`§2`), no solo del lead magnet: shock + gap, nunca exposición plana con la respuesta entera servida.
 
+#### 🔴 4.5.0c · EL RECURSO PROMETE IDENTIFICACIÓN, NO SEÑALES — Y HAY QUE LLEGAR EL PRIMERO (Iker, 2026-07-29)
+
+**El caso que lo enseña, medido:** el lead magnet de prospección manual (Iker, 28-jul) hizo **0,66x con 1.706 impresiones**, frente al de la subvención (1,16x, 4.420 imp). **2,6 veces menos alcance.** No falló la conversión: casi nadie lo vio. Dos causas, las dos evitables:
+
+**1. Prometimos lo que menos compran.** De los 5 puntos de la guía, **2 eran de señales**, el titular de la imagen era de señales (*"Todos avisan antes de comprar"*) y el gancho llevaba ahí. Pero el informe de 50 demos dice que la señal interesa **a nivel secundario** (`aboutme §1b`) y lo que compran es **a quién vender y quién decide dentro**. Solo 1 de los 5 puntos tocaba eso.
+- **Regla:** el recurso se construye sobre **la identificación** (qué empresas encajan y quién decide en cada una), y se mide en **MESES ahorrados**, que es la palabra que usan ellos. Las señales pueden salir, pero **nunca como promesa principal ni en el titular de la imagen**.
+- **Y no prometas que la IA escribe el mensaje:** objeción real y repetida (*"se nota automatizado, se ignora y quema la confianza"*).
+
+**2. Llegamos tarde a un tema quemado.** Martín Arosa publicó *"D.E.P. prospección manual"* el **25-jun**; nosotros el **28-jul**, un mes después y con audiencia solapada. **Un tema validado no vale si ya te lo han contado: el que pidió su guía no pide la segunda.**
+- **Antes de elegir tema, comprueba cuándo lo publicó la referencia.** Si tiene más de 2-3 semanas y comparte audiencia con nosotros, o se cambia de tema o se cambia el ÁNGULO por completo. Copiar el molde es bueno; copiar el tema con un mes de retraso es llegar al turno de otro.
+
 #### ⭐⭐ 4.5.0b · EL MODELO GENÉRICO — PATRONES DE MARTINA ROSA Y GUILLERMO FLOR (Iker, 2026-07-24)
 
 🎯 **ESTE PILAR SE MIDE CONTRA ELLOS, NO CONTRA NUESTRO HISTORIAL (Iker, 2026-07-24).** No tenemos la estrategia de lead magnet pulida como los mapas o los memes: casi no hay datos de éxito nuestros, así que **NO te fíes de nuestros flops** (ni de las reglas que salieron de ellos). El único dato interno fiable es el **9.85x de Unai**, que además usó ESTE formato (última hora + temática tipo IA, parecida a la suya). La **vara de medir de TODA la publicación —hook, cuerpo E imagen— son Martín Arosa y Guillermo Flor.** Es el pilar más valioso para conversión (captura correos → email marketing) y hay que recuperarlo. El validador `--generico` ya mide contra ellos: hook (corto ≤90, sin cifras, sin 👇, con alarma) y cuerpo (lista numerada + largo); la imagen, la captura del recurso (punto 6).
