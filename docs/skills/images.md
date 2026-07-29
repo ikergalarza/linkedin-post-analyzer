@@ -381,6 +381,20 @@ Cuando el remix es una tabla de datos (lista, comparativa, ranking), **el objeti
 
 Fuera del bloque solo queda **lo que se adjunta como fichero** (`§0i`): la referencia, las fuentes, los logos, las fotos. Eso no se pega, se arrastra.
 
+## ⭐ 0a-octava · ELEGIR ENTRE VARIAS FOTOS REALES (Iker, 2026-07-29)
+
+Cuando el pilar pide **foto real** (historia sobre todo) y llegan varias del movil, el criterio no es estetico, es de **CTR**. Orden, de mas a menos, segun los experimentos de MrBeast que maneja Iker:
+
+1. **Sonrisa amplia con los ojos bien abiertos.** Es la que mas clics saca.
+2. **Boca cerrada con sonrisa** si la mirada esta viva.
+3. ⛔ **Boca abierta sin sonreir, ojos entrecerrados o cara de reventado.** Baja el CTR. Se descarta aunque el fondo sea el mejor.
+
+**Y ojo al outfit**, que Iker lo mira: una foto con buena cara pero ropa que no encaja se cae igual.
+
+**El recorte a cuadrado no modifica nada mas:** ni color, ni brillo, ni retoque. Solo se quitan bandas por arriba y por abajo, dejando **la cara en el tercio superior** y los elementos que dan contexto (medalla, dorsal, entorno) dentro del encuadre.
+
+**🔴 Y esta foto NO lleva el desenfoque de postproduccion** (`§0a-penta`): sale de una camara, no de un generador, asi que no hay acabado de render ni firma de IA que borrar. **Misma excepcion que "Los 10".**
+
 ## ⭐ 0i · DESPUES DE CADA PROMPT, LA LISTA DE ADJUNTOS (Iker, 2026-07-21)
 
 **El prompt ya no se basta solo.** Desde que decimos "calca esta referencia" y "te adjunto los instaladores de las fuentes", el prompt **da por hecho ficheros que van aparte**. Si Iker esta despistado y manda solo el texto, el diseñador no tiene ni la referencia ni las fuentes, y devuelve algo que no se parece a nada.
