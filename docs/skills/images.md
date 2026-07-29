@@ -459,6 +459,9 @@ UN párrafo simple en prosa, listo para pegar en un generador de imágenes. Nomb
 >
 > **⚠️ Los dos claros NO valen como masa sobre fondo claro.** Azul bebé y Mint claro tienen muy poco contraste contra Alabastro/Mint (ratio ~1,6:1): a tamaño miniatura se disuelven. Van como **detalle o superficie interior**, nunca como la forma principal que tiene que leerse pequeña. La masa oscura es **siempre Berenjena**.
 > **El brandbook también confirma la tipografía:** Bricolage Grotesque + Switzer (las mismas de §4).
+>
+> **⛔ EL ISOTIPO NO SE REDIBUJA CON IA NUNCA (Mario, 2026-07-29).** El cuerpo de la mascota Kaixito **ES el isotipo de Neety**, así que es material de marca, no ilustración. Medido ese día: el isotipo oficial del brandbook (p.12) tiene el marco **prácticamente cuadrado, 42,0 × 41,9 pt = 1:1**, y el cuerpo que había generado la IA salía **~20% más ancho que alto**. El brandbook además avisa de que en esta versión *"suavizamos los bordes del isotipo"*, o sea que el redondeo también cambió.
+> **Procedimiento:** el isotipo se **extrae del PDF como vector** y se pega tal cual; nunca se le pide a un generador que lo dibuje ni que lo "redondee un poco". Cada vuelta de IA lo aproxima y encima suele romper otras piezas. Extracción hecha con PyMuPDF (`fitz`, `get_drawings()` para localizar el bbox y `get_pixmap(dpi=2400, clip=...)`), porque `pdftoppm` no está instalado en esta máquina.
 
 - **Paleta VIEJA (la de los outliers publicados):** Alabastro `#f9f3ef` (fondo dominante — todas las imágenes se apoyan en esta superficie clara) · Dark Blue `#0c202e` (títulos, texto, linework — la "tinta") · Persian Orange `#ee9363` (highlight / scroll-stop — a cuentagotas, a la palabra o elemento más importante).
 - **Tipografía (solo si la imagen lleva texto):** Bricolage Grotesque para títulos (bold, display) · Switzer para cuerpo. Ninguna otra fuente bajo ningún concepto.
