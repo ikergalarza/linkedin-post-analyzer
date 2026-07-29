@@ -70,7 +70,7 @@ Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo m
 **LO QUE SÍ HAY QUE CAMBIAR SIEMPRE, para que no nos pillen el calco:**
 - **La hora** que sale en la captura. **Con minuto impar** (`09:47`, no `10:46`).
 - **El nombre del remitente:** el del dueño de la cuenta donde se publica (Unai, Iker o Asier).
-- **El nombre del destinatario:** un **nombre común en el País Vasco**, que es de donde es la mayor parte de la audiencia. Rota y no repitas: **Mikel ya está usado**. Alternativas: Iñaki, Gorka, Aitor, Jon, Ander, Eneko, Julen, Imanol.
+- **El nombre del destinatario:** un **nombre común en el País Vasco**, que es de donde es la mayor parte de la audiencia. Rota y no repitas. **Ya gastados: Mikel** y **Iñaki** (meme del tatuaje, Unai, 2026-07-29). Libres: Gorka, Aitor, Jon, Ander, Eneko, Julen, Imanol, Beñat, Koldo. **Apunta aquí el que uses cada vez.**
 - **La foto de perfil** que aparezca: la del dueño de la cuenta.
 - Y cualquier dato identificable del original (empresa, ciudad, cifras).
 
