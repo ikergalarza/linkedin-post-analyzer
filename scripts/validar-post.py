@@ -279,7 +279,7 @@ def validar_entregable(texto):
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r
 
-def validar(texto, pilar, cuenta=None, generico=False):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -761,6 +761,21 @@ def validar(texto, pilar, cuenta=None, generico=False):
             if fila:
                 usadas = (fila.group(1) if pilar == 'mapa' else fila.group(2)).strip()
                 chk(True, f'Regiones ya usadas por {cuenta} ({pilar})', f'NO repetir: {usadas}')
+
+    # ------------------------------------------------------------------
+    # MEME + UNAI: bloqueo duro (Iker, 2026-07-29)
+    # Unai es el FUNDADOR y CEO: firma la casa. Un meme controversial en su
+    # cuenta ya nos costó que un directivo nos insultara CON SU NOMBRE REAL
+    # creyéndose que el tatuaje era de verdad. La doctrina ya lo decía
+    # (post-workflow §4.4, brand-voice §1b) y aun así se publicó, así que
+    # deja de ser doctrina y pasa a ser un check que hay que desactivar a mano.
+    if pilar == 'meme' and (cuenta or '').strip().lower() == 'unai':
+        chk(meme_sobrio,
+            'MEME en Unai: confirmado que NO es controversial (§4.4)',
+            'Unai es el CEO y firma la casa. Un meme controversial ahi NO se publica: '
+            'va a Iker, y si Iker ya tiene meme esa semana, a Asier. Si de verdad es '
+            'sobrio, pasa --meme-sobrio y quedara constancia de que lo decidiste.')
+
     return r
 
 def main():
@@ -769,12 +784,18 @@ def main():
     ap.add_argument('--pilar', required=True,
                     choices=['mapa', 'los10', 'meme', 'leadmagnet', 'historia', 'entregable'])
     ap.add_argument('--cuenta', default=None)
+    ap.add_argument('--meme-sobrio', action='store_true', dest='meme_sobrio',
+                    help='Confirma que un meme para la cuenta de UNAI no es controversial. '
+                         'Es controversial si CUALQUIERA de estas es que si: el chiste depende de '
+                         'que alguien se crea que paso de verdad; hay un acto ridiculo o humillante '
+                         'atribuido al que publica; alguien podria insultarnos por creerselo; hay '
+                         'tacos, escatologia, sexo, politica o religion; se rie de un colectivo.')
     ap.add_argument('--generico', action='store_true',
                     help='Lead magnet modelo GENÉRICO (Martín Arosa/Guillermo): una palabra igual para '
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
-    res = validar(texto, a.pilar, a.cuenta, a.generico)
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.

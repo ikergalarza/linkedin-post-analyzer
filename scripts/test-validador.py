@@ -60,7 +60,8 @@ CASOS = [
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Línea individual tras cada bloque': 'formateado anterior a §3.2',
-    }),
+    }, ['--meme-sobrio']),  # <- sobrio POR DISENO, y por eso es el meme que SI encaja en Unai: sin
+       # ridiculo personal, sin nada que nadie pueda creerse literal. Es la vara de lo permitido ahi.
     # --- "Los 10": los 3 que existen. Se metieron el 2026-07-17, cuando el 3º se comió
     # un DM de un CEO pidiendo que quitáramos su empresa y a su empleado. Están los tres
     # a propósito, incluido el que flopeó: el valor de este bloque es que el check nuevo
@@ -128,7 +129,9 @@ def main() -> int:
         print('Faltan APP_BASIC_USER / APP_BASIC_PASS en el entorno.', file=sys.stderr)
         return 2
     cache, tmp, malo = {}, os.path.join(os.environ.get('TMP', '/tmp'), '_reg.txt'), False
-    for frag, pilar, cuenta, esperados in CASOS:
+    for caso in CASOS:
+        frag, pilar, cuenta, esperados = caso[:4]
+        extra = list(caso[4]) if len(caso) > 4 else []
         if cuenta not in cache:
             cache[cuenta] = bajar(cuenta)
         post = next((x for x in cache[cuenta] if frag in (x.get('content_text') or '')), None)
@@ -139,7 +142,7 @@ def main() -> int:
         io.open(tmp, 'w', encoding='utf-8', newline='').write(post['content_text'])
         salida = subprocess.run(
             [sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'validar-post.py'),
-             tmp, '--pilar', pilar, '--cuenta', cuenta],
+             tmp, '--pilar', pilar, '--cuenta', cuenta] + extra,
             capture_output=True, text=True, encoding='utf-8').stdout
         fallos = [l.strip().replace('FALLA', '').strip() for l in salida.split('\n') if 'FALLA' in l]
         print(f"\n{cuenta} · {post.get('outlier_ratio')}x · {frag}")

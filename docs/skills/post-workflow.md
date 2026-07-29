@@ -422,6 +422,28 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **Unai (1º) y Asier (3º) = memes de ventas más normalitos y sobrios.** Y sí, eso les cuesta alcance: es una decisión asumida, no un descuido.
 > - **El caso que lo demostró (0,31x, 1.003 impresiones):** el original de Gavin Fernand (corporatedudes, 425 reacciones, 45% risas) traducía **"I just shit my pants"** al lenguaje corporativo de LinkedIn. Nosotros, para que encajara en la cuenta sobria de Unai, pusimos arriba *"El cliente me dijo que no"* → *"Oportunidad en pausa estratégica"*. **La caja de arriba ya era corporativa, así que no había caída y no había chiste.** El motor de ese meme es la DISTANCIA entre la vulgaridad y el eufemismo. Ese meme tenía que haber ido en Iker, tal cual de bruto.
 > - **Regla:** mide primero cuánto de bruto es el original. Si no cabe en la cuenta que te tocaba, **cambia de cuenta**, no de chiste.
+>
+> ### 🚫🚫 4.4-STOP · MEME CONTROVERSIAL EN UNAI: PROHIBIDO (Iker, 2026-07-29)
+>
+> **Lo de arriba ya estaba escrito y aun así recomendé el meme del tatuaje para Unai. Pasó lo que tenía que pasar.** El meme se viralizó (14.000 impresiones en horas) **y un directivo nos insultó CON SU NOMBRE REAL**, porque se creyó que el tatuaje era de verdad. Unai es el **FUNDADOR y CEO**: firma la casa, y lo que le llega a él no se borra con un buen ratio.
+>
+> **Deja de ser criterio y pasa a ser un bloqueo:** `validar-post.py --pilar meme --cuenta unai` **FALLA siempre** salvo que se pase `--meme-sobrio`. El flag no se pasa por inercia: se pasa después de contestar que NO a las cinco preguntas de abajo.
+>
+> **Un meme es CONTROVERSIAL si CUALQUIERA de estas es que sí:**
+> 1. **¿El chiste depende de que alguien se crea que pasó de verdad?** (el tatuaje: sí, y ahí estuvo el insulto)
+> 2. ¿Hay un acto ridículo o humillante atribuido a quien publica?
+> 3. ¿Alguien podría respondernos enfadado por habérselo creído?
+> 4. ¿Hay tacos, escatología, sexo, política o religión?
+> 5. ¿Se ríe de un colectivo?
+>
+> **La cascada, en este orden y sin saltársela:**
+> - **Iker (2º) casi siempre.** Es la cuenta que aguanta el registro bruto.
+> - **Asier (3º) si Iker ya tiene meme esa semana.** Ahí cuela.
+> - **Unai: nunca.** Si el chiste solo funciona siendo controversial y ni Iker ni Asier pueden esa semana, **no se publica**. Se cambia el chiste o se espera. No se suaviza para meterlo en Unai, que eso ya lo probamos y dio 0,31x.
+>
+> **⚠️ Y el coste oculto del realismo:** `images §0a-sexta-bis` dice que en un pantallazo documental el realismo ES la credibilidad, y es verdad, **pero esa credibilidad tiene precio**: cuanto más se lo cree la gente, más real es el enfado del que se lo cree. Ese precio lo paga la persona que firma el post. **Cuanto más creíble sea el montaje, más lejos tiene que estar de la cuenta de Unai.**
+>
+> **Y fuera del meme: cuidado con la REDACCIÓN de todo lo de Unai.** No es solo el pilar. Cualquier frase suya que se pueda leer como chulería, burla o exageración se revisa dos veces (`brand-voice §1b`: tiene que sonar como el director industrial de ~50 años que nos lee, y que le vea como un igual).
 
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
 >
