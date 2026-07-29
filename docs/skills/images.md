@@ -50,6 +50,13 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 
 **⛔ UNICA EXCEPCION: el pilar "LOS 10" (Iker, 2026-07-28).** Ahi la imagen NO la genera una IA: la **compone `scripts/montar-orla.py`** pegando las fotos de LinkedIn sobre la plantilla que pasa Iker, pixel a pixel. No hay acabado de render que suavizar ni metadatos de generador que borrar, asi que **en "Los 10" NO se pone el aviso**. En todos los demas pilares si, porque la imagen sale de un generador.
 
+**🚨 Y SOBRE TODO CUANDO LA IMAGEN QUEDA CERRADA (Iker, 2026-07-29).** Hoy entregue cuatro prompts de edicion seguidos del meme del tatuaje y **no puse el aviso en ninguno**, ni siquiera al dar la imagen por definitiva. **El momento critico es ese**, porque es cuando Mario deja de iterar y se va a subir el fichero:
+
+- **Debajo de CADA prompt de imagen** va el aviso, tal cual, aunque sea la quinta pasada. Junto al ⚠️ de adjuntos (`§0i`), primero los adjuntos y despues este.
+- **Y cuando la imagen se da por DEFINITIVA** — se apruebe con prompt o sin el, aunque no haya mas edicion que entregar — el aviso se repite **solo, en su propio bloque**, con la frase de por que: sin el desenfoque la imagen conserva el acabado de render y los metadatos del generador, y se nota que es IA.
+
+**El disparador no es "he escrito un prompt", es "esta imagen se va a subir".** Si la imagen se cierra sin que haya un prompt de por medio, el aviso va igual.
+
 Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: el **desenfoque de superficie** le quita el acabado de render a la imagen generada, y **exportar sin metadatos** borra la firma del generador (`Exportar como…` o `Guardar para web`, con **Metadatos: Ninguno`; NUNCA `Guardar como`, que los arrastra). Ojo tambien con las **Content Credentials de Adobe (C2PA)**: van por un canal aparte y el "Metadatos: Ninguno" no las toca, hay que desactivarlas en `Ventana > Content Credentials`.
 
 ## ⭐ 0a-quater · EL TEXTO DE LA IMAGEN SIEMPRE LEGIBLE (Iker, 2026-07-27)
