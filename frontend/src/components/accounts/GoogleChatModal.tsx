@@ -9,8 +9,9 @@ interface PreviewData {
     hook: string | null;
     content: string | null;
     creator_name: string | null;
+    pillar: string | null;
   };
-  // Flat array of supportive comments (3-5). No voice selection — these
+  // Flat array of supportive comments (always 5). No voice selection — these
   // are neutral network-support comments, not anyone's personal voice.
   comments: string[];
   webhook_configured: boolean;
@@ -21,29 +22,62 @@ interface PreviewData {
 // to split into multiple messages. Kept as a safety check though.
 const MAX_LEN = 3800;
 
-function buildHeader(creatorName: string | null, url: string | null): string {
-  // First name only, so all managed accounts read the same way
-  // (NUEVO POST IKER / UNAI / ASIER), never name + surname.
-  const first = (creatorName || '').trim().split(/\s+/)[0] || 'ACCOUNT';
-  return `🐝 NUEVO POST ${first.toUpperCase()}:\n${url || '(sin URL)'}`;
+function pick<T>(xs: T[]): T {
+  return xs[Math.floor(Math.random() * xs.length)];
 }
 
-// Single-line reminder between the header and the comments — the 1st-hour
-// signal is what the algorithm uses, and Like/Compartir/Comentario/Guardar
-// are the highest-impact teammate actions.
-const REMINDER_LINE =
-  '⚠️ RECORDATORIO: si podéis LIKE + COMPARTIR + COMENTARIO + GUARDAR (pulsando 3 puntos del post) nos vamos VIRALES 🔥';
+// Cómo se anuncia cada pilar en la cabecera del mensaje de Chat. Varias
+// formas por pilar, a propósito: Iker lo venía cambiando A MANO todos los
+// días (alargando vocales, quitando la palabra "post") justo para que el
+// aviso no cantara a plantilla. Ahora lo hace el botón.
+//
+// Frases COMPLETAS y no piezas que se ensamblan: componer "NUEVO" + etiqueta
+// producía "NUEVO LOS 10" y "HISTORIA NUEVO", porque el género y el número
+// cambian con el pilar. Escribirlas enteras cuesta tres líneas más y no
+// puede desconcordar.
+const CABECERAS: Record<string, string[]> = {
+  meme: ['NUEVO MEME DE {N}', 'NUEVO MEMEEE DE {N}', 'MEMAZO NUEVO DE {N}', '{N} TIENE MEME NUEVO', 'NUEVO MEME {N}'],
+  peloteo_mapa: ['NUEVO MAPA DE {N}', 'NUEVO MAPAAA DE {N}', 'MAPA NUEVO DE {N}', '{N} TIENE MAPA NUEVO'],
+  peloteo_los10: ['NUEVOS 10 DE {N}', 'NUEVO TOP 10 DE {N}', 'LOS 10 DE {N}, RECIÉN SALIDOS', '{N} TIENE TOP 10 NUEVO'],
+  lead_magnet: ['NUEVO LEAD MAGNET DE {N}', 'NUEVO LEAD MAGNEEET DE {N}', 'LEAD MAGNET NUEVO DE {N}', '{N} TIENE LEAD MAGNET NUEVO'],
+  historia: ['NUEVA HISTORIA DE {N}', 'NUEVA HISTORIAAA DE {N}', 'HISTORIA NUEVA DE {N}', '{N} TIENE HISTORIA NUEVA'],
+  otro: ['NUEVO POST DE {N}', 'NUEVO POOOST DE {N}', 'POST NUEVO DE {N}', '{N} TIENE POST NUEVO', 'NUEVO POST {N}'],
+};
 
-function buildMessage(header: string, comments: string[]): string {
+function buildHeader(creatorName: string | null, url: string | null, pillar: string | null): string {
+  // Solo el nombre de pila, para que las tres cuentas se lean igual
+  // (IKER / UNAI / ASIER), nunca nombre y apellido.
+  const first = ((creatorName || '').trim().split(/\s+/)[0] || 'ACCOUNT').toUpperCase();
+  const frase = pick(CABECERAS[pillar || 'otro'] || CABECERAS.otro);
+  return `🐝 ${frase.replace('{N}', first)}:\n${url || '(sin URL)'}`;
+}
+
+// El recordatorio va entre la cabecera y los comentarios. La señal de la
+// primera hora es lo que mira el algoritmo, y like/comentario/compartir/
+// guardar son las cuatro acciones que más pesan, así que las cuatro salen
+// en todas las variantes. Lo que cambia es la forma: el mensaje llega a
+// diario al mismo Chat y una línea idéntica deja de leerse a la semana.
+// Sin guion largo y sin coma antes de "y" (brand-voice §3).
+const RECORDATORIOS = [
+  '🔥 Like, comentario, compartir y guardar. Los cuatro. La primera hora lo decide todo.',
+  '⚡ Cuatro toques: like, comentario, compartir y guardar (los 3 puntitos del post). Y volamos.',
+  '🚀 Like, comentario, compartir y guardar. Veinte segundos vuestros, un día entero de alcance.',
+  '🔥 La primera hora manda. Like, comentario, compartir y guardar, sin dejarse ninguno.',
+  '💥 Los de siempre: like, comentario, compartir y guardar. Guardar es en los 3 puntos.',
+  '⚡ Si caen los cuatro (like, comentario, compartir y guardar) esto se va arriba solo.',
+  '🔥 Comentario y guardado son los que más pesan. Con el like y el compartir, pleno.',
+];
+
+function buildMessage(header: string, comments: string[], recordatorio: string): string {
   const cleaned = comments.map((c) => c.trim()).filter(Boolean);
   if (cleaned.length === 0) {
-    return [header, '', REMINDER_LINE].join('\n');
+    return [header, '', recordatorio].join('\n');
   }
   const subtitle = `💬 ${cleaned.length} COMENTARIOS de APOYO (copia y pega):`;
   // No numbering in front of each comment — teammates copy the one they
   // want as-is, faster, with nothing to strip.
   const body = cleaned.join('\n\n');
-  return [header, '', REMINDER_LINE, '', subtitle, '', body].join('\n');
+  return [header, '', recordatorio, '', subtitle, '', body].join('\n');
 }
 
 export default function GoogleChatModal({
@@ -59,7 +93,6 @@ export default function GoogleChatModal({
   const [comments, setComments] = useState<string[]>([]);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
   // The full Google Chat message is editable now (instead of editing each
   // comment individually). null = use the freshly computed one; string =
   // user has typed, including '' if they cleared the field. Re-roll or a
@@ -87,26 +120,20 @@ export default function GoogleChatModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
+  // La cabecera y el recordatorio se sortean UNA vez por carga del modal, no
+  // en cada render: si fueran a cada render, escribir en el textarea cambiaría
+  // el texto de debajo mientras Iker teclea.
   const computedMessage = useMemo(() => {
     if (!data) return '';
-    return buildMessage(buildHeader(data.post.creator_name, data.post.url), comments);
+    return buildMessage(
+      buildHeader(data.post.creator_name, data.post.url, data.post.pillar),
+      comments,
+      pick(RECORDATORIOS)
+    );
   }, [data, comments]);
 
   const message = editedMessage ?? computedMessage;
   const overLimit = message.length > MAX_LEN;
-
-  // Re-roll — fetch a fresh batch (count varies 3-5 for variety).
-  const handleReRoll = async () => {
-    await loadPreview();
-  };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(message);
-      setCopiedKey('all');
-      setTimeout(() => setCopiedKey(null), 1500);
-    } catch {}
-  };
 
   const handleSend = async () => {
     if (!message) return;
@@ -132,125 +159,70 @@ export default function GoogleChatModal({
     setSending(false);
   };
 
+  // Modal deliberadamente desnudo (Iker, 2026-07-29). Antes tenía eyebrow,
+  // subtítulo, Regenerar, Copiar todo, Restaurar, un pie explicativo y
+  // Cancelar. En la práctica el flujo real es: abrir, retocar el texto,
+  // enviar. Todo lo demás era ruido alrededor de un textarea. Regenerar no
+  // se sustituye por nada porque cerrar y volver a abrir ya recompone el
+  // mensaje desde cero, y copiar lo hace el propio navegador.
   return (
     <div
       className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center overflow-y-auto py-8 px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-bg-card border border-border rounded-xl shadow-2xl w-full max-w-3xl my-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div>
-            <h2 className="text-base font-semibold text-text-primary flex items-center gap-2">
-              <span>🐝</span> Enviar a Google Chat
-            </h2>
-            {data && (
-              <p className="text-xs text-text-muted mt-0.5">
-                Post de <span className="text-text-secondary font-medium">{data.post.creator_name || '—'}</span>
-                {' '}· <span className="text-text-secondary">{comments.length} comentarios de apoyo</span>
-              </p>
-            )}
-          </div>
+      <div className="bg-bg-card border border-border rounded-2xl shadow-2xl w-full max-w-3xl my-auto overflow-hidden">
+        <div className="flex items-center justify-between px-6 pt-5 pb-4">
+          <h2 className="text-[15px] font-semibold text-text-primary flex items-center gap-2">
+            <span>🐝</span> Enviar a Google Chat
+          </h2>
           <button
             onClick={onClose}
-            className="text-text-muted hover:text-text-primary transition-colors text-xl leading-none px-2"
+            className="text-text-muted hover:text-text-primary transition-colors text-xl leading-none -mr-1 px-2"
+            aria-label="Cerrar"
           >
             ×
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
+        <div className="px-6 pb-5">
           {loading && (
-            <div className="space-y-3">
-              <div className="h-4 bg-bg-secondary rounded w-1/2 animate-pulse" />
-              <div className="h-20 bg-bg-secondary rounded animate-pulse" />
-              {[1, 2, 3].map((i) => <div key={i} className="h-12 bg-bg-secondary rounded animate-pulse" />)}
-            </div>
+            <div className="h-[420px] bg-bg-secondary/60 rounded-xl animate-pulse" />
           )}
 
           {error && (
-            <div className="bg-danger/10 border border-danger/30 rounded-lg p-3 text-danger text-sm">
+            <div className="mb-3 bg-danger/10 border border-danger/30 rounded-lg px-3 py-2 text-danger text-sm">
               {error}
             </div>
           )}
 
           {!loading && data && (
-            <>
-              {/* Re-roll */}
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <p className="text-xs text-text-muted">
-                  Comentarios de apoyo para la red de compañeros — neutrales, listos para copiar y pegar.
-                </p>
-                <button
-                  onClick={handleReRoll}
-                  className="text-[11px] text-accent hover:text-accent-light border border-border px-3 py-1.5 rounded-full"
-                  title="Regenerar (la cantidad varía 3-5 para evitar fatiga)"
-                >
-                  🎲 Regenerar
-                </button>
-              </div>
-
-              {/* Editable full message */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs text-text-muted font-medium">Mensaje completo (lo que se enviará al Chat)</label>
-                  <div className="flex items-center gap-3">
-                    {editedMessage !== null && (
-                      <button
-                        onClick={() => setEditedMessage(null)}
-                        className="text-[11px] text-text-muted hover:text-text-primary"
-                        title="Restaurar el mensaje original generado"
-                      >
-                        ↺ Restaurar
-                      </button>
-                    )}
-                    <button
-                      onClick={handleCopy}
-                      className="text-[11px] text-accent hover:text-accent-light"
-                    >
-                      {copiedKey === 'all' ? '✓ Copiado' : '📋 Copiar todo'}
-                    </button>
-                  </div>
-                </div>
-                <textarea
-                  value={message}
-                  onChange={(e) => setEditedMessage(e.target.value)}
-                  rows={16}
-                  className="w-full bg-bg-secondary border border-border rounded-lg p-3 text-[11px] text-text-secondary font-mono leading-relaxed focus:outline-none focus:border-accent resize-y"
-                  spellCheck={false}
-                />
-                <p className={`text-[10px] mt-1 ${overLimit ? 'text-amber-400' : 'text-text-muted'}`}>
-                  {message.length} / {MAX_LEN} chars · editable libremente antes de enviar. Re-roll o cerrar/abrir el modal recompone el mensaje desde cero.
-                </p>
-              </div>
-            </>
+            <textarea
+              value={message}
+              onChange={(e) => setEditedMessage(e.target.value)}
+              rows={20}
+              className="w-full bg-bg-secondary/60 border border-border rounded-xl p-4 text-xs text-text-secondary font-mono leading-relaxed focus:outline-none focus:border-accent resize-y"
+              spellCheck={false}
+              autoFocus
+            />
           )}
         </div>
 
-        {/* Footer */}
         {!loading && data && (
-          <div className="p-4 border-t border-border flex items-center gap-3">
+          <div className="px-6 pb-5 flex items-center justify-end gap-4">
             {!data.webhook_configured && (
-              <p className="text-[11px] text-amber-400 flex-1">
-                ⚠️ GOOGLE_CHAT_WEBHOOK_URL no configurado. Puedes copiar el mensaje manualmente.
+              <p className="text-[11px] text-amber-400 mr-auto">
+                ⚠️ GOOGLE_CHAT_WEBHOOK_URL no configurado
               </p>
             )}
-            {data.webhook_configured && (
-              <p className="text-[11px] text-text-muted flex-1">
-                El mensaje se enviará al espacio configurado en el backend.
+            {overLimit && (
+              <p className="text-[11px] text-amber-400 mr-auto">
+                {message.length} / {MAX_LEN} caracteres
               </p>
             )}
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-xs text-text-muted hover:text-text-primary transition-colors"
-            >
-              Cancelar
-            </button>
             <button
               onClick={handleSend}
               disabled={!data.webhook_configured || sending || sent || !message || overLimit}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-medium transition-colors ${
                 sent
                   ? 'bg-green-500/15 text-green-400 cursor-default'
                   : 'bg-accent text-bg-primary hover:bg-accent-light disabled:opacity-40 disabled:cursor-not-allowed'

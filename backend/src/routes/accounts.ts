@@ -1629,7 +1629,7 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
     const postId = req.params.postId;
 
     const { rows } = await pool.query(
-      `SELECT p.id, p.content_text, p.post_url, p.hook_text,
+      `SELECT p.id, p.content_text, p.post_url, p.hook_text, p.pillar,
               c.name AS creator_name, c.headline AS creator_headline
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
@@ -1642,7 +1642,11 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
     // Randomise the count between 3 and 5 so daily messages don't feel like
     // a template. Variety reduces fatigue on the receiving side without
     // changing the underlying intent.
-    const targetCount = 3 + Math.floor(Math.random() * 3);
+    // FIJO en 5 (Iker, 2026-07-29). Antes se sorteaba 3-5 para que el mensaje
+    // diario no repitiera forma, pero el equipo ha crecido: ahora hay gente de
+    // sobra para 5 comentarios y sortear solo dejaba a compañeros sin línea que
+    // pegar. La variedad la da el propio texto, no la cantidad.
+    const targetCount = 5;
     const rawComments = await generateSupportiveComments(
       {
         postContent: post.content_text || '',
@@ -1683,6 +1687,10 @@ router.get('/posts/:postId/google-chat-preview', async (req: Request, res: Respo
         hook: post.hook_text,
         content: post.content_text,
         creator_name: post.creator_name,
+        // El pilar viaja al modal para que la cabecera del mensaje de Chat
+        // diga "NUEVO MEMEEE" o "NUEVO LEAD MAGNET" en vez del genérico
+        // "NUEVO POST", que es lo que Iker venía corrigiendo a mano cada día.
+        pillar: post.pillar || null,
       },
       comments,
       webhook_configured: !!process.env.GOOGLE_CHAT_WEBHOOK_URL,

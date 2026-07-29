@@ -234,8 +234,14 @@ Return ONLY the JSON object with keys: ${COMMENT_KEYS.map(k => `"${k}"`).join(',
  * Compared to generateComments (9 angles for the Network feature):
  * - Only "reinforce" + "warm_supportive" registers — never contrarian.
  * - 2 lines max per comment (≤180 chars enforced downstream).
- * - Variable N (3, 4, or 5) so daily Chat messages don't repeat the
- *   same shape — small surprise factor each day prevents fatigue.
+ * - N is FIXED at 5 (Iker, 2026-07-29): the team grew, so there are enough
+ *   people to place five, and rotating 3-5 just left teammates without a line.
+ *
+ * The prompt below carries the rules from docs/skills/brand-voice.md §3 and
+ * §7 (the comment/reply voice). The old one produced generic filler AND broke
+ * our own punctuation rules — the 2026-07-29 batch shipped an em dash, which
+ * §3 forbids outright. The single biggest fix: each of these five is posted by
+ * a DIFFERENT human, so they must not read like five outputs of one template.
  */
 export async function generateSupportiveComments(
   input: CommentGenerationInput,
@@ -267,15 +273,31 @@ LANGUAGE: every comment in ${detectedLang}. Never switch languages. Never mix En
 
 REGISTER: every comment is SUPPORTIVE — either "reinforce" (extend the post's idea with one extra layer) or "warm_supportive" (genuinely happy for the author). NEVER contrarian, NEVER skeptical, NEVER provocative. These are colleagues backing each other up — they will not risk their professional image with edgy takes.
 
-LENGTH: MAX 2 lines, ≤ 180 characters each. Tight beats verbose. One sharp sentence is better than three filler ones.
+LENGTH: MAX 2 lines, ≤ 180 characters each. Tight beats verbose. One sharp sentence is better than three filler ones. And vary the length across the ${n}: if they are all the same size they read as one template.
 
-NO HOLLOW OPENERS: never "Great post!", "Love this", "Totalmente de acuerdo", "Qué bueno", "Muy buen punto". Reference something SPECIFIC from the post (a number, a phrase, a claim) so it's clear you actually read it.
+★ FIVE DIFFERENT PEOPLE WILL POST THESE. This is the rule everything else hangs off. Each comment is pasted by a DIFFERENT human being into the same thread, under their own name and face. If a reader scrolls the comments and feels they were all written by the same hand, the whole thing backfires and looks coordinated. So vary the register, the length, the opening move and the level of formality between them. One can be almost telegraphic. Another can be a small personal aside.
 
-VARIETY: each comment must come from a different angle. If two sound similar, rewrite. Mix:
+★ PUNCTUATION OF A REAL PERSON (this is non-negotiable, our brand voice forbids it):
+- NEVER an em dash or en dash. No "—", no "–". Use a full stop, a comma or a colon. This rule has been broken before and it is the single clearest tell of AI writing.
+- NEVER a comma directly before "y" or "e". A comma before "pero" is fine.
+- No markdown of any kind. No bold, no bullets, no numbered lists.
+- Do not open with an emoji. At most ONE emoji, in at most one of the ${n}, and only if it lands naturally.
+
+★ SOUND HUMAN, NOT POLISHED. In ONE or at most TWO of the ${n}, stretch a vowel on the word carrying the emphasis, the way people actually type: "muuuy", "totaaal", "buenííísimo", "ciertooo", "graciaas". Doing it in all of them is try-hard and worse than not doing it at all.
+
+NO HOLLOW OPENERS: never "Great post!", "Love this", "Totalmente de acuerdo", "Qué bueno", "Muy buen punto", "Gran post", "Me encanta", "Brutal". Reference something SPECIFIC from the post (a number, a phrase, a claim) so it's clear you actually read it.
+
+★ NEVER OUT YOURSELVES. These people work at the same company as the author. Do not write anything only an insider would know, do not say "el equipo", "en casa", "nosotros" or anything that reveals coordination, and never speak on the company's behalf. Each one is a normal contact reacting to a post.
+
+★ NO NUMBERS OR FACTS THAT ARE NOT IN THE POST. Never invent a figure, a client, a company or a personal story with specifics that could be checked. If a comment needs a personal angle, keep it unfalsifiable ("me ha pasado algo parecido") rather than inventing a case.
+
+VARIETY: each comment must come from a genuinely different angle. If two sound similar, rewrite. Mix:
 - One that reinforces the main point with a concrete personal angle
-- One that picks up a specific phrase or number from the post
-- One that's warm and human ("me ha pasado lo mismo", "esto resuena", etc.)
-- Add more if asked for 4 or 5, never repeat the same angle
+- One that picks up a specific phrase or number FROM the post and quotes it back
+- One that is warm and human ("me ha pasado lo mismo", "esto resuena")
+- One that adds ONE layer the post did not cover, without contradicting it
+- One short and punchy, a single line reaction
+Never repeat the same angle, and do not let two comments latch onto the same word of the post.
 
 Return ONLY a JSON object: { "comments": ["...", "...", ...] } with exactly ${n} strings. No markdown fences, no explanation.`;
 

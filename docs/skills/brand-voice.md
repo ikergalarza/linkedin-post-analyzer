@@ -172,5 +172,18 @@ Para comentar en posts ajenos (feature Network), la herramienta genera 9 ángulo
 - **Nunca aperturas huecas:** "Great post", "Love this", "Totalmente de acuerdo", "Muy buen punto". Nunca auto-promo ("sígueme").
 - **Variante de apoyo** (cuando el contrarian no encaja: buenas noticias, eventos, hitos): ≤180 caracteres, 2 líneas, cálido y específico, sin peloteo hueco. Son colegas apoyándose; nada arriesgado que dañe su imagen.
 
+### 7.2b · Los 5 comentarios de apoyo de Google Chat (Iker, 2026-07-29)
+Los que genera el botón **Enviar a Google Chat** de Accounts, para que los compañeros los peguen en nuestro propio post. Llevaban meses sin tocarse y salían superficiales, **y encima se saltaban nuestras propias reglas**: el lote del 29/07 llevaba un **guion largo**, que `§3` prohíbe. Ahora el prompt (`backend/src/services/commentGenerator.ts`, `generateSupportiveComments`) lleva:
+
+- **SIEMPRE 5, fijo.** Antes se sorteaba entre 3 y 5 para que el mensaje diario no repitiera forma. El equipo ha crecido, así que sortear solo dejaba compañeros sin línea que pegar. **La variedad la da el texto, no la cantidad.**
+- **★ Los escriben CINCO PERSONAS DISTINTAS.** Es la regla de la que cuelga todo lo demás: cada uno lo pega con su nombre y su cara en el mismo hilo. Si el lector baja por los comentarios y le suenan a la misma mano, se lee como coordinado y **el tiro sale por la culata**. Varían registro, longitud, arranque y grado de formalidad.
+- **Puntuación de persona real** (`§3`): cero guion largo, cero coma antes de "y", cero markdown, y como mucho un emoji en uno de los cinco.
+- **Alargar una vocal en UNO o DOS**, no en los cinco (`§7.1`). En todos es try-hard y peor que no hacerlo.
+- **Nunca delatarse:** nada de "el equipo", "nosotros" ni hablar en nombre de la empresa. Cada uno es un contacto normal reaccionando.
+- **Cero cifras o casos inventados.** Si hace falta un ángulo personal, que sea incomprobable ("me ha pasado algo parecido"), nunca un caso con datos.
+- **Cinco ángulos obligatoriamente distintos** y sin que dos se agarren a la misma palabra del post.
+
+**La cabecera y el recordatorio del mensaje también rotan** (`frontend/src/components/accounts/GoogleChatModal.tsx`). La cabecera usa el **pilar ya etiquetado** del post (`NUEVO MEMEEE DE UNAI`, `NUEVA HISTORIA DE IKER`, `NUEVOS 10 DE ASIER`), que es lo que Iker venía corrigiendo a mano cada día, y el recordatorio sortea entre 7 formas distintas de pedir las cuatro acciones. **Frases completas por pilar, nunca ensambladas**: componer "NUEVO" + etiqueta daba `NUEVO LOS 10` y `HISTORIA NUEVO`, porque género y número cambian con el pilar.
+
 ### 7.3 · Qué SÍ es fiable (recordatorio)
 Lo reconstruido en §1-§6 (voz founder-trincheras, regla de audiencia, tabla anti-IA, palancas de posicionamiento) y los **diferenciadores de `aboutme §1b`** son la base sólida de la voz. El perfil literal "Voz Neety" de la DB, no: si algo de él choca con §1-§6 o con 7.1/7.2, gana lo de aquí.
