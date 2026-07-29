@@ -85,6 +85,23 @@ Antes de repartir nombres y fotos, **decide desde qué bandeja se ve la captura*
 
 **El error que hay que evitar:** heredar la bandeja de la referencia sin mirar si el cuerpo que hemos escrito va en esa dirección. Si no cuadran, la imagen desmiente al texto en el primer segundo.
 
+### 0a-septima-ter · EL PANTALLAZO, ÍNTEGRO EN ESPAÑOL (Iker, 2026-07-29)
+
+La interfaz que imitamos **está en español entera**, incluidas las palabras del sistema que el generador tiende a dejar en inglés porque la referencia venía así. **Una sola palabra en inglés delata que la captura es falsa.** Repásalo antes de mandar el prompt:
+
+- Gmail: `me` → **`yo`** · `to` → **`para`** · `Inbox` → **`Recibidos`** · `Sent` → **`Enviados`** · `Reply` → **`Responder`**
+- WhatsApp: `online` → **`en línea`** · `typing…` → **`escribiendo…`**
+- LinkedIn: `Connect` → **`Conectar`** · `followers` → **`seguidores`**
+
+### 0a-septima-quater · REENCUADRE Y AIRE (Iker, 2026-07-29)
+
+Dos defectos que salen solos al pasar una referencia **vertical a cuadrada** y hay que pedir siempre a mano:
+
+1. **El ancho.** Al cuadrar, el generador deja una franja blanca muerta a la derecha y encoge el contenido. Se pide así, en llano: **«el correo tiene que ocupar todo el ancho de la imagen, aprovecha el espacio que queda vacío a la derecha, sin estirar ni deformar las letras»**.
+2. **El aire arriba.** El bloque de foto, nombre y hora sale pegado a la barra superior. Se pide: **«deja más espacio entre la barra superior y el bloque de la foto, el nombre y la hora»**.
+
+**Cómo se le habla al generador:** órdenes concretas y visuales sobre QUÉ mover y HACIA DÓNDE. **No entiende instrucciones de criterio** como «céntralo bien», «equilibra la composición», «que respire» o «mejora el encuadre»: las ignora o hace cualquier cosa.
+
 ## ⭐ 0a-sexta-bis · LA PALETA DE MARCA NO SE APLICA A LOS SCREENSHOTS DOCUMENTALES (Iker, 2026-07-29)
 
 La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infografías, orlas, portadas de guía, carteles. **NO se aplica cuando la imagen IMITA UNA PANTALLA REAL** (un correo de Gmail, un chat de LinkedIn, la app del banco, un CRM, un panel de analíticas).
