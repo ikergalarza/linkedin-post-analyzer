@@ -61,6 +61,14 @@ Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: e
 - Al pedirlo, dale una **operacion y un espacio** (`§0c`), nunca un juicio: *"agranda el texto de la tabla y aprovecha el espacio que sobra a los lados"*, no *"que se vea mejor"*.
 - Caso real (lead magnet de prospeccion manual, 2026-07-27): el titular se comia el protagonismo y la tabla quedaba pequena. Se agrando la tabla usando margenes e interlineado y se bajo el titular: quedo legible sin perder ninguna fila.
 
+## ⭐ 0a-sexta-bis · LA PALETA DE MARCA NO SE APLICA A LOS SCREENSHOTS DOCUMENTALES (Iker, 2026-07-29)
+
+La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infografías, orlas, portadas de guía, carteles. **NO se aplica cuando la imagen IMITA UNA PANTALLA REAL** (un correo de Gmail, un chat de LinkedIn, la app del banco, un CRM, un panel de analíticas).
+
+**Por qué:** en ese registro **el realismo ES la credibilidad** (`§2`). Si le pones la barra de Gmail en berenjena y el fondo del correo en mint, deja de parecer una captura y pasa a parecer una creatividad de empresa, y el chiste se cae: la gracia depende de que el lector **se crea que ese mensaje se mandó de verdad**.
+
+**La frontera, para no dudar:** ¿la pieza finge ser una captura de algo que existe? → **colores reales de esa interfaz**. ¿La pieza es nuestra y se ve que la hemos hecho? → **paleta de marca**. Caso: el meme del email de la tarta va con el gris de Gmail y el texto en negro sobre blanco, a propósito.
+
 ## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
 > Aplica a **los 4 pilares y a cualquier foto que publiquemos**: meme, mapa, "Los 10", lead magnet, evento. Es lo primero que se comprueba y lo último que se negocia.
 
