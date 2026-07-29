@@ -5,9 +5,10 @@
 > Si falta un dato, PREGUNTA. No lo adivines.
 
 ## Estado del sistema
-- **Herramienta de envío:** sin decidir (`email-marketing §10`).
-- **Dominio:** sin calentar.
-- **Primera tanda:** aún no ha salido ninguna.
+- **Herramienta de envío: MailerLite, CONECTADA el 2026-07-28** (cuenta `management@neety.com`, id 2536617; conector MCP activo, así que se puede crear campañas, grupos y segmentos desde aquí).
+- **Contactos cargados: 1** (la cuenta está vacía: falta importar la base de ~1.000-2.000 con su etiqueta de origen).
+- **Dominio:** sin autenticar y sin calentar.
+- **Primer correo:** el correo 0 segmentador (`email-marketing §5c-0`), aún no enviado.
 
 ## Rotación de remitentes
 | Semana | Remitente principal | Notas |

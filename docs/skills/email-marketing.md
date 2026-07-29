@@ -242,6 +242,15 @@ Javi Consuegra (`javi@saleshackers.es`, herramienta: beehiiv/Encharge) vende for
 - **Ángulos que le funcionan y son nuestros:** "las llamadas/emails en frío ya no funcionan, lo que funciona son las señales" (= nuestro pilar 2), "¿cuántas herramientas sobran en tu empresa?", "quieres IA y tu CRM apesta", "outbound como el 2016", "vender ya no va de números". **Ojo: es competencia de atención**, así que el ángulo se remixea, nunca se calca.
 - **Lo que NO copiamos:** 6 enlaces y hasta 12 imágenes por correo (nuestro dominio está frío y eso es riesgo de spam directo), ni sus asuntos con corchetes tipo `[NUEVO CONTENIDO]`.
 
+### 8c · HUGO LÓPEZ — el manual de lanzamiento (127 correos, jun 2025 - jul 2026, analizado el 2026-07-28)
+`contacto@hugolopezc.com`, Meta Ads y media buying en español (LeadMadness, You Run Ads). B2C-infoproducto como Timepack, pero su valor para nosotros es otro: **es el corpus de LANZAMIENTO y de cadencia diaria en primera persona.**
+- **Números:** cuerpo mediana 446 palabras (entre Timepack 356 y Sales Hackers 698) · asunto mediana **52 chars / 10 palabras, el más largo de las 4 fuentes** · **0 de 127 en minúsculas** · **P.D. en el 89%** (113/127, el ratio más alto del corpus) · enlaces mediana 3, solo 1 correo sin ninguno.
+- **⭐ El P.D. queda CONFIRMADO como ley del género:** 4 fuentes independientes lo llevan (Timepack 86% · Hugo 89% · Aprilynne 100% · Sales Hackers 22%). El único que baja es el B2B con enlaces por todas partes. Refuerza `§4b`.
+- **Su escalera de cierre de carrito** (asuntos literales, en orden real): *"Mañana cierro las puertas"* → *"Hoy es el último día"* → *"No entres a You Run Ads"* (reversa) → *"Últimas 4 horas y cierro plazas."* → *"60 minutos y adiós."*. Es la plantilla de una ventana de campaña. **Para nosotros aplica al webinar/evento**, nunca a la suscripción (`§8` NO copiar: un SaaS con demo no abre y cierra el producto).
+- **Estructura diaria: la crónica en primera persona.** Abre con lo que ha hecho ("Ayer cerré la oficina a las 21:45", "He estado los últimos días totalmente off"), enlaza con lo que está construyendo, y de ahí sale la oferta. Es autoridad por actividad, no por consejo, y es 100% trasladable a Kaixito y a los founders contando la semana real de Neety.
+- **Las cifras SON el contenido** (400 entradas, 267 piezas, 193→400 asistentes): números propios y comprobables como prueba. Es justo lo que a nosotros nos falta (`aboutme §1`: las nuestras están sin verificar) y el motivo por el que la prueba lógica manda hasta que existan.
+- **Lo que NO copiamos:** el hype apilado ("épico", "bestialidad", "lo vamos a reventar") choca de frente con la voz Neety y sobre todo con el registro de Unai (`brand-voice §1b`), y sus asuntos de 10 palabras contradicen a las otras 3 fuentes: nos quedamos con los 5-8 de Sales Hackers y Timepack.
+
 ---
 
 ## 9 · Entrega y validación (cada email, sin excepción)
