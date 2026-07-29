@@ -487,6 +487,17 @@ Corre estas puertas EN ORDEN:
 > - **Y varía la frase.** Se estaba repitiendo el mismo molde ("perseguir al que no contesta", "te decimos a cuál llamar"). El ninja **sigue el hilo del gancho de ESE post**, así que si el gancho cambia, la frase cambia.
 > - Ej. bueno (meme de la propuesta en visto): *"Lo caro no es el que calla. Es dar con el que decide. / Eso son meses a mano y nosotros te lo damos hecho:"*.
 
+> ### 🥇 4.4b-FUENTES · QUIÉN MANDA CUANDO DOS DOCUMENTOS NUESTROS SE CONTRADICEN (Iker, 2026-07-29)
+> **Jerarquía, y no es negociable:**
+> 1. **EL INFORME DE DEMOS manda sobre todo lo demás.** Son 167 citas literales de 42 empresas que **ya se reunieron con nosotros**. Es el único documento que dice **por qué nos llamaron de verdad**.
+> 2. **El PDF de propuesta de valor y la charla BIND van por debajo.** Son lo que **creemos nosotros** que nos diferencia. Valen como material y como argumentario de demo, pero **no deciden el gancho ni el spam ninja**.
+>
+> **El porqué, que es lo importante y no es una preferencia de estilo:** *"el cliente manda"* (Iker). **Lo que escribes SELECCIONA a quién te llama.** Si el post repite el dolor que hizo descolgar el teléfono a los que ya compraron, atraes a más gente con ese mismo dolor. Si el post repite lo que a nosotros nos parece brillante, atraes a quien le parece brillante lo mismo que a nosotros, que no es quien paga. **Es un mecanismo de autoselección, no una cuestión de tono.**
+>
+> **Consecuencia práctica:** cuando llegue un documento nuevo (otra charla, otro deck, otro one-pager), **no sustituye al informe: se contrasta contra él.** Lo que coincida, refuerza. Lo que choque, pierde. Y si el nuevo documento trae un dolor que el informe no recoge, se marca como hipótesis y se prueba en un post, no se asume.
+>
+> **Lo único que el informe NO ve, para tenerlo presente sin sobrecorregir:** solo recoge a quien YA aceptó una demo. No dice nada de quien nunca contestó. Sigue siendo, con diferencia, la mejor señal que tenemos, pero no es el mercado entero.
+>
 > ### ⭐⭐ 4.4b-ORDEN · IDENTIFICACIÓN ABRE, SEÑAL CIERRA (Iker, 2026-07-29, charla BIND de Unai)
 > **Teníamos tres fuentes diciendo cosas distintas y el choque era real, no semántico:** el **PDF de propuesta de valor** pone la señal como diferencial (*"de metralleta a francotirador"*), el **informe de 50 demos** dice que la señal es secundaria y que compran la identificación, y la **charla BIND de Unai** vuelve a poner la señal como *"el gran diferencial"*. Resuelto así, y esto manda:
 >
