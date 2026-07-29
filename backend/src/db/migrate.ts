@@ -713,7 +713,7 @@ const migration = `
 
   -- v26: PILAR de contenido (a que formato de la parrilla pertenece el post).
   -- hook_type/post_structure dicen COMO esta escrito; esto dice QUE ES:
-  -- peloteo_mapa · peloteo_los10 · lead_magnet · meme · historia · otro.
+  -- peloteo_mapa · peloteo_los10 · peloteo_objeto · lead_magnet · meme · historia · otro.
   -- Sin esto se comparaban memes (cortos por diseño, viven de la imagen) con
   -- mapas (2.000 caracteres) y salian conclusiones falsas al leer la tabla.
   -- Lo rellena services/pillar.ts, y se recalcula en lote desde
