@@ -61,6 +61,21 @@ Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: e
 - Al pedirlo, dale una **operacion y un espacio** (`§0c`), nunca un juicio: *"agranda el texto de la tabla y aprovecha el espacio que sobra a los lados"*, no *"que se vea mejor"*.
 - Caso real (lead magnet de prospeccion manual, 2026-07-27): el titular se comia el protagonismo y la tabla quedaba pequena. Se agrando la tabla usando margenes e interlineado y se bajo el titular: quedo legible sin perder ninguna fila.
 
+## 🔴 0a-septima · QUÉ SE CAMBIA Y QUÉ NO AL CALCAR (Iker, 2026-07-29)
+
+Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo me equivoqué al revés en el meme del tatuaje**: cambié el motor y dejé los detalles.
+
+**LO QUE NO SE TOCA NUNCA: la esencia viral.** El objeto o la mecánica que HACE el chiste. En el email de Félix era **el tatuaje**: tatuarse el logo de un cliente que ni contesta es irreversible y absurdo, y por eso funciona. Lo cambié por una tarta y se cayó el gag: una tarta se congela, no duele, no compromete. **Precedente que ya pagamos:** el meme del perro se hundió cuando cambiamos el perro por un comercial, y meses después, respetando la esencia del perro, **rompió todas nuestras estadísticas.**
+
+**LO QUE SÍ HAY QUE CAMBIAR SIEMPRE, para que no nos pillen el calco:**
+- **La hora** que sale en la captura. **Con minuto impar** (`09:47`, no `10:46`).
+- **El nombre del remitente:** el del dueño de la cuenta donde se publica (Unai, Iker o Asier).
+- **El nombre del destinatario:** un **nombre común en el País Vasco**, que es de donde es la mayor parte de la audiencia. Rota y no repitas: **Mikel ya está usado**. Alternativas: Iñaki, Gorka, Aitor, Jon, Ander, Eneko, Julen, Imanol.
+- **La foto de perfil** que aparezca: la del dueño de la cuenta.
+- Y cualquier dato identificable del original (empresa, ciudad, cifras).
+
+**La prueba para no dudar:** si al quitar ese elemento el chiste sigue funcionando, es un detalle y se cambia. Si al quitarlo el chiste se cae, es la esencia y se respeta.
+
 ## ⭐ 0a-sexta-bis · LA PALETA DE MARCA NO SE APLICA A LOS SCREENSHOTS DOCUMENTALES (Iker, 2026-07-29)
 
 La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infografías, orlas, portadas de guía, carteles. **NO se aplica cuando la imagen IMITA UNA PANTALLA REAL** (un correo de Gmail, un chat de LinkedIn, la app del banco, un CRM, un panel de analíticas).
