@@ -479,6 +479,10 @@ Corre estas puertas EN ORDEN:
 
 **Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
 
+> **🔴 EL NINJA APUNTA A LA IDENTIFICACIÓN, NO A LA SEÑAL (Iker, 2026-07-29, con el informe de 50 demos).** Medido en `aboutme §1b`: la señal convence a un nivel **secundario** (objeción en 8 empresas), y lo que compran es **saber a quién vender y quién decide dentro**, que a mano *"puede ser un trabajo de meses"*. **Cambia el eje del ninja a eso.**
+> - **Y varía la frase.** Se estaba repitiendo el mismo molde ("perseguir al que no contesta", "te decimos a cuál llamar"). El ninja **sigue el hilo del gancho de ESE post**, así que si el gancho cambia, la frase cambia.
+> - Ej. bueno (meme de la propuesta en visto): *"Lo caro no es el que calla. Es dar con el que decide. / Eso son meses a mano y nosotros te lo damos hecho:"*.
+
 > **🚨 UN `🔗 0` EN UN POST CON ENLACE NO SIGNIFICA "NADIE PINCHA": a veces LinkedIn no mide ese enlace (Iker, 2026-07-24).**
 > **Cómo distinguirlo:** en la página de analíticas del post, cuando LinkedIn SÍ está midiendo, junto a "Visits to links from this post" aparece **la URL de destino registrada**. Cuando no mide, no aparece **ninguna URL**, solo un 0 pelado. La herramienta guarda esa URL en `link_url`: **enlace en el cuerpo + `link_url` vacío + 0 clics = LinkedIn no lo está midiendo**, y ese 0 no es un dato de interés real.
 > **Evidencia (medida el 2026-07-24 sobre los mapas de Iker):** Navarra → `pampam.city/...` **230 clics** · Galicia → `pampam.city/...` **107** · agendar → `recursos.neety.com/agendar/` **76 / 28 / 7 / 4** · Murcia **0 sin URL registrada** · Valencia **0 sin URL registrada**.

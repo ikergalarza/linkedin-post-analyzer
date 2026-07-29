@@ -39,6 +39,18 @@ Neety construye **sistemas de outbound operativo con IA** para **empresas indust
 2. **Contacto por señal, no por secuencia — "de metralleta a francotirador".** No contactamos a 500 personas porque "toca" en una cadencia (eso quema el mercado y hunde la respuesta). Neety **espera a que pase algo que justifique escribir** y entonces avisa y propone el acercamiento **con contexto**. Contactar por señal dispara la respuesta y la conversión muy por encima de la lista fría.
 3. **El comercial enseña; la herramienta replica — "propone, tú confirmas".** Hay automatización del envío, **pero el comercial valida cada comunicación y da feedback**, y Neety aprende **por comercial** (qué empresa acepta o descarta, qué mensaje corrige, qué señal le vale). Entrega **tareas accionables ya redactadas por IA, listas para confirmar**; el tono lo decide el comercial. Cuanto más lo usa, más se parece a él — "se vuelve vuestro".
 
+### 🔴 LO QUE DICEN LOS CLIENTES REALES (informe de 50 demos, jul 2026) — MANDA SOBRE LA TEORÍA
+
+Fuente: `Documentos/Mario/LINKEDIN GROWTH/FEEDBACK CLIENTES DEMOS.html` · 167 citas literales, 42 empresas, 50 reuniones, 1-27 jul 2026.
+
+**⚠️ LA SEÑAL NO ES EL ARGUMENTO PRINCIPAL. Lo es la IDENTIFICACIÓN.** Es un patrón en **8 empresas (5 del ICP)**: *"veo como más interés en la primera parte, que es la identificación sobre todo y las personas. La parte de las señales obviamente me parece interesante, pero a un nivel más secundario"* (Adrián · bigD · 17 jul). Llevábamos meses montando el spam ninja sobre *"de metralleta a francotirador"*, y el mercado dice que eso es el postre, no el plato.
+
+**El dolor nº1, en 12 empresas (8 del ICP):** buscar empresas a mano se come el tiempo de contactar. *"intentar identificar la persona, tocar de una empresa intenta saltar a otra, de una filial intenta saltar a otra"* (Lander · Burdinola · 24 jul).
+
+**El elogio que mejor vende, y su unidad de medida — MESES:** *"solamente con los nombres de las empresas ya me vale. Me dice las personas, porque yo las personas las consigo. Claro, puede ser un trabajo de meses"* (Ariel · Composites Martiartu · 10 jul). **Usa "meses", no "horas": es la palabra que ellos usan.**
+
+**Qué NO prometer en un post (objeciones reales):** que el mensaje lo escribe la IA (*"el mensaje se nota automatizado: se ignora y quema la confianza"*), ni automatismo total. Lo que compran es **a quién vender y quién decide dentro**.
+
 ### Qué NO somos (posicionamiento — lo que hay que romper en la cabeza del lector)
 - **NO** una agencia que prospecta por ti.
 - **NO** "una herramienta de prospección más" con la promesa de siempre.
