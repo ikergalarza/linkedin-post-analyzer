@@ -343,6 +343,7 @@ Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque
 3. **¿Cero simbolos raros?** Ni `UNO, DOS, TRES`, ni `(1)`, ni comillas, ni barras `/`, ni parentesis. Si hay que citar un texto literal, se dice **sin comillas**: *cambia la hora de las 10:46 a las 09:47*.
 4. **¿Es CORTO?** Una orden por frase, frases cortas, todo del tirado en un parrafo. Si ocupa mas de 10 lineas, sobra la mitad.
 5. **¿Repite algo que la imagen ya tiene bien?** Si es de EDICION, fuera. Solo van los cambios.
+6. **¿Dice que va CUADRADA?** (Iker, 2026-07-30). La regla de `§0` ya lo decia — **al calcar, el formato es NUESTRO, no el de la referencia** — y aun asi entregue el meme de reaccion en horizontal porque el original era horizontal. **Si la referencia no es 1:1, el prompt tiene que pedir 1:1 explicitamente**, y decir si se amplia (arriba y abajo, o a los lados) o se recorta. Calcar el encuadre malo del original es lo contrario de copiar y mejorar.
 
 **La forma de fallar este chequeo es no hacerlo.** Si el prompt anterior salio bien, este sale igual: se copia el molde, no se improvisa.
 
