@@ -62,6 +62,11 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 
 **El disparador no es "he escrito un prompt", es "esta imagen se va a subir".** Si la imagen se cierra sin que haya un prompt de por medio, el aviso va igual.
 
+**⚠️ EL DESENFOQUE NO VA EN LAS FOTOS REALISTAS DE PERSONAS (Iker, 2026-07-30).** Aqui iban los dos pasos siempre juntos y **no son lo mismo**:
+- **Desenfoque de superficie → SOLO en piezas de DISEÑO generadas** (infografias, tablas, ilustraciones, portadas). Ahi mata el acabado de render. **En un rostro fotorrealista lo ESTROPEA: le quita el poro y la textura de piel y lo convierte en un dibujo animado**, que es justo lo contrario de lo que busca un meme de reaccion.
+- **Exportar sin metadatos → SIEMPRE**, venga de donde venga. Eso va de la firma del generador, no del aspecto.
+- **JPG calidad 10 a 500x500 → SOLO en memes** (`§0`). Es lo que hace que parezca reenviado mil veces. **Y en un meme de foto realista este paso SUSTITUYE al desenfoque**: el pixelado del JPG ya rompe el acabado limpio sin cartonizar la cara.
+
 Los dos pasos son de postproduccion y se olvidan porque no estan en el prompt: el **desenfoque de superficie** le quita el acabado de render a la imagen generada, y **exportar sin metadatos** borra la firma del generador (`Exportar como…` o `Guardar para web`, con **Metadatos: Ninguno`; NUNCA `Guardar como`, que los arrastra). Ojo tambien con las **Content Credentials de Adobe (C2PA)**: van por un canal aparte y el "Metadatos: Ninguno" no las toca, hay que desactivarlas en `Ventana > Content Credentials`.
 
 ## ⭐ 0a-quater · EL TEXTO DE LA IMAGEN SIEMPRE LEGIBLE (Iker, 2026-07-27)
