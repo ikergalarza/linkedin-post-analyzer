@@ -763,7 +763,8 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 **OUTPUT FINAL de este pilar (SOLO esto, Iker, 2026-07-30):**
 1. **El TEXTO** del post en bloque cercado, para copiarlo con el botón.
 2. **La GUÍA DE MENCIONES** en tabla de 4 columnas con enlaces azules pulsables, empresa y persona.
-3. **La IMAGEN** ya montada, y **MOSTRADA en el chat**, no solo su ruta (Iker, 2026-07-30). La ruta se da igual, porque la necesita para subirla, pero la imagen se ensena. Vale lo mismo para "Los 10": si la compongo yo con un script, se ve aqui.
+3. **La IMAGEN** ya montada, **MOSTRADA en el chat** y **guardada en `Documents/Mario/LINKEDIN GROWTH/LOS 10/`** con la convencion de esa carpeta: minusculas, espacios y sin acentos, con el SECTOR delante (`automocion euskadi.png`, `alimentacion galicia.png`). El sector y no la palabra "objeto", que es jerga interna y no dice nada al abrir la carpeta (Iker, 2026-07-30).
+4. **NADA MAS. Sin ZIP ni carpeta de logos** (Iker, 2026-07-30): los logos me los bajo yo para montar la imagen, asi que entregarlos es ruido. **Vale igual para "Los 10" con las fotos de las personas.** Lo unico que se entrega es la imagen final. La ruta se da igual, porque la necesita para subirla, pero la imagen se ensena. Vale lo mismo para "Los 10": si la compongo yo con un script, se ve aqui.
 
 **Sin CSV, sin fotos de personas y sin Excel.** El mapa necesita CSV porque se dibuja un mapa; aquí no hay nada que importar.
 
