@@ -734,17 +734,20 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 >
 > **⭐ El titulo lleva `XXX` como marcador de region**, igual que el del despiece. Antes tenia `LA INDUSTRIA ASTURIANA` escrito a fuego **y por eso la orla de Andalucia salio diciendo ASTURIANA** y hubo que rehacerla. `montar-orla.py --region ANDALUZA` lo sustituye solo.
 >
-> **Colores del brandbook, muestreados del PSD y NO de memoria:**
+> **🎨 Colores oficiales, de la PAGINA 23 del `docs/brandbook-neety-2026.pdf`. Esa es la fuente, NO los PSD:**
 >
-> | Uso | Codigo |
-> |---|---|
-> | Berenjena (franja) | `#461943` |
-> | Menta (fondo) | `#e6f6ef` |
-> | Blanco roto (texto) | `#f9f3ef` |
-> | Naranja (palabra punchy) | `#fe8238` |
-> | Azul bebe (acento) | `#a7c5f9` |
+> | Color | Codigo | RGB |
+> |---|---|---|
+> | Berenjena | `#431b44` | 67, 27, 68 |
+> | Naranja | `#fe8238` | 254, 130, 56 |
+> | Mint claro | `#ebfff6` | 235, 255, 246 |
+> | Azul bebe | `#a7c5f9` | 167, 197, 249 |
 >
-> **⚠️ Los que yo venia usando de memoria estaban MAL** (`#431b44` y `#ebfff6`). **Se muestrean del fichero siempre**, que el brandbook cambia y la memoria no se entera.
+> **🔴 LOS PSD ESTAN DESVIADOS Y NO VALEN COMO REFERENCIA (Iker, 2026-07-30).** Muestreados el 30/07: franja `#461943` en vez de `#431b44`, fondo `#e6f6ef` en vez de `#ebfff6` y el naranja de "Los 10" en `#ee9363` en vez de `#fe8238`. **El origen:** la plantilla salio de un generador de imagen, los colores se movieron por el camino y cada copia lo ha ido arrastrando.
+>
+> **⚠️ Y me equivoque yo ANTES en esta misma seccion.** Al ver que el PSD no coincidia con mi memoria, di por hecho que el equivocado era yo y escribi aqui que los PSD mandaban. **Era al reves.** La leccion: cuando un fichero derivado contradice a la fuente, **se comprueba la FUENTE**, no se asume que la fuente esta obsoleta. El brandbook manda sobre cualquier PSD, plantilla o captura.
+>
+> El blanco del titulo esta en `#f9f3ef`, que **no aparece en la paleta**. En brandbook estricto seria el Mint claro `#ebfff6`.
 
 #### ⭐⭐ 4.7 · Runbook DESPIECE / OBJETO — el 3er peloteo regional (Iker, 2026-07-30)
 
