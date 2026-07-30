@@ -135,17 +135,33 @@ def leer_titulo(ruta_psd: str) -> dict | None:
             v = d.get('FillColor', {}).get('Values', [1, 1, 1, 1])
             tramos.append({'txt': texto[i:i + L], 'color': tuple(round(c * 255) for c in v[1:4])})
             i += L
-        return {'texto': texto, 'tramos': tramos, 'bbox': capa.bbox}
+        # El cuerpo y el interlineado del PSD estan en unidades del DOCUMENTO,
+        # no en pixeles: hay que multiplicarlos por la escala de la matriz de
+        # transformacion de la capa. Aqui 29 x 2.82 = 81.8 px reales.
+        # Iker, 2026-07-30: antes yo ajustaba el cuerpo a la caja por prueba y
+        # error, y salia MAS PEQUENO que el que habia puesto el disenador. El
+        # tamano no se recalcula, se respeta.
+        import math
+        tr = capa.transform or (1, 0, 0, 1, 0, 0)
+        escala = math.hypot(tr[0], tr[1]) or 1
+        d0 = runs[0]['StyleSheet']['StyleSheetData']
+        cuerpo = float(d0.get('FontSize', 29)) * escala
+        salto = float(d0.get('Leading') or d0.get('FontSize', 29) * 1.2) * escala
+        return {'texto': texto, 'tramos': tramos, 'bbox': capa.bbox,
+                'cuerpo': cuerpo, 'salto': salto, 'cx': tr[4], 'base': tr[5]}
     return None
 
 
 def dibujar_titulo(img: Image.Image, titulo: dict, region: str, ruta_fuente: str) -> None:
-    """Redibuja el título con la región puesta, centrado en su caja original."""
-    x0, y0, x1, y1 = titulo['bbox']
-    # Los tramos llevan el color; se parten por línea manteniendo el color.
+    """Redibuja el título con la región puesta, en el MISMO cuerpo y sitio del PSD.
+
+    No se ajusta nada a ojo: el cuerpo, el interlineado, el centro horizontal y
+    la primera línea base salen de la capa de texto del diseñador.
+    """
+    # Los tramos llevan su color; se parten por línea manteniéndolo.
     lineas: list[list[dict]] = [[]]
     for t in titulo['tramos']:
-        partes = t['txt'].replace(MARCADOR_REGION, region.upper()).split('\n')
+        partes = t['txt'].replace(MARCADOR_REGION, region.upper()).split(chr(10))
         for j, p in enumerate(partes):
             if j:
                 lineas.append([])
@@ -153,32 +169,17 @@ def dibujar_titulo(img: Image.Image, titulo: dict, region: str, ruta_fuente: str
                 lineas[-1].append({'txt': p, 'color': t['color']})
     lineas = [l for l in lineas if l]
 
-    # Cuerpo por búsqueda: el FontSize del PSD está en las unidades del
-    # documento y no se traduce a píxeles de PIL, así que se ajusta al ancho y
-    # al alto reales de la caja que dibujó el diseñador.
-    ancho_caja, alto_caja = x1 - x0, y1 - y0
-    cuerpo = 8
-    while cuerpo < 400:
-        f = ImageFont.truetype(ruta_fuente, cuerpo + 2)
-        anchos = [sum(f.getbbox(s['txt'])[2] - f.getbbox(s['txt'])[0] for s in l) for l in lineas]
-        alto_linea = f.getbbox('Hg')[3] - f.getbbox('Hg')[1]
-        if max(anchos) > ancho_caja or alto_linea * len(lineas) * 1.22 > alto_caja:
-            break
-        cuerpo += 2
-    fuente = ImageFont.truetype(ruta_fuente, cuerpo)
+    fuente = ImageFont.truetype(ruta_fuente, round(titulo['cuerpo']))
     d = ImageDraw.Draw(img)
-    alto_linea = (fuente.getbbox('Hg')[3] - fuente.getbbox('Hg')[1]) * 1.22
-    total = alto_linea * len(lineas)
-    y = y0 + (alto_caja - total) / 2
-
+    base = titulo['base']
     for linea in lineas:
-        ancho = sum(fuente.getbbox(s['txt'])[2] - fuente.getbbox(s['txt'])[0] for s in linea)
-        x = x0 + (ancho_caja - ancho) / 2
+        ancho = sum(d.textlength(s['txt'], font=fuente) for s in linea)
+        x = titulo['cx'] - ancho / 2
         for s in linea:
-            d.text((x, y), s['txt'], font=fuente, fill=s['color'] + (255,))
-            b = fuente.getbbox(s['txt'])
-            x += b[2] - b[0]
-        y += alto_linea
+            # Ancla en la línea base izquierda, que es como posiciona Photoshop.
+            d.text((x, base), s['txt'], font=fuente, fill=s['color'] + (255,), anchor='ls')
+            x += d.textlength(s['txt'], font=fuente)
+        base += titulo['salto']
 
 
 def main() -> int:
