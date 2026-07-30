@@ -727,6 +727,46 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
    - **Para NOSOTROS:** portada de guía ("El 60% de tu IA subvencionado · SPRI · Euskadi") con índice de los 5 puntos, crema/serif, logos legítimos (Claude, SPRI/Gobierno Vasco), enseñada como PDF con sus miniaturas. Reutilizable entre posts de subvención.
 7. **REPITE lo que funciona.** Si un tema+hook peta, se vuelve a hacer a las 1-2 semanas con cambios mínimos. No hace falta reinventar cada vez.
 
+#### ⭐⭐ 4.7 · Runbook DESPIECE / OBJETO — el 3er peloteo regional (Iker, 2026-07-30)
+
+**Qué es.** El tercer formato del pilar peloteo. El mapa pelotea EMPRESAS de una región, "Los 10" pelotea PERSONAS, y este pelotea **un OBJETO cotidiano despiezado**: cada pieza, la empresa de la región que la fabrica. **La prioridad es la EMPRESA**, como en el mapa, con la persona al lado. Estrenado el 2026-07-30 en la cuenta de Iker con Euskadi y el coche. Se valida con `--pilar objeto`.
+
+**Paso 1 — OBJETO y REGIÓN.**
+- El objeto tiene que ser **reconocible por cualquiera y despiezable**. El coche es el caso perfecto: todo el mundo tiene uno y da para 20 sistemas con proveedor distinto. Un aerogenerador sería más "nuestro" pero nadie tiene uno en el garaje.
+- **La región se elige por IMPRESIONES, no por ratio.** Y **la región NO se quema entre formatos de peloteo**: el despiece es nuevo, así que puede repetir una región que ya hizo el mapa o "Los 10", incluso en la misma cuenta. Lo que sí va nuevo es el concepto, los clichés y la frase-rabia.
+- **⚠️ Al fijar un sector el universo se estrecha muchísimo más que en un mapa**, que acepta cualquier industria. **Es el pilar con más riesgo de quedarse corto.** Medido el 30/07: Galicia daba 8 empresas y Euskadi 12. Si la región no llega a 10, se cambia de región, no se rellena.
+
+**Paso 2 — LAS EMPRESAS, y aquí está el trabajo de verdad.**
+- **Objetivo 20, suelo 10.**
+- **Descubrimiento: buscar PERSONAS, no empresas.** La página de LinkedIn de una empresa muestra su SEDE, no sus plantas: filtrando por localización de empresa se caen justo las grandes (Michelin dice Clermont-Ferrand aunque fabrique en Valladolid). Buscando personas con `keywords` de la planta salen las multinacionales con su gente real.
+- **Cada pieza se asigna contra la DESCRIPCIÓN de la propia empresa** (`GET /api/v1/linkedin/company/{slug}` da `description`), nunca por intuición. **El 30/07 esto evitó cinco errores factuales**: Copreci hace electrodomésticos, Orkli climatización de edificios, Goizper bancos de ensayo, Onapres prensas y la página de Grupo ELAY es de recursos humanos. **Si la descripción está vacía, la empresa se cae** (así se fueron Mecaner y Megatech).
+- Las cuatro comprobaciones de mención del `§4.2` aplican enteras.
+
+**Paso 3 — EL TEXTO.** Calca la estructura del mapa y cambia solo su firma:
+- **Gancho:** misma fórmula que el mapa (concepto despectivo en palabra universal + EXACTAMENTE 2 clichés universales + frase-rabia), pero donde el mapa remata con *"y exporta más que X entero"*, **el despiece remata con el OBJETO**: *"Y ahí se hace tu coche"*. Esa sustitución es lo que evita canibalizar el mapa.
+- **Ficha:** `→ La pieza: @Empresa - @Persona`. La pieza delante y los dos puntos son la firma del formato y lo que lo distingue del mapa en el clasificador.
+- **Bloques de 4**, y si el número no es múltiplo de 4 el último es de 2 o de 3, nunca de 1. Nunca un 5 seguido de un 2.
+- **Reveal tardío** de la región, después de la lista, con los clichés locales justo antes.
+- **Spam ninja** tras las menciones y **cierre punchy** de una línea.
+- ⚠️ **NO importes la comparación con otro país.** Es la firma del mapa, igual que ya se decidió en "Los 10".
+
+**Paso 4 — LA IMAGEN: plantilla de silueta + script.**
+- **Idea de Iker:** la silueta del objeto más representativo del sector, con los **logos** repartidos por ella. En automoción, una **llanta** con los logos en la corona. Logos y no caras, porque este pilar prioriza la empresa.
+- **La compone `scripts/montar-llanta.py`, no un generador.** Un modelo generativo rechaza logos de terceros por copyright y, si los acepta, los redibuja (`images §0i-2`).
+- **Plantilla:** `Documents/Mario/LINKEDIN GROWTH/LOS 10/PLANTILLA OBJETO.psd` (1254x1254). Franja berenjena con el título en capa de texto editable donde `XXX` es el marcador de región, fondo menta, llanta en línea berenjena y los huecos de logo **transparentes**.
+- **Los logos se bajan de Unipile** (`logo_large`) numerados en el orden del post: `01-acero.jpg`, `02-tubos.jpg`. Mismo procedimiento que el CSV del mapa, pero **aquí NO hay CSV**.
+- **Una plantilla por SECTOR.** La llanta vale para automoción y se reutiliza en toda España y en las tres cuentas: solo cambia el título. Otro sector pide otra silueta.
+- **El script ordena los huecos por ÁNGULO, como un reloj**, empezando arriba. Una orla se lee por filas, una rueda se lee como un reloj.
+- **Los logos van CONTENIDOS, no recortados**, sobre un disco blanco. Un logo recortado pierde el nombre de la empresa, que es lo único que hay que poder leer.
+- 🔴 **El desenfoque de postproducción va SOLO sobre la plantilla, una vez.** Las imágenes de cada región las compone el script y no llevan firma de generador, igual que "Los 10".
+
+**OUTPUT FINAL de este pilar (SOLO esto, Iker, 2026-07-30):**
+1. **El TEXTO** del post en bloque cercado, para copiarlo con el botón.
+2. **La GUÍA DE MENCIONES** en tabla de 4 columnas con enlaces azules pulsables, empresa y persona.
+3. **La IMAGEN** ya montada.
+
+**Sin CSV, sin fotos de personas y sin Excel.** El mapa necesita CSV porque se dibuja un mapa; aquí no hay nada que importar.
+
 #### ⭐⭐ 4.6 · Runbook HISTORIA PERSONAL / ANÉCDOTA (Iker, 2026-07-24)
 
 > ### 🎯 4.6-OBJETIVO · ESTE PILAR NO VA DE VIRALIDAD (Iker, 2026-07-29)

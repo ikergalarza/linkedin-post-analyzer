@@ -637,6 +637,36 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # ---------- AUDITORIA 2026-07-20 · POR PILAR ----------
     _flechas = [l for l in cuerpo.splitlines() if re.match(r'^\s*→\s', l)]
 
+    # ---------- DESPIECE / OBJETO (4.7) ----------
+    if pilar == 'objeto':
+        _piezas = [l for l in _flechas if ':' in l and re.search(r' - | – | — ', l.split(':', 1)[1])]
+        chk(len(_piezas) == len(_flechas) and len(_flechas) > 0,
+            'OBJETO: cada ficha lleva la pieza delante y los dos puntos (4.7)',
+            f'{len(_flechas) - len(_piezas)} de {len(_flechas)} sin ese formato. Es la firma '
+            'del pilar y lo que lo distingue del mapa en el clasificador')
+        chk(len(_piezas) >= 10,
+            'OBJETO: 10 piezas como MINIMO, objetivo 20 (4.7)',
+            f'{len(_piezas)}. Por debajo de 10 no se publica: se cambia de region, no se rellena'
+            if len(_piezas) < 10 else f'{len(_piezas)} (apunta siempre a 20)')
+        # Bloques de 4, y el ultimo puede bajar a 2 o 3. Nunca uno de 1, y nunca
+        # un 5 pegado a un 2: eso es lo que se lee como descuadre.
+        _bl, _act = [], 0
+        for _l in cuerpo.splitlines():
+            if _l.strip().startswith('→'):
+                _act += 1
+            elif _act:
+                _bl.append(_act)
+                _act = 0
+        if _act:
+            _bl.append(_act)
+        _ok_bl = bool(_bl) and all(b == 4 for b in _bl[:-1]) and _bl[-1] in (2, 3, 4)
+        chk(_ok_bl, 'OBJETO: bloques de 4 y el ultimo de 2, 3 o 4 (4.7)',
+            f'bloques de {_bl}. Todos de 4 salvo el ultimo, que puede bajar a 2 o 3')
+        # La firma del mapa NO se importa: canibalizaria el pilar.
+        chk(not re.search(r'exporta m[aá]s que|m[aá]s que \w+ entero', cuerpo, re.I),
+            'OBJETO: sin la comparacion con otro pais (4.7)',
+            'esa es la firma del MAPA. Aqui el remate del gancho es el OBJETO')
+
     if pilar in ('mapa', 'los10') and _flechas:
         # §4.2/§4.3 — la frase de entrada va SOLA. Pegada a la lista, el bloque
         # se lee como un muro.
@@ -817,7 +847,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('fichero')
     ap.add_argument('--pilar', required=True,
-                    choices=['mapa', 'los10', 'meme', 'leadmagnet', 'historia', 'entregable'])
+                    choices=['mapa', 'los10', 'objeto', 'meme', 'leadmagnet', 'historia', 'entregable'])
     ap.add_argument('--cuenta', default=None)
     ap.add_argument('--meme-sobrio', action='store_true', dest='meme_sobrio',
                     help='Confirma que un meme para la cuenta de UNAI no es controversial. '
