@@ -763,7 +763,7 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 **OUTPUT FINAL de este pilar (SOLO esto, Iker, 2026-07-30):**
 1. **El TEXTO** del post en bloque cercado, para copiarlo con el botón.
 2. **La GUÍA DE MENCIONES** en tabla de 4 columnas con enlaces azules pulsables, empresa y persona.
-3. **La IMAGEN** ya montada.
+3. **La IMAGEN** ya montada, y **MOSTRADA en el chat**, no solo su ruta (Iker, 2026-07-30). La ruta se da igual, porque la necesita para subirla, pero la imagen se ensena. Vale lo mismo para "Los 10": si la compongo yo con un script, se ve aqui.
 
 **Sin CSV, sin fotos de personas y sin Excel.** El mapa necesita CSV porque se dibuja un mapa; aquí no hay nada que importar.
 
