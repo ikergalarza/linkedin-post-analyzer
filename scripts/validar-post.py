@@ -666,9 +666,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 f"cruzado contra {_mm.get('total', 0)} ya mencionadas")
 
     if pilar == 'mapa':
-        # §4.2 Paso 4 — 20 en 5x4, o 16 en 4x4 si no llegas. Nunca otra cifra.
-        chk(len(_flechas) in (16, 20), 'Mapa con 16 o 20 menciones (§4.0c)',
-            f'{len(_flechas)}. Si no llegas a 20 baja a 16, no rellenes' if len(_flechas) not in (16, 20) else '')
+        # §4.2 Paso 4 — el objetivo son 20. Si la region no da, se baja, pero el
+        # SUELO son 10 (Iker, 2026-07-29): por debajo de 10 el post no se hace,
+        # y nunca se rellena con inventadas para llegar a una cifra bonita.
+        _n = len(_flechas)
+        chk(_n >= 10, 'Mapa con 10 menciones como MÍNIMO (§4.0c)',
+            f'{_n}. Por debajo de 10 la publicacion NO se hace. Nunca rellenes con inventadas'
+            if _n < 10 else (f'{_n} (el objetivo son 20; con menos vale, pero apunta siempre a 20)'))
         # §4.0b — en el mapa la ficha NO lleva logro. Ese es el formato de "Los 10".
         _con_logro = [l for l in _flechas if '·' in l]
         chk(not _con_logro, 'Mapa sin logro en la ficha (§4.0b)',
