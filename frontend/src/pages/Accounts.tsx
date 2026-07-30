@@ -388,6 +388,23 @@ function mostrarClics(post: { link_clicks_count?: number | null; content_text: s
    Murcia y Valencia salen a 0 sin URL, con el enlace funcionando y sin haber
    editado el post (global §4.4b). Se pinta apagado y con "sin medir" para que no
    se lea como un fracaso del CTA. */
+/* CTR = clics / impresiones, en %. Solo tiene sentido cuando el post LLEVABA
+   enlace y LinkedIn midio alcance: un CTR sobre 0 impresiones no es "malo", es
+   que no hay dato (misma logica que el orden por 'ctr' de Top posts).
+   Iker, 2026-07-29: el numero de clics ya estaba debajo de la tarjeta, pero lo
+   que de verdad compara entre posts es la TASA, porque un post con 5 veces mas
+   alcance saca mas clics haciendolo peor. */
+function ctrPct(post: {
+  link_clicks_count?: number | null;
+  impressions_count?: number | null;
+  content_text: string | null;
+}): number | null {
+  if (!mostrarClics(post)) return null;
+  const imp = post.impressions_count ?? 0;
+  if (!imp) return null;
+  return ((post.link_clicks_count ?? 0) / imp) * 100;
+}
+
 function sinMedicion(post: {
   link_clicks_count?: number | null;
   link_url?: string | null;
@@ -2178,6 +2195,18 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <PilarBadge pillar={post.pillar} />
+              {/* CTR a la izquierda del multiplicador (Iker, 2026-07-29): el ojo
+                  lee de izquierda a derecha y lo ultimo que ve es lo que se le
+                  queda, asi que el outlier va el mas a la derecha y en grande.
+                  El CTR solo sale si el post llevaba enlace. */}
+              {ctrPct(post) != null && (
+                <span
+                  className="px-2 py-1 rounded text-xs font-medium tabular-nums bg-bg-secondary border border-border text-text-secondary"
+                  title={`Tasa de clics: ${post.link_clicks_count} clics sobre ${fmtNum(post.impressions_count ?? 0)} impresiones`}
+                >
+                  {ctrPct(post)!.toFixed(2)}% CTR
+                </span>
+              )}
               {post.outlier_ratio != null && (
                 <span
                   className={`px-2.5 py-1 rounded text-sm font-semibold tabular-nums ${

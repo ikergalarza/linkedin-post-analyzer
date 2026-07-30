@@ -229,6 +229,115 @@ interface ThreadCardHandle {
   generateIfEmpty: () => Promise<void>;
 }
 
+/* Caja de respuesta para una SUB-RESPUESTA dentro de un hilo (Iker, 2026-07-29).
+   Antes solo se podia contestar al comentario de primer nivel: las respuestas
+   que otra persona le dejaba al comentarista se veian pero no se podian
+   contestar, asi que la conversacion se cortaba justo donde ya habia
+   interes. El backend no necesitaba nada: `/comments/:commentId/reply` acepta
+   cualquier id de comentario y una respuesta TAMBIEN es un comentario, asi que
+   basta con pasarle el id de la sub-respuesta.
+   Va plegada por defecto: si cada respuesta abriera su textarea, un hilo de
+   seis dejaria el panel ilegible. */
+function SubReplyBox({
+  postId,
+  reply,
+}: {
+  postId: string;
+  reply: Thread;
+}) {
+  const [abierto, setAbierto] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  // Misma regla que en el hilo principal: a una pagina de empresa no se la
+  // menciona, Unipile devuelve 422 con la plantilla de @-mencion.
+  const mention = reply.author.name && reply.author.profile_id && !reply.author.is_company
+    ? { name: reply.author.name, profile_id: reply.author.profile_id }
+    : null;
+
+  const generar = async () => {
+    setGenerating(true); setMsg(null);
+    try {
+      const res = await apiPost<{ reply: string }>(
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(reply.id)}/generate`,
+        {
+          comment_text: reply.text,
+          commenter_name: reply.author.name,
+          commenter_headline: reply.author.headline,
+          commenter_profile_id: reply.author.profile_id,
+        }
+      );
+      setDraft(res.reply);
+    } catch (e: any) { setMsg(`✗ ${e.message}`); }
+    finally { setGenerating(false); }
+  };
+
+  const enviar = async () => {
+    if (!draft.trim()) return;
+    setSending(true); setMsg(null);
+    try {
+      await apiPost(
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(reply.id)}/reply`,
+        { text: draft.trim(), mention }
+      );
+      setSent(true); setMsg('✓ Enviado');
+    } catch (e: any) { setMsg(`✗ ${e.message}`); }
+    finally { setSending(false); }
+  };
+
+  if (sent) return <p className="mt-1 text-[10px] text-green-400">✓ Respondido</p>;
+
+  if (!abierto) {
+    return (
+      <button
+        onClick={() => setAbierto(true)}
+        className="mt-1 text-[10px] text-text-muted hover:text-accent transition-colors"
+      >
+        ↩ Responder
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-2 space-y-1.5">
+      <textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        rows={2}
+        autoFocus
+        placeholder={mention ? `${mention.name} …` : 'Tu respuesta…'}
+        className="w-full bg-bg-secondary border border-border rounded-md p-2 text-xs text-text-primary focus:outline-none focus:border-accent resize-y"
+      />
+      <div className="flex items-center gap-2">
+        <button
+          onClick={generar}
+          disabled={generating}
+          className="text-[10px] px-2 py-1 rounded border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-40"
+        >
+          {generating ? '…' : '✨ Generar'}
+        </button>
+        <button
+          onClick={enviar}
+          disabled={sending || !draft.trim()}
+          className="text-[10px] px-2 py-1 rounded bg-accent text-bg-primary font-medium hover:bg-accent-light disabled:opacity-40"
+        >
+          {sending ? 'Enviando…' : 'Enviar'}
+        </button>
+        <button
+          onClick={() => { setAbierto(false); setDraft(''); setMsg(null); }}
+          className="text-[10px] text-text-muted hover:text-text-primary"
+        >
+          Cancelar
+        </button>
+        {msg && <span className="text-[10px] text-text-muted">{msg}</span>}
+      </div>
+    </div>
+  );
+}
+
 // Single top-level comment + its replies + the draft-reply box.
 function ThreadCard({
   thread,
@@ -394,6 +503,7 @@ function ThreadCard({
                       <p className="text-xs text-text-secondary whitespace-pre-wrap">{r.text}</p>
                     )}
                     <ReactionBar postId={postId} commentId={r.id} initialReaction={r.my_reaction} compact />
+                    <SubReplyBox postId={postId} reply={r} />
                   </div>
                 </div>
               ))}
