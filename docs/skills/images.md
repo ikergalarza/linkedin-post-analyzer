@@ -395,19 +395,21 @@ Cuando el pilar pide **foto real** (historia sobre todo) y llegan varias del mov
 
 **🔴 Y esta foto NO lleva el desenfoque de postproduccion** (`§0a-penta`): sale de una camara, no de un generador, asi que no hay acabado de render ni firma de IA que borrar. **Misma excepcion que "Los 10".**
 
-## \u2b50 0a-novena \u00b7 LA SILUETA DEL OBJETO: PLANTILLA POR SECTOR (Iker, 2026-07-30)
+## ⭐ 0a-novena · LA SILUETA DEL OBJETO: PLANTILLA POR SECTOR (Iker, 2026-07-30)
 
-Idea de Iker para el pilar **despiece**, y resuelve el problema de fondo: el mapa tiene captura de PamPam y "Los 10" tiene orla, pero un despiece no ten\u00eda imagen natural. **La silueta del objeto m\u00e1s representativo del sector, con los LOGOS repartidos por ella.** En automoci\u00f3n, una **llanta** con los logos en la corona.
+Idea de Iker para el pilar **despiece**, y resuelve el problema de fondo: el mapa tiene captura de PamPam y "Los 10" tiene orla, pero un despiece no tenía imagen natural. **La silueta del objeto más representativo del sector, con los LOGOS repartidos por ella.** En automoción, una **llanta** con los logos en la corona.
 
 - **Logos y no caras**, porque este pilar prioriza la empresa sobre la persona.
-- **Una plantilla por SECTOR**, no por regi\u00f3n: la llanta se reutiliza en toda Espa\u00f1a y en las tres cuentas, solo cambia el t\u00edtulo. Otro sector pide otra silueta.
-- **La compone `scripts/montar-llanta.py`**, nunca un generador: rechaza logos de terceros y, si los acepta, los redibuja (`\u00a70i-2`).
-- **El t\u00edtulo va en capa de texto editable con `XXX` como marcador de regi\u00f3n**, y el script lo sustituye respetando los colores del PSD (la palabra punchy en naranja).
-- **Los huecos se marcan en MAGENTA liso** en la generaci\u00f3n y luego se pasan a transparente en Photoshop. El magenta no existe en nuestra paleta, as\u00ed que la selecci\u00f3n por color sale limpia de una.
-- **\u2b50 El aro tiene que BISECAR cada hueco**, pasarle por el centro y dejarlo partido en dos mitades, y estar en la capa de DETR\u00c1S. As\u00ed el logo queda montado sobre la rueda en vez de flotando al lado. Cost\u00f3 cuatro pasadas el 30/07.
-- **\u26a0\ufe0f Al pedir un cambio de tama\u00f1o, di el CU\u00c1NTO, no solo la direcci\u00f3n.** "Encoge los radios" se pas\u00f3 de largo; "agr\u00e1ndalos hasta la mitad de camino de lo que eran" acert\u00f3 a la primera, porque le das una referencia entre dos versiones que ya ha hecho.
+- **Una plantilla por SECTOR**, no por región: la llanta se reutiliza en toda España y en las tres cuentas, solo cambia el título. Otro sector pide otra silueta.
+- **La compone `scripts/montar-llanta.py`**, nunca un generador: rechaza logos de terceros y, si los acepta, los redibuja (`§0i-2`).
+- **El título va en capa de texto editable con `XXX` como marcador de región**, y el script lo sustituye respetando los colores del PSD (la palabra punchy en naranja).
+- **Los huecos se marcan en MAGENTA liso** en la generación y luego se pasan a transparente en Photoshop. El magenta no existe en nuestra paleta, así que la selección por color sale limpia de una.
+- **⭐ El aro tiene que BISECAR cada hueco**, pasarle por el centro y dejarlo partido en dos mitades, y estar en la capa de DETRÁS. Así el logo queda montado sobre la rueda en vez de flotando al lado. Costó cuatro pasadas el 30/07.
+- **🔴 EL CUERPO DEL TÍTULO NO SE RECALCULA, SE LEE DEL PSD (Iker, 2026-07-30).** Mi primera versión del script ajustaba el tamaño de letra a la caja por prueba y error, y salió **más pequeño que el que había puesto el diseñador**. El `FontSize` del PSD está en **unidades del documento, no en píxeles**: hay que multiplicarlo por la escala de la **matriz de transformación de la capa** (`capa.transform`). En esta plantilla, 29 x 2,82 = **81,8 px**. El interlineado igual (`Leading` x escala) y la posición sale de la misma matriz: `tr[4]` es el centro horizontal y `tr[5]` la primera línea base. **Si el diseñador puso un tamaño, se respeta.**
+- **Los huecos llevan CONTORNO en berenjena** (Iker, 2026-07-30): un logo blanco sobre el menta claro no se despega del fondo. El aro morado lo enmarca y de paso aprovecha la paleta.
+- **⚠️ Al pedir un cambio de tamaño, di el CUÁNTO, no solo la dirección.** "Encoge los radios" se pasó de largo; "agrándalos hasta la mitad de camino de lo que eran" acertó a la primera, porque le das una referencia entre dos versiones que ya ha hecho.
 
-## \u2b50 0i \u00b7 DESPUES DE CADA PROMPT, LA LISTA DE ADJUNTOS (Iker, 2026-07-21)
+## ⭐ 0i · DESPUES DE CADA PROMPT, LA LISTA DE ADJUNTOS (Iker, 2026-07-21)
 
 **El prompt ya no se basta solo.** Desde que decimos "calca esta referencia" y "te adjunto los instaladores de las fuentes", el prompt **da por hecho ficheros que van aparte**. Si Iker esta despistado y manda solo el texto, el diseñador no tiene ni la referencia ni las fuentes, y devuelve algo que no se parece a nada.
 
