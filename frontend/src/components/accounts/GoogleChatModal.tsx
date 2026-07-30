@@ -69,7 +69,7 @@ const RECORDATORIOS = [
   '⚡ Cuatro toques: like, comentario, compartir y guardar (los 3 puntitos del post). Y volamos.',
   '🚀 Like, comentario, compartir y guardar. Veinte segundos vuestros, un día entero de alcance.',
   '🔥 La primera hora manda. Like, comentario, compartir y guardar, sin dejarse ninguno.',
-  '💥 Los de siempre: like, comentario, compartir y guardar. Guardar es en los 3 puntos.',
+  'Si dais LIKE + COMENTARIO + COMPARTIR + GUARDAR nos ayudáis mucho 😉',
   '⚡ Si caen los cuatro (like, comentario, compartir y guardar) esto se va arriba solo.',
   '🔥 Comentario y guardado son los que más pesan. Con el like y el compartir, pleno.',
 ];
