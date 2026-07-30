@@ -185,11 +185,115 @@ def leer_placeholders(ruta_psd: str) -> tuple[list[dict], dict]:
     return cajas, estilo
 
 
+MARCADOR_REGION = 'XXX'
+FUENTE_TITULO = ('C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/TIPOGRAFÍAS/'
+                 'Bricolage Grotesque/static/BricolageGrotesque-ExtraBold.ttf')
+
+
+def leer_titulo(ruta_psd: str):
+    """Saca del PSD la capa de TITULO (la que no es un placeholder de nombre).
+
+    Devuelve texto, color de cada tramo, cuerpo real en pixeles e interlineado.
+    El FontSize del PSD esta en unidades del DOCUMENTO: hay que multiplicarlo
+    por la escala de la matriz de transformacion de la capa.
+    """
+    import math
+
+    from psd_tools import PSDImage
+
+    psd = PSDImage.open(ruta_psd)
+    for capa in psd.descendants():
+        if getattr(capa, 'kind', '') != 'type' or capa.text.strip() == PLACEHOLDER:
+            continue
+        texto = capa.text.replace('\r', '\n')
+        runs = capa.engine_dict['StyleRun']['RunArray']
+        largos = capa.engine_dict['StyleRun']['RunLengthArray']
+        tramos, i = [], 0
+        for r, L in zip(runs, largos):
+            d = r['StyleSheet']['StyleSheetData']
+            v = d.get('FillColor', {}).get('Values', [1, 1, 1, 1])
+            tramos.append({'txt': texto[i:i + L], 'color': tuple(round(c * 255) for c in v[1:4])})
+            i += L
+        tr = capa.transform or (1, 0, 0, 1, 0, 0)
+        escala = math.hypot(tr[0], tr[1]) or 1
+        d0 = runs[0]['StyleSheet']['StyleSheetData']
+        return {'texto': texto, 'tramos': tramos, 'bbox': capa.bbox,
+                'cuerpo': float(d0.get('FontSize', 29)) * escala,
+                'salto': float(d0.get('Leading') or d0.get('FontSize', 29) * 1.2) * escala,
+                'cx': tr[4], 'base': tr[5]}
+    return None
+
+
+def sustituir_region(texto: str, region: str) -> str:
+    """Mete la region en el titulo.
+
+    Dos caminos, y el segundo existe por un fallo real (Iker, 2026-07-30): la
+    plantilla de "Los 10" traia `LA INDUSTRIA ASTURIANA` escrito a fuego, y por
+    eso la orla de Andalucia salio diciendo ASTURIANA y hubo que corregirla a
+    mano. Lo suyo es que el PSD lleve XXX como marcador, igual que el del
+    despiece; mientras no lo lleve, se sustituye la ULTIMA PALABRA del titulo,
+    que es donde siempre va el gentilicio.
+    """
+    region = region.upper()
+    if MARCADOR_REGION in texto:
+        return texto.replace(MARCADOR_REGION, region)
+    lineas = texto.split('\n')
+    palabras = lineas[-1].split()
+    if palabras:
+        palabras[-1] = region
+        lineas[-1] = ' '.join(palabras)
+    return '\n'.join(lineas)
+
+
+def dibujar_titulo(img: Image.Image, titulo: dict, region: str, ruta_fuente: str) -> None:
+    """Redibuja el titulo con la region puesta, en el MISMO cuerpo y sitio del PSD."""
+    texto = sustituir_region(titulo['texto'], region)
+    # Los tramos llevan el color; se reparte el texto nuevo respetando el corte
+    # de los tramos originales por longitud proporcional.
+    orig = titulo['texto']
+    lineas_txt = texto.split('\n')
+    lineas_orig = orig.split('\n')
+    lineas = []
+    pos = 0
+    for idx, lo in enumerate(lineas_orig):
+        segs, resto = [], lineas_txt[idx] if idx < len(lineas_txt) else ''
+        # Se reconstruyen los tramos de ESTA linea desde los del PSD.
+        consumido = 0
+        for t in titulo['tramos']:
+            ini, fin = pos, pos + len(t['txt'])
+            trozo = orig[ini:fin]
+            pos_linea = orig[:ini].count('\n')
+            if pos_linea == idx and trozo.strip('\n'):
+                segs.append({'txt': trozo.replace('\n', ''), 'color': t['color']})
+                consumido += len(trozo.replace('\n', ''))
+            pos = fin
+        pos = 0
+        if not segs:
+            continue
+        # Si la linea cambio de largo (la region), el ultimo tramo absorbe el cambio.
+        largo_orig = sum(len(x['txt']) for x in segs)
+        if resto and largo_orig != len(resto):
+            segs[-1]['txt'] = resto[largo_orig - len(segs[-1]['txt']):]
+        lineas.append(segs)
+
+    fuente = ImageFont.truetype(ruta_fuente, round(titulo['cuerpo']))
+    d = ImageDraw.Draw(img)
+    base = titulo['base']
+    for linea in lineas:
+        ancho = sum(d.textlength(x['txt'], font=fuente) for x in linea)
+        x = titulo['cx'] - ancho / 2
+        for x_seg in linea:
+            d.text((x, base), x_seg['txt'], font=fuente, fill=x_seg['color'] + (255,), anchor='ls')
+            x += d.textlength(x_seg['txt'], font=fuente)
+        base += titulo['salto']
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description='Monta la orla de "Los 10" sin retocar las fotos.')
     p.add_argument('--plantilla', required=True, help='PSD o PNG con los huecos transparentes')
     p.add_argument('--fotos', required=True, help='Carpeta con 01_….jpg … 10_….jpg')
     p.add_argument('--salida', required=True, help='PNG de salida')
+    p.add_argument('--region', help='Region del titulo (ASTURIANA, ANDALUZA, VASCA). Sustituye XXX, o la ultima palabra si el PSD aun no lo lleva)')
     p.add_argument('--nombres', help='Los 10 nombres separados por " | ", en orden de mención')
     p.add_argument('--fuente', help='Ruta al .ttf (por defecto, el Bricolage Grotesque ExtraBold del sistema)')
     p.add_argument('--sin-encuadre', action='store_true',
@@ -291,6 +395,23 @@ def main() -> int:
     # Quedan los pinholes de antialiasing (20 px sueltos en el borde de los
     # círculos). Se aplanan sobre el color de fondo de la propia plantilla, no
     # sobre blanco: sobre negro cantarían como puntitos.
+    if a.region:
+        titulo = leer_titulo(a.plantilla)
+        if not titulo:
+            print('⚠️  El PSD no tiene capa de titulo: no se toca.', file=sys.stderr)
+        else:
+            x0, y0, x1, y1 = titulo['bbox']
+            berenjena = final.getpixel((12, max(4, y0 - 20)))
+            ImageDraw.Draw(final).rectangle([x0 - 8, y0 - 12, x1 + 8, y1 + 12], fill=berenjena)
+            # La misma fuente que los nombres. El Bricolage del sistema es la
+            # variable y no la ExtraBold, asi que si Iker pasa --fuente se usa esa.
+            ruta_ttf = a.fuente or FUENTE_TITULO
+            dibujar_titulo(final, titulo, a.region, ruta_ttf)
+            if MARCADOR_REGION not in titulo['texto']:
+                print(f'  ⚠️  El PSD no lleva {MARCADOR_REGION}: se ha sustituido la ULTIMA PALABRA. '
+                      f'Cambia el titulo del PSD a "{MARCADOR_REGION}" para que sea explicito.')
+            print(f"  titulo: {sustituir_region(titulo['texto'], a.region).replace(chr(10), ' / ')}")
+
     fondo = plantilla.getpixel((8, plantilla.height // 2))[:3]
     plano = Image.new('RGB', final.size, fondo)
     plano.paste(final, mask=final.split()[3])

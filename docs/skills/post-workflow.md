@@ -729,6 +729,23 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
    - **Para NOSOTROS:** portada de guía ("El 60% de tu IA subvencionado · SPRI · Euskadi") con índice de los 5 puntos, crema/serif, logos legítimos (Claude, SPRI/Gobierno Vasco), enseñada como PDF con sus miniaturas. Reutilizable entre posts de subvención.
 7. **REPITE lo que funciona.** Si un tema+hook peta, se vuelve a hacer a las 1-2 semanas con cambios mínimos. No hace falta reinventar cada vez.
 
+> ### 🎨 4.3-PLANTILLA · LA PLANTILLA DE "LOS 10" Y SUS COLORES (Iker, 2026-07-30)
+> **Fichero:** `Documents/Mario/LINKEDIN GROWTH/LOS 10/LOS 10 PLANTILLA.psd` (1254x1254). **La edita Iker, no yo.** Verificada el 30/07: 10 placeholders de texto con el literal `Nombre`, 378.240 px de huecos transparentes y el titulo en capa editable a 81,8 px.
+>
+> **⭐ El titulo lleva `XXX` como marcador de region**, igual que el del despiece. Antes tenia `LA INDUSTRIA ASTURIANA` escrito a fuego **y por eso la orla de Andalucia salio diciendo ASTURIANA** y hubo que rehacerla. `montar-orla.py --region ANDALUZA` lo sustituye solo.
+>
+> **Colores del brandbook, muestreados del PSD y NO de memoria:**
+>
+> | Uso | Codigo |
+> |---|---|
+> | Berenjena (franja) | `#461943` |
+> | Menta (fondo) | `#e6f6ef` |
+> | Blanco roto (texto) | `#f9f3ef` |
+> | Naranja (palabra punchy) | `#fe8238` |
+> | Azul bebe (acento) | `#a7c5f9` |
+>
+> **⚠️ Los que yo venia usando de memoria estaban MAL** (`#431b44` y `#ebfff6`). **Se muestrean del fichero siempre**, que el brandbook cambia y la memoria no se entera.
+
 #### ⭐⭐ 4.7 · Runbook DESPIECE / OBJETO — el 3er peloteo regional (Iker, 2026-07-30)
 
 **Qué es.** El tercer formato del pilar peloteo. El mapa pelotea EMPRESAS de una región, "Los 10" pelotea PERSONAS, y este pelotea **un OBJETO cotidiano despiezado**: cada pieza, la empresa de la región que la fabrica. **La prioridad es la EMPRESA**, como en el mapa, con la persona al lado. Estrenado el 2026-07-30 en la cuenta de Iker con Euskadi y el coche. Se valida con `--pilar objeto`.
