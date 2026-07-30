@@ -61,6 +61,14 @@ export async function captureAccountSnapshots(
     const updates: Record<string, any> = {};
     if (!creator.linkedin_id && normalized.linkedin_id) updates.linkedin_id = normalized.linkedin_id;
     if (latestFollowers != null) updates.followers_count = latestFollowers;
+    // La foto SIEMPRE se reescribe si Unipile trae una (Iker, 2026-07-30). Las
+    // URLs de media.licdn.com estan FIRMADAS y CADUCAN: pasadas unas semanas
+    // devuelven 403 deny-expired-url y los avatares de las 3 cuentas
+    // desaparecen de golpe, que es justo lo que asusto (parecia un problema de
+    // credenciales o de trackeo y era solo la imagen). Aqui ya teniamos el
+    // perfil recien pedido, asi que refrescarla no cuesta ni una llamada mas:
+    // faltaba guardarla. Con esto se auto-repara en cada snapshot.
+    if (normalized.profile_image_url) updates.profile_image_url = normalized.profile_image_url;
     if (Object.keys(updates).length > 0) {
       await CreatorModel.update(creator.id, updates as any);
     }
