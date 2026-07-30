@@ -451,6 +451,8 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > ### ©️ 4.4-CREDITO · SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS, SE ACREDITA (Iker, 2026-07-29)
 > **Qué pasó.** El meme del tatuaje hizo casi 30.000 impresiones en menos de una hora, **y el autor original lo vio**. Bloqueó la cuenta de Unai. **Bloquear es el aviso barato: el caro es un reporte por copia.** Mismo patrón que el "Andalucía es más grande que Italia", que también nos costó insultos y también acabó en una regla dura del runbook del mapa.
 >
+> **⚠️ "ESPAÑOLA" ES EL IDIOMA DEL TEXTO, NO LA NACIONALIDAD DEL AUTOR (Iker, 2026-07-30).** Yo descarte acreditar a un autor "porque era frances" y **eso no es el criterio**: lo que decide es **en que idioma esta escrito el post**. Un post en ingles no lo va a ver nuestra audiencia aunque su autor viva en Bilbao, y uno en español lo van a ver todos aunque el autor sea de Buenos Aires. **Mira el idioma del texto y nada mas.**
+>
 > **La regla.** Si la referencia que calcamos es **ESPAÑOLA Y del sector de VENTAS**, va **una línea suelta en el cuerpo mencionando al autor con @**. Ese es justo el caso en el que el autor comparte audiencia con nosotros y va a verlo. Si la referencia es de fuera o de otro sector, no hace falta (el validador acepta `--referencia-fuera` para dejarlo por escrito).
 >
 > **⭐ Y el arreglo de verdad no es el crédito, es la MENCIÓN.** La diferencia entre que el autor se sienta copiado y que se sienta citado **es la notificación**. Un creador al que le llega un aviso de que has partido de su idea suele comentar o compartir, porque le confirma que su chiste funciona. A Félix se lo hicimos a su espalda, y por eso lo vivió como un robo. **Menciónalo con @, no lo nombres en texto plano.**
