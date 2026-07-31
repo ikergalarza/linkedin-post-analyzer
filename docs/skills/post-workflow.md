@@ -76,6 +76,8 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 
 **CÓMO SE COMPRUEBA (no lo hagas a ojo):** baja los posts de las 3 cuentas, quédate con los que mencionan esa región, saca sus líneas `→` y cruza tu lista **normalizando** — sin acentos, en minúscula y sin sufijos legales (`SA`, `SAU`, `SL`, `Group`, `Grupo`). Sin normalizar se cuela "Bioibérica" contra "Bioiberica" y "Prefabricados Pujol" contra "Prefabricats Pujol". Medido en Cataluña el 2026-07-17: **83 empresas y personas ya mencionadas** entre el mapa de Iker y el "Los 10" de Unai. Eso es lo que hay que esquivar, y a ojo no se esquiva.
 
+**⭐ BUSCANDO EMPRESAS NO SE PARA NUNCA (Iker, 2026-07-31).** Si una no sirve o no salen suficientes, **se sigue: otra fuente, otra provincia, prensa local, otro endpoint**. Solo se para cuando es **imposible** encontrar más, y eso hay que haberlo intentado de verdad. La que no convence **se descarta sola, sin consultar**: no se devuelven dudas. Y **no se re-auditan empresas ya verificadas en la misma sesión** — eso es trabajo repetido, no rigor. Textual: *"no tienes que parar, tienes que seguir, seguir, seguir"*. Truco que salvó Asturias el 31/07: **adivinar el slug de LinkedIn no funciona** (fallaron 20 de 22); se busca por **keyword** con `category: companies`, y el endpoint `/linkedin/company/{x}` acepta también el **id numérico**, que a veces es la única forma de sacar una ficha.
+
 **⚠️ Y LO CARO NO ES LA REGLA, ES LA BÚSQUEDA.** Cuando falten empresas, el reflejo es dar la región por agotada. En Cataluña un investigador devolvió *"0 de Girona, ninguna pasó el listón"* y **era falso**: buscando "Cataluña" a nivel autonómico, Barcelona se come los resultados. Atacando fuentes locales (el ranking provincial, el directorio del polígono de Riudellots, la prensa comarcal) salieron 8 gerundinas a la primera. **Antes de bajar a 16, busca por provincia y con prensa local.**
 
 ### 4.1 · Esqueleto general (todo post pasa por aquí)
@@ -242,6 +244,12 @@ Frase de entrada:
 **Paso 9 — TÍTULO y DESCRIPCIÓN para la web del mapa** (van juntos, los dos siempre):
 - **Título — plantilla FIJA, no la reinventes:** `[Región]: el músculo industrial`. Ej.: `Álava: el músculo industrial` · `Aragón: el músculo industrial`. Aquí no toca creatividad: es el formato de la web y se repite mapa a mapa.
 - **Descripción de 2 líneas:** corta y concisa, tipo "20 empresas industriales de [región] de los sectores X, Y, Z…". Sin florituras. Sin fechas (`global §3.5b`).
+
+**Paso 9b — PROMPT PARA EL PROGRAMADOR de la página del mapa:**
+- **⚠️ NO SE ESCRIBE DE MEMORIA NI MIRANDO LA WEB POR FUERA (Iker, 2026-07-31).** Escribí el de Asturias calcándolo de lo que se veía en la de Murcia ("reutiliza el mismo layout, la misma tipografía") y **contradecía cosas que el programador ya sabe de la web**: yo describía la fachada, no cómo está montada por dentro. Y encima me inventé un título cuando el **Paso 9 ya fija la plantilla** `[Región]: el músculo industrial`.
+- **Un párrafo, explicado como a un amigo, específico y sin secciones** — igual que los prompts de imagen (`images §0a`). Nada de listas, ni bloques con encabezados, ni meta-título/meta-descripción sueltos si la web ya los genera.
+- **Lo que hay que darle cada vez** (esto sí lo pone el post): región, slug, título del Paso 9, descripción del Paso 9, los 3 datos del cuerpo y el **embed de PamPam**, que lo monta Iker desde el CSV y sin él el prompt no está cerrado.
+- **📌 CÓMO ESTÁN HECHAS LAS PÁGINAS DE LOS MAPAS:** `[PENDIENTE · esperando la respuesta del programador al prompt de intake del 2026-07-31]`. **En cuanto conteste, su respuesta se pega aquí y ya no se vuelve a preguntar.**
 
 **Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): las 20, para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 - **⚠️ ESTO APLICA AL MAPA (20 menciones). Con POCAS menciones, TABLA DE 4 COLUMNAS (Iker, 2026-07-29).** La frontera es el numero:
