@@ -61,6 +61,34 @@ function contarMenciones(texto: string): number {
 }
 
 /**
+ * Cuenta las fichas que llevan CIFRA, que es lo que separa "los 10" del mapa.
+ *
+ * Contar menciones ya no vale (Iker, 2026-07-31). El umbral era 13 porque el
+ * mapa llevaba 16 o 20 fichas y "los 10" llevaba 10, pero §4.0c bajo el suelo
+ * del mapa a 10 para no repetir empresa, y el mapa de Asturias salio con 12 y
+ * se clasifico como "los 10". El numero ya no distingue nada.
+ *
+ * Lo que SI distingue es la forma de la ficha, y no cambia nunca:
+ *   · "los 10" → "→ @Persona - @Empresa · récord de 806M€, +19%"
+ *                cada empresa entra con SU cifra verificada y su fuente, que
+ *                es el nucleo del pilar.
+ *   · mapa     → "→ @ArcelorMittal - @José Gómez García"
+ *                la ficha va desnuda; los datos viven en el cuerpo, no aqui.
+ */
+function contarFichasConCifra(texto: string): number {
+  return texto
+    .split('\n')
+    .filter((l) => {
+      const s = l.trim();
+      if (!s.startsWith('→')) return false;
+      const cuerpo = s.slice(1).trim();
+      if (!/ - | – | — /.test(cuerpo)) return false;
+      // El separador "·" abre la cifra, y detras tiene que haber un digito.
+      return /·/.test(cuerpo) && /\d/.test(cuerpo.split('·').slice(1).join('·'));
+    }).length;
+}
+
+/**
  * % de reacciones que son risa. Es la firma del meme: la gente reacciona con
  * 😂, no con 👍. Se aceptan las dos claves porque LinkedIn ha usado ambas
  * (ENTERTAINMENT es la actual, FUNNY la heredada) — mismo criterio que el
@@ -168,18 +196,28 @@ export function classifyPillar(post: PillarInput): Pillar {
   const t = (post.content_text || '').trim();
   if (!t) return 'otro';
 
-  // 1. Peloteo regional. El bloque de "→" solo existe en estos dos formatos.
-  // El mapa lleva 16 o 20 fichas (5x4 o 4x4); "los 10" lleva 10. Se parte por
-  // 13 para dejar holgura si alguna ficha se quedo sin publicar.
-  // El despiece se comprueba ANTES: sus fichas tambien cuentan como mencion,
-  // asi que si no se mirara primero caeria en "los 10" o en mapa segun cuantas
-  // piezas tenga el objeto.
+  // 1. Peloteo regional. El bloque de "→" solo existe en estos tres formatos y
+  // se separan por la FORMA de la ficha, de la mas marcada a la mas sobria:
+  //
+  //   objeto → "→ La forja: @Alcorta - @Pedro Alvarez"      (pieza + dos puntos)
+  //   los 10 → "→ @Silvia - @UNICA · récord de 806M€"       (cifra tras el "·")
+  //   mapa   → "→ @ArcelorMittal - @José Gómez García"      (desnuda)
+  //
+  // El despiece va PRIMERO porque sus fichas tambien cuentan como mencion.
   const piezas = contarPiezas(t);
   if (piezas >= 6) return 'peloteo_objeto';
 
   const menciones = contarMenciones(t);
   if (menciones >= 6) {
-    return menciones >= 13 ? 'peloteo_mapa' : 'peloteo_los10';
+    // "Los 10" mete la cifra de cada empresa DENTRO de la ficha; el mapa no.
+    // Se pide mayoria (>=60%) y no todas, porque alguna ficha puede quedarse
+    // sin dato si no se pudo verificar. Se exige ademas <=12 fichas: "los 10"
+    // son 10 por definicion, asi que una lista mas larga es mapa aunque lleve
+    // cifras. Antes esto se decidia SOLO por numero (>=13 = mapa) y el mapa de
+    // Asturias, con 12 fichas, se clasifico mal (Iker, 2026-07-31).
+    const conCifra = contarFichasConCifra(t);
+    if (menciones <= 12 && conCifra >= Math.ceil(menciones * 0.6)) return 'peloteo_los10';
+    return 'peloteo_mapa';
   }
 
   // 2. Lead magnet: pide comentar una palabra concreta al final.
