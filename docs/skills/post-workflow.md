@@ -295,8 +295,10 @@ Frase de entrada:
 
 **OUTPUT FINAL del workflow para este pilar (SOLO esto, y son CUATRO):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción**, cada uno en SU bloque cercado y la descripción en un solo parrafo · (4) la **guía de menciones** con enlaces CLICABLES fuera de cercado (Paso 10), calcando el orden del post. Ninguna imagen: la del POST es la captura de PamPam que hace el usuario, y la portada de la web la saca el programador del propio mapa.
 
-**⚠️ AVISO DE LA CAPTURA DEL MAPA — VA EN TODA ENTREGA DE MAPA (Iker, 2026-07-31).** En el mapa **NO se avisa de limpiar metadatos**: la captura sale de PamPam, que es una web, y no ensucia nada (`images §0` lo explica). Lo que sí se avisa es del **encuadre**, que es lo único que puede salir mal y solo lo ve el que hace la captura. Se entrega con este contenido, en la entrega de la imagen:
-> ⚠️ **Antes de capturar el mapa, comprueba que:** los logos están **bien espaciados entre sí**, sin solaparse ni amontonarse · **se lee el nombre de todas las empresas debajo** de su logo, sin ninguno cortado · **todas se ven grandes**, ninguna diminuta por culpa del zoom. **Si una empresa queda muy lejos y obliga a alejar el zoom, muévele la ubicación a mano en PamPam** y encuadra con el resto.
+**⚠️ AVISO DE LA CAPTURA DEL MAPA — VA EN TODA ENTREGA DE MAPA (Iker, 2026-07-31).** En el mapa **NO se avisa de limpiar metadatos**: la captura sale de PamPam, que es una web, y no ensucia nada (`images §0` lo explica). Lo que sí se avisa es del **encuadre**, que es lo único que puede salir mal y solo lo ve el que hace la captura. **UNA LÍNEA, ni una más**, literal:
+> ⚠️ Antes de capturar, comprueba que los logos se ven grandes y bien espaciados entre sí; si alguno queda muy lejos, muévele la ubicación a mano en PamPam.
+
+**Nada de que se lean los nombres (Iker, 2026-07-31):** ese lo quitó él, así que no vuelve. El aviso es solo de espaciado y tamaño.
 
 **Por qué es el aviso que importa aquí:** en el mapa la imagen ES el contenido. Un logo pisando a otro o un nombre cortado se lee como chapuza justo en el post que va de que conocemos a esas empresas. Y como la captura la hace el usuario, es el único punto del pilar que yo no puedo verificar.
 
