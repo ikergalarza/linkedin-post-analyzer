@@ -590,6 +590,26 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'el hook afirma el desprecio en seco y se lee como NUESTRO. Necesita un sujeto '
             'ajeno: "la ven como", "la llaman", "nadie habla de", "todos ven", "la conocen por", '
             '"la tienen jubilada", "la despachan como", "la dan por"')
+        # ⭐ LA PALABRA "EXPORTA" ES INAMOVIBLE EN TODO PELOTEO REGIONAL
+        # (Iker, 2026-07-31). Es lo que ancla el pilar a VENTAS de forma
+        # indirecta: si alguien exporta es porque VENDE. Sin ella el post se
+        # queda en peloteo bonito y lo podria subir cualquiera.
+        # Dos fallos reales seguidos: el despiece de Euskadi del 30/07 la quito
+        # y esta rindiendo peor, y el mapa de Asturias del 31/07 la cambio por
+        # un shock de produccion. En los dos casos yo justifique el cambio y en
+        # los dos me equivoque. NO se negocia por muy punchy que sea la
+        # alternativa.
+        chk(bool(re.search(r'\bexporta\b', hook_txt, re.I)),
+            'GANCHO: lleva la palabra "exporta" (§4.2 Paso 1)',
+            'es lo que ata el peloteo a VENTAS: si alguien exporta es porque vende. '
+            'El remate va "Y exporta más que [PAÍS] entero" en el mapa y "Y exporta más '
+            'que [PAÍS] entero" tambien en el despiece, antes del objeto. Sin esa palabra '
+            'el post lo podria subir cualquier cuenta')
+        chk(bool(re.search(r'm[aá]s que .+\bentero', hook_txt, re.I)),
+            'GANCHO: lleva la COMPARACIÓN con un país concreto (§4.2 Paso 1)',
+            'falta el "más que [PAÍS] entero". Un país CONCRETO y verificado, nunca '
+            '"medio mundo" ni "países enteros" en vago: la comparacion es el dato que '
+            'hace que se comparta')
         _quemados = sorted(v for v in VERBO_PREJUICIO_QUEMADO
                            if re.search(r'\b' + v + r'\b', texto, re.I))
         chk(not _quemados,

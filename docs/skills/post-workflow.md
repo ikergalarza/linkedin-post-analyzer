@@ -105,6 +105,18 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 > - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.) **Pero SÍ lleva aviso: el de encuadre, ver justo debajo.**
 > - **Portada de la WEB del mapa** = captura del propio mapa → **la saca el PROGRAMADOR** (confirmado por él el 2026-07-31). El antiguo Paso 11 de buscar una foto libre de la región **está muerto**: nunca hizo falta.
 
+**⛔⛔ LOS CUATRO INAMOVIBLES DEL GANCHO DE PELOTEO (Iker, 2026-07-31). Aplican al MAPA y al DESPIECE. NO a "LOS 10".** Se puede iterar todo lo demás, pero estas cuatro piezas **no se quitan, no se sustituyen y no se mejoran**, por muy punchy que parezca la alternativa:
+> 1. **El PREJUICIO dicho por otro** (`la ven`, `la tienen`, `nadie la cuenta`). No se afirma en primera persona.
+> 2. **EXACTAMENTE 2 clichés** de la región.
+> 3. **La palabra `exporta`.** Es lo que ata el pilar a **VENTAS** de forma indirecta: **si alguien exporta es porque VENDE**. Sin ella el post es peloteo bonito que podría subir cualquiera.
+> 4. **La COMPARACIÓN con un país CONCRETO y verificado** (`más que [PAÍS] entero`). Ni "medio mundo" ni "países enteros" en vago.
+>
+> **POR QUÉ ESTÁ AQUÍ EN MAYÚSCULAS: me las cargué dos días seguidos y las dos veces me pareció una mejora.** El **30/07**, en el despiece de Euskadi, cambié el remate de `exporta` por el objeto (*"Y ahí se hace tu coche"*), puse un concepto flojo (*"el sitio de comer"*) y me salté el prejuicio ajeno: **está rindiendo peor**. El **31/07**, en el mapa de Asturias, cambié `exporta más que [PAÍS]` por un shock de producción (*"y aún funde zinc para medio mundo"*) porque el total exportado no daba un titular redondo. **Las dos veces el validador me lo dijo con el fallo "Hook anclado a VENTAS" y las dos veces yo lo despaché como "fallo esperado del pilar".** No lo era: en cuanto volvió `exporta`, el check pasó solo. **Si el validador marca ancla de ventas en un peloteo, es que falta `exporta`. Punto.**
+>
+> **⛔ "LOS 10" QUEDA FUERA, y no por descuido (Iker, 2026-07-31).** Ahí el foco es **LA PERSONA**, el comercial invisible, no la región: su gancho es de otra familia y **el que más alcance nos ha dado no lleva `exporta` ni comparación de país**. Meterle estas cuatro reglas tumbaría los cuatro "Los 10" del histórico, incluido el 4.81x. En ese pilar el listón es otro (`§4.3`). Por eso los checks del validador van sobre `('mapa', 'objeto')` y no sobre `los10`.
+>
+> **Y si la comparación no sale redonda, se busca mejor, no se quita.** En Asturias di por muerta la comparación creyendo que solo batía a Chipre por un 1,8%, y era falso: **Chipre exporta 4.383 M$ en bienes (OMC, 2024) y Asturias 5.654 M€, casi un 40% más.** El error fue mío al comparar, no del dato. Mecanizado en `validar-post.py` como dos fallos duros.
+
 **Paso 1 — Iterar el GANCHO** (estructura archi-probada, ver `swipe-file §2.1`). Empieza SIEMPRE por aquí. Fórmula:
 `[concepto original despectivo/gracioso de la zona] + [EXACTAMENTE 2 clichés locales] + [frase-rabia entre comillas] . Y exporta más que [PAÍS] entero 👇`
 - **Concepto: DERIVADO DE LA GEOGRAFÍA de la región** (su posición en el mapa, accidentes geográficos, fronteras). Nunca "región/pueblo/tierra". Así lo hemos hecho siempre: Galicia = "la esquina del Atlántico" (arriba a la izquierda), Álava/País Vasco = "la trastienda del norte" (arriba, la olvidada del norte), Navarra = "el patio trasero de los Pirineos" (frontera con Francia). Inventa uno original y geográfico por región; no repitas concepto usado.
@@ -832,7 +844,8 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 - Las cuatro comprobaciones de mención del `§4.2` aplican enteras.
 
 **Paso 3 — EL TEXTO.** Calca la estructura del mapa y cambia solo su firma:
-- **Gancho:** misma fórmula que el mapa (concepto despectivo en palabra universal + EXACTAMENTE 2 clichés universales + frase-rabia), pero donde el mapa remata con *"y exporta más que X entero"*, **el despiece remata con el OBJETO**: *"Y ahí se hace tu coche"*. Esa sustitución es lo que evita canibalizar el mapa.
+- **Gancho:** misma fórmula que el mapa (concepto despectivo en palabra universal + EXACTAMENTE 2 clichés universales + frase-rabia) **y el mismo remate con `exporta` + país concreto**. El OBJETO no sustituye a `exporta`: **va DENTRO del remate**, que es lo que diferencia al despiece sin romper el ancla de ventas. Plantilla: *"Y exporta más [piezas de coche] que [PAÍS] entero 👇"*.
+  - **🔴 ESTO ES UNA CORRECCIÓN, NO LA RECETA ORIGINAL (Iker, 2026-07-31).** Yo escribí ayer que *"el despiece remata con el OBJETO y esa sustitución es lo que evita canibalizar el mapa"*, y el despiece de Euskadi salió con *"Y ahí se hace tu coche"* en vez de `exporta`. **Está rindiendo peor.** Lo que diferencia al despiece del mapa **no es quitar `exporta`**, es el objeto, el despiece por piezas y la imagen de la llanta: con eso sobra para no canibalizar. Ver los CUATRO INAMOVIBLES en `§4.2`.
 - **Ficha:** `→ La pieza: @Empresa - @Persona`. La pieza delante y los dos puntos son la firma del formato y lo que lo distingue del mapa en el clasificador.
 - **Bloques de 4**, y si el número no es múltiplo de 4 el último es de 2 o de 3, nunca de 1. Nunca un 5 seguido de un 2.
 - **Reveal tardío** de la región, después de la lista, con los clichés locales justo antes.
