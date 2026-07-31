@@ -137,6 +137,14 @@ Cuando tengas 2+ frases que sean estructura paralela, enumeración, dato+consecu
 - ✅ `No es la inversión.\nNo es el espacio.\nNo son los mentores.`
 - **Excepción staccato:** 3-5 items MUY cortos (1-3 palabras, sustantivos/adjetivos sin verbo) van pegados en una línea con puntos: "Industrial. SaaS B2B. Servicios. Logística." · "Curiosidad. Deseo. Miedo." Test: item = frase (sujeto+verbo) → línea propia; item = sustantivo/adjetivo pelado → staccato.
 
+### ⭐ 2.3c · EL DETALLE QUE NO CARGA EL CHISTE, FUERA (Iker, 2026-07-30)
+
+**Si un detalle del gancho no aporta gracia pero sí estrecha el publico, se quita.** Doble ganancia: menos palabras y mas gente que se ve reflejada.
+
+**El caso:** yo arrastraba `al correo` del original porque estaba en el texto literal. Iker: *"la rabia te da que te manden un codigo, la parte del correo es un poco sin mas"*. Y ademas **el codigo te puede llegar por SMS**, asi que nombrar el correo dejaba fuera a la mitad. Quitarlo no toca la esencia y amplia el alcance.
+
+**⚠️ Ojo, esto NO contradice copiar la esencia palabra por palabra** (`post-workflow §4.4-ESENCIA`). Se copia **lo que HACE el chiste** (`codigo de verificacion`) y se puede soltar **el atrezo que lo acompaña** (`al correo`). La prueba: quitalo y pregunta si el chiste sigue igual de bueno. Si sigue igual, sobraba.
+
 ### ⭐ 2.3b · EL DOLOR ESTÁ EN LO QUE AÚN NO TIENES (Iker, 2026-07-30)
 
 **Al escribir el gancho, el sujeto del dolor tiene que ser lo que el lector PERSIGUE, nunca lo que ya tiene.** Suena obvio y aun así se me coló entero un meme con el matiz al revés.
