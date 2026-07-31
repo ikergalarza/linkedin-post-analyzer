@@ -508,6 +508,23 @@ Corre estas puertas EN ORDEN:
 
 **Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
 
+> ## ⚔️ HAY DOS TIPOS DE SPAM Y NO SE MEZCLAN (Iker, 2026-07-31)
+>
+> **1 · SPAM NINJA — el de siempre. Vale para TODOS los pilares menos el mapa.**
+> Sigue la broma del gancho, vende, y **ataca el punto de dolor que confirmaron las reuniones: encontrar al CLIENTE IDEAL, no el momento adecuado** (`project-diferenciador-real-clientes`). Va fusionado con el cuerpo, máximo 2 líneas, y enlaza a `recursos.neety.com/agendar/`. Ej.: *"Lo caro no es el que calla. Es dar con el que decide. / Eso son meses a mano y nosotros te lo damos hecho: {link}"*.
+>
+> **2 · SPAM ULTRA NINJA — SOLO el mapa. Dos líneas menos, y por eso funciona.**
+> **Es literalmente esto y nada más:**
+> > `Mapa completo aquí: https://recursos.neety.com/mapas/{region}/`
+>
+> **Sin línea de dolor delante. Sin girar la palabra del gancho. Sin vender. Nada.**
+>
+> **POR QUÉ, y esto es lo que hay que entender antes de "mejorarlo":** el mapa es, medido a lo largo de meses, **el pilar que más clics a enlace genera de todos**, y lo era **precisamente cuando nada en el post insinuaba que íbamos a llevarles a nuestra web**. Lo último que espera quien pincha "Mapa completo aquí" es que el mapa esté embebido en la página de Neety. **Esa sorpresa ES el mecanismo.** Cualquier frase de dolor delante del enlace reintroduce el olor a venta que es justo lo que el ultra ninja elimina, y con él se va el clic.
+>
+> **⚠️ Y ESTO PISA LA REGLA DEL BLOQUE DE DOS LÍNEAS PEGADAS** (`post-workflow §4.2 Paso 5`, escrita el 23/07 contra la ceguera de banner). **En el mapa manda el ultra ninja.** El bloque de DOS que pide `§3.2` se saca de otro sitio del cuerpo, que siempre hay un par natural (en Asturias, *"No lo levantan las vacas. / Lo levantan turnos de noche…"*).
+>
+> **Consecuencia que no se puede olvidar:** si el post ya no vende, **quien convierte es la PÁGINA**. Medir un mapa deja de ser el ratio y pasa a ser **clics al enlace + qué hace la página con ellos**.
+
 > **⭐ LAS CIFRAS REDONDAS Y PERFECTAS NO SE CREEN: DEJA MARGEN DE FALLO (Iker, 2026-07-29).** Un `100%` no lo tiene nadie, "ni el más listo", y ademas huele a IA y a vendehumos. **Baja a un numero imperfecto** que deje su margen: `95%`. Vale para cualquier cifra nuestra que sea una promesa y no un dato medido — tasas de respuesta, de acierto, de entrega. Caso real: el meme de la propuesta en visto pasó de *"tiene un 100% de respuesta"* a *"un 95%"*, y se cree mucho más. **Si la cifra SÍ está medida y sale redonda, se publica tal cual y se cita la fuente**: esto va de no inflar, no de maquillar.
 
 > **🔴 EL NINJA APUNTA A LA IDENTIFICACIÓN, NO A LA SEÑAL (Iker, 2026-07-29, con el informe de 50 demos).** Medido en `aboutme §1b`: la señal convence a un nivel **secundario** (objeción en 8 empresas), y lo que compran es **saber a quién vender y quién decide dentro**, que a mano *"puede ser un trabajo de meses"*. **Cambia el eje del ninja a eso.**
