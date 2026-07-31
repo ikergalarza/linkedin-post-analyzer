@@ -469,7 +469,11 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > **EL PROCEDIMIENTO, y se hace por escrito ANTES de redactar nada:**
 > 1. **Copia el texto del original PALABRA POR PALABRA.** Entero, sin resumir.
 > 2. **Haz el inventario de lo que SE VE en la imagen.** Objetos, personas, gestos, texto dentro de la foto. Literal: *"mujer sentada en una mesa, dedos apretando los ojos cerrados, oficina detras"*.
-> 3. **La esencia es ESO y nada mas.** Esas dos listas. **Prohibido anadir una tercera linea que empiece por "lo que pasa es que" o "funciona porque".**
+> 3. **La esencia es ESO y nada mas.** Esas dos listas. **Pero leidas de verdad: lo que la cosa nombrada HACE literalmente** (Iker, 2026-07-30). Eso NO es teorizar, es entender la palabra.
+>    - **Ejemplo, y es el que me costo tres intentos.** El original decia *"a verification code was just sent to your email"*. Un codigo de verificacion **literalmente significa**: creias que habias terminado, aparece un paso mas, tienes que ir a otro sitio, buscarlo y volver, y solo entonces consigues lo que ibas a buscar. **Eso es FRICCION**, y esta en el significado de la palabra, no en una hipotesis sobre por que gusto.
+>    - **Yo entregue dos versiones sin friccion**: *"eso lo lleva otra persona"* (un corte de manga) y *"tu propuesta ha sido leida"* (un callejon sin salida). Ninguna tiene el paso extra, asi que ninguna golpea igual.
+>    - **La frontera:** ✅ *"un codigo de verificacion obliga a dar un rodeo antes de conseguir lo que ibas a buscar"* es LEER. ❌ *"esto funciono porque la gente odia los bucles y el sistema te manda en circulos"* es INVENTAR. Lo primero sale de la palabra; lo segundo, de mi cabeza.
+>    - **El test:** describe lo que hace el elemento del original **sin usar la palabra "funciona" ni "gusta"**. Si no puedes, todavia no lo has entendido. **Prohibido anadir una tercera linea que empiece por "lo que pasa es que" o "funciona porque".**
 > 4. **Adaptar a ventas = cambiar SOLO el contexto.** Los elementos de las dos listas se quedan. Si el original dice `codigo de verificacion`, tu version lleva un aviso automatico del sistema. Si en la foto hay un tatuaje, en la tuya hay un tatuaje.
 > 5. **Y ENTONCES se mejora**, que es la otra mitad del trabajo: mejor gancho, mejor cuerpo, mejor imagen, nuestro formateado. **Mejorar es sumar, nunca sustituir lo que ya funcionaba.**
 >
