@@ -267,6 +267,8 @@ Frase de entrada:
 - **Entrega:** el fichero + la URL de descarga + **licencia y autor listos para pegar**. Si hay una CC0 decente, ofrécela como alternativa aunque la bonita sea CC BY-SA: al usuario le puede compensar no tener que atribuir.
 - Validado (Aragón): `Zaragoza Rio Ebro and Catedral-Basílica del Pilar upstream from Puente de Piedra.jpg` (CC BY-SA 4.0, Ymblanter) y la alternativa CC0 `Zaragoza shel.JPG`.
 
+**⚠️ EL PROMPT DE LA WEB NECESITA EL EMBED DE PAMPAM, Y NO LO TENGO YO (Iker, 2026-07-30).** El orden real es: yo entrego el CSV → **Iker monta el mapa en PamPam** → Iker me pasa el **codigo embebido** → y solo entonces el prompt del programador esta completo. **Si entrego el prompt sin ese codigo, va SIEMPRE con un aviso en la entrega pidiendoselo**, para que no se lo mande al programador a medias y haya que repetirlo. El prompt de la pagina se clona de la de Murcia, que es la referencia viva: titular, subtitulo, bloque de 3 estadisticas con fuente, metodologia, los tres bloques de Cuando escribir / Si encaja / A quien, la seccion de "El mismo mapa pero de tus clientes" y los dos CTA.
+
 **OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** con enlaces CLICABLES fuera de cercado (Paso 10), calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
 
 **Guardarraíles de elección de región (Paso 0):**
