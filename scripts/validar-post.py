@@ -636,6 +636,21 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'del "ver mas" y un numero ahi frena. Excepcion medida: si la cifra ES el concepto '
             '(el 12.89x con "pueblo de 7.000 habitantes"), se queda', aviso=True)
 
+    # ---------- CTA DEL MAPA (§4.2 Paso 5) ----------
+    # El jefe ya pago PamPam y la web de recursos embebe el mapa completo, asi
+    # que el enlace va AHI: se lee como recurso y no como venta, y captura igual
+    # porque esa pagina lleva su propio CTA a agendar. Mecanizado el 2026-07-31
+    # tras entregarlo mal aun teniendolo escrito desde el 23/07.
+    if pilar == 'mapa':
+        chk('recursos.neety.com/mapas/' in texto,
+            'MAPA: el CTA enlaza a /mapas/{region}/ (§4.2 Paso 5)',
+            'el mapa NO enlaza a /agendar/. Va "Mapa completo aquí: '
+            'https://recursos.neety.com/mapas/{region}/", con la region en minuscula y sin '
+            'tildes. El enlace a agendar se olia a venta; el del mapa se lee como recurso')
+        chk('recursos.neety.com/agendar' not in texto,
+            'MAPA: sin enlace a /agendar/ (§4.2 Paso 5)',
+            'queda el CTA viejo a agendar. Se sustituye por el enlace a la pagina del mapa')
+
     if pilar == 'mapa':
         m = re.search(EJE_CALLADO, cuerpo, re.I)
         chk(not m, 'Eje "callado" PROHIBIDO en mapas (post-workflow §4.2)',
