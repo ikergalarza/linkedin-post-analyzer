@@ -566,21 +566,31 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             f'que tape la prensa, el titular, la cifra o nosotros' if m else '')
     # ---------- GANCHO DEL PELOTEO (§4.2 Paso 1) ----------
     # Mecanizado el 2026-07-30 porque como criterio se me olvidaba.
-    if pilar in ('mapa', 'los10', 'objeto'):
+    # SOLO mapa y objeto. "Los 10" NO usa el gancho de prejuicio regional: su
+    # foco es LA PERSONA, el comercial invisible (§4.3). Aplicarselo tumbaba los
+    # cuatro "Los 10" del historico, incluido el 4.83x.
+    if pilar in ('mapa', 'objeto'):
         chk(bool(re.search(SUJETO_AJENO, hook_txt, re.I)),
             'GANCHO: el prejuicio lo dice OTRO, no nosotros (§4.2 Paso 1)',
             'el hook afirma el desprecio en seco y se lee como NUESTRO. Necesita un sujeto '
             'ajeno: "la ven como", "la llaman", "nadie habla de", "todos ven", "la conocen por", '
             '"la tienen fichada como", "la despachan como"')
+        # AVISO y no fallo: el mejor mapa del historico (12.89x, "Nadie habla del
+        # pueblo de 7.000 habitantes") NO la lleva. La receta la pide y suele
+        # ayudar, pero la evidencia no soporta convertirla en obligatoria.
         chk(bool(re.search(FRASE_RABIA, hook_txt, re.I)),
             'GANCHO: lleva frase-rabia que despacha la región (§4.2 Paso 1)',
             'sin ese remate el local no siente el desprecio, no comenta y no hay motor. '
             'Familia: "y para de contar", "y poco mas", "y poco que rascar", '
-            '"buena para [comer X] y para irse", "un [plato] antes de seguir carretera"')
+            '"buena para [comer X] y para irse", "un [plato] antes de seguir carretera"', aviso=True)
         _cif = re.findall(r'\d[\d.,]*', hook_txt)
+        # AVISO y no fallo, por lo mismo: el 12.89x lleva "7.000 habitantes" y el
+        # 5.38x lleva "8,7 millones", y en los dos la cifra ES el concepto. Iker
+        # prefiere el gancho sin cifra (2026-07-30), asi que avisa, pero no tumba.
         chk(len(_cif) == 0, 'GANCHO: sin cifras, van al cuerpo (§2.10)',
-            f'{_cif} en el hook. El gancho lo lee todo el mundo antes del "ver mas" y un numero '
-            'ahi frena; los datos son para el cuerpo, donde el lector ya esta dentro')
+            f'{_cif} en el hook. Iker lo prefiere sin cifra: el gancho lo lee todo el mundo antes '
+            'del "ver mas" y un numero ahi frena. Excepcion medida: si la cifra ES el concepto '
+            '(el 12.89x con "pueblo de 7.000 habitantes"), se queda', aviso=True)
 
     if pilar == 'mapa':
         m = re.search(EJE_CALLADO, cuerpo, re.I)
