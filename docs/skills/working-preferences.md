@@ -53,6 +53,8 @@ Describir el concepto de la imagen y enlazar la referencia **no es la entrega**:
 
 ## 🔴🔴 1d-BIS · NO SE ENTREGA LA PRIMERA VERSION. NUNCA (Iker, 2026-07-30)
 
+**⚠️ APLICA A TODO, no solo a los memes (Iker, 2026-07-30).** Mapa, "Los 10", despiece, lead magnet, historia, meme, newsletter, secuencia de email, prompt de imagen y prompt para el programador. **Y a cualquier pilar que inventemos manana.** Vive aqui, en como se ENTREGA, precisamente para que no dependa del pilar: si algun dia hay que repetirlo dentro de un runbook, es que esta mal puesto.
+
 **El problema que lo motiva, en palabras de Iker:** *"tienes todas las recetas superdetalladas, con validaciones superespecificas, y solo las estas aplicando si te lo digo yo"*. Cuerpos bien, **ganchos mal**, y cada dia fallando por un motivo distinto: un dia sin sujeto colectivo, otro sin verbo punchy, otro con una cifra dentro.
 
 **⛔ La causa raiz: lo que vive solo como CRITERIO depende de que yo me acuerde, y yo me olvido.** Hay dos arreglos y hacen falta los dos.
