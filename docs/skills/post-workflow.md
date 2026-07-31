@@ -459,6 +459,10 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > ### 🔴🔴 4.4-ESENCIA · LA ESENCIA SE EXTRAE DE LO QUE SE VE, NUNCA DE LO QUE YO CREA (Iker, 2026-07-30)
 > **Iker, literal: "CLARO QUE QUEREMOS COPIAR AUNQUE SEA DESCARADO PERO MEJORANDO Y ADAPTANDO A VENTAS. NO TE VAYAS POR LAS RAMAS HACIENDO OTRA BROMA DISTINTA."**
 >
+> **⭐⭐ COPIA NO ES PLAGIO, Y NO PASA NADA POR QUE SE NOTE (Iker, 2026-07-30).** Yo arrastraba la idea de que habia que disimular el calco, y **eso es lo que me hacia buscar "el equivalente" en vez de copiar**. Aclarado: *"me da igual que se note que es una copia, lo importante es que no sea un plagio"*. **La ESENCIA se copia PALABRA POR PALABRA**; lo que no se copia es el gancho entero. Si el original dice `codigo de verificacion`, mi gancho dice **`codigo de verificacion`**. Si en la foto hay un tatuaje, en la mia hay un tatuaje. Si son calvos, son calvos. **Y luego se adapta a ventas y se mejora**, que es la otra mitad.
+> - **⛔ Buscar el equivalente NO es adaptar.** "Alta de proveedor" era mi equivalente de "codigo de verificacion": mismo concepto abstracto, palabras distintas. **Mal.** Adaptar es conservar la palabra y cambiar el CONTEXTO en el que aparece.
+> - **⭐ EL TEST DE LA RABIA, que es el que me faltaba.** Despues de adaptar, leelo en frio y pregunta: **¿esto sigue dando la misma rabia?** Mi version decia *"enhorabuena por la venta, te hemos enviado el alta de proveedor"* y Iker lo tumbo en una linea: **si te confirman que la venta salio bien, ir al correo no da rabia, son buenas noticias**. La rabia del original viene de que te BLOQUEAN justo cuando ibas a conseguir lo tuyo. **Si tu version no bloquea, no sirve.**
+>
 > **El fallo, tres veces en una semana, y siempre el mismo:** me quedaba con el FORMATO y cambiaba el elemento concreto que hacia el chiste.
 > - **Tatuaje → tarta.** En la foto se veia un tatuaje. Puse una tarta.
 > - **Calvos → otra cosa.** La escalera de calvicie era el chiste. La adapte a ventas y me lleve por delante a los calvos.
