@@ -100,10 +100,10 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
 > **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
-> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción** para la web del mapa — la descripción va en **UN SOLO PÁRRAFO, sin saltos de línea** (Iker, 2026-07-22), y **tanto el título como la descripción se entregan cada uno en su bloque cercado** para poder copiarlos con el botón (igual que el texto del post) · (4) la **guía de menciones** (en el chat: enlaces CLICABLES fuera de cercado, Paso 10) · (5) una **FOTO de portada de la región** para la web del mapa (Paso 11).
-> **Ojo, son DOS imágenes distintas y solo una la das tú:**
+> **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción** para la web del mapa — la descripción va en **UN SOLO PÁRRAFO, sin saltos de línea** (Iker, 2026-07-22), y **tanto el título como la descripción se entregan cada uno en su bloque cercado** para poder copiarlos con el botón (igual que el texto del post) · (4) la **guía de menciones** (en el chat: enlaces CLICABLES fuera de cercado, Paso 10). **Son CUATRO piezas, ni una menos.**
+> **NINGUNA imagen la das tú, y las dos que hay las hacen otros:**
 > - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.)
-> - **Foto de portada de la WEB del mapa** = foto de la región → **la entrega el workflow** (Paso 11).
+> - **Portada de la WEB del mapa** = captura del propio mapa → **la saca el PROGRAMADOR** (confirmado por él el 2026-07-31). El antiguo Paso 11 de buscar una foto libre de la región **está muerto**: nunca hizo falta.
 
 **Paso 1 — Iterar el GANCHO** (estructura archi-probada, ver `swipe-file §2.1`). Empieza SIEMPRE por aquí. Fórmula:
 `[concepto original despectivo/gracioso de la zona] + [EXACTAMENTE 2 clichés locales] + [frase-rabia entre comillas] . Y exporta más que [PAÍS] entero 👇`
@@ -249,7 +249,13 @@ Frase de entrada:
 - **⚠️ NO SE ESCRIBE DE MEMORIA NI MIRANDO LA WEB POR FUERA (Iker, 2026-07-31).** Escribí el de Asturias calcándolo de lo que se veía en la de Murcia ("reutiliza el mismo layout, la misma tipografía") y **contradecía cosas que el programador ya sabe de la web**: yo describía la fachada, no cómo está montada por dentro. Y encima me inventé un título cuando el **Paso 9 ya fija la plantilla** `[Región]: el músculo industrial`.
 - **Un párrafo, explicado como a un amigo, específico y sin secciones** — igual que los prompts de imagen (`images §0a`). Nada de listas, ni bloques con encabezados, ni meta-título/meta-descripción sueltos si la web ya los genera.
 - **Lo que hay que darle cada vez** (esto sí lo pone el post): región, slug, título del Paso 9, descripción del Paso 9, los 3 datos del cuerpo y el **embed de PamPam**, que lo monta Iker desde el CSV y sin él el prompt no está cerrado.
-- **📌 CÓMO ESTÁN HECHAS LAS PÁGINAS DE LOS MAPAS:** `[PENDIENTE · esperando la respuesta del programador al prompt de intake del 2026-07-31]`. **En cuanto conteste, su respuesta se pega aquí y ya no se vuelve a preguntar.**
+- **📌 CÓMO ESTÁN HECHAS LAS PÁGINAS DE LOS MAPAS (respuesta del programador, 2026-07-31 — esto ya no se pregunta más):**
+  - **No hay componente, ni JSON, ni panel.** Cada página es un **HTML estático de 227 líneas clonado a mano**. La master es **`mapas/murcia/index.html`**, que lleva dentro un comentario `PLANTILLA DE MAPA` con los campos marcados `<< EDITAR >>`.
+  - Las **10 páginas de hoy comparten estructura idéntica** (cabecera a dos columnas con el mapa a toda altura) y solo cambian **~15 líneas**: título/SEO/OG/canonical, H1, lede, las 3 cifras con fuente, el iframe y el párrafo de valor.
+  - Crear una región = copiar la carpeta a `mapas/{region}/`, editar lo marcado y **darla de alta en TRES sitios más**: la **tarjeta** en `mapas/index.html`, su **entrada en el JSON-LD** de esa misma página (*"es lo que se suele olvidar"*, dicho por él) y el **`sitemap.xml`**. Push a `main` y **Cloudflare publica solo en 2-3 minutos**.
+  - **🔴 DE MÍ SOLO NECESITA DOS COSAS: la URL pública de PamPam con su hash, y las 3 cifras con fuente.** El `?fullPanelMobile=true`, el iframe y el CSS los pone él. **El SEO, el título, el H1, el canonical y el OG se derivan solos del nombre de la región: NO se los escribo.** El lede lo escribe él con el patrón `[Región]: el músculo industrial` **salvo que yo traiga ángulo**, y traerlo es lo que aporta el workflow.
+  - **La portada `assets/mapas/{region}.jpg` la saca ÉL, y es una captura del propio mapa.** Por eso el Paso 11 está muerto (ver abajo).
+  - **Tiempo:** menos de una hora desde que tiene URL y cifras, verificación en escritorio y móvil incluida.
 
 **Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): las 20, para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 - **⚠️ ESTO APLICA AL MAPA (20 menciones). Con POCAS menciones, TABLA DE 4 COLUMNAS (Iker, 2026-07-29).** La frontera es el numero:
@@ -272,17 +278,24 @@ Frase de entrada:
 (… 5 bloques de 4, en el orden exacto del post)
 ```
 
-**Paso 11 — FOTO de portada para la web del mapa** (no es la imagen del post):
+**Paso 11 — ~~FOTO de portada para la web del mapa~~ · 🚫 MUERTO DESDE EL 2026-07-31.**
+> **No lo hagas.** Al preguntarle al programador cómo monta las páginas contestó que **la portada `assets/mapas/{region}.jpg` es una captura del propio mapa y la saca él**. O sea que esta foto **nunca llegó a hacer falta**, y buscarla costaba media hora por región más el riesgo de licencia (la de Asturias se entregó con la licencia sin confirmar, que era un problema real en una web comercial). **La entrega del mapa pasa de 5 piezas a 4.**
+> Lo de abajo se conserva **solo por si algún día hace falta una foto libre para otra cosa**: el método de buscar en Wikimedia/Unsplash/Pexels y comprobar licencia sigue siendo bueno.
+
+<details><summary>Método antiguo de búsqueda de foto libre (ya no se usa en el mapa)</summary>
 - Una foto **icónica y reconocible de la región** (lo primero que a alguien le viene a la cabeza con "Aragón"): capital/skyline, río, monumento o paisaje-marca. Horizontal, ≥1200px de ancho, que funcione recortada como cabecera.
 - **🚫 NUNCA "la primera que salga en Google Imágenes".** Casi todo lo que devuelve Google es **material con copyright** (bancos de imágenes, prensa, fotógrafos). Esta foto va a la **web pública de una empresa** = uso comercial: una reclamación es dinero real y llega por burofax. Que sea fácil de coger no la hace libre.
 - **Busca solo en fuentes de licencia libre y comprueba la licencia una por una:** **Wikimedia Commons** (usa su API: `action=query&generator=search&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata` → lee `LicenseShortName` y `Artist`), Unsplash, Pexels. Sirven: **CC0 / dominio público** (lo mejor: sin obligaciones), **CC BY** y **CC BY-SA** (obligan a atribuir). **NO sirve** ningún **CC NC** (prohíbe uso comercial) ni nada sin licencia explícita.
 - **MÍRALA antes de entregarla** (descárgala y ábrela). No entregues una foto por su título: los buscadores devuelven escaneos de libros, cuadros y fotos mal encuadradas mezclados con las buenas.
 - **Entrega:** el fichero + la URL de descarga + **licencia y autor listos para pegar**. Si hay una CC0 decente, ofrécela como alternativa aunque la bonita sea CC BY-SA: al usuario le puede compensar no tener que atribuir.
 - Validado (Aragón): `Zaragoza Rio Ebro and Catedral-Basílica del Pilar upstream from Puente de Piedra.jpg` (CC BY-SA 4.0, Ymblanter) y la alternativa CC0 `Zaragoza shel.JPG`.
+</details>
 
-**⚠️ EL PROMPT DE LA WEB NECESITA EL EMBED DE PAMPAM, Y NO LO TENGO YO (Iker, 2026-07-30).** El orden real es: yo entrego el CSV → **Iker monta el mapa en PamPam** → Iker me pasa el **codigo embebido** → y solo entonces el prompt del programador esta completo. **Si entrego el prompt sin ese codigo, va SIEMPRE con un aviso en la entrega pidiendoselo**, para que no se lo mande al programador a medias y haya que repetirlo. El prompt de la pagina se clona de la de Murcia, que es la referencia viva: titular, subtitulo, bloque de 3 estadisticas con fuente, metodologia, los tres bloques de Cuando escribir / Si encaja / A quien, la seccion de "El mismo mapa pero de tus clientes" y los dos CTA.
+**⚠️ EL PROMPT DE LA WEB NECESITA LA URL DE PAMPAM, Y NO LA TENGO YO (Iker, 2026-07-30).** El orden real es: yo entrego el CSV → **Iker monta el mapa en PamPam** → Iker me pasa el **enlace** → y solo entonces el prompt del programador esta completo. **Si entrego el prompt sin ese enlace, va SIEMPRE con un aviso en la entrega pidiendoselo.** Si Iker manda el `<iframe>` entero, **quedate solo con la URL de `src` sin parametros** (`https://www.pampam.city/{hash}`): el programador pone el `?fullPanelMobile=true`, el iframe y el CSS por su cuenta, y mandarle el HTML es ruido.
 
-**OUTPUT FINAL del workflow para este pilar (SOLO esto):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción de 2 líneas** · (4) la **guía de menciones** con enlaces CLICABLES fuera de cercado (Paso 10), calcando el orden del post · (5) la **FOTO de portada** de la región con su licencia y autor. Ninguna imagen del POST (esa es la captura de PamPam, la hace el usuario).
+**OUTPUT FINAL del workflow para este pilar (SOLO esto, y son CUATRO):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción**, cada uno en SU bloque cercado y la descripción en un solo parrafo · (4) la **guía de menciones** con enlaces CLICABLES fuera de cercado (Paso 10), calcando el orden del post. Ninguna imagen: la del POST es la captura de PamPam que hace el usuario, y la portada de la web la saca el programador del propio mapa.
+
+**🔴 EL TÍTULO Y LA DESCRIPCIÓN NO SE OLVIDAN (Iker, 2026-07-31).** Es la pieza (3) y se me quedo fuera en la entrega de Asturias. **Repasa esta lista de cuatro antes de dar por cerrado el mapa**, aunque la conversacion venga larga y llena de retoques: precisamente cuando hay muchas iteraciones es cuando se cae una pieza.
 
 **Guardarraíles de elección de región (Paso 0):**
 - **🔔 ANTES DE NADA, RECUÉRDALE LO DEL ORGULLO DE PAÍS (encargo de Iker, 2026-07-29).** Antes de proponer región, dile que tiene aparcada la idea de hacer el peloteo con **orgullo de ESPAÑA frente a otros países** en vez de por comunidad: *"no conozco a nadie que se sienta orgulloso de ser europeo, pero de ser español sí"*. Motor de pique sano tipo Mundial (Argentina, México, Uruguay, Chile, Colombia, Perú), **jamás tirando mierda a nadie**, que ya tenemos clientes latinoamericanos y queremos más. Él decide si toca ya o sigue aparcada.
