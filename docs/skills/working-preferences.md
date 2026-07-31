@@ -51,6 +51,26 @@ Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo
 
 Describir el concepto de la imagen y enlazar la referencia **no es la entrega**: falta lo único que el diseñador puede ejecutar. En **cada** entrega que lleve imagen van las tres cosas juntas: (1) el **concepto**, (2) la **referencia real con su enlace** (outlier validado, `images.md`), y (3) el **prompt cerrado para el diseñador**, en su propio bloque copiable. Si falta el prompt, la entrega está a medias y hay que volver a pedirlo.
 
+## 🔴🔴 1d-BIS · NO SE ENTREGA LA PRIMERA VERSION. NUNCA (Iker, 2026-07-30)
+
+**El problema que lo motiva, en palabras de Iker:** *"tienes todas las recetas superdetalladas, con validaciones superespecificas, y solo las estas aplicando si te lo digo yo"*. Cuerpos bien, **ganchos mal**, y cada dia fallando por un motivo distinto: un dia sin sujeto colectivo, otro sin verbo punchy, otro con una cifra dentro.
+
+**⛔ La causa raiz: lo que vive solo como CRITERIO depende de que yo me acuerde, y yo me olvido.** Hay dos arreglos y hacen falta los dos.
+
+### Arreglo 1 — lo mecanizable se MECANIZA, no se anota
+Cada vez que Iker corrija algo del gancho o del cuerpo, la primera pregunta es **"¿esto lo puede comprobar el validador?"**. Si la respuesta es si, **va al validador ese mismo dia**, no a un parrafo de la receta. El 2026-07-30 se movieron tres reglas del gancho de peloteo (sujeto ajeno, frase-rabia y sin cifras) y **las tres cazan fallos reales mios de esa misma semana**. Lo que se mecaniza no se olvida.
+
+### Arreglo 2 — el bucle de entrega, obligatorio
+**El validador es el SUELO, no el techo.** Pasarlo no significa que este bien.
+
+1. **3 CANDIDATOS DE GANCHO, siempre.** La receta ya lo pedia (`§4` Paso 4) y yo entregaba uno. Escribir tres y elegir es lo que hace que el flojo pierda por comparacion; con uno solo, el flojo gana por incomparecencia.
+2. **Validador.** Arreglar TODO lo que falle.
+3. **Pase de criterio POR ESCRITO** contra el runbook del pilar, punto por punto. No "lo he revisado": la lista del runbook, marcada.
+4. **Si algo queda flojo, se reescribe y se vuelve al 2.**
+5. **Solo entonces se entrega.** Iker no es el que encuentra los fallos de primera version: para eso estan el validador y el pase de criterio.
+
+**Y si la version que tengo no es la mejor que puedo dar, NO se entrega.** Iterar cuesta minutos; que Iker corrija una entrega mala cuesta su tiempo, que es lo caro.
+
 ## ⭐ 1e · TODA ENTREGA DE UN POST LLEVA LA COMPARATIVA ORIGINAL vs EL MIO (Iker, 2026-07-22)
 
 En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además del texto, el prompt y los avisos, va **siempre una sección de comparativa**: el **post original de referencia** y **el mío**, **en la misma fila, lado a lado, dos columnas** (izquierda = original, derecha = el mío). Sirve para ver de un vistazo cómo se ha robado la esencia.

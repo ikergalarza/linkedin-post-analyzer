@@ -64,6 +64,15 @@ SUJETO_ES_MODELO = (r'(claude\s*(opus|sonnet|haiku)?\s*\d|gpt-?\d|gemini\s*\d'
                     r'|el nuevo claude|ha salido \w+ ?\d|sonnet|opus)')
 
 
+# §4.2 Paso 1 — En el peloteo el prejuicio SIEMPRE lo dice otro: "la ven como…",
+# "nadie habla de…". Sin ese sujeto, el desprecio se lee como NUESTRO y ofende a
+# quien queriamos que comentara defendiendo lo suyo (Iker, 2026-07-30).
+SUJETO_AJENO = r'(nadie (?:habla|la tiene|sabe)|todos? (?:ven|la)|la (?:ven|llaman|conocen|tienen|despachan|colocan|sitúan|situan)|le[s]? suena a|para el resto|en el mapa es|la pintan|se la imagina)'
+
+# §4.2 Paso 1 — la frase-rabia es el motor: sin ella el local no siente el
+# desprecio, no comenta y no hay alcance. Familia validada + variantes.
+FRASE_RABIA = r'(y para de contar|y poco m[aá]s|y poco que rascar|y gracias|para irse|antes de seguir carretera|de vuelta a|y a otra cosa|y ya|y punto|y hasta ah[ií])'
+
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 # §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
 # "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
@@ -555,6 +564,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             f'"{m.group(0)}" → único rasgo de texto que separa el 4.82x sin quejas del '
             f'0.66x que sí las tuvo. La persona invisible se queda; el culpable, fuera: '
             f'que tape la prensa, el titular, la cifra o nosotros' if m else '')
+    # ---------- GANCHO DEL PELOTEO (§4.2 Paso 1) ----------
+    # Mecanizado el 2026-07-30 porque como criterio se me olvidaba.
+    if pilar in ('mapa', 'los10', 'objeto'):
+        chk(bool(re.search(SUJETO_AJENO, hook_txt, re.I)),
+            'GANCHO: el prejuicio lo dice OTRO, no nosotros (§4.2 Paso 1)',
+            'el hook afirma el desprecio en seco y se lee como NUESTRO. Necesita un sujeto '
+            'ajeno: "la ven como", "la llaman", "nadie habla de", "todos ven", "la conocen por", '
+            '"la tienen fichada como", "la despachan como"')
+        chk(bool(re.search(FRASE_RABIA, hook_txt, re.I)),
+            'GANCHO: lleva frase-rabia que despacha la región (§4.2 Paso 1)',
+            'sin ese remate el local no siente el desprecio, no comenta y no hay motor. '
+            'Familia: "y para de contar", "y poco mas", "y poco que rascar", '
+            '"buena para [comer X] y para irse", "un [plato] antes de seguir carretera"')
+        _cif = re.findall(r'\d[\d.,]*', hook_txt)
+        chk(len(_cif) == 0, 'GANCHO: sin cifras, van al cuerpo (§2.10)',
+            f'{_cif} en el hook. El gancho lo lee todo el mundo antes del "ver mas" y un numero '
+            'ahi frena; los datos son para el cuerpo, donde el lector ya esta dentro')
+
     if pilar == 'mapa':
         m = re.search(EJE_CALLADO, cuerpo, re.I)
         chk(not m, 'Eje "callado" PROHIBIDO en mapas (post-workflow §4.2)',
