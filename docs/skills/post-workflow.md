@@ -545,6 +545,12 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > ### 🔒 4.4-BUCLE · →→ ESTA REGLA SE MUDÓ A `global-instructions §2.0` (Iker, 2026-07-31)
 > **El bucle abierto es de TODOS los pilares, no del meme ni del lead magnet.** La escribí aquí y en `§4.5` como si fuera de pilar, y por eso propuse un gancho de meme que desvelaba el chiste. **Vive en `global §2.0` y ahí se lee.** Lo único específico del meme: al haber imagen, el bucle es doble — el gancho tampoco cuenta lo que se ve.
 >
+> ### 🤐 4.4-CALLA · EL CUERPO NO NOMBRA EL CHISTE, Y SI LO NOMBRA ES TARDE (Iker, 2026-07-31)
+> **El cuerpo del meme habla del MÉTODO en abstracto. La broma la carga la imagen, entera.** Comprobado contra los dos originales: **ni el post de Félix ni el nuestro de Unai nombran el tatuaje una sola vez**. Unai habla de *"hacer algo imposible de ignorar"* y de *"el que no contesta también está contestando"*, y el tatuaje **no aparece en el texto en ningún momento**.
+> - **Por qué funciona así:** el lector ve la imagen, entiende el chiste solo, y el texto le da **otra capa** en vez de repetirle lo que acaba de ver. Si el cuerpo explica la foto, el post pierde la mitad: la foto deja de aportar y el texto tampoco aporta.
+> - **Y si hay que nombrarlo, NUNCA justo debajo del gancho.** Iker, 2026-07-31: en el double down yo puse *"El brazo tiene un fallo: hay que enseñarlo. / La cara sale sola en cada videollamada"* **en la segunda línea del post**, y eso mata el bucle en el sitio exacto donde más caro sale, el corte del "ver más". **Va después del crédito, ya metido en el cuerpo**, cuando el lector lleva rato dentro.
+> - **Regla práctica:** de la mitad del post hacia arriba, se habla del método. De la mitad hacia abajo se puede guiñar a la imagen.
+
 > ### 🔁 4.4-DOBLE · DOUBLE DOWN: SE REPITE EL ESQUELETO, SOLO ROTA EL INTENSIFICADOR (Iker, 2026-07-31)
 > **⚠️ NO ES DEL MEME: vale para CUALQUIER pilar.** Se puede doblar un mapa, un lead magnet o una historia que acabe de petar. Está escrita aquí porque el primer caso fue un meme, pero al leerla sustituye "meme" por el pilar que toque.
 > **Qué es.** Repetir en otra cuenta, **lo antes posible**, una idea que se acaba de hacer viral en la nuestra. No es un pilar y no lleva receta propia: es una jugada sobre un pilar que ya existe. Se hizo el 31/07 con el tatuaje (Unai, miércoles, ~100.000 impresiones → Iker, viernes).
