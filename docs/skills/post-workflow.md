@@ -270,6 +270,12 @@ Frase de entrada:
   - **La portada `assets/mapas/{region}.jpg` la saca ÉL, y es una captura del propio mapa.** Por eso el Paso 11 está muerto (ver abajo).
   - **Tiempo:** menos de una hora desde que tiene URL y cifras, verificación en escritorio y móvil incluida.
 
+**⛔ EL NOMBRE NUNCA SE ACORTA, NI EL DE LA PERSONA NI EL DE LA EMPRESA (Iker, 2026-07-31).** Va **tal cual lo devuelve LinkedIn**, en el cuerpo del post Y en la guía, en **todos los pilares**, no solo en el mapa. Aunque quede largo, aunque lleve `S.A.`, aunque el nombre de la página tenga un guion dentro y choque con el separador ` - ` de la línea.
+- **Razón 1, la que él da:** con el nombre recortado **no encuentra el perfil** en el desplegable de la @ y pierde el tiempo buscándolo.
+- **🔴 Razón 2, que es peor y la descubrimos en Asturias:** **acortar rompe el detector de repetidas de `§4.0c`.** Yo escribí `@TSK` y el cruce contra el "Los 10" de Asturias de Iker no saltaba; al poner el nombre real, **`TSK Electrónica y Electricidad` salió repetida al instante**. Lo mismo con `@Reny Picot`, que es la **marca comercial** y no el nombre de la página (`Industrias Lacteas Asturianas, S.A.`). **Un nombre acortado no es solo incómodo: esconde violaciones de reglas.**
+- **Ojo con las marcas:** la empresa se menciona por el nombre de **su página**, no por la marca con la que la conoce la gente. Si quieres que se entienda, la marca va en la **descripción del CSV**, nunca en la mención.
+- **Ojo con las tildes:** si el perfil está escrito sin ellas (`Jesus Angel Perez Fernandez`) se copia **sin ellas**. Manda el perfil, no la ortografía.
+
 **Paso 10 — Guía de menciones** (fuera del post, para pegar las @ a mano): las 20, para que el usuario encuentre a la persona/empresa correcta sin confundirse con homónimos.
 - **⚠️ ESTO APLICA AL MAPA (20 menciones). Con POCAS menciones, TABLA DE 4 COLUMNAS (Iker, 2026-07-29).** La frontera es el numero:
   - **Hasta 10 menciones** (historia con peloteo, "Los 10"): **tabla markdown de CUATRO columnas**, en este orden exacto: **nombre de la empresa | enlace de la empresa | nombre de la persona | enlace de la persona**. Se lee de un vistazo y se comprueba fila a fila.
