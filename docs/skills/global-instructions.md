@@ -508,6 +508,20 @@ Corre estas puertas EN ORDEN:
 
 **Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
 
+> ## 🔄 EL DOLOR NO CAMBIA, LA FRASE SÍ: EL SPAM NINJA ROTA SIEMPRE (Iker, 2026-07-31)
+>
+> **El punto de dolor está cerrado y no se toca:** desde el informe de las 50 demos sabemos que lo que compran es **encontrar al cliente ideal, la empresa Y la persona que decide dentro**. Ya no se habla del "momento adecuado" ni de la señal: eso era lo que creíamos nosotros, no lo que dicen ellos (`project-diferenciador-real-clientes`).
+>
+> **Pero la FORMA rota en cada publicación.** Iker, textual: *"seguro que hay miles de variantes, no puede ser que siempre me digas es dar con el que decide"*. Un cierre calcado hace que **la publicación nueva no se note nueva**, que es exactamente lo contrario de para lo que existe.
+>
+> **La mejor variante es la que cuelga de la BROMA DEL GANCHO**, no una frase de catálogo. Si el post va de un tatuaje, el spam ninja habla de tatuajes:
+> > `Tatuarse es lo fácil. Lo caro es saber de quién tiene que ser el logo.`
+> > `Esa parte ya la tenemos hecha: {link}`
+>
+> **Ángulos distintos para decir lo mismo**, por si el gancho no da juego: acertar la empresa · saber a quién le hablas · elegir bien la lista · quién firma de verdad · a quién merece la pena perseguir · la mitad del trabajo es la lista · dar con el nombre correcto.
+>
+> **🚫 QUEMADAS, no se repiten:** `dar con el que decide` · `son meses a mano` · `te lo damos hecho`. Salieron en el meme de Unai del 29/07, la historia de Iker del 29/07 y el mapa de Asturias del 31/07. **Mecanizado en `SPAM_QUEMADO` de `validar-post.py`: fallo duro, y al publicar se mete ahí la frase usada.** `te lo damos hecho` gusta porque es punchy, así que se conserva el punch cambiando el verbo: `esa parte ya la tenemos hecha`, `ese trabajo ya está hecho`, `eso te lo damos resuelto`.
+
 > ## ⚔️ HAY DOS TIPOS DE SPAM Y NO SE MEZCLAN (Iker, 2026-07-31)
 >
 > **1 · SPAM NINJA — el de siempre. Vale para TODOS los pilares menos el mapa.**

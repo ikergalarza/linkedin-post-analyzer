@@ -89,6 +89,18 @@ VERBO_PREJUICIO_QUEMADO = {
 # desprecio, no comenta y no hay alcance. Familia validada + variantes.
 FRASE_RABIA = r'(y para de contar|y poco m[aá]s|y poco que rascar|y gracias|para irse|antes de seguir carretera|de vuelta a|y a otra cosa|y ya|y punto|y hasta ah[ií])'
 
+# §4.4b — FRASES DEL SPAM NINJA QUEMADAS. El dolor es SIEMPRE el mismo (dar con
+# el cliente ideal, empresa y persona), pero la FORMA rota en cada post. Iker,
+# 2026-07-31: "seguro que hay miles de variantes, no puede ser que siempre me
+# digas es dar con el que decide". Un cierre repetido hace que la publicacion
+# nueva no se note nueva, que es justo lo contrario de para lo que existe.
+# Al publicar, mete aqui la frase que hayas usado. La lista solo crece.
+SPAM_QUEMADO = {
+    'dar con el que decide': 'meme Unai 29/07, historia Iker 29/07, mapa Asturias 31/07',
+    'son meses a mano': 'lo mismo, en los tres',
+    'te lo damos hecho': 'lo mismo, en los tres',
+}
+
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 # §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
 # "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
@@ -641,6 +653,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # que el enlace va AHI: se lee como recurso y no como venta, y captura igual
     # porque esa pagina lleva su propio CTA a agendar. Mecanizado el 2026-07-31
     # tras entregarlo mal aun teniendolo escrito desde el 23/07.
+    _spam = sorted(f for f in SPAM_QUEMADO if f in texto.lower())
+    chk(not _spam, 'SPAM NINJA: la frase no está quemada (§4.4b)',
+        ' · '.join(f'"{f}" ya salió en {SPAM_QUEMADO[f]}' for f in _spam) +
+        '. El dolor es el mismo siempre (dar con el cliente ideal, empresa Y persona) pero la '
+        'forma rota en cada post. Lo mejor es colgarlo de la broma del gancho: si el post va de '
+        'un tatuaje, "Tatuarse es lo facil. Lo caro es saber de quien tiene que ser el logo"')
+
     if pilar == 'mapa':
         chk('recursos.neety.com/mapas/' in texto,
             'MAPA: el CTA enlaza a /mapas/{region}/ (§4.2 Paso 5)',
