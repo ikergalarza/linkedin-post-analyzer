@@ -67,7 +67,22 @@ SUJETO_ES_MODELO = (r'(claude\s*(opus|sonnet|haiku)?\s*\d|gpt-?\d|gemini\s*\d'
 # §4.2 Paso 1 — En el peloteo el prejuicio SIEMPRE lo dice otro: "la ven como…",
 # "nadie habla de…". Sin ese sujeto, el desprecio se lee como NUESTRO y ofende a
 # quien queriamos que comentara defendiendo lo suyo (Iker, 2026-07-30).
-SUJETO_AJENO = r'(nadie (?:habla|la tiene|sabe)|todos? (?:ven|la)|la (?:ven|llaman|conocen|tienen|despachan|colocan|sitúan|situan)|le[s]? suena a|para el resto|en el mapa es|la pintan|se la imagina)'
+SUJETO_AJENO = r'(nadie (?:habla|la tiene|la cuenta|sabe)|todos? (?:ven|la)|la (?:ven|llaman|conocen|tienen|despachan|colocan|cuentan|dan por|sitúan|situan)|le[s]? suena a|para el resto|en el mapa es|la pintan|se la imagina)'
+
+# §4.2 Paso 1 — VERBOS DE PREJUICIO QUEMADOS. El sujeto ajeno es obligatorio,
+# pero el VERBO tiene que rotar. "Fichada" salio el 30/07 en el despiece de
+# Euskadi ("nadie lo tiene fichado como tierra de coches") y al dia siguiente
+# volvia a abrir el mapa de Asturias, ademas DOS veces en el mismo post. El
+# verbo es lo primero que se lee: repetirlo convierte el pilar en plantilla y
+# el lector deja de notar el desprecio, que es el motor entero (Iker,
+# 2026-07-31). No es que el verbo sea malo, es que ya esta gastado.
+#
+# COMO SE MANTIENE: cuando publiques un peloteo, mete aqui el verbo que hayas
+# usado. La lista solo crece.
+VERBO_PREJUICIO_QUEMADO = {
+    'fichada': 'Euskadi 30/07 y Asturias 31/07',
+    'fichado': 'Euskadi 30/07',
+}
 
 # §4.2 Paso 1 — la frase-rabia es el motor: sin ella el local no siente el
 # desprecio, no comenta y no hay alcance. Familia validada + variantes.
@@ -574,7 +589,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'GANCHO: el prejuicio lo dice OTRO, no nosotros (§4.2 Paso 1)',
             'el hook afirma el desprecio en seco y se lee como NUESTRO. Necesita un sujeto '
             'ajeno: "la ven como", "la llaman", "nadie habla de", "todos ven", "la conocen por", '
-            '"la tienen fichada como", "la despachan como"')
+            '"la tienen jubilada", "la despachan como", "la dan por"')
+        _quemados = sorted(v for v in VERBO_PREJUICIO_QUEMADO
+                           if re.search(r'\b' + v + r'\b', texto, re.I))
+        chk(not _quemados,
+            'GANCHO: el verbo del prejuicio no está quemado (§4.2 Paso 1)',
+            ' · '.join(f'"{v}" ya salió en {VERBO_PREJUICIO_QUEMADO[v]}' for v in _quemados) +
+            '. El sujeto ajeno es obligatorio, el VERBO rota. Busca otro del mismo nivel: '
+            '"la tienen jubilada", "la despachan como", "la dan por amortizada", '
+            '"la entierran con", "nadie la cuenta como"')
         # AVISO y no fallo: el mejor mapa del historico (12.89x, "Nadie habla del
         # pueblo de 7.000 habitantes") NO la lleva. La receta la pide y suele
         # ayudar, pero la evidencia no soporta convertirla en obligatoria.
