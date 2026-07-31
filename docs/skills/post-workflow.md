@@ -455,18 +455,24 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **El caso que lo demostró (0,31x, 1.003 impresiones):** el original de Gavin Fernand (corporatedudes, 425 reacciones, 45% risas) traducía **"I just shit my pants"** al lenguaje corporativo de LinkedIn. Nosotros, para que encajara en la cuenta sobria de Unai, pusimos arriba *"El cliente me dijo que no"* → *"Oportunidad en pausa estratégica"*. **La caja de arriba ya era corporativa, así que no había caída y no había chiste.** El motor de ese meme es la DISTANCIA entre la vulgaridad y el eufemismo. Ese meme tenía que haber ido en Iker, tal cual de bruto.
 > - **Regla:** mide primero cuánto de bruto es el original. Si no cabe en la cuenta que te tocaba, **cambia de cuenta**, no de chiste.
 >
-> ### 🔴🔴 4.4-ESENCIA · SE COPIA DESCARADO, PERO SE COPIA LA BROMA (Iker, 2026-07-30, SEGUNDA VEZ)
+> ### 🔴🔴 4.4-ESENCIA · LA ESENCIA SE EXTRAE DE LO QUE SE VE, NUNCA DE LO QUE YO CREA (Iker, 2026-07-30)
 > **Iker, literal: "CLARO QUE QUEREMOS COPIAR AUNQUE SEA DESCARADO PERO MEJORANDO Y ADAPTANDO A VENTAS. NO TE VAYAS POR LAS RAMAS HACIENDO OTRA BROMA DISTINTA."**
 >
-> **El fallo, y lo he cometido dos veces en tres dias:**
-> - **Tatuaje → tarta.** Me quede con el formato (correo de Gmail) y cambie el objeto que hacia el chiste.
-> - **Codigo de verificacion → "eso lo lleva otra persona".** Me quede con el formato (frase entrecomillada + cara de agotamiento) y **me invente OTRA broma**. El original se reia del **BUCLE**: el sistema te manda un codigo al sitio al que no puedes entrar. Yo puse un corte de manga del portero, que no es un bucle ni se le parece.
+> **El fallo, tres veces en una semana, y siempre el mismo:** me quedaba con el FORMATO y cambiaba el elemento concreto que hacia el chiste.
+> - **Tatuaje → tarta.** En la foto se veia un tatuaje. Puse una tarta.
+> - **Calvos → otra cosa.** La escalera de calvicie era el chiste. La adapte a ventas y me lleve por delante a los calvos.
+> - **Codigo de verificacion → "eso lo lleva otra persona".** Su texto decia codigo de verificacion. Yo escribi otra broma y encima me invente una teoria sobre bucles que **no estaba en ninguna parte** para justificarla.
 >
-> **La regla:** lo que se calca es **LA MECANICA DEL CHISTE**, no la plantilla. Antes de escribir, **formula la mecanica en UNA frase**: *"te mandan en circulos con una frase que suena servicial"*. **Esa frase tiene que seguir siendo verdad en tu version.**
+> **⛔ LA CAUSA RAIZ: yo teorizaba POR QUE creia que habia funcionado, y construia el remix sobre esa teoria.** Eso es inventarse el dato. En marketing nos cenimos a lo medido; aqui igual.
 >
-> **Adaptar a ventas SI. Cambiar la broma NO.** El codigo de verificacion adaptado bien es *"eso lo lleva compras" y en compras te dicen que lo pide fabrica*: mismo bucle, mismo agotamiento, contexto nuestro.
+> **EL PROCEDIMIENTO, y se hace por escrito ANTES de redactar nada:**
+> 1. **Copia el texto del original PALABRA POR PALABRA.** Entero, sin resumir.
+> 2. **Haz el inventario de lo que SE VE en la imagen.** Objetos, personas, gestos, texto dentro de la foto. Literal: *"mujer sentada en una mesa, dedos apretando los ojos cerrados, oficina detras"*.
+> 3. **La esencia es ESO y nada mas.** Esas dos listas. **Prohibido anadir una tercera linea que empiece por "lo que pasa es que" o "funciona porque".**
+> 4. **Adaptar a ventas = cambiar SOLO el contexto.** Los elementos de las dos listas se quedan. Si el original dice `codigo de verificacion`, tu version lleva un aviso automatico del sistema. Si en la foto hay un tatuaje, en la tuya hay un tatuaje.
+> 5. **Y ENTONCES se mejora**, que es la otra mitad del trabajo: mejor gancho, mejor cuerpo, mejor imagen, nuestro formateado. **Mejorar es sumar, nunca sustituir lo que ya funcionaba.**
 >
-> **El test, dos preguntas:** (1) ¿cual es la mecanica del original en una frase? (2) ¿mi version cumple esa misma frase? Si la 2 es que no, no es un remix, es otro post.
+> **El test antes de entregar:** pon las dos listas al lado de tu version. **Cada elemento de la lista tiene que tener su equivalente reconocible en el remix.** Si falta uno, no es un remix, es otro post.
 >
 > ### ©️ 4.4-CREDITO · SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS, SE ACREDITA (Iker, 2026-07-29)
 > **Qué pasó.** El meme del tatuaje hizo casi 30.000 impresiones en menos de una hora, **y el autor original lo vio**. Bloqueó la cuenta de Unai. **Bloquear es el aviso barato: el caro es un reporte por copia.** Mismo patrón que el "Andalucía es más grande que Italia", que también nos costó insultos y también acabó en una regla dura del runbook del mapa.
