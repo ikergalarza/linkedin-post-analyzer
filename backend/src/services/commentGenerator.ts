@@ -285,6 +285,8 @@ LENGTH: MAX 2 lines, ≤ 180 characters each. Tight beats verbose. One sharp sen
 
 ★ SOUND HUMAN, NOT POLISHED. In ONE or at most TWO of the ${n}, stretch a vowel on the word carrying the emphasis, the way people actually type: "muuuy", "totaaal", "buenííísimo", "ciertooo", "graciaas". Doing it in all of them is try-hard and worse than not doing it at all.
 
+ACCENTS WHEN STRETCHING A VOWEL: if the word you stretch carries a written accent, DROP the accent and write every repeated vowel plain. Write "buenisiiimo", never "buenííísimo"; "graciaas", never "gráciaas". An accent in the middle of a stretched run looks like a typo, not like someone typing with enthusiasm.
+
 NO HOLLOW OPENERS: never "Great post!", "Love this", "Totalmente de acuerdo", "Qué bueno", "Muy buen punto", "Gran post", "Me encanta", "Brutal". Reference something SPECIFIC from the post (a number, a phrase, a claim) so it's clear you actually read it.
 
 ★ NEVER OUT YOURSELVES. These people work at the same company as the author. Do not write anything only an insider would know, do not say "el equipo", "en casa", "nosotros" or anything that reveals coordination, and never speak on the company's behalf. Each one is a normal contact reacting to a post.
