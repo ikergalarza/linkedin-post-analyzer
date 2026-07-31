@@ -137,6 +137,14 @@ Cuando tengas 2+ frases que sean estructura paralela, enumeración, dato+consecu
 - ✅ `No es la inversión.\nNo es el espacio.\nNo son los mentores.`
 - **Excepción staccato:** 3-5 items MUY cortos (1-3 palabras, sustantivos/adjetivos sin verbo) van pegados en una línea con puntos: "Industrial. SaaS B2B. Servicios. Logística." · "Curiosidad. Deseo. Miedo." Test: item = frase (sujeto+verbo) → línea propia; item = sustantivo/adjetivo pelado → staccato.
 
+### ⭐ 2.3b · EL DOLOR ESTÁ EN LO QUE AÚN NO TIENES (Iker, 2026-07-30)
+
+**Al escribir el gancho, el sujeto del dolor tiene que ser lo que el lector PERSIGUE, nunca lo que ya tiene.** Suena obvio y aun así se me coló entero un meme con el matiz al revés.
+
+**El caso:** escribi *"un codigo de verificacion por cada empresa a la que VENDES"*. Iker lo tumbo en una linea: **a una empresa que ya es tu cliente no le pides el telefono ni le buscas al decisor, asi que no hay rabia ninguna.** Corregido a *"a la que QUIERES vender"*, y ahi si duele: son los 200 de la lista que todavia no te ha cogido nadie el telefono.
+
+**La regla:** `vendes` → cliente → cero dolor. `quieres vender` → prospecto → todo el dolor. Vale para cualquier pilar: **antes de dar un gancho por bueno, comprueba que la frustracion recae sobre algo que el lector NO tiene todavia.** Lo que ya tienes no te quita el sueño.
+
 ### 3.2 · Bloques en escalera + respiración (regla transversal, NO negociable)
 
 **⭐ EL BLOQUE DE DOS: tiene que HABERLO (2026-07-17).** El ritmo de LinkedIn es **suelta → par → suelta → terna → sueltas**. El par es típico y a mí no me salía nunca: medido el 2026-07-17, el lead magnet de Iker tenía **1 bloque de 3 y 10 líneas sueltas, y CERO pares**; el mapa de Cataluña, lo mismo. Sin pares el post se lee como una lista de frases sueltas.
