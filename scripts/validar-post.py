@@ -82,6 +82,7 @@ SUJETO_AJENO = r'(nadie (?:habla|la tiene|la cuenta|sabe)|todos? (?:ven|la)|la (
 VERBO_PREJUICIO_QUEMADO = {
     'fichada': 'Euskadi 30/07 y Asturias 31/07',
     'fichado': 'Euskadi 30/07',
+    'jubilada': 'Asturias 31/07',
 }
 
 # §4.2 Paso 1 — la frase-rabia es el motor: sin ella el local no siente el
