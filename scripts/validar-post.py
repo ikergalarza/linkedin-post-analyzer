@@ -101,6 +101,28 @@ SPAM_QUEMADO = {
     'te lo damos hecho': 'lo mismo, en los tres',
 }
 
+# §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
+# concepto usado" y no habia lista: dependia de que yo recordara diez posts.
+# Auditoria del 2026-07-31.
+CONCEPTO_QUEMADO = {
+    'patio trasero': 'Navarra',
+    'esquina del atl': 'Galicia',
+    'trastienda del norte': 'Álava / País Vasco',
+    'desierto': 'Murcia',
+    'sitio de comer': 'Euskadi (despiece)',
+    'museo minero': 'Asturias',
+}
+
+# §4.2 Paso 1 — FRASES-RABIA YA USADAS. Misma historia: la receta pedia no
+# repetirla y no habia con que comprobarlo.
+FRASE_RABIA_USADA = {
+    'txistorra y poco m': 'Navarra',
+    'pintxo-pote y para irse': 'Álava',
+    'ternasco antes de seguir carretera': 'Aragón',
+    'de vuelta al aeropuerto': 'Euskadi',
+    'poco que rascar': 'Asturias',
+}
+
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 # §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
 # "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
@@ -623,6 +645,14 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'falta el "más que [PAÍS] entero". Un país CONCRETO y verificado, nunca '
             '"medio mundo" ni "países enteros" en vago: la comparacion es el dato que '
             'hace que se comparta')
+        _conc = sorted(c for c in CONCEPTO_QUEMADO if c in hook_txt.lower())
+        chk(not _conc, 'GANCHO: el concepto no está usado (§4.2 Paso 1)',
+            ' · '.join(f'"{c}" fue {CONCEPTO_QUEMADO[c]}' for c in _conc) +
+            '. El concepto se inventa nuevo por region, derivado de su GEOGRAFIA')
+        _rabia = sorted(f for f in FRASE_RABIA_USADA if f in hook_txt.lower())
+        chk(not _rabia, 'GANCHO: la frase-rabia no está usada (§4.2 Paso 1)',
+            ' · '.join(f'"{f}" fue {FRASE_RABIA_USADA[f]}' for f in _rabia) +
+            '. El beat se mantiene siempre, las palabras cambian siempre')
         _quemados = sorted(v for v in VERBO_PREJUICIO_QUEMADO
                            if re.search(r'\b' + v + r'\b', texto, re.I))
         chk(not _quemados,

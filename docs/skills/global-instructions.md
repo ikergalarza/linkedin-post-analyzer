@@ -48,6 +48,15 @@ El hook es la línea más importante. Si no funciona, no se lee el cuerpo.
 
 > **POR QUÉ ESTÁ AQUÍ ARRIBA Y NO EN UN RUNBOCK (Iker, 2026-07-31).** Yo la tenía escrita **solo en el runbook del lead magnet** (`post-workflow §4.5`), como si fuera una regla de ese pilar, y por eso propuse un gancho de meme que desvelaba el chiste. Iker: *"todos mis ganchos tienen que abrir un bucle abierto porque la estrategia principal de LinkedIn es el gancho corto y que pulsen ver más"*. **El fallo no fue la regla, fue tenerla guardada en el cajón equivocado.** Cuando una regla habla del GANCHO, del CUERPO o del REMIX, vive aquí, en global, aunque la haya aprendido haciendo un pilar concreto.
 
+### 🤐 2.0c · EL CUERPO NO EXPLICA LA IMAGEN (universal, todo post con imagen — Iker, 2026-07-31)
+
+**Corolario del bucle abierto de `§2.0`, y se falla igual de fácil.** La imagen carga su parte y **el cuerpo aporta OTRA capa**, no la misma. Si el texto describe lo que se ve, el post pierde la mitad: la foto deja de aportar y el texto tampoco.
+
+- **Comprobado, no supuesto:** ni el post original de Félix ni el nuestro de Unai **nombran el tatuaje una sola vez**. Todo el cuerpo habla del método en abstracto.
+- **Y si hay que nombrarlo, NUNCA en la mitad de arriba.** Yo lo puse en la segunda línea del double down, que es el sitio donde más caro sale: el corte del "ver más".
+- **Regla práctica:** de la mitad del post hacia arriba, el método. De la mitad hacia abajo, se puede guiñar a la imagen.
+- Detalle por pilar en `post-workflow §4.4-CALLA`.
+
 ### 2.1 · Ley de formato del hook (la regla más importante — leer antes de escribir la primera línea)
 LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, con "…ver más". Ese corte es el único momento para ganar el clic. El error del 90%: meter un **doble salto de línea (`\n\n`) justo después de la primera frase del hook** — eso le entrega a LinkedIn un punto de corte antes de tiempo, el lector lee la primera frase como idea cerrada y sigue scrolleando.
 
@@ -56,6 +65,32 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 - Patrón de hook de dos partes que funciona: [afirmación tajante o dato shock] + [puente que abre curiosidad: "Y casi nadie lo cuenta…", "Pero el motivo real…", "👇"].
 - El **primer salto de línea en blanco de todo el post va DESPUÉS del bloque de hook**, nunca dentro.
 - Ejemplo real (Cataluña **7.11x**): ✅ `Cataluña exporta más que Portugal entera. Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇` (una sola línea). ❌ La misma con blank line en medio muere.
+
+### 🔄 2.0b · LEY DE VARIEDAD: TODO ELEMENTO QUE SE REPITE, ROTA (universal — auditoría del 2026-07-31)
+
+**El principio, y es lo que faltaba escrito en algún sitio:** el fondo se repite a propósito (mismo pilar, mismo dolor, mismo formato: eso es lo que hace que funcione), pero **la publicación nueva tiene que NOTARSE nueva**. Cualquier trozo de texto que aparezca igual en dos posts seguidos quema el pilar entero, porque el lector nos tiene fichados y deja de leer.
+
+> **POR QUÉ ESTA SECCIÓN EXISTE.** La auditoría del 31/07 encontró **diez reglas de rotación repartidas por seis sitios distintos**, cada una escrita después de un fallo distinto, y **ningún sitio que dijera el principio**. Por eso fallaba siempre en un elemento nuevo: tenía diez recordatorios y ninguna ley. Iker, ese día: *"este texto que me has dado ahora deberías habértelo ocurrido a la primera sin tanta iteración"*. Tenía razón, y la causa era esta.
+
+**INVENTARIO COMPLETO de lo que rota. Antes de entregar, se repasa entero:**
+
+| Elemento | Dónde vive la lista de quemados |
+|---|---|
+| **Concepto del gancho** (geográfico, en peloteo) | `CONCEPTO_QUEMADO` |
+| **Verbo del prejuicio** (`fichada`, `jubilada`…) | `VERBO_PREJUICIO_QUEMADO` |
+| **Frase-rabia** del gancho | `FRASE_RABIA_USADA` |
+| **Frase del spam ninja** | `SPAM_QUEMADO` |
+| **Opener** del post | `OPENERS_QUEMADOS` |
+| **Cierre** (Spoiler, Plot twist, P.D.) | `CIERRE_QUEMADO` |
+| **Reveal** (`Sí, hablo de X`) | `REVEAL_QUEMADO` |
+| **Eje del cuerpo** (el "callado/en silencio" en mapas) | `§4.2 Paso 3`, prohibido |
+| **Emoji del gancho** | criterio: no siempre `👇` |
+| **Ángulo del ancla de ventas** | `§2.3`, rota respecto al post anterior |
+
+**LAS TRES REGLAS DE MANTENIMIENTO:**
+1. **Al publicar, la frase usada entra en su lista.** Las listas solo crecen. Esto no es opcional y no espera a que nadie lo pida.
+2. **Si un elemento repetible NO tiene lista, es un hueco**: se crea. Así aparecieron `CONCEPTO_QUEMADO` y `FRASE_RABIA_USADA`, que llevaban meses con un "no repitas" en la receta y **nada detrás con qué comprobarlo**.
+3. **La mejor variante no sale de un banco de frases, sale del GANCHO de ese post.** Si el post va de un tatuaje, el spam ninja habla de tatuajes. Un banco de alternativas es el plan B, no el plan A.
 
 ### 2.2 · Calidad de la idea del hook (antes de que el formato pueda salvarlo)
 Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tres, dóblala hasta que pueda:
