@@ -508,6 +508,7 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **Regla:** mide primero cuánto de bruto es el original. Si no cabe en la cuenta que te tocaba, **cambia de cuenta**, no de chiste.
 >
 > ### 🔴🔴 4.4-ESENCIA · LA ESENCIA SE EXTRAE DE LO QUE SE VE, NUNCA DE LO QUE YO CREA (Iker, 2026-07-30)
+> **⚠️ UNIVERSAL, no solo del meme.** Vale para remixar CUALQUIER cosa: un lead magnet, un mapa, una historia. La esencia se saca del texto palabra por palabra y del inventario de lo que se ve, nunca de mi teoria de por que funciono. Enlazada desde `global §2.2b`.
 > **Iker, literal: "CLARO QUE QUEREMOS COPIAR AUNQUE SEA DESCARADO PERO MEJORANDO Y ADAPTANDO A VENTAS. NO TE VAYAS POR LAS RAMAS HACIENDO OTRA BROMA DISTINTA."**
 >
 > **⭐⭐ COPIA NO ES PLAGIO, Y NO PASA NADA POR QUE SE NOTE (Iker, 2026-07-30).** Yo arrastraba la idea de que habia que disimular el calco, y **eso es lo que me hacia buscar "el equivalente" en vez de copiar**. Aclarado: *"me da igual que se note que es una copia, lo importante es que no sea un plagio"*. **La ESENCIA se copia PALABRA POR PALABRA**; lo que no se copia es el gancho entero. Si el original dice `codigo de verificacion`, mi gancho dice **`codigo de verificacion`**. Si en la foto hay un tatuaje, en la mia hay un tatuaje. Si son calvos, son calvos. **Y luego se adapta a ventas y se mejora**, que es la otra mitad.
@@ -534,7 +535,20 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 >
 > **El test antes de entregar:** pon las dos listas al lado de tu version. **Cada elemento de la lista tiene que tener su equivalente reconocible en el remix.** Si falta uno, no es un remix, es otro post.
 >
+> ### 🔒 4.4-BUCLE · →→ ESTA REGLA SE MUDÓ A `global-instructions §2.0` (Iker, 2026-07-31)
+> **El bucle abierto es de TODOS los pilares, no del meme ni del lead magnet.** La escribí aquí y en `§4.5` como si fuera de pilar, y por eso propuse un gancho de meme que desvelaba el chiste. **Vive en `global §2.0` y ahí se lee.** Lo único específico del meme: al haber imagen, el bucle es doble — el gancho tampoco cuenta lo que se ve.
+>
+> ### 🔁 4.4-DOBLE · DOUBLE DOWN: SE REPITE EL ESQUELETO, SOLO ROTA EL INTENSIFICADOR (Iker, 2026-07-31)
+> **⚠️ NO ES DEL MEME: vale para CUALQUIER pilar.** Se puede doblar un mapa, un lead magnet o una historia que acabe de petar. Está escrita aquí porque el primer caso fue un meme, pero al leerla sustituye "meme" por el pilar que toque.
+> **Qué es.** Repetir en otra cuenta, **lo antes posible**, una idea que se acaba de hacer viral en la nuestra. No es un pilar y no lleva receta propia: es una jugada sobre un pilar que ya existe. Se hizo el 31/07 con el tatuaje (Unai, miércoles, ~100.000 impresiones → Iker, viernes).
+> - **El cuerpo se copia casi entero.** Ya está adaptado a ventas y ya capturó la esencia. Tocarlo es rehacer trabajo que funcionó.
+> - **El gancho MANTIENE el esqueleto validado y solo cambia la palabra de intensidad.** La escalera real de este caso: Félix puso `no, señor` → nosotros lo mejoramos con `Jamás` → el double down usa `Nunca`. **Tres palabras, misma frase.** Inventar un gancho nuevo es tirar lo único que ya sabes que funciona.
+> - **La escalada va en la IMAGEN, no en el texto.** El brazo pasó a la cara. Ahí es donde se sube lo absurdo sin tocar lo que ya rinde.
+> - **Y se marca que es broma en el cierre**, con una línea corta detrás del bold statement (`Silencio es no. El láser son 6 sesiones.`). El primero se comió insultos por leerse en serio.
+> - **Expectativa realista:** un double down rinde **por debajo** del original, porque la audiencia se solapa y parte ya lo vio. Se avisa en la entrega.
+>
 > ### ©️ 4.4-CREDITO · SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS, SE ACREDITA (Iker, 2026-07-29)
+> **⚠️ UNIVERSAL, no solo del meme.** Si remixamos a un espanol del sector ventas, se le menciona, sea el pilar que sea. En el validador se activa solo con `--pilar meme`; para los demas pilares se pasa `--remix`.
 > **Qué pasó.** El meme del tatuaje hizo casi 30.000 impresiones en menos de una hora, **y el autor original lo vio**. Bloqueó la cuenta de Unai. **Bloquear es el aviso barato: el caro es un reporte por copia.** Mismo patrón que el "Andalucía es más grande que Italia", que también nos costó insultos y también acabó en una regla dura del runbook del mapa.
 >
 > **⚠️ "ESPAÑOLA" ES EL IDIOMA DEL TEXTO, NO LA NACIONALIDAD DEL AUTOR (Iker, 2026-07-30).** Yo descarte acreditar a un autor "porque era frances" y **eso no es el criterio**: lo que decide es **en que idioma esta escrito el post**. Un post en ingles no lo va a ver nuestra audiencia aunque su autor viva en Bilbao, y uno en español lo van a ver todos aunque el autor sea de Buenos Aires. **Mira el idioma del texto y nada mas.**

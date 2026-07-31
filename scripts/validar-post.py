@@ -304,7 +304,7 @@ def validar_entregable(texto):
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r
 
-def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -890,7 +890,9 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # cuenta de Unai. Bloquear es el aviso barato; el caro es un reporte por
     # copia. Mismo blindaje que se le puso al dato regional de los mapas
     # despues del "Andalucia es mas grande que Italia".
-    if pilar == 'meme':
+    # El credito se comprueba en el meme siempre, y en cualquier otro pilar
+    # si se declara que es un remix (--remix). Remixar es universal.
+    if pilar == 'meme' or remix:
         cred = re.search(
             r'(se lo (?:vi|rob[eé])|idea (?:original )?de|el original es de|visto en|gracias a|'
             r'v[ií] esto en|me lo (?:encontr[eé]|top[eé]) en|cr[eé]dito)\s*@?',
@@ -940,12 +942,16 @@ def main():
                     help='La referencia del meme NO es española ni del sector de ventas, asi que su '
                          'autor no comparte audiencia con nosotros y no hace falta acreditarlo en el '
                          'cuerpo. Si es española Y de ventas, NO pases este flag: acredita.')
+    ap.add_argument('--remix', action='store_true',
+                    help='Este post calca una referencia ajena aunque NO sea un meme (lead magnet, '
+                         'mapa, historia...). Activa el check de credito al autor, que si no solo '
+                         'corre en --pilar meme. Remixar es universal (global §2.2b).')
     ap.add_argument('--generico', action='store_true',
                     help='Lead magnet modelo GENÉRICO (Martín Arosa/Guillermo): una palabra igual para '
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
-    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera)
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.

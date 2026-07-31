@@ -37,6 +37,17 @@ Si el hook toma prestada la palanca de otro pilar → reescribe. La mezcla de pi
 
 El hook es la línea más importante. Si no funciona, no se lee el cuerpo.
 
+### 🔒 2.0 · BUCLE ABIERTO: EL HOOK PROMETE, EL POST PAGA (universal, TODOS los pilares — Iker, 2026-07-31)
+
+**La regla anterior a todas las demás del hook.** LinkedIn corta a las 2-3 líneas y pone "…ver más". **Ese botón es el único objetivo del gancho.** Si el gancho cierra la idea, no hay razón para pulsarlo: el lector ya sabe qué pasa, y sin ese clic no hay lectura, ni interacción, ni alcance. **Un gancho que se entiende del todo es un gancho muerto**, por bien escrito que esté.
+
+- **Aplica a TODO: mapa, "Los 10", despiece, meme, historia, lead magnet, insight y lo que venga.** No es una regla de un pilar.
+- **En un post con IMAGEN, el bucle es doble: el gancho tampoco desvela lo que se ve.** El gancho promete y **la imagen paga**. Si el gancho cuenta lo que enseña la foto, has gastado el remate antes de tenerlo.
+- **El test, y es de un segundo:** léete solo el gancho. **Si ya sabes cómo acaba, está roto.** Si hay imagen, tápala y repite.
+- **Falso amigo, y es donde yo fallo:** casi todo lo que llamo "insinuar" en realidad desvela. `Esta vez no me ha cabido en el brazo` desvela; `Nunca` no.
+
+> **POR QUÉ ESTÁ AQUÍ ARRIBA Y NO EN UN RUNBOCK (Iker, 2026-07-31).** Yo la tenía escrita **solo en el runbook del lead magnet** (`post-workflow §4.5`), como si fuera una regla de ese pilar, y por eso propuse un gancho de meme que desvelaba el chiste. Iker: *"todos mis ganchos tienen que abrir un bucle abierto porque la estrategia principal de LinkedIn es el gancho corto y que pulsen ver más"*. **El fallo no fue la regla, fue tenerla guardada en el cajón equivocado.** Cuando una regla habla del GANCHO, del CUERPO o del REMIX, vive aquí, en global, aunque la haya aprendido haciendo un pilar concreto.
+
 ### 2.1 · Ley de formato del hook (la regla más importante — leer antes de escribir la primera línea)
 LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, con "…ver más". Ese corte es el único momento para ganar el clic. El error del 90%: meter un **doble salto de línea (`\n\n`) justo después de la primera frase del hook** — eso le entrega a LinkedIn un punto de corte antes de tiempo, el lector lee la primera frase como idea cerrada y sigue scrolleando.
 
@@ -120,7 +131,7 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 
 **⛔ NO REPITAS EL MISMO VERBO en el hook (Iker, 2026-07-23).** *"Te venden que vender es mandar la oferta"* — `venden` + `vender` pegados, queda fatal y mata el punch igual que un verbo flojo. Léelo en alto antes de entregar: si un verbo (o su raíz) se repite, otra pasada. Arreglado: *"Te pintan la venta como una línea recta"*.
 
-**⭐ CALCAR Y MEJORAR ES UNIVERSAL, no solo del meme (Iker, 2026-07-23).** Siempre que se remixa una referencia —meme, lead magnet, remix de mapa, lo que sea— el mínimo es IGUALAR el original y el objetivo es SUPERARLO: verbo más punchy, formato más limpio, mejor ángulo. Copiar tal cual es el SUELO, no la meta. Iker lo dijo para el meme el 22/07 y al día siguiente no lo apliqué en otro hook: **un aprendizaje basado en datos no es del pilar donde se dijo, es de TODOS** — igual que el formateado (`§3`). Apúntalos siempre en global/receta/validador aunque no te lo pidan.
+**⭐ CALCAR Y MEJORAR ES UNIVERSAL, no solo del meme (Iker, 2026-07-23).** **Y con ello viajan las tres reglas del remix, que estan escritas en el runbook del meme solo porque el primer caso fue un meme:** la esencia se saca de lo OBSERVABLE y nunca de mi teoria (`post-workflow §4.4-ESENCIA`), al espanol del sector ventas se le ACREDITA con @ (`§4.4-CREDITO`), y un ganador propio se DOBLA lo antes posible repitiendo el esqueleto y rotando solo el intensificador (`§4.4-DOBLE`). **Aplican al pilar que sea.** Siempre que se remixa una referencia —meme, lead magnet, remix de mapa, lo que sea— el mínimo es IGUALAR el original y el objetivo es SUPERARLO: verbo más punchy, formato más limpio, mejor ángulo. Copiar tal cual es el SUELO, no la meta. Iker lo dijo para el meme el 22/07 y al día siguiente no lo apliqué en otro hook: **un aprendizaje basado en datos no es del pilar donde se dijo, es de TODOS** — igual que el formateado (`§3`). Apúntalos siempre en global/receta/validador aunque no te lo pidan.
 **El verbo del gancho tiene un trabajo: frenar el scroll.** Si solo describe, no vale. Delatores de verbo flojo: `se cae`, `hay`, `es`, `tiene`, `pasa`, `ocurre`, `se pierde`, `no funciona`. Sube un peldaño hasta el punto dulce.
 **La familia punchy validada** (roba de aquí, pero NO repitas el que ya usó ese pilar): **quemar · reventar · enterrar · tirar · desmontar · arrancar · comerse · fundir · machacar**. Se pasan de rosca: destripar, descuartizar.
 **Delatores de gerundio que DESCRIBEN** (el fallo real, 2026-07-15): `colgando`, `volviendo a`, `intentando`, `trabajando`, `haciendo`, `dando vueltas`. Caso: *"Alguien lleva un año **colgando** el teléfono **y volviendo a marcar**"* → cuenta lo que hace, no frena a nadie. Arreglado a *"Alguien lleva un año **comiéndose** noes para **arrancar** un sí"*: dos verbos punchy, la herida y el premio. Ya están en el validador.
