@@ -83,6 +83,7 @@ VERBO_PREJUICIO_QUEMADO = {
     'fichada': 'Euskadi 30/07 y Asturias 31/07',
     'fichado': 'Euskadi 30/07',
     'jubilada': 'Asturias 31/07',
+    'despachan': 'Castilla y León 04/08',
 }
 
 # §4.2 Paso 1 — la frase-rabia es el motor: sin ella el local no siente el
@@ -111,6 +112,7 @@ CONCEPTO_QUEMADO = {
     'desierto': 'Murcia',
     'sitio de comer': 'Euskadi (despiece)',
     'museo minero': 'Asturias',
+    'pasillo de espa': 'Castilla y León',
 }
 
 # §4.2 Paso 1 — FRASES-RABIA YA USADAS. Misma historia: la receta pedia no
@@ -121,6 +123,7 @@ FRASE_RABIA_USADA = {
     'ternasco antes de seguir carretera': 'Aragón',
     'de vuelta al aeropuerto': 'Euskadi',
     'poco que rascar': 'Asturias',
+    'y para de contar': 'Castilla y León',
 }
 
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
@@ -640,7 +643,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'El remate va "Y exporta más que [PAÍS] entero" en el mapa y "Y exporta más '
             'que [PAÍS] entero" tambien en el despiece, antes del objeto. Sin esa palabra '
             'el post lo podria subir cualquier cuenta')
-        chk(bool(re.search(r'm[aá]s que .+\bentero', hook_txt, re.I)),
+        chk(bool(re.search(r'm[aá]s que .+\benter[oa]s?\b', hook_txt, re.I)),
             'GANCHO: lleva la COMPARACIÓN con un país concreto (§4.2 Paso 1)',
             'falta el "más que [PAÍS] entero". Un país CONCRETO y verificado, nunca '
             '"medio mundo" ni "países enteros" en vago: la comparacion es el dato que '
