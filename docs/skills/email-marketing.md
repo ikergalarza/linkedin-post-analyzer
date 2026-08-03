@@ -74,6 +74,9 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 
 **El cuerpo de un email se formatea COMO el cuerpo de un post** (`global-instructions §3` + `brand-voice §3`), con los matices del medio:
 
+- **⭐ EN EMAIL LA LÍNEA INDIVIDUAL ES LA NORMA, NO LA EXCEPCIÓN (medido el 2026-08-03 en los 4 corpus).** Porcentaje de bloques de UNA sola línea: **Isra Bravo 99% · Timepack 97% · Hugo López 92% · Sales Hackers 68%** (este último, el B2B con HTML pesado, es el único con bloques de 2 reales, un 21%). **Mediana de 7-9 palabras por línea en los cuatro.**
+  - **⛔ El "bloque de DOS" obligatorio de LinkedIn (`global §3.2`) NO se importa al email.** Es la única regla de formateado del post que aquí se cae: en el correo, un bloque = una frase = una línea. Lo que sí se hereda es todo lo demás (líneas cortas, escalera, anti-IA, cifras en dígito).
+  - **El error típico no es usar demasiadas líneas sueltas, es que las líneas sean largas.** Si una línea pasa de ~12 palabras, pártela. Diana: 7-9.
 - **Párrafos de 1-3 líneas, NUNCA 4-5.** Frases cortas. Líneas que respiran.
 - **Una sola idea fuerte por email.** Cinco ideas = cero ideas.
 - **Legible en ~1 minuto** en móvil. Si pasa de eso, corta lo que no sirva a la idea.
