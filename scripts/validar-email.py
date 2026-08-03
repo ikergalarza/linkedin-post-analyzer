@@ -170,22 +170,20 @@ def main():
         checks.append(ok('No abre con presentación'))
 
     # --- párrafos de prosa ≤3 líneas (global §3.2 heredado) ---
-    # Excepción, igual que en LinkedIn (global §3.1-3.2): una ENUMERACIÓN con anáfora
-    # (todas las líneas arrancan con la misma palabra) no es un bloque de prosa, es una
-    # lista, y va apilada sin blancos. Sin esto el validador obliga a separar con línea
-    # en blanco lo que debe ir junto, que es justo lo que hacía raro el correo 0.
-    def es_enumeracion(b):
+    # Excepción, la misma que en LinkedIn (global §3.2): SOLO las listas con MARCADOR
+    # (→, guion, viñeta, numeradas) quedan fuera del tope, porque son el bloque de
+    # empresas de los mapas, que va en bloques de 4.
+    # ⛔ Una enumeración de PROSA con anáfora NO está exenta: el tope de 3 líneas
+    # también le aplica (Mario, 2026-08-03, corrigiendo una versión de este check que
+    # la dejaba pasar con 4). En LinkedIn no se hacen bloques de 4 de prosa, nunca.
+    def es_lista_con_marcador(b):
         ls = [l.strip() for l in b.splitlines() if l.strip()]
-        if len(ls) < 3:
-            return False
-        primeras = [l.split()[0].lower() for l in ls if l.split()]
-        return len(set(primeras)) == 1 or all(
-            re.match(r'^(→|-|•|\d+[.)])', l) for l in ls)
+        return len(ls) >= 3 and all(re.match(r'^(→|-|•|\d+[.)])', l) for l in ls)
 
     bloques = [b for b in cuerpo.split('\n\n') if b.strip()]
     gordos = [b for b in bloques
               if len([l for l in b.splitlines() if l.strip()]) > 3
-              and not es_enumeracion(b)]
+              and not es_lista_con_marcador(b)]
     if gordos:
         checks.append(fallo(f'{len(gordos)} bloque(s) de prosa con 4+ líneas (máx 3)'))
     else:
