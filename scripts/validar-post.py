@@ -67,7 +67,7 @@ SUJETO_ES_MODELO = (r'(claude\s*(opus|sonnet|haiku)?\s*\d|gpt-?\d|gemini\s*\d'
 # §4.2 Paso 1 — En el peloteo el prejuicio SIEMPRE lo dice otro: "la ven como…",
 # "nadie habla de…". Sin ese sujeto, el desprecio se lee como NUESTRO y ofende a
 # quien queriamos que comentara defendiendo lo suyo (Iker, 2026-07-30).
-SUJETO_AJENO = r'(nadie (?:habla|la tiene|la cuenta|sabe)|todos? (?:ven|la)|la (?:ven|llaman|conocen|tienen|despachan|colocan|cuentan|dan por|sitúan|situan)|le[s]? suena a|para el resto|en el mapa es|la pintan|se la imagina)'
+SUJETO_AJENO = r'(nadie (?:habla|la tiene|la cuenta|sabe)|todos? (?:ven|la)|la (?:ven|llaman|conocen|tienen|despachan|colocan|cuentan|archivan|entierran|dan por|sitúan|situan)|le[s]? suena a|para el resto|en el mapa es|la pintan|se la imagina)'
 
 # §4.2 Paso 1 — VERBOS DE PREJUICIO QUEMADOS. El sujeto ajeno es obligatorio,
 # pero el VERBO tiene que rotar. "Fichada" salio el 30/07 en el despiece de
@@ -80,10 +80,16 @@ SUJETO_AJENO = r'(nadie (?:habla|la tiene|la cuenta|sabe)|todos? (?:ven|la)|la (
 # COMO SE MANTIENE: cuando publiques un peloteo, mete aqui el verbo que hayas
 # usado. La lista solo crece.
 VERBO_PREJUICIO_QUEMADO = {
-    'fichada': 'Euskadi 30/07 y Asturias 31/07',
-    'fichado': 'Euskadi 30/07',
-    'jubilada': 'Asturias 31/07',
-    'despachan': 'Castilla y León 04/08',
+    'despachan': 'Murcia (Iker)',
+    'fichada': 'Asturias (Unai)',
+    'fichado': 'Euskadi (Iker)',
+    'jubilada': 'Asturias (Unai)',
+    'la ven como': 'Navarra, Cataluña y Aragón',
+    'la llaman': 'Álava (Unai)',
+    'la conocen por': 'País Vasco (Unai)',
+    'nadie habla': 'Gipuzkoa (Iker) y País Vasco (Unai)',
+    'en el mapa es': 'Euskadi (Iker)',
+    'todos ven': 'Valencia (Iker)',
 }
 
 # §4.2 Paso 1 — la frase-rabia es el motor: sin ella el local no siente el
@@ -105,25 +111,49 @@ SPAM_QUEMADO = {
 # §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
 # concepto usado" y no habia lista: dependia de que yo recordara diez posts.
 # Auditoria del 2026-07-31.
+# §4.2 Paso 2 — PAISES YA USADOS EN LA COMPARACION. Lista nueva del 2026-08-03:
+# no existia y por eso propuse Bolivia para Castilla y Leon sin darme cuenta de
+# que ya era el pais del mapa de Navarra. La comparacion es lo que se comparte,
+# asi que repetirla se nota mas que ninguna otra cosa.
+# ⏳ PENDIENTES DE ENTRAR AL PUBLICAR (Castilla y Leon, martes 04/08):
+#   verbo 'archivada' · concepto 'azotea' · frase-rabia 'y a otra cosa' ·
+#   pais 'paraguay'. Se meten el dia que se sube, no antes: si entran
+#   ahora el propio post se marca a si mismo.
+PAIS_QUEMADO = {
+    'uruguay': 'Murcia',
+    'bolivia': 'Navarra',
+    'croacia': 'Galicia',
+    'luxemburgo': 'Valencia',
+    'italia': 'Andalucía',
+    'portugal': 'Cataluña (Iker)',
+    'chipre': 'Asturias',
+    'finlandia': 'Cataluña (Unai)',
+    'honduras': 'Álava',
+    'kenia': 'Aragón',
+}
+
 CONCEPTO_QUEMADO = {
+    'sitio de comer': 'Euskadi',
+    'desierto': 'Murcia',
     'patio trasero': 'Navarra',
     'esquina del atl': 'Galicia',
-    'trastienda del norte': 'Álava / País Vasco',
-    'desierto': 'Murcia',
-    'sitio de comer': 'Euskadi (despiece)',
     'museo minero': 'Asturias',
-    'pasillo de espa': 'Castilla y León',
+    'ltima parada': 'Cataluña',
+    'trastienda del norte': 'Álava',
+    'secarral': 'Aragón',
+    'pasillo de espa': 'descartado por Iker: critica a España',
 }
 
 # §4.2 Paso 1 — FRASES-RABIA YA USADAS. Misma historia: la receta pedia no
 # repetirla y no habia con que comprobarlo.
 FRASE_RABIA_USADA = {
-    'txistorra y poco m': 'Navarra',
-    'pintxo-pote y para irse': 'Álava',
-    'ternasco antes de seguir carretera': 'Aragón',
     'de vuelta al aeropuerto': 'Euskadi',
+    'y para de contar': 'Murcia',
+    'y poco m': 'Navarra',
     'poco que rascar': 'Asturias',
-    'y para de contar': 'Castilla y León',
+    'y a seguir': 'Cataluña',
+    'para irse': 'Álava',
+    'antes de seguir carretera': 'Aragón',
 }
 
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
@@ -648,6 +678,11 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'falta el "más que [PAÍS] entero". Un país CONCRETO y verificado, nunca '
             '"medio mundo" ni "países enteros" en vago: la comparacion es el dato que '
             'hace que se comparta')
+        _pais = sorted(p for p in PAIS_QUEMADO if p in hook_txt.lower())
+        chk(not _pais, 'GANCHO: el país de la comparación no está usado (§4.2 Paso 2)',
+            ' · '.join(f'"{p}" fue {PAIS_QUEMADO[p]}' for p in _pais) +
+            '. La comparacion es lo que se comparte, asi que repetir pais se nota mas '
+            'que ninguna otra cosa. Busca otro con >=15% de margen y fuente oficial')
         _conc = sorted(c for c in CONCEPTO_QUEMADO if c in hook_txt.lower())
         chk(not _conc, 'GANCHO: el concepto no está usado (§4.2 Paso 1)',
             ' · '.join(f'"{c}" fue {CONCEPTO_QUEMADO[c]}' for c in _conc) +
