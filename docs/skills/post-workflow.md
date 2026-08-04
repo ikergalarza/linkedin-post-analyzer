@@ -322,6 +322,9 @@ Frase de entrada:
 **Paso 9b — PROMPT PARA EL PROGRAMADOR de la página del mapa:**
 - **⚠️ NO SE ESCRIBE DE MEMORIA NI MIRANDO LA WEB POR FUERA (Iker, 2026-07-31).** Escribí el de Asturias calcándolo de lo que se veía en la de Murcia ("reutiliza el mismo layout, la misma tipografía") y **contradecía cosas que el programador ya sabe de la web**: yo describía la fachada, no cómo está montada por dentro. Y encima me inventé un título cuando el **Paso 9 ya fija la plantilla** `[Región]: el músculo industrial`.
 - **Un párrafo, explicado como a un amigo, específico y sin secciones** — igual que los prompts de imagen (`images §0a`). Nada de listas, ni bloques con encabezados, ni meta-título/meta-descripción sueltos si la web ya los genera.
+- **⚠️ DEBAJO DEL PROMPT VA SIEMPRE EL AVISO A MARIO (Iker, 2026-08-03), en su propio bloque**, igual que el de postproducción en los prompts de imagen (`images §0a-penta`). Literal:
+  > ⚠️ **Acuérdate Mario de pegarle al final del prompt el código embebido de PamPam.**
+  **El disparador es ENTREGAR el prompt, no acordarse.** El hash es lo único que el programador no puede deducir de nada, y si se copia mal el mapa carga vacío sin dar error.
 - **Lo que hay que darle cada vez** (esto sí lo pone el post): región, slug, título del Paso 9, descripción del Paso 9, los 3 datos del cuerpo y el **embed de PamPam**, que lo monta Iker desde el CSV y sin él el prompt no está cerrado.
 - **📌 CÓMO ESTÁN HECHAS LAS PÁGINAS DE LOS MAPAS (respuesta del programador, 2026-07-31 — esto ya no se pregunta más):**
   - **No hay componente, ni JSON, ni panel.** Cada página es un **HTML estático de 227 líneas clonado a mano**. La master es **`mapas/murcia/index.html`**, que lleva dentro un comentario `PLANTILLA DE MAPA` con los campos marcados `<< EDITAR >>`.
