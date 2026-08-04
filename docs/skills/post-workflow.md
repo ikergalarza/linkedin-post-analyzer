@@ -101,9 +101,10 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 ### 4.2 · Runbook MAPA REGIONAL (encadenado) — RECETA DEFINITIVA
 > **Input del usuario:** SOLO la región — **si no te la da, pídesela primero.** Todo lo demás (país de comparación, cifras, empresas, personas) lo verifica y rellena el workflow.
 > **Output final (solo esto):** (1) el **TEXTO** del post copy-ready · (2) el **CSV** para importar en PamPam · (3) el **TÍTULO** y la **descripción** para la web del mapa — la descripción va en **UN SOLO PÁRRAFO, sin saltos de línea** (Iker, 2026-07-22), y **tanto el título como la descripción se entregan cada uno en su bloque cercado** para poder copiarlos con el botón (igual que el texto del post) · (4) la **guía de menciones** (en el chat: enlaces CLICABLES fuera de cercado, Paso 10). **Son CUATRO piezas, ni una menos.**
-> **NINGUNA imagen la das tú, y las dos que hay las hacen otros:**
+> **DE LAS TRES IMÁGENES, TÚ SOLO DAS UNA (la de PamPam):**
 > - **Imagen del POST** = captura de la web PamPam → **la hace el USUARIO**. El workflow NO la genera ni la describe. (Por eso el mapa NO usa la skill `images`.) **Pero SÍ lleva aviso: el de encuadre, ver justo debajo.**
-> - **Portada de la WEB del mapa** = captura del propio mapa → **la saca el PROGRAMADOR** (confirmado por él el 2026-07-31). El antiguo Paso 11 de buscar una foto libre de la región **está muerto**: nunca hizo falta.
+> - **Portada de la WEB del mapa** = captura del propio mapa → **la saca el PROGRAMADOR** (confirmado por él el 2026-07-31).
+> - **Portada de PAMPAM** = foto icónica de la región con licencia libre → **la das TÚ** (Paso 11).
 
 **⛔⛔ LOS CUATRO INAMOVIBLES DEL GANCHO DE PELOTEO (Iker, 2026-07-31). Aplican al MAPA y al DESPIECE. NO a "LOS 10".** Se puede iterar todo lo demás, pero estas cuatro piezas **no se quitan, no se sustituyen y no se mejoran**, por muy punchy que parezca la alternativa:
 > 1. **El PREJUICIO dicho por otro** (`la ven`, `la tienen`, `nadie la cuenta`). No se afirma en primera persona.
@@ -332,22 +333,33 @@ Frase de entrada:
 (… 5 bloques de 4, en el orden exacto del post)
 ```
 
-**Paso 11 — ~~FOTO de portada para la web del mapa~~ · 🚫 MUERTO DESDE EL 2026-07-31.**
-> **No lo hagas.** Al preguntarle al programador cómo monta las páginas contestó que **la portada `assets/mapas/{region}.jpg` es una captura del propio mapa y la saca él**. O sea que esta foto **nunca llegó a hacer falta**, y buscarla costaba media hora por región más el riesgo de licencia (la de Asturias se entregó con la licencia sin confirmar, que era un problema real en una web comercial). **La entrega del mapa pasa de 5 piezas a 4.**
-> Lo de abajo se conserva **solo por si algún día hace falta una foto libre para otra cosa**: el método de buscar en Wikimedia/Unsplash/Pexels y comprobar licencia sigue siendo bueno.
-
-<details><summary>Método antiguo de búsqueda de foto libre (ya no se usa en el mapa)</summary>
+**Paso 11 — FOTO de portada, y es para PAMPAM, no para la web.**
+> **🔴 ESTO LO MATÉ POR ERROR EL 31/07 Y LO REVIVE IKER EL 03/08.** El programador me dijo que la portada de la **página web** (`assets/mapas/{region}.jpg`) es una captura del propio mapa y la saca él, y yo di por muerto el paso entero. **Eran DOS fotos distintas y las confundí:**
+> - **Portada de la WEB** → captura del mapa → **la saca el PROGRAMADOR**. Esa sí que no la doy yo.
+> - **Portada de PAMPAM** → foto icónica de la región → **la doy YO**, y va en el output junto al título y la descripción, que son los tres campos que PamPam pide para el mapa.
+>
+> **Lección: cuando alguien me resuelve una tarea, compruebo QUÉ tarea exactamente antes de borrar el paso.** Borré de más por no distinguir dos cosas con el mismo nombre.
 - Una foto **icónica y reconocible de la región** (lo primero que a alguien le viene a la cabeza con "Aragón"): capital/skyline, río, monumento o paisaje-marca. Horizontal, ≥1200px de ancho, que funcione recortada como cabecera.
 - **🚫 NUNCA "la primera que salga en Google Imágenes".** Casi todo lo que devuelve Google es **material con copyright** (bancos de imágenes, prensa, fotógrafos). Esta foto va a la **web pública de una empresa** = uso comercial: una reclamación es dinero real y llega por burofax. Que sea fácil de coger no la hace libre.
 - **Busca solo en fuentes de licencia libre y comprueba la licencia una por una:** **Wikimedia Commons** (usa su API: `action=query&generator=search&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata` → lee `LicenseShortName` y `Artist`), Unsplash, Pexels. Sirven: **CC0 / dominio público** (lo mejor: sin obligaciones), **CC BY** y **CC BY-SA** (obligan a atribuir). **NO sirve** ningún **CC NC** (prohíbe uso comercial) ni nada sin licencia explícita.
 - **MÍRALA antes de entregarla** (descárgala y ábrela). No entregues una foto por su título: los buscadores devuelven escaneos de libros, cuadros y fotos mal encuadradas mezclados con las buenas.
 - **Entrega:** el fichero + la URL de descarga + **licencia y autor listos para pegar**. Si hay una CC0 decente, ofrécela como alternativa aunque la bonita sea CC BY-SA: al usuario le puede compensar no tener que atribuir.
 - Validado (Aragón): `Zaragoza Rio Ebro and Catedral-Basílica del Pilar upstream from Puente de Piedra.jpg` (CC BY-SA 4.0, Ymblanter) y la alternativa CC0 `Zaragoza shel.JPG`.
-</details>
+- Validado (Castilla y León): `Burgos cathedral 1.JPG`, **CC0** (Jebulon), 4600x3316. **Prioriza CC0 siempre que la haya**: no obliga a atribuir y en una web comercial eso es una cosa menos de la que acordarse.
 
 **⚠️ EL PROMPT DE LA WEB NECESITA LA URL DE PAMPAM, Y NO LA TENGO YO (Iker, 2026-07-30).** El orden real es: yo entrego el CSV → **Iker monta el mapa en PamPam** → Iker me pasa el **enlace** → y solo entonces el prompt del programador esta completo. **Si entrego el prompt sin ese enlace, va SIEMPRE con un aviso en la entrega pidiendoselo.** Si Iker manda el `<iframe>` entero, **el prompt lleva la URL de `src` sin parametros** (`https://www.pampam.city/{hash}`), porque el programador pone el `?fullPanelMobile=true`, el iframe y el CSS por su cuenta. **Pero el iframe crudo se pega igual al final del prompt, en una linea** (Iker, 2026-07-31): el **hash es lo unico que no se puede deducir de nada** y un caracter mal copiado no da error, carga el mapa vacio. Cuesta una linea y mata el unico fallo silencioso del proceso.
 
-**OUTPUT FINAL del workflow para este pilar (SOLO esto, y son CUATRO):** (1) el **TEXTO** del post en bloque cercado · (2) el **CSV** listo para importar en PamPam · (3) el **TÍTULO** (`[Región]: el músculo industrial`) + la **descripción**, cada uno en SU bloque cercado y la descripción en un solo parrafo · (4) la **guía de menciones** con enlaces CLICABLES fuera de cercado (Paso 10), calcando el orden del post. Ninguna imagen: la del POST es la captura de PamPam que hace el usuario, y la portada de la web la saca el programador del propio mapa.
+**⭐ ORDEN EXACTO DEL OUTPUT (Iker, 2026-08-03). No es cosmético: es el orden en que él lo ejecuta.**
+> 1. **TEXTO** del post, en bloque cercado.
+> 2. **GUÍA DE MENCIONES**, con enlaces clicables fuera de cercado (Paso 10), calcando el orden del post.
+> 3. **CSV** para importar en PamPam.
+> 4. **FOTO** de portada para PamPam (Paso 11), con su licencia y autor.
+> 5. **TÍTULO** (`[Región]: el músculo industrial`), en su bloque cercado.
+> 6. **DESCRIPCIÓN**, en su bloque cercado y en un solo párrafo.
+> 7. **PROMPT PARA EL PROGRAMADOR** de la página web (Paso 9b), en un párrafo.
+>
+> **Los puntos 3, 4, 5 y 6 van juntos y en ese orden porque son las cuatro cosas que se meten en PamPam de una sentada**: importas el CSV, subes la foto, pones el título y pegas la descripción. Yo se lo daba con el título antes que el CSV, que es al revés de como se usa.
+> La **imagen del POST** no la doy nunca: es la captura de PamPam que hace el usuario. La **portada de la WEB** tampoco: la saca el programador.
 
 **⚠️ AVISO DE LA CAPTURA DEL MAPA — VA EN TODA ENTREGA DE MAPA (Iker, 2026-07-31).** En el mapa **NO se avisa de limpiar metadatos**: la captura sale de PamPam, que es una web, y no ensucia nada (`images §0` lo explica). Lo que sí se avisa es del **encuadre**, que es lo único que puede salir mal y solo lo ve el que hace la captura. **UNA LÍNEA, ni una más**, literal:
 > ⚠️ Antes de capturar, comprueba que los logos se ven grandes y bien espaciados entre sí; si alguno queda muy lejos, muévele la ubicación a mano en PamPam.
