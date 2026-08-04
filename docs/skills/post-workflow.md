@@ -296,6 +296,15 @@ Frase de entrada:
 
 **Paso 7 — Ensamblar el TEXTO** copy-ready, en este orden: **gancho → cuerpo (3 datos + clichés + reveal) → 20 empresas en 5×4 → CTA al mapa (link `recursos.neety.com/mapas/{región}`, NO agendar) → cierre punchy**. Corre el pase de validación (§8) en silencio.
 
+**⭐⭐ COORDENADAS: UNA DISTINTA POR EMPRESA, NUNCA LA DE LA CAPITAL (Iker, 2026-08-03).** En el CSV de Castilla y León le puse a las 4 empresas de Burgos **la misma coordenada, la de la capital** (`42.3400, -3.7000`). PamPam las apiló en el punto exacto y **salieron como puntos sin logo y sin nombre**: cuatro menciones tiradas. Se vio a simple vista en el mapa montado, porque las cuatro fallonas eran justo las cuatro pegadas.
+- **Cada empresa lleva la coordenada de SU dirección**, que sale del campo `locations` de su propia página (`GET /linkedin/company/{id}` → `locations` con `street`, `city`, `postal_code`). Un polígono industrial y el centro de la capital están a 3-4 km, y con eso PamPam ya las separa.
+- **Comprobación obligatoria antes de entregar el CSV:** que **no haya dos coordenadas iguales**. Es una línea de código y evita el fallo entero:
+  ```python
+  assert len({f[4] for f in filas}) == len(filas), 'coordenadas repetidas'
+  ```
+- **⚠️ REVISAR EL DE ASTURIAS**, que se entregó antes de saber esto: allí ArcelorMittal, Windar Renovables e ISASTUR comparten `43.5560, -5.9250`. Probablemente le pasó lo mismo y no se detectó.
+- **🔎 Y de paso, mirar la dirección revela cosas:** al sacarlas salió que **CROPU tiene la sede en Guarnizo (Cantabria)** y **Campofrío en Alcobendas (Madrid)**, aunque las dos tengan centro en Burgos. Es el patrón de siempre: **la página muestra la SEDE, no la planta**. No las tumba, pero se avisa en la entrega para que el usuario decida.
+
 **Paso 8 — CSV para PamPam** (clonar `ref_import_navarra.csv`, en esta misma carpeta — plantilla de referencia sobre Navarra):
 - **Cálcalo tal cual:** misma estructura de columnas, mismo orden, mismas comillas, mismo formato (incluida la columna `Section` que aparece DOS veces — se mantiene). Cambia solo la info por ser otra ubicación.
 - Solo las 20 empresas que has elegido para el post.
