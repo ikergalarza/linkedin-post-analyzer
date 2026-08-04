@@ -120,6 +120,23 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 **Paso 1 — Iterar el GANCHO** (estructura archi-probada, ver `swipe-file §2.1`). Empieza SIEMPRE por aquí. Fórmula:
 `[concepto original despectivo/gracioso de la zona] + [EXACTAMENTE 2 clichés locales] + [frase-rabia entre comillas] . Y exporta más que [PAÍS] entero 👇`
 - **⭐⭐⭐ CÓMO SE INVENTA EL CONCEPTO — LA FÓRMULA, que hasta el 2026-08-03 no estaba escrita.** Aquí ponía *"inventa uno original y geográfico"*, y eso no es un método, es un deseo. Por ese hueco entregué `el pasillo de España` (que además pincha al país) y `la región más extensa de la Unión Europea` (que es un DATO, no una metáfora). Iker: *"me parece una basura… trastienda del norte era superoriginal"*.
+  - **📊 VALIDADO CONTRA IMPRESIONES REALES (autovalidación del 2026-08-03, solo mapas de IKER para que la comparación sea limpia):**
+
+    | Impresiones | Concepto | Familia |
+    |---|---|---|
+    | **112.667** | `el pueblo de 7.000 habitantes` | dato-shock |
+    | **79.224** | `el patio trasero de los Pirineos` | metáfora doméstica |
+    | **64.566** | `la esquina del Atlántico` | metáfora doméstica |
+    | 29.755 | `región de 8,7 millones de habitantes` | dato SIN contradicción |
+    | 16.726 | `un desierto` | metáfora de PAISAJE |
+    | 2.090 *(Unai)* | `un museo minero` | espacio, pero PÚBLICO |
+
+    **Lo que dicen los números, y no estaba escrito:**
+    1. **La metáfora de PAISAJE rinde ~4 veces peor que la doméstica.** `desierto` 16.726 y `secarral` 27.009 frente a `patio trasero` 79.224 y `esquina` 64.566. **No vale cualquier metáfora: tiene que ser de CASA.**
+    2. **`museo minero` es el peor mapa del histórico (2.090).** Es un espacio, pero **público y turístico**. Lo que funciona no es "un sitio", es **un sitio de TU casa**, porque el lector se coloca dentro.
+    3. **HAY UNA SEGUNDA FAMILIA QUE GANA A TODAS: el DATO-SHOCK**, y es la del mejor mapa de la historia. **Pero solo funciona si el número es PEQUEÑO y CONTRADICE**: `7.000 habitantes` hace 112.667 y `8,7 millones` hace 29.755. **El número tiene que ser tan pequeño que choque con "exporta más que países enteros".** Un número grande e impresionante (`la región más extensa de la UE`) no sorprende a nadie y por eso Iker lo tumbó el 03/08.
+    - **⚠️ Y esto contradice a medias lo que escribo abajo:** la fórmula doméstica es la vía **fiable** (2º y 3º puestos), pero **el techo lo tiene el dato-shock**. Si aparece un número pequeño y contradictorio de esa región, **ese gana**. Si no aparece, se va a la fórmula.
+
   - **LA FÓRMULA, sacada de los que funcionaron:** `[ESPACIO DOMÉSTICO HUMILDE] + de + [ACCIDENTE GEOGRÁFICO]`. Es una **palabra de casa aplicada al mapa**, y por eso la entiende todo el mundo y suena nueva a la vez.
     - `trastienda` + del norte (Álava) · `esquina` + del Atlántico (Galicia) · `patio trasero` + de los Pirineos (Navarra) · `tejado` + de la Península (Castilla y León).
     - **Los tres son sitios de una casa donde no se recibe a nadie.** Ese es el desprecio: no eres el salón.
