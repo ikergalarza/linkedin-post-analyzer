@@ -557,6 +557,18 @@ Corre estas puertas EN ORDEN:
 >
 > **🚫 QUEMADAS, no se repiten:** `dar con el que decide` · `son meses a mano` · `te lo damos hecho`. Salieron en el meme de Unai del 29/07, la historia de Iker del 29/07 y el mapa de Asturias del 31/07. **Mecanizado en `SPAM_QUEMADO` de `validar-post.py`: fallo duro, y al publicar se mete ahí la frase usada.** `te lo damos hecho` gusta porque es punchy, así que se conserva el punch cambiando el verbo: `esa parte ya la tenemos hecha`, `ese trabajo ya está hecho`, `eso te lo damos resuelto`.
 
+> ## 📅 EL EVENTO DE SEPTIEMBRE: 3 POSTS A LA SEMANA, UNO POR CUENTA (Iker, 2026-08-03)
+>
+> **Enlace:** `https://luma.com/ujffj66o` · **24 de septiembre, Donostia** · aforo 50-80 · privado, con solicitud que hay que aceptar.
+>
+> **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
+>
+> **⚠️ EL DOLOR DEL EVENTO NO ES EL DE AGENDAR, Y CONFUNDIRLOS LO MATA.** El de `/agendar/` es *encontrar al cliente ideal*, y está validado. **Asistir a un evento no le resuelve eso a nadie**, así que ese ángulo aquí no pega. El dolor del evento es otro y es **FOMO puro**: aforo cerrado, hay que solicitar plaza, se anuncia la versión nueva del producto, y **la sala se llena con la gente que decide**. Lo que duele no es perderse una charla, es **enterarte después de lo que se dijo y de quién estaba**.
+>
+> **🔴 Y EL AVISO INCÓMODO, que va con cada plan:** un post informativo promocionando el evento **no lo lee nadie**. Iker, textual: *"todas las publicaciones que sean simplemente informativas de texto promocionando el evento nos vamos a comer una mierda"*. El evento **solo se vende dentro de formatos que ya son outlier** (meme, mapa, despiece, historia): el post gana el alcance por su propio motor y el evento viaja dentro. Nunca al revés.
+>
+> **⚠️ EL DESAJUSTE GEOGRÁFICO SE VIGILA.** Un mapa de Castilla y León lo lee gente de allí y el evento es en Donostia. No lo tumba (los 3 founders son vascos y su red está allí), pero **cuando el post sea de una región lejana, el evento va en la PÁGINA del mapa y no en el cuerpo**, que es lo que hacemos hoy.
+
 > ## ⚔️ HAY DOS TIPOS DE SPAM Y NO SE MEZCLAN (Iker, 2026-07-31)
 >
 > **1 · SPAM NINJA — el de siempre. Vale para TODOS los pilares menos el mapa.**
