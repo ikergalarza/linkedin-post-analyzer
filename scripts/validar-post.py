@@ -89,6 +89,7 @@ VERBO_PREJUICIO_QUEMADO = {
     'la conocen por': 'País Vasco (Unai)',
     'nadie habla': 'Gipuzkoa (Iker) y País Vasco (Unai)',
     'en el mapa es': 'Euskadi (Iker)',
+    'resumen': 'Castilla y León (Iker)',
     'todos ven': 'Valencia (Iker)',
 }
 
@@ -115,10 +116,6 @@ SPAM_QUEMADO = {
 # no existia y por eso propuse Bolivia para Castilla y Leon sin darme cuenta de
 # que ya era el pais del mapa de Navarra. La comparacion es lo que se comparte,
 # asi que repetirla se nota mas que ninguna otra cosa.
-# ⏳ PENDIENTES DE ENTRAR AL PUBLICAR (Castilla y Leon, martes 04/08):
-#   verbo 'archivada' · concepto 'azotea' · frase-rabia 'y a otra cosa' ·
-#   pais 'paraguay'. Se meten el dia que se sube, no antes: si entran
-#   ahora el propio post se marca a si mismo.
 PAIS_QUEMADO = {
     'uruguay': 'Murcia',
     'bolivia': 'Navarra',
@@ -130,6 +127,7 @@ PAIS_QUEMADO = {
     'finlandia': 'Cataluña (Unai)',
     'honduras': 'Álava',
     'kenia': 'Aragón',
+    'paraguay': 'Castilla y León',
 }
 
 CONCEPTO_QUEMADO = {
@@ -142,6 +140,7 @@ CONCEPTO_QUEMADO = {
     'trastienda del norte': 'Álava',
     'secarral': 'Aragón',
     'pasillo de espa': 'descartado por Iker: critica a España',
+    'tejado de la pen': 'Castilla y León',
 }
 
 # §4.2 Paso 1 — FRASES-RABIA YA USADAS. Misma historia: la receta pedia no
@@ -154,6 +153,7 @@ FRASE_RABIA_USADA = {
     'y a seguir': 'Cataluña',
     'para irse': 'Álava',
     'antes de seguir carretera': 'Aragón',
+    'y a otra cosa': 'Castilla y León',
 }
 
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
