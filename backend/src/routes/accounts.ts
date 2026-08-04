@@ -1314,6 +1314,7 @@ router.get('/live-posts', async (req: Request, res: Response) => {
          WHERE c.is_managed = TRUE
            AND c.unipile_account_id IS NOT NULL
            AND p.published_at IS NOT NULL
+           AND p.deleted_from_linkedin_at IS NULL
            ${creatorFilter}
        )
        SELECT

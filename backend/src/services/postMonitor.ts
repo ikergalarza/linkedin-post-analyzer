@@ -251,7 +251,34 @@ export async function capturePostSnapshot(postId: string): Promise<{
     const raws = await unipileService.getPosts(target.linkedin_id, since, target.unipile_account_id);
     const raw = raws.find((r: any) => String(r.social_id || r.id) === String(target.linkedin_post_id));
     if (!raw) {
-      return { ok: false, reason: 'post not in current feed (older than monitor window or deleted)' };
+      // Desambiguar las DOS razones por las que un post puede no estar en el feed
+      // (Iker, 2026-08-04). Antes se devolvian juntas y el usuario se quedaba con
+      // un post fantasma en Live Posts que no habia forma de quitar.
+      //
+      //  a) El post es RECIENTE: deberia estar en el feed que acabamos de pedir,
+      //     asi que si no esta es porque su autor lo BORRO. Se marca y desaparece
+      //     de Live Posts. NO se borra la fila: sus metricas siguen valiendo para
+      //     analisis historico (el meme de 196 impresiones de Asier es justo el
+      //     dato con el que diagnosticamos la degradacion de imagen).
+      //  b) El post es viejo y simplemente cayo fuera de MONITOR_WINDOW_MS. Ese
+      //     no se toca: sigue vivo en LinkedIn.
+      const { rows: pub } = await pool.query(
+        `SELECT published_at FROM posts WHERE id = $1 LIMIT 1`,
+        [target.id]
+      );
+      const publishedAt = pub[0]?.published_at ? new Date(pub[0].published_at).getTime() : null;
+      const dentroDeVentana =
+        publishedAt != null && Date.now() - publishedAt < MONITOR_WINDOW_MS;
+      if (dentroDeVentana) {
+        await pool.query(
+          `UPDATE posts SET deleted_from_linkedin_at = NOW()
+            WHERE id = $1 AND deleted_from_linkedin_at IS NULL`,
+          [target.id]
+        );
+        console.log(`[capturePostSnapshot] ${target.id} no esta en el feed y es reciente: marcado como borrado en LinkedIn`);
+        return { ok: false, reason: 'deleted from LinkedIn (removed from Live Posts)' };
+      }
+      return { ok: false, reason: 'post not in current feed (older than monitor window)' };
     }
 
     const normalized = unipileService.normalizePost(raw, target.creator_id);

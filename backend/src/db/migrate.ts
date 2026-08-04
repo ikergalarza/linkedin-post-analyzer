@@ -52,6 +52,10 @@ const migration = `
   CREATE INDEX IF NOT EXISTS idx_posts_content_type ON posts(content_type);
 
   -- v2: text structure & engagement ratio fields
+  -- Marca de que el post YA NO EXISTE en LinkedIn (lo borro el autor). No se
+  -- borra la fila: sus metricas siguen valiendo para analisis historico, solo
+  -- deja de aparecer en Live Posts.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS deleted_from_linkedin_at TIMESTAMPTZ;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS char_count INTEGER DEFAULT 0;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS line_break_count INTEGER DEFAULT 0;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS has_aggressive_spacing BOOLEAN DEFAULT FALSE;
