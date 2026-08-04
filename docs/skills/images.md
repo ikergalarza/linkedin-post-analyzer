@@ -334,6 +334,20 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Y en el prompt, la frase que evita el rechazo sin mentir:** *"lo que estas maquetando es una tabla de datos publicos, asi que tratalo como una maquetacion tipografica: el resultado es texto sobre fondo, sin ilustraciones, sin iconos y sin ningun logotipo"*. Describe la tarea de verdad y le quita al generador la parte que dispara el filtro.
 
+## 🎨 0i-4 · LA PALETA DE MARCA NO SE APLICA A LA ANATOMÍA (Iker, 2026-08-04)
+
+**Los colores de marca van en lo que se DISEÑA. Lo que el cuerpo humano ya tiene de serie conserva su color natural.**
+
+- **Van en marca:** fondo, ropa, pelo, mobiliario, objetos, rayos, gotas, iconos, acentos.
+- **NO van en marca, NUNCA:** **piel, dientes, ojos, labios, uñas**. Piel en tono piel, dientes en blanco, ojos en su color.
+
+**Qué pasó.** En la caricatura del meme de Asier escribí *"la piel y los acentos en naranja fe8238"* y el diseñador hizo exactamente eso: **cara, cuello, orejas, manos y brazos naranja fosforito**. Iker: *"¿pero cómo le pones la cara y los brazos naranjas? Menos mal que los dientes los has puesto blancos"*. Y tenía razón: por la misma lógica los dientes habrían salido morados.
+
+**Por qué importa más de lo que parece:** el generador **no filtra por sentido común**, ejecuta la lista de colores que le des. Si metes "piel" en la frase de la paleta, te la pinta. **La paleta se enumera nombrando SOLO elementos de diseño**, y la piel se menciona aparte y en positivo: *"la piel en tono natural"*.
+
+**Plantilla de la frase de paleta, para copiar:**
+> *"Usa los colores de nuestra marca: fondo en mint claro ebfff6, ropa y pelo en berenjena 431b44, objetos y acentos en naranja fe8238, detalles sueltos en azul bebé a7c5f9. La piel en tono natural y los dientes en blanco."*
+
 ## ⭐ 0i-3 · EL PROMPT SE ESCRIBE COMO SE LE HABLA A UN AMIGO (Iker, 2026-07-21, ya avisado antes)
 
 **Los prompts largos y con puntuacion rara fallan.** Medido el 2026-07-21: un prompt de edicion con parentesis numerados, comillas y frases encadenadas dio error de generacion tres veces seguidas. La version corta y hablada paso a la primera.
