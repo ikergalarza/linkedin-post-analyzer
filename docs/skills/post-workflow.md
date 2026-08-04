@@ -305,7 +305,7 @@ Frase de entrada:
   ```python
   assert len({f[4] for f in filas}) == len(filas), 'coordenadas repetidas'
   ```
-- **⚠️ REVISAR EL DE ASTURIAS**, que se entregó antes de saber esto: allí ArcelorMittal, Windar Renovables e ISASTUR comparten `43.5560, -5.9250`. Probablemente le pasó lo mismo y no se detectó.
+- **🚫 LOS MAPAS YA PUBLICADOS NO SE RETOCAN (Iker, 2026-08-04).** El de Asturias comparte coordenada en tres empresas y probablemente le pasó lo mismo, pero **ya está subido y rehacerlo no cambia nada**: la regla existe **de cara al futuro**. Vale para cualquier corrección de este tipo — se arregla la receta, no el pasado.
 - **🔎 Y de paso, mirar la dirección revela cosas:** al sacarlas salió que **CROPU tiene la sede en Guarnizo (Cantabria)** y **Campofrío en Alcobendas (Madrid)**, aunque las dos tengan centro en Burgos. Es el patrón de siempre: **la página muestra la SEDE, no la planta**. No las tumba, pero se avisa en la entrega para que el usuario decida.
 
 **Paso 8 — CSV para PamPam** (clonar `ref_import_navarra.csv`, en esta misma carpeta — plantilla de referencia sobre Navarra):
