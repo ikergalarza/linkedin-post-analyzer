@@ -592,6 +592,22 @@ Corre estas puertas EN ORDEN:
 >
 > **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
 >
+> ### 🏅 LO QUE YA HACÍA UNAI Y HABÍAMOS PERDIDO (recuperado el 2026-08-05 del cajón `otro`)
+>
+> Al crear el pilar aparecieron **7 posts de evento y premio** clasificados como `otro`. Iker: *"ahí hacía conceptos muy originales, porque de por sí sabía que la publicación de evento no le interesa a nadie"*. Tenía razón, y de esos posts salen **tres reglas que ninguna receta tenía escritas**:
+>
+> **1. EL EVENTO ES EL DECORADO, NO EL TEMA.** El post va de una **lección que le sirve al lector**; el evento solo es dónde pasó.
+> > *"Ganamos una final nacional con solo 4 minutos para vendernos. **Y lo que aprendí no va de vender** 👇"*
+> El gancho suelta el logro y **en la misma frase lo desactiva**: lo interesante no es el premio, es lo que aprendió. Y lo que aprendió es transferible: *"el que más sabe del producto no es el que más cierra"*.
+>
+> **2. GIRA EL FOCO HACIA OTRO. El mejor de todos no habla de nosotros:**
+> > *"Que dos clientes subieran a un escenario a vendernos ellos **no fue casualidad** 👇"* (4.140)
+> El protagonista son los clientes, nosotros somos el testigo. `No fue casualidad` es el bucle. Es la versión de evento del **`alguien`** del post del 05/08: **hablar de un tercero rinde más que hablar de uno mismo**, y encaja con el dato de que nuestro bold claim sobre nosotros hizo 4.426 y el que hablaba del oficio del lector, 138.828.
+>
+> **3. LOS AGRADECIMIENTOS VAN AL FINAL, NUNCA EN EL GANCHO.** En los dos buenos, el *"gracias a…"* con las menciones está en las últimas líneas. Cuando el gracias abre el post (*"🎉 Nos hemos llevado el tercer premio…"*, 5.695 · *"Neety, startup ganadora de…"*, 8.167) el post rinde por debajo de lo que podría, porque **ya has contado el final en la primera línea**.
+>
+> **⚠️ Y la vara de este pilar es baja: entre 1.100 y 8.200 impresiones.** Son posts de autoridad, no de alcance. **Se hacen igual, pero sabiendo eso**: el objetivo es que existan y que las menciones lleguen, no batir a un mapa.
+>
 > ### 📊 EL GANCHO DE UN EVENTO NO ES UN ANUNCIO (medido el 2026-08-05)
 >
 > **1. Anunciar no funciona, ni fuera ni dentro.** De los **60 mejores ganchos del corpus de competencia**, por tipo: **bold_claim 8 · story_opener 5 · curiosity_gap 5 · pattern_interrupt 2 · announcement 2**. Los que petan no dicen qué son: *"The SDR role isn't entry-level anymore"* (37.2x), *"España tiene un problema"* (44.6x), *"Uncomfortable Truth for Employers:"* (39.4x), *"CARTA DE DESPEDIDA"* (35.5x).
