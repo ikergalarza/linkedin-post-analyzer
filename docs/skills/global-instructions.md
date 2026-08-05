@@ -79,6 +79,11 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 4. **Añádele el detalle que lo hace NUESTRO**, no genérico. *"Ya tiene fecha de derribo"* está bien; *"y no la ha puesto LinkedIn"* lo convierte en algo que pica, porque descarta al sospechoso obvio y sugiere que lo ha hecho alguien pequeño.
 5. **El test final:** quita el objeto. **Si lo que queda es una frase que podría firmar cualquiera, el objeto estaba haciendo todo el trabajo y el gancho es bueno.** Si lo que queda sigue siendo igual de bueno, es que el objeto era decorado.
 
+**⚡ Y LA METÁFORA NO EXIME DEL VERBO PUNCHY, LAS DOS COSAS VAN JUNTAS (Iker, 2026-08-05).** Un gancho puede tener un objeto buenísimo y seguir siendo flojo si el verbo es de relleno. Iker lo pilló mirando diez ganchos con metáforas que le gustaban: *"me faltaría que en todos haya una palabra punchy, solemos hacerlo siempre con los verbos"*.
+- **El sustantivo aguanta la imagen, el verbo aguanta la energía.** `Tu forma de vender **lleva meses con** una gotera` es tibio; `Tu forma de vender **gotea** desde hace meses` pega, y es la misma idea. Fíjate en el patrón: **el mejor verbo suele ser la propia metáfora convertida en verbo** (gotera → gotea, cronómetro → cronometrar, ficha → tirar la ficha).
+- **Se itera con la escalera de `§2.9`, y se para en el peldaño CON TECHO:** `criticar` → `desmontar` → `despellejar`, y se queda en **desmontar**. Medido: `desmonto perfiles` 8.52x contra `destripo perfiles` 0.21x. **Pasarse de extremo cuesta tanto como quedarse corto.**
+- **Verbos de relleno que hay que cazar:** `es`, `sigue siendo`, `va a acabar`, `lleva`, `le ha puesto`, `hay`, `tiene`. Si el gancho descansa en uno de esos, el verbo está sin iterar.
+
 **🚪 Y SI EL POST NO ES DE UN PILAR VALIDADO, EL GANCHO VA SOLO Y PRIMERO** (`post-workflow §4.1-GANCHO`): se entregan **10 metáforas** y se para ahí, sin cuerpo, hasta que Iker elija. Sin pilar detrás, el gancho es lo único que sostiene el post.
 
 **⛔ Y NUNCA NOMBRES LO QUE ANUNCIAS.** Ni "evento", ni "premio", ni "lanzamiento". Iker: *"si ya en el gancho te han dicho cuál es el premio, ¿para qué te vas a leer la publicación?"*. El objeto sustituye al nombre.
