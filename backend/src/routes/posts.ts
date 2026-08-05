@@ -26,7 +26,7 @@ const router = Router();
 // reproceso de las 47.828 filas.
 const PILARES = new Set([
   'peloteo_mapa', 'peloteo_los10', 'peloteo_objeto',
-  'meme', 'lead_magnet', 'historia', 'otro',
+  'meme', 'lead_magnet', 'historia', 'evento', 'otro',
 ]);
 router.patch('/:id/pillar', async (req: Request, res: Response) => {
   try {
