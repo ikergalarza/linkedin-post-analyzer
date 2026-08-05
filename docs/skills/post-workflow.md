@@ -416,6 +416,28 @@ Frase de entrada:
 - Baneadas: capitales/ciudades obvias (Madrid 0.55x) y cualquier cosa que critique a otra región española.
 - ≥2 semanas desde el último mapa de esa cuenta. **Región: no repetir DENTRO de esa cuenta** (otra cuenta sí puede hacerla). **Concepto: no repetir NUNCA, ni entre cuentas** (medido: 7.87x → 1.2x al repetirlo otra cuenta).
 
+### 🌍 4.2-PAIS · PELOTEO DE PAÍS POR ADIVINANZA (descubierto el 2026-08-05 auditando el cajón `otro`)
+
+**⚠️ ESTE PILAR YA EXISTÍA Y NO LO SABÍAMOS.** Al mirar qué había dentro de los 51 posts clasificados como `otro` aparecieron **tres peloteos**, y el mejor es **el segundo post con más alcance de todo el histórico**: **78.711 impresiones, 5.94x** (Unai, 12/06). Lo teníamos tirado en el cajón de sastre, y encima es **la idea de "orgullo de país" que Iker tenía apuntada como pendiente de probar**: ya se probó y funcionó.
+
+**NO ES EL PELOTEO DE SIEMPRE. El motor es OTRO:**
+| | Peloteo regional (mapa/los10/objeto) | **Peloteo de país por adivinanza** |
+|---|---|---|
+| Motor | **menciones** → notificación → repost | **comentarios** → la gente adivina |
+| Reveal | sí, en el post | **NUNCA. El post no dice qué país es** |
+| Menciones | 12-20 | **cero** |
+| Reparto real | ~10 likes por comentario | **33 likes / 32 comentarios** |
+
+**La anatomía del 78.711:**
+1. **Gancho con sujeto ajeno + claim, SIN nombrar el país:** *"Nadie habla de este país… pero es donde mejor se vende del mundo 👇"*.
+2. **Tres razones numeradas, todas con humor**, no con datos: regulación, carácter, geografía. *"Su PIB es un misterio y su idioma no tiene vocales."*
+3. **Dos líneas que suben la apuesta:** *"El 99% de los americanos no sabría ubicarlo en el mapa. De hecho, la mitad jura que está en Latinoamérica."*
+4. **Cierre = PREGUNTA ABIERTA:** *"¿Alguien se atreve a adivinar?"*. Aquí **sí** se pide comentario, y es lo contrario del mapa: **en este pilar el comentario ES el motor**, no un segundo CTA que estorba.
+
+**⛔ Y por eso NO lleva spam ninja ni enlace.** El post entero está diseñado para que la gente comente, no para que clique. Meterle un enlace lo rompería.
+
+**🔧 EL CLASIFICADOR NO LO VE**, y no es fácil que lo vea: `pillar.ts` detecta peloteo por el bloque de `→ @Empresa - @Persona`, y este no tiene ninguno. **Hasta que se resuelva, estos posts caen en `otro` y ensucian esa mediana.** Al planificar, cuéntalos a mano.
+
 ### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
 > **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
 > **Input del usuario:** SOLO la región (o sector) — **si no te la da, pídesela primero** (igual que el mapa). El resto lo verifica y rellena el workflow.
