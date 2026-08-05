@@ -592,6 +592,15 @@ Corre estas puertas EN ORDEN:
 >
 > **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
 >
+> ### 🛑 NO SE PUBLICA UN POST DE EVENTO SIN EL OK DE LOS MENCIONADOS (Iker, 2026-08-05)
+>
+> **Pasó de verdad:** el post del evento se subió y **hubo que borrarlo**, porque el jefe pidió el visto bueno previo de los mencionados.
+>
+> **El porqué, que es la parte que hay que entender para no volver a equivocarse:** en un **mapa** mencionas empresas frías y estás publicando **información pública** sobre ellas, no las comprometes a nada. En un **evento**, la mención **ASOCIA a esa persona o empresa con el acto**: parece que van, que lo apoyan o que lo patrocinan. Eso ya no es información, es implicarles, y **necesita su permiso**.
+> - Aplica a **todos** los mencionados: partners, clientes y sede.
+> - **Va como aviso fijo del validador** (`--pilar evento`), así que sale solo en cada entrega y se pega en la respuesta. No depende de que yo me acuerde.
+> - **Y adelanta el aviso:** si el post se entrega un lunes para publicar el martes, el OK hay que pedirlo el lunes. Avisar el mismo día de subir no sirve de nada.
+>
 > ### 🏷️ CADA BLOQUE DE MENCIONES DICE QUÉ SON (Iker, 2026-08-05)
 >
 > **En un post de evento, cualquier lista de nombres se lee como lista de ASISTENTES.** Así que el rótulo tiene que decir explícitamente qué son esas personas, y decir la verdad.

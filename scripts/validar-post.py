@@ -752,6 +752,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # el post de anuncio puro. Motor validado: la SALA, no el programa
     # (Grace Gong 11.6x y 14.4x en el corpus de competencia).
     if pilar == 'evento':
+        # Aviso fijo, no es un check: siempre sale y siempre hay que pegarlo en la
+        # entrega. Iker subio el post del evento el 05/08 y hubo que BORRARLO
+        # porque el jefe pidio el visto bueno previo de los mencionados.
+        # El porque: en un mapa mencionas empresas frias y es informacion publica;
+        # en un evento la mencion ASOCIA a esa persona con el acto, y eso necesita
+        # su permiso.
+        chk(False, '⚠️ EVENTO: NO PUBLICAR SIN EL OK DE LOS MENCIONADOS',
+            'antes de subir, que los mencionados (partners, clientes, sede) den el '
+            'visto bueno. Una mencion en un post de evento les asocia al acto, y eso '
+            'no es informacion publica como en un mapa. El 05/08 hubo que borrar un '
+            'post ya publicado por saltarse esto', aviso=True)
         chk('luma.com/ujffj66o' in texto,
             'EVENTO: lleva el enlace de inscripción (§4.4b)',
             'falta https://luma.com/ujffj66o. Un post de evento sin el enlace no sirve de nada')
