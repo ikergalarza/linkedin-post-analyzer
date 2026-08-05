@@ -571,8 +571,14 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # ambos son recursos.neety.com, asi que este check los acepta igual.
     _urls = re.findall(r'https?://\S+|[\w.-]+\.(?:com|es|city|io)\S*', cuerpo)
     _fuera = [u for u in _urls if 'recursos.neety.com' not in u and 'linkedin.com' not in u]
+    # En el pilar EVENTO el enlace de Luma es ajeno POR DISEÑO: la inscripcion
+    # vive alli. Baja a aviso, pero no desaparece, porque la mejor version sigue
+    # siendo una pagina nuestra que lleve a Luma (asi el clic es nuestro y de
+    # paso se mide). Mismo razonamiento que el ultra ninja del mapa.
+    _solo_luma = bool(_fuera) and all('luma.com' in u for u in _fuera)
     chk(not _fuera, 'El enlace apunta a recursos.neety.com, no fuera (outliers §3.14)',
-        f'{_fuera[:2]} — un clic a web ajena no es un clic nuestro' if _fuera else '')
+        f'{_fuera[:2]} — un clic a web ajena no es un clic nuestro' if _fuera else '',
+        aviso=(pilar == 'evento' and _solo_luma))
 
     # global §2.10 — la mano abajo. DURA en peloteo (su formula de hook la lleva
     # literal), AVISO en meme y lead magnet: 2 de 3 memes grandes la llevan pero
@@ -727,6 +733,20 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         '. El dolor es el mismo siempre (dar con el cliente ideal, empresa Y persona) pero la '
         'forma rota en cada post. Lo mejor es colgarlo de la broma del gancho: si el post va de '
         'un tatuaje, "Tatuarse es lo facil. Lo caro es saber de quien tiene que ser el logo"')
+
+    # ---------- PILAR EVENTO (Iker, 2026-08-05) ----------
+    # El evento se vende DENTRO de formatos que ya funcionan; este pilar es para
+    # el post de anuncio puro. Motor validado: la SALA, no el programa
+    # (Grace Gong 11.6x y 14.4x en el corpus de competencia).
+    if pilar == 'evento':
+        chk('luma.com/ujffj66o' in texto,
+            'EVENTO: lleva el enlace de inscripción (§4.4b)',
+            'falta https://luma.com/ujffj66o. Un post de evento sin el enlace no sirve de nada')
+        _agenda = re.search(r'(agenda|programa|ponencias?|horario|charlas?).{0,40}(ser[aá]|habr[aá]|incluye)',
+                            texto, re.I)
+        chk(not _agenda, 'EVENTO: vende la SALA, no el programa (§4.4b)',
+            'el motor validado es QUIEN esta dentro y por que se ha elegido a mano, '
+            'no la agenda ni los ponentes. Grace Gong hizo 11.6x y 14.4x contando la sala')
 
     if pilar == 'mapa':
         chk('recursos.neety.com/mapas/' in texto,
@@ -1032,7 +1052,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('fichero')
     ap.add_argument('--pilar', required=True,
-                    choices=['mapa', 'los10', 'objeto', 'meme', 'leadmagnet', 'historia', 'entregable'])
+                    choices=['mapa', 'los10', 'objeto', 'meme', 'leadmagnet', 'historia', 'entregable', 'evento'])
     ap.add_argument('--cuenta', default=None)
     ap.add_argument('--meme-sobrio', action='store_true', dest='meme_sobrio',
                     help='Confirma que un meme para la cuenta de UNAI no es controversial. '

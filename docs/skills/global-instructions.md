@@ -563,6 +563,25 @@ Corre estas puertas EN ORDEN:
 >
 > **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
 >
+> ### 🏟️ EL FORMATO VALIDADO PARA ANUNCIARLO: VENDE LA SALA, NO EL PROGRAMA (investigado el 2026-08-05)
+>
+> **De dónde sale.** De los 500 outliers del corpus de competencia, **13 anuncian un evento**. Los dos mejores del mismo autor, **Grace Gong (11.6x y 14.4x)**, usan el mismo motor, y no es el que usa todo el mundo:
+> > *"I launched 3 summits in 12 months. 50+ hand-picked leaders per room. (…) **I built this because I was tired of walking into conferences and meeting randos. So I curated the entire room.**"*
+>
+> **El motor es LA SALA.** No el programa, no los ponentes, no la agenda. Cuenta **quién está dentro y por qué se ha elegido a mano**. Es de otro sector (eventos de IA y VC), así que no copiamos a nadie de ventas y no hace falta acreditar (`--referencia-fuera`).
+>
+> **Las 4 piezas, en orden:**
+> 1. **Cifra de aforo + fricción de entrada** en el gancho (`80 sillas … no se compran, se piden`). La escasez va delante.
+> 2. **El camino no tomado**: *"podríamos haber montado un webinar y meter a 500. Elegimos al revés."* Esto es lo que convierte una limitación en una decisión.
+> 3. **El enemigo**: por qué lo montas. Grace: *"eventos donde acabas conociendo randos"*. Nosotros: *"eventos de ventas donde acabas hablando con gente que ni compra ni vende"*.
+> 4. **La composición de la sala en bloque corto** (inversores / directores comerciales / clientes), y solo entonces el enlace.
+>
+> **Por qué encaja tan bien con nosotros:** el FOMO deja de ser *"te pierdes una charla"* y pasa a ser **"no vas a estar en la sala donde están los que deciden"**, que es literalmente lo que vende el producto.
+>
+> **Mecanizado** en `validar-post.py --pilar evento`: exige el enlace de Luma y falla si el post se pone a vender agenda o ponentes.
+>
+> **🔗 MEJORA PENDIENTE:** el enlace va a `luma.com`, que **no es dominio nuestro**, así que ese clic no lo medimos ni lo capitalizamos (`outliers §3.14`). El validador lo deja en AVISO porque la inscripción vive allí, pero **la versión buena es una página propia en `recursos.neety.com/evento/` que lleve a Luma**, igual que hicimos con los mapas. Con eso el clic es nuestro y el ultra ninja funciona igual.
+
 > **⚠️ EL DOLOR DEL EVENTO NO ES EL DE AGENDAR, Y CONFUNDIRLOS LO MATA.** El de `/agendar/` es *encontrar al cliente ideal*, y está validado. **Asistir a un evento no le resuelve eso a nadie**, así que ese ángulo aquí no pega. El dolor del evento es otro y es **FOMO puro**: aforo cerrado, hay que solicitar plaza, se anuncia la versión nueva del producto, y **la sala se llena con la gente que decide**. Lo que duele no es perderse una charla, es **enterarte después de lo que se dijo y de quién estaba**.
 >
 > **🔴 Y EL AVISO INCÓMODO, que va con cada plan:** un post informativo promocionando el evento **no lo lee nadie**. Iker, textual: *"todas las publicaciones que sean simplemente informativas de texto promocionando el evento nos vamos a comer una mierda"*. El evento **solo se vende dentro de formatos que ya son outlier** (meme, mapa, despiece, historia): el post gana el alcance por su propio motor y el evento viaja dentro. Nunca al revés.
