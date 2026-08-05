@@ -843,6 +843,21 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # usan Martin Arosa y Guillermo Flor. Eso es DOBLE validacion (dentro y
         # fuera), asi que llevar los dos no es redundante, es la maxima garantia
         # que sabemos comprar. Uno solo pasa; los dos se aplauden.
+        # ⛔ 2026-08-05, Iker: se me colo "te saca su nombre y su perfil SIN PAGAR
+        # una herramienta" cuando a esa persona la encontramos con Sales Navigator
+        # (de pago) y Unipile (49 €/mes minimo, 7 dias de prueba y ya). Es la misma
+        # familia de mentira que inventarse una empresa, y encima la desmonta
+        # cualquiera que lo intente. NUESTRO STACK REAL: Claude + LinkedIn Premium
+        # + Sales Navigator + Unipile. Todo menos Claude a secas se paga.
+        _gratis = re.search(r'sin pagar|sin gastar|gratis y sin|sin (?:ninguna |ninguna otra )?herramienta'
+                            r'|no (?:hace falta|necesitas) (?:pagar|ninguna herramienta|herramientas)'
+                            r'|sin suscri|sin licencia|cero herramientas', cuerpo, re.I)
+        chk(not _gratis,
+            'Ninguna promesa de "sin pagar/sin herramientas" (§4.5.0a)',
+            (f'dice "{_gratis.group(0)}" y a la persona la sacamos con Sales Navigator + Unipile, '
+             'que se pagan los dos. Di lo que el prompt SI hace ("te da el filtro exacto"), '
+             'no lo que te ahorra. Regla general: toda promesa del cuerpo se verifica contra '
+             'el stack que usamos DE VERDAD, igual que se verifica una cifra') if _gratis else '')
         _disp = re.search(r'ÚLTIMA HORA|ULTIMA HORA|D\.?E\.?P\.?|BREAKING|ADIÓS|ADIOS', hook_txt, re.I)
         _exp = re.search(MOLDE_EXPERIMENTO, hook_txt, re.I)
         chk(bool(_disp) or bool(_exp),

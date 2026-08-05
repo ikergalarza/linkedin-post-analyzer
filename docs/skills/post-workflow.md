@@ -1007,6 +1007,13 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **3 · UN recurso, genérico, el mismo para todos, y la captura la hace el GATE de la landing.**
 
+**4 · ⛔ LAS PROMESAS DEL CUERPO SE VERIFICAN COMO SE VERIFICA UNA CIFRA (Iker, 2026-08-05).** Se me coló *"te saca su nombre y su perfil **sin pagar una herramienta**"* en un post sobre cómo encontramos nosotros a los decisores. **A esa persona la encontramos con Sales Navigator y Unipile, y los dos se pagan** (Unipile: 49 €/mes mínimo, 7 días de prueba). Es la misma familia de mentira que inventarse una empresa, con el agravante de que **la desmonta el propio lector en cuanto lo intenta**, y encima ese lector es el que acaba de dejarnos el correo.
+- **NUESTRO STACK REAL, para contrastar contra él:** Claude · LinkedIn Premium (las 3 cuentas) · Sales Navigator · Unipile · nuestro backend. **Todo menos Claude a secas se paga.**
+- **Di lo que el prompt SÍ hace, no lo que te ahorra.** ❌ *"te saca su perfil sin pagar nada"* → ✅ *"te da el filtro exacto con el que buscarla en LinkedIn"*.
+- **El experimento tiene que ser reproducible por el lector con lo que le dices que hace falta.** Si para reproducirlo necesita Sales Navigator, o se dice, o se cambia el prompt.
+- Mecanizado: el validador falla ante `sin pagar` · `sin herramienta` · `no necesitas pagar` · `sin suscripción` y similares en el cuerpo de un lead magnet.
+- **Y de aquí, la longitud de la lista: números IMPARES (Iker, 2026-08-05).** Al caerse el prompt falso quedaban 5 en vez de 6 y **mejor así**: 5 y 7 rinden más que 4 y 6 en lista numerada. Si al quitar algo te queda par, quita otro o añade otro.
+
 #### ⭐⭐ 4.5.0b · EL MODELO GENÉRICO — PATRONES DE MARTINA ROSA Y GUILLERMO FLOR (Iker, 2026-07-24)
 
 🎯 **ESTE PILAR SE MIDE CONTRA ELLOS, NO CONTRA NUESTRO HISTORIAL (Iker, 2026-07-24).** No tenemos la estrategia de lead magnet pulida como los mapas o los memes: casi no hay datos de éxito nuestros, así que **NO te fíes de nuestros flops** (ni de las reglas que salieron de ellos). El único dato interno fiable es el **9.85x de Unai**, que además usó ESTE formato (última hora + temática tipo IA, parecida a la suya). La **vara de medir de TODA la publicación —hook, cuerpo E imagen— son Martín Arosa y Guillermo Flor.** Es el pilar más valioso para conversión (captura correos → email marketing) y hay que recuperarlo. El validador `--generico` ya mide contra ellos: hook (corto ≤90, sin cifras, sin 👇, con alarma) y cuerpo (lista numerada + largo); la imagen, la captura del recurso (punto 6).
