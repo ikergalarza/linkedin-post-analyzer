@@ -66,6 +66,23 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 - El **primer salto de línea en blanco de todo el post va DESPUÉS del bloque de hook**, nunca dentro.
 - Ejemplo real (Cataluña **7.11x**): ✅ `Cataluña exporta más que Portugal entera. Y casi nadie lo cuenta porque se trabaja en silencio desde hace 80 años 👇` (una sola línea). ❌ La misma con blank line en medio muere.
 
+### 🎭 2.0a · EL GANCHO SE CONSTRUYE CON UNA METÁFORA, NO CON UNA AFIRMACIÓN (universal — Iker, 2026-08-05)
+
+**La regla, y vale para TODOS los pilares:** un gancho que **afirma** algo lo podría firmar cualquiera. Un gancho con **un objeto o una escena física dentro** solo lo puedes firmar tú. Es lo que nos diferencia, y **es lo único que tenemos cuando el post no pertenece a un pilar validado**, que es justo cuando más falta hace.
+
+**De dónde sale.** Iker lleva meses eligiendo estos y son los que mejor han ido: `la esquina del Atlántico` (Galicia, 64.566) · `la trastienda del norte` (Álava) · `el patio trasero de los Pirineos` (Navarra, 79.224) · `el tejado de la Península` (Castilla y León). El 05/08, montando el post del evento, le devolví seis ganchos seguidos que eran afirmaciones (*"tu mejor comercial va a dejar de prospectar"*, *"hay equipos que ya no prospectan"*) y las tumbó todas con la misma frase: **"eso lo podría leer en cualquier cuenta"**.
+
+**EL PROCEDIMIENTO, 5 pasos:**
+1. **Escribe la afirmación en seco y aburrida.** *"La prospección manual va a dejar de funcionar."*
+2. **Traduce esa idea a un OBJETO o una ESCENA física.** ¿Algo que se acaba? → *fecha de derribo*, *cuenta atrás*, *interruptor*. ¿Algo que queda obsoleto? → *vitrina de museo*, *el último de su especie*. ¿Algo oculto? → *una carpeta que no se abre*. ¿Un sitio? → *trastienda*, *tejado*, *esquina*.
+3. **Test del bar:** ¿usaría esa palabra un señor de 55 años tomando un café? Si es literaria o técnica, fuera.
+4. **Añádele el detalle que lo hace NUESTRO**, no genérico. *"Ya tiene fecha de derribo"* está bien; *"y no la ha puesto LinkedIn"* lo convierte en algo que pica, porque descarta al sospechoso obvio y sugiere que lo ha hecho alguien pequeño.
+5. **El test final:** quita el objeto. **Si lo que queda es una frase que podría firmar cualquiera, el objeto estaba haciendo todo el trabajo y el gancho es bueno.** Si lo que queda sigue siendo igual de bueno, es que el objeto era decorado.
+
+**⛔ Y NUNCA NOMBRES LO QUE ANUNCIAS.** Ni "evento", ni "premio", ni "lanzamiento". Iker: *"si ya en el gancho te han dicho cuál es el premio, ¿para qué te vas a leer la publicación?"*. El objeto sustituye al nombre.
+
+**🚫 CONCEPTOS YA USADOS** (entran en la ley de variedad de §2.0b, no se repiten): `esquina del Atlántico` · `trastienda del norte` · `patio trasero de los Pirineos` · `tejado de la Península` · `museo minero` · `desierto` · `secarral` · `última parada` · `sitio de comer`. Propuestos el 05/08 para el evento y aún sin gastar: `fecha de derribo` · `vitrina` · `cuenta atrás` · `carpeta que no se abre` · `último de su especie` · `interruptor` · `la grieta` · `la última foto`.
+
 ### 🔄 2.0b · LEY DE VARIEDAD: TODO ELEMENTO QUE SE REPITE, ROTA (universal — auditoría del 2026-07-31)
 
 **El principio, y es lo que faltaba escrito en algún sitio:** el fondo se repite a propósito (mismo pilar, mismo dolor, mismo formato: eso es lo que hace que funcione), pero **la publicación nueva tiene que NOTARSE nueva**. Cualquier trozo de texto que aparezca igual en dos posts seguidos quema el pilar entero, porque el lector nos tiene fichados y deja de leer.

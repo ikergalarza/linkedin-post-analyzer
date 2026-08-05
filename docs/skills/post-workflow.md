@@ -138,7 +138,8 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
     3. **HAY UNA SEGUNDA FAMILIA QUE GANA A TODAS: el DATO-SHOCK**, y es la del mejor mapa de la historia. **Pero solo funciona si el número es PEQUEÑO y CONTRADICE**: `7.000 habitantes` hace 112.667 y `8,7 millones` hace 29.755. **El número tiene que ser tan pequeño que choque con "exporta más que países enteros".** Un número grande e impresionante (`la región más extensa de la UE`) no sorprende a nadie y por eso Iker lo tumbó el 03/08.
     - **⚠️ Y esto contradice a medias lo que escribo abajo:** la fórmula doméstica es la vía **fiable** (2º y 3º puestos), pero **el techo lo tiene el dato-shock**. Si aparece un número pequeño y contradictorio de esa región, **ese gana**. Si no aparece, se va a la fórmula.
 
-  - **LA FÓRMULA, sacada de los que funcionaron:** `[ESPACIO DOMÉSTICO HUMILDE] + de + [ACCIDENTE GEOGRÁFICO]`. Es una **palabra de casa aplicada al mapa**, y por eso la entiende todo el mundo y suena nueva a la vez.
+  - **⬆️ ESTO ES UN CASO PARTICULAR DE UNA REGLA GENERAL (`global §2.0a`, 2026-08-05):** el gancho de CUALQUIER pilar se construye con una metáfora y no con una afirmación. Lo de abajo es cómo se aplica esa regla al mapa, donde el objeto sale de la geografía. En un meme, un lead magnet o un post de evento el objeto sale de otro sitio, pero **el procedimiento de 5 pasos es el mismo**.
+  - **LA FÓRMULA DEL MAPA, sacada de los que funcionaron:** `[ESPACIO DOMÉSTICO HUMILDE] + de + [ACCIDENTE GEOGRÁFICO]`. Es una **palabra de casa aplicada al mapa**, y por eso la entiende todo el mundo y suena nueva a la vez.
     - `trastienda` + del norte (Álava) · `esquina` + del Atlántico (Galicia) · `patio trasero` + de los Pirineos (Navarra) · `tejado` + de la Península (Castilla y León).
     - **Los tres son sitios de una casa donde no se recibe a nadie.** Ese es el desprecio: no eres el salón.
   - **EL PROCEDIMIENTO, cuatro pasos y en este orden:**
