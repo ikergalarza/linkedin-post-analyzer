@@ -778,6 +778,18 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 **⭐ Matiz (Iker, 2026-07-22): eso es el POST. El DM privado del recurso es OTRA superficie, y ahí SÍ va el spam ninja.** Un lead magnet que entrega el recurso por DM y **no crea web ni gate** (p.ej. la lista de empresas) capturaría CERO si el DM no llevara funnel — es exactamente el error del 8.52x "desmonto perfiles": viral y sin capturar nada. Así que **el DM privado cierra con el spam ninja después del recurso**. El destino puede ser `agendar` (demo) o un **recurso con gate de correo** — cualquiera de las vías de captura (`post-workflow §4.5.-2`). En la lista de empresas apunta a **`recursos.neety.com/senales`**, que **complementa la lista**: la lista da el QUIÉN, señales da el CUÁNDO (la señal de compra), y de paso captura el correo con su gate. No apila con el post: el CTA del post es el comentario; esto va en el mensaje 1:1 a alguien que ya comentó y ya tiene su recurso, donde el funnel no compite con nada. Y a diferencia del post, **en el DM SÍ se puede nombrar Neety** (una vez, sin vender, `brand-voice §4`): es outreach personal, no publicidad encubierta. Implementado en `leadMagnetCopy.buildListaDm` (`NINJA_DM`).
 
+### @️ 4.4c · SI SE NOMBRA A NEETY EN EL CUERPO, VA CON ARROBA (Iker, 2026-08-05)
+
+**Cuando el post nombra la marca de forma explícita, se escribe `@Neety`, no `Neety`.** Es una mención como cualquier otra: la página recibe la notificación, puede repostear desde la cuenta de empresa, y el nombre queda enlazado en vez de en texto muerto.
+- **⚠️ NO contradice la regla del spam ninja** (`§4.4b`), que sigue diciendo que **el spam ninja NO nombra a Neety**, porque ahí nombrar la marca convierte el guiño en publicidad. Son sitios distintos: en el cuerpo se puede nombrar y entonces lleva `@`; pegado al enlace, no se nombra.
+- Aplica igual a cualquier marca nuestra que salga en el futuro.
+
+### 👥 4.4d · EL BLOQUE DE LA PLANTILLA: PELOTEO HACIA DENTRO (Iker, 2026-08-05)
+
+**En algunos posts —no en todos— va un bloque mencionando a todo el equipo de Neety.** Es la misma mecánica del peloteo pero hacia dentro: cada compañero recibe notificación, y el repost de un empleado llega a una red que se solapa poco con la del founder.
+- **⏳ CUÁNDO: cuando el evento ya haya pasado o esté a punto de pasar.** Antes no: meter a la plantilla en un post de expectación no aporta y gasta el recurso.
+- **No se abusa.** Si sale en todos los posts, deja de ser un gesto y se convierte en firma, y los compañeros dejan de interactuar.
+
 ### 4.5 · La regla del UNO en el cierre (CTA)
 Exactamente UN cierre: una pregunta que fuerza postura, O un lead-magnet con la fórmula "Comenta X + Y", O un link directo en el cuerpo, O ningún CTA (un claim fuerte cierra). **Nunca apiles cierres.** (Nota: LinkedIn en 2026 NO penaliza links en el cuerpo — el folklore "ponlo en el primer comentario" está obsoleto. Un link en el cuerpo no suprime alcance; lo hemos verificado con posts >100K imp.)
 
