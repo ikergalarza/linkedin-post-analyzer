@@ -957,6 +957,16 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 **2. Llegamos tarde a un tema quemado.** Martín Arosa publicó *"D.E.P. prospección manual"* el **25-jun**; nosotros el **28-jul**, un mes después y con audiencia solapada. **Un tema validado no vale si ya te lo han contado: el que pidió su guía no pide la segunda.**
 - **Antes de elegir tema, comprueba cuándo lo publicó la referencia.** Si tiene más de 2-3 semanas y comparte audiencia con nosotros, o se cambia de tema o se cambia el ÁNGULO por completo. Copiar el molde es bueno; copiar el tema con un mes de retraso es llegar al turno de otro.
 
+#### 📋 4.5.0-ENTREGA · EN TODA ENTREGA DE LEAD MAGNET VAN NUESTROS 5 MEJORES GANCHOS (Iker, 2026-08-05)
+
+**Después del texto del post, SIEMPRE, va una tabla con los cinco ganchos de lead magnet que más comentarios nos han dado, ordenados por comentarios.** Iker: *"para que así pueda revisarlo siempre bien"*.
+
+**No se copia de aquí: se genera de la base de datos en cada entrega**, filtrando `pillar = lead_magnet` en las 3 cuentas y ordenando por `comments_count`. Así el bloque se actualiza solo cuando publiquemos uno que entre en el top 5, y **nunca queda desfasado**.
+
+**Columnas:** comentarios · ratio · el gancho literal · **el verbo punchy subrayado**, que es lo que hay que comparar contra el gancho nuevo.
+
+**Para qué sirve de verdad:** es el listón. Antes de dar por bueno un gancho, se pone al lado de esos cinco y se ve si aguanta la comparación. Es la versión práctica de `global §0-DATOS`: **nuestros datos delante, no de memoria.**
+
 #### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
 
 **1 · EL GANCHO: DOS MOLDES VALIDADOS, Y EL NUESTRO VA PRIMERO.**
