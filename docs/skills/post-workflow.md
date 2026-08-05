@@ -416,27 +416,18 @@ Frase de entrada:
 - Baneadas: capitales/ciudades obvias (Madrid 0.55x) y cualquier cosa que critique a otra región española.
 - ≥2 semanas desde el último mapa de esa cuenta. **Región: no repetir DENTRO de esa cuenta** (otra cuenta sí puede hacerla). **Concepto: no repetir NUNCA, ni entre cuentas** (medido: 7.87x → 1.2x al repetirlo otra cuenta).
 
-### 🌍 4.2-PAIS · PELOTEO DE PAÍS POR ADIVINANZA (descubierto el 2026-08-05 auditando el cajón `otro`)
+### 🚫 4.2-PAIS · ~~PELOTEO DE PAÍS POR ADIVINANZA~~ · NO EXISTE. ME LO INVENTÉ (2026-08-05)
 
-**⚠️ ESTE PILAR YA EXISTÍA Y NO LO SABÍAMOS.** Al mirar qué había dentro de los 51 posts clasificados como `otro` aparecieron **tres peloteos**, y el mejor es **el segundo post con más alcance de todo el histórico**: **78.711 impresiones, 5.94x** (Unai, 12/06). Lo teníamos tirado en el cajón de sastre, y encima es **la idea de "orgullo de país" que Iker tenía apuntada como pendiente de probar**: ya se probó y funcionó.
+**Lo dejo escrito porque el ERROR es más útil que la regla que quise poner.**
 
-**NO ES EL PELOTEO DE SIEMPRE. El motor es OTRO:**
-| | Peloteo regional (mapa/los10/objeto) | **Peloteo de país por adivinanza** |
-|---|---|---|
-| Motor | **menciones** → notificación → repost | **comentarios** → la gente adivina |
-| Reveal | sí, en el post | **NUNCA. El post no dice qué país es** |
-| Menciones | 12-20 | **cero** |
-| Reparto real | ~10 likes por comentario | **33 likes / 32 comentarios** |
+Auditando el cajón `otro` vi el post de Unai del 12/06 (*"Nadie habla de este país…"*, **78.711 impresiones**), no encontré bloque de menciones, vi **33 likes y 32 comentarios** y concluí que habíamos descubierto un pilar nuevo cuyo motor era la adivinanza. Se lo presenté a Iker como el segundo mejor post del histórico.
 
-**La anatomía del 78.711:**
-1. **Gancho con sujeto ajeno + claim, SIN nombrar el país:** *"Nadie habla de este país… pero es donde mejor se vende del mundo 👇"*.
-2. **Tres razones numeradas, todas con humor**, no con datos: regulación, carácter, geografía. *"Su PIB es un misterio y su idioma no tiene vocales."*
-3. **Dos líneas que suben la apuesta:** *"El 99% de los americanos no sabría ubicarlo en el mapa. De hecho, la mitad jura que está en Latinoamérica."*
-4. **Cierre = PREGUNTA ABIERTA:** *"¿Alguien se atreve a adivinar?"*. Aquí **sí** se pide comentario, y es lo contrario del mapa: **en este pilar el comentario ES el motor**, no un segundo CTA que estorba.
+**Estaba mal en tres cosas, y las tres estaban ya escritas en `historial-publicaciones.md`:**
+1. **No es peloteo, es un MEME.** La ficha lo dice literal: *"Mapa-meme dibujado (NO peloteo)"*. La imagen era un mapa dibujado y el país era **inventado**: humor y sarcasmo puros.
+2. **El motor no era la adivinanza, era CONTROVERSIA INVOLUNTARIA.** *"Lo leyeron como burla a Baleares."* Esos 32 comentarios no eran gente jugando, era gente picada.
+3. **No es un triunfo.** La ficha avisa: ***"alcance sin respaldo"***. 78.7K impresiones con **33 likes y 2 reposts** es un post hueco, no un modelo a copiar. Y el 2º intento (12.7K) murió justo porque *"el país ficticio cayó donde no había nada, nadie se sintió aludido, sin controversia y sin alcance"*.
 
-**⛔ Y por eso NO lleva spam ninja ni enlace.** El post entero está diseñado para que la gente comente, no para que clique. Meterle un enlace lo rompería.
-
-**🔧 EL CLASIFICADOR NO LO VE**, y no es fácil que lo vea: `pillar.ts` detecta peloteo por el bloque de `→ @Empresa - @Persona`, y este no tiene ninguno. **Hasta que se resuelva, estos posts caen en `otro` y ensucian esa mediana.** Al planificar, cuéntalos a mano.
+**📌 LA LECCIÓN, que es la que hay que retener: LA BASE DE DATOS TIENE LOS NÚMEROS, EL HISTORIAL TIENE EL PORQUÉ.** Yo hice el análisis contra la BD y no abrí el historial, que ya tenía el diagnóstico correcto de los dos posts. **Antes de sacar cualquier conclusión sobre un post publicado, se lee su ficha del historial.** Un número sin su ficha te lleva a inventarte un pilar.
 
 ### 4.3 · Runbook "LOS 10" (encadenado) — RECETA DEFINITIVA
 > **Casi idéntico al mapa (§4.2)** en formato y flujo (hook → cuerpo → menciones → spam ninja → cierre punchy). La diferencia de fondo: **la importancia va a las PERSONAS, no a la región.**
