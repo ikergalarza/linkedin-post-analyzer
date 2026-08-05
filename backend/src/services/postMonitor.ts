@@ -156,9 +156,10 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
                comments_count = $3,
                reposts_count = $4,
                impressions_count = $5,
-               engagement_score = $6
+               engagement_score = $6,
+               content_text = COALESCE($7, content_text)
              WHERE id = $1`,
-            [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, normalized.impressions_count, engagement]
+            [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, normalized.impressions_count, engagement, normalized.content_text]
           );
 
           touchedCreators.add(creatorId);
@@ -198,6 +199,13 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
 // back. Tolerant to the case where the post is no longer findable on
 // LinkedIn (the original was deleted, or the creator's account_id changed)
 // — returns ok:false rather than throwing.
+// ⭐ EL REFRESH TAMBIEN REFRESCA EL TEXTO (Iker, 2026-08-05).
+// Antes solo se tocaban las metricas, asi que si Iker editaba un post ya
+// publicado —cosa que hace a menudo con las menciones, porque LinkedIn solo las
+// resuelve al pegarlas a mano— la BD se quedaba con la version vieja para
+// siempre. Ese dia me hizo dar por buenas cinco menciones que el ya habia
+// corregido. COALESCE por si Unipile devuelve texto vacio: mejor conservar el
+// que hay que machacarlo con NULL.
 export async function capturePostSnapshot(postId: string): Promise<{
   ok: boolean;
   reason?: string;
@@ -322,9 +330,10 @@ export async function capturePostSnapshot(postId: string): Promise<{
              likes_count = $2,
              comments_count = $3,
              reposts_count = $4,
-             engagement_score = $5
+             engagement_score = $5,
+             content_text = COALESCE($6, content_text)
            WHERE id = $1`,
-          [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, engagement]
+          [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, engagement, normalized.content_text]
         );
         return {
           ok: false,
@@ -351,9 +360,10 @@ export async function capturePostSnapshot(postId: string): Promise<{
          comments_count = $3,
          reposts_count = $4,
          impressions_count = $5,
-         engagement_score = $6
+         engagement_score = $6,
+         content_text = COALESCE($7, content_text)
        WHERE id = $1`,
-      [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, normalized.impressions_count, engagement]
+      [target.id, normalized.likes_count, normalized.comments_count, normalized.reposts_count, normalized.impressions_count, engagement, normalized.content_text]
     );
 
     // Recompute outlier_ratio for the whole creator since the average shifted.
