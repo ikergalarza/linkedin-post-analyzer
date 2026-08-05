@@ -10,11 +10,11 @@
 - **Estructura creada por Claude vía MCP el 2026-07-29:** campo personalizado **`origen`** (texto, id 1403523) + **7 grupos de segmentación**: `origen-desconocido` · `linkedin-recursos` · `web` · `evento` · `webinar` · `referido` · `contacto-comercial`. Todos vacíos, listos para la importación.
 - **Lo que el MCP NO puede tocar (solo panel web):** idioma de la cuenta, autenticación del dominio, alta de remitentes verificados y ajustes de cuenta. Todo lo demás (contactos, grupos, segmentos, campos, campañas, automatizaciones, programación) sí.
 - ⚠️ **Verificar remitente ≠ autenticar dominio** (las dos hacen falta): verificar remitente = confirmar UNA dirección con un clic en un email; autenticar dominio = meter los registros SPF/DKIM en el DNS de neety.com. Si en la llamada solo se hizo lo primero, el dominio sigue sin autenticar.
-- 🔴 **Pendientes de configuración, antes de enviar nada:**
-  1. **Idioma de la cuenta en INGLÉS** (en-US) → pasar a español, o el pie de baja y los textos del sistema salen en inglés.
-  2. **Remitente genérico** "Neety `<management@neety.com>`" → dar de alta remitentes-persona (`email-marketing §1`: Kaixito, Iker, Unai, Asier).
-  3. **Dominio sin autenticar** (no verificable por MCP: mirar en Ajustes → Dominios). Es el bloqueante nº 1.
-  4. **Falta un campo personalizado `origen`** (los 8 existentes son los de serie): es el que sostiene toda la segmentación del correo 0.
+- ✅ **Dominio `neety.com`: autenticado** (verificado el 2026-07-30 creando un borrador con `hola@neety.com` de remitente: MailerLite lo dio por apto para enviar y sin avisos).
+- ✅ **Remitente de la newsletter: `hola@neety.com`**, con **forwarding activado y probado** (confirmado por Mario el 2026-08-03: los correos enviados a esa dirección llegan). Es la condición que sostiene el correo 0, cuya métrica son las RESPUESTAS.
+- ✅ **Credenciales:** no hace falta API key. Todo va por el conector MCP, que se autentica solo. Si algún día se automatiza desde un script propio, la key iría a variable de entorno (nunca al chat ni al repo).
+- 🔴 **Pendiente de configuración, antes de enviar nada:**
+  1. **Idioma de la cuenta en INGLÉS** (en-US) → pasar a español, o el pie de baja y los textos del sistema salen en inglés. **Es el único bloqueante que queda.**
 - **Primer correo:** el correo 0 segmentador (`email-marketing §5c-0`), aún no enviado.
 
 ## Rotación de remitentes
