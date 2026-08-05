@@ -592,6 +592,13 @@ Corre estas puertas EN ORDEN:
 >
 > **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
 >
+> ### 🏷️ CADA BLOQUE DE MENCIONES DICE QUÉ SON (Iker, 2026-08-05)
+>
+> **En un post de evento, cualquier lista de nombres se lee como lista de ASISTENTES.** Así que el rótulo tiene que decir explícitamente qué son esas personas, y decir la verdad.
+> - Yo puse `Y estos ya no persiguen a nadie a ciegas:` sobre el bloque de clientes. Iker lo cambió a **`Y estos CLIENTES ya no persiguen…`** precisamente porque *"no sé si van a ser asistentes confirmados o no, así que por si acaso"*.
+> - **Rótulos que sí dicen la verdad:** `Lo montamos con:` (partners, están en el cartel) · `Y estos clientes…` (son clientes, no sabemos si van) · `Confirmados:` (solo si tienes la lista de Luma delante).
+> - **Por qué importa más que la elegancia:** si alguien de la lista comenta *"yo no voy"*, el post se cae entero y arrastra la credibilidad de las otras menciones. **Un rótulo ambiguo es una afirmación que no puedes defender.**
+>
 > ### 🏅 LO QUE YA HACÍA UNAI Y HABÍAMOS PERDIDO (recuperado el 2026-08-05 del cajón `otro`)
 >
 > Al crear el pilar aparecieron **7 posts de evento y premio** clasificados como `otro`. Iker: *"ahí hacía conceptos muy originales, porque de por sí sabía que la publicación de evento no le interesa a nadie"*. Tenía razón, y de esos posts salen **tres reglas que ninguna receta tenía escritas**:
