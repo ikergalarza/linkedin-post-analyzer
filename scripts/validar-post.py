@@ -817,6 +817,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _disp = re.search(r'ÚLTIMA HORA|ULTIMA HORA|D\.?E\.?P\.?|BREAKING|ADIÓS|ADIOS', hook_txt, re.I)
         _exp = re.search(r'\b(le (?:di|pas[eé]|tir[eé]|dej[eé])|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)|'
                          r'hoy (?:desmonto|comparto|regalo|te doy)|me ha ayudado|nunca hab[ií]a|'
+                         r'claude me \w+|me (?:destapa|caza|saca|desentierra|pone|encuentra|dice)|'
                          r'(?:le )?paso a claude|cada semana (?:publico|hago|le))\b', hook_txt, re.I)
         chk(bool(_disp) or bool(_exp),
             'GARANTIA: el gancho usa uno de los DOS moldes validados (§4.5.0a)',
@@ -845,6 +846,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _experimento = bool(re.search(
             r'\b(le (?:di|pas[eé]|tir[eé]|dej[eé])|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)|'
             r'hoy (?:desmonto|comparto|regalo|te doy)|me ha ayudado|nunca hab[ií]a|'
+            r'claude me \w+|me (?:destapa|caza|saca|desentierra|pone|encuentra|dice)|'
             r'(?:le )?paso a claude|cada semana (?:publico|hago|le))\b', h, re.I))
         alarma = h.startswith('🚨') or h.startswith('⚰') or h.startswith('⚰️') or _experimento
         chk(alarma, 'Hook: alarma 🚨/⚰️ o EXPERIMENTO en 1a persona (§4.5.0)',

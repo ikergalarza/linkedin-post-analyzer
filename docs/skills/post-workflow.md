@@ -963,7 +963,12 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 - **🥇 MOLDE A · EXPERIMENTO EN PRIMERA PERSONA + CLAUDE + resultado de VENTAS.** **Es el nuestro: 4 de nuestros 5 mejores lo usan.** *"Le pasé las llaves de mi LinkedIn a Claude y nunca había cerrado tantas reuniones"* (285c) · *"Le tiré las llaves…"* (232c) · *"Claude me ha ayudado a cazar miles de leads"* (183c) · *"Hoy desmonto perfiles en directo"* (483c). Arranques: `Le di/pasé/tiré…` · `Llevo meses…` · `Hoy [verbo] …` · `Cada semana…` · `…y nunca había…`.
 - **🥈 MOLDE B · `[DISPARADOR] + CLAUDE + [algo de VENTAS]`.** `🚨 ÚLTIMA HORA` · `⚰️ D.E.P.` · `BREAKING`. **Es el de Martín Arosa y Guillermo Flor**, y a nosotros nos funcionó **una vez**: el 9.84x, que además llevaba Claude.
 - **⚠️ POR QUÉ EL ORDEN IMPORTA (Iker, 2026-08-05):** yo habia hardcodeado solo el molde B, que es el de ellos, teniendo el A cuatro veces validado **en nuestras propias cuentas**. **Se prioriza siempre lo nuestro cuando lo nuestro es viral**; si no tenemos datos, o los que tenemos son malos, entonces sí se copia el de fuera.
-- **En los dos moldes:** `CLAUDE` no se toca, el remate es un resultado de VENTAS, ≤90 caracteres, cero cifras y sin `👇`.
+- **⚡ EL VERBO ES LA MITAD DEL GANCHO, Y VA ITERADO (Iker, 2026-08-05).** Mira los de nuestros cinco mejores: **matar** (632c) · **desmontar** (483c) · **tirar** las llaves (232c) · **cazar** miles de leads (183c) · **pasar** las llaves (285c). Todos **punchy y visuales**, ninguno de relleno. Iker: *"me centraba en refinar al máximo los hooks, y la clave era el verbo punchy"*.
+  - **Se itera con la escalera de `§2.9` y se para en el peldaño con techo.** Para "encontrar a quien decide": `encontrar` → `localizar` → **`destapar`** → `desenterrar`. Se queda en destapar: `encontrar` es de relleno y `desenterrar` se pasa.
+  - **Fíjate en que `matar` sí valía**: la escalera no prohíbe lo fuerte, prohíbe lo gratuito. `Claude acaba de matar el cold outbound` es nuestro mejor lead magnet.
+- **⭐ Y NUESTROS GANCHOS SÍ LLEVAN `👇`**, aunque Martín Arosa y Guillermo Flor no lo usen: tres de nuestros cinco mejores lo llevan y otro usa `↓`. **Manda lo nuestro** (`global §0-DATOS`).
+- **⭐ CLAUDE VA DELANTE si se puede.** Dos de los cinco abren literalmente con la palabra (`Claude acaba de matar…`, `Claude me ha ayudado a cazar…`). Es lo primero que lee el que quiere la herramienta.
+- **En los dos moldes:** `CLAUDE` no se toca, el remate es un resultado de VENTAS, ≤90 caracteres y cero cifras.
 - **El disparador ROTA**: `🚨 ÚLTIMA HORA` · `⚰️ D.E.P.` · `BREAKING` · `🚨 ADIÓS`.
 - **`CLAUDE` NO SE TOCA.** Va nombrado en la primera línea, siempre.
 - **El remate es un resultado de VENTAS**, no una capacidad de la herramienta.
