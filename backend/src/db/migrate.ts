@@ -56,6 +56,10 @@ const migration = `
   -- borra la fila: sus metricas siguen valiendo para analisis historico, solo
   -- deja de aparecer en Live Posts.
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS deleted_from_linkedin_at TIMESTAMPTZ;
+  -- Pilar corregido A MANO. El clasificador no lo vuelve a tocar: hay formatos
+  -- que no puede acertar por estructura (mapa-meme sin menciones, fichas con la
+  -- flecha en medio) y la correccion humana tiene que sobrevivir al reproceso.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS pillar_manual BOOLEAN DEFAULT FALSE;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS char_count INTEGER DEFAULT 0;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS line_break_count INTEGER DEFAULT 0;
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS has_aggressive_spacing BOOLEAN DEFAULT FALSE;

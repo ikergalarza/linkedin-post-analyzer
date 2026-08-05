@@ -16,6 +16,38 @@ const router = Router();
 // Es idempotente y barato (una lectura + un UPDATE por post), asi que se puede
 // relanzar tras tocar las reglas de services/pillar.ts. Por defecto reclasifica
 // todo; con ?only_missing=true solo toca los que no tienen pilar todavia.
+// PATCH /api/posts/:id/pillar — corrige el pilar A MANO y lo bloquea.
+//
+// Necesario porque hay formatos que el clasificador no puede acertar por
+// estructura y no es un bug suyo: un mapa-meme dibujado no lleva bloque de
+// menciones, y el mapa de Madrid del 20/05 uso "Empresa → Persona" con la
+// flecha en medio en vez de "→ @Empresa - @Persona". Marcar pillar_manual
+// hace que classify-pillars se lo salte, asi que la correccion sobrevive al
+// reproceso de las 47.828 filas.
+const PILARES = new Set([
+  'peloteo_mapa', 'peloteo_los10', 'peloteo_objeto',
+  'meme', 'lead_magnet', 'historia', 'otro',
+]);
+router.patch('/:id/pillar', async (req: Request, res: Response) => {
+  try {
+    const pillar = String(req.body?.pillar || '');
+    if (!PILARES.has(pillar)) {
+      return res.status(400).json({ error: `pillar must be one of ${[...PILARES].join(', ')}` });
+    }
+    const { rows } = await pool.query(
+      `UPDATE posts SET pillar = $2, pillar_manual = TRUE
+        WHERE id = $1
+        RETURNING id, pillar, pillar_manual`,
+      [req.params.id as string, pillar]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    res.json({ ok: true, ...rows[0] });
+  } catch (err: any) {
+    console.error('[posts/pillar]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/classify-pillars', async (req: Request, res: Response) => {
   try {
     const soloVacios = req.query.only_missing === 'true';
@@ -23,6 +55,7 @@ router.post('/classify-pillars', async (req: Request, res: Response) => {
       `SELECT id, content_text, reaction_mix, content_type
          FROM posts
         WHERE linkedin_post_id <> 'DEMO_LIVE_POST'
+          AND pillar_manual IS NOT TRUE
           ${soloVacios ? 'AND pillar IS NULL' : ''}`
     );
 
