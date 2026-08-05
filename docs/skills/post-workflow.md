@@ -232,7 +232,11 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
    - **(c) ANÁFORA DE NEGACIÓN con clichés locales.** Navarra: *"No paga las nóminas San Fermín. No las pagan las subvenciones forales. No las paga el pacharán de sobremesa."* Es lo que da el mérito sin caer en el eje "callado", que está prohibido.
    - **(d) UNA LÍNEA DE MÉRITO HUMANA, con un oficio dentro.** Navarra: *"gente que empezó barriendo una nave y acabó dirigiéndola"*. Una persona haciendo algo concreto, nunca un adjetivo.
    - **🚫 Y LOS CLICHÉS DEL CUERPO NO SON LOS DEL GANCHO (Iker, 2026-08-03).** En el gancho van los **2 más universales**, y en el cuerpo van **otros, y más locales**, precisamente para que el de allí se sienta identificado. Yo puse `trigo` en el gancho **y lo repetí en la línea del reveal**. Castilla y León: gancho `trigo, castillos` → cuerpo `niebla, murallas de Ávila, acueducto, morcilla, cochinillo`. **Si una palabra ya salió arriba, abajo no vuelve.**
-3. Cuerpo saturado de **clichés de la zona nueva** (4-8, tejidos), anáfora de negación ("No paga X. No las pagan Y."), frases-oficio, y variedad de formato (bloques de 2/3, líneas sueltas, escalera).
+3. **⭐⭐ LA DENSIDAD DE CLICHÉS ES EL MOTOR, NO EL ADORNO. MÍNIMO OCHO (medido el 2026-08-05).** Aquí ponía "4-8" y ese suelo de 4 es el que hundió Asturias.
+   - **La medida, con los dos extremos del histórico:** **Navarra, 79.224 impresiones, DIEZ guiños** (San Fermín · el pañuelo rojo · las subvenciones forales · el pacharán de sobremesa · Landaben · los Volkswagen · las palas de los molinos · la ensalada en bolsa · las conservas · la pasta de tomate). **Asturias, 2.297 impresiones, CUATRO** (sidra · fabada · las vacas · hórreos). Es el peor mapa de todo el histórico.
+   - **Por qué es el motor y no decoración:** este pilar funciona porque **el local se siente aludido y comenta o repostea**. Cada cliché es un anzuelo distinto; con cuatro solo pican los de la capital, con diez pica el del pueblo, el que trabaja en esa fábrica y el que se ríe del tópico. **Menos clichés = menos gente que se da por aludida = menos alcance.**
+   - **Y no valen cuatro genéricos:** tienen que mezclar comida, fiesta, paisaje, marcas locales, un barrio o polígono concreto y algo que solo sepa el de allí.
+   - Cuerpo saturado de **clichés de la zona nueva** (mínimo 8, tejidos), anáfora de negación ("No paga X. No las pagan Y."), frases-oficio, y variedad de formato (bloques de 2/3, líneas sueltas, escalera).
 4. **⭐⭐ EL REVEAL VA ANTES DE LA LISTA, Y DETRÁS DE ÉL EL BARRIDO GEOGRÁFICO (medido el 2026-08-03 sobre los 14 mapas publicados).**
    - **🔄 DECISIÓN DE IKER, 2026-08-03: el reveal pasa a ir DESPUÉS de la lista, y con él todo el bloque final.** Yo le puse delante los datos, que van al revés (**13 de 14 mapas publicados lo llevan ANTES**, y el único que lo lleva después es Asturias con 2.090 impresiones, el peor). **Pero esa evidencia es débil y hay que decirlo:** el de Asturias era de Unai, en viernes, con una empresa repetida y estrenando el ultra ninja, así que su fracaso no se puede achacar a la posición del reveal. Un solo caso confundido no es una regla.
    - **El argumento de Iker, que es estructural y no de datos:** *"si todo el peso está antes de las menciones, ¿para qué vas a seguir leyendo el post?"*. **El post tiene que quedar equilibrado**: gancho → bloque de datos → una línea → menciones → y el resto (clichés, mérito, reveal, barrido y spam ninja) DESPUÉS. Medido en el de Castilla y León: **589 caracteres antes de la lista y 617 después**. Ese es el reparto que se busca.
@@ -666,6 +670,9 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **El gancho MANTIENE el esqueleto validado y solo cambia la palabra de intensidad.** La escalera real de este caso: Félix puso `no, señor` → nosotros lo mejoramos con `Jamás` → el double down usa `Nunca`. **Tres palabras, misma frase.** Inventar un gancho nuevo es tirar lo único que ya sabes que funciona.
 > - **La escalada va en la IMAGEN, no en el texto.** El brazo pasó a la cara. Ahí es donde se sube lo absurdo sin tocar lo que ya rinde.
 > - **Y se marca que es broma en el cierre**, con una línea corta detrás del bold statement (`Silencio es no. El láser son 6 sesiones.`). El primero se comió insultos por leerse en serio.
+> - **🔴 MEDIDO EL 2026-08-05, Y ES PEOR DE LO QUE YO AVISABA: el double down del tatuaje hizo 5.427 contra 93.744 del original. Un 5,8%.** Yo avisé de que rendiría "por debajo"; rindió **17 veces menos**.
+> - **La causa, y es la lección:** el original funcionó **por polémica** (a Unai le insultaron y eso disparó los comentarios). Al repetir, lo hicimos **más absurdo a propósito para evitar los insultos**… y con eso le quitamos el motor. **Un double down suavizado no es un double down: es el mismo chiste sin lo que lo hizo viral.**
+> - **La regla: o se repite CON el filo, o no se repite.** Si el original era controversial y no queremos volver a comerlo, la respuesta correcta no es limarlo, es **no hacer el double down** y buscar otro ángulo.
 > - **Expectativa realista:** un double down rinde **por debajo** del original, porque la audiencia se solapa y parte ya lo vio. Se avisa en la entrega.
 >
 > ### 🎯 4.4-FUENTE · DE DÓNDE SE COGE LA REFERENCIA (Iker, 2026-08-05, tras el flop del código de verificación)
@@ -768,6 +775,11 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > **Y el cierre punchy es SIEMPRE una linea.** Dos oraciones largas al final diluyen el remate: un cierre no admite explicacion detras.
 
 **Paso 0 — Conseguir la referencia:** accede al enlace y extrae (a) el **TEXTO** del post (gancho/1ª línea + cuerpo) y (b) la **FOTO**.
+
+**⛔ PASO 0 — ¿ESTE TEMA YA LO HAN HECHO DOS CUENTAS DE VENTAS? ENTONCES ESTÁ QUEMADO (medido el 2026-08-05).** El lead magnet de Iker del 28/07 hizo **2.837 impresiones (0.82x)** siendo **el cuarto de nuestro sector en subir el mismo recurso**.
+- **Y el dato que señala dónde estuvo el fallo:** sacó **31 comentarios sobre 23 likes**, más comentarios que likes. **El gate funcionó perfectamente.** Lo que no llegó fue la gente. O sea que **no fue la receta, fue el tema**: la mejoramos mucho y dio igual.
+- **Por qué mata:** el lead magnet vive de que el lector quiera ESE recurso. Si ya lo ha visto pedir tres veces en su feed, **ya lo tiene o ya decidió que no lo quiere**. Un gancho mejor no arregla eso.
+- **Comprobación obligatoria antes de elegir tema:** cruzar contra el banco de outliers de competencia (`/api/analysis/cross-creators`). **Si dos o más cuentas de ventas ya lo han hecho, se cambia de tema**, por muy validado que esté. Estar validado y estar quemado son la misma cosa vista con un mes de diferencia.
 
 **Paso 1 — Traducir (si está en inglés, que es lo habitual):** EN→ES **fiel al original** en formato, longitud y estructura, pero con **expresiones naturales en español** donde suenen mejor (no traducción literal robótica).
 
@@ -1185,6 +1197,17 @@ Cada post lleva ahora su **etiqueta de PILAR** en la herramienta (chapa de color
 - **Meme:** alcance disparado y **reacciones de risa**, no me-gusta.
 - **Lead magnet:** se juzga por **comentarios y leads, NUNCA por ratio de outlier**. Un lead magnet ronda 1x por naturaleza (los últimos: 28L/39C y 30L/34C, más comentarios que likes, que es exactamente el gate funcionando). Medirlo con la vara del mapa lleva a "arreglar" lo que no está roto.
 - **Historia:** likes muy por encima de comentarios.
+
+### 📉 8.0-RIESGO · UNA SEMANA NO PUEDE DEPENDER DE UN SOLO POST (medido el 2026-08-05)
+
+**La semana del 27 al 31 de julio: 8 posts, 123.402 impresiones, y UNO SOLO aporta 93.744. El 76%.** Y 142 de los 225 clics. **Siete de los ocho quedaron por debajo de 1.0x**, o sea por debajo de la media de su propia cuenta.
+
+**Eso no es una buena semana, es una semana frágil.** Si ese meme no sale, la semana entera son 29.658 impresiones repartidas entre siete posts. **El resultado dependió de un acierto, no del sistema.**
+
+**Qué hacer con esto al planificar:**
+- **Mirar la semana entera, no post a post.** Si al repasar el plan ves que solo hay una apuesta fuerte y seis de relleno, el plan está mal repartido aunque cada pieza cumpla su receta.
+- **El pilar que más mediana da es el peloteo** (21.295 contra 2.925 de un post suelto), así que **una semana sin peloteo en ninguna cuenta es una semana que depende del azar del meme**.
+- **Y avisar de la fragilidad en la propia planificación**, con el número: es más útil decir *"esta semana el 70% del alcance depende del martes"* que repasar siete posts uno a uno.
 
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
 - **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).
