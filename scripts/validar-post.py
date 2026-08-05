@@ -811,10 +811,18 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'GARANTIA: Claude nombrado en el GANCHO (§4.5.0a)',
             'los 5 lead magnets nuestros con Claude pasaron de 100 comentarios; los que no '
             'lo llevan se quedan en 20 de mediana. Va en la PRIMERA linea, no solo en el cuerpo')
+        # DOS moldes validados, y basta con uno. El de EXPERIMENTO es el nuestro
+        # (4 de nuestros 5 mejores) y el de DISPARADOR es el de ellos, que a
+        # nosotros nos funciono una vez (el 9.84x, que ademas era Claude).
         _disp = re.search(r'ÚLTIMA HORA|ULTIMA HORA|D\.?E\.?P\.?|BREAKING|ADIÓS|ADIOS', hook_txt, re.I)
-        chk(bool(_disp), 'GARANTIA: el gancho abre con DISPARADOR (§4.5.0a)',
-            'falta 🚨 ÚLTIMA HORA / ⚰️ D.E.P. / BREAKING / ADIÓS. Es el molde de Martin Arosa '
-            'y el nuestro del 9.84x. El disparador rota, pero alguno tiene que haber')
+        _exp = re.search(r'\b(le (?:di|pas[eé]|tir[eé]|dej[eé])|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)|'
+                         r'hoy (?:desmonto|comparto|regalo|te doy)|me ha ayudado|nunca hab[ií]a|'
+                         r'(?:le )?paso a claude|cada semana (?:publico|hago|le))\b', hook_txt, re.I)
+        chk(bool(_disp) or bool(_exp),
+            'GARANTIA: el gancho usa uno de los DOS moldes validados (§4.5.0a)',
+            'ni EXPERIMENTO en 1a persona ("Le pasé las llaves de mi LinkedIn a Claude…", '
+            '4 de nuestros 5 mejores) ni DISPARADOR ("🚨 ÚLTIMA HORA…", el 9.84x). '
+            'PRIORIZA EL DE EXPERIMENTO: es el que tenemos validado en NUESTRAS cuentas')
         _yo = len(re.findall(r'\b(yo|mi|mis|me|uso|hago|publico|llevo|prob[eé]|le (?:di|pas[eé]|tir[eé]))\b',
                              cuerpo, re.I))
         chk(_yo >= 4, 'GARANTIA: es un EXPERIMENTO en primera persona, no un paquete (§4.5.0a)',
@@ -828,9 +836,18 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # 2.72x) y la que usan SIN FALTA Guillermo Flor y Martín Arosa. Como
         # "exporta" en los mapas: obligatorio, no decorativo (Iker, 2026-07-23). La
         # lista de Unai (22/07) arrancó fría por saltárselo.
+        # ⭐ CORREGIDO EL 2026-08-05: esto exigia que el hook EMPEZARA por alarma,
+        # y era verdad mientras la referencia fueran Martin Arosa y Guillermo Flor.
+        # Al mirar NUESTROS datos resulta que 4 de nuestros 5 mejores NO abren con
+        # alarma, abren con un experimento en primera persona. Los dos moldes valen,
+        # y el de experimento tiene mas respaldo interno.
         h = hook_txt.strip()
-        alarma = h.startswith('🚨') or h.startswith('⚰') or h.startswith('⚰️')
-        chk(alarma, 'Hook abre con alarma de última hora 🚨/⚰️ (§4.5.0)',
+        _experimento = bool(re.search(
+            r'\b(le (?:di|pas[eé]|tir[eé]|dej[eé])|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)|'
+            r'hoy (?:desmonto|comparto|regalo|te doy)|me ha ayudado|nunca hab[ií]a|'
+            r'(?:le )?paso a claude|cada semana (?:publico|hago|le))\b', h, re.I))
+        alarma = h.startswith('🚨') or h.startswith('⚰') or h.startswith('⚰️') or _experimento
+        chk(alarma, 'Hook: alarma 🚨/⚰️ o EXPERIMENTO en 1a persona (§4.5.0)',
             'los 2 mejores lead magnets abren con "🚨 ÚLTIMA HORA:" / "⚰️ D.E.P."; '
             'sin el disparador el post arranca frío' if not alarma else '')
         if generico:
