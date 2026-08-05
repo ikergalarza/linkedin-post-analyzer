@@ -668,6 +668,18 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **Y se marca que es broma en el cierre**, con una línea corta detrás del bold statement (`Silencio es no. El láser son 6 sesiones.`). El primero se comió insultos por leerse en serio.
 > - **Expectativa realista:** un double down rinde **por debajo** del original, porque la audiencia se solapa y parte ya lo vio. Se avisa en la entrega.
 >
+> ### 🎯 4.4-FUENTE · DE DÓNDE SE COGE LA REFERENCIA (Iker, 2026-08-05, tras el flop del código de verificación)
+>
+> **Qué pasó.** El meme del código de verificación de Asier hizo **196 impresiones en casi una semana**. Al resubirlo con caricatura y la cuenta ya verificada, superó esa cifra **en las primeras horas**. Pero además costó una barbaridad adaptarlo: siete iteraciones para llevar "código de verificación" al terreno de ventas.
+>
+> **LA REGLA, por orden de preferencia:**
+> 1. **Lo primero: referencias que YA funcionaron EN VENTAS.** Si el chiste nació en nuestro sector, el puente no hay que construirlo, ya está hecho. Ese es el coste oculto que casi nadie ve: **un meme que hay que "adaptar a ventas" durante siete iteraciones es un meme que va a llegar forzado.**
+> 2. **Y dentro de esas, mejor en INGLÉS que en español.** Dos motivos: la copia se nota menos (nuestro público no vio el original) y el autor tiene menos probabilidad de cruzarse con nosotros. Con un original español pasó lo que pasó: Félix Fernández bloqueó a Unai en menos de una hora.
+> 3. **⭐ LA EXCEPCIÓN, y es la que da los mejores outliers: memes de OTRO sector adaptados a ventas.** Los dos mejores del histórico son de fuera (la escalera de calvicie, 16.45x y 13.52x). **Pero solo valen si atacan un problema PSICOLÓGICO UNIVERSAL del ser humano**, no una situación propia de ese sector. La calvicie funciona porque le pasa a cualquiera, sea comercial o dentista. Un chiste sobre una herramienta ajena, no.
+> - **El test antes de elegir referencia:** *¿el problema del que se ríe le pasa a cualquier persona, o solo a alguien de ese oficio?* Si es lo segundo, el puente a ventas te va a costar siete iteraciones y va a quedar forzado.
+>
+> **⚠️ Y las dos cosas que arreglamos al resubir van juntas y no se pueden separar:** cuenta **verificada** y fichero **limpio** (caricatura a resolución completa en vez de foto de IA degradada). Cambiamos las dos a la vez, así que no sabemos cuál pesaba. **Ojo con el dato que descarta la explicación fácil: el meme del 22/07 también hizo 345 impresiones y ese no llevaba ninguna IA**, era un montaje a mano, pero sí iba degradado y con la cuenta sin verificar. Ver la cuarentena de `images §0`.
+>
 > ### ©️ 4.4-CREDITO · SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS, SE ACREDITA (Iker, 2026-07-29)
 > **⚠️ UNIVERSAL, no solo del meme.** Si remixamos a un espanol del sector ventas, se le menciona, sea el pilar que sea. En el validador se activa solo con `--pilar meme`; para los demas pilares se pasa `--remix`.
 > **Qué pasó.** El meme del tatuaje hizo casi 30.000 impresiones en menos de una hora, **y el autor original lo vio**. Bloqueó la cuenta de Unai. **Bloquear es el aviso barato: el caro es un reporte por copia.** Mismo patrón que el "Andalucía es más grande que Italia", que también nos costó insultos y también acabó en una regla dura del runbook del mapa.
