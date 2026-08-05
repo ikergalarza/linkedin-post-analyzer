@@ -90,6 +90,10 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 3. **Una tabla con el resultado del validador de cada uno** y mi recomendación razonada de dos o tres.
 4. **Y ahí se para.** El cuerpo NO se escribe hasta que Iker elige o pide otra ronda.
 
+**🚫 Y LAS DIEZ TIENEN QUE PASAR EL VALIDADOR. NO SE PRESENTA NADA QUE YA SABES QUE FALLA (Iker, 2026-08-05).** Le pasé una tanda con dos ganchos marcados por mí mismo como *"sin ancla de ventas"*. Su respuesta: ***"¿por qué me das esas opciones si tú sabías que no tenían ancla?"***. Tenía razón: **enseñar una opción rota le hace perder tiempo revisando algo que no podía salir**, y encima ensucia la comparación entre las que sí valen.
+- **El flujo correcto:** genera **más de diez**, pásalas TODAS por el validador, **descarta las que fallen** y presenta solo las limpias. Si de doce sobreviven ocho, se entregan ocho y se dice por qué cayeron las otras cuatro.
+- **Lo que sí se puede enseñar es el descarte**, en una línea (*"cayó por cifra en letra"*), porque eso es información. Lo que no vale es colarla en la lista de candidatas.
+
 **POR QUÉ, con la prueba del mismo día en que se escribió:** el 05/08, montando el primer post del evento de septiembre, le entregué **la publicación completa seis veces seguidas** cambiando solo el gancho. Todo el cuerpo de las cinco primeras fue trabajo tirado, y por el camino se colaron dos datos falsos que había que ir corrigiendo en cada versión. **Iker: *"si el gancho no convence, nadie va a pulsar ver más, así que por mucho que nos curremos el cuerpo la publicación ya no sirve de nada"*.** Es como trabajaba él su primer mes en LinkedIn, cuando no tenía ningún pilar: mil iteraciones de gancho probando conceptos, metáforas y verbos punchy, y solo después el cuerpo.
 
 **⚠️ OJO CON EL LÍMITE:** esto **NO aplica a los pilares definidos**. En un mapa o un meme la receta ya dice cómo va el gancho y el cuerpo, así que ahí se entrega el post completo como siempre. **La puerta es solo para lo que nos estamos inventando.**
