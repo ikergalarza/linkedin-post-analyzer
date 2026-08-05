@@ -6,6 +6,22 @@
 
 ---
 
+## 🔍 0-DATOS · ANTES DE ESCRIBIR NADA, PREGUNTA A NUESTRA PROPIA BASE DE DATOS (Iker, 2026-08-05)
+
+**EL ORDEN DE CONSULTA, y es este y no otro:**
+1. **NUESTROS datos.** `GET /api/creators/{id}/posts` filtrando por el pilar que toca. ¿Este patrón ya nos ha funcionado a NOSOTROS? ¿Cuántas veces? ¿Con qué números?
+2. **Los outliers de la competencia.** `/api/analysis/cross-creators` y los feeds en vivo por Unipile.
+3. **La receta escrita.** Que es un resumen de lo anterior y puede estar desactualizada.
+
+**POR QUÉ ESTÁ EL PRIMERO Y NO EL ÚLTIMO.** Llevábamos semanas refinando el pilar de lead magnet y yo repetía **un solo ejemplo de memoria** ("nuestro mejor lead magnet fue el de Claude, 9.85x"). El 05/08 Iker me preguntó si los OTROS que fueron bien también llevaban Claude. **Dos minutos de consulta:**
+> **Cinco lead magnets con Claude. Los cinco por encima de 100 comentarios: 632, 285, 232, 183 y 167.** Mediana de 167 comentarios con IA contra 20 sin ella. Y el colapso tiene fecha: mediana de 208 comentarios en mayo, **18 en junio**.
+>
+> **Eso llevaba meses en la base de datos y yo estaba discutiendo el pilar con un ejemplo suelto.**
+
+**Lo que da esta consulta y no da ninguna otra fuente:** con cinco casos propios repitiendo el mismo patrón, **sabes si va a funcionar ANTES de publicar**. Iker: *"con eso vamos a casi garantizar el éxito y lo vamos a saber antes incluso de publicar"*. Los outliers de fuera te dan ideas; **los propios te dan garantía**, porque son tu audiencia, tu voz y tu cuenta.
+
+**⚠️ Y el corolario incómodo:** si una regla de la receta **no la puedes respaldar con una consulta**, es una opinión mía disfrazada de regla. Antes de defenderla, consúltala.
+
 ## 0 · La tesis raíz: el test win/lose
 
 Antes de hooks, estructuras o CTAs, todo borrador pasa este test mental:

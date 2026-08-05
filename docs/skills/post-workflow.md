@@ -957,6 +957,24 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 **2. Llegamos tarde a un tema quemado.** Martín Arosa publicó *"D.E.P. prospección manual"* el **25-jun**; nosotros el **28-jul**, un mes después y con audiencia solapada. **Un tema validado no vale si ya te lo han contado: el que pidió su guía no pide la segunda.**
 - **Antes de elegir tema, comprueba cuándo lo publicó la referencia.** Si tiene más de 2-3 semanas y comparte audiencia con nosotros, o se cambia de tema o se cambia el ÁNGULO por completo. Copiar el molde es bueno; copiar el tema con un mes de retraso es llegar al turno de otro.
 
+#### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
+
+**1 · EL GANCHO: `[DISPARADOR] + CLAUDE + [algo de VENTAS]`.**
+- **El disparador ROTA**: `🚨 ÚLTIMA HORA` · `⚰️ D.E.P.` · `BREAKING` · `🚨 ADIÓS`.
+- **`CLAUDE` NO SE TOCA.** Va nombrado en la primera línea, siempre.
+- **El remate es un resultado de VENTAS**, no una capacidad de la herramienta.
+- ≤90 caracteres · cero cifras · sin `👇`.
+- Validado: *"🚨 ÚLTIMA HORA: Claude ya te dice a quién le tienes que vender"* (66 car).
+
+**LA PRUEBA, de nuestras propias cuentas:** los **cinco** lead magnets nuestros con Claude pasaron de **100 comentarios** (632 · 285 · 232 · 183 · 167). Mediana con IA **167**, sin IA **20**. **Ocho veces más, y en este pilar el comentario ES la conversión.**
+
+**2 · EL POST ES UN EXPERIMENTO EN PRIMERA PERSONA, NO UN PAQUETE.** Esto es lo que perdimos en junio y explica el desplome de 208 a 18 comentarios en un mes.
+- **Lo que funcionaba (abril-mayo):** *"Le pasé las llaves de mi LinkedIn a Claude y nunca había cerrado tantas reuniones"* · *"Claude me ha ayudado a cazar miles de leads"* · *"Hoy desmonto perfiles en directo"*. **Todos son: YO hice X, me pasó Y, te doy lo que usé.**
+- **Lo que dejó de funcionar (junio-julio):** `nuestro arsenal volcado` · `la biblia de ventas` · `la lista definitiva de 15 empresas` · `una auditoría de tu web`. **Todos son paquetes.** Nadie pide un paquete: piden lo que le funcionó a alguien.
+- **🔴 Y de aquí sale una obligación práctica: el experimento tiene que ser REAL.** Si el post dice "le di X a Claude y pasó Y", **Iker lo tiene que haber hecho de verdad**, aunque sean 20 minutos con 10 empresas. Sin experimento no hay post: se cambia el ángulo, no se inventa el resultado.
+
+**3 · UN recurso, genérico, el mismo para todos, y la captura la hace el GATE de la landing.**
+
 #### ⭐⭐ 4.5.0b · EL MODELO GENÉRICO — PATRONES DE MARTINA ROSA Y GUILLERMO FLOR (Iker, 2026-07-24)
 
 🎯 **ESTE PILAR SE MIDE CONTRA ELLOS, NO CONTRA NUESTRO HISTORIAL (Iker, 2026-07-24).** No tenemos la estrategia de lead magnet pulida como los mapas o los memes: casi no hay datos de éxito nuestros, así que **NO te fíes de nuestros flops** (ni de las reglas que salieron de ellos). El único dato interno fiable es el **9.85x de Unai**, que además usó ESTE formato (última hora + temática tipo IA, parecida a la suya). La **vara de medir de TODA la publicación —hook, cuerpo E imagen— son Martín Arosa y Guillermo Flor.** Es el pilar más valioso para conversión (captura correos → email marketing) y hay que recuperarlo. El validador `--generico` ya mide contra ellos: hook (corto ≤90, sin cifras, sin 👇, con alarma) y cuerpo (lista numerada + largo); la imagen, la captura del recurso (punto 6).
