@@ -670,7 +670,7 @@ Corre estas puertas EN ORDEN:
 >
 > **Mecanizado** en `validar-post.py --pilar evento`: exige el enlace de Luma y falla si el post se pone a vender agenda o ponentes.
 >
-> **🔗 MEJORA PENDIENTE:** el enlace va a `luma.com`, que **no es dominio nuestro**, así que ese clic no lo medimos ni lo capitalizamos (`outliers §3.14`). El validador lo deja en AVISO porque la inscripción vive allí, pero **la versión buena es una página propia en `recursos.neety.com/evento/` que lleve a Luma**, igual que hicimos con los mapas. Con eso el clic es nuestro y el ultra ninja funciona igual.
+> **🔗 EL ENLACE VA DIRECTO A LUMA. DECIDIDO, no lo vuelvas a proponer (Iker, 2026-08-05).** Propuse montar `recursos.neety.com/evento/` para que el clic fuera nuestro, como en los mapas, y lo descartó: **"cada clic intermedio es fricción, y aquí no busco tráfico, busco inscripciones"**. Un evento **presencial y en Euskadi** ya tiene bastante barrera de entrada como para meterle un salto más. **El razonamiento del ultra ninja NO aplica aquí**: allí la página intermedia añadía valor (el mapa embebido era el recurso prometido); en el evento no añadiría nada, solo un clic. Retirado también el aviso del validador.
 
 > **⚠️ EL DOLOR DEL EVENTO NO ES EL DE AGENDAR, Y CONFUNDIRLOS LO MATA.** El de `/agendar/` es *encontrar al cliente ideal*, y está validado. **Asistir a un evento no le resuelve eso a nadie**, así que ese ángulo aquí no pega. El dolor del evento es otro y es **FOMO puro**: aforo cerrado, hay que solicitar plaza, se anuncia la versión nueva del producto, y **la sala se llena con la gente que decide**. Lo que duele no es perderse una charla, es **enterarte después de lo que se dijo y de quién estaba**.
 >

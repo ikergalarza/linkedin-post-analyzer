@@ -579,14 +579,16 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # ambos son recursos.neety.com, asi que este check los acepta igual.
     _urls = re.findall(r'https?://\S+|[\w.-]+\.(?:com|es|city|io)\S*', cuerpo)
     _fuera = [u for u in _urls if 'recursos.neety.com' not in u and 'linkedin.com' not in u]
-    # En el pilar EVENTO el enlace de Luma es ajeno POR DISEÑO: la inscripcion
-    # vive alli. Baja a aviso, pero no desaparece, porque la mejor version sigue
-    # siendo una pagina nuestra que lleve a Luma (asi el clic es nuestro y de
-    # paso se mide). Mismo razonamiento que el ultra ninja del mapa.
+    # ⭐ EL EVENTO ENLAZA DIRECTO A LUMA Y NO SE AVISA DE NADA (Iker, 2026-08-05).
+    # Propuse montar recursos.neety.com/evento para que el clic fuera nuestro, y
+    # lo descarto con razon: "cada clic intermedio es friccion, y aqui no busco
+    # trafico, busco inscripciones". Un evento PRESENCIAL en Euskadi ya tiene
+    # bastante barrera como para meterle un salto mas. Asi que el check ni salta:
+    # no es una mejora pendiente, es una decision tomada.
     _solo_luma = bool(_fuera) and all('luma.com' in u for u in _fuera)
-    chk(not _fuera, 'El enlace apunta a recursos.neety.com, no fuera (outliers §3.14)',
-        f'{_fuera[:2]} — un clic a web ajena no es un clic nuestro' if _fuera else '',
-        aviso=(pilar == 'evento' and _solo_luma))
+    if not (pilar == 'evento' and _solo_luma):
+        chk(not _fuera, 'El enlace apunta a recursos.neety.com, no fuera (outliers §3.14)',
+            f'{_fuera[:2]} — un clic a web ajena no es un clic nuestro' if _fuera else '')
 
     # global §2.10 — la mano abajo. DURA en peloteo (su formula de hook la lleva
     # literal), AVISO en meme y lead magnet: 2 de 3 memes grandes la llevan pero
