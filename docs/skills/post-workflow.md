@@ -969,10 +969,23 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 #### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
 
-**1 · EL GANCHO: DOS MOLDES VALIDADOS, Y EL NUESTRO VA PRIMERO.**
-- **🥇 MOLDE A · EXPERIMENTO EN PRIMERA PERSONA + CLAUDE + resultado de VENTAS.** **Es el nuestro: 4 de nuestros 5 mejores lo usan.** *"Le pasé las llaves de mi LinkedIn a Claude y nunca había cerrado tantas reuniones"* (285c) · *"Le tiré las llaves…"* (232c) · *"Claude me ha ayudado a cazar miles de leads"* (183c) · *"Hoy desmonto perfiles en directo"* (483c). Arranques: `Le di/pasé/tiré…` · `Llevo meses…` · `Hoy [verbo] …` · `Cada semana…` · `…y nunca había…`.
-- **🥈 MOLDE B · `[DISPARADOR] + CLAUDE + [algo de VENTAS]`.** `🚨 ÚLTIMA HORA` · `⚰️ D.E.P.` · `BREAKING`. **Es el de Martín Arosa y Guillermo Flor**, y a nosotros nos funcionó **una vez**: el 9.84x, que además llevaba Claude.
-- **⚠️ POR QUÉ EL ORDEN IMPORTA (Iker, 2026-08-05):** yo habia hardcodeado solo el molde B, que es el de ellos, teniendo el A cuatro veces validado **en nuestras propias cuentas**. **Se prioriza siempre lo nuestro cuando lo nuestro es viral**; si no tenemos datos, o los que tenemos son malos, entonces sí se copia el de fuera.
+**1 · EL GANCHO: DOS PIEZAS VALIDADAS, Y LO ÓPTIMO ES LLEVAR LAS DOS A LA VEZ.**
+
+🥇🥇 **LA ESTRUCTURA CAMPEONA ES LA SUMA: `[DISPARADOR] + CLAUDE + [VERBO PUNCHY] + [resultado de VENTAS]`** (Iker, 2026-08-05). Los cinco lead magnets nuestros de Claude, por comentarios:
+
+| c | cuenta | gancho | disparador | Claude+verbo |
+|---|---|---|---|---|
+| **632** | Unai | `🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound…` | ✅ | ✅ |
+| 285 | Unai | `Le pasé las llaves de mi LinkedIn a Claude…` | — | ✅ |
+| 232 | Iker | `Le tiré las llaves de mi LinkedIn a Claude…` | — | ✅ |
+| 183 | Iker | `Claude me ha ayudado a cazar miles de leads…` | — | ✅ |
+| **167** | Unai | `🚨 ÚLTIMA HORA: Claude ha reducido toda mi prospección…` | ✅ | ✅ |
+
+**El #1 y el #5 llevan las dos. Y el disparador es además lo que usan sin falta Martín Arosa y Guillermo Flor: eso es DOBLE validación, dentro y fuera de casa.** No es redundancia, es la máxima garantía que sabemos comprar. Con una pieza el post pasa; con las dos se repite la estructura exacta del mejor que hemos hecho nunca.
+
+- **PIEZA 1 · EL DISPARADOR.** `🚨 ÚLTIMA HORA` · `⚰️ D.E.P.` · `BREAKING` · `🚨 ADIÓS`. **Rota**, pero alguno tiene que haber.
+- **PIEZA 2 · CLAUDE + VERBO.** `Claude acaba de [verbo]` · `Claude ahora [verbo]` · `Claude me ha [verbo]` · `Le di/pasé/tiré las llaves a Claude` · `Hoy [verbo]…` · `Cada semana…`.
+- **⚠️ EL ERROR QUE ESTO CORRIGE (Iker, 2026-08-05):** yo tenía esto escrito como dos moldes **rivales** ("el nuestro" vs "el de ellos") y basta-con-uno, y llegué a recomendar quitar el disparador *porque era de fuera*. Es falso: el disparador está en nuestro #1 y en nuestro #5. **Antes de declarar que un patrón es "de ellos", míralo en nuestra tabla.**
 - **⚡ EL VERBO ES LA MITAD DEL GANCHO, Y VA ITERADO (Iker, 2026-08-05).** Mira los de nuestros cinco mejores: **matar** (632c) · **desmontar** (483c) · **tirar** las llaves (232c) · **cazar** miles de leads (183c) · **pasar** las llaves (285c). Todos **punchy y visuales**, ninguno de relleno. Iker: *"me centraba en refinar al máximo los hooks, y la clave era el verbo punchy"*.
   - **Se itera con la escalera de `§2.9` y se para en el peldaño con techo.** Para "encontrar a quien decide": `encontrar` → `localizar` → **`destapar`** → `desenterrar`. Se queda en destapar: `encontrar` es de relleno y `desenterrar` se pasa.
   - **Fíjate en que `matar` sí valía**: la escalera no prohíbe lo fuerte, prohíbe lo gratuito. `Claude acaba de matar el cold outbound` es nuestro mejor lead magnet.

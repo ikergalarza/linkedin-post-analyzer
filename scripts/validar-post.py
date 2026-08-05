@@ -156,6 +156,26 @@ FRASE_RABIA_USADA = {
     'y a otra cosa': 'Castilla y León',
 }
 
+# §4.5.0a — MOLDE B del lead magnet: Claude (o yo) + VERBO PUNCHY + resultado.
+# Sacado de los cinco lead magnets NUESTROS con mas comentarios, no de memoria.
+# Lo habia escrito tres veces a ojo y las tres se me quedo corto, la ultima
+# rechazando "Claude acaba de destapar" cuando "Claude ACABA DE MATAR el cold
+# outbound" es literalmente nuestro numero 1 (632 comentarios). Metodo nuevo:
+# el regex sale de la lista de ganadores, y si se anade un ganador se reabre.
+#   632c "Claude ACABA DE matar…"   285c "LE PASE las llaves…"
+#   232c "LE TIRE las llaves…"      183c "CLAUDE ME HA AYUDADO a cazar…"
+#   167c "Claude HA REDUCIDO toda mi prospeccion…"
+MOLDE_EXPERIMENTO = (
+    r'\b('
+    r'claude (?:acaba de|ahora|ya|me|nunca|ha|se)\s*\w*'   # Claude acaba de matar / Claude ahora destapa
+    r'|le (?:di|pas[eé]|tir[eé]|dej[eé])'                  # Le tiré / Le pasé las llaves
+    r'|hoy (?:desmonto|comparto|regalo|te doy|le)'
+    r'|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)'
+    r'|nunca hab[ií]a|me ha ayudado|acaba de \w+'
+    r'|me (?:destapa|caza|saca|desentierra|pone|encuentra|dice)'
+    r'|cada semana (?:publico|hago|le)|(?:le )?paso a claude'
+    r')\b')
+
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 # §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
 # "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
@@ -811,19 +831,31 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'GARANTIA: Claude nombrado en el GANCHO (§4.5.0a)',
             'los 5 lead magnets nuestros con Claude pasaron de 100 comentarios; los que no '
             'lo llevan se quedan en 20 de mediana. Va en la PRIMERA linea, no solo en el cuerpo')
-        # DOS moldes validados, y basta con uno. El de EXPERIMENTO es el nuestro
-        # (4 de nuestros 5 mejores) y el de DISPARADOR es el de ellos, que a
-        # nosotros nos funciono una vez (el 9.84x, que ademas era Claude).
+        # ⭐ 2026-08-05, Iker: yo tenia esto como DOS moldes rivales y basta-con-uno.
+        # Es falso. Los 5 lead magnets nuestros de Claude, por comentarios:
+        #   632c  🚨 ÚLTIMA HORA: Claude ACABA DE MATAR el cold outbound       <- los dos
+        #   285c  LE PASE las llaves de mi LinkedIn a Claude…
+        #   232c  LE TIRE las llaves de mi LinkedIn a Claude…
+        #   183c  CLAUDE ME HA AYUDADO a cazar miles de leads…
+        #   167c  🚨 ÚLTIMA HORA: Claude HA REDUCIDO toda mi prospeccion…      <- los dos
+        # El #1 y el #5 llevan DISPARADOR *y* Claude+verbo. Y el disparador no es
+        # "el molde de ellos": es el nuestro tambien, y ademas coincide con lo que
+        # usan Martin Arosa y Guillermo Flor. Eso es DOBLE validacion (dentro y
+        # fuera), asi que llevar los dos no es redundante, es la maxima garantia
+        # que sabemos comprar. Uno solo pasa; los dos se aplauden.
         _disp = re.search(r'ÚLTIMA HORA|ULTIMA HORA|D\.?E\.?P\.?|BREAKING|ADIÓS|ADIOS', hook_txt, re.I)
-        _exp = re.search(r'\b(le (?:di|pas[eé]|tir[eé]|dej[eé])|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)|'
-                         r'hoy (?:desmonto|comparto|regalo|te doy)|me ha ayudado|nunca hab[ií]a|'
-                         r'claude me \w+|me (?:destapa|caza|saca|desentierra|pone|encuentra|dice)|'
-                         r'(?:le )?paso a claude|cada semana (?:publico|hago|le))\b', hook_txt, re.I)
+        _exp = re.search(MOLDE_EXPERIMENTO, hook_txt, re.I)
         chk(bool(_disp) or bool(_exp),
             'GARANTIA: el gancho usa uno de los DOS moldes validados (§4.5.0a)',
-            'ni EXPERIMENTO en 1a persona ("Le pasé las llaves de mi LinkedIn a Claude…", '
-            '4 de nuestros 5 mejores) ni DISPARADOR ("🚨 ÚLTIMA HORA…", el 9.84x). '
-            'PRIORIZA EL DE EXPERIMENTO: es el que tenemos validado en NUESTRAS cuentas')
+            'ni DISPARADOR ("🚨 ÚLTIMA HORA…", nuestro #1 y nuestro #5) ni Claude+VERBO '
+            '("Claude acaba de matar…", "Le tiré las llaves a Claude…"). '
+            'LO IDEAL ES LLEVAR LOS DOS: es la estructura exacta del de 632 comentarios')
+        chk(bool(_disp) and bool(_exp),
+            'GARANTIA MAXIMA: el gancho combina DISPARADOR + Claude+VERBO (§4.5.0a)',
+            'llevas solo uno de los dos. El de 632 comentarios (y el de 167) llevan los dos '
+            'en la misma linea: "🚨 ÚLTIMA HORA: Claude acaba de matar el cold outbound". '
+            'Doble validacion: nuestro historial Y el de Martín Arosa/Guillermo Flor',
+            aviso=True)
         _yo = len(re.findall(r'\b(yo|mi|mis|me|uso|hago|publico|llevo|prob[eé]|le (?:di|pas[eé]|tir[eé]))\b',
                              cuerpo, re.I))
         chk(_yo >= 4, 'GARANTIA: es un EXPERIMENTO en primera persona, no un paquete (§4.5.0a)',
@@ -843,11 +875,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # alarma, abren con un experimento en primera persona. Los dos moldes valen,
         # y el de experimento tiene mas respaldo interno.
         h = hook_txt.strip()
-        _experimento = bool(re.search(
-            r'\b(le (?:di|pas[eé]|tir[eé]|dej[eé])|llevo (?:\w+ )?(?:meses|semanas|d[ií]as|a[ñn]os)|'
-            r'hoy (?:desmonto|comparto|regalo|te doy)|me ha ayudado|nunca hab[ií]a|'
-            r'claude me \w+|me (?:destapa|caza|saca|desentierra|pone|encuentra|dice)|'
-            r'(?:le )?paso a claude|cada semana (?:publico|hago|le))\b', h, re.I))
+        _experimento = bool(re.search(MOLDE_EXPERIMENTO, h, re.I))
         alarma = h.startswith('🚨') or h.startswith('⚰') or h.startswith('⚰️') or _experimento
         chk(alarma, 'Hook: alarma 🚨/⚰️ o EXPERIMENTO en 1a persona (§4.5.0)',
             'los 2 mejores lead magnets abren con "🚨 ÚLTIMA HORA:" / "⚰️ D.E.P."; '
