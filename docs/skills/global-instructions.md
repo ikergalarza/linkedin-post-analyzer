@@ -559,7 +559,7 @@ Corre estas puertas EN ORDEN:
 
 > ## 📅 EL EVENTO DE SEPTIEMBRE: 3 POSTS A LA SEMANA, UNO POR CUENTA (Iker, 2026-08-03)
 >
-> **NEETY FORWARD** · `https://luma.com/ujffj66o` · **24 de septiembre, 17:30, Donostia** · **80 plazas**, privado y por solicitud · lo que se anuncia es **Talent House, la nueva generación de Neety**, y ese "en primicia" es lo que sostiene el FOMO.
+> **NEETY FORWARD** · `https://luma.com/ujffj66o` · **24 de septiembre, 17:30, Donostia** · **80 plazas**, privado y por solicitud · se anuncia **la nueva generación de Neety** en primicia. **Talent House es la SEDE**, no el producto: me confundí el 04/08. Puertas 17:30, arranque 18:00, y **las solicitudes se revisan una por una**, que es lo que sostiene el FOMO.
 >
 > **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
 >
