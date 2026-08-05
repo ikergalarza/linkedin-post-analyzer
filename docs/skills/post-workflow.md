@@ -80,6 +80,20 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 
 **⚠️ Y LO CARO NO ES LA REGLA, ES LA BÚSQUEDA.** Cuando falten empresas, el reflejo es dar la región por agotada. En Cataluña un investigador devolvió *"0 de Girona, ninguna pasó el listón"* y **era falso**: buscando "Cataluña" a nivel autonómico, Barcelona se come los resultados. Atacando fuentes locales (el ranking provincial, el directorio del polígono de Riudellots, la prensa comarcal) salieron 8 gerundinas a la primera. **Antes de bajar a 16, busca por provincia y con prensa local.**
 
+### ⛔ 4.1-GANCHO · SI EL PILAR NO ESTÁ DEFINIDO, PRIMERO SOLO EL GANCHO (Iker, 2026-08-05)
+
+**LA PUERTA. Antes de escribir una sola línea de cuerpo, pregúntate: ¿este post pertenece a un pilar que ya tenemos validado con datos?** (mapa · "Los 10" · despiece · meme · lead magnet · historia). **Si la respuesta es NO —nos estamos inventando el formato— el flujo CAMBIA y no se entrega una publicación entera.**
+
+**Lo que se entrega en esa casuística, y solo esto:**
+1. **Un aviso explícito** de que ese formato **no está validado ni con nuestros datos ni con los de nadie**, así que lo único que puede sostenerlo es el gancho.
+2. **DIEZ variantes de gancho, todas con metáfora** (`global §2.0a`), cada una con **un concepto distinto** y, a poder ser, **una perspectiva distinta**: el que vende, el que compra, el jefe, el oficio, el que mira desde el futuro, el que se queda fuera.
+3. **Una tabla con el resultado del validador de cada uno** y mi recomendación razonada de dos o tres.
+4. **Y ahí se para.** El cuerpo NO se escribe hasta que Iker elige o pide otra ronda.
+
+**POR QUÉ, con la prueba del mismo día en que se escribió:** el 05/08, montando el primer post del evento de septiembre, le entregué **la publicación completa seis veces seguidas** cambiando solo el gancho. Todo el cuerpo de las cinco primeras fue trabajo tirado, y por el camino se colaron dos datos falsos que había que ir corrigiendo en cada versión. **Iker: *"si el gancho no convence, nadie va a pulsar ver más, así que por mucho que nos curremos el cuerpo la publicación ya no sirve de nada"*.** Es como trabajaba él su primer mes en LinkedIn, cuando no tenía ningún pilar: mil iteraciones de gancho probando conceptos, metáforas y verbos punchy, y solo después el cuerpo.
+
+**⚠️ OJO CON EL LÍMITE:** esto **NO aplica a los pilares definidos**. En un mapa o un meme la receta ya dice cómo va el gancho y el cuerpo, así que ahí se entrega el post completo como siempre. **La puerta es solo para lo que nos estamos inventando.**
+
 ### 4.1 · Esqueleto general (todo post pasa por aquí)
 1. **Input:** pilar · cuenta (Iker/Unai/Asier) · idea semilla · objetivo (`alcance | pipeline`).
 2. **Test gana/pierde + mecánica** (`global-instructions §0`, matriz §4.6) + **chequeo de riesgo** (`working-preferences §2-§3`: región baneada, fatiga de lead magnet, meme sin motor, exclusividad de formato del día). Si hay riesgo → **avisar ANTES** del borrador.

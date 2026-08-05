@@ -79,6 +79,8 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 4. **Añádele el detalle que lo hace NUESTRO**, no genérico. *"Ya tiene fecha de derribo"* está bien; *"y no la ha puesto LinkedIn"* lo convierte en algo que pica, porque descarta al sospechoso obvio y sugiere que lo ha hecho alguien pequeño.
 5. **El test final:** quita el objeto. **Si lo que queda es una frase que podría firmar cualquiera, el objeto estaba haciendo todo el trabajo y el gancho es bueno.** Si lo que queda sigue siendo igual de bueno, es que el objeto era decorado.
 
+**🚪 Y SI EL POST NO ES DE UN PILAR VALIDADO, EL GANCHO VA SOLO Y PRIMERO** (`post-workflow §4.1-GANCHO`): se entregan **10 metáforas** y se para ahí, sin cuerpo, hasta que Iker elija. Sin pilar detrás, el gancho es lo único que sostiene el post.
+
 **⛔ Y NUNCA NOMBRES LO QUE ANUNCIAS.** Ni "evento", ni "premio", ni "lanzamiento". Iker: *"si ya en el gancho te han dicho cuál es el premio, ¿para qué te vas a leer la publicación?"*. El objeto sustituye al nombre.
 
 **🚫 CONCEPTOS YA USADOS** (entran en la ley de variedad de §2.0b, no se repiten): `esquina del Atlántico` · `trastienda del norte` · `patio trasero de los Pirineos` · `tejado de la Península` · `museo minero` · `desierto` · `secarral` · `última parada` · `sitio de comer`. Propuestos el 05/08 para el evento y aún sin gastar: `fecha de derribo` · `vitrina` · `cuenta atrás` · `carpeta que no se abre` · `último de su especie` · `interruptor` · `la grieta` · `la última foto`.
