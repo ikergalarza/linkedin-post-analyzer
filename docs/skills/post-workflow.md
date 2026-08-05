@@ -677,7 +677,18 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 >
 > ### 🎯 4.4-FUENTE · DE DÓNDE SE COGE LA REFERENCIA (Iker, 2026-08-05, tras el flop del código de verificación)
 >
-> **Qué pasó.** El meme del código de verificación de Asier hizo **196 impresiones en casi una semana**. Al resubirlo con caricatura y la cuenta ya verificada, superó esa cifra **en las primeras horas**. Pero además costó una barbaridad adaptarlo: siete iteraciones para llevar "código de verificación" al terreno de ventas.
+> **Qué pasó.** El meme del código de verificación de Asier hizo **196 impresiones en casi una semana**. Al resubirlo con caricatura y la cuenta ya verificada mejoró el arranque, **pero se quedó en 296 impresiones a las 3 horas: flop confirmado también en la segunda versión** (Iker, 2026-08-05). **O sea que ni la caricatura ni la cuenta verificada salvaron al meme: el problema estaba en la ELECCIÓN de la referencia.** Pero además costó una barbaridad adaptarlo: siete iteraciones para llevar "código de verificación" al terreno de ventas.
+>
+> **⚖️ LOS TRES EJES DE UNA REFERENCIA, y el mejor caso es el que tiene los tres (Iker, 2026-08-05):**
+> | Eje | Por qué importa |
+> |---|---|
+> **1. ¿Ya está adaptada a VENTAS?** | Si el chiste nació en nuestro sector, **el puente ya está construido**. Ese es el coste que nadie ve: adaptar cuesta iteraciones y lo que llega, llega forzado. |
+> **2. ¿Está en INGLÉS?** | Suelen tener **más alcance**, y sobre todo **no nos pillan la copia**: nuestro público no vio el original y el autor no se cruza con nosotros. |
+> **3. ¿Ataca un problema PSICOLÓGICO universal?** | La calvicie le pasa a cualquiera, sea comercial o dentista. Eso es lo que hace que viaje fuera del nicho. |
+>
+> **El caso perfecto es el de la calvicie: los tres a la vez** (ya iba de ventas, estaba en inglés y el motor es psicológico), y son nuestros dos mejores memes del histórico, **16.45x y 13.52x**.
+>
+> **El contraejemplo es el del tatuaje:** ya estaba adaptado a ventas ✅ y era psicológico ✅, **pero en español** ❌. Resultado: nos pillaron la copia en menos de una hora, Félix bloqueó a Unai, y **la polémica nos dio alcance**. Iker, y esto es lo importante: ***"tampoco me conviene que se nos haga viral por polémica de copia"***. **El alcance por polémica de copia no es una estrategia, es una factura aplazada.**
 >
 > **LA REGLA, por orden de preferencia:**
 > 1. **Lo primero: referencias que YA funcionaron EN VENTAS.** Si el chiste nació en nuestro sector, el puente no hay que construirlo, ya está hecho. Ese es el coste oculto que casi nadie ve: **un meme que hay que "adaptar a ventas" durante siete iteraciones es un meme que va a llegar forzado.**
