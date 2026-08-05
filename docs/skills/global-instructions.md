@@ -569,13 +569,28 @@ Corre estas puertas EN ORDEN:
 >
 > **2. Y la línea que separa nuestros dos bold claims lo explica todo.** Iker temía que sin autoridad un bold claim no nos funcionara. **Tiene razón a medias**, y nuestros propios datos parten la duda:
 >
+> **🔴 Y AQUÍ ME EQUIVOQUÉ, VALE LA PENA CONTARLO PORQUE EL ERROR ES REPETIBLE.** Enseñé esta tabla como prueba de que los bold claims nos funcionan:
 > | Nuestro bold claim | Impresiones |
 > |---|---|
-> | *"Subir en ventas siempre pasa factura."* (sobre el OFICIO del lector) | **138.828** |
-> | *"Finalistas en el #DES2025 en Málaga."* (sobre NOSOTROS) | **4.426** |
+> | *"Subir en ventas siempre pasa factura."* | 138.828 |
+> | *"Finalistas en el #DES2025 en Málaga."* | 4.426 |
 >
-> **La regla que sale de ahí:** no tenemos autoridad para afirmar sobre nosotros, pero **sí la tenemos para afirmar sobre el trabajo del lector**. Un gancho de evento que diga lo que hemos montado, el premio que hemos ganado o dónde vamos a estar **muere**. Uno que afirme algo incómodo sobre su oficio, y deje el evento para el cuerpo, es nuestro mejor formato.
-> **⚠️ n=2 en lo nuestro**, así que es dirección, no ley. Pero apunta igual que el corpus y explica el fracaso del DES2025.
+> **Iker lo tumbó en un segundo: los DOS son memes.** Y las impresiones del meme están infladas porque LinkedIn amplifica cuando dispara la reacción de risa (`outliers §3.11`), cosa que ya teníamos escrita. **Yo estaba comparando un meme bueno con un meme malo y llamándolo comparación de ganchos.** Al filtrar memes, **nuestros bold_claim fuera de meme son n=0**: cero evidencia.
+>
+> ### ⭐⭐ LO QUE SÍ DICEN LOS DATOS: MANDA EL PILAR, NO EL GANCHO
+> Mediana de impresiones de nuestras 3 cuentas, por pilar:
+> | Pilar | n | Mediana |
+> |---|---|---|
+> | **peloteo_mapa** | 16 | **24.152** |
+> | peloteo_los10 | 4 | 18.140 |
+> | meme | 31 | 6.905 |
+> | historia | 5 | 6.243 |
+> | lead magnet | 20 | 4.856 |
+> | **otro** (post suelto) | 51 | **3.072** |
+>
+> **Un mapa tiene 8 veces la mediana de un post suelto.** Así que ante un post que no es de pilar (un evento, un anuncio), **la palanca no es el gancho: es meterle la mecánica de un pilar que funcione**, y en el peloteo esa mecánica son las MENCIONES. Antes de iterar el gancho por quinta vez, consigue más nombres reales que mencionar.
+>
+> **📐 LA LECCIÓN METODOLÓGICA, que vale para todo análisis futuro:** **antes de comparar cualquier variable, comprueba que no está confundida con el pilar.** El pilar domina tanto que casi cualquier corte que no lo controle acaba midiendo el pilar por accidente. Lo mismo pasa con la CUENTA (`§4.2 Paso 1`: los mapas de Unai caen entre 3,2x y 3,7x hagan lo que hagan).
 >
 > ### 🏟️ EL FORMATO VALIDADO PARA ANUNCIARLO: VENDE LA SALA, NO EL PROGRAMA (investigado el 2026-08-05)
 >
