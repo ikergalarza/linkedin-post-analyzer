@@ -371,6 +371,14 @@ def validar_entregable(texto):
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r
 
+# ⚠️ AL AÑADIR UN PILAR NUEVO, CABLEALO A LOS GATES QUE YA EXISTEN.
+# Iker, 2026-08-05: meti el pilar `evento` y solo le escribi SUS checks nuevos,
+# sin revisar los 22 `if pilar in (...)` que ya habia. Resultado: el validador
+# aprobo 28/28 un post sin un solo bloque de dos, porque ese check estaba
+# limitado a mapa/los10/leadmagnet. Lo pillo el a ojo, que es justo lo que el
+# validador existe para evitar.
+# EL PROCEDIMIENTO: grep "if pilar" y decidir SI o NO para cada uno, por escrito.
+
 def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False):
     texto = norm(texto)
     if pilar == 'entregable':
@@ -531,7 +539,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # delante de la decisión — al meter el check, los 2 memes ganadores (13.51x y
     # 16.46x) lo fallaron mientras el mapa de Navarra 7.72x lo pasaba. Se anotó
     # como conflicto sin taparlo y el usuario lo resolvió así.
-    if pilar in ('mapa', 'los10', 'leadmagnet'):
+    if pilar in ('mapa', 'los10', 'leadmagnet', 'evento'):
         pares = [i for i, b in enumerate(bs) if not es_lista(b) and len(b) == 2]
         chk(bool(pares), 'Al menos un bloque de DOS (§3.2)',
             'todo son líneas sueltas y bloques de 3: el par es el ritmo típico de LinkedIn y no aparece nunca'
@@ -594,23 +602,28 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             if not _mano else '', aviso=True)
 
     # ---------- POR PILAR ----------
-    tiene_link = 'recursos.neety.com' in cuerpo
-    if pilar in ('mapa', 'los10', 'meme'):
+    # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.
+    tiene_link = 'recursos.neety.com' in cuerpo or (pilar == 'evento' and 'luma.com' in cuerpo)
+    if pilar in ('mapa', 'los10', 'meme', 'evento'):
         chk(tiene_link, 'Spam ninja presente (§4.4b)', 'falta el link de agendar' if not tiene_link else '')
         if tiene_link:
             # El enlace SIEMPRE con https:// delante, o LinkedIn puede no detectarlo
             # como clicable (Iker, 2026-07-22). Mismo criterio que los DMs.
-            _bare_link = re.search(r'(?<!https://)recursos\.neety\.com', cuerpo)
+            # Que dominio hace de CTA en ESTE post: en evento es luma.com, en el
+            # resto recursos.neety.com. Antes estaba escrito a fuego y al meter el
+            # pilar evento esto reventaba con StopIteration (Iker, 2026-08-05).
+            _dom = 'luma.com' if (pilar == 'evento' and 'luma.com' in cuerpo) else 'recursos.neety.com'
+            _bare_link = re.search(r'(?<!https://)' + re.escape(_dom), cuerpo)
             chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
-                'falta https:// delante de recursos.neety.com' if _bare_link else '')
-            chk('Neety' not in cuerpo.split('recursos.neety.com')[0].split('\n')[-1],
+                f'falta https:// delante de {_dom}' if _bare_link else '')
+            chk('Neety' not in cuerpo.split(_dom)[0].split('\n')[-1],
                 'Spam ninja NO nombra a Neety (§4.4b)', 'nombrar la marca = publicidad encubierta')
             lineas = [l for l in cuerpo.split('\n') if l.strip()]
-            idx = next(i for i, l in enumerate(lineas) if 'recursos.neety.com' in l)
+            idx = next(i for i, l in enumerate(lineas) if _dom in l)
             chk(idx != len(lineas) - 1, 'Spam ninja NO es la última línea (§4.4b)',
                 'el cierre va después' if idx == len(lineas) - 1 else '')
             for i, b in enumerate(bs):
-                if any('recursos.neety.com' in l for l in b):
+                if any(_dom in l for l in b):
                     # El spam ninja va FUSIONADO: la broma pegada al CTA + enlace,
                     # máx 2 líneas (Iker, 2026-07-22). Antes se exigía separarlas
                     # con un blanco; ahora se permite el bloque de 2 (broma / CTA+link)

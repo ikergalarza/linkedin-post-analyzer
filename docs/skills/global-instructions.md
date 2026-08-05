@@ -563,6 +563,20 @@ Corre estas puertas EN ORDEN:
 >
 > **LA REGLA, y hay que recordarla en la planificación semanal sin que la pidan:** cada semana, **como mínimo 3 publicaciones llevan este enlace, una de cada cuenta**. Va tejido con spam ninja normal, siguiendo la broma del gancho de ESE post, igual que el de agendar.
 >
+> ### 📊 EL GANCHO DE UN EVENTO NO ES UN ANUNCIO (medido el 2026-08-05)
+>
+> **1. Anunciar no funciona, ni fuera ni dentro.** De los **60 mejores ganchos del corpus de competencia**, por tipo: **bold_claim 8 · story_opener 5 · curiosity_gap 5 · pattern_interrupt 2 · announcement 2**. Los que petan no dicen qué son: *"The SDR role isn't entry-level anymore"* (37.2x), *"España tiene un problema"* (44.6x), *"Uncomfortable Truth for Employers:"* (39.4x), *"CARTA DE DESPEDIDA"* (35.5x).
+>
+> **2. Y la línea que separa nuestros dos bold claims lo explica todo.** Iker temía que sin autoridad un bold claim no nos funcionara. **Tiene razón a medias**, y nuestros propios datos parten la duda:
+>
+> | Nuestro bold claim | Impresiones |
+> |---|---|
+> | *"Subir en ventas siempre pasa factura."* (sobre el OFICIO del lector) | **138.828** |
+> | *"Finalistas en el #DES2025 en Málaga."* (sobre NOSOTROS) | **4.426** |
+>
+> **La regla que sale de ahí:** no tenemos autoridad para afirmar sobre nosotros, pero **sí la tenemos para afirmar sobre el trabajo del lector**. Un gancho de evento que diga lo que hemos montado, el premio que hemos ganado o dónde vamos a estar **muere**. Uno que afirme algo incómodo sobre su oficio, y deje el evento para el cuerpo, es nuestro mejor formato.
+> **⚠️ n=2 en lo nuestro**, así que es dirección, no ley. Pero apunta igual que el corpus y explica el fracaso del DES2025.
+>
 > ### 🏟️ EL FORMATO VALIDADO PARA ANUNCIARLO: VENDE LA SALA, NO EL PROGRAMA (investigado el 2026-08-05)
 >
 > **De dónde sale.** De los 500 outliers del corpus de competencia, **13 anuncian un evento**. Los dos mejores del mismo autor, **Grace Gong (11.6x y 14.4x)**, usan el mismo motor, y no es el que usa todo el mundo:
