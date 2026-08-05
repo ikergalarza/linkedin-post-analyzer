@@ -797,6 +797,31 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 f'{len(sin_arroba)} líneas sin las 2 arrobas' if sin_arroba else '')
             chk(all(len(b) == 4 for b in menciones), 'Menciones en bloques de 4 (5×4)',
                 f'bloques de {[len(b) for b in menciones]}')
+    # ---------- GARANTIA DE VIRALIDAD · LEAD MAGNET (Iker, 2026-08-05) ----------
+    # Estos tres checks NO son de forma: comprueban que el post repite lo que
+    # YA nos ha funcionado a NOSOTROS. La evidencia esta en nuestras cuentas:
+    #   · 5 lead magnets con Claude, los 5 con +100 comentarios (632/285/232/183/167)
+    #   · mediana con IA 167 comentarios, sin IA 20
+    #   · los 5 mejores son EXPERIMENTOS en primera persona, no paquetes
+    #   · mediana de comentarios: mayo 208 -> junio 18, justo cuando dejamos de
+    #     contar experimentos y empezamos a repartir "biblias" y "arsenales"
+    if pilar == 'leadmagnet':
+        _hook_l = hook_txt.lower()
+        chk('claude' in _hook_l,
+            'GARANTIA: Claude nombrado en el GANCHO (§4.5.0a)',
+            'los 5 lead magnets nuestros con Claude pasaron de 100 comentarios; los que no '
+            'lo llevan se quedan en 20 de mediana. Va en la PRIMERA linea, no solo en el cuerpo')
+        _disp = re.search(r'ÚLTIMA HORA|ULTIMA HORA|D\.?E\.?P\.?|BREAKING|ADIÓS|ADIOS', hook_txt, re.I)
+        chk(bool(_disp), 'GARANTIA: el gancho abre con DISPARADOR (§4.5.0a)',
+            'falta 🚨 ÚLTIMA HORA / ⚰️ D.E.P. / BREAKING / ADIÓS. Es el molde de Martin Arosa '
+            'y el nuestro del 9.84x. El disparador rota, pero alguno tiene que haber')
+        _yo = len(re.findall(r'\b(yo|mi|mis|me|uso|hago|publico|llevo|prob[eé]|le (?:di|pas[eé]|tir[eé]))\b',
+                             cuerpo, re.I))
+        chk(_yo >= 4, 'GARANTIA: es un EXPERIMENTO en primera persona, no un paquete (§4.5.0a)',
+            f'solo {_yo} marcas de primera persona. Nuestros 5 mejores son "YO hice X, me paso Y, '
+            'te doy lo que use" (632/483/285/232/183 comentarios). Los paquetes ("la biblia", '
+            '"el arsenal", "la lista definitiva") se hundieron a 18 de mediana en junio')
+
     if pilar == 'leadmagnet':
         # El gancho abre SIEMPRE con el disparador de última hora + emoji de alarma
         # (post-workflow §4.5.0). Es la estructura de nuestros 2 mejores (9.96x y
