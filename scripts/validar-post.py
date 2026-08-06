@@ -628,6 +628,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     tiene_link = 'recursos.neety.com' in cuerpo or (pilar == 'evento' and 'luma.com' in cuerpo)
     if pilar in ('mapa', 'los10', 'meme', 'evento'):
         chk(tiene_link, 'Spam ninja presente (§4.4b)', 'falta el link de agendar' if not tiene_link else '')
+        # ⛔ 2026-08-06, Iker: este check decia "falta el link de agendar" pero se
+        # conformaba con CUALQUIER url de recursos.neety.com, asi que me colo un
+        # meme cuyo ninja apuntaba a /prospeccion-manual/. §4.4b es tajante: el
+        # spam ninja ES el enlace de agendar. Y el orden de prioridad de conversion
+        # no es opinable (Iker, 2026-08-06):
+        #   1. AGENDAR — la web con el buscador de clientes que acaba en demo y venta
+        #   2. LEAD MAGNET — captura el correo para email marketing, menos friccion
+        #      pero tambien menos valor por lead
+        # Un lead magnet en el hueco del ninja cambia lo primero por lo segundo sin
+        # que nadie lo haya decidido. El MAPA es la unica excepcion y ya la valida
+        # su propio check: va a la pagina del mapa, que lleva su CTA a agendar.
+        if pilar in ('los10', 'meme'):
+            _dest_ok = 'recursos.neety.com/agendar' in cuerpo
+            chk(_dest_ok, 'El spam ninja apunta a /agendar/, no a un lead magnet (§4.4b)',
+                'hay enlace pero no es el de agendar. Prioridad 1 = agendar (demo y venta), '
+                'prioridad 2 = lead magnet (correo). Solo el mapa enlaza a otro sitio, y '
+                'porque su pagina ya lleva el CTA a agendar dentro' if not _dest_ok else '')
         if tiene_link:
             # El enlace SIEMPRE con https:// delante, o LinkedIn puede no detectarlo
             # como clicable (Iker, 2026-07-22). Mismo criterio que los DMs.
