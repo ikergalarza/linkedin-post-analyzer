@@ -179,7 +179,27 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Aplica a TODOS los pilares, no solo al meme.** Ya estaba escrita para el meme y la generalizo aquí: cualquier brief de imagen que yo entregue **va con el enlace al post real cuyo formato estoy calcando**, y con su ratio.
 - **Prioridad: primero un post NUESTRO, y solo si no hay, uno de fuera.** Es la misma regla que el gancho (`global §0-DATOS`): si tenemos el dato en casa, el de fuera no manda.
 - **Sin enlace no hay propuesta.** Si no encuentro referencia, se dice —"no tengo referencia validada para este formato"— y se propone uno que sí la tenga. No se rellena con criterio.
+- **⛔ AL DISEÑADOR SE LE PASA LA FOTO, NUNCA EL ENLACE (Iker, 2026-08-06).** El enlace es para IKER, para que compruebe que la referencia existe y cuánto hizo. **En el prompt del diseñador se escribe "te paso la foto de referencia", nunca "mira este enlace y saca la foto".** Y la foto hay que dejársela descargada a Iker para que la reenvíe: se baja de la API (`/api/posts/post/{id}/refresh-media` para las nuestras, `attachments[0].url` de Unipile para las suyas) y se entrega como fichero.
 - **Y la referencia se MIRA, no se recuerda.** El 2026-08-06 iba a proponer "captura del artefacto" citando a Guillermo Flor de memoria; al bajarme las imágenes de verdad resultó que **nuestros cuatro mejores lead magnets usan cuatro formatos distintos** y ninguno era el que yo tenía en la cabeza. Las URLs de `media.licdn.com` caducan y dan 403: se refrescan con `POST /api/posts/post/{id}/refresh-media` y luego se abren.
+
+### ⭐⭐ 0b-REF-ter · EN LEAD MAGNET, LA REFERENCIA DE IMAGEN ES DE FUERA (Iker, 2026-08-06)
+
+> *"Es mejor coger referencias de fotos de otros, ya que de momento ellos están consiguiendo publicaciones con mil comentarios y nosotros no hemos llegado nunca a eso. Así que ellos hacen de momento todo mejor."*
+
+**Cuidado con la regla de "primero lo nuestro" (`§0b-REF`): vale cuando lo nuestro es viral, y en imagen de lead magnet NO lo es.** Nuestro mejor lead magnet con imagen tiene 483 comentarios y el formato que yo iba a proponer, 183. **Martín Arosa saca 1.200-2.100 con la misma temática (Claude + LinkedIn).** Con esa diferencia, proponerle un formato nuestro de 183 comentarios es proponerle lo peor de los dos mundos. **En este pilar concreto, la referencia se coge de él hasta que tengamos un mil.** (Esto NO cambia la prioridad en gancho ni en cuerpo, donde sí tenemos virales propios.)
+
+**SUS CUATRO FORMATOS, abiertos y medidos el 2026-08-06** (`/users/{pid}/posts` de `martinarosaotero`):
+
+| c | qué es la imagen | cuándo usarlo |
+|---|---|---|
+| **2.125** | Pantallazo del **PDF abierto en el visor**: barra de herramientas, columna de miniaturas, portada + índice de 10 secciones | El recurso es un PDF con volumen que enseñar |
+| **1.958** | Lo mismo pero en **1:1**, estilo Anthropic: crema, serif, `ANTHROP\C` arriba, logos Claude + LinkedIn, índice de 10 | Igual, y este además cumple nuestro 1:1 |
+| **1.245** | **Solo los logos de Claude y LinkedIn** sobre crema, con una costura naranja/azul en medio y unas líneas de circuito muy suaves. **Cero texto.** | No hay artefacto que enseñar todavía, o el post ya lo cuenta todo |
+| **1.217** | Pantallazo de un **workflow de n8n** con los 4 pasos en bloques de color | El recurso es un proceso |
+
+**⛔ NINGUNA DE LAS CUATRO LLEVA EL CTA DENTRO DE LA IMAGEN (Iker, 2026-08-06).** Nuestro 183c sí lo lleva (*Comenta "perfil" + tu departamento*) y es de los flojos. **El CTA vive en el texto y solo ahí:** repetirlo en la imagen es un segundo CTA, y además se lee como que estamos forzando al lector, que es justo lo que genera rechazo. Es la misma regla que tumbó el *"conecta conmigo"* (`post-workflow §4.4`).
+
+**Y el formato sigue siendo NUESTRO: 1:1.** Su 1.245c es 16:9 y su 2.125c casi 2:1; se calca el concepto y se recompone a cuadrado (`§0b`). Su 1.958c ya es 1:1, así que ahí no hay conflicto.
 
 ### 0b-REF-bis · LOS 4 FORMATOS DE IMAGEN DE LEAD MAGNET QUE TENEMOS VALIDADOS
 > Medidos abriendo las cuatro imágenes el 2026-08-06. **Ojo al leerlos: son 4 posts y el gancho cambia en cada uno, así que el formato de imagen no está aislado.** Se elige por SUBTIPO de lead magnet, no por el ratio a pelo.
