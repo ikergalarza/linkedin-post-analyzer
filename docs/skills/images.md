@@ -186,6 +186,28 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **LA PRUEBA, y es de una sola variable:** resubir el MISMO texto, a la hora de siempre, cambiando SOLO la imagen. Si vuela, era la imagen. **Cambiar texto e imagen a la vez —que es lo que pide el cuerpo cuando algo sale mal— garantiza no aprender nada.**
 - Quitar los metadatos NO basta: el del 06/08 se subió ya sin ellos y se capó igual.
 
+## 🔴🔴 0b-TEXTO-REF · EL TEXTO DE DENTRO DE LA IMAGEN SE CALCA PALABRA POR PALABRA (Iker, 2026-08-06)
+
+> **⚠️ GLOBAL: vale para el texto dentro de CUALQUIER imagen remixada, no solo del meme.** Es la misma doctrina de `global §2.2b` aplicada a lo que va DENTRO de la foto, que es donde yo la incumplo sin darme cuenta porque el texto del post ya lo tengo vigilado.
+
+**El fallo, medido el 2026-08-06:** en el post ya había corregido la esencia del texto, y aun así **cinco de las diez etiquetas de la imagen estaban cambiadas**, todas hacia el lado informal:
+
+| original | lo que puse | qué rompí |
+|---|---|---|
+| `Let's GO!!!` | `Hoy los reviento` | un grito de energía convertido en chulería |
+| `YES! I got a sale` | `Reunión cerrada` | **venta → reunión**, que no es lo mismo |
+| `How will I spend my commission?` | `Ya estoy gastando la comisión` | pregunta convertida en afirmación |
+| `Another sale! I'm going to smash it` | `Otra reunión, este mes lo peto` | otra vez reunión, y `lo peto` es jerga |
+| `Why won't anyone speak to me?` | `Me han vuelto a dejar en visto` | **me cargué la REPETICIÓN, que era el chiste** |
+
+- **⭐ LO MÁS CARO: las repeticiones del original son deliberadas.** Ahí la queja de soledad salía DOS veces casi igual, y esa vuelta al mismo pensamiento es la broma. Cambiar la segunda por otra queja distinta parece "dar variedad" y en realidad desmonta el gag. **Si el original repite, tú repites**, y se le dice al diseñador que es a propósito para que no lo "arregle".
+- **Preguntas siguen siendo preguntas**, afirmaciones siguen siendo afirmaciones. El tiempo verbal y el modo son parte de la esencia (`post-workflow §4.4` paso 2).
+- **El sustantivo concreto no se cambia por un primo suyo.** `venta` no es `reunión`, igual que `tatuaje` no es `tarta`.
+
+**⭐ Y EL DESCUBRIMIENTO QUE QUITA EL MIEDO A LA CUENTA SOBRIA (Iker, 2026-08-06).** Iker temía que ser formal en la cuenta de Unai matara la gracia: *"si perdemos el humor no va a servir de nada por culpa de querer ser sobrio"*. **Míralo antes de asumirlo: en este original no había NI UNA vulgaridad ni una jerga en las diez frases.** El humor estaba entero en la contradicción entre etiquetas vecinas, no en la ordinariez. **El que se puso informal fui yo, no el original.**
+- **La regla:** antes de "suavizar" para una cuenta sobria, comprueba **cuánto de bruto es el original de verdad**. Si no es bruto, no hay nada que suavizar y calcarlo literal es a la vez lo más fiel y lo más sobrio.
+- Esto **no contradice** `§4.4 PASO 0` (elegir la cuenta que aguanta el meme): sigue siendo verdad que un original bruto no se lima, se manda a Iker. Lo que se añade es que **muchos originales no son brutos y yo los estaba volviendo brutos al traducirlos**.
+
 ## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
 
 > **La regla:** *"no me puedes dar una propuesta de foto sin una referencia, porque entonces me estás demostrando que te la estás inventando. Tiene que estar validado en que ese mismo formato de foto ya haya funcionado, por lo tanto me tienes que pasar el enlace."*
