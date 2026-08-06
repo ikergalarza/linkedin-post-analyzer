@@ -69,6 +69,14 @@ Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo
 
 Describir el concepto de la imagen y enlazar la referencia **no es la entrega**: falta lo único que el diseñador puede ejecutar. En **cada** entrega que lleve imagen van las tres cosas juntas: (1) el **concepto**, (2) la **referencia real con su enlace** (outlier validado, `images.md`), y (3) el **prompt cerrado para el diseñador**, en su propio bloque copiable. Si falta el prompt, la entrega está a medias y hay que volver a pedirlo.
 
+## ⭐ 1d-ter · LA FOTO DE LA REFERENCIA SE ADJUNTA SIEMPRE, NO SOLO SU ENLACE (Iker, 2026-08-06)
+
+**En CUALQUIER entrega que se base en una referencia —meme, lead magnet, mapa, historia, email— la imagen de esa referencia va ADJUNTA en el chat**, además del enlace. Iker: *"a veces me la pasas y a veces no, y me la tienes que pasar siempre para ir más rápido"*.
+
+- **El enlace es para él** (comprobar que existe y cuánto hizo); **la foto es para el diseñador**, que la necesita adjunta y no va a abrir LinkedIn (`images §0i-2-ADJUNTOS`). Si no se la doy descargada, el trabajo de bajarla se lo come Iker.
+- **Se baja de la API, no se le pide a él:** las nuestras con `POST /api/posts/post/{id}/refresh-media` (las URLs de `media.licdn.com` caducan y dan 403) y las de fuera con `attachments[0].url` de Unipile.
+- Va **en el mismo turno** que el prompt del diseñador, para que pueda reenviar las dos cosas de una vez.
+
 ## 🔴🔴 1d-BIS · NO SE ENTREGA LA PRIMERA VERSION. NUNCA (Iker, 2026-07-30)
 
 **⚠️ APLICA A TODO, no solo a los memes (Iker, 2026-07-30).** Mapa, "Los 10", despiece, lead magnet, historia, meme, newsletter, secuencia de email, prompt de imagen y prompt para el programador. **Y a cualquier pilar que inventemos manana.** Vive aqui, en como se ENTREGA, precisamente para que no dependa del pilar: si algun dia hay que repetirlo dentro de un runbook, es que esta mal puesto.

@@ -687,6 +687,10 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'ritmo. El 2026-08-06 entregue un gancho del DOBLE de largo que el original, '
             'con dos frases en vez de una y el emoji cambiado. La salida va en la entrega '
             '(global §2.2b-MEDIR)', aviso=True)
+        chk(False, 'ENTREGA: adjunta la FOTO de la referencia, no solo su enlace',
+            'bajala y mandala como fichero en el mismo turno que el prompt del disenador. '
+            'El enlace es para Iker; la foto es para el disenador, que la necesita adjunta '
+            '(working-preferences §1d-ter)', aviso=True)
 
     chk(False, 'ENTREGA: comparativa en DOS COLUMNAS, misma fila, separador discontinuo',
         'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '
