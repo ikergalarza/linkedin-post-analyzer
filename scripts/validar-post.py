@@ -646,15 +646,30 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # 2) RITMO. `1-2-1-2-1-2` es un metronomo: el lector coge el patron y deja de
     #    leer. Iker, 2026-08-06: "superpredecible, es horrible". Se exige AL MENOS
     #    UN BLOQUE DE TRES y que no se alterne 1-2 mas de dos veces seguidas.
+    #    ⭐ AMPLIADO EL 2026-08-06: la primera version solo prohibia el 1-2-1-2, y
+    #    a la siguiente entrega le colé un 1-3-1-2-1-3-1-2, que es igual de
+    #    predecible pero con ciclo de CUATRO. Iker: "superpredecible. Siempre tiene
+    #    que haber mas lineas individuales y mas irregular". Asi que ahora se mira
+    #    la PERIODICIDAD en general, no un patron concreto, y se exige que la linea
+    #    suelta domine — la misma prioridad que ya estaba escrita para el email
+    #    (`email-marketing`: 1º lineas individuales, 2º bloques de dos, 3º de tres).
     _pat = [len(b) for b in bloques(texto)]
     if pilar in ('meme', 'mapa', 'los10', 'historia', 'leadmagnet', 'evento') and len(_pat) >= 6:
         _ritmo = '-'.join(map(str, _pat))
         chk(any(n >= 3 for n in _pat), 'RITMO: al menos un bloque de TRES (§3.2)',
-            f'ritmo {_ritmo} — todo unos y doses se lee como un metronomo')
-        _metro = sum(1 for i in range(len(_pat) - 3)
-                     if _pat[i:i + 4] in ([1, 2, 1, 2], [2, 1, 2, 1]))
-        chk(_metro == 0, 'RITMO: sin metronomo 1-2-1-2 (§3.2)',
-            f'ritmo {_ritmo} — rompelo con un trio o con dos lineas sueltas seguidas')
+            f'ritmo {_ritmo} — todo unos y doses se lee plano')
+        # Ciclo de 2: a-b-a-b con a distinto de b. Ciclo de 4: a-b-c-d-a-b-c-d.
+        _ciclo2 = any(_pat[i] == _pat[i + 2] and _pat[i + 1] == _pat[i + 3]
+                      and _pat[i] != _pat[i + 1] for i in range(len(_pat) - 3))
+        _ciclo4 = any(_pat[i:i + 4] == _pat[i + 4:i + 8] and len(set(_pat[i:i + 4])) > 1
+                      for i in range(len(_pat) - 7))
+        chk(not (_ciclo2 or _ciclo4), 'RITMO: sin patron que se repita (§3.2)',
+            f'ritmo {_ritmo} — se repite un ciclo de {"dos" if _ciclo2 else "cuatro"} bloques. '
+            'El lector lo coge y deja de leer. Rompelo metiendo lineas sueltas seguidas')
+        _sueltas = sum(1 for n in _pat if n == 1) / len(_pat)
+        chk(_sueltas >= 0.55, 'RITMO: la linea suelta domina, +55% de los bloques (§3.2)',
+            f'ritmo {_ritmo} — solo {_sueltas:.0%} son lineas sueltas. La suelta es la base y '
+            'los bloques son la variedad, no al reves')
 
     # ⚠️ RECORDATORIO DE ENTREGA, en TODOS los pilares (Iker, 2026-08-06). El
     # validador solo ve el texto, asi que la forma de la ENTREGA no la puede

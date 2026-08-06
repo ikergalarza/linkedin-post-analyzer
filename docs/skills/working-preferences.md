@@ -41,6 +41,24 @@ El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacio
 
 Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo falso, cosas que faltan por adjuntar y sin las cuales el entregable no funciona, y contradicciones entre lo que dice el texto y lo que enseña la imagen. **No se marca** lo que es solo una opinion o una mejora opcional — si se marca todo, deja de destacar nada.
 
+## 🔴🔴 0c-BIS · ANTES DE ESCRIBIR UNA CORRECCIÓN: ¿ES GLOBAL O ES DE ESTE PILAR? (Iker, 2026-08-06)
+
+**La pregunta se hace SIEMPRE, aunque Iker no la haga.** Cada vez que él corrige algo o que sale un dato, antes de tocar ninguna receta: *¿esto vale para cualquier publicación, o solo para el pilar que tengo delante?*
+
+**EL TEST, que es el que da la respuesta sin dudar:** *¿la cosa que estoy corrigiendo existe SOLO en este pilar?*
+- **Si existe en todos → la regla es GLOBAL** y vive en `global-instructions` o aquí, no en el runbook. Formateado, ritmo de bloques, ancho de línea, bucle abierto, cómo se roba una referencia, cómo se entrega: **todo eso lo tiene cualquier post**.
+- **Si solo existe en ese pilar → es del RUNBOOK.** El bloque de menciones, el CSV de PamPam, la palabra clave del CTA, la escalera de países: un meme no tiene menciones salvo que demos crédito, así que una regla de menciones NO es global.
+
+**⛔ Por qué esto es prioritario y no una manía de orden: escribir en un runbook algo universal garantiza que se rompa en los otros cinco pilares.** No es una teoría, es lo que lleva pasando:
+| Regla | Dónde la escribí | Qué costó |
+|---|---|---|
+| Bucle abierto | `post-workflow §4.4` (meme) | Propuse un gancho de meme que desvelaba el chiste; había que moverla a `global §2.0` |
+| Vehículo vs contenido | `post-workflow §4.4` (meme) | Se rompió **cuatro veces el mismo día** en un lead magnet |
+| Medir la anatomía de la referencia | `post-workflow §4.4` (meme) | Iker: *"espero que no lo hayas aplicado solo a la receta de meme"*. A `global §2.2b-MEDIR` |
+| Ritmo de bloques | Solo en el validador, y a medias | Prohibía el `1-2-1-2` y le colé un `1-3-1-2-1-3-1-2` |
+
+**Y si es global, se dice en la entrega.** Una línea: *"esto lo he metido en `global` porque afecta a todos los pilares"*. Así Iker puede corregir la decisión antes de que envejezca dentro del sitio equivocado.
+
 ## ⭐ 0c · MIS DEDUCCIONES NO ENTRAN EN LAS RECETAS SIN QUE IKER LAS APRUEBE (Iker, 2026-07-27)
 
 **El fallo real:** el 21-jul observé que un prompt de imagen que funcionó estaba escrito en líneas sueltas, deduje que ESA era la forma correcta y lo escribí en `images §0i-3` **junto a las reglas de Iker, como si fuera una de ellas**. Encima creé una contradicción con su regla de siempre (párrafo único) que arrastré seis días. Cuando lo vio: *"yo eso no te lo he dicho en la vida, ¿alguien ha hecho un commit?"*.
