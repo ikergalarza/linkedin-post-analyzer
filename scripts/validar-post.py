@@ -1090,11 +1090,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # ensena el ARTEFACTO, no la cara, como el 12.3x de Guillermo Flor).
         # El validador solo puede mirar el texto, asi que esto no es un check:
         # es un recordatorio que se imprime siempre para que no se me pase.
-        chk(False, 'ENTREGA: ¿las TRES piezas? texto + IMAGEN + prompt del programador',
-            'la imagen del lead magnet ENSEÑA EL ARTEFACTO (la captura del recurso), '
-            'nunca la cara ni un diseno generico. 4 de nuestros 5 mejores llevan imagen; '
-            'los 16 con imagen tienen mediana 46 c y los 5 sin ella 65, o sea que una '
-            'imagen MALA resta mas de lo que suma una del monton (§4.5.-1)', aviso=True)
+        chk(False, 'ENTREGA: ¿las CUATRO piezas? texto + imagen del POST + imagen OG + prompt',
+            'son CUATRO, no tres (Iker, 2026-08-06): (1) el texto · (2) la imagen del post '
+            'de LinkedIn, 1:1 · (3) la imagen de COMPARTIR del recurso web, 1200x630, que la '
+            'mete el programador y sin ella el enlace llega como caja gris (images §0b-OG) · '
+            '(4) el prompt del programador. Y CADA brief de imagen va CON EL ENLACE a la '
+            'referencia real que calca (images §0b-REF): sin enlace me la estoy inventando. '
+            'Los 4 formatos validados y sus enlaces, en images §0b-REF-bis', aviso=True)
         m = re.search(ENTREGABLE_GENERICO, cuerpo, re.I)
         chk(not m, 'Entregable UNO y concreto, no generico (§4.5 Paso 2)',
             f'"{m.group(0)}" — la biblia hizo 1.2x · 2.3K' if m else '')

@@ -170,6 +170,46 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Tamaño recomendado: 800x800** (es el que más se repite en los que funcionaron). 480x480 también vale.
 - **⚠️ AL CALCAR UNA REFERENCIA, el formato es NUESTRO, no suyo.** Si el original es vertical (la referencia del meme del perro era **480x720**, ratio 0,67), el remix **se recompone a 1:1**: se calca la esencia, nunca el encuadre malo (`post-workflow §4.4`, tabla de qué se calca). Calcar un 2:3 es entregar un post recortado.
 - **En el prompt de imagen va escrito siempre**, con estas palabras: `en formato cuadrado 1:1`.
+- **⚠️ LA ÚNICA EXCEPCIÓN es la imagen de COMPARTIR del recurso web (`§0b-OG`), que no se publica en el feed: la recorta Open Graph, no LinkedIn.** Todo lo que se sube a un post sigue siendo 1:1.
+
+## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
+
+> **La regla:** *"no me puedes dar una propuesta de foto sin una referencia, porque entonces me estás demostrando que te la estás inventando. Tiene que estar validado en que ese mismo formato de foto ya haya funcionado, por lo tanto me tienes que pasar el enlace."*
+
+- **Aplica a TODOS los pilares, no solo al meme.** Ya estaba escrita para el meme y la generalizo aquí: cualquier brief de imagen que yo entregue **va con el enlace al post real cuyo formato estoy calcando**, y con su ratio.
+- **Prioridad: primero un post NUESTRO, y solo si no hay, uno de fuera.** Es la misma regla que el gancho (`global §0-DATOS`): si tenemos el dato en casa, el de fuera no manda.
+- **Sin enlace no hay propuesta.** Si no encuentro referencia, se dice —"no tengo referencia validada para este formato"— y se propone uno que sí la tenga. No se rellena con criterio.
+- **Y la referencia se MIRA, no se recuerda.** El 2026-08-06 iba a proponer "captura del artefacto" citando a Guillermo Flor de memoria; al bajarme las imágenes de verdad resultó que **nuestros cuatro mejores lead magnets usan cuatro formatos distintos** y ninguno era el que yo tenía en la cabeza. Las URLs de `media.licdn.com` caducan y dan 403: se refrescan con `POST /api/posts/post/{id}/refresh-media` y luego se abren.
+
+### 0b-REF-bis · LOS 4 FORMATOS DE IMAGEN DE LEAD MAGNET QUE TENEMOS VALIDADOS
+> Medidos abriendo las cuatro imágenes el 2026-08-06. **Ojo al leerlos: son 4 posts y el gancho cambia en cada uno, así que el formato de imagen no está aislado.** Se elige por SUBTIPO de lead magnet, no por el ratio a pelo.
+
+| ratio | qué enseña la imagen | subtipo al que sirve | enlace |
+|---|---|---|---|
+| **8.53x** (483c) | **Selfie natural de oficina**, sin texto ninguno | Promesa personal o entrega EN DIRECTO (*"hoy desmonto perfiles"*) | `linkedin.com/feed/update/urn:li:activity:7465685847254945793/` |
+| 4.52x (285c) | **Gráfico antes/después** con métricas reales (2.971→130.735 impresiones, 11→317 leads) | El post promete un RESULTADO medible | `…7459885839846834176/` |
+| 3.34x (183c) | **Captura real del artefacto** a la izquierda + tarjeta *"Qué incluye"* con 6 checks naranjas a la derecha + **el CTA repetido abajo dentro de la imagen** | El recurso es un PAQUETE de piezas (lista, prompts, plantillas) | `…7460629818804613120/` |
+| 2.69x (167c) | Ilustración conceptual abstracta (cajas de UI, flechas, un bocadillo naranja) | — **el más flojo de los cuatro; no lo elijas si hay artefacto que enseñar** | `…7461002377421295616/` |
+
+**El patrón que se lee de la tabla:** cuanto más abstracta es la imagen, peor va. Lo humano (selfie) arriba, lo concreto (artefacto real, cifras reales) en medio, lo conceptual abajo.
+
+## ⭐ 0b-OG · LA IMAGEN DE COMPARTIR DEL RECURSO WEB (Iker, 2026-08-06)
+
+> **Por qué existe esta sección:** lo descubrimos hace tiempo —al compartir un enlace de `recursos.neety.com` salía sin imagen— y **no lo escribí en ningún sitio**, así que en la entrega del lead magnet de `firma` volví a dejarla fuera y Iker tuvo que pasarme la referencia otra vez. Lo aprendido que no se guarda se vuelve a perder.
+
+**Es una imagen DISTINTA de la del post, y las dos hacen falta.** La del post la ve quien scrollea el feed; **esta la ve quien recibe el enlace del recurso por WhatsApp, por DM o en un mensaje de LinkedIn**, que es justo el camino por el que le llega al que ha comentado la palabra. Sin ella, el enlace llega como una caja gris y parece roto.
+
+**LA PLANTILLA (es siempre la misma, solo cambia el texto):**
+- **Formato 1.91:1, 1200x630.** Es el de Open Graph, y aquí sí, porque no pasa por el feed.
+- **Fondo berenjena `#431b44`** con un **halo magenta difuso en la esquina INFERIOR IZQUIERDA**, que sube en degradado y se apaga antes de llegar al centro.
+- **Titular a la izquierda**, ocupando el ~60% del ancho, alineado a la izquierda y centrado en vertical. **Dos líneas, en Bricolage Grotesque bold:**
+  - **Línea 1 en BLANCO** = el problema o la situación.
+  - **Línea 2 ENTERA en naranja `#fe8238`** = el remate. **Ojo, aquí la línea entera va en color, no una sola palabra** (eso es la regla del post, `§0h`; aquí no aplica).
+  - Referencia real: `Tu cliente se mueve` / `Tú no lo ves`.
+- **Formas geométricas en azul bebé `#a7c5f9` entrando en diagonal por el borde DERECHO y sangrando fuera del lienzo.** En la referencia son dos piezas de puzzle, una pequeña arriba y una grande abajo, giradas. Son decorado y masa de color: nunca tapan el texto ni llevan significado propio.
+- **Cero logo, cero footer, cero URL, cero foto.** Igual que todo lo nuestro (`§0a-bis`).
+
+**Quién la hace:** la mete el programador en la web, así que va **en el prompt del programador** junto con el gate. No se genera con IA: lleva texto en español y se compone (`§0i-2b`).
 
 ## 0c · 🎯 CÓMO SE LE PIDE UNA COLOCACIÓN (nunca digas "céntralo")
 > Técnica validada peleándose con la herramienta. Aplica a cualquier prompt de imagen, de cualquier pilar.
