@@ -92,7 +92,7 @@ RULE 1 — LANGUAGE: Write the reply in the EXACT SAME LANGUAGE as the post and 
 
 RULE 2 — VOICE: The voice_style / worldview / signature_moves below are how you actually write. The "avoid" list is words/patterns you would never use. Both are law.
 
-RULE 3 — LENGTH: 1–3 short sentences. A reply, not an essay. If a single tight line works, ship it.
+RULE 3 — LENGTH: EXACTLY ONE SENTENCE. Not two, not three — ONE (Iker, 2026-08-06). It may be a long line, but it is a single sentence and it ends with a single full stop. This applies to EVERY profile and EVERY tone, no exceptions: the voice changes the volume, never the length. If you cannot fit it in one sentence, you are saying too much — cut the idea, do not add a second sentence.
 
 RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, gently push back, or ask a sharpening question). NO generic "Thanks for sharing!" / "Great point!" filler. NO emoji unless your signature_moves explicitly include them.
 
@@ -161,7 +161,23 @@ function buildPrompt(input: ReplyGenerationInput, voice: Voice): string {
     'go straight into the concrete scene, no preamble at all',
   ];
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
-  const varietyNudge = `OPENING MOVE for THIS reply (RULE 10), decided for you: ${move}. Use THAT one. Only if the comment makes it genuinely impossible, pick a DIFFERENT move from RULE 10 — never fall back to whatever you'd have written anyway. ⛔ BURNT, do not open with these: "y lo más curioso", "lo más curioso es que", "lo curioso es que". They were showing up reply after reply. The same goes for any opener you feel pulled to write on autopilot: that pull IS the tell.`;
+
+  // La palabra de asentimiento tambien se SORTEA (Iker, 2026-08-06). El sorteo de
+  // OPENING_MOVES ya estaba y aun asi el usuario seguia viendo "exacto" en todos
+  // los perfiles: el movimiento "agree, then add…" no dice CON QUE PALABRA se
+  // asiente, asi que el modelo volvia a su favorita. Misma leccion de siempre:
+  // "da variedad" no produce variedad, produce la misma palabra. Se manda una.
+  //
+  // Las variantes con vocal estirada solo se ofrecen a las voces que ya estiran
+  // (RULE 12): en la de Unai quedarian fuera de registro.
+  const ASENTIMIENTOS = ['exacto', 'justo', 'eso es', 'tal cual', 'cierto',
+    'totalmente', 'claro', 'sin duda', 'ahí está', 'ese es el tema',
+    'y tanto', 'buen punto', 'lo has clavado', 'te compro eso'];
+  const ASENT_ESTIRADOS = ['juuusto', 'exactoo', 'eso esss', 'buenoo', 'clarooo', 'tal cuaal'];
+  const banco = voice === 'sobrio' ? ASENTIMIENTOS : ASENTIMIENTOS.concat(ASENT_ESTIRADOS);
+  const asent = banco[Math.floor(Math.random() * banco.length)];
+
+  const varietyNudge = `OPENING MOVE for THIS reply (RULE 10), decided for you: ${move}. Use THAT one. Only if the comment makes it genuinely impossible, pick a DIFFERENT move from RULE 10 — never fall back to whatever you'd have written anyway. IF your reply agrees with the commenter, the agreement word for THIS reply is "${asent}" — use that one and no other. Do NOT default to "exacto": it was showing up on every profile, which is exactly what reads as canned. ⛔ BURNT, do not open with these: "y lo más curioso", "lo más curioso es que", "lo curioso es que". The same goes for any opener you feel pulled to write on autopilot: that pull IS the tell.`;
 
   // PUNTOS SUSPENSIVOS AL CIERRE (usuario 2026-07-17). Ahora que el 1er jefe (Unai,
   // sobrio) y el 3º (Asier, medio) bajaron el volumen, les falta el gesto que en el
@@ -212,7 +228,7 @@ So this reply has TWO jobs and needs both:
 1. ENGAGE with what they actually said. They didn't only drop the keyword — they wrote something real (an opinion, their own experience, a question). React to THAT, specifically, the way you would to any good comment. This is the part that matters; a reply that skips it is worthless.
 2. CONFIRM the resource is sent, in a SHORT closing beat — "te lo acabo de mandar", "lo tienes en privado", "te lo he pasado por DM". Casual, tacked on at the end, NOT the headline of the reply.
 
-Order matters: engage FIRST, confirm LAST. Never open with "enviado" — that turns a real comment into a receipt, which is exactly what we're trying to avoid. Keep the whole thing to 2-3 short sentences even with both jobs.\n`
+Order matters: engage FIRST, confirm LAST. Never open with "enviado" — that turns a real comment into a receipt, which is exactly what we're trying to avoid. Keep the whole thing to ONE sentence even with both jobs: engage and confirm in the same breath.\n`
     : '';
 
   return `You are ${input.authorName}. Reply to a comment on your own post.
@@ -229,13 +245,12 @@ ${commenterLine}
 ${mentionInstruction}
 ${leadMagnetInstruction}
 ${varietyNudge}
-${varietyNudge}
 
 ${ellipsisNudge}
 
 ${thanksNudge}
 
-Write the reply now. Plain text, 1–3 short sentences, in the same language as the post/comment.`;
+Write the reply now. Plain text, ONE single sentence, in the same language as the post/comment.`;
 }
 
 export async function generateReply(input: ReplyGenerationInput): Promise<string> {
