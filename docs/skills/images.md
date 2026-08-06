@@ -187,6 +187,7 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - Quitar los metadatos NO basta: el del 06/08 se subió ya sin ellos y se capó igual.
 
 ## 🔴🔴 0b-TEXTO-REF · EL TEXTO DE DENTRO DE LA IMAGEN SE CALCA PALABRA POR PALABRA (Iker, 2026-08-06)
+> **🗺️ Esta es la CAPA 3 de las tres que tiene una referencia. El indice de las tres, en `global §2.2b-CAPAS`.**
 
 > **⚠️ GLOBAL: vale para el texto dentro de CUALQUIER imagen remixada, no solo del meme.** Es la misma doctrina de `global §2.2b` aplicada a lo que va DENTRO de la foto, que es donde yo la incumplo sin darme cuenta porque el texto del post ya lo tengo vigilado.
 

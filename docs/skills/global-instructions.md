@@ -488,6 +488,19 @@ Corre estas puertas EN ORDEN:
 
 **Buscamos outliers para extraer su vector viral, copiarlo, adaptarlo a ventas y MEJORARLO. No para inspirarnos.** El objetivo no es ser el primero en inventar algo: es ser **el segundo mejor**, que llega despues y lo hace mejor.
 
+#### 🗺️ 2.2b-CAPAS · LAS TRES CAPAS DE UNA REFERENCIA, Y LAS TRES SON GLOBALES (Iker, 2026-08-06)
+> **Índice único.** Iker preguntó si lo de capturar la esencia ya era global **para todo: lo visual de la foto, el texto del post y el texto que va DENTRO de la foto**. Lo estaba, pero repartido en tres sitios y con el inventario visual viviendo dentro del runbook del meme. Aquí quedan las tres nombradas juntas para que no se pierda ninguna. **Aplican a CUALQUIER pilar que parta de una referencia** (`working-preferences §0c-BIS`).
+
+| Capa | Qué se calca | Dónde está el detalle |
+|---|---|---|
+| **1 · Lo VISUAL de la foto** | Inventario de lo que SE VE, literal: objetos, personas, gestos, composición. Si hay un tatuaje, hay un tatuaje. **Nunca mi teoría de por qué funcionó** | `post-workflow §4.4-ESENCIA` |
+| **2 · El TEXTO del post** | Palabra por palabra, y además **medido**: longitud del gancho, nº de frases, emoji y dónde vive, longitud total, bloques y ritmo | `§2.2b-MEDIR` (aquí abajo) |
+| **3 · El TEXTO de DENTRO de la foto** | También palabra por palabra. **Las repeticiones del original son deliberadas y se conservan**; una pregunta sigue siendo pregunta; un sustantivo no se cambia por un primo suyo | `images §0b-TEXTO-REF` |
+
+**La capa 3 es la que se me escapa**, porque para cuando llego a ella ya he vigilado el texto del post y bajo la guardia. El 2026-08-06 tenía el post perfecto y **cinco de las diez etiquetas de la imagen cambiadas**.
+
+**Y en las tres, lo mismo: calcar es el SUELO, superarlo es la meta** (`§2.2`). Se mejora el verbo, el formateado y el ritmo; no se "mejora" cambiando el elemento que hacía el chiste.
+
 #### 📏 2.2b-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
 > **⚠️ UNIVERSAL: vale SIEMPRE que partamos de una referencia, sea el pilar que sea** — meme, lead magnet, mapa, historia, newsletter, secuencia de email. Nacio remixando un meme y por eso el detalle esta en `post-workflow §4.4-MEDIR`, pero **la regla vive aqui**, igual que le paso a `§2.0` con el bucle abierto y a `§2.2b` con el vehiculo: escribirla dentro de un runbook es garantizar que se rompe en los otros cinco.
 

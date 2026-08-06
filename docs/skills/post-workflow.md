@@ -626,6 +626,7 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > - **Regla:** mide primero cuánto de bruto es el original. Si no cabe en la cuenta que te tocaba, **cambia de cuenta**, no de chiste.
 >
 > ### 🔴🔴 4.4-ESENCIA · LA ESENCIA SE EXTRAE DE LO QUE SE VE, NUNCA DE LO QUE YO CREA (Iker, 2026-07-30)
+> **🗺️ Esta es la CAPA 1 (lo visual) de las tres que tiene una referencia. Las otras dos y el indice, en `global §2.2b-CAPAS`.**
 > **⚠️ UNIVERSAL, no solo del meme.** Vale para remixar CUALQUIER cosa: un lead magnet, un mapa, una historia. La esencia se saca del texto palabra por palabra y del inventario de lo que se ve, nunca de mi teoria de por que funciono. Enlazada desde `global §2.2b`.
 > **Iker, literal: "CLARO QUE QUEREMOS COPIAR AUNQUE SEA DESCARADO PERO MEJORANDO Y ADAPTANDO A VENTAS. NO TE VAYAS POR LAS RAMAS HACIENDO OTRA BROMA DISTINTA."**
 >
