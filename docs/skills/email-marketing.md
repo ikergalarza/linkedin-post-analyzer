@@ -359,6 +359,37 @@ Igual que en LinkedIn se avisa de adjuntar la imagen o de pasarle las tipografí
 
 ---
 
+## ⭐ 9c · OPERAR MAILERLITE — todo lo aprendido montando el correo 0 (2026-08-06)
+
+Un día entero de fricción, destilado. **Léelo antes de montar cualquier campaña.**
+
+### Lo que se edita SIEMPRE por duplicado
+**⛔ Un correo tiene DOS capas y hay que tocar las dos.** El HTML es lo que ve la gente; el **texto plano** es una versión alternativa oculta que **leen los filtros de spam**. Si el HTML va en español y el texto plano se queda en la plantilla inglesa por defecto, es una incoherencia que puntúa en contra. Cada vez que se cambia una frase, se cambia en los dos sitios.
+- **Dónde está el texto plano:** paso *Enviar o programar* → flecha desplegable junto a **"Editar contenido"** → **"Editar versión de texto plano"**. No está dentro del editor.
+- Debe terminar siempre con el `{$unsubscribe}`.
+
+### Los dos pies de página
+Hay **dos** y hay que repartirlos, o salen duplicados:
+- **Pie de la CUENTA** (Configuración de la cuenta → *Detalles de la empresa y descargo de cancelación*): nombre, dirección y aviso legal. Es el que se añade solo a todo.
+- **Pie de la CAMPAÑA** (formulario "Pie de página" dentro del editor): **solo los textos de los enlaces**. Se vacían *Nombre de la compañía*, *Detalles de la empresa* y *Aviso legal* para que no se repitan.
+- **⛔ No se puede quitar el pie de la campaña:** es el que lleva el enlace de baja, y MailerLite bloquea el envío sin él.
+- **Si los campos de texto de enlace están vacíos, sale `you_unsubscribe`**, una clave de traducción sin resolver. Hay que rellenar *Texto del enlace para cancelar suscripción* (`Darme de baja`) y *Texto de enlace del centro de preferencias* (`Cambiar mis preferencias`).
+- 🔴 **Y marcar las casillas "Forzar la actualización… en borradores"**, o los cambios NO llegan a la campaña ya creada. **Esta fue la causa de que pareciera que nada se guardaba.**
+
+### Ajustes que se olvidan y muerden
+- **Idioma: por CAMPAÑA, no por cuenta.** No se hereda de una campaña a otra ni de la cuenta. Controla el pie legal y la página de baja.
+- **Zona horaria de la cuenta:** venía en UTC+0. Con eso, un envío programado sale **2 horas antes** de lo que pusiste, sin avisar.
+- **Banner "Sent by MailerLite":** se quita en Configuración de la cuenta → *MailerLite branding*. Incluido desde el plan Comfort.
+- **Los correos de PRUEBA no generan enlaces de baja ni de preferencias reales**: no se pueden pulsar. Es lo único del checklist que solo se verifica enviando de verdad.
+
+### Una campaña = un envío
+Una campaña **solo se puede enviar una vez**. Cada tanda es una campaña distinta: se nombra `… Tanda 1`, `Tanda 2`, y **la siguiente se DUPLICA de la anterior** (arrastra idioma, texto plano, UTM y pie ya resueltos). 🔴 Lo único que hay que cambiar al duplicar es el **grupo de destinatarios**, y verificar el contador antes de enviar.
+
+### Lo que sí funcionó a la primera
+El correo llegó a **bandeja Principal de un Gmail externo**, ni Promociones ni Spam. No fue suerte: texto dominante, **un solo enlace**, sin plantilla de marketing con botones ni banners, tono personal y dominio autenticado. **Es la validación del formato que define esta skill.**
+
+---
+
 ## 10 · Huecos pendientes (preguntar, no adivinar)
 
 - [ ] **Herramienta de envío — RECOMENDADA: MailerLite Comfort (~$19/mes con 1.000 suscriptores, verificado en su web el 2026-07-27; $49 al llegar a 5.000). Pendiente del OK del jefe.** Por qué: ganadora doble en los dos análisis independientes que nos pasó Mario (el de gratuitas y el de 26 de pago), automatizaciones completas (cubre la secuencia de bienvenida), analíticas enteras (aperturas, CTR, mapa de clics, A/B, informes comparativos), facturación justa (no cobra bajas, sube Y baja de tramo), autenticación de dominio automatizada (~20 s, clave para calentar) y **API + integración nativa con Claude/MCP** (su tabla de planes la lista), que es lo que esta skill necesita para programar correos. Klaviyo (lo de Carmen) se descarta: más caro a nuestro tamaño y el análisis de 26 lo eliminó por no bajar de plan solo; Mailchimp descartado por sus prácticas de facturación (los apuntes lo destrozan); Resend es para transaccional de developers, no para marketing con campañas; Brevo es digno rival barato pero perdió contra MailerLite en los dos análisis. ⚠️ El plan Free de MailerLite ya NO es de 1.000 contactos como decía el vídeo: hoy son 250 subs / 2.500 emails/mes (verificado 2026-07-27) → con nuestra base de ~1.000 toca pago desde el día 1.
@@ -366,5 +397,7 @@ Igual que en LinkedIn se avisa de adjuntar la imagen o de pasarle las tipografí
 - [ ] **Firma-mantra** de la casa (ver §3.7): decisión de marca.
 - [ ] **Tokens de personalización** ({nombre}…): depende de la herramienta elegida y de qué campos tenemos (muchos contactos son solo un correo).
 - [ ] **Etiqueta `newsletters` en el Gmail** de Iker para que el análisis periódico del corpus (§8) sea un filtro limpio.
-- [ ] **Kaixito:** confirmar cómo se presenta (¿tiene imagen/avatar en el email? ¿remite desde kaixito@neety.com?).
+- [ ] 🔴 **FOTO DEL REMITENTE — avisar a Mario en CADA correo hasta que se resuelva (pedido por él, 2026-08-06).** Hoy los correos salen con la inicial genérica de Gmail en vez de un icono. **No se arregla subiendo una imagen a MailerLite:** es **BIMI**, y requiere DMARC en modo estricto (`p=quarantine` o `p=reject`), un registro DNS de BIMI y un **certificado de pago de 650-1.100 $/año** que tarda 1-3 semanas. Descartado también crear una cuenta de Google para `hola@`: en envíos masivos Gmail no consulta el perfil del remitente.
+  - **Y cuando se haga, va el ISOTIPO, no Kaixito:** BIMI se aplica **por dominio**, así que el mismo logo saldría en todos los correos de `neety.com`, incluidos los comerciales de los founders.
+- [ ] **Kaixito:** confirmar cómo se presenta (¿remite desde kaixito@neety.com?).
 - [ ] **Export del Google Chat de feedback de producto** (dolores reales de clientes en demos/reuniones): cuando llegue (vía Google Takeout, ZIP al Escritorio), se destila a `docs/skills/dolores-clientes.md` y pasa a ser LA fuente del echo marketing (§5) para emails, posts y spam ninja. Hasta entonces, los dolores salen de `aboutme §1b` (tabla de contrastes) y de lo que cuente Iker.
