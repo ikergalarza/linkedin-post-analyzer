@@ -653,6 +653,20 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 >
 > **El test antes de entregar:** pon las dos listas al lado de tu version. **Cada elemento de la lista tiene que tener su equivalente reconocible en el remix.** Si falta uno, no es un remix, es otro post.
 >
+> ### 📏 4.4-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
+> **`python scripts/anatomia-referencia.py original.txt mio.txt` antes de entregar.** Copié el tema y el motor del meme de Daniel Disney y no medí nada, y salió esto:
+> ```
+> ORIGINAL  hook 34 car | 1 frase  | emoji 🤣
+> EL MIO    hook 62 car | 2 frases | emoji 👇
+> ```
+> Iker: *"no puede ser que el gancho original sea tan corto con un emoji de risa y el nuestro sea el doble de largo, dos frases en vez de una, y el emoji de la mano en vez del suyo. Todo lo queremos validar en datos. En las referencias igual: analiza su ritmo, su lenguaje, sus conjugaciones, su longitud, sus emojis, todo."*
+> - **Longitud del hook:** el inglés dice lo mismo con menos palabras, así que se admite margen, **pero no el DOBLE**.
+> - **Nº de frases del hook:** una frase es una frase. Partirla en dos se carga el golpe seco.
+> - **El emoji del hook se calca**, no se sustituye: 🤣 anuncia broma y 👇 anuncia lista. **Y se mira DÓNDE vive cada emoji**: aquí el 👇 estaba en el CIERRE, no en el hook, así que copiarlo al hook es ponerlo donde el original no lo puso.
+> - **Longitud total y nº de bloques:** 1.289 car y 17 bloques contra 773 y 9 es habernos dejado media publicación.
+> - **El ritmo es donde SÍ mejoramos**: bloques de 2 y 3 en escalera y líneas sueltas. Su ritmo puede ser peor que el nuestro; la longitud y el hook, no.
+> - **Lo que NO se calca se dice en la entrega, para que sea decisión y no descuido.** Aquí, el cierre: el suyo remata con pregunta + 👇 y el nuestro con un bold statement, porque `global §4.5` pide un solo CTA y ese hueco ya lo ocupa el spam ninja.
+>
 > ### 🔒 4.4-BUCLE · →→ ESTA REGLA SE MUDÓ A `global-instructions §2.0` (Iker, 2026-07-31)
 > **El bucle abierto es de TODOS los pilares, no del meme ni del lead magnet.** La escribí aquí y en `§4.5` como si fuera de pilar, y por eso propuse un gancho de meme que desvelaba el chiste. **Vive en `global §2.0` y ahí se lee.** Lo único específico del meme: al haber imagen, el bucle es doble — el gancho tampoco cuenta lo que se ve.
 >

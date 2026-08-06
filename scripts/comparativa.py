@@ -69,8 +69,11 @@ def comparativa(izq, der, cab_izq='ORIGINAL', cab_der='EL MÍO'):
     a += [''] * (n - len(a))
     b += [''] * (n - len(b))
     pad = lambda s: s + ' ' * (W - ancho(s))
+    # La regla horizontal, discontinua con POCOS cortes (Iker, 2026-08-06): con
+    # '┄' salian demasiados y quedaba sucia. Trazos largos y huecos escasos.
+    regla = ('──── ' * (W // 5 + 2))[:W]
     return '\n'.join(
-        [pad(cab_izq) + ' ┊ ' + cab_der, '┄' * W + '┄┼┄' + '┄' * W] +
+        [pad(cab_izq) + ' ┊ ' + cab_der, regla + '─┼─' + regla] +
         [(pad(a[i]) + ' ┊ ' + b[i]).rstrip() for i in range(n)]
     )
 
