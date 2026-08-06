@@ -943,12 +943,33 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # <24h, 2.014 el de Guillermo) NO pide 2º dato: una palabra IGUAL para todos
         # y un recurso GENÉRICO (una guía), y la captura la hace la LANDING con gate
         # de correo, no el comentario (`§4.5.1`). Con --generico este check se salta.
+        # ⭐ 2026-08-06, medido en NUESTROS 10 lead magnets con mas comentarios.
+        # Iker dudaba porque la competencia pide UNA sola palabra y porque nuestro
+        # #1 tambien la pide. Los numeros dicen lo contrario:
+        #   CON 2o dato  (4 posts: 483·285·183·167) -> mediana 234 c · 11.638 imp
+        #   SOLO palabra (6 posts: 632·232·177·129·104·65) -> mediana 153 c · 8.522 imp
+        # Un 53% mas de comentarios pidiendo el dato. La hipotesis de Iker es que
+        # comentarios TODOS IGUALES ("vibe", "vibe", "vibe") le huelen a LinkedIn
+        # a coordinacion y nerfea el alcance; el 2o dato los hace distintos.
         if not generico:
-            chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento)'
+            chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento|emoji)'
                                r'|(y|\+)\s+(el\s+enlace\s+de\s+)?(tu|su)\s+(web|p[aá]gina|url|landing)',
                                cuerpo, re.I)),
                 'CTA con la palabra + el 2º dato (sector si es DM, web si es público) (§4.4)',
-                'el "mes de cumpleaños" ya flopeó a 0.57x: el 2º dato tiene que ser el que necesitas para responderle')
+                'con 2º dato sacamos 234 comentarios de mediana y sin él 153, medido en '
+                'nuestros 10 mejores. Y ojo, el dato tiene que ser el que necesitas para '
+                'responderle: el "mes de cumpleaños" no servía para nada y flopeó a 0.57x')
+        # ⚠️ Iker tiene "descargar/instalar/gratis" prohibidas en su marca personal.
+        # En LinkedIn NO nos penalizan —medido: gratis 15 posts, mediana 3.884 imp
+        # contra 3.371 del corpus, y va en el gancho de nuestro #2 (483 c)—, asi que
+        # gratis NO se marca. Instalar y descargar solo tienen 3 y 1 post: no hay
+        # muestra para defenderlas, y casi siempre se dicen mejor de otra forma.
+        _pref = re.search(r'\b(instalar|instalaci[oó]n|descargar|descarga)\b', cuerpo, re.I)
+        chk(not _pref, 'Sin "instalar"/"descargar" (preferencia de marca de Iker)',
+            (f'dice "{_pref.group(0)}". No hay dato de que penalicen (3 y 1 post en todo el '
+             'corpus), pero Iker las tiene vetadas y suelen sobrar: "No hay nada que montar" '
+             'dice lo mismo. Ojo, "gratis" SI vale: 3.884 de mediana y esta en el gancho '
+             'del de 483 comentarios') if _pref else '', aviso=True)
 
     # ---------- AUDITORIA 2026-07-20 · POR PILAR ----------
     _flechas = [l for l in cuerpo.splitlines() if re.match(r'^\s*→\s', l)]

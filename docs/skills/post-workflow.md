@@ -1014,6 +1014,17 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 - Mecanizado: el validador falla ante `sin pagar` · `sin herramienta` · `no necesitas pagar` · `sin suscripción` y similares en el cuerpo de un lead magnet.
 - **Y de aquí, la longitud de la lista: números IMPARES (Iker, 2026-08-05).** Al caerse el prompt falso quedaban 5 en vez de 6 y **mejor así**: 5 y 7 rinden más que 4 y 6 en lista numerada. Si al quitar algo te queda par, quita otro o añade otro.
 
+**5 · EL CTA PIDE LA PALABRA **Y UN SEGUNDO DATO** (medido en los nuestros, 2026-08-06).** Iker dudaba porque la competencia pide una sola palabra y porque nuestro #1 (`vibe`, 632c) también. Los diez nuestros con más comentarios dicen lo contrario:
+
+| | posts | mediana comentarios | mediana impresiones |
+|---|---|---|---|
+| **Con 2º dato** (483 · 285 · 183 · 167) | 4 | **234** | **11.638** |
+| Solo palabra (632 · 232 · 177 · 129 · 104 · 65) | 6 | 153 | 8.522 |
+
+**Un 53% más de comentarios pidiendo el dato.** La hipótesis de Iker, que explica el porqué: 600 comentarios idénticos (`vibe`, `vibe`, `vibe`) le huelen a LinkedIn a coordinación y nerfea el alcance; el segundo dato los hace todos distintos. Datos usados: `+ tu sector` · `+ tu departamento` · `+ tu emoji favorito`. **El dato tiene que servir para responderle**: el `+ tu mes de cumpleaños` no servía para nada y flopeó a 0.57x.
+
+**6 · PALABRAS VETADAS EN LA MARCA PERSONAL DE IKER: `descargar`, `instalar`, `gratis` (Iker, 2026-08-06).** En LinkedIn **no nos penalizan** —medido: `gratis` sale en 15 posts con mediana de 3.884 impresiones contra 3.371 del corpus entero, y está en el gancho de nuestro **#2** (*"Hoy desmonto perfiles de LinkedIn gratis"*, 483c)—. **Así que `gratis` se usa sin miedo.** `instalar` (3 posts) y `descargar` (1) no tienen muestra que las defienda y casi siempre sobran: *"No hay nada que montar"* dice lo mismo. El validador las marca como aviso, no como fallo.
+
 #### ⭐⭐ 4.5.0b · EL MODELO GENÉRICO — PATRONES DE MARTINA ROSA Y GUILLERMO FLOR (Iker, 2026-07-24)
 
 🎯 **ESTE PILAR SE MIDE CONTRA ELLOS, NO CONTRA NUESTRO HISTORIAL (Iker, 2026-07-24).** No tenemos la estrategia de lead magnet pulida como los mapas o los memes: casi no hay datos de éxito nuestros, así que **NO te fíes de nuestros flops** (ni de las reglas que salieron de ellos). El único dato interno fiable es el **9.85x de Unai**, que además usó ESTE formato (última hora + temática tipo IA, parecida a la suya). La **vara de medir de TODA la publicación —hook, cuerpo E imagen— son Martín Arosa y Guillermo Flor.** Es el pilar más valioso para conversión (captura correos → email marketing) y hay que recuperarlo. El validador `--generico` ya mide contra ellos: hook (corto ≤90, sin cifras, sin 👇, con alarma) y cuerpo (lista numerada + largo); la imagen, la captura del recurso (punto 6).
