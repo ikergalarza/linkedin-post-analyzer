@@ -50,6 +50,11 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 - **Sin "hola" ni saludos** — tampoco en la primera línea del cuerpo (Carmen: salirse de la norma del email corporativo es parte del efecto).
 - El asunto de un email de la newsletter NO necesita ancla de ventas explícita como el hook de LinkedIn (el lector ya sabe quiénes somos: está suscrito), pero sí tiene que tocar un problema o curiosidad real del que vende.
 
+**⭐ A/B DE ASUNTO (verificado en nuestra cuenta el 2026-08-06):** MailerLite permite testar **solo el asunto** manteniendo el mismo cuerpo (`type: "ab"`, `test_type: "subject"`). ⚠️ El conector MCP **no** puede configurarlo entero: solo admite un campo de asunto, así que la variante B se mete en el panel.
+- **⛔ Y ojo con qué se mide.** El A/B declara ganador por APERTURAS. Si el correo tiene otra métrica (respuestas, en el correo 0), **el ganador se decide por esa métrica, no por la que declare la herramienta.** Un asunto agresivo puede abrir más y hacer responder menos.
+- **No se hace A/B en las tandas de calentamiento.** Con 25-50 por variante no mide nada. El A/B va en la tanda grande, cuando ya hay volumen.
+- **Sesgo de negatividad (Mario, 2026-08-06):** un asunto en negativo ("¿no te acuerdas de mí?") suele abrir más que su versión neutra, y es un efecto real y documentado. El riesgo no está en la apertura sino en que un reproche baje la respuesta. **Es exactamente el tipo de cosa que hay que testar en vez de decidir a ojo.**
+
 **Preview text: SIEMPRE manual, nunca el automático.** Completa el asunto o estira el gap; no lo repitas. Es la segunda línea del "hook" del inbox.
 
 **Taxonomía de asuntos del corpus (353 clasificados, % aprox.) — rota entre tipos, no te cases con uno:**
@@ -315,6 +320,26 @@ Javi Consuegra (`javi@saleshackers.es`, herramienta: beehiiv/Encharge) vende for
 - Fuera del bloque: pilar, segmento objetivo, el porqué del ángulo, los avisos 🔴 y los datos con su año (entrega interna).
 - **Validador mecánico:** `python scripts/validar-email.py <fichero.txt>` y pegar el resultado en la entrega, como con los posts. Si esa línea falta, es que se ha saltado.
 - **Pase de criterio en silencio** (lo que el script no ve): ¿el asunto abre un gap real o describe? ¿la primera línea recompensa? ¿una sola idea? ¿el remitente encaja con el tema? ¿el caso es real? ¿el ángulo no está quemado de emails anteriores (mirar `historial-newsletter.md`)?
+
+### ⭐ 9b · AVISOS DE PRE-ENVÍO — se pegan SIEMPRE debajo del texto entregado (Iker, 2026-08-06)
+Igual que en LinkedIn se avisa de adjuntar la imagen o de pasarle las tipografías al diseñador, **toda entrega de un correo termina con esta lista**. No es opcional y no se resume: se pega entera, porque es lo que se olvida cuando hay prisa.
+
+```
+🔴 ANTES DE ENVIAR A NADIE:
+1. Prueba a `testers` (mínimo 4, y que NO sean los 4 el mismo cliente de correo).
+2. RESPONDER a esa prueba y comprobar que la respuesta llega al buzón que se lee.
+3. Abrirlo en MÓVIL y en modo OSCURO.
+4. Que el pie legal y la baja salgan UNA sola vez y en ESPAÑOL.
+5. Que el GIF anime, y que su primer fotograma se entienda solo (Outlook lo congela).
+6. Que los enlaces del cuerpo y de la PD lleven donde tienen que llevar.
+7. Test de spam (Mail-Tester o equivalente) antes del primer envío masivo del dominio.
+8. Comprobar si cae en Principal o en Promociones.
+9. Destinatarios apuntados al GRUPO correcto, no a "todos los suscriptores".
+10. Envío ESCALONADO: nunca la lista entera de golpe.
+```
+
+- **El nº 2 es el más importante y el que más se olvida:** si las respuestas no llegan al buzón, un correo de re-permiso no vale absolutamente nada, y no te enteras hasta que es tarde.
+- **El nº 9 ha estado a punto de fallar de verdad** (2026-08-06): la campaña se quedó apuntada a "todos los suscriptores" con 1.333 contactos mientras el plan era mandar a 50.
 - **Resumen al final** de cada entrega (`working-preferences §0b`).
 
 ---
