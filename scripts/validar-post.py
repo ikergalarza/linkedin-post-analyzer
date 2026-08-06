@@ -32,10 +32,10 @@ HISTORIAL = os.path.join(RAIZ, 'docs', 'skills', 'historial-publicaciones.md')
 
 # brand-voice §3 — tabla de AI-tells, "en cuanto uno aparezca en un borrador,
 # cambialo antes de entregar". Lista literal cerrada.
-AI_TELLS = (r'(lo m[aá]s importante|lo fundamental|lo esencial|es (fundamental|crucial|clave) que'
+AI_TELLS = (r'\b(lo m[aá]s importante|lo fundamental|lo esencial|es (fundamental|crucial|clave) que'
             r'|hoy en d[ií]a|en la actualidad|en el mundo actual|sin embargo|no obstante|asimismo'
             r'|por lo tanto|en consecuencia|de esta manera|posibilita|optimizar|maximizar|potenciar'
-            r'|numerosos|en definitiva|en resumen|en conclusi[oó]n|la clave est[aá] en|el secreto es)')
+            r'|numerosos|en definitiva|en resumen|en conclusi[oó]n|la clave est[aá] en|el secreto es)\b')
 
 # global §2.8 y §6 — cierres quemados. El validador ya miraba OPENERS; estos
 # viven al FINAL y no los veia nadie.
@@ -48,8 +48,8 @@ NEGRITA_UNICODE = r'[𝐀-𝟿]'
 # post-workflow §4.5 Paso 2 — el entregable generico esta MUERTO.
 # Medido: "biblia de ventas" 1.2x · 2.3K impresiones, contra 8.52x y 9.85x de
 # los entregables de UNA cosa concreta.
-ENTREGABLE_GENERICO = (r'(biblia|todo mi material|todos mis recursos|toda mi (caja|carpeta|colecci[oó]n)'
-                       r'|en una caja|el pack completo|arsenal)')
+ENTREGABLE_GENERICO = (r'\b(biblia|todo mi material|todos mis recursos|toda mi (caja|carpeta|colecci[oó]n)'
+                       r'|en una caja|el pack completo|arsenal)\b')
 
 # post-workflow §4.5 puerta 4 — CTA implicita DEPRECADA: "hundieron el conteo de
 # comentarios en dos A/B independientes".
@@ -359,7 +359,7 @@ def normalizar_entidad(x):
     import unicodedata
     x = unicodedata.normalize('NFD', x or '')
     x = ''.join(c for c in x if unicodedata.category(c) != 'Mn').lower()
-    x = re.sub(r'(s\.?a\.?u?\.?|s\.?l\.?u?\.?|group|grupo|holding|company)', '', x)
+    x = re.sub(r'\b(s\.?a\.?u?\.?|s\.?l\.?u?\.?|group|grupo|holding|company)\b', '', x)
     x = re.sub(r'[^a-z0-9ñ ]', ' ', x)
     return re.sub(r'\s+', ' ', x).strip()
 
@@ -585,11 +585,11 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
 
     # brand-voice §4.5 — el nombre del founder gana al del producto. Como mucho
     # UNA vez y nunca en el hook. El check viejo solo miraba el spam ninja.
-    _neety = len(re.findall(r'Neety', cuerpo, re.I))
+    _neety = len(re.findall(r'\bNeety\b', cuerpo, re.I))
     chk(_neety <= 1, 'Neety se nombra como mucho UNA vez (brand-voice §4.5)',
         f'{_neety} veces' if _neety > 1 else '')
-    chk(not re.search(r'Neety', hook_txt, re.I), 'Neety NUNCA en el hook (brand-voice §4.5)',
-        'el post vende al pensador, no al producto' if re.search(r'Neety', hook_txt, re.I) else '')
+    chk(not re.search(r'\bNeety\b', hook_txt, re.I), 'Neety NUNCA en el hook (brand-voice §4.5)',
+        'el post vende al pensador, no al producto' if re.search(r'\bNeety\b', hook_txt, re.I) else '')
 
     # global §4.4b + outliers §3.14 — el link va SIEMPRE a recursos.neety.com
     # (dominio propio), nunca a web ajena. Los CTR mas altos del historico no
@@ -597,7 +597,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # Desde 2026-07-23 el mapa enlaza a recursos.neety.com/mapas/{region} (la web
     # embebe el mapa completo, el jefe ya pago PamPam) en vez de a /agendar/:
     # ambos son recursos.neety.com, asi que este check los acepta igual.
-    _urls = re.findall(r'https?://\S+|[\w.-]+\.(?:com|es|city|io)\S*', cuerpo)
+    _urls = re.findall(r'https?://\S+|\b[\w.-]+\.(?:com|es|city|io)\S*', cuerpo)
     _fuera = [u for u in _urls if 'recursos.neety.com' not in u and 'linkedin.com' not in u]
     # ⭐ EL EVENTO ENLAZA DIRECTO A LUMA Y NO SE AVISA DE NADA (Iker, 2026-08-05).
     # Propuse montar recursos.neety.com/evento para que el clic fuera nuestro, y
@@ -657,7 +657,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             # Aunque global §4.4b diga que el spam ninja no consume la regla del UNO,
             # en la practica compite: el que iba a clicar se va a comentar, y la
             # prioridad es el clic. El cierre es un bold statement, no otro CTA.
-            m = re.search(r'(etiqueta|etiquetad|menciona|comenta|comparte)\w*', cuerpo, re.I)
+            m = re.search(r'\b(etiqueta|etiquetad|menciona|comenta|comparte)\w*\b', cuerpo, re.I)
             chk(not m, 'Con spam ninja, el cierre NO es otro CTA (§4.4 Paso 5)',
                 f'"{m.group(0)}" apila un 2o CTA sobre el enlace. Cierra con bold statement'
                 if m else '')
@@ -788,7 +788,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         chk('luma.com/ujffj66o' in texto,
             'EVENTO: lleva el enlace de inscripción (§4.4b)',
             'falta https://luma.com/ujffj66o. Un post de evento sin el enlace no sirve de nada')
-        _agenda = re.search(r'(agenda|programa|ponencias?|horario|charlas?).{0,40}(ser[aá]|habr[aá]|incluye)',
+        _agenda = re.search(r'\b(agenda|programa|ponencias?|horario|charlas?)\b.{0,40}\b(ser[aá]|habr[aá]|incluye)',
                             texto, re.I)
         chk(not _agenda, 'EVENTO: vende la SALA, no el programa (§4.4b)',
             'el motor validado es QUIEN esta dentro y por que se ha elegido a mano, '
@@ -959,6 +959,21 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 'con 2º dato sacamos 234 comentarios de mediana y sin él 153, medido en '
                 'nuestros 10 mejores. Y ojo, el dato tiene que ser el que necesitas para '
                 'responderle: el "mes de cumpleaños" no servía para nada y flopeó a 0.57x')
+        # ⛔ UN SOLO CTA (Iker, 2026-08-06). "Conecta conmigo para que pueda
+        # escribirte" convierte el cierre en DOS llamadas a la accion y parte la
+        # atencion justo donde no toca. Medido en nuestros 23 lead magnets:
+        #   CON "conecta"  3 posts | mediana 65 c | MAXIMO 177 c
+        #   SIN "conecta" 20 posts | mediana 41 c | MAXIMO 632 c
+        # La mediana enganya (n=3), lo que manda es que NINGUNO de nuestros SEIS
+        # mejores lo lleva: los tres que lo llevan son el 177, el 65 y el 46.
+        # Ya no hace falta: el recurso se entrega con el enlace del gate, que se
+        # puede responder en el propio comentario sin ser contacto de 1er grado.
+        _2cta = re.search(r'\bconect(?:a|ar|es|amos)\b|\bs[ií]gueme\b|\bmand[aá]me un (?:dm|mensaje)\b',
+                          cuerpo, re.I)
+        chk(not _2cta, 'UN SOLO CTA: sin "conecta conmigo" ni segundo pedido (§4.4)',
+            (f'dice "{_2cta.group(0)}" despues del CTA de comentar. Son DOS acciones y el '
+             'techo con esa linea es 177 comentarios; sin ella es 632. Ninguno de nuestros '
+             '6 mejores la lleva') if _2cta else '')
         # ⚠️ Iker tiene "descargar/instalar/gratis" prohibidas en su marca personal.
         # En LinkedIn NO nos penalizan —medido: gratis 15 posts, mediana 3.884 imp
         # contra 3.371 del corpus, y va en el gancho de nuestro #2 (483 c)—, asi que
@@ -1182,7 +1197,34 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
 
     return r
 
+def _autochequeo():
+    """El validador se valida a si mismo antes de validar nada.
+
+    2026-08-06: 12 regex del fichero tenian un 0x08 (BACKSPACE) donde debia ir
+    un \\b. Un regex que empieza por 0x08 exige un byte que no aparece nunca en
+    un post, asi que NO CASA JAMAS y el check sale OK sin comprobar nada. Habia
+    checks muertos desde hacia semanas: AI_TELLS, "Neety NUNCA en el hook",
+    ENTREGABLE_GENERICO, el de menciones y el de la agenda del evento.
+
+    CAUSA: parchear este fichero escribiendo Python por heredoc de shell. El
+    '\\\\b' del parche llega a Python como '\\b' y Python lo escribe como el
+    caracter de control. Por eso los parches van con la herramienta de edicion,
+    nunca por heredoc. Un fallo silencioso en el validador es peor que no tener
+    validador: da un 45/45 falso y encima te deja tranquilo.
+    """
+    import inspect
+    src = inspect.getsource(inspect.getmodule(_autochequeo))
+    malos = sorted({hex(ord(c)) for c in src if ord(c) < 9 or ord(c) == 11 or ord(c) == 12})
+    if malos:
+        print(f'\n  ⛔ VALIDADOR CORRUPTO: caracteres de control {malos} en el propio script.')
+        print('     Son \\b de regex que se convirtieron en bytes literales.')
+        print('     Los checks que los usan NO CASAN NUNCA y salen OK en falso.')
+        print('     Arregla el script antes de fiarte de ningun resultado.\n')
+        sys.exit(2)
+
+
 def main():
+    _autochequeo()
     ap = argparse.ArgumentParser()
     ap.add_argument('fichero')
     ap.add_argument('--pilar', required=True,
