@@ -1084,6 +1084,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 'despues de la lista solo corrige la objecion; antes la evita' if _pos_beat > _pos_lista else '')
 
     if pilar == 'leadmagnet':
+        # ⚠️ RECORDATORIO DE ENTREGA (Iker, 2026-08-06). La receta dice desde
+        # hace semanas que este pilar entrega TRES piezas y yo entregue dos: me
+        # deje la imagen, y encima con un dato claro sobre cual va (§4.5.-1: se
+        # ensena el ARTEFACTO, no la cara, como el 12.3x de Guillermo Flor).
+        # El validador solo puede mirar el texto, asi que esto no es un check:
+        # es un recordatorio que se imprime siempre para que no se me pase.
+        chk(False, 'ENTREGA: ¿las TRES piezas? texto + IMAGEN + prompt del programador',
+            'la imagen del lead magnet ENSEÑA EL ARTEFACTO (la captura del recurso), '
+            'nunca la cara ni un diseno generico. 4 de nuestros 5 mejores llevan imagen; '
+            'los 16 con imagen tienen mediana 46 c y los 5 sin ella 65, o sea que una '
+            'imagen MALA resta mas de lo que suma una del monton (§4.5.-1)', aviso=True)
         m = re.search(ENTREGABLE_GENERICO, cuerpo, re.I)
         chk(not m, 'Entregable UNO y concreto, no generico (§4.5 Paso 2)',
             f'"{m.group(0)}" — la biblia hizo 1.2x · 2.3K' if m else '')
