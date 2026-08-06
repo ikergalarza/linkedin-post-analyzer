@@ -217,14 +217,20 @@ def main():
     else:
         checks.append(ok('Cifras en dígito'))
 
-    # --- P.S. (aviso, no fallo: Kaixito puede no llevarlo) ---
+    # --- PD (aviso, no fallo: Kaixito puede no llevarlo) ---
+    # En ESPAÑOL la postdata es PD, no P.S. Medido el 2026-08-06 sobre el corpus
+    # español entero (Timepack + Hugo López + Sales Hackers + newsletters):
+    # 453 "PD" y 141 "PPD" contra CERO "P.S.". El P.S. es un anglicismo.
+    tiene_pd = re.search(r'^\s*p\.?\s?d\.?[:. ]', cuerpo_low, re.M)
     tiene_ps = re.search(r'^\s*p\.?\s?s\.?[:. ]', cuerpo_low, re.M)
-    if tiene_ps:
-        checks.append(ok('Lleva P.S.'))
+    if tiene_ps and not tiene_pd:
+        checks.append(fallo('Usa "P.S." en vez de "PD" (corpus español: 453 PD, 0 P.S.)'))
+    elif tiene_pd:
+        checks.append(ok('Lleva PD'))
     elif rem == 'kaixito':
-        checks.append(aviso('Sin P.S. (en Kaixito es opcional)'))
+        checks.append(aviso('Sin PD (en Kaixito es opcional)'))
     else:
-        checks.append(fallo('Sin P.S. (email-marketing §4b: en emails importantes, siempre)'))
+        checks.append(fallo('Sin PD (email-marketing §4b: en emails importantes, siempre)'))
 
     # --- preview: sin techo medido, aviso a partir de 100 chars ---
     if preview and len(preview) > 100:

@@ -147,8 +147,11 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 - **Kaixito:** CTA de relación ("respóndeme y me lo cuentas") o ninguno.
 - Un solo CTA por email. Varía el copy entre emails (`working-preferences §4`: nunca dos seguidos con el mismo cierre).
 
-### 4b · El P.S.
-En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, a veces P.S.+P.P.S.). Usos, por orden de valor:
+### 4b · La PD
+
+> **⛔ EN ESPAÑOL SE ESCRIBE "PD", NUNCA "P.S." (medido el 2026-08-06).** Sobre el corpus español entero (Timepack + Hugo López + Sales Hackers + newsletters): **453 "PD" y 141 "PPD" contra CERO "P.S."**. El "P.S." es un anglicismo y delata traducción. Cuando hay dos postdatas, la segunda es **PPD**. Está en el validador.
+
+En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, a veces PD+PPD). Usos, por orden de valor:
 1. **Motor de referidos, no de venta** (el uso nº 1 de Timepack): pedir el reenvío. En B2B el reenvío interno es multithreading gratis: *"P.S. Si esto le sirve a tu director comercial, reenvíaselo."* La pila de 3 P.S. de Timepack es plantilla: gustado→reenvía / te lo reenviaron→suscríbete / ¿quieres irte?→**baja sin drama** ("Cero dramas. Aquí.").
 2. **Reforzar el CTA bajando fricción:** *"P.S. No sería una demo genérica; la idea es revisar vuestro proceso."*
 3. **Derivar:** *"P.S. Si no eres la persona adecuada, ¿quién lleva esto en tu equipo?"*
