@@ -623,6 +623,39 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'no es obligatorio (el 15.0x cierra con ✨) pero es la opcion por defecto'
             if not _mano else '', aviso=True)
 
+    # ── §3.2 · ANCHO DE LINEA y RITMO (Iker, 2026-08-06) ─────────────────────
+    # Dos cosas que la receta pedia desde siempre y que el validador NO miraba,
+    # y por eso se me colaron en verde tres veces en una semana.
+    #
+    # 1) ANCHO. Contaba las lineas que YO escribo, no las que LinkedIn PINTA.
+    #    Una linea de 95 caracteres es una linea aqui y dos en el movil, asi que
+    #    un "bloque de dos" acaba leyendose como cuatro.
+    #    ⚠️ HONESTIDAD SOBRE EL DATO: medido en 651 lineas de outliers y 2.874 de
+    #    flops, las lineas largas NO correlacionan con el rendimiento — 17,8% de
+    #    lineas >80 en los outliers contra 14,8% en los flops. Es CRITERIO DE
+    #    OFICIO de Iker, no una palanca de alcance, asi que va como AVISO y no
+    #    cuenta en el marcador. Los enlaces se saltan: miden lo que miden.
+    _largas = [l for b in bloques(texto) for l in b
+               if len(l.strip()) > 80 and 'http' not in l
+               and not l.strip().startswith(('→', '❌', '✅'))]
+    chk(not _largas, 'Ninguna linea pasa de 80 caracteres (§3.2)',
+        (f'{len(_largas)} linea(s) se parten en dos en el movil, y ahi un bloque de dos '
+         f'se lee como cuatro. La peor: "{max(_largas, key=len).strip()[:60]}…"')
+        if _largas else '', aviso=True)
+
+    # 2) RITMO. `1-2-1-2-1-2` es un metronomo: el lector coge el patron y deja de
+    #    leer. Iker, 2026-08-06: "superpredecible, es horrible". Se exige AL MENOS
+    #    UN BLOQUE DE TRES y que no se alterne 1-2 mas de dos veces seguidas.
+    _pat = [len(b) for b in bloques(texto)]
+    if pilar in ('meme', 'mapa', 'los10', 'historia', 'leadmagnet', 'evento') and len(_pat) >= 6:
+        _ritmo = '-'.join(map(str, _pat))
+        chk(any(n >= 3 for n in _pat), 'RITMO: al menos un bloque de TRES (§3.2)',
+            f'ritmo {_ritmo} — todo unos y doses se lee como un metronomo')
+        _metro = sum(1 for i in range(len(_pat) - 3)
+                     if _pat[i:i + 4] in ([1, 2, 1, 2], [2, 1, 2, 1]))
+        chk(_metro == 0, 'RITMO: sin metronomo 1-2-1-2 (§3.2)',
+            f'ritmo {_ritmo} — rompelo con un trio o con dos lineas sueltas seguidas')
+
     # ---------- POR PILAR ----------
     # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.
     tiene_link = 'recursos.neety.com' in cuerpo or (pilar == 'evento' and 'luma.com' in cuerpo)
