@@ -96,7 +96,9 @@ def main():
         checks.append(fallo('Faltan campos de cabecera (REMITENTE/ASUNTO/PREVIEW)'))
 
     rem = cab.get('REMITENTE', '').lower()
-    if rem in REMITENTES:
+    # match por prefijo: el From va con marca ("Kaixito de Neety", email-marketing §1)
+    rem_base = next((r for r in REMITENTES if rem.startswith(r)), '')
+    if rem_base:
         checks.append(ok(f'Remitente válido ({cab["REMITENTE"]})'))
     else:
         checks.append(fallo(f'Remitente "{cab.get("REMITENTE", "?")}" no es Iker/Asier/Unai/Kaixito'))
@@ -238,7 +240,7 @@ def main():
 
     # --- firma humana (ventana de 10 líneas: P.S.+P.P.S.+baja pueden empujarla) ---
     ultimas = '\n'.join(cuerpo_lineas[-10:]).lower()
-    if rem and rem in ultimas:
+    if rem_base and rem_base in ultimas:
         checks.append(ok('Firma con el nombre del remitente'))
     else:
         checks.append(fallo('No se ve la firma humana con el nombre del remitente al final'))
