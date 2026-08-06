@@ -246,6 +246,13 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 **La plantilla:** `aprovecha el espacio que [elemento] tiene hacia [la izquierda/la derecha/arriba/abajo] para que [quede centrado / respire / llene el ancho]`.
 Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que cuelga. **Describe el movimiento y el espacio, nunca el resultado abstracto.**
 
+**⭐ Y VALE IGUAL PARA EL TAMAÑO, NO SOLO PARA LA POSICIÓN (Iker, 2026-08-06).** Aquí esto estaba escrito solo para colocar, y por eso el 2026-08-06 pedí *"agrándalos hasta que ocupen bastante más de la mitad del alto"* — que es otra vez pedirle que MIDA y que JUZGUE, el mismo error con otra ropa. **Agrandar también se pide nombrando el espacio libre y la dirección:**
+- ❌ `agrándalos hasta que ocupen más de la mitad del alto`
+- ❌ `hazlos más grandes, sobra mucho espacio vacío`
+- ✅ `aprovecha el espacio que los logos tienen por arriba y por abajo y también por los laterales para que llenen la imagen`
+
+**Y el caso típico donde hace falta: al recomponer una referencia de 16:9 a nuestro 1:1** (`§0b`). El generador conserva el ancho de los elementos y te deja dos bandas muertas arriba y abajo. **Se cuenta como espacio a aprovechar, nunca como "está pequeño".**
+
 ## 0d · ⭐ EL OBJETIVO NO ES CALCAR: ES CALCAR Y MEJORAR
 > Al remixar una referencia se copia la **esencia** (`post-workflow §4.4`), pero **los DEFECTOS del original no se heredan: se arreglan**. Ser fiel no es ser fiel a sus fallos.
 
