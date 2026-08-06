@@ -69,12 +69,38 @@ const RECURSOS: Record<string, Recurso> = {
     link: 'https://recursos.neety.com/prospeccion-manual/',
     topic: 'las señales que avisan de que una empresa va a comprar',
   },
+  firma: {
+    link: 'https://recursos.neety.com/firma/',
+    topic: 'los 5 prompts para dar con quien firma la compra',
+  },
 };
 
 // El recurso de una palabra clave, o null si esa palabra no tiene uno mapeado
 // todavía (entonces el panel avisa en vez de mandar un DM sin enlace).
 export function recursoFor(keyword: string): Recurso | null {
   return RECURSOS[normalize(keyword).trim()] ?? null;
+}
+
+// ────────────────── la palabra clave se saca del propio post ──────────────────
+//
+// El CTA del lead magnet SIEMPRE lleva la palabra entre comillas después de
+// "comenta" — es regla dura del pilar y `scripts/validar-post.py` la exige antes
+// de publicar. Así que el post ya sabe cuál es su palabra y no hay por qué
+// teclearla a mano: se saca de aquí y el panel la prerrellena.
+//
+// Se busca desde el FINAL: el CTA vive en la última línea, y un post puede
+// mencionar "comenta" antes de pasada (`§4.4`). Si hay varias, gana la última.
+//
+// Comillas: se aceptan las rectas y las tipográficas, porque LinkedIn convierte
+// unas en otras según desde dónde se pegue el texto. Es el mismo motivo por el
+// que `normalize` existe.
+const CTA_KEYWORD = /comenta\w*\s+["“«']([^"”»']{2,30})["”»']/gi;
+
+export function extractKeyword(postText: string | null | undefined): string {
+  if (!postText) return '';
+  let last = '';
+  for (const m of postText.matchAll(CTA_KEYWORD)) last = m[1];
+  return last.trim();
 }
 
 // ──────────────────────────── name extraction ────────────────────────────

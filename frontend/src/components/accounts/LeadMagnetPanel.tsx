@@ -4,7 +4,7 @@ import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
   buildDm, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
-  commentDepth, extractSector, matchesKeyword, recursoFor, voiceFor,
+  commentDepth, extractKeyword, extractSector, matchesKeyword, recursoFor, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 
@@ -233,7 +233,19 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // No "reload on post change" effect: the parent keys this component by
   // post id, so a different post is a fresh mount and this initialiser runs
   // again on its own.
-  const [cfg, setCfg] = useState<LmConfig>(() => loadConfig(post.id));
+  //
+  // La palabra clave se saca SOLA del texto del post (Iker, 2026-08-06). El CTA
+  // del pilar siempre pide comentar una palabra entre comillas y el validador lo
+  // exige antes de publicar, así que el post ya la lleva dentro y teclearla era
+  // trabajo repetido —y un sitio donde escribirla mal, que aquí significa que el
+  // filtro no reconoce a quien comentó y ese lead se pierde en silencio—.
+  // Solo se rellena si la config guardada no trae ninguna: lo que el usuario
+  // haya escrito a mano ya está en localStorage y manda sobre esto.
+  const [cfg, setCfg] = useState<LmConfig>(() => {
+    const saved = loadConfig(post.id);
+    if (saved.keyword.trim()) return saved;
+    return { ...saved, keyword: extractKeyword(post.content_text) };
+  });
   useEffect(() => { saveConfig(post.id, cfg); }, [post.id, cfg]);
 
   // Si la palabra clave es «lista», ES el lead magnet de la lista: cambia solo al
