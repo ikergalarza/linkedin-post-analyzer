@@ -376,6 +376,12 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Consecuencia para elegir referencia (`post-workflow §4.4`):** al bajar por Inspiration, si el meme outlier se monta sobre un **fotograma de película / cara de famoso**, sé consciente de que **la imagen NO la va a generar la IA** — se hará por overlay. No es motivo para descartarla (el motor sigue siendo válido), pero sí para avisar y montarla a mano.
 
+## ⛔ 0i-2-ADJUNTOS · LOS ASSETS SE LOS ADJUNTA IKER, NUNCA LOS BUSCA EL DISEÑADOR (Iker, 2026-08-06)
+
+**En el prompt jamás se escribe "me los descargas", "búscalos" ni "sácalos de su web".** Ni logos, ni la foto de referencia, ni las tipografías. **Todo eso se lo adjunta Iker**, y el prompt lo da por hecho: *"te adjunto los logos"*, *"te paso la foto de referencia"*.
+- **Por qué no es un detalle:** si el diseñador busca el logo, se trae la versión que encuentre —vieja, con fondo, en baja, o la de otra marca con el mismo nombre—. Es el mismo fallo de familia que deducir la URL de LinkedIn por el nombre (`post-workflow §4.2 Paso 4`): un asset no se adivina, se pasa.
+- **⚠️ Y DEBAJO DE CADA PROMPT DE IMAGEN VA UN AVISO CON EL TRIÁNGULO AMARILLO** listando lo que Iker tiene que adjuntar: la foto de referencia, los logos que aparezcan, y las tipografías si el diseñador no las tiene. Va fuera del bloque cercado, en una línea, igual que el recordatorio de postproducción de `§0a-penta`.
+
 ## ⭐ 0i-2 · LOGOS DE TERCEROS: EL GENERADOR LOS RECHAZA, Y SE SACAN DE LA IMAGEN (Iker, 2026-07-21)
 
 **Medido el 2026-07-21:** un prompt que pedia colocar quince logos de empresas reales hizo que ChatGPT devolviera *"se ha producido un error en la herramienta de generacion"*. Es el filtro de marcas de terceros, y **no se arregla insistiendo ni reformulando el prompt**.
