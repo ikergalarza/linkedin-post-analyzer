@@ -623,6 +623,20 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'no es obligatorio (el 15.0x cierra con ✨) pero es la opcion por defecto'
             if not _mano else '', aviso=True)
 
+    # ⛔ MARCAS TEMPORALES (Iker, 2026-08-06). El original de Daniel Disney lleva
+    # una lista Monday…Friday, me quedé con ese ritmo de semana y escribí "y aun
+    # no es ni jueves" en un post que se publico un JUEVES. Lo pillo Iker al
+    # subirlo. Un dia de la semana o un mes son DATOS y se verifican igual que una
+    # cifra: que el original diga miercoles no hace verdad nuestro miercoles.
+    # Aviso y no fallo, porque a veces la marca temporal es correcta a proposito.
+    _tiempo = re.search(r'\b(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo'
+                        r'|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre'
+                        r'|octubre|noviembre|diciembre)\b', cuerpo, re.I)
+    chk(not _tiempo, 'Marca temporal verificada contra la fecha REAL de publicacion',
+        (f'dice "{_tiempo.group(0)}" — comprueba que es cierto el dia que se publica, no hoy '
+         'ni el dia que lo decia la referencia. Si el post aguanta dos dias en el feed, mejor '
+         'una marca que no caduque (global §2.2b-CAPAS)') if _tiempo else '', aviso=True)
+
     # ── §3.2 · ANCHO DE LINEA y RITMO (Iker, 2026-08-06) ─────────────────────
     # Dos cosas que la receta pedia desde siempre y que el validador NO miraba,
     # y por eso se me colaron en verde tres veces en una semana.

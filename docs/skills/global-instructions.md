@@ -501,6 +501,13 @@ Corre estas puertas EN ORDEN:
 
 **Y en las tres, lo mismo: calcar es el SUELO, superarlo es la meta** (`§2.2`). Se mejora el verbo, el formateado y el ritmo; no se "mejora" cambiando el elemento que hacía el chiste.
 
+##### ⛔ LA EXCEPCIÓN AL CALCO: TODO LO QUE SEA UNA FECHA SE ADAPTA A LA REALIDAD, NO A LA REFERENCIA (Iker, 2026-08-06)
+**Pasó de verdad:** el original de Daniel Disney lleva una lista `↳ Monday…Friday`, me quedé con ese ritmo de semana y escribí *"Y aún no es ni jueves"*… **en un post que se publicó un JUEVES.** Lo pilló Iker al subirlo y lo cambió a *"aún no es ni viernes"*.
+- **Un día de la semana, un mes o una estación son DATOS, y los datos se verifican** (`aboutme`, la regla de no escribir una cifra sin comprobarla). Que el original diga miércoles no hace que nuestro miércoles sea verdad.
+- **Se comprueba contra la fecha REAL de publicación**, no contra la de hoy si el post va programado para otro día.
+- Vale para cualquier marca temporal: `lunes`, `a final de mes`, `en verano`, `esta semana`, `en enero`. Si el post se puede leer dos días después, mejor una marca que aguante (*"y ni siquiera es fin de semana"*).
+- Mecanizado: el validador avisa si aparece un día de la semana o un mes en el cuerpo.
+
 #### 📏 2.2b-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
 > **⚠️ UNIVERSAL: vale SIEMPRE que partamos de una referencia, sea el pilar que sea** — meme, lead magnet, mapa, historia, newsletter, secuencia de email. Nacio remixando un meme y por eso el detalle esta en `post-workflow §4.4-MEDIR`, pero **la regla vive aqui**, igual que le paso a `§2.0` con el bucle abierto y a `§2.2b` con el vehiculo: escribirla dentro de un runbook es garantizar que se rompe en los otros cinco.
 
