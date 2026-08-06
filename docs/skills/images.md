@@ -227,9 +227,15 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
   - **Línea 2 ENTERA en naranja `#fe8238`** = el remate. **Ojo, aquí la línea entera va en color, no una sola palabra** (eso es la regla del post, `§0h`; aquí no aplica).
   - Referencia real: `Tu cliente se mueve` / `Tú no lo ves`.
 - **Formas geométricas en azul bebé `#a7c5f9` entrando en diagonal por el borde DERECHO y sangrando fuera del lienzo.** En la referencia son dos piezas de puzzle, una pequeña arriba y una grande abajo, giradas. Son decorado y masa de color: nunca tapan el texto ni llevan significado propio.
-- **Cero logo, cero footer, cero URL, cero foto.** Igual que todo lo nuestro (`§0a-bis`).
+- **Cero footer, cero URL, cero foto.** Igual que todo lo nuestro (`§0a-bis`).
+- **El LOGO no lo pone el diseñador: se inserta DESPUÉS** (ver el circuito de abajo). El diseñador la entrega sin logo.
 
-**Quién la hace:** la mete el programador en la web, así que va **en el prompt del programador** junto con el gate. No se genera con IA: lleva texto en español y se compone (`§0i-2b`).
+**⭐ EL CIRCUITO COMPLETO DE ESTA IMAGEN, QUE NO TERMINA EN EL DISEÑADOR (Iker, 2026-08-06).** Es distinto al de la imagen del post y por eso se me quedó a medias: yo entregaba el prompt y ahí lo dejaba. Son tres pasos y los tres van avisados debajo del prompt:
+1. **El diseñador la genera** a partir de la referencia que le adjunta Mario.
+2. **Mario le aplica el desenfoque de superficie en Photoshop** y la exporta sin metadatos con Exportar como, igual que cualquier otra imagen generada (`§0a-penta`).
+3. **Mario se la pasa al otro chat, el de la web de recursos**, que es quien **le inserta el logo** y **la sube al recurso**. Sin este paso la imagen existe pero el enlace sigue llegando como caja gris.
+
+**Quién decide qué dice:** el texto sale del gancho del post, igual que el H1 del gate (`lead-magnet-web §2`).
 
 ## 0c · 🎯 CÓMO SE LE PIDE UNA COLOCACIÓN (nunca digas "céntralo")
 > Técnica validada peleándose con la herramienta. Aplica a cualquier prompt de imagen, de cualquier pilar.
