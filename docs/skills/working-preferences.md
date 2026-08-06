@@ -79,6 +79,11 @@ En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además de
 
 **⭐ EL ORDEN DE LA ENTREGA (Iker, 2026-07-27):** primero **mi post** en su bloque cercado listo para copiar; **justo debajo, el post ORIGINAL entero en OTRO bloque cercado igual** (también copiable, mismo formateado); y **después** la vista comparativa. Sin el original suelto no se puede leer de dónde sale lo nuestro.
 
+**🔴 REINCIDÍ OTRA VEZ EL 2026-08-06, y la doctrina de abajo ya estaba escrita entera.** Entregué el meme de Unai con dos bloques cercados apilados. Iker: *"esto te lo he pedido ya muchas veces y siempre te equivocas"*. **Aquí no falta receta, falta cumplirla:** antes de pegar una entrega de post, se relee este bloque, igual que el chequeo de `images §0i-3`. Y dos precisiones suyas de ese día:
+- **Las columnas se separan con una línea DISCONTINUA vertical** (`:` repetido a lo alto), no con un borde continuo ni con espacios sueltos. Debajo de la cabecera, una regla horizontal que se cruza con ella.
+- **Cero etiquetas dentro de las columnas.** Nada de `GANCHO:`, `CUERPO:`, `CIERRE:`. Iker: *"eso lo sé yo"*. Va el texto tal cual, seguido, de arriba abajo.
+- **La comparativa NO tiene que ser copiable.** No es un entregable, es una vista para leer: *"ni me apetece copiarla, no lo necesito, pero necesito verlo en dos columnas"*.
+
 **El formato, exacto (Iker es tiquismiquis con esto):**
 - **LOS DOS TEXTOS VAN ENTEROS, sin resumir ni poner `[lo malo]` ni recortes.** Una comparativa "general" con etiquetas no vale: se comparan las publicaciones completas, palabra por palabra.
 - **Dos columnas EN LA MISMA FILA**, no dos bloques apilados. Se monta en **un solo bloque cercado monoespaciado**: cada línea = columna izquierda (rellenada a ancho fijo) + hueco + columna derecha, alineadas arriba. **NADA de tabla, nada de floritura, nada de "cosas raras".**

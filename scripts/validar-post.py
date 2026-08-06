@@ -656,6 +656,18 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         chk(_metro == 0, 'RITMO: sin metronomo 1-2-1-2 (§3.2)',
             f'ritmo {_ritmo} — rompelo con un trio o con dos lineas sueltas seguidas')
 
+    # ⚠️ RECORDATORIO DE ENTREGA, en TODOS los pilares (Iker, 2026-08-06). El
+    # validador solo ve el texto, asi que la forma de la ENTREGA no la puede
+    # comprobar; pero puede recordarmela, que es donde reincido. La comparativa
+    # original-vs-el-mio lleva escrita en working-preferences §1e desde el 22 de
+    # julio y la he entregado mal tres veces: dos bloques apilados en vez de dos
+    # columnas en la misma fila.
+    chk(False, 'ENTREGA: comparativa en DOS COLUMNAS, misma fila, separador discontinuo',
+        'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '
+        'separados por una linea discontinua vertical. Sin etiquetas de gancho ni cuerpo '
+        'dentro de las columnas, y sin trocear. No hace falta que sea copiable: es para '
+        'mirarla (working-preferences §1e)', aviso=True)
+
     # ---------- POR PILAR ----------
     # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.
     tiene_link = 'recursos.neety.com' in cuerpo or (pilar == 'evento' and 'luma.com' in cuerpo)
