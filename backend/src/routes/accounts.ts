@@ -2721,12 +2721,21 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
 
 // GET /api/accounts/lead-magnet/followups?creator_id=xxx
 //
-// Los SEGUIMIENTOS pendientes del lead magnet "lista": gente a la que se le mandó
-// una INVITACIÓN con la lista completa ya pre-generada y guardada (followup_text),
-// y a la que TODAVÍA no se le ha mandado esa lista por DM. Cuando aceptan la
-// invitación se les manda con /lead-magnet/send (kind='dm', text = followup_text)
-// y desaparecen de aquí. No lee ninguna conversación: solo saca lo guardado al
-// invitar. Omite las que ya recibieron el DM (NOT EXISTS).
+// Los SEGUIMIENTOS pendientes de CUALQUIER lead magnet: gente a la que se le mandó
+// una INVITACIÓN (porque no era de 1er grado y un DM no le habría llegado) y a la
+// que TODAVÍA no se le ha mandado el recurso por DM. Cuando aceptan, se les manda
+// con /lead-magnet/send (kind='dm') y desaparecen de aquí. No lee ninguna
+// conversación: solo saca lo guardado al invitar.
+//
+// ⭐ 2026-08-06: esto filtraba por `followup_text IS NOT NULL`, y ese campo SOLO
+// lo rellena el lead magnet de tipo "lista". Resultado: en un lead magnet normal
+// invitabas a alguien, te aceptaba, y no aparecía por ningún lado — el segundo
+// mensaje se quedaba sin mandar salvo que te acordaras tú. Ahora salen todos, y
+// el texto lo monta el panel con el recurso de la palabra clave cuando no hay uno
+// guardado.
+//
+// El NOT EXISTS de abajo es el que evita el DM duplicado: en cuanto esa persona
+// tiene un DM enviado en ese post, deja de ser un pendiente.
 router.get('/lead-magnet/followups', async (req: Request, res: Response) => {
   try {
     const creatorId = (req.query.creator_id as string) || null;
@@ -2744,7 +2753,6 @@ router.get('/lead-magnet/followups', async (req: Request, res: Response) => {
          JOIN posts p ON p.id = s.post_id
          JOIN creators c ON c.id = p.creator_id
         WHERE s.kind = 'invite' AND s.status = 'sent'
-          AND s.followup_text IS NOT NULL
           ${creatorFilter}
           AND NOT EXISTS (
             SELECT 1 FROM lead_magnet_sends d

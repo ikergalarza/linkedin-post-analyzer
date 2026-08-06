@@ -293,6 +293,23 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     [sendsData]
   );
 
+  // Y lo mismo para los envíos: indexados TAMBIÉN por comment_social_id, no solo
+  // por persona (Iker, 2026-08-06). Era la otra mitad del mismo bug: a alguien a
+  // quien ya le habías mandado el DM desde Seguimientos le seguían saliendo abajo
+  // los controles de envío, porque el DM se guardó con el provider_id viejo (el
+  // de la invitación) y la tarjeta buscaba por el nuevo. Un clic más y le llegaba
+  // el mismo mensaje dos veces.
+  const sendsByComment = useMemo(() => {
+    const m = new Map<string, SendRecord[]>();
+    for (const s of sendsData?.sends ?? []) {
+      if (!s.comment_social_id) continue;
+      const arr = m.get(s.comment_social_id) ?? [];
+      arr.push(s);
+      m.set(s.comment_social_id, arr);
+    }
+    return m;
+  }, [sendsData]);
+
   // Ya solo hace falta la PALABRA CLAVE, en los tres tipos. El público y la
   // lista generan su recurso por tarjeta (el análisis o la lista de empresas);
   // el DM resuelve enlace y tema desde la propia palabra (recursoFor), así que
@@ -484,7 +501,9 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 
       {/* Seguimientos: invitados (2º grado+) que esperan la lista, a los que se
           les manda por DM en cuanto aceptan. Solo en el tipo lista. */}
-      {cfg.kind === 'lista' && <Seguimientos post={post} creatorId={creatorId} />}
+      {cfg.kind !== 'publico' && (
+        <Seguimientos post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
+      )}
 
       {!ready && (
         <p className="text-center text-text-muted text-sm py-10">
@@ -515,7 +534,12 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           postId={post.id}
           creatorId={creatorId}
           cfg={cfg}
-          sends={t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []}
+          // Por persona Y por comentario: el provider_id cambia al aceptar la
+          // invitación, así que solo con él se pierden los envíos ya hechos.
+          sends={[
+            ...(t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []),
+            ...(sendsByComment.get(t.id) ?? []),
+          ]}
           invitedCommentIds={invitedCommentIds}
           ownsDm={dmOwnerByPerson.get(t.author.profile_id ?? '') === t.id}
           voice={voice}
@@ -684,13 +708,23 @@ function CommenterCard({
   const kind: 'dm' | 'invite' = degree === 1 ? 'dm' : 'invite';
 
   const priorSend = sends.find((s) => s.kind === kind) ?? null;
-  const alreadySent = priorSend?.status === 'sent';
+  // ⭐ Un DM enviado bloquea la tarjeta AUNQUE ahora toque otro `kind`
+  // (Iker, 2026-08-06). `kind` se recalcula con el grado de red de HOY: alguien
+  // a quien invitaste siendo 2º grado pasa a 1º al aceptarte, y entonces la
+  // tarjeta pasaba a buscar un envío de tipo 'dm' bajo el provider_id nuevo, no
+  // lo encontraba, y volvía a ofrecer el envío. El recurso ya lo tiene: es un
+  // mensaje repetido a alguien que además acaba de darnos su atención.
+  const dmSent = sends.some((s) => s.kind === 'dm' && s.status === 'sent');
+  const alreadySent = priorSend?.status === 'sent' || dmSent;
 
   // ¿Esta persona ya recibió la invitación con la lista prometida? Se mira por el
   // id del comentario (estable), NO por el provider_id (cambia al pasar a 1er
   // grado). Si es así, su seguimiento se gestiona ARRIBA en Seguimientos y esta
   // tarjeta NO muestra controles de envío — así no se manda la lista dos veces.
-  const handledInSeguimientos = cfg.kind === 'lista' && invitedCommentIds.has(thread.id);
+  // ⭐ Ya NO se limita al tipo "lista" (Iker, 2026-08-06). El segundo mensaje
+  // después de que te acepten la invitación hace falta en TODOS los lead magnets,
+  // no solo en ese: el flujo invitación → aceptan → recurso es el mismo siempre.
+  const handledInSeguimientos = cfg.kind !== 'publico' && invitedCommentIds.has(thread.id);
 
   // 'plain' → they dropped the keyword and nothing else; the template IS the
   // answer. 'rich' → they wrote something real, and "remitido!" would be
@@ -1232,7 +1266,9 @@ interface FollowupRow {
   provider_id: string;
   provider_name: string | null;
   sector: string | null;
-  followup_text: string;
+  // Vacio salvo en el tipo lista, que guarda la lista entera al invitar. En un
+  // lead magnet normal el texto se monta aqui con el recurso de la palabra clave.
+  followup_text: string | null;
   comment_social_id: string;
 }
 
@@ -1242,7 +1278,18 @@ interface FollowupRow {
 // red con Unipile (NO lee su chat); a los que ya te aceptaron, un clic les manda
 // la lista guardada sin regenerarla. Se ocultan solas al recibirla (el backend
 // las excluye en cuanto hay un DM enviado a esa persona en ese post).
-function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }) {
+function Seguimientos({ post, creatorId, cfg, voice }: {
+  post: GridPost; creatorId: string; cfg: LmConfig; voice: Voice;
+}) {
+  // El texto del segundo mensaje. Si al invitar guardamos uno (tipo lista), ese
+  // manda. Si no, se monta el DM normal con el recurso de la palabra clave, que
+  // es justo lo que faltaba para que esto valiera en todos los lead magnets.
+  const textFor = useCallback((f: FollowupRow): string => {
+    if (f.followup_text) return f.followup_text;
+    const recurso = recursoFor(cfg.keyword);
+    if (!recurso) return '';
+    return buildDm({ name: f.provider_name, topic: recurso.topic, link: recurso.link, voice });
+  }, [cfg.keyword, voice]);
   const { data, loading } = useApi<{ followups: FollowupRow[] }>(
     `/api/accounts/lead-magnet/followups?creator_id=${creatorId}`
   );
@@ -1292,7 +1339,7 @@ function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }
   if (loading || followups.length === 0) return null;
 
   const sendList = async (f: FollowupRow) => {
-    const text = (texts[f.provider_id] ?? f.followup_text).trim();
+    const text = (texts[f.provider_id] ?? textFor(f)).trim();
     if (!text) return;
     setSending(f.provider_id);
     setErr(null);
@@ -1354,7 +1401,7 @@ function Seguimientos({ post, creatorId }: { post: GridPost; creatorId: string }
           // editable, y el botón de mandarla. Es lo que el usuario pedía: que el
           // follow-up no viva perdido entre los comentarios, sino aquí.
           if (ok) {
-            const val = texts[f.provider_id] ?? f.followup_text;
+            const val = texts[f.provider_id] ?? textFor(f);
             return (
               <div key={f.provider_id} className="border-t border-border pt-2 space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
