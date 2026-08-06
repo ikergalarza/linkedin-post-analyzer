@@ -172,6 +172,20 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **En el prompt de imagen va escrito siempre**, con estas palabras: `en formato cuadrado 1:1`.
 - **⚠️ LA ÚNICA EXCEPCIÓN es la imagen de COMPARTIR del recurso web (`§0b-OG`), que no se publica en el feed: la recorta Open Graph, no LinkedIn.** Todo lo que se sube a un post sigue siendo 1:1.
 
+## 🚨 0a-CAPADO · LINKEDIN CAPA POSTS SUELTOS, Y HAY QUE SABER RECONOCERLO (Iker, 2026-08-06)
+
+**El capado es POR POST, no por cuenta ni por dispositivo.** Iker lo vio antes que yo: *"ya nos pasó la semana pasada con Asier y solo fue con el post del meme, con el resto de cuentas fueron bien"*. Yo había apuntado a las 4 cuentas del mismo equipo interactuando desde la misma wifi, y **eso no lo explica**: si fuera el dispositivo, habrían caído las tres cuentas a la vez, y no pasó.
+
+**CÓMO SE RECONOCE, con los números del corpus (246 posts, medidos el 2026-08-06):**
+- mediana **3.394** impresiones · percentil 10 **830** · peor flop reciente **196**
+- **Un post capado no está "abajo": está fuera de escala.** El lead magnet del 06/08 hizo **30 impresiones**, un orden de magnitud por debajo del siguiente peor. Un post que no gusta se queda en 200-600; uno que no se reparte se queda en decenas.
+- **Cuidado al mirar la cola:** 14 de los 19 posts por debajo de 700 son de diciembre-enero, o sea de la época de audiencia fría. **Esos no son capados, es que no había nadie.** Filtra por fecha antes de sacar conclusiones.
+
+**HIPÓTESIS ABIERTA, NO CONFIRMADA — el logotipo de LinkedIn dentro de la imagen.** El post del 06/08 es el primero nuestro que mete **el logo de LinkedIn** en la foto, junto al de Claude, y encima el texto va de automatizar la prospección en LinkedIn. Es la única variable nueva.
+- **Lo que la contradice, y va escrito para no engañarnos:** Martín Arosa usa esa misma imagen de los dos logos y saca 1.245 comentarios. **Así que el logo solo no puede ser la causa.** O pesa distinto según el tamaño de la cuenta, o la causa es otra.
+- **LA PRUEBA, y es de una sola variable:** resubir el MISMO texto, a la hora de siempre, cambiando SOLO la imagen. Si vuela, era la imagen. **Cambiar texto e imagen a la vez —que es lo que pide el cuerpo cuando algo sale mal— garantiza no aprender nada.**
+- Quitar los metadatos NO basta: el del 06/08 se subió ya sin ellos y se capó igual.
+
 ## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
 
 > **La regla:** *"no me puedes dar una propuesta de foto sin una referencia, porque entonces me estás demostrando que te la estás inventando. Tiene que estar validado en que ese mismo formato de foto ya haya funcionado, por lo tanto me tienes que pasar el enlace."*
