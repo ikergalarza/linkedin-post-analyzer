@@ -488,6 +488,23 @@ Corre estas puertas EN ORDEN:
 
 **Buscamos outliers para extraer su vector viral, copiarlo, adaptarlo a ventas y MEJORARLO. No para inspirarnos.** El objetivo no es ser el primero en inventar algo: es ser **el segundo mejor**, que llega despues y lo hace mejor.
 
+#### 📏 2.2b-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
+> **⚠️ UNIVERSAL: vale SIEMPRE que partamos de una referencia, sea el pilar que sea** — meme, lead magnet, mapa, historia, newsletter, secuencia de email. Nacio remixando un meme y por eso el detalle esta en `post-workflow §4.4-MEDIR`, pero **la regla vive aqui**, igual que le paso a `§2.0` con el bucle abierto y a `§2.2b` con el vehiculo: escribirla dentro de un runbook es garantizar que se rompe en los otros cinco.
+
+**`python scripts/anatomia-referencia.py original.txt mio.txt` ANTES de entregar, y su salida va en la entrega.** Copiar el motor y no medir la forma es lo que produjo esto el 2026-08-06:
+```
+ORIGINAL  hook 34 car | 1 frase  | emoji 🤣
+EL MIO    hook 62 car | 2 frases | emoji 👇
+```
+Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su ritmo, su lenguaje, sus conjugaciones, su longitud, sus emojis, todo. Y copiamos y mejoramos."*
+
+- **Longitud del gancho.** El ingles dice lo mismo con menos, asi que hay margen, **pero no el DOBLE**.
+- **Numero de frases del gancho.** Una frase es una frase; partirla en dos se carga el golpe seco.
+- **El emoji se calca y se mira DONDE vive.** 🤣 anuncia broma y 👇 anuncia lista: cambiarlo cambia la promesa. Y si su 👇 esta en el cierre, no se sube al gancho.
+- **Longitud total y numero de bloques.** 1.289 caracteres contra 773 es habernos dejado media publicacion.
+- **El ritmo es donde SI les ganamos** (bloques de 2 y 3 en escalera, lineas sueltas). Su ritmo puede ser peor que el nuestro; su gancho y su longitud, no.
+- **Lo que NO se calca se declara en la entrega**, para que sea una decision y no un descuido.
+
 #### El paso que se falla siempre: separar VEHICULO de CONTENIDO
 
 | | Que es | Se hace con el |

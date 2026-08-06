@@ -662,6 +662,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # original-vs-el-mio lleva escrita en working-preferences §1e desde el 22 de
     # julio y la he entregado mal tres veces: dos bloques apilados en vez de dos
     # columnas en la misma fila.
+    # Si el post CALCA una referencia, su anatomia se mide, no se mira. Vale para
+    # cualquier pilar (global §2.2b-MEDIR), por eso el aviso sale con --remix y
+    # tambien en meme, que siempre parte de una referencia.
+    if remix or pilar == 'meme':
+        chk(False, 'ENTREGA: mide la anatomia de la referencia antes de entregar',
+            'python scripts/anatomia-referencia.py original.txt mio.txt — compara longitud '
+            'del gancho, numero de frases, emoji y DONDE vive, longitud total, bloques y '
+            'ritmo. El 2026-08-06 entregue un gancho del DOBLE de largo que el original, '
+            'con dos frases en vez de una y el emoji cambiado. La salida va en la entrega '
+            '(global §2.2b-MEDIR)', aviso=True)
+
     chk(False, 'ENTREGA: comparativa en DOS COLUMNAS, misma fila, separador discontinuo',
         'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '
         'separados por una linea discontinua vertical. Sin etiquetas de gancho ni cuerpo '

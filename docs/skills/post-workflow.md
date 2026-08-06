@@ -654,6 +654,7 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 > **El test antes de entregar:** pon las dos listas al lado de tu version. **Cada elemento de la lista tiene que tener su equivalente reconocible en el remix.** Si falta uno, no es un remix, es otro post.
 >
 > ### 📏 4.4-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
+> **🔒 ESTA REGLA ES UNIVERSAL Y VIVE EN `global §2.2b-MEDIR`.** Vale para CUALQUIER pilar que parta de una referencia, no solo el meme. Aqui queda el detalle porque el primer caso fue un meme; si algun dia choca con lo de alla, manda `global`.
 > **`python scripts/anatomia-referencia.py original.txt mio.txt` antes de entregar.** Copié el tema y el motor del meme de Daniel Disney y no medí nada, y salió esto:
 > ```
 > ORIGINAL  hook 34 car | 1 frase  | emoji 🤣
