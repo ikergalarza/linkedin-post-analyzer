@@ -230,10 +230,11 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Cero footer, cero URL, cero foto.** Igual que todo lo nuestro (`§0a-bis`).
 - **El LOGO no lo pone el diseñador: se inserta DESPUÉS** (ver el circuito de abajo). El diseñador la entrega sin logo.
 
-**⭐ EL CIRCUITO COMPLETO DE ESTA IMAGEN, QUE NO TERMINA EN EL DISEÑADOR (Iker, 2026-08-06).** Es distinto al de la imagen del post y por eso se me quedó a medias: yo entregaba el prompt y ahí lo dejaba. Son tres pasos y los tres van avisados debajo del prompt:
-1. **El diseñador la genera** a partir de la referencia que le adjunta Mario.
-2. **Mario le aplica el desenfoque de superficie en Photoshop** y la exporta sin metadatos con Exportar como, igual que cualquier otra imagen generada (`§0a-penta`).
-3. **Mario se la pasa al otro chat, el de la web de recursos**, que es quien **le inserta el logo** y **la sube al recurso**. Sin este paso la imagen existe pero el enlace sigue llegando como caja gris.
+**⭐ EL CIRCUITO COMPLETO DE ESTA IMAGEN, QUE NO TERMINA EN EL DISEÑADOR (Iker, 2026-08-06).** Es distinto al de la imagen del post y por eso se me quedó a medias: yo entregaba el prompt y ahí lo dejaba. El diseñador la genera desde la referencia, y luego Mario la desenfoca, la exporta limpia y **se la pasa al chat de la web de recursos, que le inserta el logo y la sube**. Sin ese último paso la imagen existe pero el enlace sigue llegando como caja gris.
+
+**El aviso va en UNO SOLO, el rojo de `§0a-penta` ampliado — no en dos (Iker, 2026-08-06).** Yo lo había partido en un 🔴 y un 🟣 y es la misma cadena de postproducción. Literal, para copiar:
+
+> 🔴 **Acuérdate Mario de aplicar el desenfoque de superficie en Photoshop, exportar sin metadatos con Exportar como, y pasársela al otro chat, el de la web de recursos, para que le inserte el logo y la suba.**
 
 **Quién decide qué dice:** el texto sale del gancho del post, igual que el H1 del gate (`lead-magnet-web §2`).
 
