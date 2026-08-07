@@ -623,6 +623,15 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
+**⛔ EL FORMATO EXACTO DEL NINJA: UNA SOLA ORACIÓN + DOS PUNTOS + ENLACE, TODO PEGADO (Iker, 2026-08-07).**
+```
+✅ Saber quién firma dentro de cada una es lo que cuesta meses: https://recursos.neety.com/agendar/
+❌ Dar con estas 12 es lo fácil. Saber quién firma dentro, no. https://…   (DOS oraciones y el enlace)
+❌ Dar con estas 12 es lo fácil.⏎⏎https://…                                (el enlace suelto en su línea)
+```
+- **Da igual que esa línea caiga a dos líneas en el móvil.** Iker: *"me da igual que la frase con el enlace caiga a 2 líneas, lo que NO quiero son 2 oraciones y el enlace todo junto"*. Es la única excepción al ancho de línea de `§3.2`, porque la URL mide lo que mide.
+- **🔴 Y esto ya se hacía bien: lo rompí yo el 07/08.** Escribí que *"el enlace va SIEMPRE en línea individual porque la URL es lo único que no puedo acortar"*, y era una deducción mía disfrazada de regla (`working-preferences §0c`). Iker no lo había pedido nunca. **Cuidado con las reglas que suenan razonables y no vienen de él ni de un dato.**
+
 **Qué es:** el link de agendar (`https://recursos.neety.com/agendar/`, `aboutme §1`) tejido DENTRO del cuerpo con gracia. **No es el cierre** y no consume la regla del UNO (§4.5): el post cierra después con un bold statement aparte.
 
 > ## 🔄 EL DOLOR NO CAMBIA, LA FRASE SÍ: EL SPAM NINJA ROTA SIEMPRE (Iker, 2026-07-31)
