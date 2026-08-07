@@ -181,6 +181,12 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Un post capado no está "abajo": está fuera de escala.** El lead magnet del 06/08 hizo **30 impresiones**, un orden de magnitud por debajo del siguiente peor. Un post que no gusta se queda en 200-600; uno que no se reparte se queda en decenas.
 - **Cuidado al mirar la cola:** 14 de los 19 posts por debajo de 700 son de diciembre-enero, o sea de la época de audiencia fría. **Esos no son capados, es que no había nadie.** Filtra por fecha antes de sacar conclusiones.
 
+**⛔ DESCARTADO CON DATOS: la palabra `prompt` NO está baneada (2026-08-07).** Iker sospechaba de ella y propuso cambiarla por `mensaje`. Los dos corpus dicen que no:
+- **Nuestros 8 posts con `prompt`:** 4.153 · 4.082 · 3.072 · 2.837 · 1.586 · 830 · 826 impresiones, y solo el del 06/08 se cayó a 67. La mediana del corpus es 3.424. **Siete de ocho se repartieron con normalidad.**
+- El del **28/07** lleva `ÚLTIMA HORA` + `prompt` + formato lead magnet, los tres a la vez, y **hizo 2.837**.
+- **Martín Arosa usa `prompt` en 15 de sus 50 últimos posts**, con 2.125, 1.958, 1.397, 1.245, 1.224 y 1.071 comentarios.
+- **Por qué importa no ceder aquí:** quitar la palabra no protege de nada, nos deja sin el sustantivo que describe el recurso en todo lead magnet de Claude, y si el post funciona tras el cambio se consolida una creencia falsa que arrastraremos meses. **Cuando una hipótesis se puede comprobar en el corpus, se comprueba antes de tocar el post.**
+
 **HIPÓTESIS ABIERTA, NO CONFIRMADA — el logotipo de LinkedIn dentro de la imagen.** El post del 06/08 es el primero nuestro que mete **el logo de LinkedIn** en la foto, junto al de Claude, y encima el texto va de automatizar la prospección en LinkedIn. Es la única variable nueva.
 - **Lo que la contradice, y va escrito para no engañarnos:** Martín Arosa usa esa misma imagen de los dos logos y saca 1.245 comentarios. **Así que el logo solo no puede ser la causa.** O pesa distinto según el tamaño de la cuenta, o la causa es otra.
 - **LA PRUEBA, y es de una sola variable:** resubir el MISMO texto, a la hora de siempre, cambiando SOLO la imagen. Si vuela, era la imagen. **Cambiar texto e imagen a la vez —que es lo que pide el cuerpo cuando algo sale mal— garantiza no aprender nada.**
