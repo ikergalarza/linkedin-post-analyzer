@@ -108,6 +108,22 @@ def contener(logo: Image.Image, lado: int) -> Image.Image:
     lienzo = Image.new('RGBA', (lado, lado), (255, 255, 255, 255))
     util = round(lado * (1 - 2 * MARGEN))
     logo = logo.convert('RGBA')
+    # ⭐ RECORTE DEL BORDE BLANCO (Iker, 2026-08-07). Los logos de LinkedIn vienen
+    # con MUCHO aire propio dentro del cuadrado: ICER, KYB o TI traen casi un 30%
+    # de blanco alrededor de la marca. Al escalarlos tal cual estabamos metiendo
+    # ese aire dentro del circulo y encima le sumabamos el nuestro, asi que la
+    # marca acababa diminuta aunque el hueco fuese grande. Aqui se quita el aire
+    # AJENO y se deja solo el nuestro, que es el que decide MARGEN.
+    _gris = logo.convert('L')
+    # Todo lo que no sea casi-blanco es marca. 246 y no 255 porque los JPG traen
+    # el fondo sucio de compresion y con 255 no recortaria nada.
+    _caja = _gris.point(lambda v: 0 if v > 246 else 255).getbbox()
+    if _caja:
+        _w, _h = logo.size
+        # Guarda de seguridad: si el recorte se comiera casi todo, es que el logo
+        # es casi blanco entero y algo ha ido mal. Mejor dejarlo como estaba.
+        if (_caja[2] - _caja[0]) > _w * 0.12 and (_caja[3] - _caja[1]) > _h * 0.12:
+            logo = logo.crop(_caja)
     # Los logos de LinkedIn vienen en JPG con fondo blanco: al pegarlos sobre
     # blanco el fondo desaparece solo y no hace falta recortarlo.
     escala = min(util / logo.width, util / logo.height)
