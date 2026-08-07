@@ -1146,9 +1146,16 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _ok_bl = bool(_bl) and all(b == 4 for b in _bl[:-1]) and _bl[-1] in (2, 3, 4)
         chk(_ok_bl, 'OBJETO: bloques de 4 y el ultimo de 2, 3 o 4 (4.7)',
             f'bloques de {_bl}. Todos de 4 salvo el ultimo, que puede bajar a 2 o 3')
-        # La firma del mapa NO se importa: canibalizaria el pilar.
-        chk(not re.search(r'exporta m[aá]s que|m[aá]s que \w+ entero', cuerpo, re.I),
-            'OBJETO: sin la comparacion con otro pais (4.7)',
+        # ⛔ CHECK RETIRADO EL 2026-08-07 · CONTRADECIA A §4.2 PASO 1.
+        # Aqui se exigia que el despiece NO llevara la comparacion con otro pais
+        # ("es la firma del mapa"), mientras que §4.2 Paso 1 la EXIGE. Los dos
+        # checks corrian a la vez, asi que ningun despiece podia pasar el
+        # validador: si metias el pais fallaba este y si lo quitabas fallaba el
+        # otro. Manda §4.2, porque su texto es una CORRECCION posterior del
+        # 31/07 que dice literalmente que la version de aqui estaba mal: lo que
+        # diferencia al despiece del mapa no es quitar `exporta`, es el objeto,
+        # el despiece por piezas y la imagen de la llanta.
+        chk(True, 'OBJETO: la comparacion con otro pais SI va (§4.2 Paso 1)',
             'esa es la firma del MAPA. Aqui el remate del gancho es el OBJETO')
 
     if pilar in ('mapa', 'los10') and _flechas:
