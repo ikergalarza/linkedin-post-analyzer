@@ -88,6 +88,30 @@ Escribe como un founder-operador se lo diría **a un director comercial de 55 a�
 
 ---
 
+## 🚨 2c · LENGUAJE DE RIESGO: LO QUE PUEDE HACER QUE LINKEDIN NOS CAPE (Iker, 2026-08-07)
+
+> **⚠️ GLOBAL. Vale para CUALQUIER pilar y para el post entero**, aunque el gancho es donde más pesa porque es lo primero que lee el clasificador. Nace de dos publicaciones capadas el mismo día.
+
+**QUÉ PASÓ, y lo que hay que aprender del método más que del caso.** El lead magnet del 06/08 hizo **67 impresiones en 24 h** y el resubido del 07/08 **19 en una hora**, con la mediana del corpus en 3.424. **Yo apostaba por la imagen** (el logo de LinkedIn dentro) y **me equivoqué**: se resubió con foto natural sin metadatos y volvió a caer. Iker apostaba por el texto desde el principio. **La imagen queda DESCARTADA con dos pruebas; el texto es lo único que queda en pie.**
+
+**LAS FAMILIAS DE RIESGO, por orden de lo que yo considero más peligroso:**
+
+| Familia | Ejemplos | Por qué |
+|---|---|---|
+| **1 · Alerta de noticia falsa** | `🚨 ÚLTIMA HORA`, `⚰️ D.E.P.`, `BREAKING` | Una sirena más un titular de última hora **es literalmente el patrón de la desinformación**. Y va en la primera línea. |
+| **2 · Sorteo o chollo** | `regalo`, `gratis`, `sorteo`, `chollo` | Familia de estafa. `regalo` es además el elemento con **peor mediana de todo lo que medimos: 1.527 contra 3.424**. |
+| **3 · Delito o documento legal** | `destapa`, `firma`, `denuncia`, `caso` | `destapar` suena a destapar un caso y `firmar` a papel legal. **Iker, y es buen criterio: si la palabra te da señal de algo ilegal a TI como persona, se la da al clasificador.** |
+| **4 · Cebo de interacción** | `guarda esto`, `etiqueta a alguien`, `comparte si` | Pedir la interacción por la interacción. |
+| **5 · Sacar gente a privado** | `te lo mando por privado`, `mándame un DM` | Mover tráfico fuera del feed. `te los paso` es más neutro. |
+
+**⚠️ PERO OJO CON EL SESGO DE CONFIRMACIÓN, que aquí es fácil:** casi todos estos elementos **tienen precedente en posts nuestros que se repartieron bien** (`gratis` 15 posts sin ninguno bajo 500, `comenta`+palabra 25 posts con mediana 4.574, `ÚLTIMA HORA` 6 posts con mediana 4.855). **No hay ninguna palabra probada como culpable.** Lo que sí es nuevo es que los dos capados **apilan varias familias a la vez**. La hipótesis viva es la ACUMULACIÓN, no una palabra suelta.
+
+**CÓMO SE APLICA, sin volverse paranoico:**
+- **En el GANCHO, cero familias de riesgo.** Ahí no se negocia: es lo primero que se lee y lo primero que se clasifica.
+- **En el cuerpo, una como mucho**, y si se puede decir igual sin ella, se dice sin ella.
+- **Antes de cambiar una palabra por sospecha, se mira en el corpus** (`§0a-CAPADO` de `images` tiene el procedimiento). El 07/08 Iker sospechaba de `prompt` y los datos dijeron que no —7 posts nuestros con ella bien repartidos y Martín Arosa la usa en 15 de sus 50 últimos—. **Se cambió igual, pero por AUDIENCIA (es un anglicismo, `§2b`), no por algoritmo.** Esa distinción es la que evita que acabemos con una lista de palabras prohibidas por superstición.
+- **Y una marca de reciente basta**: `ahora` da la novedad sin la sirena (`post-workflow §4.5.0a`).
+
 ## 3 · Cuerpo natural, no robótico (matar los AI-tells)
 
 El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el lenguaje flojo — es el **lenguaje corporativo-robótico** (equilibrado, hedgy, abstracto, lleno de conectores, sabor nota de prensa).
