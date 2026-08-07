@@ -625,7 +625,8 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 
 **⛔ Y ESA ORACIÓN LLEVA LAS DOS COSAS: EL DOLOR *Y* QUE LO RESOLVEMOS (Iker, 2026-08-07).** No basta con nombrar el dolor y soltar el enlace: falta la mitad que convierte el dolor en motivo para pinchar.
 ```
-✅ Saber quién firma dentro cuesta meses, y eso lo resolvemos nosotros: https://…
+✅ Saber quién firma dentro cuesta meses y eso lo resolvemos nosotros: https://…
+   ⚠️ SIN coma antes de la "y" (brand-voice §3). Se me colo al escribir este mismo ejemplo.
 ❌ Saber quién firma dentro es lo que cuesta meses: https://…        (solo dolor, sin solución)
 ❌ Dar con las empresas es fácil. Saber quién firma, no. https://…   (dos oraciones)
 ```
