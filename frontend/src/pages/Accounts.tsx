@@ -2126,6 +2126,76 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
   );
 }
 
+// Menu de tres puntos de cada post de Live Posts (Iker, 2026-08-07).
+//
+// Nace de un caso repetido: Iker borra un post en LinkedIn —el del evento sin el
+// OK de los mencionados, el lead magnet capado— y la tarjeta se queda colgada en
+// el panel. Hasta ahora tenia que pedirmelo y yo lo quitaba por SQL.
+//
+// Ocultar NO borra la fila: solo la saca de la vista. Las metricas y los
+// snapshots se conservan, que es justo lo que no queria perder.
+//
+// Confirmacion obligatoria, porque el boton vive pegado a las chapas de pilar y
+// de multiplicador y un clic sin querer es facil.
+function PostMenu({ post, onHidden }: { post: LivePost; onHidden?: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  // Cerrar al hacer clic fuera: sin esto el menu se queda abierto al pinchar en
+  // otra tarjeta y acabas con varios abiertos a la vez.
+  useEffect(() => {
+    if (!open) return;
+    const cerrar = () => setOpen(false);
+    document.addEventListener('click', cerrar);
+    return () => document.removeEventListener('click', cerrar);
+  }, [open]);
+
+  const ocultar = async () => {
+    if (!confirm(
+      '¿Ocultar esta publicación del panel?\n\n' +
+      'Se quita de Live Posts pero NO se borra: las métricas y el histórico se conservan.\n' +
+      'Úsalo cuando hayas borrado el post en LinkedIn.'
+    )) return;
+    setBusy(true);
+    try {
+      await apiPost(`/api/accounts/posts/${post.id}/hide`, {});
+      setOpen(false);
+      onHidden?.();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="relative" onClick={(e) => e.stopPropagation()}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="px-1.5 py-1 rounded text-text-muted hover:text-text-secondary hover:bg-bg-secondary transition-colors leading-none"
+        title="Más acciones"
+        aria-label="Más acciones"
+      >
+        ⋮
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-20 min-w-[15rem] rounded-lg border border-border bg-bg-card shadow-lg py-1">
+          <button
+            onClick={ocultar}
+            disabled={busy}
+            className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-bg-secondary disabled:opacity-50"
+          >
+            {busy ? 'Ocultando…' : 'Ocultar del panel'}
+            <span className="block text-[10px] text-text-muted mt-0.5">
+              Si ya lo has borrado en LinkedIn. No pierde métricas.
+            </span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: LivePost; onRemoveDemo?: () => void; onOpenChat?: () => void; onRefreshed?: () => void }) {
   const [open, setOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -2194,6 +2264,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
               </span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
+              <PostMenu post={post} onHidden={onRefreshed} />
               <PilarBadge pillar={post.pillar} />
               {/* CTR a la izquierda del multiplicador (Iker, 2026-07-29): el ojo
                   lee de izquierda a derecha y lo ultimo que ve es lo que se le

@@ -895,6 +895,53 @@ router.delete('/posts/:id/snapshots/zero-impressions', async (req: Request, res:
   }
 });
 
+// POST /api/accounts/posts/:id/hide   — quitar un post de Live Posts a mano.
+// POST /api/accounts/posts/:id/unhide — devolverlo, por si el clic fue sin querer.
+//
+// Iker borra un post de LinkedIn (le pasó dos veces en agosto: el del evento sin
+// el OK de los mencionados y el lead magnet capado) y el post se queda colgado en
+// el panel. Hasta ahora había que pedírmelo a mí y lo hacía por SQL.
+//
+// Se reutiliza `deleted_from_linkedin_at`, la misma columna que pone el monitor
+// cuando detecta que un post ya no está en el feed (`postMonitor.ts`), en vez de
+// crear una `hidden_at` aparte: el caso real es siempre el mismo —el post ya no
+// existe en LinkedIn— y dos columnas para un solo estado se acaban desincronizando.
+// NO se borra la fila: las métricas y los snapshots se conservan enteros, que es
+// justo lo que Iker no quería perder.
+router.post('/posts/:id/hide', async (req: Request, res: Response) => {
+  try {
+    const { rowCount } = await pool.query(
+      `UPDATE posts SET deleted_from_linkedin_at = NOW()
+        WHERE id = $1 AND deleted_from_linkedin_at IS NULL`,
+      [req.params.id]
+    );
+    if (rowCount === 0) {
+      // O no existe, o ya estaba oculto. Lo segundo no es un error: el boton es
+      // idempotente a proposito, para que un doble clic no reviente nada.
+      const { rows } = await pool.query(`SELECT id FROM posts WHERE id = $1`, [req.params.id]);
+      if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    }
+    res.json({ ok: true, hidden: true });
+  } catch (err: any) {
+    console.error('[accounts/posts/:id/hide]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/posts/:id/unhide', async (req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      `UPDATE posts SET deleted_from_linkedin_at = NULL WHERE id = $1 RETURNING id`,
+      [req.params.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    res.json({ ok: true, hidden: false });
+  } catch (err: any) {
+    console.error('[accounts/posts/:id/unhide]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/accounts/posts/:id/refresh — force a single-post snapshot now.
 // Mirrors the bulk live-refresh button but scoped to one post, so the user
 // can pull fresh numbers for just the post they're staring at without

@@ -64,6 +64,26 @@ Escribe como un founder-operador se lo diría **a un director comercial de 55 a�
 
 **Test final del hook:** ¿un director comercial de 55 años que vende maquinaria industrial en Gipuzkoa lo entiende en una lectura de 2 segundos sin googlear nada? Sí → listo. No → reescribe.
 
+### ⛔ 2b · LOS ANGLICISMOS CON TRADUCCIÓN LLANA NO VALEN EN NINGÚN SITIO (Iker, 2026-08-07)
+> **Y "ningún sitio" incluye las RESPUESTAS A COMENTARIOS**, que es donde saltó: Iker se puso a contestar desde la cuenta de Unai y la herramienta le metía `pipeline` a señores mayores. **El lector es el mismo lea un post o lea una respuesta**, así que la regla de audiencia manda igual en los dos.
+
+**El fallo de la lista de arriba:** `pipeline` **no estaba en ella**, y encima esa lista era solo del HOOK. Yo mismo escribí *"su pipeline depende entero de gente que no controla"* en el cuerpo del meme de Unai del 06/08 y se publicó así.
+
+**La frontera, que es lo que hay que tener claro:** no se prohíbe todo el inglés. Se prohíbe **el que tiene una traducción llana que el lector ya usa**. `CRM`, `B2B`, `SDR`, `lead` o `deal` no la tienen y siguen valiendo en el cuerpo; `pipeline` sí la tiene.
+
+| ⛔ | ✅ |
+|---|---|
+| pipeline | la cartera · las oportunidades abiertas · lo que tienes en marcha |
+| funnel | el embudo |
+| forecast | la previsión |
+| workflow | el proceso · la rutina |
+| engagement | la respuesta · la interacción |
+| insight | el hallazgo · lo que aprendes |
+| pitch | el discurso · cómo lo cuentas |
+| closing | el cierre |
+
+**Test:** ¿lo diría un director comercial de 55 años que vende maquinaria y puede no tener CRM? Si la respuesta es que él diría "la cartera", nosotros decimos "la cartera". Mecanizado en `validar-post.py` (fallo duro, en TODO el texto) y en el prompt de `replyGenerator.ts`.
+
 **Excepción:** si el post va dirigido explícitamente a una audiencia técnica (founders SaaS, RevOps avanzado, AI builders) Y el usuario lo pide expresamente, se permite vocabulario más denso. Por defecto: lenguaje llano.
 
 ---

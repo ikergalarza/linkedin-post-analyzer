@@ -623,6 +623,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'no es obligatorio (el 15.0x cierra con ✨) pero es la opcion por defecto'
             if not _mano else '', aviso=True)
 
+    # ⛔ ANGLICISMOS CON TRADUCCION LLANA (Iker, 2026-08-07). Solo se prohiben los
+    # que el lector YA dice en espanol: CRM, B2B, SDR, lead o deal no tienen
+    # equivalente llano y siguen valiendo en el cuerpo (`brand-voice §2`).
+    # `pipeline` si lo tiene, y ni siquiera estaba en la lista: se me colo en el
+    # cuerpo del meme de Unai del 06/08 y se publico. El lector es un director
+    # comercial de 55 anos que vende maquinaria y puede no tener CRM.
+    ANGLICISMOS = {
+        'pipeline': 'la cartera / las oportunidades abiertas',
+        'funnel': 'el embudo', 'forecast': 'la prevision',
+        'workflow': 'el proceso / la rutina', 'engagement': 'la respuesta',
+        'insight': 'el hallazgo', 'insights': 'los hallazgos',
+        'pitch': 'el discurso', 'closing': 'el cierre',
+    }
+    _ang = [w for w in ANGLICISMOS if re.search(r'\b' + w + r'\b', cuerpo, re.I)]
+    chk(not _ang, 'Sin anglicismos que tengan traduccion llana (brand-voice §2b)',
+        ' · '.join(f'"{w}" → {ANGLICISMOS[w]}' for w in _ang) if _ang else '')
+
     # ⛔ MARCAS TEMPORALES (Iker, 2026-08-06). El original de Daniel Disney lleva
     # una lista Monday…Friday, me quedé con ese ritmo de semana y escribí "y aun
     # no es ni jueves" en un post que se publico un JUEVES. Lo pillo Iker al
