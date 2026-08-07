@@ -141,11 +141,36 @@ def contener(logo: Image.Image, lado: int) -> Image.Image:
     # La condicion real es que la DIAGONAL del logo quepa en el diametro util:
     # un rectangulo w×h centrado cabe en un circulo de diametro D si y solo si
     # sqrt(w² + h²) ≤ D. Asi que se escala por la diagonal y no por el lado.
-    _diag = (logo.width ** 2 + logo.height ** 2) ** 0.5
-    escala = util / _diag
+    # ⭐ Y AFINADO EL MISMO DIA: por el RADIO REAL, no por la diagonal.
+    #
+    # Ajustar por la diagonal es exacto para un RECTANGULO lleno, pero castiga a
+    # los logos REDONDOS: un circulo inscrito en un cuadrado deja las esquinas
+    # vacias, y al medir la diagonal del cuadrado le quitas tamaño por un area
+    # que no existe. Lizarte y Plasticos Brello, que son redondos, salian mucho
+    # mas pequeños que los demas por esto.
+    #
+    # Lo exacto para CUALQUIER forma es el radio: la distancia del centro al
+    # pixel de marca mas lejano. Un logo redondo llega casi al borde y uno
+    # apaisado tambien, cada uno segun su forma real.
+    # Y el centro se toma del CENTRO DE MASA de la tinta, no de la caja: una T
+    # tiene todo el peso arriba, asi que centrada por caja se ve alta aunque
+    # geometricamente este centrada (Iker lo vio en Tafalla). Se mide el radio
+    # DESDE ese centro de masa y se pega ahi, con lo que las dos cosas —tamaño y
+    # centrado— salen de la misma medida y no pueden contradecirse.
+    _px = np.array(logo.convert('L'))
+    _ys, _xs = np.nonzero(_px <= 246)
+    if len(_xs):
+        _cx, _cy = float(_xs.mean()), float(_ys.mean())
+        _r = float(np.max(np.sqrt((_xs - _cx) ** 2 + (_ys - _cy) ** 2)))
+    else:
+        _cx, _cy = (logo.width - 1) / 2.0, (logo.height - 1) / 2.0
+        _r = ((logo.width ** 2 + logo.height ** 2) ** 0.5) / 2
+    escala = (util / 2.0) / max(_r, 1.0)
     nuevo = (max(1, round(logo.width * escala)), max(1, round(logo.height * escala)))
     logo = logo.resize(nuevo, Image.LANCZOS)
-    lienzo.paste(logo, ((lado - logo.width) // 2, (lado - logo.height) // 2), logo)
+    _ox = round(lado / 2.0 - _cx * escala)
+    _oy = round(lado / 2.0 - _cy * escala)
+    lienzo.paste(logo, (_ox, _oy), logo)
     return lienzo
 
 
