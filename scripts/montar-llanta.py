@@ -49,7 +49,10 @@ MIN_PX_HUECO = 1500
 # Bajado de 0.20 a 0.08 el 2026-08-07: con 0.20 el logo solo ocupaba el 60%
 # del diametro y en la llanta de 12 huecos se veian diminutos. Con 0.08 usa el
 # 84%. El disco blanco sigue dando aire suficiente para que no parezca un fallo.
-MARGEN = 0.08
+# 0.04 y no 0.08 desde que se ajusta por la DIAGONAL: la geometria ya impide
+# que el logo toque el borde, asi que el margen solo tiene que dar respiro
+# visual. Con 0.08 encima de la diagonal los logos se quedaban pequeños otra vez.
+MARGEN = 0.04
 # Marcador que el diseñador deja en el PSD para la región.
 MARCADOR_REGION = 'XXX'
 FUENTE_DEF = ('C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/TIPOGRAFÍAS/'
@@ -126,7 +129,20 @@ def contener(logo: Image.Image, lado: int) -> Image.Image:
             logo = logo.crop(_caja)
     # Los logos de LinkedIn vienen en JPG con fondo blanco: al pegarlos sobre
     # blanco el fondo desaparece solo y no hace falta recortarlo.
-    escala = min(util / logo.width, util / logo.height)
+    # ⭐ SE AJUSTA AL CIRCULO, NO AL CUADRADO (Iker, 2026-08-07).
+    #
+    # Antes se escalaba con min(util/w, util/h), o sea metiendo el logo en un
+    # CUADRADO de lado `util`. Pero el hueco es un CIRCULO, y las esquinas de un
+    # cuadrado inscrito se salen de la circunferencia: el cuadrado mas grande que
+    # cabe en un circulo de diametro D tiene lado 0,707·D, y `util` era 0,84·D.
+    # Con MARGEN 0.20 no se notaba porque el logo iba pequeño; al bajarlo a 0.08 y
+    # recortarle el blanco propio, dos logos acabaron TOCANDO el borde del hueco.
+    #
+    # La condicion real es que la DIAGONAL del logo quepa en el diametro util:
+    # un rectangulo w×h centrado cabe en un circulo de diametro D si y solo si
+    # sqrt(w² + h²) ≤ D. Asi que se escala por la diagonal y no por el lado.
+    _diag = (logo.width ** 2 + logo.height ** 2) ** 0.5
+    escala = util / _diag
     nuevo = (max(1, round(logo.width * escala)), max(1, round(logo.height * escala)))
     logo = logo.resize(nuevo, Image.LANCZOS)
     lienzo.paste(logo, ((lado - logo.width) // 2, (lado - logo.height) // 2), logo)

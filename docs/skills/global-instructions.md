@@ -623,6 +623,14 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
+**⛔ Y ESA ORACIÓN LLEVA LAS DOS COSAS: EL DOLOR *Y* QUE LO RESOLVEMOS (Iker, 2026-08-07).** No basta con nombrar el dolor y soltar el enlace: falta la mitad que convierte el dolor en motivo para pinchar.
+```
+✅ Saber quién firma dentro cuesta meses, y eso lo resolvemos nosotros: https://…
+❌ Saber quién firma dentro es lo que cuesta meses: https://…        (solo dolor, sin solución)
+❌ Dar con las empresas es fácil. Saber quién firma, no. https://…   (dos oraciones)
+```
+**Antes esto se hacía en DOS oraciones y con eso se cumplía, pero era largo.** El trabajo ahora es meter las dos mitades en UNA sola y corta: dolor, coma, y quién lo resuelve. Iker: *"el único error que hacías antes es que lo decías muy largo y en dos oraciones; dilo más corto y en solo una"*.
+
 **⛔ EL FORMATO EXACTO DEL NINJA: UNA SOLA ORACIÓN + DOS PUNTOS + ENLACE, TODO PEGADO (Iker, 2026-08-07).**
 ```
 ✅ Saber quién firma dentro de cada una es lo que cuesta meses: https://recursos.neety.com/agendar/
