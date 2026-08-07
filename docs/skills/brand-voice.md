@@ -106,6 +106,11 @@ Escribe como un founder-operador se lo diría **a un director comercial de 55 a�
 
 **⚠️ PERO OJO CON EL SESGO DE CONFIRMACIÓN, que aquí es fácil:** casi todos estos elementos **tienen precedente en posts nuestros que se repartieron bien** (`gratis` 15 posts sin ninguno bajo 500, `comenta`+palabra 25 posts con mediana 4.574, `ÚLTIMA HORA` 6 posts con mediana 4.855). **No hay ninguna palabra probada como culpable.** Lo que sí es nuevo es que los dos capados **apilan varias familias a la vez**. La hipótesis viva es la ACUMULACIÓN, no una palabra suelta.
 
+**🔴 MATIZ MEDIDO EL MISMO DÍA, y degrada la familia 1: la alarma NO parece ser lo que capa.** Medidos los 50 últimos posts de Martín Arosa: sus **17 con alarma van de 29 a 1.958 comentarios** y 3 están por debajo de 100, así que **él tampoco gana siempre** —llevábamos el día comparando nuestros fracasos contra su top—. **Pero la diferencia decisiva es otra: sus malos FLOPEAN y los nuestros no se REPARTEN.** Su peor post con alarma tiene 29 comentarios, o sea miles de impresiones; el nuestro tuvo 19 impresiones. **Son dos fenómenos distintos**, y solo el segundo es un capado.
+- Y a él la alarma le **ayuda**: mediana 177 con ella contra 146 sin ella, y 3 de 17 por debajo de 100 frente a 14 de 33.
+- **La explicación que queda en pie es la CONFIANZA DE CUENTA**: historial, volumen y engagement propio. El mismo gancho no se juzga igual en una cuenta con miles de comentarios que en la nuestra.
+- **Consecuencia práctica:** quitar la alarma sigue siendo lo que hacemos, **pero no porque esté probada culpable, sino porque es lo más barato de quitar sin perder fuerza** (`ahora` da la misma novedad). Si algún día la cuenta gana confianza, se puede volver a probar.
+
 **CÓMO SE APLICA, sin volverse paranoico:**
 - **En el GANCHO, cero familias de riesgo.** Ahí no se negocia: es lo primero que se lee y lo primero que se clasifica.
 - **En el cuerpo, una como mucho**, y si se puede decir igual sin ella, se dice sin ella.
