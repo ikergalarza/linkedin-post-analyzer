@@ -675,7 +675,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     #    lineas >80 en los outliers contra 14,8% en los flops. Es CRITERIO DE
     #    OFICIO de Iker, no una palanca de alcance, asi que va como AVISO y no
     #    cuenta en el marcador. Los enlaces se saltan: miden lo que miden.
-    _largas = [l for b in bloques(texto) for l in b
+    # El GANCHO se excluye: tiene su propia medida (§2.1 ≤210 y la zona de
+    # outliers ≤110) y va en una sola linea a proposito. Incluirlo hacia que
+    # este aviso saltara en CASI TODOS los posts, y un aviso que salta siempre
+    # es ruido: es la razon por la que el 2026-08-07 me lo salte teniendo una
+    # linea de 82 caracteres delante (Iker me la pillo).
+    _largas = [l for b in bloques(texto)[1:] for l in b
                if len(l.strip()) > 80 and 'http' not in l
                and not l.strip().startswith(('→', '❌', '✅'))]
     chk(not _largas, 'Ninguna linea pasa de 80 caracteres (§3.2)',
@@ -694,7 +699,14 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     #    suelta domine — la misma prioridad que ya estaba escrita para el email
     #    (`email-marketing`: 1º lineas individuales, 2º bloques de dos, 3º de tres).
     _pat = [len(b) for b in bloques(texto)]
-    if pilar in ('meme', 'mapa', 'los10', 'historia', 'leadmagnet', 'evento') and len(_pat) >= 6:
+    if pilar == 'objeto':
+        _pat = [n for n, bl in zip(_pat, bloques(texto))
+                if not any(l.strip().startswith('→') for l in bl)]
+    # `objeto` estaba FUERA de esta lista y no deberia haberlo estado nunca
+    # (Iker, 2026-08-07): el ritmo es regla de formateado, o sea GLOBAL, y el
+    # despiece es un post como cualquier otro. Se le excluye solo el tramo de
+    # fichas, que va en bloques de 4 por diseño del pilar.
+    if pilar in ('meme', 'mapa', 'los10', 'historia', 'leadmagnet', 'evento', 'objeto') and len(_pat) >= 6:
         _ritmo = '-'.join(map(str, _pat))
         chk(any(n >= 3 for n in _pat), 'RITMO: al menos un bloque de TRES (§3.2)',
             f'ritmo {_ritmo} — todo unos y doses se lee plano')
