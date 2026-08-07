@@ -858,7 +858,10 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'El remate va "Y exporta más que [PAÍS] entero" en el mapa y "Y exporta más '
             'que [PAÍS] entero" tambien en el despiece, antes del objeto. Sin esa palabra '
             'el post lo podria subir cualquier cuenta')
-        chk(bool(re.search(r'm[aá]s que .+\benter[oa]s?\b', hook_txt, re.I)),
+        # El DESPIECE mete el objeto entre medias — la plantilla de §4.7 es
+        # "exporta mas [piezas de coche] que [PAIS] entero" — asi que exigir
+        # "mas que" pegado tumbaba un gancho que seguia la receta al pie.
+        chk(bool(re.search(r'm[aá]s (?:\w+ ){0,4}que .+\benter[oa]s?\b', hook_txt, re.I)),
             'GANCHO: lleva la COMPARACIÓN con un país concreto (§4.2 Paso 1)',
             'falta el "más que [PAÍS] entero". Un país CONCRETO y verificado, nunca '
             '"medio mundo" ni "países enteros" en vago: la comparacion es el dato que '
