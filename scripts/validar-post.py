@@ -630,6 +630,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # cuerpo del meme de Unai del 06/08 y se publico. El lector es un director
     # comercial de 55 anos que vende maquinaria y puede no tener CRM.
     ANGLICISMOS = {
+        # `prompt` ya estaba en la lista de anglicismos prohibidos de
+        # brand-voice §2 desde hacia semanas y ayer NO la meti aqui: fallo mio.
+        # Iker la quita del lead magnet del 07/08. ⚠️ Honestidad sobre el dato:
+        # NO hay indicio de que LinkedIn la penalice —7 posts nuestros con ella
+        # se repartieron bien y Martin Arosa la usa en 15 de sus 50 ultimos—.
+        # Se prohibe por AUDIENCIA, no por algoritmo: un director comercial de
+        # 55 anos que vende maquinaria no dice "prompt".
+        'prompt': 'el mensaje / la instruccion que le mandas',
+        'prompts': 'los mensajes / las instrucciones',
         'pipeline': 'la cartera / las oportunidades abiertas',
         'funnel': 'el embudo', 'forecast': 'la prevision',
         'workflow': 'el proceso / la rutina', 'engagement': 'la respuesta',
