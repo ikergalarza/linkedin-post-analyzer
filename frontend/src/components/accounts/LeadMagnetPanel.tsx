@@ -4,7 +4,7 @@ import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
   buildDm, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
-  commentDepth, extractKeyword, extractSector, matchesKeyword, recursoFor, voiceFor,
+  commentDepth, extractKeyword, extractSector, matchesKeyword, recursoFor, resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 
@@ -317,7 +317,13 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // recurso mapeado, la tarjeta ya avisa y el botón de enviar se bloquea.
   const ready = !!cfg.keyword.trim();
   // El recurso que resuelve la palabra clave (solo aplica al DM).
-  const recurso = recursoFor(cfg.keyword);
+  // OJO con la diferencia, que ya me la comi una vez: `mapeado` dice si la
+  // palabra esta en RECURSOS y decide si se ENSEÑA el formulario manual;
+  // `recurso` es el que se va a mandar, mapeado o escrito a mano. Usar
+  // `recurso` para pintar el formulario lo hacia desaparecer en cuanto
+  // tecleabas el primer caracter del enlace.
+  const mapeado = recursoFor(cfg.keyword);
+  const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
 
   // Keyword filter, client-side: the comment list is already in memory, so
   // changing the keyword re-filters instantly instead of hitting LinkedIn
@@ -449,17 +455,35 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
               resuelve (recursoFor). Aquí solo confirmamos qué recurso saldrá,
               o avisamos si esa palabra no tiene ninguno mapeado todavía. */}
           {cfg.kind === 'dm' && cfg.keyword.trim() && (
-            recurso ? (
+            mapeado ? (
               <p className="text-[11px] text-text-muted leading-snug">
                 Mandará el recurso: <span className="text-text">{recurso.topic}</span>
                 <br />
                 <span className="text-accent break-all">{recurso.link}</span>
               </p>
             ) : (
-              <p className="text-[11px] text-amber-500 leading-snug">
-                La palabra «{cfg.keyword.trim()}» no tiene recurso asignado. Añádela en
-                <span className="font-mono"> RECURSOS</span> (leadMagnetCopy.ts) y el DM saldrá solo.
-              </p>
+              /* SALIDA MANUAL (Iker, 2026-08-07). Antes esto era solo un aviso de
+                 "añádela en RECURSOS" y el envío se quedaba bloqueado hasta que yo
+                 tocara el código. Paso de verdad un viernes a la una, con el post ya
+                 subido y la gente comentando. Ahora se escribe el enlace aquí y el DM
+                 sale igual; el mapa sigue mandando cuando la palabra está en él. */
+              <div className="space-y-1.5">
+                <p className="text-[11px] text-amber-500 leading-snug">
+                  «{cfg.keyword.trim()}» no está en RECURSOS. Pega el enlace aquí y el DM sale igual.
+                </p>
+                <input
+                  value={cfg.link}
+                  onChange={(e) => setCfg((c) => ({ ...c, link: e.target.value }))}
+                  placeholder="https://recursos.neety.com/…"
+                  className="w-full bg-bg-secondary border border-border rounded px-2 py-1 text-xs"
+                />
+                <input
+                  value={cfg.topic}
+                  onChange={(e) => setCfg((c) => ({ ...c, topic: e.target.value }))}
+                  placeholder="Tema, para el DM: los 5 mensajes para dar con quien cierra"
+                  className="w-full bg-bg-secondary border border-border rounded px-2 py-1 text-xs"
+                />
+              </div>
             )
           )}
         </div>
@@ -785,7 +809,7 @@ function CommenterCard({
     // Enlace y tema salen de la palabra clave (recursoFor). Si la palabra no
     // tiene recurso, no hay nada que mandar: se deja el mensaje vacío y el
     // botón queda bloqueado, en vez de redactar un DM con un enlace en blanco.
-    const recurso = recursoFor(cfg.keyword);
+    const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
     if (!recurso) { setMessage(''); return; }
     const input = { name: thread.author.name, location, topic: recurso.topic, link: recurso.link, voice };
     setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
@@ -878,7 +902,7 @@ function CommenterCard({
           lead_magnet_topic: ownsDm
             ? (cfg.kind === 'lista'
                 ? (sector.trim() ? `la lista de ${sector.trim()}` : 'la lista')
-                : (recursoFor(cfg.keyword)?.topic ?? ''))
+                : (resolverRecurso(cfg.keyword, cfg.link, cfg.topic)?.topic ?? ''))
             : undefined,
         }
       );
@@ -1235,7 +1259,7 @@ function CommenterCard({
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={handleSendResource}
-                    disabled={msgSending || !message.trim() || (cfg.kind === 'dm' && !recursoFor(cfg.keyword))}
+                    disabled={msgSending || !message.trim() || (cfg.kind === 'dm' && !resolverRecurso(cfg.keyword, cfg.link, cfg.topic))}
                     className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
                   >
                     {msgSending ? 'Enviando…' : kind === 'dm' ? 'Enviar DM' : 'Invitar con nota'}
@@ -1286,7 +1310,7 @@ function Seguimientos({ post, creatorId, cfg, voice }: {
   // es justo lo que faltaba para que esto valiera en todos los lead magnets.
   const textFor = useCallback((f: FollowupRow): string => {
     if (f.followup_text) return f.followup_text;
-    const recurso = recursoFor(cfg.keyword);
+    const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
     if (!recurso) return '';
     return buildDm({ name: f.provider_name, topic: recurso.topic, link: recurso.link, voice });
   }, [cfg.keyword, voice]);

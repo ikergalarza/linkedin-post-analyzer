@@ -71,7 +71,16 @@ const RECURSOS: Record<string, Recurso> = {
   },
   firma: {
     link: 'https://recursos.neety.com/firma/',
-    topic: 'los 5 prompts para dar con quien firma la compra',
+    topic: 'los 5 mensajes para dar con quien cierra la compra',
+  },
+  // MISMO recurso que `firma`, con otra palabra (Iker, 2026-08-07). El post se
+  // reescribio tres veces por un capado de alcance y la palabra acabo siendo
+  // `nombre` —se entiende sola en el hilo de comentarios, que `firma` no—, pero
+  // la pagina sigue siendo /firma/ porque no compensaba mover la web por esto.
+  // Dos palabras pueden apuntar al mismo sitio y no pasa nada.
+  nombre: {
+    link: 'https://recursos.neety.com/firma/',
+    topic: 'los 5 mensajes para dar con quien cierra la compra',
   },
 };
 
@@ -79,6 +88,25 @@ const RECURSOS: Record<string, Recurso> = {
 // todavía (entonces el panel avisa en vez de mandar un DM sin enlace).
 export function recursoFor(keyword: string): Recurso | null {
   return RECURSOS[normalize(keyword).trim()] ?? null;
+}
+
+// El recurso de una palabra, con SALIDA MANUAL (Iker, 2026-08-07).
+//
+// Hasta ahora, si la palabra no estaba en el mapa, el panel avisaba y bloqueaba
+// el envio: habia que esperar a que yo tocara este fichero. Eso paso de verdad
+// un viernes a la una, con el post ya subido y la gente comentando.
+//
+// Ahora el panel deja escribir el enlace a mano y esto lo recoge. El mapa sigue
+// mandando cuando existe —es donde vive el tema bien redactado y evita erratas—,
+// pero nunca vuelve a ser un bloqueo.
+export function resolverRecurso(keyword: string, link?: string, topic?: string): Recurso | null {
+  const mapeado = recursoFor(keyword);
+  if (mapeado) return mapeado;
+  const l = (link || '').trim();
+  if (!l) return null;
+  // Sin tema, el DM diria "te dejo el recurso sobre " y se cortaria en seco, asi
+  // que hay un texto de reserva en vez de dejar la frase coja.
+  return { link: l, topic: (topic || '').trim() || 'lo que pediste en el post' };
 }
 
 // ────────────────── la palabra clave se saca del propio post ──────────────────
