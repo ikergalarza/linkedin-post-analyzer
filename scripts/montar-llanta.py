@@ -46,7 +46,10 @@ UMBRAL_ALPHA = 8
 MIN_PX_HUECO = 1500
 # Aire entre el logo y el borde del círculo, en tanto por uno del diámetro. Un
 # logo pegado al borde se lee como un error de montaje.
-MARGEN = 0.20
+# Bajado de 0.20 a 0.08 el 2026-08-07: con 0.20 el logo solo ocupaba el 60%
+# del diametro y en la llanta de 12 huecos se veian diminutos. Con 0.08 usa el
+# 84%. El disco blanco sigue dando aire suficiente para que no parezca un fallo.
+MARGEN = 0.08
 # Marcador que el diseñador deja en el PSD para la región.
 MARCADOR_REGION = 'XXX'
 FUENTE_DEF = ('C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/TIPOGRAFÍAS/'
