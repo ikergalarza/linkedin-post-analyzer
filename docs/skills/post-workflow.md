@@ -1108,7 +1108,8 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 - **⚠️ Al fijar un sector el universo se estrecha muchísimo más que en un mapa**, que acepta cualquier industria. **Es el pilar con más riesgo de quedarse corto.** Medido el 30/07: Galicia daba 8 empresas y Euskadi 12. Si la región no llega a 10, se cambia de región, no se rellena.
 
 **Paso 2 — LAS EMPRESAS, y aquí está el trabajo de verdad.**
-- **Objetivo 20, suelo 10.**
+- **⛔ SON 12 EXACTAS (Iker, 2026-08-07).** No es objetivo ni suelo: es el número. **La plantilla de la llanta tiene 12 huecos**, así que 11 deja un agujero vacío y 13 no cabe. El texto y la imagen son la misma pieza y aquí **el número lo manda la imagen**. Vale para el despiece de **cualquier objeto y cualquier sector**, no solo la llanta de automoción: cuando se cree la plantilla de otro sector, se crea con 12 huecos.
+- ~~Objetivo 20, suelo 10.~~ (Era lo de antes, cuando la plantilla no estaba fijada.)
 - **Descubrimiento: buscar PERSONAS, no empresas.** La página de LinkedIn de una empresa muestra su SEDE, no sus plantas: filtrando por localización de empresa se caen justo las grandes (Michelin dice Clermont-Ferrand aunque fabrique en Valladolid). Buscando personas con `keywords` de la planta salen las multinacionales con su gente real.
 - **Cada pieza se asigna contra la DESCRIPCIÓN de la propia empresa** (`GET /api/v1/linkedin/company/{slug}` da `description`), nunca por intuición. **El 30/07 esto evitó cinco errores factuales**: Copreci hace electrodomésticos, Orkli climatización de edificios, Goizper bancos de ensayo, Onapres prensas y la página de Grupo ELAY es de recursos humanos. **Si la descripción está vacía, la empresa se cae** (así se fueron Mecaner y Megatech).
 - Las cuatro comprobaciones de mención del `§4.2` aplican enteras.

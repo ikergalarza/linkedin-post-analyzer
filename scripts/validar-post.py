@@ -1128,8 +1128,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'OBJETO: cada ficha lleva la pieza delante y los dos puntos (4.7)',
             f'{len(_flechas) - len(_piezas)} de {len(_flechas)} sin ese formato. Es la firma '
             'del pilar y lo que lo distingue del mapa en el clasificador')
-        chk(len(_piezas) >= 10,
-            'OBJETO: 10 piezas como MINIMO, objetivo 20 (4.7)',
+        # ⛔ SON 12 EXACTAS, no "10 minimo" (Iker, 2026-08-07). No es una
+        # preferencia de texto: la PLANTILLA de la llanta tiene 12 huecos, asi
+        # que 11 deja un hueco vacio y 13 no cabe. El texto y la imagen son la
+        # misma pieza y el numero lo manda la imagen. Vale para el despiece de
+        # cualquier objeto y cualquier sector, no solo la llanta de automocion.
+        chk(len(_piezas) == 12,
+            'OBJETO: EXACTAMENTE 12 piezas, las que tiene la plantilla (4.7)',
             f'{len(_piezas)}. Por debajo de 10 no se publica: se cambia de region, no se rellena'
             if len(_piezas) < 10 else f'{len(_piezas)} (apunta siempre a 20)')
         # Bloques de 4, y el ultimo puede bajar a 2 o 3. Nunca uno de 1, y nunca
