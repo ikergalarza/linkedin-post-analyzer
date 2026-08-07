@@ -100,77 +100,102 @@ def buscar_huecos(alpha: np.ndarray) -> list[dict]:
     return huecos
 
 
-def contener(logo: Image.Image, lado: int) -> Image.Image:
-    """Disco blanco con el logo dentro, escalado para CABER y sin deformar.
+def _recortar_fondo(logo):
+    """Quita el fondo del logo, sea cual sea, y devuelve solo la marca.
+
+    LAS CUATRO CASUISTICAS, porque los logos de LinkedIn vienen de todo (Iker,
+    2026-08-07: "hay logos cuadrados, redondos, sin fondo, otros con fondo, y de
+    todo, y todos tienen que salir grandes y centrados"):
+
+      1. FONDO BLANCO (la mayoria) -> se recorta el blanco.
+      2. TRANSPARENTE (PNG)        -> se recorta por alpha.
+      3. FONDO DE COLOR (el azul de VW, el negro de Mercedes) -> NO se recorta:
+         ese fondo ES el logo, y quitarlo lo dejaria irreconocible.
+      4. FONDO CLARO CON DEGRADADO (Lizarte) -> el umbral fijo de 246 recortaba
+         un lado si y el otro no, y el logo salia descentrado. Por eso el fondo
+         no se decide con un numero fijo: se MIDE en las cuatro esquinas.
+    """
+    import numpy as np
+    from PIL import Image
+
+    rgba = logo.convert('RGBA')
+    arr = np.array(rgba)
+    alto, ancho = arr.shape[0], arr.shape[1]
+
+    # ¿Hay transparencia de verdad? Entonces el fondo es esa.
+    alpha = arr[:, :, 3]
+    if (alpha < 250).mean() > 0.02:
+        mask = alpha > 40
+    else:
+        # El fondo es el color de las esquinas. Se toma la MEDIANA de las cuatro
+        # para que una esquina rara no decida por las demas.
+        k = max(2, min(alto, ancho) // 25)
+        esquinas = np.concatenate([
+            arr[:k, :k, :3].reshape(-1, 3), arr[:k, -k:, :3].reshape(-1, 3),
+            arr[-k:, :k, :3].reshape(-1, 3), arr[-k:, -k:, :3].reshape(-1, 3)])
+        fondo = np.median(esquinas, axis=0)
+        # Si las esquinas NO son claras, el fondo es parte del logo (caso 3).
+        if fondo.mean() < 225:
+            return rgba
+        # Tolerancia generosa: coge el degradado entero, no solo el blanco puro.
+        dist = np.abs(arr[:, :, :3].astype(int) - fondo.astype(int)).max(axis=2)
+        mask = dist > 22
+
+    ys, xs = np.nonzero(mask)
+    if len(xs) == 0:
+        return rgba
+    x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+    # Guarda: si el recorte se comiera casi todo, algo ha ido mal en la medida.
+    if (x1 - x0) < ancho * 0.10 or (y1 - y0) < alto * 0.10:
+        return rgba
+    return rgba.crop((x0, y0, x1 + 1, y1 + 1))
+
+
+def contener(logo, lado):
+    """Disco blanco con el logo dentro: lo mas grande posible y CENTRADO.
 
     Contener y no cubrir: un logo recortado pierde el nombre de la empresa, que
-    es lo único que hay que poder leer. El disco blanco existe porque el hueco
-    es transparente y sin fondo se vería el menta a través, y un logo con fondo
-    blanco propio sobre menta canta.
+    es lo unico que hay que poder leer.
+
+    LAS DOS DECISIONES, y las dos se equivocaron una vez antes de quedar asi:
+
+    TAMAÑO — se mide el RADIO, no el lado ni la diagonal. El hueco es un CIRCULO
+    pase lo que pase con el logo. Ajustar por el lado deja que las esquinas se
+    salgan; ajustar por la diagonal castiga a los logos REDONDOS, que tienen las
+    esquinas vacias. El radio al pixel de marca mas lejano vale para las dos
+    formas y para cualquier otra.
+
+    CENTRADO — por el CENTRO DE LA CAJA, nunca por el centro de masa. Probe con
+    el centro de masa para bajar una T que se veia alta y descoloco todos los
+    logos ASIMETRICOS: el pajaro de Lizarte mira a la derecha, asi que su masa
+    esta a la derecha y el centroide lo empujo a la izquierda. La caja equilibra
+    los extremos visibles, que es lo que el ojo lee como centrado.
     """
+    import numpy as np
+    from PIL import Image
+
     lienzo = Image.new('RGBA', (lado, lado), (255, 255, 255, 255))
+    logo = _recortar_fondo(logo)
     util = round(lado * (1 - 2 * MARGEN))
-    logo = logo.convert('RGBA')
-    # ⭐ RECORTE DEL BORDE BLANCO (Iker, 2026-08-07). Los logos de LinkedIn vienen
-    # con MUCHO aire propio dentro del cuadrado: ICER, KYB o TI traen casi un 30%
-    # de blanco alrededor de la marca. Al escalarlos tal cual estabamos metiendo
-    # ese aire dentro del circulo y encima le sumabamos el nuestro, asi que la
-    # marca acababa diminuta aunque el hueco fuese grande. Aqui se quita el aire
-    # AJENO y se deja solo el nuestro, que es el que decide MARGEN.
-    _gris = logo.convert('L')
-    # Todo lo que no sea casi-blanco es marca. 246 y no 255 porque los JPG traen
-    # el fondo sucio de compresion y con 255 no recortaria nada.
-    _caja = _gris.point(lambda v: 0 if v > 246 else 255).getbbox()
-    if _caja:
-        _w, _h = logo.size
-        # Guarda de seguridad: si el recorte se comiera casi todo, es que el logo
-        # es casi blanco entero y algo ha ido mal. Mejor dejarlo como estaba.
-        if (_caja[2] - _caja[0]) > _w * 0.12 and (_caja[3] - _caja[1]) > _h * 0.12:
-            logo = logo.crop(_caja)
-    # Los logos de LinkedIn vienen en JPG con fondo blanco: al pegarlos sobre
-    # blanco el fondo desaparece solo y no hace falta recortarlo.
-    # ⭐ SE AJUSTA AL CIRCULO, NO AL CUADRADO (Iker, 2026-08-07).
-    #
-    # Antes se escalaba con min(util/w, util/h), o sea metiendo el logo en un
-    # CUADRADO de lado `util`. Pero el hueco es un CIRCULO, y las esquinas de un
-    # cuadrado inscrito se salen de la circunferencia: el cuadrado mas grande que
-    # cabe en un circulo de diametro D tiene lado 0,707·D, y `util` era 0,84·D.
-    # Con MARGEN 0.20 no se notaba porque el logo iba pequeño; al bajarlo a 0.08 y
-    # recortarle el blanco propio, dos logos acabaron TOCANDO el borde del hueco.
-    #
-    # La condicion real es que la DIAGONAL del logo quepa en el diametro util:
-    # un rectangulo w×h centrado cabe en un circulo de diametro D si y solo si
-    # sqrt(w² + h²) ≤ D. Asi que se escala por la diagonal y no por el lado.
-    # ⭐ Y AFINADO EL MISMO DIA: por el RADIO REAL, no por la diagonal.
-    #
-    # Ajustar por la diagonal es exacto para un RECTANGULO lleno, pero castiga a
-    # los logos REDONDOS: un circulo inscrito en un cuadrado deja las esquinas
-    # vacias, y al medir la diagonal del cuadrado le quitas tamaño por un area
-    # que no existe. Lizarte y Plasticos Brello, que son redondos, salian mucho
-    # mas pequeños que los demas por esto.
-    #
-    # Lo exacto para CUALQUIER forma es el radio: la distancia del centro al
-    # pixel de marca mas lejano. Un logo redondo llega casi al borde y uno
-    # apaisado tambien, cada uno segun su forma real.
-    # Y el centro se toma del CENTRO DE MASA de la tinta, no de la caja: una T
-    # tiene todo el peso arriba, asi que centrada por caja se ve alta aunque
-    # geometricamente este centrada (Iker lo vio en Tafalla). Se mide el radio
-    # DESDE ese centro de masa y se pega ahi, con lo que las dos cosas —tamaño y
-    # centrado— salen de la misma medida y no pueden contradecirse.
-    _px = np.array(logo.convert('L'))
-    _ys, _xs = np.nonzero(_px <= 246)
-    if len(_xs):
-        _cx, _cy = float(_xs.mean()), float(_ys.mean())
-        _r = float(np.max(np.sqrt((_xs - _cx) ** 2 + (_ys - _cy) ** 2)))
+
+    # Radio desde el CENTRO DE LA CAJA (que tras el recorte es el centro de la
+    # imagen), midiendo solo pixeles de marca.
+    gris = np.array(logo.convert('L'))
+    alpha = np.array(logo)[:, :, 3]
+    marca = (alpha > 40) & (gris <= 250)
+    if not marca.any():
+        marca = alpha > 40
+    ys, xs = np.nonzero(marca)
+    cx, cy = (logo.width - 1) / 2.0, (logo.height - 1) / 2.0
+    if len(xs):
+        r = float(np.max(np.sqrt((xs - cx) ** 2 + (ys - cy) ** 2)))
     else:
-        _cx, _cy = (logo.width - 1) / 2.0, (logo.height - 1) / 2.0
-        _r = ((logo.width ** 2 + logo.height ** 2) ** 0.5) / 2
-    escala = (util / 2.0) / max(_r, 1.0)
+        r = ((logo.width ** 2 + logo.height ** 2) ** 0.5) / 2
+    escala = (util / 2.0) / max(r, 1.0)
+
     nuevo = (max(1, round(logo.width * escala)), max(1, round(logo.height * escala)))
     logo = logo.resize(nuevo, Image.LANCZOS)
-    _ox = round(lado / 2.0 - _cx * escala)
-    _oy = round(lado / 2.0 - _cy * escala)
-    lienzo.paste(logo, (_ox, _oy), logo)
+    lienzo.paste(logo, ((lado - logo.width) // 2, (lado - logo.height) // 2), logo)
     return lienzo
 
 
