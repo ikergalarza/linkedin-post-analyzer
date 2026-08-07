@@ -1033,6 +1033,12 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **3 · UN recurso, genérico, el mismo para todos, y la captura la hace el GATE de la landing.**
 
+**3b · ⭐ LA PALABRA DEL CTA ES UN CARTEL PÚBLICO, NO SOLO UN FILTRO (Iker, 2026-08-07).** Cuando el hilo se llena, cualquiera que pase ve doscientos comentarios con esa palabra. **Si se entiende sola, el propio hilo vende el post; si es opaca, no dice nada.** Iker: *"si ahora ves moviendo comentarios con la palabra cierra, no vas a saber de lo que va"*.
+- **El test:** léela sin el post delante. ¿Se entiende? ❌ `cierra`, `vibe`, `frase`. ✅ `nombre`, `perfil`, `llaves`.
+- **La mejor palabra es la TESIS del post.** El del 07/08 dice *"el problema es el nombre"*, así que la palabra es `nombre` y el gancho la incorpora: *"Claude ahora me da el nombre de quien cierra la compra"*. Los tres criterios a la vez: se entiende sola, es la tesis, y reconecta con el gancho.
+- **Y `me da el nombre` gana a `me encuentra a quien`** (Iker): es más concreto —promete algo que puedes pegar en un buscador— y baja el riesgo, porque `encontrar a alguien` roza el registro de rastrear personas.
+- **⛔ Gastadas en todo LinkedIn, no valen aunque nosotros no las hayamos usado:** `guía`, `plantilla`, `info`, `quiero`, `dame`, `pdf`, `link`, `gratis`. No distinguen nuestro post de los otros doce del feed. Mecanizado en el validador.
+
 **4 · ⛔ LAS PROMESAS DEL CUERPO SE VERIFICAN COMO SE VERIFICA UNA CIFRA (Iker, 2026-08-05).** Se me coló *"te saca su nombre y su perfil **sin pagar una herramienta**"* en un post sobre cómo encontramos nosotros a los decisores. **A esa persona la encontramos con Sales Navigator y Unipile, y los dos se pagan** (Unipile: 49 €/mes mínimo, 7 días de prueba). Es la misma familia de mentira que inventarse una empresa, con el agravante de que **la desmonta el propio lector en cuanto lo intenta**, y encima ese lector es el que acaba de dejarnos el correo.
 - **NUESTRO STACK REAL, para contrastar contra él:** Claude · LinkedIn Premium (las 3 cuentas) · Sales Navigator · Unipile · nuestro backend. **Todo menos Claude a secas se paga.**
 - **Di lo que el prompt SÍ hace, no lo que te ahorra.** ❌ *"te saca su perfil sin pagar nada"* → ✅ *"te da el filtro exacto con el que buscarla en LinkedIn"*.

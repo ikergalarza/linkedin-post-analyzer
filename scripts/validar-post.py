@@ -176,6 +176,13 @@ MOLDE_EXPERIMENTO = (
     r'|cada semana (?:publico|hago|le)|(?:le )?paso a claude'
     r')\b')
 
+def normalizar_kw(k):
+    """La palabra del CTA, en minusculas y sin tildes, para compararla."""
+    import unicodedata
+    k = unicodedata.normalize('NFD', k.strip().lower())
+    return ''.join(c for c in k if unicodedata.category(c) != 'Mn')
+
+
 # §2.3 — el hook debe leerse inequívocamente sobre VENDER
 # §2.3 — El ancla. OJO: la lista es un PROXY, no el test. El test de verdad es
 # "¿esto solo puede publicarlo una cuenta de VENTAS?" y eso es criterio (§8).
@@ -1078,6 +1085,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             chk(not tildes, 'Palabra clave SIN tildes (§4.4)',
                 f'"{kw}" lleva {tildes} → quien la comente sin tilde desde el móvil no entra en el filtro'
                 if tildes else '')
+        # ⭐ LA PALABRA DEL CTA ES UN CARTEL PUBLICO (Iker, 2026-08-07).
+        # No es solo un filtro para nosotros: cuando el hilo se llena, cualquiera
+        # que pase ve 200 comentarios con esa palabra. Si la palabra se entiende
+        # sola, el propio hilo vende el post; si es opaca, no dice nada.
+        #   ❌ "cierra"  -> ves el hilo lleno de "cierra" y no sabes de que va
+        #   ✅ "nombre"  -> se entiende a la primera y ademas ES la tesis del post
+        # Y las gastadisimas por todo LinkedIn no valen aunque nosotros no las
+        # hayamos usado: no distinguen nuestro post de los otros doce del feed.
+        KW_GASTADAS = {'guia', 'guía', 'plantilla', 'info', 'quiero', 'yo',
+                       'mas', 'más', 'dame', 'gratis', 'pdf', 'link', 'enlace'}
+        if m2:
+            _kw = normalizar_kw(m2.group(1))
+            chk(_kw not in KW_GASTADAS,
+                'La palabra del CTA no es de las gastadas en todo LinkedIn (§4.4)',
+                f'"{m2.group(1)}" la pide medio LinkedIn: no distingue nuestro post de los '
+                'otros doce del feed. Busca una que sea la TESIS del post y se entienda sola')
+
         # El CTA pide la palabra Y UN SEGUNDO DATO, y cuál es depende del subtipo
         # (§4.4). En el de DM el dato es el sector/departamento: sirve para
         # personalizar el recurso. En el PÚBLICO (auditoría de web) el dato es la
