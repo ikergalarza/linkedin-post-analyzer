@@ -422,6 +422,12 @@ El rastreo de enlaces vive en **Configuración de la cuenta → Rastreo del enla
 - ⛔ **Los `testers` NO se incluyen a partir de la tanda 2:** ya lo recibieron y falsean el denominador (en la tanda 1 fueron 5 de 54, un 9% de la muestra).
 - ⚠️ **Los segmentos por API no aplican la exclusión de grupos.** Se probó `not_in_all` sobre `groups` y el segmento salió con la lista entera (1.310 en vez de ~1.236). Si hace falta un segmento con exclusiones, se configura en el panel.
 
+### ⛔ EL DOMINIO DEL CORREO NO DICE EL PAÍS (medido el 2026-08-10)
+Sobre los 151 candidatos a la tanda 2: **85% no da ninguna señal de país** (56% gmail/hotmail/outlook/icloud + 29% dominios `.com`/`.io`/`.ai`). Solo 9 eran `.es` y 13 LatAm.
+- **Corolario: el ICP de una lista NO se puede segmentar por el correo.** El país sale del CRM (HubSpot), y si el CRM no lo tiene, no se tiene. **Priorizar por afinidad exige enriquecer antes.**
+- 🔴 **Y el error de método que lo destapó: afirmé "buena parte de la lista es LatAm" de un vistazo, sin contar.** Eran 13 de 151. **Ninguna composición de lista se afirma sin contarla**, igual que no se escribe una cifra sin fuente (`§7`). Si el conteo cuesta una llamada, se hace la llamada.
+- **Lo que sí se hace mientras tanto:** en las tandas de calentamiento van primero los más afines que se puedan identificar, y los claramente fuera de ICP se dejan para la última. No por entregabilidad, sino porque **calentar con gente que no va a abrir desperdicia el envío**.
+
 ### Una campaña = un envío
 Una campaña **solo se puede enviar una vez**. Cada tanda es una campaña distinta: se nombra `… Tanda 1`, `Tanda 2`, y **la siguiente se DUPLICA de la anterior** (arrastra idioma, texto plano, UTM y pie ya resueltos). 🔴 Lo único que hay que cambiar al duplicar es el **grupo de destinatarios**, y verificar el contador antes de enviar.
 

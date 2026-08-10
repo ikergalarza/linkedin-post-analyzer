@@ -37,14 +37,19 @@
 - 🔴 **Rebotes duros 2 = 4,3% sobre los 47 reales.** Banda de alarma (2-5%), y con n=47 el dato es impreciso. **Es la razón por la que hay que verificar la lista antes de la tanda grande:** si la tasa se mantiene, en los ~1.263 restantes son ~54 rebotes.
 - ⭐ **1 reunión agendada el mismo día del envío**, de 2 clics en el enlace. Con el `origen: newsletter` y los UTM llegando bien al formulario.
 - ⛔ **RESPUESTAS: 0** (comprobado por Mario el 2026-08-10, 3 días después). La lista cerrada de una palabra **no bastó**. Con 47 destinatarios el dato no concluye nada, pero **si la tanda 2 (149) también da 0, el CTA de respuesta está roto y hay que rediseñarlo**, no repetirlo en la tanda 3.
-- **Contexto de la lista:** de los ~1.310, buena parte es LatAm (.mx, .com.mx) y queda fuera del ICP industrial español. Explica parte del silencio y habrá que separarlos.
+- **Composición de la lista (contada, no estimada):** de 151 candidatos, **85% no da señal de país** (gmail/hotmail/.com). Solo 9 `.es` y 13 LatAm. **Para priorizar por ICP hace falta el país del CRM.**
 
 ## Tandas del correo 0
 | Tanda | Grupo | Tamaño | Estado |
 |---|---|---|---|
 | 1 | `warmup-tanda-1` (194973211060864772) | 47 (+5 testers) | ✅ Enviada 2026-08-07 |
-| 2 | `warmup-tanda-2` (195398984128267443) | **149**, sin testers | Grupo lleno el 2026-08-10 por API, pendiente de enviar |
-| 3+ | — | El resto de `Leads General · limpia` (1.310) | Pendiente, y **con la lista verificada antes** |
+| 2 | `warmup-tanda-2` (195398984128267443) | **138**, sin testers | Grupo lleno el 2026-08-10 por API, pendiente de enviar |
+| 3 | — | ~400 | Pendiente. **Con la lista verificada antes** |
+| 4 | — | El resto (~725), aquí van los de fuera de ICP | Pendiente |
+
+**Son 4 tandas, no 3.** Con 47+138 = 185 enviados, meter los ~1.125 restantes de golpe es un salto de 8x con un 4,3% de rebotes detrás.
+
+⛔ **Las tandas NO son cadencia:** nadie recibe dos correos, así que la regla de 1 correo/semana (que es POR PERSONA) no limita el ritmo entre tandas. Lo que manda el espaciado es el calentamiento: **48-72 h entre tandas**, el tiempo que tardan en aterrizar rebotes y quejas. No son 5 días ni ningún número de días fijo.
 
 ## Palabras de CTA-respuesta ya usadas (no repetir)
 - `web` / `linkedin` / `evento` / `webinar` / `ni idea` (correo 0, 2026-08-07)
