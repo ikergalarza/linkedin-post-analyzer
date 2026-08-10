@@ -101,7 +101,7 @@ RULE 3c — POR DEFECTO SE APOYA, NO SE REBATE (Iker, 2026-08-07). Quien comenta
 ✅ SOLO se discrepa en dos casos, y los decide el COMENTARIO, no las ganas: (a) dice algo factualmente falso que perjudicaria a quien lo lea; (b) nos ataca o cuestiona el post. En esos dos, se discrepa con educacion y sin ironia. En todo lo demas, aunque su punto sea flojo o incompleto, se apoya y se suma.
 Ejemplo real del 07/08, y es lo que NO se hace: alguien comento que el estado mental del comercial es fundamental, y la herramienta contesto "el estado mental importa, si, pero lo que yo decia es que ese estado mental lo genera el volumen de oportunidades, no la perseverancia". Le estaba dando la razon y le corregimos. Lo correcto era apoyarle y anadir el angulo del volumen SIN quitarle el suyo.
 
-RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, or ask a sharpening question — NOT push back, ver RULE 3c). NO generic "Thanks for sharing!" / "Great point!" filler. NO emoji unless your signature_moves explicitly include them.
+RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, or ask a sharpening question — NOT push back, ver RULE 3c). NO generic "Thanks for sharing!" / "Great point!" filler. Los emojis los decide la regla EMOJIS del mensaje de usuario, que va por cuenta: no los saques de signature_moves.
 
 RULE 5 — START WITH THE NAME, THEN A SPACE, THEN A LOWERCASE FIRST WORD (but normal capitalization after that): Begin the reply with the commenter's full display name VERBATIM (exact casing, exact spelling) at position 0, followed by a SINGLE SPACE — NO comma, no colon, no punctuation after the name. The FIRST word after the name is lowercase (close/casual). Example: "Basilio García y lo peor es que…" / "Joan Bisquert totalmente de acuerdo…" — NOT "Basilio García, ..." and NOT "Basilio García. Lo peor…". From there ON, write with NORMAL capitalization: a new sentence after a period / ! / ? starts with a CAPITAL letter, as in any text. ONLY the very first word after the name is lowercase — do NOT carry lowercase across a period. Wrong: "exacto eso es. y lo que más caro…". Right: "exacto eso es. Y lo que más caro…". The name becomes a blue @-mention chip on LinkedIn and flows straight into the sentence; the backend turns this leading name into a real @-mention tag, so it must be verbatim at position 0. If a name was not provided, skip this rule and open naturally — still lowercase first word, normal capitalization after.
 
@@ -195,11 +195,54 @@ function buildPrompt(input: ReplyGenerationInput, voice: Voice): string {
   // OPENING_MOVES: "a veces" no produce "a veces", produce "siempre" o "nunca". Cada
   // llamada es independiente y no sabe qué hizo la anterior. La frecuencia la decide
   // el dado, no el modelo.
-  const ELLIPSIS_ODDS: Record<Voice, number> = { sobrio: 0.25, medio: 0.18, cercano: 0 };
-  const useEllipsis = Math.random() < ELLIPSIS_ODDS[voice];
-  const ellipsisNudge = useEllipsis
-    ? `CIERRE DE ESTA RESPUESTA: termínala con puntos suspensivos ("...") en vez de un punto final. Es tu equivalente sobrio del emoji: deja la frase abierta, con media sonrisa o dejando caer lo que no hace falta decir. Tiene que salir natural del contenido — si la última frase no admite quedarse en el aire, reescríbela para que sí. UNA vez, al final, nunca en medio.`
-    : `CIERRE DE ESTA RESPUESTA: acaba con punto normal. NO uses puntos suspensivos en esta.`;
+  // CIERRE DE LA RESPUESTA, sorteado por voz (Iker, 2026-08-07).
+  //
+  // Antes esto era BINARIO —puntos suspensivos o punto— y tenia dos problemas:
+  //   · Unai y Asier acababan casi siempre en punto o en suspensivos, y nunca en
+  //     exclamacion, aunque una exclamacion de vez en cuando no rompe la sobriedad.
+  //   · Iker, con 0 de probabilidad de suspensivos, caia SIEMPRE en la rama del
+  //     "acaba con punto normal", asi que el mas cercano de los tres era el unico
+  //     obligado a terminar igual siempre. Justo al reves de lo que se buscaba.
+  //
+  // Ahora son tres salidas y cada voz tiene su reparto. Iker no lleva instruccion:
+  // es el unico que puede cerrar como le pida el comentario.
+  const CIERRES: Record<Voice, Array<[string, number]>> = {
+    // Sobrio: el punto manda. Los suspensivos son su equivalente del emoji y la
+    // exclamacion entra poco, para que cuando salga signifique algo.
+    sobrio: [['punto', 0.60], ['suspensivos', 0.25], ['exclamacion', 0.15]],
+    // Medio: mismo esqueleto con la exclamacion algo mas suelta.
+    medio: [['punto', 0.55], ['suspensivos', 0.20], ['exclamacion', 0.25]],
+    cercano: [],
+  };
+  let cierre = '';
+  const _tabla = CIERRES[voice];
+  if (_tabla.length) {
+    let _r = Math.random();
+    for (const [nombre, prob] of _tabla) {
+      if (_r < prob) { cierre = nombre; break; }
+      _r -= prob;
+    }
+    if (!cierre) cierre = _tabla[0][0];
+  }
+  const ellipsisNudge =
+    cierre === 'suspensivos'
+      ? `CIERRE DE ESTA RESPUESTA: termínala con puntos suspensivos ("...") en vez de un punto final. Es tu equivalente sobrio del emoji: deja la frase en el aire, con media sonrisa. UNA vez, al final, nunca en medio. Si la frase no admite quedarse abierta, reescríbela para que sí.`
+      : cierre === 'exclamacion'
+        ? `CIERRE DE ESTA RESPUESTA: termínala con UNA exclamación ("!"), no con punto. Una sola y al final: en tu tono la exclamación es afecto contenido, no euforia. Nada de "!!" ni de mayúsculas gritadas.`
+        : cierre === 'punto'
+          ? `CIERRE DE ESTA RESPUESTA: acaba con punto normal. NO uses puntos suspensivos ni exclamación en esta.`
+          : `CIERRE DE ESTA RESPUESTA: ciérrala como te pida el comentario — punto, exclamación o puntos suspensivos. Eres el más cercano de los tres y el único sin regla fija aquí.`;
+
+  // EMOJIS, por voz y no por lo que ponga el perfil en la BD (Iker, 2026-08-07).
+  // RULE 4 los dejaba a merced de `signature_moves`, que es texto libre de la
+  // base de datos: si ahi no se mencionan, no salen nunca, y si se mencionan
+  // salen siempre. Demasiado frágil para un rasgo que Iker tiene decidido.
+  const EMOJI_POR_VOZ: Record<Voice, string> = {
+    sobrio: 'EMOJIS: NUNCA. Ni uno. Eres el fundador y tu tono no los necesita; los puntos suspensivos hacen ese papel.',
+    medio: 'EMOJIS: de vez en cuando, como mucho UNO y solo si remata de verdad. La mayoría de tus respuestas van sin ninguno.',
+    cercano: 'EMOJIS: puedes usarlos con naturalidad, uno por respuesta como mucho. No los fuerces si la frase no los pide.',
+  };
+  const emojiNudge = EMOJI_POR_VOZ[voice];
 
   // Same per-call trick as OPENING_MOVES, for the same reason. RULE 13 lists the
   // thanks variants but a menu doesn't produce variety: every call is independent,
@@ -252,6 +295,8 @@ ${leadMagnetInstruction}
 ${varietyNudge}
 
 ${ellipsisNudge}
+
+${emojiNudge}
 
 ${thanksNudge}
 
