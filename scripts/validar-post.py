@@ -766,11 +766,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'El enlace es para Iker; la foto es para el disenador, que la necesita adjunta '
             '(working-preferences §1d-ter)', aviso=True)
 
-    chk(False, 'ENTREGA: comparativa en DOS COLUMNAS, misma fila, separador discontinuo',
+    chk(False, 'ENTREGA: comparativa en DOS COLUMNAS, y OTRA VEZ en cada correccion',
         'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '
         'separados por una linea discontinua vertical. Sin etiquetas de gancho ni cuerpo '
         'dentro de las columnas, y sin trocear. No hace falta que sea copiable: es para '
-        'mirarla (working-preferences §1e)', aviso=True)
+        'mirarla (working-preferences §1e). ⛔ Y VA CADA VEZ QUE CAMBIA EL TEXTO DEL POST, '
+        'no solo la primera: si Iker corrige una linea, la comparativa NUEVA va sin que la '
+        'pida, porque la que vio compara un texto que ya no existe. El disparador es que '
+        'cambie el TEXTO; corregir un analisis o el codigo no la dispara '
+        '(§1e-REENTREGA)', aviso=True)
 
     # ---------- POR PILAR ----------
     # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.

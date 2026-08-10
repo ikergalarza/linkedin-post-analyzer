@@ -99,6 +99,29 @@ Cada vez que Iker corrija algo del gancho o del cuerpo, la primera pregunta es *
 
 **Y si la version que tengo no es la mejor que puedo dar, NO se entrega.** Iterar cuesta minutos; que Iker corrija una entrega mala cuesta su tiempo, que es lo caro.
 
+## ⛔⛔ 1e-REENTREGA · SI CAMBIA EL TEXTO DEL POST, LA COMPARATIVA SE REHACE (Iker, 2026-08-10)
+
+**La regla:** cada vez que cambia el TEXTO de la publicación, **la comparativa
+nueva va en esa misma entrega, sin que Iker la pida**. No solo la primera vez.
+
+**El disparador es que cambie el texto del post.** Una corrección a un análisis, a
+una cifra de la entrega o al código **no** la dispara. Iker: *"cuando te haga una
+corrección respecto al texto de la publicación me refiero"*.
+
+**Por qué:** el 2026-08-10 entregué el lead magnet con su comparativa, Iker corrigió
+tres cosas del texto (el bloque de tres, la longitud, el cierre calcado), reescribí
+el post — **y entregué la versión nueva sin comparativa**. La que él tenía delante
+compara un texto que ya no existe, así que tuvo que pedirla otra vez. Correr el
+script cuesta un segundo; pedirla cuesta un turno entero.
+
+**Dónde aplica:** en todo pilar que se monte sobre una referencia — **lead magnet y
+meme siempre**, y cualquier remix. En los pilares de formato propio (mapa, los 10,
+despiece) no hay referencia externa que comparar.
+
+**Y la referencia de esa comparativa nueva es la MISMA de antes** (§1e-REF): si al
+corregir el texto la comparativa cambiara de referencia, ya no se vería qué ha
+cambiado, que es justo para lo que se mira.
+
 ## ⛔ 1e-REF · LA REFERENCIA DE LA COMPARATIVA COMPARTE ANATOMIA, NO FECHA (Iker, 2026-08-10)
 
 **El error:** entregue el lead magnet del martes comparado contra el post de 483
