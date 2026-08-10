@@ -333,9 +333,19 @@ def es_lista(bloque):
        cuotas…"), que es el 3er mejor post del histórico. Lo destapó correr el
        validador contra nuestros propios ganadores, que es el test que nunca se
        había hecho.
+    4. Item NUMERADO DESARROLLADO: la primera linea abre con "1." y debajo van
+       2-4 lineas de desarrollo. Faltaba, y por eso este script tumbaba NUESTRO
+       MEJOR LEAD MAGNET, el de 632 comentarios, cuyos 5 puntos son justo eso
+       ("1. Lenguaje natural > filtros rigidos" + tres lineas explicandolo).
+       Un item de lista es una unidad estructural aunque su desarrollo sea
+       prosa: lo que lo hace lista es el numero de delante, no que todas las
+       lineas lleven marcador. Mismo hallazgo y mismo metodo que el caso 3:
+       correr el validador contra nuestros propios ganadores.
     """
     lineas = [l for l in bloque if l.strip()]
     if not lineas:
+        return True
+    if re.match(r'\s*(?:[0-9]+[\.\)]|1️⃣|[2-9]️⃣)\s', lineas[0]) and len(lineas) <= 5:
         return True
     if all(re.match(r'\s*(→|✅|[0-9]+[\.\)]|-|•|1️⃣|[2-9]️⃣)', l) for l in lineas):
         return True
@@ -705,7 +715,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     #    la PERIODICIDAD en general, no un patron concreto, y se exige que la linea
     #    suelta domine — la misma prioridad que ya estaba escrita para el email
     #    (`email-marketing`: 1º lineas individuales, 2º bloques de dos, 3º de tres).
-    _pat = [len(b) for b in bloques(texto)]
+    # Un item de lista numerada DESARROLLADO (titulo + 2-3 lineas) es una
+    # unidad estructural, no un bloque de prosa, asi que no entra en las
+    # reglas de ritmo ni de escalera. Sin esto, la lista de 5 items cuenta
+    # como 3-3-3-3-3 y dispara el check de patron repetido. Y es justo la
+    # estructura de nuestro mejor lead magnet, el de 632 comentarios.
+    _pat = [len(b) for b in bloques(texto) if not es_lista(b)]
     if pilar == 'objeto':
         _pat = [n for n, bl in zip(_pat, bloques(texto))
                 if not any(l.strip().startswith('→') for l in bl)]
