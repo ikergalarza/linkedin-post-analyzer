@@ -816,8 +816,40 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                     # máx 2 líneas (Iker, 2026-07-22). Antes se exigía separarlas
                     # con un blanco; ahora se permite el bloque de 2 (broma / CTA+link)
                     # y también el de 1. Lo que NO vale es un bloque de 3+.
-                    chk(len(b) <= 2, 'Spam ninja máx 2 líneas (§4.4b)',
-                        f'{len(b)} líneas en el bloque del spam ninja, máx 2' if len(b) > 2 else '')
+                    # ⛔ EXACTAMENTE DOS: DOLOR ARRIBA, ENLACE ABAJO (Iker, 2026-08-10).
+                    # Era 'max 2' y colaba la linea suelta. Medido en clics, el bloque
+                    # de dos gana en los DOS pilares donde aparece: el meme del 29/07
+                    # (0,151%, el mejor meme) y el mapa del 14/07 (0,415%, el mejor
+                    # enlace de venta de la casa). Las cinco lineas sueltas van de
+                    # 0,094% a 0,017%. Ninguna llega al peor de los dos bloques.
+                    #
+                    # No choca con la regla del 07/08 ('una sola oracion + dos puntos
+                    # + enlace, todo pegado'): esa manda sobre la LINEA DEL ENLACE, y
+                    # el meme del 29/07 la cumple. Lo que se anade es la linea de dolor
+                    # ENCIMA, en el mismo bloque.
+                    # ⚠️ Y EL DOLOR PUEDE IR PEGADO CON SALTO SIMPLE O CON LINEA EN
+                    # BLANCO. Lo intente como 'bloque de exactamente 2' y suspendia al
+                    # mapa del 14/07, que es EL MEJOR de la casa (0,415%): el separa sus
+                    # dos lineas con un blanco. El meme del 29/07 las junta con salto
+                    # simple. Las dos formas ganan; lo que ninguna de las dos hace es
+                    # soltar el enlace sin nada delante.
+                    _prev = b[-2] if len(b) >= 2 else (bs[i - 1][-1] if i > 0 else '')
+                    chk(len(b) <= 2 and len(_prev.strip()) > 0,
+                        'Spam ninja: hay una linea de dolor pegada al enlace (§4.4b)',
+                        '%d lineas en el bloque' % len(b) if len(b) > 2
+                        else 'el enlace abre el post sin dolor delante')
+                    # Y la de abajo es la mas CORTA de las dos. Es el orden del corpus
+                    # de email: linea larga de valor y remate corto justo antes del
+                    # enlace, para que caiga como punto final. Nuestros dos ganadores lo
+                    # hacen (52→49 y 73→69 caracteres), pero por 3-4 caracteres, asi que
+                    # va de AVISO: sirve para desempatar, no es ley.
+                    if len(b) == 2:
+                        _arriba = len(b[0])
+                        _abajo = len(re.sub(r'https?://\S+', '', b[1]).strip())
+                        chk(_abajo <= _arriba, 'Spam ninja: la linea del enlace no es mas larga que la de arriba (§4.4b)',
+                            'arriba %d, abajo %d. En el cuerpo la escalera va de corto a '
+                            'largo; en el cierre, al reves' % (_arriba, _abajo)
+                            if _abajo > _arriba else '', aviso=True)
                     # ⛔ LOS TRES DE ABAJO SALEN DE MEDIR LOS CLICS REALES (2026-08-10).
                     # El mapa es el pilar que mas convierte (mediana 84 clics, CTR
                     # 0,315%) y el meme el segundo (0,151%), pero el meme del 06/08

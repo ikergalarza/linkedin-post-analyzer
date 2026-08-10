@@ -620,6 +620,58 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 
 ---
 
+### ⛔ 4.4b-EMAIL · LO QUE SE ROBA DEL CORPUS DE NEWSLETTERS (Iker, 2026-08-10)
+
+Iker pasó un corpus real de correos (Isra Bravo, RunnerPro, Hugo López, Juan
+Domínguez y 8 remitentes más) sobre cómo venden el enlace. **Ellos llevan años en
+esto y nosotros empezamos ahora**, así que se roba — pero no entero: **tres de
+sus movimientos chocan de frente con reglas que dio Iker**, y esos no se tocan.
+
+#### ✅ SE ADOPTA
+
+**1. La línea de debajo es la MÁS CORTA de las dos.** RunnerPro cierra sus dos
+correos con una línea larga de valor y luego cinco palabras: *"Tu plan te está
+esperando."* Una frase corta detrás de una larga cae como punto final. **Es la
+excepción a la escalera del cuerpo** (`§3.2`, corto → largo): en el cuerpo,
+escalera; en el cierre del enlace, al revés. Nuestros dos ganadores ya lo hacen,
+pero por 3-4 caracteres (52→49 y 73→69), así que **va de AVISO en el validador,
+no de regla dura**: sirve para desempatar.
+
+**2. Regalar la victoria ANTES del enlace.** En los correos de RunnerPro el
+lector se lleva algo aplicable sin pagar: a qué hora correr, beber antes de tener
+sed. El enlace deja de ser el peaje de la información y pasa a ser *"y si quieres
+el sistema entero, está aquí"*. El que no pincha se va contento y vuelve.
+
+**⚠️ Y esto explica el hueco mapa-vs-meme mejor que ninguna otra cosa que hayamos
+medido.** El mapa convierte a 0,315% y el meme a 0,151%, la mitad. **El mapa
+REGALA**: 12 empresas con nombre y persona, más el enlace al mapa completo. El
+meme solo regala una risa. Mismo enlace de agendar, misma casa, el doble de
+clics. En un meme no hay lista que regalar, pero sí se puede regalar **el
+criterio**: la frase que el lector se lleva y puede usar mañana.
+
+**3. La transición no argumenta, entrega.** Isra pasa del cuerpo al enlace con
+*"En este:"*, *"Hazme caso."*, *"Al tiempo."*. **El porqué era el correo entero.**
+Nuestra línea del enlace hace el mismo trabajo y por eso tiene techo de 80
+caracteres: no está ahí para convencer, está para abrir la puerta.
+
+#### ➖ YA LO CUMPLÍAMOS (no es cambio, es confirmación)
+
+**Sin verbo imperativo en la línea del enlace.** El corpus insiste en frase de
+estado, no orden (*"El mapa ya está hecho"* en vez de *"Descárgalo aquí"*).
+Revisados nuestros 6 últimos ninjas: **ninguno usa imperativo**, todos van en
+primera persona del plural (*"te marcamos"*, *"te lo damos hecho"*). El verbo
+punchy que pide la receta vive en el cuerpo, no en el cierre, que es justo lo que
+recomienda el corpus. Nada que cambiar.
+
+#### ⛔ SE RECHAZA, Y POR QUÉ
+
+| lo que propone el corpus | por qué NO |
+|---|---|
+| **Una frase-puente FIJA, repetida siempre** (RunnerPro usa la misma en todos) | Choca con `SPAM_QUEMADO`. Iker, 2026-07-31: *"no puede ser que siempre me digas es dar con el que decide"*. En email el suscriptor te lee entero y la repetición crea firma; en LinkedIn el post nuevo tiene que **notarse nuevo**, que es para lo que existe. |
+| **El nombre solo en su línea** (`Neety.`) | Choca con la regla dura **"el spam ninja NO nombra a Neety"**. Nombrar la marca convierte el post en publicidad encubierta, que es lo único que el ninja existe para evitar. |
+| **Pregunta de seguimiento al final** (*"¿por cuántas salidas vas?"*) | Choca con **"si hay spam ninja, el cierre NO puede ser otro CTA"** (Iker, 2026-07-20). En email el CTA de respuesta es gratis; en un post apila dos llamadas y rompe la regla del UNO. |
+| **Anclar el precio acusando** (*"me estás robando"*) | No aplica: nuestros posts no mencionan precio. Guardado por si algún día lo hacen. |
+
 ### ⛔⛔ 4.4b-CLICS · LO QUE HACE QUE EL NINJA CONVIERTA (medido en clics reales, 2026-08-10)
 
 Hasta hoy el ninja se juzgaba por cómo sonaba. Ahora tenemos los clics de cada
