@@ -44,8 +44,8 @@
 |---|---|---|---|
 | 1 | `warmup-tanda-1` (194973211060864772) | 47 (+5 testers) | ✅ Enviada 2026-08-07 |
 | 2 | `warmup-tanda-2` (195398984128267443) | **138**, sin testers | Grupo lleno el 2026-08-10 por API, pendiente de enviar |
-| 3 | miércoles 12 | ~400 | Pendiente. **Lista verificada el martes** |
-| 4 | jueves 13 | El resto (~587), aquí van los de fuera de ICP | Pendiente |
+| 3 | miércoles 12, 09:01 | ~400 | Pendiente. **Programada el martes, tras verificar la lista** |
+| 4 | jueves 13, 09:01 | El resto (~587), aquí van los de fuera de ICP | Pendiente. Programada el martes |
 
 **Son 4 tandas y caben todas en la misma semana.** Con 47+138 = 185 enviados, meter los ~987 restantes de golpe sería un salto de 5x con un 4,3% de rebotes detrás; en dos pasos (2,9x y 1,5x) no.
 

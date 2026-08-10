@@ -201,7 +201,8 @@ En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, 
 - **Fin de semana: no.** Timepack, con 5 envíos semanales durante 16 meses, mandó **un solo correo en domingo y ninguno en sábado**. Coincide con el criterio de Mario: se vende a empresas y las empresas trabajan de lunes a viernes.
 - **Nunca dos correos el mismo día.** Prácticamente cero en los dos corpus, aunque uno mande 5 por semana.
 - **⛔ NO SE TESTAN LOS DÍAS: la tabla de arriba ya los ha respondido.** Los cinco laborables rinden igual, así que el día de una tanda se elige por criterio OPERATIVO (acabar antes, no caer en viernes), nunca para medir. Y las tandas de un mismo correo **no son comparables entre sí** aunque caigan en días distintos: cambian las personas, el tamaño y la temperatura del dominio.
-- **⭐ HORA DE LA CASA: 09:00, fijada el 2026-08-10.** Todos los envíos a esa hora hasta que el test de hora diga otra cosa.
+- **⭐ HORA DE LA CASA: 09:01, fijada el 2026-08-10.** Todos los envíos a esa hora hasta que el test de hora diga otra cosa.
+  - **El minuto impar es deliberado (Mario):** la mayoría de la gente programa a la hora en punto. Saliendo a las 09:01 llegas DESPUÉS de esa oleada, y en una bandeja ordenada por lo más reciente eso te pone encima de todos ellos. Cuesta cero y la lógica se sostiene; no está medido, pero no hay nada que perder.
   - **El porqué:** los dos corpus mandan antes de las 08:00 y nuestro único dato real (09:23) dio 46,8% de aperturas. El mecanismo es **estar ya ahí cuando abren la bandeja**, no llegar mientras trabajan. A las 11:00-12:00 el correo cae en mitad de la faena.
   - ⛔ **No se traslada la hora de LinkedIn.** En LinkedIn las 12:00 funcionan porque se mira en un descanso; el correo se abre como tarea al empezar la jornada. Son comportamientos distintos.
   - **La hora SÍ merece un test, pero uno de verdad:** mismo correo, mismo día, la lista partida en dos mitades equivalentes, **07:00 contra 09:00**. Nunca cambiando la hora entre tandas: cambian las personas, el tamaño y la temperatura del dominio a la vez, y el resultado no dice nada.
@@ -425,6 +426,12 @@ El rastreo de enlaces vive en **Configuración de la cuenta → Rastreo del enla
 4. Verificar el contador antes de enviar: saldrá algo menos que el cupo, y esa diferencia son los repetidos que ha quitado.
 - ⛔ **Los `testers` NO se incluyen a partir de la tanda 2:** ya lo recibieron y falsean el denominador (en la tanda 1 fueron 5 de 54, un 9% de la muestra).
 - ⚠️ **Los segmentos por API no aplican la exclusión de grupos.** Se probó `not_in_all` sobre `groups` y el segmento salió con la lista entera (1.310 en vez de ~1.236). Si hace falta un segmento con exclusiones, se configura en el panel.
+
+### ⛔ LA VERIFICACIÓN GRATUITA DE LISTAS NO SIRVE PARA NUESTRO CASO (probado el 2026-08-10)
+Se comprobaron por DNS los 71 dominios únicos de la tanda 2 buscando dominios muertos (sin MX ni A). **Resultado: 1 de 71.**
+- **Por qué:** en una lista de un CRM de hace un año los rebotes NO son dominios caídos, son **buzones que ya no existen porque la persona cambió de empresa**. El dominio sigue vivo y respondiendo. Detectar eso exige verificación SMTP a nivel de buzón, que es justo lo que cobran los servicios.
+- **Lo gratuito que SÍ vale la pena hacer siempre (y es gratis):** sintaxis, dominios desechables (`qvmao.com` y similares), y direcciones de rol (`marketing@`, `info@`) — MailerLite ya rechaza estas últimas al importar.
+- **Recomendado: MailerCheck**, que es de los mismos que MailerLite y por eso entra sin exportar CSV. **0,01 $ por correo, mínimo 1.000 (10 $), los créditos no caducan** y da 10 gratis de prueba (verificado en su web el 2026-08-10). Las alternativas gratuitas (ZeroBounce 100/mes, y 100-500 créditos de alta única en el resto) obligarían a registrarse en cinco sitios para cubrir 1.000 y devolverían criterios distintos: no compensa por 10 $.
 
 ### ⛔ EL DOMINIO DEL CORREO NO DICE EL PAÍS (medido el 2026-08-10)
 Sobre los 151 candidatos a la tanda 2: **85% no da ninguna señal de país** (56% gmail/hotmail/outlook/icloud + 29% dominios `.com`/`.io`/`.ai`). Solo 9 eran `.es` y 13 LatAm.
