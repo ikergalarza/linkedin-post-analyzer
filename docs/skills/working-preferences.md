@@ -127,6 +127,8 @@ engagement en meme, por clics en peloteo):
 | meme | 06/08, *"Vender es un caos"* (0,54% lk/imp, 31 reposts) | — |
 | mapa | 28/04 Unai (1,096% CTR) y 13/05 Iker (270 clics) | — |
 
+**⛔ Y EL PELOTEO NO SE LIBRA POR NO TENER REFERENCIA EXTERNA (Iker, 2026-08-10).** *"Peloteos nunca tenemos referencias de otros, pero de nosotros sí"*. Allí la vista 2 es la ÚNICA, y es justo donde más falta hace: **es el control de regresión del pilar.** Iker: *"así me aseguraré en el futuro de no volver a cagarla como cuando me borraste del gancho la palabra exporta"*. Ese fallo — quitar del gancho una palabra que en el mapa ganador sí estaba — es invisible leyendo el post solo, y **salta a la cara puesto al lado del que funcionó**. La comparativa contra nosotros mismos no es un adorno de la entrega: es lo que impide que cada post nuevo pierda, sin querer, una pieza que ya sabíamos que funcionaba.
+
 **Y las dos se rehacen cada vez que cambia el texto** (§1e-REENTREGA).
 
 ## ⛔⛔ 1e-REENTREGA · SI CAMBIA EL TEXTO DEL POST, LA COMPARATIVA SE REHACE (Iker, 2026-08-10)
