@@ -52,7 +52,7 @@ router.post('/classify-pillars', async (req: Request, res: Response) => {
   try {
     const soloVacios = req.query.only_missing === 'true';
     const { rows } = await pool.query(
-      `SELECT id, content_text, reaction_mix, content_type
+      `SELECT id, content_text, reaction_mix, content_type, pillar
          FROM posts
         WHERE linkedin_post_id <> 'DEMO_LIVE_POST'
           AND pillar_manual IS NOT TRUE
@@ -60,7 +60,7 @@ router.post('/classify-pillars', async (req: Request, res: Response) => {
     );
 
     const conteo: Record<string, number> = {};
-    let escritos = 0;
+    const cambios: { id: string; pilar: string }[] = [];
     for (const r of rows) {
       const pilar = classifyPillar({
         content_text: r.content_text,
@@ -68,11 +68,29 @@ router.post('/classify-pillars', async (req: Request, res: Response) => {
         content_type: r.content_type,
       });
       conteo[pilar] = (conteo[pilar] || 0) + 1;
-      await pool.query('UPDATE posts SET pillar = $2 WHERE id = $1', [r.id, pilar]);
-      escritos++;
+      if (pilar !== r.pillar) cambios.push({ id: r.id, pilar });
     }
 
-    res.json({ ok: true, revisados: rows.length, escritos, por_pilar: conteo });
+    // UNA sentencia, no una por fila. Con el UPDATE dentro del bucle esto eran
+    // ~250 idas y vueltas a Postgres y la ruta devolvia 502 por timeout del
+    // proxy: era inservible justo el dia que hizo falta (Iker, 2026-08-10).
+    // Ademas solo se escriben las filas que CAMBIAN, que suelen ser una o dos.
+    if (cambios.length) {
+      await pool.query(
+        `UPDATE posts SET pillar = c.pilar
+           FROM (SELECT unnest($1::uuid[]) AS id, unnest($2::text[]) AS pilar) c
+          WHERE posts.id = c.id`,
+        [cambios.map((c) => c.id), cambios.map((c) => c.pilar)]
+      );
+    }
+
+    res.json({
+      ok: true,
+      revisados: rows.length,
+      escritos: cambios.length,
+      por_pilar: conteo,
+      cambios: cambios.slice(0, 50),
+    });
   } catch (err: any) {
     console.error('classify-pillars error:', err);
     res.status(500).json({ error: err.message });
