@@ -183,6 +183,25 @@ En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, 
 
 **Cadencia:** mínimo 1 email/semana a la lista activa (una lista abandonada muere); el objetivo de crucero es 2-3/semana alternando pilares y remitentes. **Mismo día y misma hora local, religiosamente:** Timepack manda a las 06:30 hora española clavadas durante 16 meses (ajusta el UTC con el horario de verano) y esa costumbre ES el activo. Un "empleado digital que no falla" predica con el ejemplo no fallando.
 
+**⭐ DÍA DE LA SEMANA Y HORA — medido el 2026-08-10 sobre las fechas reales de envío de 480 correos (los nombres de fichero del corpus llevan fecha y hora).**
+
+| | Timepack (353, 490 días) | Hugo López (127, 402 días) |
+|---|---|---|
+| Frecuencia | **5,0 correos/semana** | 2,2 correos/semana |
+| Lunes | **20,1%** | 23,6% |
+| Martes | 19,8% | **26,0%** |
+| Miércoles | **20,1%** | 13,4% |
+| Jueves | 19,8% | 16,5% |
+| Viernes | 19,8% | 11,8% |
+| Sábado + domingo | **0,3%** (1 de 353) | 8,6% |
+| Hora (española) | **06:30-07:30** | 08:00-11:00 |
+| Dos correos el mismo día | 1 de 352 (0%) | 3 de 122 (2%) |
+
+- **⛔ EL LUNES NO SE EVITA EN EMAIL. Es el error de trasladar la intuición de LinkedIn.** Timepack reparte los cinco laborables **exactamente por igual** (19,8-20,1%, una diferencia de 1 correo en 490 días), y Hugo López **concentra en lunes y martes** (49,6% de sus envíos). En LinkedIn el lunes se evita; en la bandeja de entrada no hay ningún dato que lo respalde.
+- **Fin de semana: no.** Timepack, con 5 envíos semanales durante 16 meses, mandó **un solo correo en domingo y ninguno en sábado**. Coincide con el criterio de Mario: se vende a empresas y las empresas trabajan de lunes a viernes.
+- **Nunca dos correos el mismo día.** Prácticamente cero en los dos corpus, aunque uno mande 5 por semana.
+- **La hora es el hueco que tenemos sin explotar.** Los dos corpus mandan **antes de las 08:00**; el correo 0 salió a las **09:23**. No es un fallo (llegó a Principal), pero es la variable más barata de testar cuando haya volumen: mismo correo, mismo día, 07:00 contra 09:30.
+
 **El reparto que no quema la lista (medido en el corpus): ~40% valor puro sin ningún enlace · ~45% valor + siembra suave (P.S. o teaser) · ~15% venta directa concentrada en ventanas cortas.** El 47% de los correos de Timepack no lleva NI UN enlace en el cuerpo. La newsletter que agenda demos no es la que pide la demo cada día: es la que hace imposible no abrir el siguiente email, y pide la demo pocas veces con toda la confianza acumulada.
 
 | Pilar | Qué es | Remitente natural | CTA |

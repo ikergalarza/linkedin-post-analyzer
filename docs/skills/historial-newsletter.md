@@ -36,13 +36,14 @@
 - **Bajas 0. Quejas de spam 0.** El formato aguanta: llegó a bandeja Principal.
 - 🔴 **Rebotes duros 2 = 4,3% sobre los 47 reales.** Banda de alarma (2-5%), y con n=47 el dato es impreciso. **Es la razón por la que hay que verificar la lista antes de la tanda grande:** si la tasa se mantiene, en los ~1.263 restantes son ~54 rebotes.
 - ⭐ **1 reunión agendada el mismo día del envío**, de 2 clics en el enlace. Con el `origen: newsletter` y los UTM llegando bien al formulario.
-- ⏳ **RESPUESTAS: pendiente de contar.** MailerLite no las mide y son LA métrica de este correo. Hay que contarlas a mano en `hola@` y anotarlas aquí.
+- ⛔ **RESPUESTAS: 0** (comprobado por Mario el 2026-08-10, 3 días después). La lista cerrada de una palabra **no bastó**. Con 47 destinatarios el dato no concluye nada, pero **si la tanda 2 (149) también da 0, el CTA de respuesta está roto y hay que rediseñarlo**, no repetirlo en la tanda 3.
+- **Contexto de la lista:** de los ~1.310, buena parte es LatAm (.mx, .com.mx) y queda fuera del ICP industrial español. Explica parte del silencio y habrá que separarlos.
 
 ## Tandas del correo 0
 | Tanda | Grupo | Tamaño | Estado |
 |---|---|---|---|
 | 1 | `warmup-tanda-1` (194973211060864772) | 47 (+5 testers) | ✅ Enviada 2026-08-07 |
-| 2 | `warmup-tanda-2` (195398984128267443) | ~200, **sin testers** | Grupo creado vacío el 2026-08-10, pendiente de llenar y enviar |
+| 2 | `warmup-tanda-2` (195398984128267443) | **149**, sin testers | Grupo lleno el 2026-08-10 por API, pendiente de enviar |
 | 3+ | — | El resto de `Leads General · limpia` (1.310) | Pendiente, y **con la lista verificada antes** |
 
 ## Palabras de CTA-respuesta ya usadas (no repetir)
