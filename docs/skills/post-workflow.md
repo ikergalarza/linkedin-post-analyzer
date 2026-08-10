@@ -858,6 +858,33 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 
 **Paso 4 — SPAM NINJA:** reglas canónicas en **`global-instructions §4.4b`** (mándalas siempre). Máx **2 líneas CORTAS**, **NUNCA nombrar a Neety**, chiste con **verbo punchy con techo** que gira el concepto del hook, dolor concreto + diferenciador aterrizado (`aboutme §1b`), nunca última línea. Aquí no hay menciones, así que va en el punto más natural del cuerpo — y ojo: el cuerpo del meme es de 3-6 líneas, así que el spam ninja **no puede comerse el post**. Validado: el iMessage "El de Ventas" (7.9x · 80.9K) llevaba link de agendar en spam ninja sin matar alcance.
 
+> ⛔⛔ **DÓNDE VA, EXACTAMENTE: ANTES DEL CARÁCTER 650** (medido en clics, 2026-08-10).
+> "El punto más natural del cuerpo" era demasiado vago y nos costó el mejor meme del año.
+> El del 06/08 sacó **77.006 impresiones, récord de reposts — y 13 clics: 0,017%**, el peor
+> CTR del año. Su enlace estaba en el carácter **707**. De los 6 memes con dato, los 4 que
+> lo ponen antes del **511** dan 0,050-0,151%; los 2 que pasan de 650 dan 0,042% y 0,017%,
+> y son los dos cuerpos más largos. Está en el validador.
+>
+> ⚠️ **Y AQUÍ SE CORRIGE EL "3-6 LÍNEAS" DE ARRIBA.** El cuerpo del 06/08 ocupa 816
+> caracteres, muy por encima de esas 3-6 líneas, **y es nuestro mejor meme del año en
+> engagement** (0,54% lk/imp, 31 reposts, récord de la tabla). El cuerpo largo, cuando sale
+> de la referencia, **funciona**. Lo que no funciona es dejar el ninja al final de él.
+>
+> **Entonces: cuerpo largo → el ninja SUBE.** No se acorta el post para que quepa el ninja
+> al final; se mete el ninja hacia la mitad y el cuerpo sigue hasta el punchline. En un
+> meme de 800 caracteres eso es aproximadamente **tras el segundo bloque**, no tras el
+> último. El lector que va a hacer clic ya se ha reído a esa altura; el que llega al final
+> ya ha decidido que no.
+>
+> **Y cómo se escribe ese bloque** (§4.4b-CLICS, las dos van al validador):
+> - **Bloque de DOS: dolor arriba, promesa corta + enlace en la segunda línea.** Máximo
+>   **80 caracteres sin contar la URL**. La de 0,415% ocupa 69; fusionarlo todo en una
+>   línea larga (101 caracteres) baja a 0,172%.
+> - **Promete IDENTIFICAR a la persona, no el momento.** *"Te marcamos quién va a comprar
+>   y cuándo"* → 0,415%. *"De montar esa lista nos encargamos nosotros"* → 0,017%. Lo que
+>   los clientes dijeron en reunión que compran es la identificación de empresa y persona.
+
+
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs).
 
 > **⛔ SI HAY SPAM NINJA, EL CIERRE NO PUEDE SER OTRO CTA** (Iker, 2026-07-20). Nada de "Etiqueta al compi que…" ni "Comenta X". Aunque `global §4.4b` diga que el spam ninja no consume la regla del UNO, **en la practica compite**: el lector que iba a clicar el enlace se va a comentar, y la prioridad es el clic. El cierre es un **bold statement de UNA linea**, y punto.
