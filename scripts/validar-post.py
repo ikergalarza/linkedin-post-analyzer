@@ -1065,91 +1065,40 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 if len(cuerpo) < 320 else '')
         chk(not tiene_link, 'Lead magnet SIN spam ninja (§4.4b, única excepción)',
             'el link apila un 2º CTA y hunde los comentarios' if tiene_link else '')
-        m = re.search(r'\bcomenta\b', cuerpo, re.I)
-        chk(bool(m), 'CTA con "Comenta" EXPLÍCITO (§4.4)',
-            'sin la palabra, la gente no comenta: 20 vs 483 com.' if not m else '')
-        m2 = re.search(r'comenta\s+"([^"]+)"', cuerpo, re.I)
-        chk(bool(m2), 'CTA con la PALABRA entre comillas (§4.4)', '')
-        # La palabra clave va en MINÚSCULAS y SIN TILDES (§4.4, usuario 2026-07-17).
-        # Minúsculas: un CTA en mayúsculas es el patrón que LinkedIn asocia a spam, y
-        # pedir un comentario masivo ya nos pone a tiro de que nos capen el alcance.
-        # Sin tildes: la escribe a mano gente desde el móvil. Si la palabra lleva
-        # tilde, media lista la comenta sin ella, el filtro no la reconoce y ese lead
-        # se pierde en silencio, que es el peor modo de fallo que hay.
-        if m2:
-            kw = m2.group(1)
-            chk(kw == kw.lower(), 'Palabra clave en MINÚSCULAS (§4.4)',
-                f'"{kw}" → en mayúsculas huele a spam y LinkedIn nos puede capar el alcance'
-                if kw != kw.lower() else '')
-            tildes = [c for c in kw if c in 'áéíóúüñÁÉÍÓÚÜÑ']
-            chk(not tildes, 'Palabra clave SIN tildes (§4.4)',
-                f'"{kw}" lleva {tildes} → quien la comente sin tilde desde el móvil no entra en el filtro'
-                if tildes else '')
-        # ⭐ LA PALABRA DEL CTA ES UN CARTEL PUBLICO (Iker, 2026-08-07).
-        # No es solo un filtro para nosotros: cuando el hilo se llena, cualquiera
-        # que pase ve 200 comentarios con esa palabra. Si la palabra se entiende
-        # sola, el propio hilo vende el post; si es opaca, no dice nada.
-        #   ❌ "cierra"  -> ves el hilo lleno de "cierra" y no sabes de que va
-        #   ✅ "nombre"  -> se entiende a la primera y ademas ES la tesis del post
-        # Y las gastadisimas por todo LinkedIn no valen aunque nosotros no las
-        # hayamos usado: no distinguen nuestro post de los otros doce del feed.
-        KW_GASTADAS = {'guia', 'guía', 'plantilla', 'info', 'quiero', 'yo',
-                       'mas', 'más', 'dame', 'gratis', 'pdf', 'link', 'enlace'}
-        if m2:
-            _kw = normalizar_kw(m2.group(1))
-            chk(_kw not in KW_GASTADAS,
-                'La palabra del CTA no es de las gastadas en todo LinkedIn (§4.4)',
-                f'"{m2.group(1)}" la pide medio LinkedIn: no distingue nuestro post de los '
-                'otros doce del feed. Busca una que sea la TESIS del post y se entienda sola')
+        # ⛔⛔ EL CTA DEL LEAD MAGNET CAMBIO EL 2026-08-10 (ver §4.5.0-CTA).
+        #
+        # Aqui vivian ocho checks alrededor de `Comenta "palabra"`: que estuviera
+        # explicito, entre comillas, en minusculas, sin tildes, con 2o dato, sin
+        # repetir, sin gastar y reconectando con el gancho. TODOS EN SUSPENSO.
+        #
+        # LinkedIn dejo de repartir ese mecanismo entre el 4 y el 5 de agosto de
+        # 2026. Medido en la cuenta de Martin Arosa: del 13/07 al 31/07 usa el
+        # gate en todos sus lead magnets y saca entre 527 y 1.398 comentarios; el
+        # 03/08 saca 7 y el 04/08 saca 41, los dos con gate; y desde el 05/08 no
+        # lo vuelve a usar ni una vez y recupera 543, 402, 483 y 145. A nosotros
+        # nos costo CUATRO publicaciones capadas antes de verlo.
+        #
+        # No se borra de la historia porque el mecanismo puede volver. Hoy el CTA
+        # es el suyo: pregunta directa + regalarlo + conectar.
+        _gate = re.search(r'coment[a\u00e1]\w*\s+["\u201c\u00ab\']', cuerpo, re.I)
+        chk(not _gate, 'CTA: SIN "Comenta la palabra X", el mecanismo esta capado (§4.5.0-CTA)',
+            'LinkedIn dejo de repartirlo el 05/08/2026: a Martin Arosa lo hundio de 1.254 a 7 '
+            'comentarios y a nosotros nos costo 4 posts. Usa la pregunta' if _gate else '')
+        _preg = re.search(r'\u00bf[^?]{5,90}\?', cuerpo)
+        chk(bool(_preg), 'CTA: una PREGUNTA directa ofreciendo el recurso (§4.5.0-CTA)',
+            'el CTA nuevo abre con una pregunta tipo "\u00bfQuieres los 5 mensajes?". La gente '
+            'comenta igual, pero el comentario sale de ellos y cada uno escribe algo distinto, '
+            'que ademas es lo que evita que parezcan comentarios coordinados' if not _preg else '')
+        _regalo = re.search(r'gratuit|gratis|acceso libre|sin coste', cuerpo, re.I)
+        chk(bool(_regalo), 'CTA: se dice que se comparte GRATIS (§4.5.0-CTA)',
+            'sus tres ultimos lo dicen dos veces, "de forma gratuita" y "acceso libre". '
+            'La palabra gratis no penaliza: medida en 15 posts nuestros, mediana 3.884 '
+            'impresiones y ninguno por debajo de 500' if not _regalo else '')
+        _conecta = re.search(r'conecta conmigo', cuerpo, re.I)
+        chk(bool(_conecta), 'CTA: cierra con "(Conecta conmigo para que pueda escribirte)" (§4.5.0-CTA)',
+            'entre parentesis y al final. Sin el gate ya no compite con ningun otro CTA, y hace '
+            'falta para poder mandarle el recurso por privado' if not _conecta else '')
 
-        # El CTA pide la palabra Y UN SEGUNDO DATO, y cuál es depende del subtipo
-        # (§4.4). En el de DM el dato es el sector/departamento: sirve para
-        # personalizar el recurso. En el PÚBLICO (auditoría de web) el dato es la
-        # URL, porque sin ella no hay nada que analizar y el generador falla a
-        # propósito. Pedir el sector ahí sobra, y pedir un dato que no se usa es
-        # justo lo que hundió el "mes de cumpleaños" a 0.57x: el segundo dato tiene
-        # que ser el que hace falta para responderle, ni uno más.
-        # ⚠️ SOLO en el modelo PERSONALIZADO. El modelo GENÉRICO (Martín Arosa /
-        # Guillermo Flor, los que MÁS comentarios sacan del sector: 1.033 y 788 en
-        # <24h, 2.014 el de Guillermo) NO pide 2º dato: una palabra IGUAL para todos
-        # y un recurso GENÉRICO (una guía), y la captura la hace la LANDING con gate
-        # de correo, no el comentario (`§4.5.1`). Con --generico este check se salta.
-        # ⭐ 2026-08-06, medido en NUESTROS 10 lead magnets con mas comentarios.
-        # Iker dudaba porque la competencia pide UNA sola palabra y porque nuestro
-        # #1 tambien la pide. Los numeros dicen lo contrario:
-        #   CON 2o dato  (4 posts: 483·285·183·167) -> mediana 234 c · 11.638 imp
-        #   SOLO palabra (6 posts: 632·232·177·129·104·65) -> mediana 153 c · 8.522 imp
-        # Un 53% mas de comentarios pidiendo el dato. La hipotesis de Iker es que
-        # comentarios TODOS IGUALES ("vibe", "vibe", "vibe") le huelen a LinkedIn
-        # a coordinacion y nerfea el alcance; el 2o dato los hace distintos.
-        if not generico:
-            chk(bool(re.search(r'\+\s*(tu|su)\s+(sector|departamento|emoji)'
-                               r'|(y|\+)\s+(el\s+enlace\s+de\s+)?(tu|su)\s+(web|p[aá]gina|url|landing)',
-                               cuerpo, re.I)),
-                'CTA con la palabra + el 2º dato (sector si es DM, web si es público) (§4.4)',
-                'con 2º dato sacamos 234 comentarios de mediana y sin él 153, medido en '
-                'nuestros 10 mejores. Y ojo, el dato tiene que ser el que necesitas para '
-                'responderle: el "mes de cumpleaños" no servía para nada y flopeó a 0.57x')
-        # ⛔ UN SOLO CTA (Iker, 2026-08-06). "Conecta conmigo para que pueda
-        # escribirte" convierte el cierre en DOS llamadas a la accion y parte la
-        # atencion justo donde no toca. Medido en nuestros 23 lead magnets:
-        #   CON "conecta"  3 posts | mediana 65 c | MAXIMO 177 c
-        #   SIN "conecta" 20 posts | mediana 41 c | MAXIMO 632 c
-        # La mediana enganya (n=3), lo que manda es que NINGUNO de nuestros SEIS
-        # mejores lo lleva: los tres que lo llevan son el 177, el 65 y el 46.
-        # Ya no hace falta: el recurso se entrega con el enlace del gate, que se
-        # puede responder en el propio comentario sin ser contacto de 1er grado.
-        _2cta = re.search(r'\bconect(?:a|ar|es|amos)\b|\bs[ií]gueme\b|\bmand[aá]me un (?:dm|mensaje)\b',
-                          cuerpo, re.I)
-        chk(not _2cta, 'UN SOLO CTA: sin "conecta conmigo" ni segundo pedido (§4.4)',
-            (f'dice "{_2cta.group(0)}" despues del CTA de comentar. Son DOS acciones y el '
-             'techo con esa linea es 177 comentarios; sin ella es 632. Ninguno de nuestros '
-             '6 mejores la lleva') if _2cta else '')
-        # ⚠️ Iker tiene "descargar/instalar/gratis" prohibidas en su marca personal.
-        # En LinkedIn NO nos penalizan —medido: gratis 15 posts, mediana 3.884 imp
-        # contra 3.371 del corpus, y va en el gancho de nuestro #2 (483 c)—, asi que
-        # gratis NO se marca. Instalar y descargar solo tienen 3 y 1 post: no hay
-        # muestra para defenderlas, y casi siempre se dicen mejor de otra forma.
         _pref = re.search(r'\b(instalar|instalaci[oó]n|descargar|descarga)\b', cuerpo, re.I)
         chk(not _pref, 'Sin "instalar"/"descargar" (preferencia de marca de Iker)',
             (f'dice "{_pref.group(0)}". No hay dato de que penalicen (3 y 1 post en todo el '
