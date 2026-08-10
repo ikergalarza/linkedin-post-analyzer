@@ -99,6 +99,36 @@ Cada vez que Iker corrija algo del gancho o del cuerpo, la primera pregunta es *
 
 **Y si la version que tengo no es la mejor que puedo dar, NO se entrega.** Iterar cuesta minutos; que Iker corrija una entrega mala cuesta su tiempo, que es lo caro.
 
+## ⛔⛔ 1e-DOS · LA COMPARATIVA SON DOS VISTAS, NO UNA (Iker, 2026-08-10) — GLOBAL
+
+**Toda entrega de un post lleva DOS comparativas, en este orden:**
+
+1. **Contra la REFERENCIA que estamos remezclando**, si la hay. Responde: *¿hemos
+   calcado lo que fuimos a robar?* — gancho, ritmo, emojis, longitud, cierre.
+2. **Contra NUESTRO MEJOR post de ese mismo pilar.** Responde: *¿esto se parece a
+   lo que ya sabemos que nos funciona a NOSOTROS?*
+
+**Es global: vale para todos los pilares.** Si no hay referencia externa (mapa,
+los 10, despiece), se entrega solo la segunda, y se dice que no hay primera.
+
+**Por qué hacen falta las dos, y no una:** son preguntas distintas y pueden dar
+respuestas opuestas. El lead magnet del 2026-08-10 calcaba el CTA de Martín Arosa
+(vista 1) y el molde de gancho de nuestro 632c (vista 2); mirando solo una de las
+dos, la mitad del post quedaba sin contrastar. Yo entregué primero solo la suya —
+y como no compartía anatomía, no medía nada (§1e-REF) — y luego solo la nuestra,
+con lo que el CTA robado se quedó sin comparar. **Las dos, siempre.**
+
+**Cuál es "nuestro mejor" de cada pilar** (por comentarios en lead magnet, por
+engagement en meme, por clics en peloteo):
+
+| pilar | el mejor | fichero |
+|---|---|---|
+| lead magnet | 632 comentarios, *"Claude acaba de matar el cold outbound"* | swipe file |
+| meme | 06/08, *"Vender es un caos"* (0,54% lk/imp, 31 reposts) | — |
+| mapa | 28/04 Unai (1,096% CTR) y 13/05 Iker (270 clics) | — |
+
+**Y las dos se rehacen cada vez que cambia el texto** (§1e-REENTREGA).
+
 ## ⛔⛔ 1e-REENTREGA · SI CAMBIA EL TEXTO DEL POST, LA COMPARATIVA SE REHACE (Iker, 2026-08-10)
 
 **La regla:** cada vez que cambia el TEXTO de la publicación, **la comparativa
