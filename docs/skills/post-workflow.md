@@ -1001,6 +1001,38 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **Para qué sirve de verdad:** es el listón. Antes de dar por bueno un gancho, se pone al lado de esos cinco y se ve si aguanta la comparación. Es la versión práctica de `global §0-DATOS`: **nuestros datos delante, no de memoria.**
 
+#### 🚨🚨 4.5.0-CTA · EL "COMENTA LA PALABRA" DEJÓ DE FUNCIONAR EL 5 DE AGOSTO DE 2026
+
+> **Esto es lo que estuvo capando nuestros lead magnets toda la semana del 03/08, y no era ninguna palabra.** Cuatro publicaciones borradas y resubidas cambiando gancho, cuerpo entero, imagen, y quitando `prompt`, `ÚLTIMA HORA`, `destapa`, `firma`, `regalo` y hasta la foto. **El problema nunca estuvo en el texto: estaba en el MECANISMO.**
+
+**LA PRUEBA, en la cuenta de Martín Arosa (el mayor del nicho, medido el 2026-08-10):**
+
+| fecha | comentarios | ¿pide comentar la palabra? |
+|---|---|---|
+| 13/07 → 31/07 | 527 · 1.032 · 970 · 1.072 · 1.233 · 1.398 · **1.254** | **SÍ** |
+| **03/08** | **7** | SÍ |
+| **04/08** | **41** | SÍ |
+| 05/08 → 10/08 | **543 · 402 · 483 · 145** | **NO, en ninguno** |
+
+**Sus dos últimos posts con gate sacaron 7 y 41 comentarios viniendo de 1.254, y desde el 05/08 no lo ha vuelto a usar.** Nuestro capado es del 06/08: justo en la bisagra.
+
+**⛔ REGLA NUEVA: el lead magnet YA NO PIDE "Comenta la palabra X".** Todo lo escrito en `§4.4` sobre la palabra clave, el 2º dato, que la palabra se entienda sola o que no esté quemada **queda EN SUSPENSO** mientras dure esto. No se borra por si vuelve a servir, pero no se aplica.
+
+**✅ EL CTA QUE SÍ FUNCIONA AHORA, calcado de sus tres últimos:**
+```
+¿Quieres [el recurso]?
+
+Lo estoy compartiendo de forma gratuita.
+Acceso libre.
+(Conecta conmigo para que pueda escribirte).
+```
+- **Una PREGUNTA directa** en vez de una orden. La gente comenta igual porque quiere el recurso, y el comentario sale de ellos, no de una instrucción.
+- **`gratis` / `de forma gratuita` SÍ se usa**, y sin miedo: lo lleva en dos de sus tres últimos.
+- **`(Conecta conmigo para que pueda escribirte)` vuelve**, entre paréntesis y al final. Yo lo había quitado el 06/08 diciendo que era un segundo CTA; con el gate fuera **ya no compite con nada**, y él lo lleva en los tres.
+- **Sin enlace en el post.** Ninguno de los suyos lo lleva.
+
+**🔴 LA LECCIÓN DE MÉTODO, que es más cara que la regla:** estuvimos una semana buscando *qué palabra* nos penalizaba, y **cambiando variables de una en una sobre nuestro propio post**. Lo que resolvió el caso en 10 minutos fue **mirar la línea temporal del referente y ver QUÉ CAMBIÓ ÉL Y CUÁNDO**. Cuando algo deja de funcionar de golpe y no sabemos por qué, **lo primero no es auditar nuestro texto: es mirar si el mejor del nicho cambió de mecánica, y en qué fecha.**
+
 #### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
 
 **1 · EL GANCHO: DOS PIEZAS VALIDADAS, Y LO ÓPTIMO ES LLEVAR LAS DOS A LA VEZ.**
