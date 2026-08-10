@@ -6,6 +6,18 @@
 
 ---
 
+## ⚠️ SI ES LUNES Y SE HABLA DE PUBLICACIONES: PRIMERO SE ANALIZA LA SEMANA PASADA (Iker, 2026-08-10)
+
+**Antes de planificar nada.** No es un repaso opcional ni algo que Iker tenga que pedir: **se hace solo, al detectar que es lunes y que la conversación va de publicaciones.** Se sacan las métricas de las publicaciones de la semana anterior en las tres cuentas, se comparan con su pilar, y **los aprendizajes se integran en las recetas ANTES de decidir qué se publica esta semana**. Planificar sin haber mirado lo anterior es repetir errores con calendario nuevo.
+
+**Y el análisis se hace CONJUNTO:** primero Iker da sus conclusiones, yo las contrasto contra la base de datos, y lo que entra en las recetas es la suma de las dos, no la mía sola.
+
+**Contexto que hay que tener en cuenta al juzgar los números, y no es excusa (Iker, 2026-08-10):**
+- **Iker es el departamento de marketing entero.** El objetivo son 9 posts semanales (3 por cuenta) y la semana del 03/08 salieron 5, porque en paralelo montó de cero el email marketing: mascota, 5 animaciones, base de datos de correos, CRM y MailerLite. **Menos posts no es menos constancia, es otra carga.**
+- **AGOSTO EN ESPAÑA.** El alcance baja porque el público objetivo está de vacaciones, no porque el algoritmo cambie. Iker, y es la frase que hay que recordar: *"el algoritmo no es un robot, es tu público objetivo"*. Aun así, en agosto han salido DOS memes disparados (el tatuaje y el de "vender es un caos"), así que **agosto explica el suelo, no el techo: una buena publicación funciona igual**.
+
+---
+
 ## 🔴🔴 AVISOS ABIERTOS PARA LA SEMANA DEL 10/08 (leer antes de planificar nada)
 
 ### 1 · EL LEAD MAGNET DE IKER SE CAPÓ TRES VECES. LA HIPÓTESIS VIVA ES **CLAUDE**.
