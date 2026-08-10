@@ -44,12 +44,16 @@
 |---|---|---|---|
 | 1 | `warmup-tanda-1` (194973211060864772) | 47 (+5 testers) | ✅ Enviada 2026-08-07 |
 | 2 | `warmup-tanda-2` (195398984128267443) | **138**, sin testers | Grupo lleno el 2026-08-10 por API, pendiente de enviar |
-| 3 | — | ~400 | Pendiente. **Con la lista verificada antes** |
-| 4 | — | El resto (~725), aquí van los de fuera de ICP | Pendiente |
+| 3 | miércoles 12 | ~400 | Pendiente. **Lista verificada el martes** |
+| 4 | jueves 13 | El resto (~587), aquí van los de fuera de ICP | Pendiente |
 
-**Son 4 tandas, no 3.** Con 47+138 = 185 enviados, meter los ~1.125 restantes de golpe es un salto de 8x con un 4,3% de rebotes detrás.
+**Son 4 tandas y caben todas en la misma semana.** Con 47+138 = 185 enviados, meter los ~987 restantes de golpe sería un salto de 5x con un 4,3% de rebotes detrás; en dos pasos (2,9x y 1,5x) no.
 
-⛔ **Las tandas NO son cadencia:** nadie recibe dos correos, así que la regla de 1 correo/semana (que es POR PERSONA) no limita el ritmo entre tandas. Lo que manda el espaciado es el calentamiento: **48-72 h entre tandas**, el tiempo que tardan en aterrizar rebotes y quejas. No son 5 días ni ningún número de días fijo.
+### ⭐ CADA CUÁNTO SE PUEDE LANZAR UNA TANDA (corregido el 2026-08-10)
+**Al día siguiente ya se puede.** El dato que decide es el rebote DURO, y un rebote duro es un rechazo SMTP: llega **en minutos**, no en días. Lo que tarda hasta 72 h son los rebotes blandos (reintentos), que casi no afectan a la reputación. Las quejas de spam llegan en su mayoría en 24 h.
+- **Regla: 24 h entre tandas si el salto es ≤2x; 48 h si el salto es mayor**, para tener margen de reacción antes de multiplicar el volumen.
+- Los calentamientos de dominio del sector escalan **a diario**. Espaciar 3 días era exceso de cautela por mi parte, no doctrina.
+- ⛔ **Y el viernes no se lanza la última tanda:** si no lo abren ese día, el fin de semana se lo come y no vuelven hasta el lunes (criterio de Mario, coherente con vender a empresas).
 
 ## Palabras de CTA-respuesta ya usadas (no repetir)
 - `web` / `linkedin` / `evento` / `webinar` / `ni idea` (correo 0, 2026-08-07)
