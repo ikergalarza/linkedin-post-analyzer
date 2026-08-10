@@ -1001,6 +1001,21 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **Para qué sirve de verdad:** es el listón. Antes de dar por bueno un gancho, se pone al lado de esos cinco y se ve si aguanta la comparación. Es la versión práctica de `global §0-DATOS`: **nuestros datos delante, no de memoria.**
 
+#### ⛔ 4.5.0-AVANCE · LA LISTA DEL LEAD MAGNET ES UN AVANCE, NO EL CONTENIDO (Iker, 2026-08-10)
+
+**Los items van a UNA LINEA. No se desarrollan.** Un lead magnet **abre un hueco, no lo cierra**: si explicas cada punto, el lector ya tiene lo que necesita y no pide el recurso. Iker: *"hay que dar un avance del contenido pero NO contar el contenido"*.
+
+**⚠️ Y CUIDADO CON LA TRAMPA EN LA QUE CAI (2026-08-10).** Nuestro mejor lead magnet, el de 632 comentarios, **sí lleva la lista desarrollada** —5 puntos con titulo y tres lineas cada uno— y yo lo copié creyendo que era la estructura ganadora. **La diferencia está en QUÉ enumera esa lista:**
+
+| lo que enumera | cómo va |
+|---|---|
+| **Lo que está CAMBIANDO en el mercado** (el 632: "lenguaje natural > filtros rígidos", "señales vivas > base de datos fría") | **desarrollado**, porque es el argumento del post y no es el entregable |
+| **LO QUE HAY DENTRO del recurso** (los 5 mensajes, los capítulos de la guía) | **una línea por punto**, porque desarrollarlo es regalar el recurso |
+
+**El test antes de escribir la lista:** ¿esto es el motivo por el que debería querer el recurso, o es el recurso? Si es lo segundo, una línea.
+
+**Y la longitud sale sola de ahí.** El post pasó de 1.702 a 1.217 caracteres solo con esto, en la zona del 483 y el 232. No se acorta recortando frases: se acorta no contando lo que se regala.
+
 #### 🚨🚨 4.5.0-CTA · EL "COMENTA LA PALABRA" DEJÓ DE FUNCIONAR EL 5 DE AGOSTO DE 2026
 
 > **Esto es lo que estuvo capando nuestros lead magnets toda la semana del 03/08, y no era ninguna palabra.** Cuatro publicaciones borradas y resubidas cambiando gancho, cuerpo entero, imagen, y quitando `prompt`, `ÚLTIMA HORA`, `destapa`, `firma`, `regalo` y hasta la foto. **El problema nunca estuvo en el texto: estaba en el MECANISMO.**
