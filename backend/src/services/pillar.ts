@@ -56,7 +56,52 @@ function contarMenciones(texto: string): number {
       const s = l.trim();
       if (!s.startsWith('→')) return false;
       const cuerpo = s.slice(1).trim();
-      return / - | – | — /.test(cuerpo) && cuerpo.length > 8;
+      return SEPARADOR.test(cuerpo) && cuerpo.length > 8;
+    }).length;
+}
+
+/**
+ * El guion que separa empresa de persona.
+ *
+ * Era ' - ' literal y eso tiraba fichas reales (Iker, 2026-08-10): en el
+ * despiece de Navarra, "→ La direccion: Lizarte S.A.U.- Oscar Huarte Azpiroz"
+ * no contaba, porque el punto de "S.A.U." se come el espacio de delante del
+ * guion. Se acepta el guion precedido de espacio O de punto. Lo que sigue
+ * exigiendo es el espacio de DETRAS, que es lo que impide contar como ficha un
+ * nombre compuesto tipo "Mercedes-Benz".
+ */
+const SEPARADOR = /(?:\s|\.)[-–—]\s/;
+
+/**
+ * Fichas de peloteo SIN persona: "→ Gonvarri Industries", "→ Las llantas:
+ * Mapsa S. Coop.".
+ *
+ * POR QUE EXISTEN (Iker, 2026-08-10): la receta permite desde el 06/08 llevar
+ * empresas sin persona verificada — "eso no me parece bien" fue la respuesta a
+ * quitar las 12 empresas porque 8 no tenian nombre. Pero el clasificador seguia
+ * definiendo la ficha como empresa+persona, asi que el despiece de Navarra, con
+ * 8 de 12 fichas sin persona, conto 5 y se quedo a UNA del umbral. Se etiqueto
+ * 'otro' un despiece de manual.
+ *
+ * Se exige que la linea sea CORTA y sin punto final: un nombre de empresa, no
+ * una frase. Es lo que separa esto de las viñetas de una oferta de empleo
+ * ("→ Trabajaras codo con codo con los fundadores.").
+ */
+function contarFichasSinPersona(texto: string): number {
+  return texto
+    .split('\n')
+    .filter((l) => {
+      const s = l.trim();
+      if (!s.startsWith('→')) return false;
+      const cuerpo = s.slice(1).trim();
+      if (SEPARADOR.test(cuerpo)) return false; // ya la cuenta contarMenciones
+      const nombre = cuerpo.includes(':') ? cuerpo.slice(cuerpo.indexOf(':') + 1).trim() : cuerpo;
+      if (nombre.length < 3 || nombre.length > 60) return false;
+      // Sin punto final: una empresa no lo lleva, una frase si. Se descuenta
+      // antes la forma juridica, que acaba en punto de forma legitima
+      // ("Mapsa S. Coop.", "Plasticos Brello, S.A.").
+      const sinForma = nombre.replace(/,?\s*(S\.\s?A\.(\s?U\.)?|S\.\s?L\.(\s?U\.)?|S\.\s?Coop\.|Coop\.)$/i, '').trim();
+      return !/[.!?]$/.test(sinForma);
     }).length;
 }
 
@@ -118,8 +163,16 @@ function contarPiezas(texto: string): number {
       const cuerpo = s.slice(1).trim();
       const dosPuntos = cuerpo.indexOf(':');
       if (dosPuntos < 1) return false;
-      // El guion de empresa-persona va DESPUES de los dos puntos.
-      return / - | – | — /.test(cuerpo.slice(dosPuntos));
+      // LA PERSONA ES OPCIONAL (Iker, 2026-08-10). Antes se exigia el guion
+      // empresa-persona detras de los dos puntos, y con eso el despiece de
+      // Navarra conto 5 de sus 12 piezas: las otras 7 solo llevaban empresa,
+      // porque no habia persona verificada. La firma del despiece es la PIEZA,
+      // no la persona.
+      const pieza = cuerpo.slice(0, dosPuntos).trim();
+      const quien = cuerpo.slice(dosPuntos + 1).trim();
+      // La pieza es un sustantivo corto ("Los frenos", "El bloque del motor"),
+      // nunca una frase. Es lo que impide contar "→ Nota: ..." como despiece.
+      return pieza.length >= 3 && pieza.length <= 40 && quien.length >= 3;
     }).length;
 }
 
@@ -207,8 +260,14 @@ export function classifyPillar(post: PillarInput): Pillar {
   const piezas = contarPiezas(t);
   if (piezas >= 6) return 'peloteo_objeto';
 
-  const menciones = contarMenciones(t);
-  if (menciones >= 6) {
+  // Las fichas sin persona SUMAN, pero no mandan solas: se exigen al menos 3
+  // con persona. Sin ese suelo volveria el fallo que motivo `contarMenciones`
+  // — la oferta de "Busco 2 SDRs Junior", con 6 viñetas "→", se clasificaba
+  // como peloteo. Un peloteo real siempre nombra a alguien; lo que ya no se
+  // exige es que los nombre a TODOS.
+  const conPersona = contarMenciones(t);
+  const menciones = conPersona + contarFichasSinPersona(t);
+  if (menciones >= 6 && conPersona >= 3) {
     // "Los 10" mete la cifra de cada empresa DENTRO de la ficha; el mapa no.
     // Se pide mayoria (>=60%) y no todas, porque alguna ficha puede quedarse
     // sin dato si no se pudo verificar. Se exige ademas <=12 fichas: "los 10"
