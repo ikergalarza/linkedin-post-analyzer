@@ -25,12 +25,28 @@
 | _(sin envíos todavía)_ | | |
 
 ## Emails enviados
-| Fecha | Remitente | Pilar | Asunto | Segmento | CTA (tipo/palabra) | Métricas (opens/clics/respuestas/demos) |
+| Fecha | Remitente | Pilar | Asunto | Segmento | CTA (tipo/palabra) | Métricas |
 |---|---|---|---|---|---|---|
-| _(sin envíos todavía)_ | | | | | | |
+| 2026-08-07 09:23 | Kaixito | Correo 0 segmentador | `¿no te acuerdas de mí?` | warmup-tanda-1 (47) + testers (5) | Respuesta / web·linkedin·evento·webinar·ni idea | Ver abajo |
+
+### Tanda 1 · resultados a 2026-08-10 (leídos por API, no de la captura)
+- **54 enviados = 47 reales + 5 testers.** Entregados 52.
+- **Aperturas 46,8% en la lista real** (22/47). Testers 60% (3/5).
+- **Clics 3, todos de la lista real (6,4%).** CTOR 12%. De los 3, **2 fueron al enlace de agendar**.
+- **Bajas 0. Quejas de spam 0.** El formato aguanta: llegó a bandeja Principal.
+- 🔴 **Rebotes duros 2 = 4,3% sobre los 47 reales.** Banda de alarma (2-5%), y con n=47 el dato es impreciso. **Es la razón por la que hay que verificar la lista antes de la tanda grande:** si la tasa se mantiene, en los ~1.263 restantes son ~54 rebotes.
+- ⭐ **1 reunión agendada el mismo día del envío**, de 2 clics en el enlace. Con el `origen: newsletter` y los UTM llegando bien al formulario.
+- ⏳ **RESPUESTAS: pendiente de contar.** MailerLite no las mide y son LA métrica de este correo. Hay que contarlas a mano en `hola@` y anotarlas aquí.
+
+## Tandas del correo 0
+| Tanda | Grupo | Tamaño | Estado |
+|---|---|---|---|
+| 1 | `warmup-tanda-1` (194973211060864772) | 47 (+5 testers) | ✅ Enviada 2026-08-07 |
+| 2 | `warmup-tanda-2` (195398984128267443) | ~200, **sin testers** | Grupo creado vacío el 2026-08-10, pendiente de llenar y enviar |
+| 3+ | — | El resto de `Leads General · limpia` (1.310) | Pendiente, y **con la lista verificada antes** |
 
 ## Palabras de CTA-respuesta ya usadas (no repetir)
-_(ninguna)_
+- `web` / `linkedin` / `evento` / `webinar` / `ni idea` (correo 0, 2026-08-07)
 
 ## Ángulos ya usados (no repetir, como los conceptos del mapa)
 _(ninguno)_

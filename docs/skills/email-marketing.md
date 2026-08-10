@@ -351,6 +351,9 @@ Igual que en LinkedIn se avisa de adjuntar la imagen o de pasarle las tipografí
 8. Comprobar si cae en Principal o en Promociones.
 9. Destinatarios apuntados al GRUPO correcto, no a "todos los suscriptores".
 10. Envío ESCALONADO: nunca la lista entera de golpe.
+11. Texto plano con las MISMAS frases que el HTML (son dos capas, §9c).
+12. Cuenta → Rastreo del enlace: que `utm_campaign` sea el de ESTE correo,
+    y `utm_content` la tanda. Se hereda del envío anterior (§9c).
 ```
 
 - **El nº 2 es el más importante y el que más se olvida:** si las respuestas no llegan al buzón, un correo de re-permiso no vale absolutamente nada, y no te enteras hasta que es tarde.
@@ -381,6 +384,24 @@ Hay **dos** y hay que repartirlos, o salen duplicados:
 - **Zona horaria de la cuenta:** venía en UTC+0. Con eso, un envío programado sale **2 horas antes** de lo que pusiste, sin avisar.
 - **Banner "Sent by MailerLite":** se quita en Configuración de la cuenta → *MailerLite branding*. Incluido desde el plan Comfort.
 - **Los correos de PRUEBA no generan enlaces de baja ni de preferencias reales**: no se pueden pulsar. Es lo único del checklist que solo se verifica enviando de verdad.
+
+### 🔴 LOS UTM SON DE LA CUENTA, NO DE LA CAMPAÑA (Mario, 2026-08-10)
+El rastreo de enlaces vive en **Configuración de la cuenta → Rastreo del enlace**, y sus tres campos se inyectan en **TODAS** las campañas. Si no se tocan, el correo nº 2 llega a GA4 con el `utm_campaign` del correo nº 1 y los datos se mezclan sin que nadie lo note.
+
+- `utm_source` = `newsletter` y `utm_medium` = `email` — **fijos, no se tocan nunca.**
+- `utm_campaign` = **el CORREO**, en kebab-case (`kaixito-01-segmentar`). **Se cambia cuando cambia el correo, NO cuando cambia la tanda:** las tandas son el mismo correo y deben agregarse juntas en GA4.
+- `utm_content` = **la tanda** (`tanda-2`). Así GA4 agrega por campaña y deja desglosar por tanda. Es el campo que estaba vacío y resuelve el conflicto.
+- **Va al checklist de pre-envío (§9b, punto 12): antes de CADA envío, comprobar que `utm_campaign` es el del correo que se manda.**
+- ✅ Funciona de punta a punta, verificado el 2026-08-10: el formulario de `recursos.neety.com` recogió `origen: newsletter` y `cómo nos conoció: email` de una persona que vino del correo 0. **El campo `origen` del formulario y los UTM del enlace se validan mutuamente.**
+
+### Cómo se monta la tanda N (probado el 2026-08-10)
+**El cupo se hace con un GRUPO; la exclusión, con el selector de destinatarios de la campaña.** No hace falta calcular a mano quién ya lo recibió:
+1. Crear el grupo `warmup-tanda-N` (vacío).
+2. En Suscriptores, filtrar por el grupo origen y **añadir al grupo N páginas enteras** (100 por página). Da igual si caen repetidos de tandas anteriores.
+3. Duplicar la campaña anterior y en destinatarios: **incluir** `warmup-tanda-N` y **excluir** `warmup-tanda-1…N-1`, `testers` y los grupos de origen conocido. MailerLite resuelve el solape solo.
+4. Verificar el contador antes de enviar: saldrá algo menos que el cupo, y esa diferencia son los repetidos que ha quitado.
+- ⛔ **Los `testers` NO se incluyen a partir de la tanda 2:** ya lo recibieron y falsean el denominador (en la tanda 1 fueron 5 de 54, un 9% de la muestra).
+- ⚠️ **Los segmentos por API no aplican la exclusión de grupos.** Se probó `not_in_all` sobre `groups` y el segmento salió con la lista entera (1.310 en vez de ~1.236). Si hace falta un segmento con exclusiones, se configura en el panel.
 
 ### Una campaña = un envío
 Una campaña **solo se puede enviar una vez**. Cada tanda es una campaña distinta: se nombra `… Tanda 1`, `Tanda 2`, y **la siguiente se DUPLICA de la anterior** (arrastra idioma, texto plano, UTM y pie ya resueltos). 🔴 Lo único que hay que cambiar al duplicar es el **grupo de destinatarios**, y verificar el contador antes de enviar.
