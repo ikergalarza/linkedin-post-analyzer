@@ -381,8 +381,12 @@ Igual que en LinkedIn se avisa de adjuntar la imagen o de pasarle las tipografí
 9. Destinatarios apuntados al GRUPO correcto, no a "todos los suscriptores".
 10. Envío ESCALONADO: nunca la lista entera de golpe.
 11. Texto plano con las MISMAS frases que el HTML (son dos capas, §9c).
-12. Cuenta → Rastreo del enlace: que `utm_campaign` sea el de ESTE correo,
-    y `utm_content` la tanda. Se hereda del envío anterior (§9c).
+12. Cuenta → Rastreo del enlace: que `utm_campaign` sea el de ESTE correo.
+    Se hereda del envío anterior (§9c).
+
+🔴 Y DESPUÉS DE DARLE A ENVIAR (o de programar):
+13. RECARGAR el panel y confirmar que la campaña está en Enviadas y no ha
+    vuelto a Borradores. Ha pasado 2 de 2 veces (§9c).
 ```
 
 - **El nº 2 es el más importante y el que más se olvida:** si las respuestas no llegan al buzón, un correo de re-permiso no vale absolutamente nada, y no te enteras hasta que es tarde.
@@ -443,6 +447,13 @@ Sobre los 151 candidatos a la tanda 2: **85% no da ninguna señal de país** (56
 - **Corolario: el ICP de una lista NO se puede segmentar por el correo.** El país sale del CRM (HubSpot), y si el CRM no lo tiene, no se tiene. **Priorizar por afinidad exige enriquecer antes.**
 - 🔴 **Y el error de método que lo destapó: afirmé "buena parte de la lista es LatAm" de un vistazo, sin contar.** Eran 13 de 151. **Ninguna composición de lista se afirma sin contarla**, igual que no se escribe una cifra sin fuente (`§7`). Si el conteo cuesta una llamada, se hace la llamada.
 - **Lo que sí se hace mientras tanto:** en las tandas de calentamiento van primero los más afines que se puedan identificar, y los claramente fuera de ICP se dejan para la última. No por entregabilidad, sino porque **calentar con gente que no va a abrir desperdicia el envío**.
+
+### 🔴🔴 DARLE A ENVIAR NO ES HABER ENVIADO (2026-08-07 y 2026-08-10, dos de dos)
+Al pulsar enviar, MailerLite pasa la campaña a **Bandeja de salida** y la pone **"en revisión"**. En los dos primeros envíos **volvió sola a Borradores sin avisar de nada**. Solo se descubre recargando el panel: aparece un *"perdón por la demora"* con la opción de enviar ahora o reprogramar, y hay que **volver a pulsar enviar**.
+- **Si nadie recarga, el correo no sale y no hay ninguna notificación.** En la tanda 2 costó 20 minutos: se pulsó a las 11:30 y salió a las 11:51.
+- **⛔ REGLA: siempre que Mario diga que va a enviar o que ya ha enviado, se le avisa de que lo verifique, y se comprueba por API en el momento.** No es opcional y va en la misma respuesta.
+- **Cómo se comprueba:** `get_campaign` → `status` debe ser `sent` (o `ready` con `scheduled_for` si es programado), más `queued_at` y `started_at` con hora real. Un `status: draft` después de darle a enviar significa que se cayó.
+- **Con los programados el riesgo es peor:** si se cae uno puesto para el día siguiente, te enteras cuando ya ha pasado la hora. **Todo programado se verifica el mismo día del envío.**
 
 ### Una campaña = un envío
 Una campaña **solo se puede enviar una vez**. Cada tanda es una campaña distinta: se nombra `… Tanda 1`, `Tanda 2`, y **la siguiente se DUPLICA de la anterior** (arrastra idioma, texto plano, UTM y pie ya resueltos). 🔴 Lo único que hay que cambiar al duplicar es el **grupo de destinatarios**, y verificar el contador antes de enviar.
