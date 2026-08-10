@@ -204,7 +204,7 @@ En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, 
 - **⛔ NO SE TESTAN LOS DÍAS: la tabla de arriba ya los ha respondido.** Los cinco laborables rinden igual, así que el día de una tanda se elige por criterio OPERATIVO (acabar antes, no caer en viernes), nunca para medir. Y las tandas de un mismo correo **no son comparables entre sí** aunque caigan en días distintos: cambian las personas, el tamaño y la temperatura del dominio.
 - **⭐ HORA DE LA CASA: 09:01, fijada el 2026-08-10.** Todos los envíos a esa hora hasta que el test de hora diga otra cosa.
   - **El minuto impar es deliberado (Mario):** la mayoría de la gente programa a la hora en punto. Saliendo a las 09:01 llegas DESPUÉS de esa oleada, y en una bandeja ordenada por lo más reciente eso te pone encima de todos ellos. Cuesta cero y la lógica se sostiene; no está medido, pero no hay nada que perder.
-  - **El porqué:** los dos corpus mandan antes de las 08:00 y nuestro único dato real (09:23) dio 46,8% de aperturas. El mecanismo es **estar ya ahí cuando abren la bandeja**, no llegar mientras trabajan. A las 11:00-12:00 el correo cae en mitad de la faena.
+  - **⚠️ El porqué original ("los corpus mandan antes de las 08:00") SE CAYÓ con el corpus de 13 remitentes (§8d): la hora no tiene consenso, va de las 06:00 a las 23:29.** Las 09:01 se mantienen igualmente, ahora por otra razón: es la hora más cercana a nuestro único dato real (09:23 → 46,8%) y **lo que de verdad importa es no moverla nunca**.
   - ⛔ **No se traslada la hora de LinkedIn.** En LinkedIn las 12:00 funcionan porque se mira en un descanso; el correo se abre como tarea al empezar la jornada. Son comportamientos distintos.
   - **⭐ EL PRINCIPIO, en palabras de Mario (2026-08-10): "siempre hay que adelantarse a la hora pico".** Es la formulación correcta del mecanismo, y aplica igual a posts y a correos. Lo que cambia es DÓNDE está el pico:
     - **LinkedIn: pico a las 12:00** (se mira en un descanso) → se publica antes.
@@ -214,14 +214,19 @@ En los emails importantes, SIEMPRE (Timepack lo lleva en el 86% de los correos, 
 
 **El reparto que no quema la lista (medido en el corpus): ~40% valor puro sin ningún enlace · ~45% valor + siembra suave (P.S. o teaser) · ~15% venta directa concentrada en ventanas cortas.** El 47% de los correos de Timepack no lleva NI UN enlace en el cuerpo. La newsletter que agenda demos no es la que pide la demo cada día: es la que hace imposible no abrir el siguiente email, y pide la demo pocas veces con toda la confianza acumulada.
 
-| Pilar | Qué es | Remitente natural | CTA |
-|---|---|---|---|
-| **Educativo / valor** | Una táctica aplicable aunque no compren. Victoria pequeña para el lector | Iker / Unai | Suave |
-| **Problema / dolor** | UN dolor concreto agitado con su consecuencia, y la forma Neety de resolverlo (`aboutme §1b`, tabla de contrastes) | Iker / Unai | Fuerte o suave |
-| **Caso de uso / prueba** | Antes/después REAL con Neety. Si no hay caso potente: prueba lógica (proceso, flujo, captura) | Iker / Asier | Fuerte |
-| **Técnico / por dentro** | Cómo está construido algo (señales, el aprendizaje por comercial) aterrizado en el beneficio de ventas | Asier | Suave |
-| **Diagnóstico / demo** | Invitación directa con el valor de la reunión explícito | Iker | Fuerte |
-| **Novedades / programa** | Lo nuevo del producto contado con humor, entre bastidores | **Kaixito** | Relación, o derivación a founder ("responde DEMO y te lo enseña Iker") |
+| Pilar | % | Qué es | Remitente | CTA |
+|---|---|---|---|---|
+| **1 · El dolor de encontrarlos** | ~40% | El director comercial que no sabe a quién llamar. La lista comprada que no vale. La feria de 200 tarjetas y cero pedidos. El comercial que se pasa media semana buscando en vez de vendiendo | Iker | Suave, y fuerte 1 de cada 3 |
+| **2 · Historia con lección** | ~25% | El molde RunnerPro: una historia (propia o inventada, §7) que aterriza en el dolor y cierra con la frase-puente. Puede colgarse del calendario (agosto, vuelta de vacaciones, cierre de trimestre) | Cualquiera | Suave |
+| **3 · Rompe una creencia del sector** | ~20% | El molde Isra Bravo: *"lo que te han contado sobre X está mal"*. Ej: "más leads no era tu problema", "el CRM no te va a decir a quién llamar" | Unai o Iker | Suave |
+| **4 · Por dentro y novedades** | ~15% | Cómo funciona algo por debajo, aterrizado en ventas · lo que hemos roto esta semana | Asier · Kaixito | Relación |
+
+**⭐ LA PROMESA CENTRAL, Y ES UNA SOLA (confirmada por Mario con feedback de clientes, 2026-08-10):**
+> **Encontrar las empresas que de verdad te pueden comprar, y la persona exacta con la que hablar dentro.**
+
+No son las señales. No es el momento. **Es la identificación.** Los clientes industriales compran eso porque encontrar a quién venderle es su cuello de botella real (coincide con `aboutme` y con el diferenciador que corrigió Iker).
+
+⛔ **Corolario, y es el modelo de Isra Bravo: un solo producto, ángulos infinitos.** Los cuatro pilares no son cuatro promesas: son **cuatro caminos a la misma puerta**. Isra vende el mismo libro los 7 días entrando por un capítulo distinto; nosotros vendemos la misma identificación entrando por un dolor distinto. **Nunca inventar un segundo mensaje central para "variar".**
 
 - **Mini-campañas de 3 emails** sobre el mismo ángulo para empujar demos: (1) problema + insight + CTA demo · (2) caso/ejemplo + CTA suave · (3) diagnóstico directo + P.S. bajando fricción. Separados varios días, cada uno con ángulo nuevo, jamás el mismo mensaje repetido. Si no responde → vuelve al nurture normal.
 - **Echo marketing:** los emails se escriben con las palabras del comprador, no las nuestras. Frases reales de llamadas, objeciones frecuentes ("ya hacemos LinkedIn", "la IA no me da confianza", "no es prioridad") y preguntas de demos se convierten en asuntos y cuerpos. Pídele a Iker el porqué real de cada demo agendada: ese dolor es el próximo email.
@@ -344,6 +349,74 @@ Javi Consuegra (`javi@saleshackers.es`, herramienta: beehiiv/Encharge) vende for
 - **Estructura diaria: la crónica en primera persona.** Abre con lo que ha hecho ("Ayer cerré la oficina a las 21:45", "He estado los últimos días totalmente off"), enlaza con lo que está construyendo, y de ahí sale la oferta. Es autoridad por actividad, no por consejo, y es 100% trasladable a Kaixito y a los founders contando la semana real de Neety.
 - **Las cifras SON el contenido** (400 entradas, 267 piezas, 193→400 asistentes): números propios y comprobables como prueba. Es justo lo que a nosotros nos falta (`aboutme §1`: las nuestras están sin verificar) y el motivo por el que la prueba lógica manda hasta que existan.
 - **Lo que NO copiamos:** el hype apilado ("épico", "bestialidad", "lo vamos a reventar") choca de frente con la voz Neety y sobre todo con el registro de Unai (`brand-voice §1b`), y sus asuntos de 10 palabras contradicen a las otras 3 fuentes: nos quedamos con los 5-8 de Sales Hackers y Timepack.
+
+---
+
+### 8d · ⭐ CORPUS TRANSVERSAL — 32 correos, 13 remitentes, 6 sectores, una semana (4-10 ago 2026)
+
+El corpus más valioso que tenemos, porque **es el único que permite separar lo que hace UN sector de lo que hace TODO el mundo**. Remitentes: Isra Bravo (7), SINGULARU (5, joyería ecommerce), Hugo López (4), Lara Acosta/Kleo (3+2, inglés), Juan Domínguez (3), **RunnerPro (2, la empresa de Carmen)**, Cosas de Freelance (3), BOGA/EDEM, Kieran Flanagan, Sonia Ferrent.
+
+#### Lo que hacen TODOS (esto es doctrina, no estilo)
+
+**1. La micro-apertura imperativa de 1-3 palabras.** El patrón más fuerte del corpus español, y no lo teníamos escrito:
+
+| Remitente | Aperturas literales |
+|---|---|
+| Isra Bravo | **"Mira."** ×5 · **"Una cosa."** ×2 — 7 de 7 |
+| RunnerPro | **"Escúchame."** · **"Domingo."** |
+| Hugo López | **"Atiende."** · **"Vale."** ×2 |
+| Juan Domínguez | **"Correo rápido hoy."** |
+
+Una orden o una palabra suelta, **con punto**, y línea en blanco. Es un freno: obliga a parar antes de leer. **Se adopta.**
+
+**2. PD sí, P.S. no — reconfirmado en corpus nuevo e independiente: 17 de 32 llevan PD, 1 lleva P.S.**
+
+**3. Firma-mantra fija. Esto CIERRA el pendiente de §3.7:** no es un capricho de Timepack, lo hace medio corpus.
+- Isra Bravo: **"PD: Arriba."** — los 7 días, siempre igual
+- RunnerPro: **"Ánimo Runner, nos vemos dentro de la App."**
+- Juan Domínguez: **"Un abrazo, Juan, «el silencioso»"**
+
+**4. Frase-puente fija al producto.** Cada remitente tiene UNA y la repite siempre:
+- RunnerPro: **"Tu plan te está esperando."** → botón
+- Isra Bravo: **"en el capítulo 18 de mi libro"** → enlace
+
+**5. Un producto, ángulos infinitos.** Isra Bravo vende **el mismo libro los 7 días** entrando por un capítulo distinto. No hay catálogo: hay una puerta y muchos caminos. Es el modelo exacto para nosotros, que también vendemos una sola cosa.
+
+#### 🔴 Lo que CORRIGE lo que teníamos escrito
+
+**LA HORA NO TIENE CONSENSO. Lo que es religioso es el MINUTO.**
+
+| Remitente | Hora fija |
+|---|---|
+| Cosas de Freelance | 06:00-06:03 |
+| Sonia Ferrent | 06:01 |
+| Hugo López | 07:49-08:06 |
+| SINGULARU | **09:30** clavadas, 5 de 5 |
+| RunnerPro | 13:00-13:03 |
+| Lara Acosta / Kleo | 13:00-13:04 |
+| Juan Domínguez | **14:02** clavadas, 3 de 3 |
+| **Isra Bravo** | **23:29 clavadas, 7 de 7** |
+
+- ⛔ **Se cae la regla de "mandar antes de las 08:00".** Salía de 2 corpus que casualmente madrugaban. Con 13 remitentes la hora va de las 06:00 a las 23:29, y **el mejor copywriter de email en español manda a las 23:29 todos los días**.
+- ✅ **Lo que sí aguanta: cada remitente clava SU hora y no la mueve.** La constancia es el activo, no la hora concreta. Elegir una y no tocarla importa más que cuál elijas.
+- ✅ **Y el minuto impar está en el corpus:** 23:29, 14:02, 06:01, 06:03, 13:01. Nadie manda en punto salvo SINGULARU. Respalda las **09:01** de Mario.
+
+**FIN DE SEMANA: depende de a quién vendas.** Isra manda 7/7 incluido sábado y domingo; RunnerPro, Hugo y Content Playbook mandan en domingo. **Pero los 5 son B2C o infoproducto.** Nuestra regla de lunes a viernes sigue en pie porque vendemos a empresas: no es que el fin de semana sea malo, es que nuestro lector no está trabajando.
+
+#### El molde de RunnerPro (la empresa de Carmen) — el más copiable que tenemos
+~350 palabras, un solo CTA, mismo esqueleto los dos días:
+1. Micro-apertura ("Escúchame." / "Domingo.")
+2. Historia propia **o** consejo práctico del momento (agosto y el calor: **riden el calendario**)
+3. El giro: *"El error no es ir lento en agosto. El error es dejarlo porque vas lento."*
+4. Frase-puente fija: **"Tu plan te está esperando."**
+5. Botón único
+6. **Pd + Pd2**, y el Pd2 es SIEMPRE una pregunta personal de seguimiento: *"¿por cuántas salidas del reto vas? Deberías rondar la 4 o la 5."* — relación y presión amable a la vez
+7. Firma-mantra + nombre y cargo real
+
+⭐ **El Pd2-pregunta es lo mejor que hay aquí y no lo teníamos:** convierte un correo unidireccional en un seguimiento personal, y de paso es un CTA de respuesta encubierto.
+
+#### Quién firma: 12 de 13 son una PERSONA con nombre
+La única excepción es SINGULARU, que es ecommerce puro de ofertas. **Cero mascotas en 13 remitentes.** RunnerPro, que es el caso más parecido al nuestro, firma **"Cristóbal, CEO de RunnerPro"**. Eso es a la vez el argumento en contra de irnos 100% a Kaixito y la prueba de que la mascota es terreno libre.
 
 ---
 
