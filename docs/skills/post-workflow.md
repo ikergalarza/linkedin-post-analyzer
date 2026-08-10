@@ -1028,6 +1028,37 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 
 **Para qué sirve de verdad:** es el listón. Antes de dar por bueno un gancho, se pone al lado de esos cinco y se ve si aguanta la comparación. Es la versión práctica de `global §0-DATOS`: **nuestros datos delante, no de memoria.**
 
+#### ⛔⛔ 4.5.0-RESUBIDA · UNA RESUBIDA NO ES UN LEAD MAGNET NUEVO (Iker, 2026-08-10)
+
+**En una resubida SOLO cambia el texto.** La web del recurso, la imagen del post y
+la imagen de compartir **ya existen desde la primera subida** y no se vuelven a
+pedir. Iker: *"es la cuarta vez que resubimos el post, así que la web el
+programador ya la hizo, la imagen ya creamos una y la de compartido ya se hizo"*.
+
+**Qué hice mal el 2026-08-10:** entregué "el output completo" de las CUATRO piezas
+— texto, imagen del post, imagen OG y prompt del programador — en la **cuarta**
+subida del mismo post. Peor aún: recomendé un formato de imagen distinto del que
+ya está hecho y aprobado (el de los logos de Claude y LinkedIn, sacado de una
+referencia más validada), o sea que propuse **tirar trabajo bueno y rehacerlo**.
+
+**La regla de las cuatro piezas es para un lead magnet NUEVO.** Antes de armar la
+entrega, la pregunta es una: **¿es la primera vez que sube este post?**
+
+| | primera subida | resubida |
+|---|---|---|
+| texto | sí | **sí, es lo único** |
+| imagen del post | sí | ya está |
+| imagen OG | sí | ya está |
+| prompt del programador | sí | ya está |
+| comparativas (§1e-DOS) | sí | sí |
+| validador | sí | sí |
+
+**Y el listado de PENDIENTES también se revisa.** Arrastré tres turnos seguidos un
+*"PENDIENTE: la página /firma/ no existe"* que era falso: estaba hecha. **Un
+pendiente que no es verdad es peor que no ponerlo**, porque manda a Iker a
+comprobar algo que ya estaba resuelto. Si un pendiente lleva varios turnos sin
+moverse, se verifica o se quita.
+
 #### ⛔ 4.5.0-AVANCE · LA LISTA DEL LEAD MAGNET ES UN AVANCE, NO EL CONTENIDO (Iker, 2026-08-10)
 
 **Los items van a UNA LINEA. No se desarrollan.** Un lead magnet **abre un hueco, no lo cierra**: si explicas cada punto, el lector ya tiene lo que necesita y no pide el recurso. Iker: *"hay que dar un avance del contenido pero NO contar el contenido"*.
