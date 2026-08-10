@@ -706,6 +706,13 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 >
 > **Qué pasó.** El meme del código de verificación de Asier hizo **196 impresiones en casi una semana**. Al resubirlo con caricatura y la cuenta ya verificada mejoró el arranque, **pero se quedó en 296 impresiones a las 3 horas: flop confirmado también en la segunda versión** (Iker, 2026-08-05). **O sea que ni la caricatura ni la cuenta verificada salvaron al meme: el problema estaba en la ELECCIÓN de la referencia.** Pero además costó una barbaridad adaptarlo: siete iteraciones para llevar "código de verificación" al terreno de ventas.
 >
+> ### 📊 4.4-SERIO · EL MEME SERIO GANA EN CALIDAD DE AUDIENCIA, Y EL DATO LO CONFIRMA (Iker, 2026-08-10)
+> **Medido en los 17 memes de 2026 con más de 10.000 impresiones.** El de *"Vender es un caos"* (Unai, 06/08) es **el mejor de todos en engagement por impresión**: 0,54% de likes contra 0,18% del tatuaje y 0,07% del que más alcance tuvo. Y **31 reposts**, récord absoluto de la tabla; el segundo tiene 22 con el triple de alcance. **El tatuaje tuvo un 50% más de impresiones y la MITAD de likes.**
+> - **Lo que dice el dato:** el meme serio y reconocible llega a menos gente pero a **gente que reacciona**, y esa es la que puede comprar. El meme bruto compra alcance con audiencia que no es nuestra.
+> - **La consecuencia, y es de Iker: las referencias de meme para UNAI y ASIER van en este registro** —de ventas, reconocible, sin caricatura—, y **la cuenta de IKER se reserva como banco de pruebas** para lo más informal. No se restringe a los tres: se reparte.
+> - **Lo que sí vale para las TRES:** la referencia tiene que estar **ya adaptada a ventas** y, a igualdad, **priorizar idiomas que no sean el español** —y no solo el inglés— para que no nos pillen la copia.
+> - **Por qué esto importa más que el alcance:** el objetivo es vender. Entre 190.000 impresiones con 143 likes y 61.000 con 330, la segunda nos deja más gente a la que escribir.
+
 > **⚖️ LOS TRES EJES DE UNA REFERENCIA, y el mejor caso es el que tiene los tres (Iker, 2026-08-05):**
 > | Eje | Por qué importa |
 > |---|---|

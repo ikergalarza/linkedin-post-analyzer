@@ -181,6 +181,21 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Un post capado no está "abajo": está fuera de escala.** El lead magnet del 06/08 hizo **30 impresiones**, un orden de magnitud por debajo del siguiente peor. Un post que no gusta se queda en 200-600; uno que no se reparte se queda en decenas.
 - **Cuidado al mirar la cola:** 14 de los 19 posts por debajo de 700 son de diciembre-enero, o sea de la época de audiencia fría. **Esos no son capados, es que no había nadie.** Filtra por fecha antes de sacar conclusiones.
 
+**⛔⛔ DESCARTADO CON DATOS: `Claude` TAMPOCO está penalizado (2026-08-10).** Era la hipótesis viva de Iker y la mató la competencia: **Martín Arosa tiene 20 posts con Claude con mediana de 728 comentarios**, contra 48 los que no lo llevan. Y en la misma ventana de nuestro capado: **05/08 → 543 comentarios · 06/08 → 400** (el mismo día que nuestro post se quedó en 67 impresiones) · 09/08 y 10/08 sigue publicando de Claude. **Claude no está prohibido: es el motor del pilar.** También sigue usando `🚨 ÚLTIMA HORA` esta semana.
+
+**⭐ LA HIPÓTESIS QUE QUEDA, y explica lo que ninguna otra explicaba (2026-08-10): NO es el texto, es QUIÉN COMENTA EN EL PRIMER MINUTO.**
+| post de esa semana | ¿pide comentar una palabra? | resultado |
+|---|---|---|
+| Mapa CyL 04/08 | no | 8.174 imp |
+| Meme Asier 05/08 | no | 527 imp |
+| Meme Unai 06/08 | no | **61.254 imp** |
+| Despiece Asier 07/08 | no | 915 imp |
+| **Lead magnet 06 y 07/08 ×3** | **sí** | **18-163 imp** |
+
+**El lead magnet es el ÚNICO pilar que pide comentarios y el ÚNICO capado**, cuatro veces seguidas cambiando texto, imagen, gancho y palabras. Y Iker entra a comentar desde las otras tres cuentas nada más publicar. En un mapa eso es interacción normal; **en un post que pide "comenta una palabra", cuatro comentarios en los primeros minutos desde cuentas conectadas entre sí es la firma de un pod de engagement**, que es lo que LinkedIn más persigue. Martín Arosa también pide comentarios, pero le llegan cientos de gente dispersa.
+- **Encaja con el dato que más pesa:** el post NUNCA salió en el feed, ni una vez de cuatro. La decisión se toma al publicar, y los primeros comentarios llegan al publicar.
+- **⛔ LA PRUEBA, y es gratis: el próximo lead magnet se publica y NO se comenta desde ninguna otra cuenta durante la primera hora.** Si vuela, tenemos la causa. Hasta entonces sigue siendo hipótesis.
+
 **⛔ DESCARTADO CON DATOS: la palabra `prompt` NO está baneada (2026-08-07).** Iker sospechaba de ella y propuso cambiarla por `mensaje`. Los dos corpus dicen que no:
 - **Nuestros 8 posts con `prompt`:** 4.153 · 4.082 · 3.072 · 2.837 · 1.586 · 830 · 826 impresiones, y solo el del 06/08 se cayó a 67. La mediana del corpus es 3.424. **Siete de ocho se repartieron con normalidad.**
 - El del **28/07** lleva `ÚLTIMA HORA` + `prompt` + formato lead magnet, los tres a la vez, y **hizo 2.837**.
