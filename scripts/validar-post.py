@@ -818,6 +818,51 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                     # y también el de 1. Lo que NO vale es un bloque de 3+.
                     chk(len(b) <= 2, 'Spam ninja máx 2 líneas (§4.4b)',
                         f'{len(b)} líneas en el bloque del spam ninja, máx 2' if len(b) > 2 else '')
+                    # ⛔ LOS TRES DE ABAJO SALEN DE MEDIR LOS CLICS REALES (2026-08-10).
+                    # El mapa es el pilar que mas convierte (mediana 84 clics, CTR
+                    # 0,315%) y el meme el segundo (0,151%), pero el meme del 06/08
+                    # saco 13 clics con 77.006 impresiones: 0,017%, el peor CTR del
+                    # ano con alcance real. Los tres motivos, medidos:
+                    #
+                    # 1) DONDE CAE EL ENLACE. En los 6 memes con datos, los 4 que
+                    #    ponen el enlace antes del caracter 511 dan 0,050-0,151%; los
+                    #    2 que lo pasan de 650 dan 0,042% y 0,017%. Son justo los dos
+                    #    cuerpos mas largos. El cuerpo largo gana interaccion y pierde
+                    #    clics: para cuando llega el enlace, ya se han ido.
+                    #    OJO: solo aplica donde el cuerpo es PROSA. En el mapa y en
+                    #    los 10 la lista de empresas empuja el enlace mucho mas alla
+                    #    del 650 y aun asi convierten (el mapa de Asier del 14/07 lo
+                    #    pone en el 1.400 y saca 0,415%): alli la lista ES el contenido
+                    #    y el lector la baja entera. En prosa, no.
+                    _pos = cuerpo.find(_dom) if pilar in ('meme', 'historia', 'entregable') else 0
+                    chk(_pos <= 650, 'Spam ninja: el enlace cae antes del caracter 650 (§4.4b)',
+                        'el enlace cae en el %d. Los 2 unicos posts que lo pasaron de 650 '
+                        'son los 2 peores CTR del ano (0,042%% y 0,017%%) frente al '
+                        '0,050-0,151%% de los que lo ponen antes del 511' % _pos
+                        if _pos > 650 else '')
+                    # 2) EL ENLACE VA EN LA SEGUNDA LINEA Y ESA LINEA ES CORTA. El
+                    #    bloque de dos (dolor / promesa corta + enlace) da 0,415% en el
+                    #    mapa de Asier del 14/07. Fusionarlo todo en UNA linea larga da
+                    #    0,172% (Unai 07/07). Iker, 2026-08-10: "que el enlace siempre
+                    #    este en la segunda linea, que esa linea sea corta y punchy".
+                    #    Se mide SIN la URL: el lector no lee la URL, lee la promesa.
+                    _lin = [l for l in b if _dom in l][0]
+                    _lin = re.sub(r'https?://\S+', '', _lin).strip()
+                    chk(len(_lin) <= 80, 'Spam ninja: la linea del enlace es corta (§4.4b)',
+                        '%d caracteres sin contar la URL. La del 0,415%% ocupa 69 y la '
+                        'del 0,172%%, que fusiona dolor y promesa en una sola linea, '
+                        'ocupa 101' % len(_lin) if len(_lin) > 80 else '')
+                    # 3) QUE PROMETE. El dolor validado por los clientes en reunion es
+                    #    ENCONTRAR AL CLIENTE IDEAL, empresa y persona. No el momento.
+                    #    El ninja de 0,415% dice "te marcamos quien va a comprar y
+                    #    cuando": identifica primero. El de 0,017% dice "de montar esa
+                    #    lista nos encargamos nosotros": no identifica a nadie.
+                    _blo = ' '.join(b).lower()
+                    _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)
+                    chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
+                        'el bloque no nombra a quien vas a encontrar. El momento es el '
+                        'dolor secundario: los clientes compran la identificacion de la '
+                        'empresa y la persona' if not _iden else '')
                     break
             # post-workflow §4.4 Paso 5 — SI HAY SPAM NINJA, EL CIERRE NO ES OTRO CTA.
             # Aunque global §4.4b diga que el spam ninja no consume la regla del UNO,

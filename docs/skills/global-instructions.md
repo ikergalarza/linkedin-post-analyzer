@@ -620,6 +620,69 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 
 ---
 
+### ⛔⛔ 4.4b-CLICS · LO QUE HACE QUE EL NINJA CONVIERTA (medido en clics reales, 2026-08-10)
+
+Hasta hoy el ninja se juzgaba por cómo sonaba. Ahora tenemos los clics de cada
+publicación y **cambian tres cosas**. El disparador: el meme del 06/08 fue el
+único outlier de la semana (77.006 impresiones y subiendo, récord de reposts)
+**y solo sacó 13 clics: 0,017%, el peor CTR del año con alcance real.**
+
+**Qué convierte, por pilar** (solo posts con dato; los "0 clics" con 100.000
+impresiones son huecos de la BD, no ceros, y están excluidos):
+
+| pilar | posts | mediana clics | CTR mediano |
+|---|---|---|---|
+| **peloteo_mapa** | 10 | **84** | **0,315%** |
+| peloteo_los10 | 3 | 17 | 0,122% |
+| meme | 11 | 12 | 0,151% |
+
+**El mapa es, con diferencia, el que más trae.** Los tres posts con más clics de
+la historia de las 3 cuentas son mapas: 270, 231 y 226. Y el mapa del 04/08
+(0,024%) es el peor mapa medido, 13 veces por debajo de su propia mediana — la
+intuición de Iker de que "este mes el mapa ha convertido poco" es correcta.
+
+#### 1. DÓNDE cae el enlace — en prosa, antes del carácter 650
+
+De los 6 memes con dato, los 4 que ponen el enlace **antes del 511** dan
+0,050-0,151%. Los 2 que lo pasan de **650** dan 0,042% y 0,017%. Son exactamente
+los dos cuerpos más largos.
+
+**El cuerpo largo en meme gana interacción y pierde clics.** No es un
+contra-argumento al cuerpo largo — el del 06/08 es nuestro mejor meme del año en
+engagement — es que hay que **subir el ninja**, no acortar el post.
+
+⚠️ **Solo aplica donde el cuerpo es PROSA** (meme, historia, entregable). En el
+mapa y en los 10 la lista de empresas empuja el enlace mucho más allá del 650 y
+convierten igual (el mapa de Asier del 14/07 lo pone en el 1.400 y saca 0,415%):
+allí **la lista ES el contenido** y el lector la baja entera.
+
+#### 2. CÓMO se presenta — bloque de DOS, el enlace en la segunda línea, corta
+
+| forma | ejemplo | CTR |
+|---|---|---|
+| **dolor / promesa corta + enlace** | Asier 14/07: *"Llamar a 500 a puerta fría para que compre uno. Eso sí que es un secarral."* · *"Te marcamos quién va a comprar y cuándo. Tu comercial entra solo ahí: LINK"* | **0,415%** |
+| todo fusionado en UNA línea larga | Unai 07/07: *"Vender callado está bien, hasta que otro te roba el cliente. Nosotros te lo cazamos y tú solo cierras: LINK"* | 0,172% |
+
+Iker, 2026-08-10: *"era mejor venderlo como lo vendíamos antes, en un bloque de
+dos, pero que el enlace siempre esté en la segunda línea, que esa línea sea
+corta y punchy"*. **La línea del enlace: máximo 80 caracteres sin contar la URL**
+(la ganadora ocupa 69, la de 0,172% ocupa 101). El lector no lee la URL, lee la
+promesa; si la promesa no cabe de un vistazo, no hace clic.
+
+#### 3. QUÉ promete — identificar a la persona, no el momento
+
+El ninja de 0,415% dice **"te marcamos quién va a comprar y cuándo"**: identifica
+primero, el momento va detrás. El de 0,017% dice *"de montar esa lista nos
+encargamos nosotros"*: no nombra a nadie.
+
+Coincide con lo que dijeron los clientes en las reuniones: **lo que compran es la
+identificación de la empresa y la persona; la señal y el momento son
+secundarios.** Atacar el dolor del momento adecuado era el error viejo.
+
+**Los tres están en el validador** (`Spam ninja: el enlace cae antes del
+carácter 650` · `la linea del enlace es corta` · `promete IDENTIFICAR, no solo
+el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
+
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
