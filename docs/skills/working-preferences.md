@@ -99,6 +99,43 @@ Cada vez que Iker corrija algo del gancho o del cuerpo, la primera pregunta es *
 
 **Y si la version que tengo no es la mejor que puedo dar, NO se entrega.** Iterar cuesta minutos; que Iker corrija una entrega mala cuesta su tiempo, que es lo caro.
 
+## ⛔ 1e-REF · LA REFERENCIA DE LA COMPARATIVA COMPARTE ANATOMIA, NO FECHA (Iker, 2026-08-10)
+
+**El error:** entregue el lead magnet del martes comparado contra el post de 483
+comentarios de Martín Arosa, que **no comparte nada con el nuestro** salvo el
+mecanismo del CTA. Iker: *"no entiendo tampoco por qué me has puesto esa
+referencia si no tiene absolutamente nada que ver con lo nuestro, solo que es el
+lead magnet más reciente, supongo"*. Y era exactamente eso: lo elegí por reciente.
+
+**Para qué sirve la comparativa:** para ver si hemos calcado la anatomía — hook,
+ritmo, bloques, emojis, longitud. **Contra un post que no comparte anatomía, la
+comparativa no mide nada**: sale que somos distintos en todo, que es justo lo que
+tiene que salir, y no informa de nada.
+
+**La regla:** la referencia es **el post que estamos calcando**, el que comparte
+molde de gancho, pilar y motor. Casi siempre es **uno nuestro del swipe file**.
+
+**Y si de un post solo robamos UN mecanismo** (el CTA, el cierre, un giro), eso
+**no lo convierte en la referencia**. Se dice en la entrega en una línea — *"el
+CTA sale del 483 de Martín Arosa, que dejó el gate el 05/08"* — y la comparativa
+se monta contra la referencia anatómica de verdad.
+
+## ⛔ 1e-COPIA · EL MECANISMO SE ROBA, LAS PALABRAS NO (Iker, 2026-08-10)
+
+Copié el cierre de Martín Arosa casi literal: *"Lo estoy compartiendo de forma
+gratuita. / Acceso libre. / (Conecta conmigo para que pueda escribirte)"*, tres
+líneas contra sus tres. Iker: *"se ve demasiado copia — todo eso yo lo resumiría
+en una, sin perder valor y con otras palabras"*.
+
+**Lo que se roba es el MECANISMO:** sin la palabra "comenta", una pregunta
+directa, gratis y conectar para poder mandarlo. **Lo que no se roba es la
+redacción.** Tres líneas suyas caben en una nuestra: *"Conecta conmigo y te los
+mando gratis."* — mismo mecanismo, 3 líneas menos y sin olor a calco.
+
+**El validador solo puede exigir el mecanismo** (que haya pregunta, que se diga
+gratis, que aparezca "conecta conmigo"). **Que no sean sus palabras exactas es
+criterio, y toca mirarlo a mano en el pase de `global §8`.**
+
 ## ⭐ 1e · TODA ENTREGA DE UN POST LLEVA LA COMPARATIVA ORIGINAL vs EL MIO (Iker, 2026-07-22)
 
 En **cada** entrega de un post (meme, lead magnet, mapa, lo que sea), además del texto, el prompt y los avisos, va **siempre una sección de comparativa**: el **post original de referencia** y **el mío**, **en la misma fila, lado a lado, dos columnas** (izquierda = original, derecha = el mío). Sirve para ver de un vistazo cómo se ha robado la esencia.
