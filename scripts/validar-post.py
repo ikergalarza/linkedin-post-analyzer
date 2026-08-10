@@ -720,6 +720,28 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # reglas de ritmo ni de escalera. Sin esto, la lista de 5 items cuenta
     # como 3-3-3-3-3 y dispara el check de patron repetido. Y es justo la
     # estructura de nuestro mejor lead magnet, el de 632 comentarios.
+    # ⛔⛔ TRAS EL GANCHO, LINEA INDIVIDUAL SIEMPRE (Iker, 2026-08-10).
+    # "siempre te he dicho que despues del gancho nunca puede haber ni un bloque
+    # de dos ni de tres en ningun tipo de publicaciones". Estaba dicho y NO
+    # estaba mecanizado, asi que el 10/08 abri el lead magnet con un bloque de
+    # TRES pegado al gancho y no salto nada. El primer bloque es el que decide
+    # si sigues leyendo: un muro de tres lineas ahi pesa antes de haber dado
+    # ningun motivo para seguir.
+    _bs = bloques(texto)
+    if len(_bs) >= 2:
+        chk(len(_bs[1]) == 1, 'Tras el gancho, LINEA INDIVIDUAL (§3.2)',
+            'el bloque de despues del gancho tiene %d lineas. Va suelta, siempre y en '
+            'todos los pilares' % len(_bs[1]) if len(_bs[1]) != 1 else '')
+    # Y EL PRIMER BLOQUE MULTIPLE ES DE DOS, NO DE TRES (Iker, 2026-08-10):
+    # "prefiero empezar con bloques de dos y no con uno de tres". El de tres es
+    # el mas pesado que tenemos; si es el primero que aparece, el post arranca
+    # cuesta arriba.
+    _multi = [len(b) for b in _bs if not es_lista(b) and len(b) > 1]
+    if _multi:
+        chk(_multi[0] == 2, 'El primer bloque multiple es de DOS, no de TRES (§3.2)',
+            'el primero que aparece es de %d. Los doses van antes que los treses'
+            % _multi[0] if _multi[0] != 2 else '')
+
     _pat = [len(b) for b in bloques(texto) if not es_lista(b)]
     if pilar == 'objeto':
         _pat = [n for n, bl in zip(_pat, bloques(texto))
