@@ -415,6 +415,17 @@ Una orden o una palabra suelta, **con punto**, y línea en blanco. Es un freno: 
 
 ⭐ **El Pd2-pregunta es lo mejor que hay aquí y no lo teníamos:** convierte un correo unidireccional en un seguimiento personal, y de paso es un CTA de respuesta encubierto.
 
+#### ⭐ CÓMO SE VENDE EL ENLACE (extraído de los puentes literales del corpus)
+1. **La última línea antes del enlace es una FRASE DE ESTADO, sin verbo imperativo.** RunnerPro: **"Tu plan te está esperando."** No dice entra, apúntate ni no te lo pierdas. Describe que el producto ya existe y está parado esperando. Cero olor a anuncio.
+2. **⛔ Y va en escalera INVERTIDA: larga primero, corta después.** RunnerPro remata con 17 palabras y luego 5. **La línea más corta es la última antes del enlace**, porque es el golpe de cierre. Es la excepción a la escalera del cuerpo (`global §3.2`), y aplica solo al bloque final.
+3. **El nombre del producto, solo y con punto, en su propia línea.** Isra: `ARROGANTE.` No va dentro de una frase: es una etiqueta, porque el argumento ya lo ha hecho el correo entero.
+4. **La transición no argumenta, entrega.** *"En este:"* · *"Hazme caso."* · *"Al tiempo."* El porqué era el cuerpo.
+5. **El enlace llega después de regalar la victoria.** El que no clica se va contento y abre el siguiente correo.
+6. **El precio se ancla acusando, no defendiendo.** Isra: *"Por 18€... me estás robando."*
+7. **Variantes:** enlace como promesa cumplida de ayer (Hugo: *"Te dije que hoy te contaba cómo entrar"*) · respuesta en vez de enlace (*"respóndeme con TRÁFICO"*) · **cero enlace** (Juan Domínguez cierra con una PD y ya).
+
+**📄 Versión larga con la adaptación al spam ninja de LinkedIn: `Escritorio/como-venden-el-enlace.md`** (documento de traspaso al chat de estrategia de LinkedIn, 2026-08-10).
+
 #### Quién firma: 12 de 13 son una PERSONA con nombre
 La única excepción es SINGULARU, que es ecommerce puro de ofertas. **Cero mascotas en 13 remitentes.** RunnerPro, que es el caso más parecido al nuestro, firma **"Cristóbal, CEO de RunnerPro"**. Eso es a la vez el argumento en contra de irnos 100% a Kaixito y la prueba de que la mascota es terreno libre.
 
