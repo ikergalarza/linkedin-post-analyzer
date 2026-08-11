@@ -3,7 +3,13 @@ dist/
 .env
 *.log
 .DS_Store
-.claude/
+.claude/*
+# …salvo el settings de PROYECTO, que lleva el hook que me obliga a releer las
+# skills antes de escribir un post. Si no se versiona, se pierde al reinstalar o
+# al cambiar de maquina, y con el se pierde la unica salvaguarda que no depende
+# de que yo me acuerde. El settings.local.json (permisos de esta maquina) sigue
+# fuera.
+!.claude/settings.json
 /main.js
 
 # credenciales del MCP en claro, nunca al repo

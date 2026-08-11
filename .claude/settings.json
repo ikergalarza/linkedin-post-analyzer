@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"UserPromptSubmit\\\",\\\"additionalContext\\\":\\\"RECORDATORIO AUTOMATICO (hook, no lo ha escrito el usuario). Si esta peticion toca un POST DE LINKEDIN o un EMAIL -escribir, editar, planificar, meme, mapa, los 10, despiece, lead magnet, historia, evento, newsletter-: ABRE Y LEE ENTEROS los ficheros de docs/skills/ que aplican ANTES de escribir nada, sin resumir y sin fiarte de lo que creas recordar. El runbook del pilar manda sobre tu memoria: cada vez que has reconstruido una receta de memoria has entregado una version mas pobre (paleta olvidada, cliches perdidos, referencias ya usadas). Si NO te queda contexto para releerlos enteros, DILO y pide abrir un chat nuevo en vez de escribir de memoria.\\\"}}\"",
+            "suppressOutput": true
+          }
+        ]
+      }
+    ]
+  }
+}
