@@ -612,6 +612,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         '"%s" dentro del texto le pone fecha de caducidad. Quitalo: casi siempre la '
         'frase funciona igual sin el, y asi el post se puede reflotar o reutilizar en '
         'otra cuenta dentro de meses' % _anio.group(0) if _anio else '')
+    # Lenguaje de REPROCHE. Aviso y no fallo: `no es culpa tuya` es empatia,
+    # no reproche, y una lista cerrada nunca va a distinguir las dos. Lo que
+    # hace es obligar a mirar la frase con el test de brand-voice delante.
+    _rep = re.search(r'\b(la culpa|por culpa|culpables?|culparon|no hicieron|'
+                     r'nadie se molest\w+|se les olvid\w+|llegaron tarde|tarde y mal)\b',
+                     cuerpo, re.I)
+    chk(not _rep, 'Sin lenguaje de reproche (brand-voice, canonico)',
+        '"%s": mira si alguien de dentro o de fuera puede sentirse senalado. El culpable '
+        'nunca es una persona ni un equipo, es la falta de informacion, la herramienta o el '
+        'proceso. Y si se puede, que la frase incluya al que publica' % _rep.group(0)
+        if _rep else '', aviso=True)
     m = re.search(NEGRITA_UNICODE, cuerpo)
     chk(not m, 'Sin negrita Unicode tipo 𝗟𝗮𝘀 𝟭𝟬 (§6)',
         'el check de markdown no la caza: es otro bloque Unicode' if m else '')

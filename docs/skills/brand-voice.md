@@ -263,3 +263,45 @@ año tampoco entra nunca en el prompt del diseñador.
 
 **Lo que SÍ vale** es la marca de urgencia sin fecha: `ÚLTIMA HORA`, `acaba de`,
 `esta semana`. Envejecen bien porque no se anclan a un número.
+
+## ⛔⛔ CANÓNICO · NO CRITICAMOS A NADIE, Y A NOSOTROS TAMPOCO (Iker, 2026-08-11) — GLOBAL
+
+**Regla única, para TODOS los pilares y TODAS las cuentas, y vale igual en el gancho,
+en el cuerpo, en el cierre, en el spam ninja, en el texto de la imagen y en el DM.**
+
+Iker: *"nunca en nuestras publicaciones ni en gancho ni en cuerpo ni en texto ni en
+imagen ni en nada nos autocritiquemos ni critiquemos otras regiones"*.
+
+**Las CUATRO cosas que no se hacen:**
+
+| no | qué significa |
+|---|---|
+| **1. A nosotros mismos** | ⭐ **LO NUEVO.** Ni al equipo, ni a otra cuenta, ni a un compañero, ni siquiera sin nombrarlo. Un *"los llamaron 5 días tarde"* es un reproche a ventas aunque no diga a quién |
+| **2. A empresas, marcas, herramientas o personas por su nombre** | ya estaba escrito arriba: cualquier mención a otro producto o empresa es neutra o positiva |
+| **3. A otras regiones o ciudades españolas** | ya estaba en `post-workflow §4.2`: buscamos hermandad entre regiones, no dividir |
+| **4. A un colectivo profesional** | “los de compras”, “los SDR”, “los de marketing” como bloque al que se ridículiza |
+
+**Lo que SÍ vale, y es justo el motor de medio catálogo:**
+- **La comparación del peloteo** (*"exporta más que Bolivia entera"*). Comparar no es
+  despreciar: ahí la región sale GANANDO.
+- **El desprecio que dice OTRO** (`post-workflow §4.2`): *"la ven como el patio
+  trasero"*. Nunca en primera persona, siempre atribuido a un sujeto ajeno.
+- **Lo auto-despectivo de la propia región del post**, que es cariño, no ataque.
+
+**⛔ DÓNDE MÁS SE CUELA, Y POR QUÉ ES EL CASO PELIGROSO: LA CUENTA DE MARIO.** Es la
+única que habla del trabajo de DENTRO, así que ahí una queja genérica se lee como un
+reproche a compañeros con nombre —y los jefes comentan sus posts desde sus cuentas,
+con lo que el chiste se convierte en una bronca interna a la vista de todos.
+
+**La reescritura, que es siempre la misma:** el culpable **nunca es una persona ni un
+equipo, es la falta de información, la herramienta o el proceso**. Y si se puede,
+que la frase **incluya al que publica**, así no señala a nadie:
+
+```
+❌ Los llamaron 5 días tarde. / Y la culpa siempre viaja en la misma dirección.
+✅ Ninguno traía nombre ni cargo. / Y sin eso, cualquiera llama a ciegas.
+```
+
+**El test, antes de entregar:** *¿hay alguien —dentro o fuera— que pueda leer esta
+frase y sentirse señalado?* Si la respuesta no es un no rotundo, se reescribe contra
+el proceso.
