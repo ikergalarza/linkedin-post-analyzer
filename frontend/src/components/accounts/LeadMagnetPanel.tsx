@@ -4,7 +4,7 @@ import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
   buildDm, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
-  commentDepth, extractKeyword, extractSector, matchesKeyword, recursoFor, resolverRecurso, voiceFor,
+  commentDepth, detectarRecurso, extractKeyword, extractSector, resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 
@@ -241,10 +241,27 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // filtro no reconoce a quien comentó y ese lead se pierde en silencio—.
   // Solo se rellena si la config guardada no trae ninguna: lo que el usuario
   // haya escrito a mano ya está en localStorage y manda sobre esto.
+  //
+  // ⛔ Y DESDE EL 2026-08-11 NO HAY CAMPO QUE RELLENAR: el recurso se detecta
+  // solo (Iker). LinkedIn dejo de repartir el "comenta la palabra X" el
+  // 05/08/2026, asi que los posts nuevos no nombran ninguna palabra y no habia
+  // nada que teclear. `detectarRecurso` lo saca del propio post —por la palabra
+  // si el post es viejo y la lleva, y si no por lo que el post promete— y se
+  // escribe aqui como enlace + tema, que es lo que ya sabia usar todo lo de
+  // abajo. La palabra se sigue guardando porque `commentDepth` y
+  // `extractSector` la usan para limpiarla del comentario en los posts viejos;
+  // en los nuevos vale '' y las dos funciones lo tratan bien.
   const [cfg, setCfg] = useState<LmConfig>(() => {
     const saved = loadConfig(post.id);
-    if (saved.keyword.trim()) return saved;
-    return { ...saved, keyword: extractKeyword(post.content_text) };
+    // Lo escrito a mano manda: si ya hay enlace guardado, no se toca.
+    if (saved.link.trim()) return saved;
+    const auto = detectarRecurso(post.content_text);
+    return {
+      ...saved,
+      keyword: saved.keyword.trim() || extractKeyword(post.content_text),
+      link: auto?.link ?? saved.link,
+      topic: auto?.topic ?? saved.topic,
+    };
   });
   useEffect(() => { saveConfig(post.id, cfg); }, [post.id, cfg]);
 
@@ -252,6 +269,10 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // tipo «Lista personalizada» para no pedir enlace ni tema y generar el DM con
   // la lista + su spam ninja (Iker, 2026-07-22). Una sola vez, y solo desde el
   // tipo por defecto: si luego el usuario elige otro tipo a mano, no se lo pisa.
+  //
+  // Sigue vivo SOLO por los posts viejos, que son los unicos que traen palabra.
+  // En un post nuevo `cfg.keyword` es '' y esto no dispara nunca: el tipo se
+  // elige a mano en el selector de arriba.
   const autoLista = useRef(false);
   useEffect(() => {
     if (autoLista.current) return;
@@ -315,26 +336,30 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // el DM resuelve enlace y tema desde la propia palabra (recursoFor), así que
   // no se pide ningún campo de enlace a mano. Si la palabra del DM no tiene
   // recurso mapeado, la tarjeta ya avisa y el botón de enviar se bloquea.
-  const ready = !!cfg.keyword.trim();
-  // El recurso que resuelve la palabra clave (solo aplica al DM).
-  // OJO con la diferencia, que ya me la comi una vez: `mapeado` dice si la
-  // palabra esta en RECURSOS y decide si se ENSEÑA el formulario manual;
-  // `recurso` es el que se va a mandar, mapeado o escrito a mano. Usar
-  // `recurso` para pintar el formulario lo hacia desaparecer en cuanto
-  // tecleabas el primer caracter del enlace.
-  const mapeado = recursoFor(cfg.keyword);
   const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
+  // El DM necesita un recurso que mandar; el publico y la lista generan el suyo
+  // por tarjeta, asi que no dependen de esto.
+  const ready = cfg.kind === 'dm' ? !!recurso : true;
+  // ¿Salio de detectarRecurso o lo escribio el usuario? Solo sirve para decirlo
+  // en la UI: si el panel no distingue las dos cosas, un enlace mal detectado se
+  // lee igual que uno confirmado a mano.
+  const autoDetectado = useMemo(() => detectarRecurso(post.content_text), [post.content_text]);
+  const esAutomatico = !!autoDetectado && autoDetectado.link === recurso?.link;
 
-  // Keyword filter, client-side: the comment list is already in memory, so
-  // changing the keyword re-filters instantly instead of hitting LinkedIn
-  // again. Company pages are dropped — you can't DM a company page, and a
-  // company commenting the keyword isn't a lead.
-  const matches = useMemo(() => {
-    if (!cfg.keyword.trim()) return [];
-    return (data?.threads ?? []).filter(
-      (t) => !t.author.is_company && matchesKeyword(t.text || '', cfg.keyword)
-    );
-  }, [data, cfg.keyword]);
+  // ⛔ SE ACABO EL FILTRO POR PALABRA (Iker, 2026-08-11).
+  //
+  // Antes solo entraban los comentarios que contenian la palabra del post. Con
+  // el gate muerto (05/08/2026) nadie escribe ninguna palabra: el post pregunta
+  // "¿quieres los 5 mensajes?" y la gente contesta lo que le sale. Filtrar por
+  // palabra hoy significa una lista vacia con 400 comentarios debajo.
+  //
+  // Entran TODOS los comentarios de personas. Las paginas de empresa se siguen
+  // cayendo: no se puede mandar un DM a una pagina, y su comentario no es un
+  // lead. Y el envio sigue siendo uno a uno, a mano, tarjeta por tarjeta.
+  const matches = useMemo(
+    () => (data?.threads ?? []).filter((t) => !t.author.is_company),
+    [data]
+  );
 
   // Pagination resets whenever the keyword changes (a new keyword is a new
   // list, and inheriting "showing 40" from the previous one is nonsense).
@@ -375,10 +400,14 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     return owner;
   }, [matches, cfg.keyword]);
 
+  // La paginacion se resetea al cambiar de POST, no de palabra: ya no hay
+  // palabra que cambie, y heredar un "viendo 40" del post anterior no tiene
+  // sentido. Derivado, no en un efecto: se recuerda de que post es el contador
+  // y se ignora en cuanto queda obsoleto.
   const PAGE = 10;
-  const [vis, setVis] = useState<{ key: string; n: number }>({ key: cfg.keyword, n: PAGE });
-  const visible = vis.key === cfg.keyword ? vis.n : PAGE;
-  const showMore = () => setVis({ key: cfg.keyword, n: visible + PAGE });
+  const [vis, setVis] = useState<{ key: string; n: number }>({ key: post.id, n: PAGE });
+  const visible = vis.key === post.id ? vis.n : PAGE;
+  const showMore = () => setVis({ key: post.id, n: visible + PAGE });
 
   const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 200);
 
@@ -443,55 +472,55 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
       <div className="bg-bg-card border border-border rounded-xl p-4 space-y-3">
         <KindPicker value={cfg.kind} onChange={(k) => setCfg((c) => ({ ...c, kind: k }))} />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <Field
-            label="Palabra clave"
-            hint="La que pides comentar. Ej: MAPA"
-            value={cfg.keyword}
-            onChange={(v) => setCfg((c) => ({ ...c, keyword: v }))}
-            placeholder="MAPA"
-          />
-          {/* El DM ya no pide enlace ni tema: la propia palabra clave los
-              resuelve (recursoFor). Aquí solo confirmamos qué recurso saldrá,
-              o avisamos si esa palabra no tiene ninguno mapeado todavía. */}
-          {cfg.kind === 'dm' && cfg.keyword.trim() && (
-            mapeado ? (
+        {/* Ni palabra clave ni ningún otro input: el recurso lo detecta
+            `detectarRecurso` a partir del post. Aquí solo se CONFIRMA cuál va a
+            salir, y se puede corregir si la detección falla o si el recurso es
+            nuevo y todavía no está en el catálogo. */}
+        {cfg.kind === 'dm' && (
+          recurso ? (
+            <div className="space-y-1.5">
               <p className="text-[11px] text-text-muted leading-snug">
-                Mandará el recurso: <span className="text-text">{recurso.topic}</span>
+                {esAutomatico ? 'Detectado en el post' : 'Puesto a mano'} · mandará{' '}
+                <span className="text-text">{recurso.topic}</span>
                 <br />
                 <span className="text-accent break-all">{recurso.link}</span>
               </p>
-            ) : (
-              /* SALIDA MANUAL (Iker, 2026-08-07). Antes esto era solo un aviso de
-                 "añádela en RECURSOS" y el envío se quedaba bloqueado hasta que yo
-                 tocara el código. Paso de verdad un viernes a la una, con el post ya
-                 subido y la gente comentando. Ahora se escribe el enlace aquí y el DM
-                 sale igual; el mapa sigue mandando cuando la palabra está en él. */
-              <div className="space-y-1.5">
-                <p className="text-[11px] text-amber-500 leading-snug">
-                  «{cfg.keyword.trim()}» no está en RECURSOS. Pega el enlace aquí y el DM sale igual.
-                </p>
-                <input
-                  value={cfg.link}
-                  onChange={(e) => setCfg((c) => ({ ...c, link: e.target.value }))}
-                  placeholder="https://recursos.neety.com/…"
-                  className="w-full bg-bg-secondary border border-border rounded px-2 py-1 text-xs"
-                />
-                <input
-                  value={cfg.topic}
-                  onChange={(e) => setCfg((c) => ({ ...c, topic: e.target.value }))}
-                  placeholder="Tema, para el DM: los 5 mensajes para dar con quien cierra"
-                  className="w-full bg-bg-secondary border border-border rounded px-2 py-1 text-xs"
-                />
-              </div>
-            )
-          )}
-        </div>
+              <button
+                onClick={() => setCfg((c) => ({ ...c, link: '', topic: '' }))}
+                className="text-[11px] text-text-muted underline hover:text-text-secondary"
+              >
+                No es éste, lo pongo yo
+              </button>
+            </div>
+          ) : (
+            /* SALIDA MANUAL (Iker, 2026-08-07). Nunca se bloquea el envío por
+               esperar a que yo toque el código: pasó de verdad un viernes a la
+               una, con el post ya subido y la gente comentando. Ahora también
+               cubre el caso nuevo — que la detección no lo tenga claro. */
+            <div className="space-y-1.5">
+              <p className="text-[11px] text-amber-500 leading-snug">
+                No he sabido qué recurso pide este post. Pega el enlace y el DM sale igual.
+              </p>
+              <input
+                value={cfg.link}
+                onChange={(e) => setCfg((c) => ({ ...c, link: e.target.value }))}
+                placeholder="https://recursos.neety.com/…"
+                className="w-full md:w-2/3 bg-bg-secondary border border-border rounded px-2 py-1 text-xs"
+              />
+              <input
+                value={cfg.topic}
+                onChange={(e) => setCfg((c) => ({ ...c, topic: e.target.value }))}
+                placeholder="Tema, para el DM: los 5 mensajes para dar con quien cierra"
+                className="w-full md:w-2/3 bg-bg-secondary border border-border rounded px-2 py-1 text-xs"
+              />
+            </div>
+          )
+        )}
 
         {cfg.kind === 'lista' && (
           <p className="text-[11px] text-text-muted leading-snug pt-1 border-t border-border">
-            Solo hace falta la palabra clave. El post les pide comentar{' '}
-            <span className="text-text-secondary">«{cfg.keyword.trim() || 'lista'}» + su sector</span>. En cada
+            Aquí no hay nada que rellenar. El post les pide comentar{' '}
+            <span className="text-text-secondary">su sector</span>. En cada
             comentario se lee el sector, y al darle a <span className="text-text-secondary">Generar lista</span> se
             buscan empresas reales españolas de ese sector con su zona y su LinkedIn, y se rellena el DM. A 1er grado
             va la lista entera; a los demás, una invitación y la lista al aceptar.
@@ -500,8 +529,8 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 
         {cfg.kind === 'publico' && (
           <p className="text-[11px] text-text-muted leading-snug pt-1 border-t border-border">
-            Solo hace falta la palabra clave. El post tiene que pedirles que{' '}
-            <span className="text-text-secondary">peguen su web</span> junto a ella. Al darle a{' '}
+            Aquí no hay nada que rellenar. El post tiene que pedirles que{' '}
+            <span className="text-text-secondary">peguen su web</span> en el comentario. Al darle a{' '}
             <span className="text-text-secondary">Redactar respuesta</span> en cada comentario, se lee su web de
             verdad, se audita, se le crea su propia página y el enlace ya viene dentro del texto. El comentario
             regala el fallo más caro citando su titular, y la página pide el correo para ver los demás. Si el
@@ -514,7 +543,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           <div className="flex items-center gap-3 flex-wrap text-xs text-text-secondary pt-1 border-t border-border">
             <span>
               <span className="font-semibold text-text-primary">{matches.length}</span> comentario
-              {matches.length === 1 ? '' : 's'} con «{cfg.keyword.trim()}»
+              {matches.length === 1 ? '' : 's'} de personas
             </span>
             {sentCount > 0 && (
               <span className="text-text-muted">· {sentCount} ya recibieron el recurso</span>
@@ -531,9 +560,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 
       {!ready && (
         <p className="text-center text-text-muted text-sm py-10">
-          {cfg.kind === 'dm'
-            ? 'Rellena la palabra clave, el enlace y el tema para ver a quién hay que mandarle el recurso.'
-            : 'Escribe la palabra clave para ver a quién hay que mandarle el recurso.'}
+          Pega arriba el enlace del recurso para ver a quién hay que mandárselo.
         </p>
       )}
 
@@ -547,7 +574,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
       )}
       {ready && data && matches.length === 0 && (
         <p className="text-center text-text-muted text-sm py-10">
-          Ningún comentario contiene «{cfg.keyword.trim()}». Revisa que la palabra sea la del post.
+          Este post no tiene todavía ningún comentario de una persona.
         </p>
       )}
 
@@ -631,50 +658,6 @@ function KindPicker({ value, onChange }: { value: LmKind; onChange: (k: LmKind) 
     </div>
   );
 }
-
-function Field({
-  label,
-  hint,
-  value,
-  onChange,
-  placeholder,
-  multiline,
-}: {
-  label: string;
-  hint: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-  multiline?: boolean;
-}) {
-  const cls =
-    'w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent';
-  return (
-    <div className="min-w-0">
-      <label className="block text-[11px] font-medium text-text-secondary mb-1">{label}</label>
-      {multiline ? (
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          rows={2}
-          className={`${cls} resize-y leading-snug`}
-        />
-      ) : (
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className={cls}
-        />
-      )}
-      <p className="text-[10px] text-text-muted mt-1">{hint}</p>
-    </div>
-  );
-}
-
-// The degree badge. This is the load-bearing bit of information on the card:
-// it decides whether the person can be DM'd at all.
 function DegreeBadge({ d }: { d: number | null | undefined }) {
   if (d === 1) {
     return (

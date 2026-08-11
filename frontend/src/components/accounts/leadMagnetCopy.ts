@@ -60,29 +60,57 @@ export interface Recurso {
   topic: string;
 }
 
-const RECURSOS: Record<string, Recurso> = {
-  subvencion: {
+// ⛔ EL CATALOGO ES LA FUENTE DE VERDAD, Y YA NO SE INDEXA POR PALABRA CLAVE
+// (Iker, 2026-08-11).
+//
+// LinkedIn dejo de repartir el "comenta la palabra X" entre el 4 y el 5 de
+// agosto de 2026 (`post-workflow §4.5.0-CTA`), asi que los posts nuevos NO
+// nombran ninguna palabra: piden el recurso con una pregunta y se manda por
+// privado a quien comente cualquier cosa. Sin palabra que teclear, el recurso
+// tiene que salir del PROPIO POST, que es lo que hace `detectarRecurso`.
+//
+// Cada entrada lleva dos cosas para reconocerse:
+//   · claves — las palabras que se pedian comentar cuando el gate existia. Se
+//     conservan porque los posts VIEJOS siguen en la herramienta y se les
+//     sigue mandando el recurso desde aqui.
+//   · pistas — lo que el post PROMETE, que es como se reconoce un post nuevo.
+//     Van sin tildes y en minusculas porque se comparan contra `normalize`.
+interface RecursoDef extends Recurso {
+  claves: string[];
+  pistas: string[];
+}
+
+const CATALOGO: RecursoDef[] = [
+  {
     link: 'https://recursos.neety.com/subvencion-euskadi/',
     topic: 'la subvención de IA para industria vasca',
+    claves: ['subvencion'],
+    pistas: ['subvencion', 'ayuda publica', 'industria vasca', 'euskadi'],
   },
-  manual: {
+  {
     link: 'https://recursos.neety.com/prospeccion-manual/',
     topic: 'las señales que avisan de que una empresa va a comprar',
+    claves: ['manual'],
+    pistas: ['prospeccion manual', 'senales que avisan', 'va a comprar', 'senal de compra'],
   },
-  firma: {
+  {
+    // `firma` y `nombre` apuntaban al mismo sitio con dos entradas duplicadas:
+    // el post se reescribio tres veces por un capado de alcance y la palabra
+    // cambio, pero la pagina siguio siendo /firma/. Con el catalogo eso es una
+    // sola entrada con dos claves, que es lo que siempre fue.
     link: 'https://recursos.neety.com/firma/',
     topic: 'los 5 mensajes para dar con quien cierra la compra',
+    claves: ['firma', 'nombre'],
+    pistas: [
+      'quien firma', 'firma la compra', 'prospeccion por nombre',
+      '5 mensajes', 'quien decide', 'con quien hablo',
+    ],
   },
-  // MISMO recurso que `firma`, con otra palabra (Iker, 2026-08-07). El post se
-  // reescribio tres veces por un capado de alcance y la palabra acabo siendo
-  // `nombre` —se entiende sola en el hilo de comentarios, que `firma` no—, pero
-  // la pagina sigue siendo /firma/ porque no compensaba mover la web por esto.
-  // Dos palabras pueden apuntar al mismo sitio y no pasa nada.
-  nombre: {
-    link: 'https://recursos.neety.com/firma/',
-    topic: 'los 5 mensajes para dar con quien cierra la compra',
-  },
-};
+];
+
+const RECURSOS: Record<string, Recurso> = Object.fromEntries(
+  CATALOGO.flatMap((r) => r.claves.map((c) => [c, { link: r.link, topic: r.topic }]))
+);
 
 // El recurso de una palabra clave, o null si esa palabra no tiene uno mapeado
 // todavía (entonces el panel avisa en vez de mandar un DM sin enlace).
@@ -129,6 +157,41 @@ export function extractKeyword(postText: string | null | undefined): string {
   let last = '';
   for (const m of postText.matchAll(CTA_KEYWORD)) last = m[1];
   return last.trim();
+}
+
+// ────────────── el RECURSO se saca del post, sin palabra de por medio ──────────────
+//
+// Sustituye al campo "Palabra clave" del panel (Iker, 2026-08-11): *"ya no
+// pedimos palabras, que se detecte automaticamente en base a la publicacion el
+// enlace del lead magnet, ya nada de input"*.
+//
+// Dos pasadas, en este orden:
+//   1. LA PALABRA, si el post la lleva. Los posts anteriores al 05/08/2026
+//      siguen en la herramienta con su `comenta "X"` dentro, y ahi la palabra
+//      es una firma exacta: mejor eso que adivinar por contenido.
+//   2. LAS PISTAS. Se cuenta cuantas aparecen en el texto y gana la que mas
+//      tenga. Un empate devuelve null a proposito: dos recursos igual de
+//      probables es justo cuando NO hay que elegir por el usuario, porque el
+//      precio de acertar es cero y el de fallar es mandarle a 400 personas el
+//      enlace equivocado. El panel entonces pide el enlace a mano.
+export function detectarRecurso(postText: string | null | undefined): Recurso | null {
+  if (!postText) return null;
+
+  const porPalabra = recursoFor(extractKeyword(postText));
+  if (porPalabra) return porPalabra;
+
+  const t = normalize(postText);
+  let mejor: RecursoDef | null = null;
+  let mejorN = 0;
+  let empate = false;
+  for (const r of CATALOGO) {
+    const n = r.pistas.filter((p) => t.includes(p)).length;
+    if (n === 0) continue;
+    if (n > mejorN) { mejor = r; mejorN = n; empate = false; }
+    else if (n === mejorN) empate = true;
+  }
+  if (!mejor || empate) return null;
+  return { link: mejor.link, topic: mejor.topic };
 }
 
 // ──────────────────────────── name extraction ────────────────────────────
