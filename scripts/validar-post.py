@@ -799,6 +799,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'ritmo. El 2026-08-06 entregue un gancho del DOBLE de largo que el original, '
             'con dos frases en vez de una y el emoji cambiado. La salida va en la entrega '
             '(global §2.2b-MEDIR)', aviso=True)
+        # ⛔ SE ME OLVIDO EN LOS DOS MEMES DEL 11/08 Y ESTABA ESCRITO COMO
+        # OBLIGATORIO (Iker). `images §4 · Constraints de marca (SIEMPRE, en
+        # cualquier variante)` dice fuentes NUESTRAS y paleta del brandbook 2026
+        # en TODA imagen con texto, memes incluidos. Un meme calcado sin nuestra
+        # tipografia es el meme de otro con nuestro chiste: lo unico que lo hace
+        # nuestro es como esta escrito.
+        chk(False, 'ENTREGA: el prompt lleva PALETA y TIPOGRAFIA de marca',
+            'Bricolage Grotesque en titulos y Switzer en cuerpo, y los colores del brandbook '
+            '2026: naranja #fe8238, berenjena #431b44 (el UNICO oscuro), azul bebe #a7c5f9 y '
+            'mint claro #ebfff6. Los dos claros van de detalle, nunca de masa principal. '
+            'Excepciones: screenshot documental (§0a-sexta-bis) y anatomia (§0i-4)',
+            aviso=True)
+        chk(False, 'ENTREGA: debajo del prompt, QUE tiene que adjuntar Iker',
+            'va JUSTO despues del prompt y en cualquier pilar: la foto de la referencia y los '
+            'instaladores de Bricolage Grotesque y Switzer, mas los logos si el pilar los '
+            'lleva. Si no se lo digo ahi, se le olvida y el disenador tira de fuente por '
+            'defecto (working-preferences §1g)',
+            aviso=True)
         chk(False, 'ENTREGA: el prompt en UNA linea por parrafo, sin cortar a mano',
             'los bloques copiables no se parten a los 70 caracteres: el bloque no reajusta '
             'al ancho, asi que quedan el doble de altos con media pantalla vacia a la '

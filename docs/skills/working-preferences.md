@@ -99,6 +99,23 @@ Cada vez que Iker corrija algo del gancho o del cuerpo, la primera pregunta es *
 
 **Y si la version que tengo no es la mejor que puedo dar, NO se entrega.** Iterar cuesta minutos; que Iker corrija una entrega mala cuesta su tiempo, que es lo caro.
 
+## ⛔⛔ 1g · DEBAJO DE CADA PROMPT, QUÉ HAY QUE ADJUNTAR (Iker, 2026-08-11) — GLOBAL
+
+**Justo después de cada prompt va la lista de lo que Iker tiene que adjuntarle a
+quien lo va a ejecutar.** En cualquier pilar y para cualquier prompt — diseñador,
+animador, programador, edición—. Si no se dice ahí, se olvida, y el diseñador acaba
+tirando de la fuente por defecto o inventándose la referencia.
+
+Lo habitual: **la foto de la referencia**, **los instaladores de Bricolage
+Grotesque y Switzer**, y los **logos** si el pilar los lleva (despiece, mapa).
+
+**Y el prompt mismo NUNCA sale sin paleta ni tipografía.** Está en `images §4 ·
+Constraints de marca (SIEMPRE, en cualquier variante)` desde el principio y el
+11/08 lo omití en los dos memes. Iker: *"es lo más importante, tanto nuestra
+tipografía como los colores del nuevo brand book"*. **Un meme calcado sin nuestra
+tipografía es el meme de otro con nuestro chiste**: lo único que lo hace nuestro es
+cómo está escrito. Las dos cosas van al validador como aviso de entrega.
+
 ## ⛔⛔ 1f · LO QUE SE COPIA NO SE PARTE A MANO (Iker, 2026-08-11) — GLOBAL
 
 **En todo bloque cercado pensado para COPIAR, cada párrafo va en UNA SOLA LÍNEA.**
