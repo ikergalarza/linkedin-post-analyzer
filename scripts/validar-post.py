@@ -603,8 +603,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # brand-voice §4.5 — el nombre del founder gana al del producto. Como mucho
     # UNA vez y nunca en el hook. El check viejo solo miraba el spam ninja.
     _neety = len(re.findall(r'\bNeety\b', cuerpo, re.I))
-    chk(_neety <= 1, 'Neety se nombra como mucho UNA vez (brand-voice §4.5)',
-        f'{_neety} veces' if _neety > 1 else '')
+    # ⛔ MARIO ES LA EXCEPCION, Y ESTABA ESCRITA PERO NO MECANIZADA (Iker,
+    # 2026-08-11). `aboutme §2` lo dice desde el 22/07: en la cuenta de Mario las
+    # menciones a @Neety y a los 3 jefes son OBLIGATORIAS en TODOS los posts,
+    # porque su cuenta no es thought leadership de founder sino ADVOCACY DE
+    # EMPLEADO — ahi nombrar a la empresa y etiquetar a los jefes es el punto,
+    # no una fuga. Con la regla de los founders aplicada a su cuenta, un post
+    # suyo BIEN hecho suspendia; y al reves, uno sin las menciones aprobaba.
+    _es_mario_cta = (cuenta or '').strip().lower() == 'mario'
+    if _es_mario_cta:
+        _falta = [n for n in ('Neety', 'Unai', 'Iker', 'Asier')
+                  if not re.search(r'@\s?' + n, cuerpo, re.I)]
+        chk(not _falta, 'MARIO: menciona a @Neety y a los 3 jefes (aboutme §2)',
+            'faltan ' + ', '.join('@' + n for n in _falta) + '. Es obligatorio en TODOS sus '
+            'posts: su cuenta es advocacy de empleado, no thought leadership de founder'
+            if _falta else '')
+    else:
+        chk(_neety <= 1, 'Neety se nombra como mucho UNA vez (brand-voice §4.5)',
+            f'{_neety} veces' if _neety > 1 else '')
     chk(not re.search(r'\bNeety\b', hook_txt, re.I), 'Neety NUNCA en el hook (brand-voice §4.5)',
         'el post vende al pensador, no al producto' if re.search(r'\bNeety\b', hook_txt, re.I) else '')
 
