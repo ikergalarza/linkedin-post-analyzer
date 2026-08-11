@@ -617,6 +617,32 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces** · (4) **los 2 PROMPTS de imagen** literales con sus `XXX` rellenos (Paso 6b). **Sin CSV** y sin montar la imagen: eso lo hace el usuario con su plantilla.
 
+### ⛔⛔ 4.4-PASO-1 · PRIMERO LA IDEA, DESPUÉS EL FORMATO (Iker, 2026-08-11)
+
+**Son dos lecturas de la referencia y van en este orden. Las dos, siempre.**
+
+Iker: *"la manera que tenías tú de captar la anatomía no es mala, sino que eso se hace
+DESPUÉS de lo mío. Primero se capta la esencia de la IDEA, y el paso dos es captar la
+esencia del formateado, tanto del gancho como del cuerpo. Tienes que hacer las dos
+cosas, pero lo primero y lo más importante es la idea"*.
+
+| | qué se lee | cómo |
+|---|---|---|
+| **1. LA IDEA** | el **verbo** que hace el chiste y el **concepto** que abre | a mano, mirando el gancho. El script saca los verbos candidatos y hace las 4 preguntas |
+| **2. EL FORMATO** | longitud del gancho, frases, emojis, bloques, ritmo, cierre | `python scripts/anatomia-referencia.py original.txt mio.txt` |
+
+**Por qué este orden y no el otro:** un remix con el **formato perfecto y la idea
+perdida** es el meme de otro vaciado —pasó el 11/08 con el de Lauren Vilips: calqué su
+estructura, tiré su *"you're not saving lives"* y la imagen se quedó con un médico que
+ningún texto explicaba—. Al revés, con la idea buena y el formato flojo, **todavía se
+salva**: el chiste funciona aunque el ritmo cojee.
+
+**Cómo se caza la idea, que es el atajo de Iker: por el VERBO.** *"Yo sobre todo pillo
+las esencias con los verbos"*. Y el concepto que va con él es siempre una de estas cuatro
+cosas — **original, exagerado, controversial o una metáfora**. `salvar vidas` es metáfora
++ exageración, y por eso vuela. **Si lo que has sacado no es ninguna de las cuatro, no has
+dado con la idea todavía.**
+
 ### ⛔⛔ 4.4-PASO-0 · ANTES DE ELABORAR NADA: ¿YA LA HEMOS USADO? (Iker, 2026-08-11)
 
 **Es el PRIMER paso del runbook del meme, antes de leer la referencia siquiera.**

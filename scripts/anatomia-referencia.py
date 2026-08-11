@@ -101,7 +101,13 @@ def esencia(texto):
     hook = texto.strip().split('\n')[0]
     cand = [p for p in _VERBO.findall(hook) if p.lower() not in _VACIAS and len(p) > 3]
     return [
-        'ESENCIA DE LA REFERENCIA — responde a las 4 ANTES de escribir nada:',
+        'PASO 1 de 2 · LA IDEA — y es el importante (Iker, 2026-08-11):',
+        '  "primero se capta la esencia de la IDEA; el paso dos es la esencia del',
+        '   FORMATO, del gancho y del cuerpo. Las dos cosas, pero lo primero y lo',
+        '   mas importante es la idea." Un remix con el formato perfecto y la idea',
+        '   perdida es el meme de otro vaciado; al reves todavia se salva.',
+        '',
+        'Responde a las 4 ANTES de escribir nada:',
         '',
         '  gancho: %s' % hook[:110],
         '  posibles verbos: %s' % (', '.join(dict.fromkeys(cand)) or '(ninguno claro)'),
@@ -126,6 +132,8 @@ if __name__ == '__main__':
     original = io.open(sys.argv[1], encoding='utf-8').read()
     for linea in esencia(original):
         print(linea)
+    print('PASO 2 de 2 · EL FORMATO — solo despues de haber respondido arriba:')
+    print()
     for nom, ruta in [('ORIGINAL', sys.argv[1]), ('EL MIO', sys.argv[2])]:
         print(anatomia(io.open(ruta, encoding='utf-8').read(), nom))
         print()
