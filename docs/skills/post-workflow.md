@@ -617,6 +617,56 @@ python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LIN
 
 **OUTPUT FINAL (SOLO esto):** (1) el **TEXTO** del post copy-ready · (2) el **ZIP con las 10 fotos** en orden de mención · (3) la **guía de menciones con enlaces** · (4) **los 2 PROMPTS de imagen** literales con sus `XXX` rellenos (Paso 6b). **Sin CSV** y sin montar la imagen: eso lo hace el usuario con su plantilla.
 
+### ⛔⛔ 4.4-PASO-0 · ANTES DE ELABORAR NADA: ¿YA LA HEMOS USADO? (Iker, 2026-08-11)
+
+**Es el PRIMER paso del runbook del meme, antes de leer la referencia siquiera.**
+Iker: *"cuando consigas una referencia, antes de elaborarla, verificar si ya la
+hemos usado o no, porque si no estás perdiendo el tiempo"*.
+
+**Qué pasó el 2026-08-11:** propuse a Asier el meme de The Office, escribí el post,
+el prompt de imagen y las dos comparativas — y **The Office fue el primer meme de
+Asier**, el 16/07. Iker lo sabía; yo no lo había mirado. Al cambiarla, propuse la de
+los calvos, que **Iker se había hecho el 06/05 con 138.828 impresiones**. Dos
+referencias quemadas seguidas, dos entregas enteras a la basura y el retraso encima.
+
+**La comprobación, en este orden:**
+1. **En la cuenta que va a publicar.** Si esa cuenta ya la usó, se descarta y se
+   busca otra. No hay excepción.
+2. **En las otras cuentas.** Si la usó otra, **no se descarta**: la audiencia se
+   solapa poco y el runbook ya lo contempla (*"el formato se repite, el ángulo se
+   itera"*). Pero **se dice en la entrega con su resultado**, para que la decisión de
+   repetir sea de Iker y con el dato delante.
+
+**Cómo se comprueba, que a ojo no vale:** el texto del post nuestro casi nunca nombra
+la referencia, así que se busca por el CONCEPTO de la imagen — `calv|pelo`,
+`tiburón`, `tatuaje`— sobre los `content_text` de las 3 cuentas, y se cruza con
+`historial-publicaciones.md`, que sí anota la referencia de cada meme.
+
+### ⛔ 4.4-PASO-0b · LAS REFERENCIAS SE BUSCAN EN LINKEDIN, NO SOLO EN LA BD
+
+Iker, 2026-08-11: *"son todas referencias que las sigues sacando de nuestra base de
+datos, cuando tú tienes Unipile. Llevamos 5 meses usándola y yo ya miraba la sección
+de inspiración con el filtro meme, y los primeros casi todos ya los hemos usado"*.
+
+**El corpus está agotado por arriba**: ordenar por ratio devuelve justo lo que ya
+hemos gastado. Lo nuevo hay que ir a buscarlo.
+
+**⚠️ La búsqueda de POSTS de Unipile NO funciona con nuestra cuenta** (probado el
+11/08: `category: posts` devuelve `total_count: 0` con cualquier keyword). Lo que SÍ
+funciona, y es el camino:
+
+```
+GET {BASE}/api/v1/users/{provider_id}/posts?account_id=…&limit=30
+```
+
+Se pide sobre los **autores de meme que ya conocemos** y devuelve **sus últimas
+publicaciones, incluidas las que nuestra BD todavía no ha rastreado**. Así salieron
+el 11/08 posts de hace 4 horas y de hace 5 días que no estaban en el corpus.
+
+Se filtra por: lleva imagen, reacciones por encima del umbral del autor, y **no está
+en `cross-creators`** (si está, ya lo teníamos). Lo de hace menos de un mes es lo que
+sorprende, que es de lo que vive este pilar.
+
 ### 4.4 · Runbook MEME (REMIX de una referencia) — receta definitiva
 
 > **⭐ EL FLUJO EN 5 PASOS (la intuición, antes de los detalles). Costó 8 iteraciones sacarlo el 2026-07-23; que no vuelva a costar:**
