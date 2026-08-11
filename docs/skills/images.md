@@ -394,6 +394,26 @@ tipo `IZQUIERDA (55%)`. Se escribe como se le explicaría a una persona: un pár
 seguido que empieza por `SOLO HAZ LO QUE TE PIDO`, describe la escena y termina con la
 contención (`§0a-penta`). El diseñador lee prosa, no un esquema.
 
+**2b-bis · ⭐ LA JERARQUÍA DE CAJAS: SOLO LOS DATOS LLEVAN CAJA (medido, 2026-08-11).**
+Idea de Iker, y **confirmada por nuestro propio ganador**: el meme de la escalera de
+Iker del 06/05 hace **13.92x con 138.828 impresiones**, y su imagen es exactamente
+esto:
+
+| elemento | cómo va |
+|---|---|
+| **Título** | **SIN caja**, texto berenjena directo sobre el fondo, con **UNA palabra en naranja** (`§0h`). El suyo: *"Subir en ventas siempre pasa **factura**"* |
+| **Etiquetas de datos** (los roles) | **CON caja** berenjena y texto blanco. **Las seis iguales entre sí** |
+| **Etiqueta del eje** | **SIN caja**, texto berenjena suelto |
+
+**Y el naranja vive en UN solo sitio.** En el ganador está en el título y ninguna
+etiqueta lo lleva. El 11/08 yo había puesto el título en caja y la última etiqueta
+en naranja: con eso hay dos focos peleando y se pierden los dos. **Si el título
+lleva la palabra naranja, las etiquetas van todas berenjena.**
+
+**El porqué de que la caja sea de los datos:** la caja es peso visual, y el peso
+tiene que ir donde está el contenido que se compara. El título ya destaca por
+tamaño de letra, no necesita caja; el eje es contexto y no debe competir.
+
 **2c · ⛔ LAS ETIQUETAS VAN EN MAYÚSCULA INICIAL, Y EL EJE SIN CAJA (Iker, 2026-08-11).** En cualquier rótulo o etiqueta de una imagen, **la primera letra de cada palabra va en mayúscula menos las preposiciones**: `Nivel de Responsabilidad`, `Jefe de Equipo`, `Responsable de Ventas`. Todo en minúscula se lee a borrador. Y **la etiqueta del eje no lleva caja de color**: el texto suelto en berenjena. Una caja ahí compite con las etiquetas de datos, que son las que tienen que destacar.
 
 **2d · ⛔ PARA MOVER ALGO, NOMBRA EL HUECO, NO LA ACCIÓN (Iker, 2026-08-11).** *“Si le decimos céntralo, se pierde”.* Se le dice **`aprovecha el espacio que tiene por la izquierda para moverlo un poco`**, no *“céntralo”*. Es la misma regla que §0c para el tamaño (*“aprovecha el espacio que tiene”* en vez de *“agrándalo”*): el diseñador ejecuta bien una instrucción espacial concreta y mal una abstracta.
