@@ -2120,8 +2120,23 @@ async function buildThreadsForPost(post: any): Promise<{ threads: ThreadedCommen
     }
     // Una fecha ausente vale 0, así que nunca cuenta como posterior: mejor no
     // resucitar un hilo por un dato que falta que inundar la bandeja.
+    //
+    // ⛔ Y UNA REACCIÓN NUESTRA YA CUENTA COMO ATENDERLO (Iker, 2026-08-11).
+    //
+    // Al empezar a mostrar los follow-ups, la bandeja se llenó: cada hilo vivo
+    // de cada post reciente vuelve a entrar. Pero a muchos de esos mensajes la
+    // respuesta correcta ES un 👍 — no todo merece texto. Si reaccionar no los
+    // sacaba de la lista, la única forma de vaciarla era contestar a todo.
+    //
+    // `my_reaction` viene de `user_reacted` de Unipile, o sea de LinkedIn: vale
+    // igual si la reacción se puso desde la app o desde el móvil.
+    //
+    // ⏱️ El efecto es DIFERIDO a propósito, que es justo como lo pidió: esto se
+    // calcula al pedir los comentarios, así que el que acabas de reaccionar
+    // sigue en pantalla hasta que recargas. Si desapareciera al instante, la
+    // tarjeta se esfumaría bajo el cursor y no podrías rectificar.
     t.pending_followups = t.replies.filter(
-      (r) => r.author.profile_id !== authorLinkedInId && tsOf(r.date) > mia
+      (r) => r.author.profile_id !== authorLinkedInId && tsOf(r.date) > mia && !r.my_reaction
     );
     t.answered_by_author = t.pending_followups.length === 0;
   }

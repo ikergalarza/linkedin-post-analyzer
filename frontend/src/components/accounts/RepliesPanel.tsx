@@ -291,13 +291,20 @@ function SubReplyBox({
   if (sent) return <p className="mt-1 text-[10px] text-green-400">✓ Respondido</p>;
 
   if (!abierto) {
+    // ⛔ BOTÓN DE VERDAD Y EN SU PROPIA LÍNEA (Iker, 2026-08-11). Era texto gris
+    // pelado y caía pegado a la barra de reacciones, así que no parecía
+    // pulsable: justo el control que ahora hace falta a diario, desde que los
+    // follow-ups reaparecen en la bandeja. Mismo estilo que "✨ Generar
+    // respuesta" del hilo principal, para que se lea como lo que es.
     return (
-      <button
-        onClick={() => setAbierto(true)}
-        className="mt-1 text-[10px] text-text-muted hover:text-accent transition-colors"
-      >
-        ↩ Responder
-      </button>
+      <div className="mt-1.5">
+        <button
+          onClick={() => setAbierto(true)}
+          className="text-[10px] px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+        >
+          ↩ Responder
+        </button>
+      </div>
     );
   }
 
