@@ -382,8 +382,26 @@ function ThreadCard({
   // No mention for company pages — they aren't mentionable (Unipile 422s
   // on the @-mention template), so we reply to them as plain text from
   // the start instead of relying on the backend's 422 retry.
-  const mention = thread.author.name && thread.author.profile_id && !thread.author.is_company
-    ? { name: thread.author.name, profile_id: thread.author.profile_id }
+  // ⛔ A QUIÉN SE LE CONTESTA: AL ÚLTIMO QUE HABLÓ (Iker, 2026-08-11).
+  //
+  // Si el hilo trae mensajes posteriores a nuestra última respuesta, el que
+  // espera contestación NO es el que abrió el hilo: es el último que escribió.
+  // Pasó de verdad en el lead magnet del 11/08 — Iker respondió a Mario y
+  // después entró Vicente Garcés pidiendo el recurso. Mencionar a Mario ahí
+  // habría sido contestarle al que ya estaba atendido.
+  //
+  // La respuesta se sigue PUBLICANDO contra `thread.id`: en LinkedIn las
+  // respuestas de un hilo son hermanas del comentario de arriba, así que ese
+  // es el ancla. Lo que cambia es a quién se menciona y de qué texto se
+  // genera el borrador.
+  const followups = thread.pending_followups ?? [];
+  const target = followups.length ? followups[followups.length - 1] : thread;
+
+  // No mention for company pages — they aren't mentionable (Unipile 422s
+  // on the @-mention template), so we reply to them as plain text from
+  // the start instead of relying on the backend's 422 retry.
+  const mention = target.author.name && target.author.profile_id && !target.author.is_company
+    ? { name: target.author.name, profile_id: target.author.profile_id }
     : null;
 
   const willMention = !!mention && draft
@@ -395,12 +413,12 @@ function ThreadCard({
     setMsg(null);
     try {
       const res = await apiPost<{ reply: string; voice: string }>(
-        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/generate`,
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(target.id)}/generate`,
         {
-          comment_text: thread.text,
-          commenter_name: thread.author.name,
-          commenter_headline: thread.author.headline,
-          commenter_profile_id: thread.author.profile_id,
+          comment_text: target.text,
+          commenter_name: target.author.name,
+          commenter_headline: target.author.headline,
+          commenter_profile_id: target.author.profile_id,
         }
       );
       setDraft(res.reply);
@@ -496,6 +514,15 @@ function ThreadCard({
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium">{r.author.name || 'Anónimo'}</span>
                       <span className="text-[10px] text-text-muted">{fmtRelative(r.date)}</span>
+                      {/* El que ha entrado DESPUÉS de nuestra última respuesta.
+                          Sin esto el hilo reaparece pero hay que releerlo entero
+                          para saber qué es lo nuevo, que es justo el trabajo que
+                          la herramienta tiene que quitar. */}
+                      {followups.some((f) => f.id === r.id) && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/15 text-accent font-medium">
+                          sin contestar
+                        </span>
+                      )}
                     </div>
                     {r.is_media_only || !r.text.trim() ? (
                       <p className="text-xs text-text-muted italic">🎞️ GIF / imagen</p>

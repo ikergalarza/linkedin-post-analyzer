@@ -816,8 +816,16 @@ function CommenterCard({
     priorSend ? { status: priorSend.status, error: priorSend.error } : null
   );
 
-  const mention = thread.author.name && thread.author.profile_id && !thread.author.is_company
-    ? { name: thread.author.name, profile_id: thread.author.profile_id }
+  // Se le contesta AL ÚLTIMO QUE HABLÓ, igual que en la pestaña de Comentarios
+  // (Iker, 2026-08-11). Si el hilo trae mensajes posteriores a nuestra última
+  // respuesta, el que espera no es el que abrió el hilo. La respuesta se sigue
+  // publicando contra `thread.id`, que es el ancla del hilo en LinkedIn; lo que
+  // cambia es a quién se menciona y de qué texto sale el borrador.
+  const followups = thread.pending_followups ?? [];
+  const target = followups.length ? followups[followups.length - 1] : thread;
+
+  const mention = target.author.name && target.author.profile_id && !target.author.is_company
+    ? { name: target.author.name, profile_id: target.author.profile_id }
     : null;
   const willMention = !!mention && reply.slice(0, mention.name.length).toLowerCase() === mention.name.toLowerCase();
 
@@ -876,12 +884,12 @@ function CommenterCard({
       }
 
       const res = await apiPost<{ reply: string }>(
-        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(thread.id)}/generate`,
+        `/api/accounts/posts/${postId}/comments/${encodeURIComponent(target.id)}/generate`,
         {
-          comment_text: thread.text,
-          commenter_name: thread.author.name,
-          commenter_headline: thread.author.headline,
-          commenter_profile_id: thread.author.profile_id,
+          comment_text: target.text,
+          commenter_name: target.author.name,
+          commenter_headline: target.author.headline,
+          commenter_profile_id: target.author.profile_id,
           lead_magnet_topic: ownsDm
             ? (cfg.kind === 'lista'
                 ? (sector.trim() ? `la lista de ${sector.trim()}` : 'la lista')
@@ -1030,6 +1038,40 @@ function CommenterCard({
           <p className="text-sm text-text-primary whitespace-pre-wrap">{thread.text}</p>
 
           <ReactionBar postId={postId} commentId={thread.id} initialReaction={thread.my_reaction} />
+
+          {/* ⛔ EL HILO, QUE AQUÍ NO SE VEÍA (Iker, 2026-08-11).
+              La pestaña de Comentarios sí pintaba las respuestas del hilo y
+              ésta no: enseñaba el comentario de arriba y nada más. Con eso, un
+              lead que pedía el recurso en una respuesta —Vicente Garcés, en el
+              lead magnet del 11/08— era literalmente invisible aquí. Cada
+              respuesta lleva su barra de reacción, y la que ha entrado después
+              de nuestra última contestación va marcada. */}
+          {thread.replies?.length > 0 && (
+            <div className="mt-3 space-y-2 pl-3 border-l border-border">
+              {thread.replies.map((r) => (
+                <div key={r.id} className="flex items-start gap-2">
+                  <Avatar src={r.author.profile_picture_url} name={r.author.name} size={22} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-medium">{r.author.name || 'Anónimo'}</span>
+                      <span className="text-[10px] text-text-muted">{fmtRelative(r.date)}</span>
+                      {followups.some((f) => f.id === r.id) && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/15 text-accent font-medium">
+                          sin contestar
+                        </span>
+                      )}
+                    </div>
+                    {r.is_media_only || !r.text.trim() ? (
+                      <p className="text-xs text-text-muted italic">🎞️ GIF / imagen</p>
+                    ) : (
+                      <p className="text-xs text-text-secondary whitespace-pre-wrap">{r.text}</p>
+                    )}
+                    <ReactionBar postId={postId} commentId={r.id} initialReaction={r.my_reaction} compact />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* ── Reply ── */}
           <div className="mt-3 space-y-2">

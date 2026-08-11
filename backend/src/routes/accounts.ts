@@ -1847,6 +1847,11 @@ interface ThreadedComment {
   // comments only — nested replies are siblings of each other inside the
   // same thread.
   answered_by_author?: boolean;
+  // Las respuestas del hilo que han entrado DESPUÉS de nuestra última
+  // intervención y no son nuestras. Vacío cuando el hilo está al día o cuando
+  // todavía no hemos entrado en él. Es lo que la UI resalta para que se vea
+  // qué hay que contestar sin releer el hilo entero.
+  pending_followups?: ThreadedComment[];
   // The reaction WE'VE placed on this comment (like / celebrate / support /
   // love / insightful / funny), or null if none. Sourced from the
   // comment_reactions table (what we sent from the app) so it survives
@@ -2077,14 +2082,48 @@ async function buildThreadsForPost(post: any): Promise<{ threads: ThreadedCommen
   const authorLinkedInId: string | null = post.creator_linkedin_id
     ? String(post.creator_linkedin_id).replace(/^urn:li:[a-z_]+:/, '')
     : null;
+  // ⛔ "CONTESTADO" ES CONTESTADO LO ÚLTIMO, NO CONTESTADO ALGUNA VEZ
+  // (Iker, 2026-08-11).
+  //
+  // Antes bastaba con que EXISTIERA una respuesta nuestra en el hilo para
+  // darlo por cerrado para siempre. Pero un hilo sigue vivo después de que
+  // contestemos: en el lead magnet del 11/08, Iker respondió a Mario, y
+  // después entraron Vicente Garcés pidiendo el recurso y Mario otra vez. La
+  // herramienta ya no los enseñaba, así que un lead que pedía el recurso EN
+  // VOZ ALTA se quedaba sin contestar y sin que nadie lo viera.
+  //
+  // Ahora se compara con la FECHA: un hilo vuelve a estar pendiente si alguien
+  // que no somos nosotros ha escrito DESPUÉS de nuestra última intervención.
+  // Y los mensajes nuevos van aparte en `pending_followups`, para que la UI
+  // pueda enseñar exactamente cuáles hay que responder en vez de repintar el
+  // hilo entero como si no lo hubiéramos tocado.
+  const nuestraUltimaHora = (t: ThreadedComment): number | null => {
+    const mias = [
+      ...(t.author.profile_id === authorLinkedInId ? [t.date] : []),
+      ...t.replies.filter((r) => r.author.profile_id === authorLinkedInId).map((r) => r.date),
+    ].map(tsOf);
+    return mias.length ? Math.max(...mias) : null;
+  };
   for (const t of topLevel) {
-    if (authorLinkedInId && t.author.profile_id === authorLinkedInId) {
-      t.answered_by_author = true;
+    if (!authorLinkedInId) {
+      t.answered_by_author = false;
+      t.pending_followups = [];
       continue;
     }
-    t.answered_by_author = authorLinkedInId
-      ? t.replies.some((r) => r.author.profile_id === authorLinkedInId)
-      : false;
+    const mia = nuestraUltimaHora(t);
+    if (mia === null) {
+      // Nunca hemos entrado en el hilo: pendiente de siempre, sin follow-ups
+      // que separar (el pendiente ES el comentario de arriba).
+      t.answered_by_author = false;
+      t.pending_followups = [];
+      continue;
+    }
+    // Una fecha ausente vale 0, así que nunca cuenta como posterior: mejor no
+    // resucitar un hilo por un dato que falta que inundar la bandeja.
+    t.pending_followups = t.replies.filter(
+      (r) => r.author.profile_id !== authorLinkedInId && tsOf(r.date) > mia
+    );
+    t.answered_by_author = t.pending_followups.length === 0;
   }
 
   return { threads: topLevel, rawSample: raw[0] };

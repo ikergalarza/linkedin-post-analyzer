@@ -26,7 +26,13 @@ export interface Thread {
   date: string | null;
   author: CommentAuthor;
   replies: Thread[];
+  // OJO con la semántica, que cambió el 2026-08-11: es "contestado LO ÚLTIMO",
+  // no "contestado alguna vez". Un hilo que ya respondimos vuelve a false en
+  // cuanto alguien escribe después de nosotros.
   answered_by_author?: boolean;
+  // Los mensajes que han entrado DESPUÉS de nuestra última intervención. Es lo
+  // que hay que contestar; el resto del hilo ya está atendido.
+  pending_followups?: Thread[];
   my_reaction?: string | null;
   is_media_only?: boolean;
 }
