@@ -239,3 +239,27 @@ Los que genera el botón **Enviar a Google Chat** de Accounts, para que los comp
 
 ### 7.3 · Qué SÍ es fiable (recordatorio)
 Lo reconstruido en §1-§6 (voz founder-trincheras, regla de audiencia, tabla anti-IA, palancas de posicionamiento) y los **diferenciadores de `aboutme §1b`** son la base sólida de la voz. El perfil literal "Voz Neety" de la DB, no: si algo de él choca con §1-§6 o con 7.1/7.2, gana lo de aquí.
+
+## ⛔⛔ NUNCA EL AÑO, NI EN EL TEXTO NI EN LA IMAGEN (Iker, 2026-08-11) — GLOBAL
+
+**Ningún post lleva el año dentro.** Ni en el gancho, ni en el cuerpo, ni en el
+rótulo de la foto.
+
+Iker: *"si decimos el año, tanto en la foto como en el texto, nos estamos limitando
+el alcance, y este meme dentro de un año no se puede seguir viralizando"*.
+
+**Por qué:** un post sin año se puede **reflotar, reutilizar en otra cuenta y seguir
+circulando** meses después. Con el año dentro nace con fecha de caducidad, y encima
+se lee viejo en cuanto pasa enero. El coste de quitarlo es cero: casi siempre la
+frase funciona igual o mejor sin él.
+
+**Y el dato lo confirma:** nuestro mejor meme de este formato —el de la escalera de
+Iker, **13.92x y 138.828 impresiones**— no lleva año por ningún lado. El que sí lo
+llevaba era el borrador que escribí yo.
+
+**Mecanizado** como check duro del validador (`Sin el AÑO en el post`), que mira
+cualquier `19xx` o `20xx` en el cuerpo. La imagen no la ve el script, así que el
+año tampoco entra nunca en el prompt del diseñador.
+
+**Lo que SÍ vale** es la marca de urgencia sin fecha: `ÚLTIMA HORA`, `acaba de`,
+`esta semana`. Envejecen bien porque no se anclan a un número.

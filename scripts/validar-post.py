@@ -596,6 +596,22 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     chk(not m, 'Sin cierres quemados: Spoiler / Plot twist / P.D. (§2.8, §6)',
         f'"{m.group(0)}" al final' if m else '')
 
+    # ⛔⛔ NUNCA EL AÑO EN EL POST (Iker, 2026-08-11) — GLOBAL, TODOS LOS PILARES.
+    #
+    # "Si decimos el año, tanto en la foto como en el texto, nos estamos limitando
+    # el alcance, y este meme dentro de un año no se puede seguir viralizando".
+    # Un post sin año se puede reflotar, reutilizar en otra cuenta y seguir
+    # circulando; con el año dentro nace con fecha de caducidad y encima se lee
+    # viejo en cuanto pasa enero. No cuesta nada quitarlo y no aporta nada:
+    # nuestro mejor meme de este formato (13.92x) no lo lleva.
+    #
+    # Vale para el TEXTO y para la IMAGEN. La imagen no la ve el script, asi que
+    # el prompt tampoco lo lleva nunca.
+    _anio = re.search(r'\b(?:19|20)\d{2}\b', cuerpo)
+    chk(not _anio, 'Sin el AÑO en el post (atemporalidad, brand-voice)',
+        '"%s" dentro del texto le pone fecha de caducidad. Quitalo: casi siempre la '
+        'frase funciona igual sin el, y asi el post se puede reflotar o reutilizar en '
+        'otra cuenta dentro de meses' % _anio.group(0) if _anio else '')
     m = re.search(NEGRITA_UNICODE, cuerpo)
     chk(not m, 'Sin negrita Unicode tipo 𝗟𝗮𝘀 𝟭𝟬 (§6)',
         'el check de markdown no la caza: es otro bloque Unicode' if m else '')
