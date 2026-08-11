@@ -106,6 +106,11 @@ quien lo va a ejecutar.** En cualquier pilar y para cualquier prompt — diseña
 animador, programador, edición—. Si no se dice ahí, se olvida, y el diseñador acaba
 tirando de la fuente por defecto o inventándose la referencia.
 
+**Va en UNA sola línea y con ⚠️, el triángulo amarillo.** Ni un clip, ni dos
+avisos separados, ni un emoji nuevo por mi cuenta (Iker, 2026-08-11: *"eso no te lo
+he pedido nunca"*). Una línea, un triángulo, todo dentro: lo que adjunta y la
+postproducción si la hay.
+
 Lo habitual: **la foto de la referencia**, **los instaladores de Bricolage
 Grotesque y Switzer**, y los **logos** si el pilar los lleva (despiece, mapa).
 
@@ -139,8 +144,11 @@ lleva los saltos falsos dentro.
 lo decide `§3.2` y define el ritmo que ve el lector en LinkedIn. Ahí los saltos van
 exactamente donde van, ni uno más.
 
-**Los saltos que SÍ valen en un prompt** son los de párrafo: una línea en blanco
-entre bloques de sentido. Lo prohibido es partir una frase por la mitad.
+**⛔ Y NO, LOS SALTOS DE PÁRRAFO TAMPOCO (Iker, 2026-08-11).** Escribí aquí que
+"los de párrafo sí valen" y **me contradije con `images §2b`**, que ya decía desde esa
+misma mañana que el prompt va en **un solo párrafo**. Con mi versión devolví un
+prompt de tres. **Es UNO: sin líneas en blanco dentro, sin apartados, sin listas.**
+Se escribe como se lo explicarías a un amigo, del tirón.
 
 ## ⛔⛔ 1e-DOS · LA COMPARATIVA SON DOS VISTAS, NO UNA (Iker, 2026-08-10) — GLOBAL
 

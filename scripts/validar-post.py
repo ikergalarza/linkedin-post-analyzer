@@ -811,13 +811,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'mint claro #ebfff6. Los dos claros van de detalle, nunca de masa principal. '
             'Excepciones: screenshot documental (§0a-sexta-bis) y anatomia (§0i-4)',
             aviso=True)
-        chk(False, 'ENTREGA: debajo del prompt, QUE tiene que adjuntar Iker',
-            'va JUSTO despues del prompt y en cualquier pilar: la foto de la referencia y los '
-            'instaladores de Bricolage Grotesque y Switzer, mas los logos si el pilar los '
-            'lleva. Si no se lo digo ahi, se le olvida y el disenador tira de fuente por '
-            'defecto (working-preferences §1g)',
+        chk(False, 'ENTREGA: UN aviso con ⚠️ debajo del prompt, con que adjuntar',
+            'UNA sola linea y con el triangulo amarillo, nunca un clip ni dos avisos '
+            'separados. Dentro va todo: la foto de la referencia, los instaladores de '
+            'Bricolage Grotesque y Switzer, los logos si el pilar los lleva, y la '
+            'postproduccion si la hay (working-preferences §1g)',
             aviso=True)
-        chk(False, 'ENTREGA: el prompt en UNA linea por parrafo, sin cortar a mano',
+        chk(False, 'ENTREGA: el prompt es UN parrafo, del tiron y sin cortar a mano',
             'los bloques copiables no se parten a los 70 caracteres: el bloque no reajusta '
             'al ancho, asi que quedan el doble de altos con media pantalla vacia a la '
             'derecha, y al pegarlos se llevan los saltos falsos dentro. La unica excepcion '
