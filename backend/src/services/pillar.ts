@@ -32,6 +32,7 @@ export type Pillar =
   | 'lead_magnet'
   | 'meme'
   | 'historia'
+  | 'evento'
   | 'otro';
 
 export interface PillarInput {
@@ -217,6 +218,43 @@ function pideComentarPalabra(texto: string): boolean {
 }
 
 /**
+ * El CTA NUEVO del lead magnet, el que sustituyo al gate (Iker, 2026-08-11).
+ *
+ * POR QUE HACIA FALTA: `pideComentarPalabra` era la UNICA senal de este pilar, y
+ * el "comenta la palabra X" esta muerto desde el 05/08/2026 — LinkedIn dejo de
+ * repartirlo (`post-workflow §4.5.0-CTA`). Asi que el lead magnet de Iker del
+ * 11/08, que es el que confirmo el diagnostico, entro en la base como 'otro'.
+ * Cambiamos la receta y no revisamos el clasificador que codificaba la vieja.
+ *
+ * La firma del CTA nuevo son tres cosas juntas, y se exigen las tres porque por
+ * separado cada una aparece en cualquier post: una PREGUNTA ofreciendo el
+ * recurso, decir que se comparte GRATIS, y cerrar con CONECTA CONMIGO (que hace
+ * falta para poder mandarlo por privado). Las tres viven en el ultimo tercio.
+ */
+function pideConectar(texto: string): boolean {
+  const cola = texto.slice(Math.floor(texto.length * 0.6));
+  const pregunta = /¿[^?]{5,90}\?/.test(cola);
+  const gratis = /\b(gratis|gratuit\w+|acceso libre|sin coste)\b/i.test(cola);
+  const conecta = /\bconecta\s+conmigo\b/i.test(cola);
+  return pregunta && gratis && conecta;
+}
+
+/**
+ * Post de EVENTO: el que anuncia una jornada nuestra y lleva el enlace de
+ * inscripcion de Luma.
+ *
+ * POR QUE VA POR EL ENLACE Y NO POR EL TEXTO (Iker, 2026-08-11): el anuncio del
+ * evento del 11/08 lleva 8 fichas "→ Marca" con las empresas colaboradoras, asi
+ * que el clasificador lo dio por `peloteo_mapa` — la forma es identica. Lo unico
+ * que NINGUN otro pilar tiene es el enlace de Luma: en el evento hace de spam
+ * ninja (`global §4.4b`) y en el resto el enlace es siempre recursos.neety.com.
+ * Por eso se comprueba ANTES que el peloteo, que si no gana el bloque de fichas.
+ */
+function esEvento(texto: string): boolean {
+  return /\b(luma\.com|lu\.ma)\b/i.test(texto);
+}
+
+/**
  * Anecdota personal: abre con una ESCENA propia en primera persona y no lleva
  * ni lista de menciones ni gate de comentario. Se pide señal doble (apertura
  * personal + narracion en primera persona mas adelante) porque un solo "mi" o
@@ -257,6 +295,10 @@ export function classifyPillar(post: PillarInput): Pillar {
   //   mapa   → "→ @ArcelorMittal - @José Gómez García"      (desnuda)
   //
   // El despiece va PRIMERO porque sus fichas tambien cuentan como mencion.
+  // 0. EVENTO, antes que nada: su bloque de colaboradores es indistinguible del
+  // de un peloteo, asi que si se comprueba despues siempre pierde.
+  if (esEvento(t)) return 'evento';
+
   const piezas = contarPiezas(t);
   if (piezas >= 6) return 'peloteo_objeto';
 
@@ -279,8 +321,11 @@ export function classifyPillar(post: PillarInput): Pillar {
     return 'peloteo_mapa';
   }
 
-  // 2. Lead magnet: pide comentar una palabra concreta al final.
-  if (pideComentarPalabra(t)) return 'lead_magnet';
+  // 2. Lead magnet, por sus DOS CTAs: el gate viejo (posts anteriores al
+  // 05/08/2026, que siguen en la base) y el nuevo de pregunta + gratis +
+  // conecta conmigo. Con solo el viejo, los lead magnets de ahora caian en
+  // 'otro' — que es lo que le paso al del 11/08.
+  if (pideComentarPalabra(t) || pideConectar(t)) return 'lead_magnet';
 
   // 3. Meme. Solo con imagen: un texto pelado no es un meme aunque haga gracia.
   // Dos señales, y basta con UNA:
