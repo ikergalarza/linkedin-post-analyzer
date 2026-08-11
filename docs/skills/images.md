@@ -49,6 +49,28 @@ cuarta parte que la palabra**, así que el titular cabe a más tamaño. En un fo
 se juega todo en la miniatura, cada punto de tamaño cuenta. Además el ojo lo lee como
 dato y no como prosa, que es justo lo que es.
 
+**2d. ⭐ SI LA REFERENCIA REPITE SU CONCEPTO EN TEXTO E IMAGEN, NOSOTROS LO DEJAMOS SOLO
+EN LA IMAGEN (Iker, 2026-08-11).** Es la forma más barata de *copiar y mejorar* que hemos
+encontrado: **le ganamos un sitio entero**.
+
+**El caso:** la referencia de Lauren Vilips dice en el texto *"you work in marketing you're
+not saving lives"* y enseña a un médico que no consigue reanimar al paciente. El concepto
+—salvar vidas— aparece **dos veces**. Nosotros lo ponemos **solo en el titular de la foto**
+(*"En marketing no salvas vidas"*) y el texto del post se dedica a otra cosa. Mismo chiste,
+un hueco más de contenido.
+
+**⚠️ Y ojo al fallo del que sale esta regla, que es el peligroso:** yo había tirado el
+concepto **de los dos sitios**. El texto lo adapté a otro ángulo y el titular decía *"Así
+queda el marketing"*, así que la imagen tenía un médico y **nada explicaba por qué**. Lo vio
+Iker: *"el motor viral está en la foto"*. **Antes de dar por buena una imagen, preguntarse
+qué hace ahí cada elemento del dibujo**: si un elemento tan cargado como un médico no lo
+recoge ningún texto, la referencia está calcada por fuera y vacía por dentro.
+
+**El orden correcto para repartir el concepto de una referencia:**
+1. ¿El concepto vive en la IMAGEN? → ahí se queda, y el texto va a otro sitio.
+2. ¿El concepto es puramente verbal y la imagen no lo sostiene? → al texto.
+3. **Nunca a los dos**, y **nunca a ninguno**.
+
 **3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
 
 ## ⭐ 0a-ter · PALETA NUEVA (Brandbook 2026_Saiabera, Iker 2026-07-27) — MANDA SOBRE LA ANTIGUA
