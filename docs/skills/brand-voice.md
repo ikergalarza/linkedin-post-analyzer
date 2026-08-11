@@ -305,3 +305,35 @@ que la frase **incluya al que publica**, así no señala a nadie:
 **El test, antes de entregar:** *¿hay alguien —dentro o fuera— que pueda leer esta
 frase y sentirse señalado?* Si la respuesta no es un no rotundo, se reescribe contra
 el proceso.
+
+## ⛔⛔ CANÓNICO · LA PERSONA: YO > NOSOTROS > TÚ (Iker, 2026-08-11) — GLOBAL
+
+**Para afirmar, confesar o nombrar un dolor, se habla en PRIMERA PERSONA DEL
+SINGULAR.** En el gancho, en el cuerpo, en el cierre y en el texto de la imagen.
+
+Iker: *"a lo mejor sería incluso más efectivo 'en marketing no salvo'. Hablar de yo,
+ya que el espectador en cuanto lo lea pensará en sí mismo y no en mí. Si pongo
+primera persona plural, parece que estoy forzándole a que piense en nosotros
+juntos"*.
+
+| persona | qué provoca |
+|---|---|
+| **✅ YO** (`no salvo vidas`) | una **confesión**. El lector no se siente señalado, se reconoce solo. Es la que más identificación produce **precisamente porque no la pide** |
+| **⚠️ NOSOTROS** (`no salvamos vidas`) | mete al lector en un grupo **al que no ha pedido entrar**. Se lee como forzar la complicidad |
+| **⛔ TÚ** (`no salvas vidas`) | **señala**. Y esto ya estaba escrito más arriba: *"la crítica en segunda persona dispara rechazo defensivo y mata el engagement"* |
+
+**Y hay una comprobación de coherencia que se olvida:** si la imagen etiqueta a un
+personaje como **`Yo`**, el titular tiene que ir en primera persona también. Con `no
+salvas`, titular y etiqueta hablan en dos voces distintas dentro de la misma foto.
+
+**Las TRES excepciones, que no son excepciones sino otros papeles:**
+1. **El spam ninja va en NOSOTROS** (*"eso lo resolvemos nosotros"*): ahí el sujeto
+   es la empresa ofreciendo, no la persona confesando.
+2. **El desprecio del peloteo va en TERCERA** y atribuido (*"la ven como el patio
+   trasero"*), nunca en primera. Ya estaba escrito.
+3. **El CTA puede ir en segunda** (*"¿quieres los 5 mensajes?"*): es una oferta, no
+   un juicio. Lo que no vale en segunda es **afirmar algo sobre el lector**.
+
+**Referencia externa que lo respalda (Iker):** el creador de TikTok que sigue habla
+siempre en primera persona; sus vídeos no van de *"a ti te pasa"*, van de *"a mí me
+pasó"*, y el que mira lo traduce solo.
