@@ -21,6 +21,24 @@ Una vez publicado un post con foto, la foto **NO se puede cambiar** (habría que
 >
 > ⚠️ **Esto es criterio, no dato, y conviene saberlo:** nuestro mejor meme de este formato —la escalera de Iker, **13.92x y 138.828 impresiones**— **sí** repetía: el gancho del post y el titular de la imagen eran la misma frase, *"Subir en ventas siempre pasa factura"*. Así que repetir no hunde nada; la apuesta es que complementar rinde más. Si un remix complementado se queda corto, esta es la primera variable a mirar.
 
+**2b. ⛔ Y EL TITULAR DE LA IMAGEN TAMBIÉN ANCLA A VENTAS (Iker, 2026-08-11).** La misma
+regla del gancho (`global §2.3`) vale para el titular de la foto: **tiene que llevar una
+palabra de ventas dentro**. No basta con que la lleven las etiquetas, los datos o las
+menciones.
+
+**Por qué no basta:** a tamaño miniatura en el feed **lo único que se lee es el titular**;
+las etiquetas se leen cuando el lector ya ha parado, y para entonces el ancla ya no hace
+falta. Sin ella, un gráfico de seis cabezas es un chiste de cualquier carrera corporativa.
+El ancla existe justo para que **solo pueda ser nuestro**.
+
+**Y confirmado por el ganador:** el 13.92x de Iker titula *"Subir **en ventas** siempre pasa
+factura"*. El ancla está en el titular, no delegada a las etiquetas.
+
+**⚠️ El riesgo aparece al complementar** (§0a-bis punto 2): al buscar un titular que NO
+repita el gancho es fácil irse tan lejos que se pierde el ancla. Pasó el 11/08 —
+*"Seis peldaños, seis coronillas"*, complementario y sin una sola palabra de ventas. **Las
+dos condiciones se cumplen a la vez:** *"Seis peldaños **en ventas**, seis coronillas"*.
+
 **3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
 
 ## ⭐ 0a-ter · PALETA NUEVA (Brandbook 2026_Saiabera, Iker 2026-07-27) — MANDA SOBRE LA ANTIGUA
