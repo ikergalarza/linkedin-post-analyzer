@@ -394,9 +394,9 @@ tipo `IZQUIERDA (55%)`. Se escribe como se le explicaría a una persona: un pár
 seguido que empieza por `SOLO HAZ LO QUE TE PIDO`, describe la escena y termina con la
 contención (`§0a-penta`). El diseñador lee prosa, no un esquema.
 
-**2c · ⛔ LAS ETIQUETAS VAN EN MAYÚSCULA INICIAL, Y EL EJE SIN CAJA (Iker, 2026-08-11).** En cualquier rótulo o etiqueta de una imagen, **la primera letra de cada palabra va en mayúscula menos las preposiciones**: , , . Todo en minúscula se lee a borrador. Y **la etiqueta del eje no lleva caja de color**: el texto suelto en berenjena. Una caja ahí compite con las etiquetas de datos, que son las que tienen que destacar.
+**2c · ⛔ LAS ETIQUETAS VAN EN MAYÚSCULA INICIAL, Y EL EJE SIN CAJA (Iker, 2026-08-11).** En cualquier rótulo o etiqueta de una imagen, **la primera letra de cada palabra va en mayúscula menos las preposiciones**: `Nivel de Responsabilidad`, `Jefe de Equipo`, `Responsable de Ventas`. Todo en minúscula se lee a borrador. Y **la etiqueta del eje no lleva caja de color**: el texto suelto en berenjena. Una caja ahí compite con las etiquetas de datos, que son las que tienen que destacar.
 
-**2d · ⛔ PARA MOVER ALGO, NOMBRA EL HUECO, NO LA ACCIÓN (Iker, 2026-08-11).** *“Si le decimos céntralo, se pierde”.* Se le dice ****, no *“céntralo”*. Es la misma regla que §0c para el tamaño (*“aprovecha el espacio que tiene”* en vez de *“agrándalo”*): el diseñador ejecuta bien una instrucción espacial concreta y mal una abstracta.
+**2d · ⛔ PARA MOVER ALGO, NOMBRA EL HUECO, NO LA ACCIÓN (Iker, 2026-08-11).** *“Si le decimos céntralo, se pierde”.* Se le dice **`aprovecha el espacio que tiene por la izquierda para moverlo un poco`**, no *“céntralo”*. Es la misma regla que §0c para el tamaño (*“aprovecha el espacio que tiene”* en vez de *“agrándalo”*): el diseñador ejecuta bien una instrucción espacial concreta y mal una abstracta.
 
 **3 · ⛔ SIN FOOTER, NUNCA.** Aunque la referencia lleve una franja inferior (la del meme de The Office llevaba *"BREAKING NEWS: 99% OF DEALS DIE OF OVER-COMMUNICATION"*), **se quita**. Queda fatal. La imagen termina en la última fila. Es de las cosas que se calcan NO (`§4.4`: el formato es nuestro, no el suyo).
 - Y en la misma familia: **cero logos y cero marcas de agua**. Nuestra marca se pone con la paleta y los detalles, nunca con un logo pegado.
