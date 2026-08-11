@@ -251,6 +251,23 @@ function SubReplyBox({
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+
+  // Mete el emoji donde está el cursor, no al final (Iker, 2026-08-11: aquí
+  // faltaba el selector que sí tiene el hilo principal). Misma implementación
+  // que allí: si el textarea no está enfocado, se añade al final.
+  const insertEmoji = (emoji: string) => {
+    const ta = taRef.current;
+    if (!ta) { setDraft((d) => d + emoji); return; }
+    const start = ta.selectionStart ?? draft.length;
+    const end = ta.selectionEnd ?? draft.length;
+    setDraft(draft.slice(0, start) + emoji + draft.slice(end));
+    requestAnimationFrame(() => {
+      ta.focus();
+      const pos = start + emoji.length;
+      ta.setSelectionRange(pos, pos);
+    });
+  };
 
   // Misma regla que en el hilo principal: a una pagina de empresa no se la
   // menciona, Unipile devuelve 422 con la plantilla de @-mencion.
@@ -296,13 +313,18 @@ function SubReplyBox({
     // pulsable: justo el control que ahora hace falta a diario, desde que los
     // follow-ups reaparecen en la bandeja. Mismo estilo que "✨ Generar
     // respuesta" del hilo principal, para que se lea como lo que es.
+    //
+    // ⛔ Y DE UN SOLO PASO (Iker, 2026-08-11): antes abría la caja vacía y había
+    // que pulsar "Generar" dentro, o sea dos clics para lo mismo que en el hilo
+    // principal cuesta uno. Ahora este botón abre Y genera. La caja sigue
+    // pudiendo escribirse a mano, pero nadie viene aquí a redactar desde cero.
     return (
       <div className="mt-1.5">
         <button
-          onClick={() => setAbierto(true)}
+          onClick={() => { setAbierto(true); generar(); }}
           className="text-[10px] px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
         >
-          ↩ Responder
+          ✨ Generar respuesta
         </button>
       </div>
     );
@@ -311,6 +333,7 @@ function SubReplyBox({
   return (
     <div className="mt-2 space-y-1.5">
       <textarea
+        ref={taRef}
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         rows={2}
@@ -319,12 +342,16 @@ function SubReplyBox({
         className="w-full bg-bg-secondary border border-border rounded-md p-2 text-xs text-text-primary focus:outline-none focus:border-accent resize-y"
       />
       <div className="flex items-center gap-2">
+        {/* El selector de emojis faltaba aquí y sí estaba en el hilo principal
+            (Iker, 2026-08-11). Un follow-up se contesta igual de corto que un
+            comentario, y muchas veces el emoji ES media respuesta. */}
+        <EmojiPicker onPick={insertEmoji} disabled={generating || sending} />
         <button
           onClick={generar}
           disabled={generating}
           className="text-[10px] px-2 py-1 rounded border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-40"
         >
-          {generating ? '…' : '✨ Generar'}
+          {generating ? '…' : '↻ Regenerar'}
         </button>
         <button
           onClick={enviar}
