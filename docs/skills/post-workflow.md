@@ -901,6 +901,15 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 4. **¿Qué NO lleva la imagen?** ← el más importante. Aquí es donde se cuela lo que solo estaba en el post.
 
 **⛔ LA TRAMPA QUE YA CAYÓ (2026-07-16): el texto del post y el texto de la imagen son DOS MITADES DISTINTAS. No se mezclan.**
+> ⛔ **EL CRÉDITO SOLO SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS (Iker, 2026-08-11).**
+> *"Como la referencia está en otro idioma, no hace falta darle créditos. Eso es solo
+> cuando es una calca de ventas en español y nos van a pillar."* El crédito no es
+> cortesía: es un **seguro**. Nació porque el autor del meme del tatuaje —español y del
+> sector— vio la copia y bloqueó la cuenta de Unai. Con un autor de otro idioma y de
+> otro mercado ese riesgo no existe, y la línea de "gracias a X" solo gasta un bloque
+> del post. **En el validador es `--referencia-fuera`**, y ahora hay que pasarlo
+> siempre que la referencia no sea española.
+
 - La referencia (The Office, 8.57x) tenía **`Manager: / SDR: / AE:` en el TEXTO** del post y **diálogo puro en la IMAGEN** (`CALL THE PROSPECT.` → `I EMAILED THEM.`). **La foto no llevaba ni un rol.**
 - El prompt salió pidiendo **6 filas con los roles como etiquetas**: conté los roles del TEXTO en vez de los paneles de la FOTO, y convertí un meme de diálogo en un gráfico de etiquetas. Costó 3 rondas de edición arreglarlo.
 - **El reparto correcto, que es el que hace la referencia:** el **TEXTO** lleva la escalera de roles · la **IMAGEN** lleva el diálogo. Cada uno cuenta una mitad. Con los roles metidos en la foto, la imagen **repetía lo que ya decía el texto** y dejaba de aportar (es la misma regla que "el título no repite el hook", `images §0h`).

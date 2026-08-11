@@ -387,6 +387,13 @@ No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que 
 
 **2 · EL TÍTULO NO REPITE EL HOOK.** Si el hook ya dice *"En ventas, el pedido encoge cada vez que sube un piso"*, la imagen **no lo vuelve a decir**: el lector lee lo mismo dos veces y la foto no aporta nada. El título de la imagen es **otra frase** del mismo chiste, no un eco.
 
+**2b · ⛔ EL PROMPT VA EN UN SOLO PÁRRAFO, EN PROSA (Iker, 2026-08-11).** *"Tiene que
+ser un prompt de solo un párrafo. Me has metido muchos símbolos raros y cosas."* Nada
+de listas con viñetas, nada de `·`, `→`, flechas, cabeceras en mayúsculas ni etiquetas
+tipo `IZQUIERDA (55%)`. Se escribe como se le explicaría a una persona: un párrafo
+seguido que empieza por `SOLO HAZ LO QUE TE PIDO`, describe la escena y termina con la
+contención (`§0a-penta`). El diseñador lee prosa, no un esquema.
+
 **3 · ⛔ SIN FOOTER, NUNCA.** Aunque la referencia lleve una franja inferior (la del meme de The Office llevaba *"BREAKING NEWS: 99% OF DEALS DIE OF OVER-COMMUNICATION"*), **se quita**. Queda fatal. La imagen termina en la última fila. Es de las cosas que se calcan NO (`§4.4`: el formato es nuestro, no el suyo).
 - Y en la misma familia: **cero logos y cero marcas de agua**. Nuestra marca se pone con la paleta y los detalles, nunca con un logo pegado.
 
