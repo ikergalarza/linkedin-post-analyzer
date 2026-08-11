@@ -322,7 +322,20 @@ const PILAR_META: Record<string, { etiqueta: string; clase: string; ayuda: strin
   lead_magnet: {
     etiqueta: 'Lead Magnet',
     clase: 'bg-sky-500/15 text-sky-400',
-    ayuda: 'Pide comentar una palabra para entregar el recurso por privado',
+    // La ayuda decía "pide comentar una palabra", y ese gate murió el
+    // 05/08/2026: LinkedIn dejó de repartirlo. Hoy el CTA es pregunta + gratis
+    // + conecta conmigo, y el recurso sale por privado igual.
+    ayuda: 'Ofrece un recurso y lo entrega por privado a quien comenta o conecta',
+  },
+  // ⛔ FALTABA, y por eso el anuncio del evento del 11/08 se pintaba como
+  // "Otro" aunque en la base estuviera bien (Iker, 2026-08-11). PilarBadge cae
+  // a PILAR_META.otro cuando no conoce el pilar, así que crear un pilar en el
+  // backend sin darle su etiqueta aquí lo deja invisible: la tabla dice una
+  // cosa y la base otra, que es peor que no tener el pilar.
+  evento: {
+    etiqueta: 'Evento',
+    clase: 'bg-amber-500/15 text-amber-400',
+    ayuda: 'Anuncia una jornada nuestra y lleva el enlace de inscripción de Luma',
   },
   meme: {
     etiqueta: 'Meme',

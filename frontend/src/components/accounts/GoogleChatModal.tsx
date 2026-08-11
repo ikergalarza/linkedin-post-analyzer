@@ -47,6 +47,12 @@ const CABECERAS: Record<string, string[]> = {
   peloteo_los10: ['Nuevo TOP 10 de {N}', 'Nuevos 10 de {N}', 'LOS 10 de {N}, recién salidos', '{N} tiene TOP 10 nuevo'],
   lead_magnet: ['Nuevo LEAD MAGNET de {N}', 'Nuevo LEAD MAGNEEET de {N}', 'LEAD MAGNET nuevo de {N}', '{N} tiene LEAD MAGNET nuevo'],
   historia: ['Nueva HISTORIA de {N}', 'Nueva HISTORIAAA de {N}', 'HISTORIA nueva de {N}', '{N} tiene HISTORIA nueva'],
+  // Estos dos faltaban (Iker, 2026-08-11), asi que un DESPIECE y un EVENTO se
+  // anunciaban en el chat como "Nuevo POST", que es justo lo que este aviso
+  // existe para evitar: el equipo sabe por el titular si le toca comentar,
+  // reaccionar o compartir.
+  peloteo_objeto: ['Nuevo DESPIECE de {N}', 'Nuevo DESPIEEECE de {N}', 'DESPIECE nuevo de {N}', '{N} tiene DESPIECE nuevo'],
+  evento: ['Nuevo post de EVENTO de {N}', 'EVENTO nuevo de {N}', '{N} anuncia el EVENTO', 'Post del EVENTO de {N}'],
   otro: ['Nuevo POST de {N}', 'Nuevo POOOST de {N}', 'POST nuevo de {N}', '{N} tiene POST nuevo', 'Nuevo POST {N}'],
 };
 
