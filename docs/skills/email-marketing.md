@@ -527,6 +527,19 @@ Se comprobaron por DNS los 71 dominios únicos de la tanda 2 buscando dominios m
 - **Lo gratuito que SÍ vale la pena hacer siempre (y es gratis):** sintaxis, dominios desechables (`qvmao.com` y similares), y direcciones de rol (`marketing@`, `info@`) — MailerLite ya rechaza estas últimas al importar.
 - **Recomendado: MailerCheck**, que es de los mismos que MailerLite y por eso entra sin exportar CSV. **0,01 $ por correo, mínimo 1.000 (10 $), los créditos no caducan** y da 10 gratis de prueba (verificado en su web el 2026-08-10). Las alternativas gratuitas (ZeroBounce 100/mes, y 100-500 créditos de alta única en el resto) obligarían a registrarse en cinco sitios para cubrir 1.000 y devolverían criterios distintos: no compensa por 10 $.
 
+### 🔴🔴 LA LISTA DE SUPRESIÓN PERMANENTE — se monta ANTES que nada (2026-08-11)
+**Antes de importar un solo contacto a cualquier plataforma, se crea un grupo de EXCLUSIÓN y se excluye en TODAS las campañas, sin excepción.** No se decide caso por caso ni se confía en acordarse.
+
+Qué entra, por orden de gravedad:
+1. **CLIENTES ACTUALES.** Mandarle a un cliente un correo que dice *"no sé de qué te conozco"* es el peor error posible: el cliente no se da de baja, llama al comercial. Pasó el 2026-08-11 con **Fagor Automation** (`ahernandez@fagorautomation.es`, 4 clics: probablemente alucinando de que no le reconociéramos) y se evitó por poco con **Telpark**.
+2. **Los que se dieron de baja.** Requisito legal, y reimportarlos es la vía más rápida a otro baneo.
+3. **Los rebotados.**
+4. **Prospectos en conversación comercial abierta**, que tampoco deben recibir correo de lista fría.
+
+⛔ **Y el aviso de método: la lista de clientes NO la puede reconstruir Claude.** Los 5 nombres que aparecen en `project-personas-clientes` (Fagor Automation, Telpark, OJMAR, Arania, Betsaide) salieron de UN post de Iker, no de la cartera. **Cualquier cliente que no saliera en ese post es invisible para mí.** Hay que exportarla del CRM y pedirla explícitamente. Es exactamente el mismo principio que las menciones: lo que no se puede verificar, se pregunta (`§7`).
+
+⚠️ **Y no basta con el dominio.** `p.carbonell@telpark.com` se pilla por dominio, pero un contacto de un cliente con Gmail personal no. La exclusión fiable sale del CRM cruzando por EMPRESA, no por cadena de texto en el correo.
+
 ### ⛔ EL DOMINIO DEL CORREO NO DICE EL PAÍS (medido el 2026-08-10)
 Sobre los 151 candidatos a la tanda 2: **85% no da ninguna señal de país** (56% gmail/hotmail/outlook/icloud + 29% dominios `.com`/`.io`/`.ai`). Solo 9 eran `.es` y 13 LatAm.
 - **Corolario: el ICP de una lista NO se puede segmentar por el correo.** El país sale del CRM (HubSpot), y si el CRM no lo tiene, no se tiene. **Priorizar por afinidad exige enriquecer antes.**
