@@ -498,7 +498,8 @@ Hay **dos** y hay que repartirlos, o salen duplicados:
 
 ### Ajustes que se olvidan y muerden
 - **Idioma: por CAMPAÑA, no por cuenta.** No se hereda de una campaña a otra ni de la cuenta. Controla el pie legal y la página de baja.
-- **Zona horaria de la cuenta:** venía en UTC+0. Con eso, un envío programado sale **2 horas antes** de lo que pusiste, sin avisar.
+- **Zona horaria: ✅ `Europe/Madrid (+02:00)`, verificado en el panel el 2026-08-11.** Se programa en hora española directamente, sin ajustar nada.
+  - ⚠️ **Pero la API SIEMPRE devuelve UTC**, tenga la cuenta la zona que tenga. Un envío para las 09:01 de Madrid aparece como `scheduled_for: 07:01`. **Eso es correcto, no es un fallo**: son el mismo instante. Al verificar por API hay que restar las 2 horas (1 en invierno) antes de dar nada por roto.
 - **Banner "Sent by MailerLite":** se quita en Configuración de la cuenta → *MailerLite branding*. Incluido desde el plan Comfort.
 - **Los correos de PRUEBA no generan enlaces de baja ni de preferencias reales**: no se pueden pulsar. Es lo único del checklist que solo se verifica enviando de verdad.
 
@@ -532,8 +533,18 @@ Sobre los 151 candidatos a la tanda 2: **85% no da ninguna señal de país** (56
 - 🔴 **Y el error de método que lo destapó: afirmé "buena parte de la lista es LatAm" de un vistazo, sin contar.** Eran 13 de 151. **Ninguna composición de lista se afirma sin contarla**, igual que no se escribe una cifra sin fuente (`§7`). Si el conteo cuesta una llamada, se hace la llamada.
 - **Lo que sí se hace mientras tanto:** en las tandas de calentamiento van primero los más afines que se puedan identificar, y los claramente fuera de ICP se dejan para la última. No por entregabilidad, sino porque **calentar con gente que no va a abrir desperdicia el envío**.
 
-### 🔴🔴 DARLE A ENVIAR NO ES HABER ENVIADO (2026-08-07 y 2026-08-10, dos de dos)
-Al pulsar enviar, MailerLite pasa la campaña a **Bandeja de salida** y la pone **"en revisión"**. En los dos primeros envíos **volvió sola a Borradores sin avisar de nada**. Solo se descubre recargando el panel: aparece un *"perdón por la demora"* con la opción de enviar ahora o reprogramar, y hay que **volver a pulsar enviar**.
+### 🔴🔴 DARLE A ENVIAR NO ES HABER ENVIADO — `needs_manual_content_review` (3 de 3 envíos)
+Al pulsar enviar, MailerLite pasa la campaña a **Bandeja de salida** y la pone **"en revisión"**, y de ahí vuelve a Borradores. Solo se descubre recargando el panel: aparece un *"perdón por la demora"* con la opción de enviar ahora o reprogramar.
+
+**⭐ CAUSA REAL, identificada por API el 2026-08-11 (antes estaba mal apuntada como un fallo de la plataforma):**
+```
+warnings: ["needs_manual_content_review"]   is_stopped: true   can_be_scheduled: false
+```
+**Es una RETENCIÓN DE CUMPLIMIENTO: una persona de MailerLite tiene que aprobar el contenido a mano.** No se cae por tardar y no es un bug.
+- ⛔ **Dos teorías descartadas:** (a) que sea un fallo técnico y (b) que se caiga porque la revisión tarda más que el "enviar ahora" y se pasa la hora. La campaña no caduca: **la retienen**.
+- ⛔ **Programar NO lo esquiva:** con una revisión pendiente, `can_be_scheduled` está a `false`. Un programado retenido pierde su ventana igual, y encima te enteras tarde.
+- **Por qué pasa:** cuenta nueva escalando volumen rápido (54 → 137 → 337) con lista recién importada. Es el patrón que dispara la revisión en cualquier ESP.
+- ✅ **LA SOLUCIÓN NO ES CONVIVIR CON ELLO: se le pide a soporte que apruebe la cuenta.** Argumentos que valen: lista propia, doble opt-out visible, 0 denuncias de spam en 191 envíos. Se resuelve en horas y deja de pasar.
 - **Si nadie recarga, el correo no sale y no hay ninguna notificación.** En la tanda 2 costó 20 minutos: se pulsó a las 11:30 y salió a las 11:51.
 - **⛔ REGLA: siempre que Mario diga que va a enviar o que ya ha enviado, se le avisa de que lo verifique, y se comprueba por API en el momento.** No es opcional y va en la misma respuesta.
 - **Cómo se comprueba:** `get_campaign` → `status` debe ser `sent` (o `ready` con `scheduled_for` si es programado), más `queued_at` y `started_at` con hora real. Un `status: draft` después de darle a enviar significa que se cayó.
