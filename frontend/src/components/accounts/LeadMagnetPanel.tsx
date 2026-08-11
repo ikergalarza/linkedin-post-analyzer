@@ -822,7 +822,15 @@ function CommenterCard({
   // publicando contra `thread.id`, que es el ancla del hilo en LinkedIn; lo que
   // cambia es a quién se menciona y de qué texto sale el borrador.
   const followups = thread.pending_followups ?? [];
-  const target = followups.length ? followups[followups.length - 1] : thread;
+  // ⛔ EL PRIMERO SIN CONTESTAR, NO EL ULTIMO (Iker, 2026-08-11).
+  // Lo escribi como "el ultimo que hablo" y el hilo real lo tumbo en el acto:
+  // Vicente Garces pidio el recurso a las 09:49 y Mario contesto a las 10:17
+  // con un "ahora te lo envia mi companiero". Con el ultimo, el borrador salia
+  // dirigido a Mario, que ya estaba atendido, y Vicente —que es el LEAD— se
+  // quedaba otra vez sin respuesta. El que espera es el que lleva mas tiempo
+  // esperando. Las respuestas vienen ordenadas de vieja a nueva, asi que es
+  // la primera. Las demas se ven marcadas en el hilo.
+  const target = followups.length ? followups[0] : thread;
 
   const mention = target.author.name && target.author.profile_id && !target.author.is_company
     ? { name: target.author.name, profile_id: target.author.profile_id }
@@ -1076,7 +1084,11 @@ function CommenterCard({
           {/* ── Reply ── */}
           <div className="mt-3 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] font-medium text-text-secondary">Respuesta al comentario</span>
+              <span className="text-[11px] font-medium text-text-secondary">
+                {followups.length
+                  ? `Respuesta a ${target.author.name || 'la respuesta nueva'}`
+                  : 'Respuesta al comentario'}
+              </span>
               {depth === 'rich' && (
                 <span
                   className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30"

@@ -395,7 +395,15 @@ function ThreadCard({
   // es el ancla. Lo que cambia es a quién se menciona y de qué texto se
   // genera el borrador.
   const followups = thread.pending_followups ?? [];
-  const target = followups.length ? followups[followups.length - 1] : thread;
+  // ⛔ EL PRIMERO SIN CONTESTAR, NO EL ULTIMO (Iker, 2026-08-11).
+  // Lo escribi como "el ultimo que hablo" y el hilo real lo tumbo en el acto:
+  // Vicente Garces pidio el recurso a las 09:49 y Mario contesto a las 10:17
+  // con un "ahora te lo envia mi companiero". Con el ultimo, el borrador salia
+  // dirigido a Mario, que ya estaba atendido, y Vicente —que es el LEAD— se
+  // quedaba otra vez sin respuesta. El que espera es el que lleva mas tiempo
+  // esperando. Las respuestas vienen ordenadas de vieja a nueva, asi que es
+  // la primera. Las demas se ven marcadas en el hilo.
+  const target = followups.length ? followups[0] : thread;
 
   // No mention for company pages — they aren't mentionable (Unipile 422s
   // on the @-mention template), so we reply to them as plain text from
@@ -540,6 +548,18 @@ function ThreadCard({
           {/* Draft + actions */}
           {!sent && (
             <div className="mt-3 space-y-2">
+              {/* A quién va dirigido, cuando NO es el que abrió el hilo. Sin
+                  esto hay que deducirlo del borrador, y equivocarse de persona
+                  en un hilo con varios es exactamente el fallo que esto viene
+                  a arreglar. */}
+              {followups.length > 0 && (
+                <p className="text-[11px] text-text-secondary">
+                  Respondiendo a <span className="text-accent">{target.author.name || 'la respuesta nueva'}</span>
+                  {followups.length > 1 && (
+                    <span className="text-text-muted"> · quedan {followups.length - 1} sin contestar</span>
+                  )}
+                </p>
+              )}
               {!draft && !generating && (
                 <button
                   onClick={handleGenerate}
