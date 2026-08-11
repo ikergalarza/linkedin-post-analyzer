@@ -44,8 +44,22 @@
 |---|---|---|---|
 | 1 | `warmup-tanda-1` (194973211060864772) | 47 (+5 testers) | ✅ Enviada 2026-08-07 |
 | 2 | `warmup-tanda-2` (195398984128267443) | **138**, sin testers | Grupo lleno el 2026-08-10 por API, pendiente de enviar |
-| 3 | miércoles 12, 09:01 | ~400 | Pendiente. **Programada el martes, tras verificar la lista** |
-| 4 | jueves 13, 09:01 | El resto (~587), aquí van los de fuera de ICP | Pendiente. Programada el martes |
+| 3 | martes 11 | **337** | Grupo `warmup-tanda-3` (195489391391540991) lleno por API |
+| 4 | miércoles 12 | El resto, **aquí entran los 55 LatAm** | **Sin grupo:** incluir `Leads General · limpia` y excluir las 3 tandas + Recursos |
+
+### Tanda 2 · resultados a 21 h (2026-08-11)
+137 enviados · 27,7% aperturas *(a 21 h, sigue subiendo: iba por 16% el primer día)* · 1 clic · **4 rebotes duros (2,92%)** · 1 blando · **5 bajas (3,65%)** · **0 spam**.
+- ⚠️ **Las aperturas de las tandas NO se comparan hasta los 4 días.** La tanda 1 marca 46,3% pero es un acumulado de 4 días; la 2 lleva 21 h. Entre el 60 y el 70% de las aperturas caen el primer día.
+- ⚠️ **Las 5 bajas son nuevas** (la tanda 1 tuvo 0) y están altas frente a la norma (0,2-0,5%). **Es esperable en un re-permiso que invita a irse**, y esas personas habrían marcado spam más adelante. Pero se vigila.
+- ✅ **Acumulado 191 enviados, 6 rebotes duros = 3,1% y BAJANDO. 0 denuncias de spam.** Con eso se sigue sin verificar la lista: la verificación se deja para antes de la primera newsletter de venta.
+
+### Los 6 rebotados, y qué se hace con cada uno
+`mktbeti@gmail.com` · `xavigames911@gmail.com` · `etacescueladearqueroa@gmail.com` · `emprendersjglo21@gmail.com` · `sttrategosolutions@gmail.com` → **5 de 6 son Gmail muertos** (Google borra cuentas inactivas a los 2 años). Se borran del CRM.
+- ⚠️ `emprender**sj**glo21` es **errata** de `emprender**si**glo21@gmail.com`, que sí existe y no rebotó. Solo se borra la errata.
+- 🔵 `pablo.rivadulla@nextbitt.com` es **corporativo: la persona se fue, la EMPRESA sigue siendo prospecto.** En un CRM B2B se invalida el correo, **no se borra la ficha ni el histórico**.
+- ✅ **La comprobación gratuita de MX acertó:** marcó `bravorobot.com` como dominio sin servidor de correo y ese fue exactamente el único rebote blando. Detecta poco (1 de 71) pero lo que detecta, acierta. **Merece la pena correrla siempre antes de una tanda: es gratis.**
+
+⛔ **En MailerLite NO se borra a un rebotado.** El estado `bounced` es lo que lo bloquea, y es automático. Borrarlo pierde esa protección y una reimportación posterior lo devuelve limpio. **Y toda importación va con `resubscribe: false`**, o los rebotados y los dados de baja reviven.
 
 **Son 4 tandas y caben todas en la misma semana.** Con 47+138 = 185 enviados, meter los ~987 restantes de golpe sería un salto de 5x con un 4,3% de rebotes detrás; en dos pasos (2,9x y 1,5x) no.
 
