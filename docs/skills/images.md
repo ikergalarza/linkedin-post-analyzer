@@ -39,6 +39,16 @@ repita el gancho es fácil irse tan lejos que se pierde el ancla. Pasó el 11/08
 *"Seis peldaños, seis coronillas"*, complementario y sin una sola palabra de ventas. **Las
 dos condiciones se cumplen a la vez:** *"Seis peldaños **en ventas**, seis coronillas"*.
 
+**2c. ⛔ LAS CIFRAS DE LA IMAGEN, EN DÍGITO (Iker, 2026-08-11).** `6 peldaños`, no
+`Seis peldaños`. **No es una regla nueva: es `global §3.6` —que ya lo exige en el texto
+del post— aplicada también a la foto.** Se me había quedado solo en el post.
+
+Iker lo pidió al ver las dos variantes juntas: *"queda mejor el número, ya que así es
+más corto o más grande el título"*. Y ese es el motivo entero: **el dígito ocupa una
+cuarta parte que la palabra**, así que el titular cabe a más tamaño. En un formato que
+se juega todo en la miniatura, cada punto de tamaño cuenta. Además el ojo lo lee como
+dato y no como prosa, que es justo lo que es.
+
 **3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
 
 ## ⭐ 0a-ter · PALETA NUEVA (Brandbook 2026_Saiabera, Iker 2026-07-27) — MANDA SOBRE LA ANTIGUA
