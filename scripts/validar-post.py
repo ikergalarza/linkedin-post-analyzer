@@ -416,7 +416,7 @@ def validar_entregable(texto):
 # validador existe para evitar.
 # EL PROCEDIMIENTO: grep "if pilar" y decidir SI o NO para cada uno, por escrito.
 
-def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -627,7 +627,16 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # no una fuga. Con la regla de los founders aplicada a su cuenta, un post
     # suyo BIEN hecho suspendia; y al reves, uno sin las menciones aprobaba.
     _es_mario_cta = (cuenta or '').strip().lower() == 'mario'
-    if _es_mario_cta:
+    if _es_mario_cta and sin_menciones:
+        # El experimento: se comprueba lo CONTRARIO, que no queda ninguna.
+        # Si se cuela una, el post no es ni lo uno ni lo otro y el test no
+        # mide nada.
+        _sobra = [n for n in ('Neety', 'Unai', 'Iker', 'Asier')
+                  if re.search(r'@\s?' + n, cuerpo, re.I)]
+        chk(not _sobra, 'EXPERIMENTO sin menciones: no queda ninguna @ (Iker, 2026-08-11)',
+            'quedan ' + ', '.join('@' + n for n in _sobra) + '. O van las cuatro o no va '
+            'ninguna; a medias el experimento no mide nada' if _sobra else '')
+    elif _es_mario_cta:
         _falta = [n for n in ('Neety', 'Unai', 'Iker', 'Asier')
                   if not re.search(r'@\s?' + n, cuerpo, re.I)]
         chk(not _falta, 'MARIO: menciona a @Neety y a los 3 jefes (aboutme §2)',
@@ -1587,6 +1596,13 @@ def main():
                     help='La referencia del meme NO es española ni del sector de ventas, asi que su '
                          'autor no comparte audiencia con nosotros y no hace falta acreditarlo en el '
                          'cuerpo. Si es española Y de ventas, NO pases este flag: acredita.')
+    ap.add_argument('--sin-menciones', action='store_true', dest='sin_menciones',
+                    help='EXPERIMENTO de Iker (2026-08-11), solo para la cuenta de Mario: un '
+                         'post suyo SIN mencionar a @Neety ni a los 3 jefes, escrito como si '
+                         'fuera de una cuenta de founder pero con su tono. La hipotesis es que '
+                         'las 4 menciones delatan el spam ninja y le quitan alcance. NO lo '
+                         'pases por defecto: la regla sigue siendo mencionarlos (aboutme 2). '
+                         'Al medirlo, anota el resultado en historial-publicaciones.')
     ap.add_argument('--remix', action='store_true',
                     help='Este post calca una referencia ajena aunque NO sea un meme (lead magnet, '
                          'mapa, historia...). Activa el check de credito al autor, que si no solo '
@@ -1596,7 +1612,7 @@ def main():
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
-    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix)
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.
