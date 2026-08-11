@@ -817,6 +817,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'Bricolage Grotesque y Switzer, los logos si el pilar los lleva, y la '
             'postproduccion si la hay (working-preferences §1g)',
             aviso=True)
+        # ⛔ LA CHECKLIST ENTERA DEL PROMPT DE IMAGEN, EN UN SOLO SITIO.
+        # Estaba repartida entre `images §0b` y `§0h` y el 11/08 entregue dos
+        # prompts saltandome CUATRO de los cinco puntos: sin paleta, sin
+        # tipografia, en tres parrafos, sin el 1:1 y sin la contencion final.
+        # Ninguno era una regla nueva: las cinco llevaban semanas escritas.
+        chk(False, 'ENTREGA: los 5 puntos del prompt de imagen (images §0b + §0h)',
+            '1) abre con SOLO HAZ LO QUE TE PIDO en mayusculas · 2) UN SOLO PARRAFO, del '
+            'tiron, como se lo explicarias a un amigo · 3) paleta y tipografia de marca '
+            '(Bricolage titulos, Switzer cuerpo, naranja #fe8238, berenjena #431b44) · '
+            '4) "en formato cuadrado 1:1" SIEMPRE, aunque la referencia sea vertical: '
+            'LinkedIn recorta la preview por arriba y por abajo, y 19 de nuestros 20 '
+            'outliers son 1:1 · 5) cierra con "deja todo lo demas intacto y no toques '
+            'nada que no te he pedido", en la ULTIMA frase, nunca al principio',
+            aviso=True)
+        # ⛔ Y EL PILAR ES COPIAR *Y MEJORAR*. Lo que se calca es la esencia,
+        # nunca el encuadre malo ni los defectos: el 1:1 es el primer sitio
+        # donde se mejora a la referencia, porque casi ninguna lo cumple.
         chk(False, 'ENTREGA: el prompt es UN parrafo, del tiron y sin cortar a mano',
             'los bloques copiables no se parten a los 70 caracteres: el bloque no reajusta '
             'al ancho, asi que quedan el doble de altos con media pantalla vacia a la '
