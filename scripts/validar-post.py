@@ -799,6 +799,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'ritmo. El 2026-08-06 entregue un gancho del DOBLE de largo que el original, '
             'con dos frases en vez de una y el emoji cambiado. La salida va en la entrega '
             '(global §2.2b-MEDIR)', aviso=True)
+        chk(False, 'ENTREGA: el prompt en UNA linea por parrafo, sin cortar a mano',
+            'los bloques copiables no se parten a los 70 caracteres: el bloque no reajusta '
+            'al ancho, asi que quedan el doble de altos con media pantalla vacia a la '
+            'derecha, y al pegarlos se llevan los saltos falsos dentro. La unica excepcion '
+            'es el TEXTO DEL POST, donde el salto ES contenido (working-preferences §1f)',
+            aviso=True)
         chk(False, 'ENTREGA: adjunta la FOTO de la referencia, no solo su enlace',
             'bajala y mandala como fichero en el mismo turno que el prompt del disenador. '
             'El enlace es para Iker; la foto es para el disenador, que la necesita adjunta '

@@ -99,6 +99,32 @@ Cada vez que Iker corrija algo del gancho o del cuerpo, la primera pregunta es *
 
 **Y si la version que tengo no es la mejor que puedo dar, NO se entrega.** Iterar cuesta minutos; que Iker corrija una entrega mala cuesta su tiempo, que es lo caro.
 
+## ⛔⛔ 1f · LO QUE SE COPIA NO SE PARTE A MANO (Iker, 2026-08-11) — GLOBAL
+
+**En todo bloque cercado pensado para COPIAR, cada párrafo va en UNA SOLA LÍNEA.**
+Nada de cortar a los 70-75 caracteres para que "quede cuadrado".
+
+Iker: *"siempre me los das con un formato raro, como un salto de línea, entonces los
+prompts ocupan mucha altura y sobra mucho espacio por la derecha. Dámelos tal cual.
+Es un problema global"*.
+
+**Por qué está mal partirlos:** el bloque no reajusta el texto al ancho de la
+ventana, así que mis saltos se quedan fijos. Resultado: una columna estrecha, el
+doble de alto y media pantalla vacía a la derecha. Y al pegarlo en otro sitio se
+lleva los saltos falsos dentro.
+
+**Dónde aplica — a TODO lo copiable, no solo al prompt del diseñador:**
+- prompts de diseñador, de animador y de programador
+- prompts de intake y de edición
+- cualquier bloque que Iker vaya a pegar en otra herramienta
+
+**La ÚNICA excepción es el TEXTO DEL POST**, donde el salto de línea es contenido:
+lo decide `§3.2` y define el ritmo que ve el lector en LinkedIn. Ahí los saltos van
+exactamente donde van, ni uno más.
+
+**Los saltos que SÍ valen en un prompt** son los de párrafo: una línea en blanco
+entre bloques de sentido. Lo prohibido es partir una frase por la mitad.
+
 ## ⛔⛔ 1e-DOS · LA COMPARATIVA SON DOS VISTAS, NO UNA (Iker, 2026-08-10) — GLOBAL
 
 **Toda entrega de un post lleva DOS comparativas, en este orden:**
