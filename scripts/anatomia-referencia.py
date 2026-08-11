@@ -60,9 +60,72 @@ def anatomia(texto, nombre):
     return '\n'.join(out)
 
 
+
+# ---------------------------------------------------------------- ESENCIA ---
+#
+# Por que existe (Iker, 2026-08-11): este script media la FORMA -longitud,
+# frases, emojis, ritmo- y no median la ESENCIA. Con eso se puede calcar un
+# meme entero y perder el chiste, que es justo lo que paso con el de Lauren
+# Vilips: copie su estructura y tire su concepto -"you're not saving lives"-,
+# asi que la imagen tenia un medico y ningun texto explicaba por que.
+#
+# El metodo es de Iker, y es rapidisimo: *"yo sobre todo pillo las esencias con
+# los VERBOS. Lo de salvar vidas es un concepto y un verbo punchy, por eso se
+# hace viral: es un concepto original, exagerado, controversial, una metafora"*.
+#
+# Asi que el script hace lo unico que puede hacer una maquina aqui -sacar los
+# candidatos y obligar a nombrarlos-. Decidir cual es el concepto sigue siendo
+# criterio, pero ya no se puede saltar sin darse cuenta.
+
+# Verbos en infinitivo o conjugados en las formas que aparecen en un gancho.
+# No es un analizador morfologico: es una red para pescar candidatos y que el
+# ojo humano elija. Falsos positivos incluidos a proposito.
+_VERBO = re.compile(
+    r"\b\w+(?:ar|er|ir|as|es|an|en|a|e|o|amos|emos|imos|aste|iste|"
+    r"ando|iendo|ado|ido|ing|ed)\b", re.I)
+
+_VACIAS = {
+    'the', 'you', 'your', 'not', 'are', 'and', 'for', 'que', 'los', 'las',
+    'una', 'uno', 'con', 'por', 'del', 'este', 'esta', 'como', 'mas', 'pero',
+    'sus', 'nos', 'ese', 'eso', 'todo', 'toda', 'muy', 'sin',
+    # OJO: aqui NO van palabras con carga. La primera version excluia `work` y
+    # `lives`, que son EXACTAMENTE las dos que hacen el chiste del meme de
+    # Vilips, asi que el extractor devolvia "ninguno claro" sobre el gancho
+    # mas facil de leer que teniamos. Aqui solo van conectores y los nombres
+    # del sector, que nunca son el chiste.
+    'ventas', 'marketing', 'comercial', 'cliente', 'clientes',
+}
+
+
+def esencia(texto):
+    hook = texto.strip().split('\n')[0]
+    cand = [p for p in _VERBO.findall(hook) if p.lower() not in _VACIAS and len(p) > 3]
+    return [
+        'ESENCIA DE LA REFERENCIA — responde a las 4 ANTES de escribir nada:',
+        '',
+        '  gancho: %s' % hook[:110],
+        '  posibles verbos: %s' % (', '.join(dict.fromkeys(cand)) or '(ninguno claro)'),
+        '',
+        '  1. ¿Cual es el VERBO que hace el chiste? Es donde vive casi siempre.',
+        '  2. ¿Cual es el CONCEPTO? Tiene que ser una de estas cuatro cosas, y si',
+        '     no lo es, probablemente no has dado con el: original, exagerado,',
+        '     controversial o una metafora. ("salvar vidas" es metafora + exageracion)',
+        '  3. ¿Donde VIVE ese concepto en la referencia: en el texto, en la imagen',
+        '     o en los dos? Si esta en los dos, nosotros lo dejamos SOLO en la',
+        '     imagen y ganamos un hueco (images §2d).',
+        '  4. ¿Que hace en el dibujo cada elemento cargado (un medico, una camilla,',
+        '     un tiburon)? Si alguno no lo recoge ningun texto nuestro, la',
+        '     referencia esta calcada por fuera y vacia por dentro.',
+        '',
+    ]
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         sys.exit(__doc__)
+    original = io.open(sys.argv[1], encoding='utf-8').read()
+    for linea in esencia(original):
+        print(linea)
     for nom, ruta in [('ORIGINAL', sys.argv[1]), ('EL MIO', sys.argv[2])]:
         print(anatomia(io.open(ruta, encoding='utf-8').read(), nom))
         print()
