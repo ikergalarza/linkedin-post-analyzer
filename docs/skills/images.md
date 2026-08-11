@@ -71,6 +71,22 @@ recoge ningún texto, la referencia está calcada por fuera y vacía por dentro.
 2. ¿El concepto es puramente verbal y la imagen no lo sostiene? → al texto.
 3. **Nunca a los dos**, y **nunca a ninguno**.
 
+**2e. ⭐ EL DETALLE DEL DIBUJO TAMBIÉN SE PUEDE SUBIR UN PELDAÑO (Iker, 2026-08-11).** No
+solo se mejora el texto, el color y el formato: **el propio dibujo tiene grados**, y subirlo
+un peldaño suele ser gratis.
+
+**El caso:** en la referencia de Vilips el monitor marca una línea **ondulada** —el paciente
+sigue vivo y el médico está peleando—. En la nuestra salió **recta**: el paciente ya está
+muerto. Aplicado a un lead, deja de ser *"se está enfriando"* y pasa a ser *"lo perdiste"*.
+Más duro y más gracioso, y no costó ni una palabra más.
+
+**⚠️ Honestidad sobre de quién fue:** **no lo pedí yo.** Mi prompt decía *"no cambies ni la
+escena, ni el encuadre, ni los colores del dibujo original"*, así que salió del diseñador o
+del fotograma que usó. Lo vio Iker al revisarla. **La lección es para mí:** al calcar, hay
+que preguntarse también **qué grado del dibujo estamos copiando** —vivo o muerto, medio
+calvo o calvo del todo, la cola corta o la cola larga— en vez de pedir el calco literal por
+defecto.
+
 **3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
 
 ## ⭐ 0a-ter · PALETA NUEVA (Brandbook 2026_Saiabera, Iker 2026-07-27) — MANDA SOBRE LA ANTIGUA
