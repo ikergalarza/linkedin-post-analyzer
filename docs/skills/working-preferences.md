@@ -121,6 +121,40 @@ tipografía como los colores del nuevo brand book"*. **Un meme calcado sin nuest
 tipografía es el meme de otro con nuestro chiste**: lo único que lo hace nuestro es
 cómo está escrito. Las dos cosas van al validador como aviso de entrega.
 
+## ⛔⛔ 1h · ANTES DE QUE SUBA NADA, PREGUNTARLE LA HORA (Iker, 2026-08-11) — GLOBAL
+
+**En cuanto Iker diga que el post ya está o que lo va a subir, hay que preguntarle
+a qué hora piensa publicarlo y decirle lo que dice el dato.** Sin esperar a que lo
+pregunte él.
+
+Iker: *"a veces me caliento. Hoy ya he subido 2 y los 2 a muy buena hora, eso es
+más que suficiente. Mejor guardarme para mañana los 2 buenos y a buena hora, que si
+no, todo el trabajo para nada. Subir ahora a las 2 de la tarde posts buenos es
+matarnos"*.
+
+**El dato, medido sobre los 3 perfiles (hora española, posts con más de 500
+impresiones):**
+
+| franja | posts | mediana imp | mediana ratio |
+|---|---|---|---|
+| **10:00** | 45 | **4.850** | **0,80x** |
+| 12:00 | 38 | 4.328 | 0,69x |
+| 13:00 | 34 | 3.894 | 0,55x |
+| **14:00** | 15 | 2.989 | **0,43x** |
+| 15:00 | 7 | 3.543 | 0,37x |
+
+**Las 14:00 es la peor franja de la jornada: 0,43x contra 0,80x de las 10:00.** Un
+post bueno publicado ahí rinde la mitad, y no hay forma de recuperarlo.
+
+**Los dos argumentos que hay que darle, porque son los que deciden:**
+1. **Ya no hay prisa de contenido.** Desde que ningún post lleva año
+   (`brand-voice`), esperar a mañana no le cuesta NADA al texto. Antes sí.
+2. **Dos posts buenos al día en buena hora bastan.** El tercero a mala hora no
+   suma alcance: gasta una pieza buena.
+
+**Cuándo SÍ se sube a mala hora:** cuando esa cuenta lleva días sin publicar y lo
+que se busca es romper la sequía, no el pico. Ahí 0,43x es mejor que nada.
+
 ## ⛔⛔ 1f · LO QUE SE COPIA NO SE PARTE A MANO (Iker, 2026-08-11) — GLOBAL
 
 **En todo bloque cercado pensado para COPIAR, cada párrafo va en UNA SOLA LÍNEA.**

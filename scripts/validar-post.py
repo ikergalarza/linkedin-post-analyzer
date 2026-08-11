@@ -838,6 +838,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # prompts saltandome CUATRO de los cinco puntos: sin paleta, sin
         # tipografia, en tres parrafos, sin el 1:1 y sin la contencion final.
         # Ninguno era una regla nueva: las cinco llevaban semanas escritas.
+        chk(False, 'ENTREGA: preguntarle A QUE HORA lo sube (working-preferences §1h)',
+            'en cuanto diga que ya esta o que lo sube, preguntar la hora y dar el dato sin '
+            'que lo pida: 10:00 rinde 0,80x y 4.850 impresiones de mediana; las 14:00, '
+            '0,43x y 2.989. Un post bueno a mala hora rinde la mitad y no se recupera. Y '
+            'desde que ningun post lleva anio, esperar a manana no le cuesta nada al texto',
+            aviso=True)
         chk(False, 'ENTREGA: los 5 puntos del prompt de imagen (images §0b + §0h)',
             '1) abre con SOLO HAZ LO QUE TE PIDO en mayusculas · 2) UN SOLO PARRAFO, del '
             'tiron, como se lo explicarias a un amigo · 3) paleta y tipografia de marca '

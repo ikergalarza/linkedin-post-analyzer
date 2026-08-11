@@ -15,7 +15,11 @@ Una vez publicado un post con foto, la foto **NO se puede cambiar** (habría que
 
 **1. Ni el logo ni el nombre de Neety van dentro de la foto.** Aunque la referencia que calcamos lo lleve (Beeze lo pone arriba y abajo). En cuanto el lector ve una marca en la imagen, **entiende que le estan vendiendo algo** y baja la guardia del contenido. La foto tiene que parecer una pieza util, no una creatividad de empresa. Fuera tambien los subtitulos de cabecera tipo `SEÑALES DE COMPRA 2026`: ocupan sitio y no aportan.
 
-**2. La imagen COMPLEMENTA al post, y su titular ECHA EL GANCHO.** Si el post abre con *"la prospeccion manual ha muerto"*, el titulo de la imagen no puede ser *"Las 7 señales"*: son dos promesas distintas y el lector no las une. El titular de la imagen repite o continua el gancho; el contenido de la imagen es la prueba de lo que el gancho promete.
+**2. La imagen COMPLEMENTA al post, y su titular ECHA EL GANCHO.** Si el post abre con *"la prospeccion manual ha muerto"*, el titulo de la imagen no puede ser *"Las 7 señales"*: son dos promesas distintas y el lector no las une. El titular de la imagen **continua** el gancho; el contenido de la imagen es la prueba de lo que el gancho promete.
+
+> ⛔⛔ **Y NUNCA LO REPITE TAL CUAL (Iker, 2026-08-11).** Aquí ponía *"repite o continua"* y el "repite" sobra: *"los textos de cualquier foto siempre tienen que ser complementarios al gancho de la publicación pero NO repetir lo mismo"*. En la vista previa se leen **las dos cosas a la vez**, así que una frase repetida gasta el único titular que tiene la imagen y no añade nada. **Dos frases, un solo chiste:** el gancho pone la regla y el titular de la imagen pone la consecuencia, la cuenta o el remate. Compartir una palabra vale; compartir la frase, no.
+>
+> ⚠️ **Esto es criterio, no dato, y conviene saberlo:** nuestro mejor meme de este formato —la escalera de Iker, **13.92x y 138.828 impresiones**— **sí** repetía: el gancho del post y el titular de la imagen eran la misma frase, *"Subir en ventas siempre pasa factura"*. Así que repetir no hunde nada; la apuesta es que complementar rinde más. Si un remix complementado se queda corto, esta es la primera variable a mirar.
 
 **3. Se tiene que entender en UN SEGUNDO.** Minimalista. El hueco que dejan la marca y los subtitulos se usa para que el titular sea lo primero que se lee, mas grande y mas arriba.
 
