@@ -4,6 +4,12 @@
 > (`email-marketing §6`) antes de escribir nada, y se ACTUALIZA y commitea al aprobar cada tanda.
 > Si falta un dato, PREGUNTA. No lo adivines.
 
+## 🔴 ESTADO: CUENTA CANCELADA (2026-08-11)
+MailerLite canceló la cuenta 2536617 por supuesta violación de la política anti-spam, tras 3 envíos y 191 correos. **La tanda 3 (337) nunca llegó a salir y la 4 no se montó.** Post-mortem completo en `email-marketing §0b`.
+- **Apelaciones enviadas:** formulario de cumplimiento (x2) y mensaje de LinkedIn a un empleado de soporte desde la cuenta de Iker, el 2026-08-12.
+- **Datos rescatados por API antes de perder el acceso:** `Escritorio/rescate-mailerlite-2026-08-11.md` — las 5 bajas con su motivo, los 7 rebotes, los 4 leads que clicaron y las métricas finales. **Sin ese fichero no se puede reconstruir la lista de supresión en otra plataforma.**
+- ⚠️ **De los 4 que clicaron, uno (`ahernandez@fagorautomation.es`) es CLIENTE**, no un lead: recibió el correo por no existir lista de supresión. Leads reales: 3.
+
 ## Estado del sistema
 - **Herramienta de envío: MailerLite, CONECTADA y VERIFICADA el 2026-07-28** (cuenta `management@neety.com`, id 2536617, token hasta jul 2027). Conector MCP probado con lecturas reales: grupos, campañas, campos y suscriptores responden. Escritura disponible (campañas, grupos, segmentos, importación, automatizaciones).
 - **Contenido actual:** 1 suscriptor (Iker/`management@neety.com`) · 1 campaña borrador vacía del 27-jul ("Campaña sin título", sin contenido ni asunto: se puede borrar, pendiente del OK de Mario).

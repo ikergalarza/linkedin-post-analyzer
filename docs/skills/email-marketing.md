@@ -18,6 +18,49 @@
 
 ---
 
+## 🔴🔴 0b · NOS CANCELARON LA CUENTA AL TERCER ENVÍO (2026-08-11) — leer antes que nada
+
+191 correos, **0 denuncias de spam**, 46% de aperturas, cuenta de pago y dominio autenticado. Cancelada igual, por supuesta violación de la política anti-spam. **Los números buenos no protegen si el perfil de la cuenta enciende las alarmas.**
+
+### Las seis señales, que juntas dibujan a un spammer
+1. **Cuenta nueva importando 1.310 contactos por API**, sin pasar por ningún formulario de la plataforma.
+2. **Los contactos entraron con `opted_in_at: null` y `optin_ip: null`** porque la migración de CRM perdió las fechas de alta. Sus términos exigen consentimiento *"activo y consciente"*: sin timestamp ni IP no hay forma de enseñarlo, y ellos lo ven en cada registro.
+3. **Volumen escalando: 54 → 137 → 337 en cuatro días.** Lo hicimos bien a propósito. ⚠️ **Pero escalonar y calentar para un envío masivo tienen la misma silueta desde fuera.**
+4. **3,65% de bajas** en el segundo envío (norma: 0,2-0,5%). Esperable en un re-permiso, pero el umbral no distingue intenciones.
+5. 🔴 **Una baja marcó como motivo "Nunca me registré en esta lista de correo"**, a las 03:41; la cancelación llegó esa mañana. **El motivo de cada baja lo guardan ellos y NO aparece en el panel de métricas**, así que no lo ves venir.
+6. 🔴🔴 **El propio texto del correo admitía que no había opt-in.** *"Me toca ordenar los correos que nos dejaron el año pasado / y no hay manera / cuál de todas, ni idea."* Cuando contestaron, el motivo fue literalmente *"su contenido no está permitido"*: **habían leído el correo.**
+
+### ⛔ LA REGLA QUE SALE DE AQUÍ Y MANDA SOBRE CUALQUIER IDEA CREATIVA
+**Nunca se escribe en un correo que no sabemos de dónde salió el contacto.** Aunque sea verdad, aunque sea la gracia del correo y aunque funcione con el lector (funcionó: 46% de aperturas y una reunión el mismo día). **El texto lo lee también un revisor de cumplimiento**, y para él es una confesión firmada.
+
+Un re-permiso se escribe igual de bien sin admitir nada:
+
+| ⛔ Nunca | ✅ Así |
+|---|---|
+| "No sé de qué te conozco" | "Queremos mandarte solo lo que te interese" |
+| "Ordenando los correos del año pasado" | "Estamos reorganizando la newsletter" |
+| "¿De qué nos conocemos?" | "¿Qué tema te interesa más?" |
+
+Misma segmentación, misma respuesta del lector, cero munición.
+
+### Qué se hace distinto la próxima vez, en orden
+1. **Importar SOLO a quien tenga el tick de consentimiento**, aunque sean 50 de 1.000. Nosotros teníamos el dato en el formulario y no lo usamos como filtro. Solo eso lo habría evitado.
+2. **Lista de supresión con los clientes dentro, antes de importar** (ver §9c).
+3. **Verificar la lista** (~10 $/1.000) antes del primer envío, no después.
+4. **No escribir que no sabemos el origen** (arriba).
+5. **Empezar por 20-30, no por 54**, y subir más despacio.
+6. **Presentarse a soporte ANTES del primer envío grande**, explicando el origen de la lista. Una cuenta nueva con lista importada es sospechosa por defecto; presentarte tú primero cambia quién lleva la iniciativa.
+
+### Lo que dicen sus términos, leídos el 2026-08-11
+- ✅ **Repetir la misma campaña NO está prohibido.** No aparece por ninguna parte.
+- ⛔ *"Tus listas deben ser suscripciones basadas en permiso"* (§2.1.2) y *"los destinatarios deben dar su consentimiento activamente mediante un acto consciente; no se permiten casillas premarcadas"* (§7.3). **Ahí es donde nos cogieron.**
+- ⛔ §9.1 (contenido prohibido: adulto, MLM, apuestas, adelgazamiento, odio, estafas) **no describe nuestro correo**. Es el único frente donde son atacables.
+- ⚠️ §16.2: *"podemos cancelar en cualquier momento, con o sin causa"*. **Apelar sale barato pero las probabilidades son bajas: monta el plan B en paralelo desde el minuto uno.**
+
+**Léete los términos del proveedor ANTES de importar. Nosotros los leímos después de que nos cancelaran.**
+
+---
+
 ## 1 · Los 4 remitentes (rotación semanal)
 
 **Un email siempre lo firma una PERSONA, nunca "Neety".** Que te hable alguien genera más confianza que que te hable una empresa (validado por los apuntes de expertos, por Carmen/Runner Pro — "cartas del fundador" — y por Timepack, que firma persona).
