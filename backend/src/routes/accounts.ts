@@ -2112,9 +2112,15 @@ async function buildThreadsForPost(post: any): Promise<{ threads: ThreadedCommen
     }
     const mia = nuestraUltimaHora(t);
     if (mia === null) {
-      // Nunca hemos entrado en el hilo: pendiente de siempre, sin follow-ups
-      // que separar (el pendiente ES el comentario de arriba).
-      t.answered_by_author = false;
+      // Nunca hemos ESCRITO en el hilo, así que no hay follow-ups que separar:
+      // el pendiente es el comentario de arriba entero.
+      //
+      // Pero sí puede estar atendido con una REACCIÓN, y eso cuenta igual que
+      // en el resto del flujo: la cola aquí es la última respuesta si la hay, y
+      // si no el propio comentario de arriba. Sin esto, reaccionar a un
+      // comentario sin contestarlo lo dejaba en la bandeja para siempre.
+      const colaSinNosotros = t.replies.length ? t.replies[t.replies.length - 1] : t;
+      t.answered_by_author = !!colaSinNosotros.my_reaction;
       t.pending_followups = [];
       continue;
     }
@@ -2138,7 +2144,27 @@ async function buildThreadsForPost(post: any): Promise<{ threads: ThreadedCommen
     t.pending_followups = t.replies.filter(
       (r) => r.author.profile_id !== authorLinkedInId && tsOf(r.date) > mia && !r.my_reaction
     );
-    t.answered_by_author = t.pending_followups.length === 0;
+
+    // ⛔ LO QUE CIERRA UN HILO ES SU COLA, NO QUE NO QUEDE NADA SUELTO EN MEDIO
+    // (Iker, 2026-08-12).
+    //
+    // Antes bastaba UN mensaje sin atender en cualquier punto para que el hilo
+    // volviera. Y hay un caso en el que eso es justo lo contrario de lo que
+    // quieres: el hilo del tatuaje, donde a un comentario hostil de en medio se
+    // decidió NO contestar, y al de abajo se le puso una reacción. Con la regla
+    // vieja ese hilo reaparecía para siempre por el de en medio.
+    //
+    // Iker: *"si entre medias hay un comentario sin responder ni interactuar es
+    // por algo. Dudo que se me haya olvidado"*. Un hilo es una conversación: si
+    // la ÚLTIMA intervención está atendida —es nuestra, o le hemos puesto una
+    // reacción— la conversación está cerrada, decidas lo que decidas del medio.
+    // Y si entra alguien nuevo, la cola cambia y el hilo vuelve solo, que es
+    // exactamente lo que se quiere.
+    //
+    // La cola es la última respuesta; si el hilo no tiene ninguna, es el propio
+    // comentario de arriba.
+    const cola = t.replies.length ? t.replies[t.replies.length - 1] : t;
+    t.answered_by_author = cola.author.profile_id === authorLinkedInId || !!cola.my_reaction;
   }
 
   return { threads: topLevel, rawSample: raw[0] };
