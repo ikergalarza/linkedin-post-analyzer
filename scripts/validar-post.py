@@ -197,8 +197,12 @@ def normalizar_kw(k):
 # `vend[eio]\w*` coge la conjugación entera (vende, vendió, vendieron, vendemos,
 # vendedor…) y deja fuera lo que solo se le parece: venda y vendaje (vend+a) y vendrá,
 # que es de venir (vend+r).
+# `prospect\w*` y no `prospectar` a secas (2026-08-12): el gancho del 167c
+# ("Claude ha reducido toda mi prospección a una sola frase") fallaba el ancla
+# porque la regex solo aceptaba el infinitivo. Prospección, prospecta y
+# prospectando son ancla de ventas igual de fuertes.
 ANCLA_FUERTE = (r'\b(vend[eio]\w*|venta|ventas'
-                r'|comercial|comerciales|cuota|comisi[oó]n|prospectar|deal|deals|propuesta comercial)\b')
+                r'|comercial|comerciales|cuota|comisi[oó]n|prospec\w+|deal|deals|propuesta comercial)\b')
 # AMBIGUA = las comparte media empresa. "pedido" lo dicen logística, compras,
 # almacén y producción; "cartera" la dice finanzas; "cliente" y "precio" los dice
 # cualquiera. Un hook anclado SOLO en estas es candidato a post huérfano.
@@ -1451,6 +1455,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             '(4) el prompt del programador. Y CADA brief de imagen va CON EL ENLACE a la '
             'referencia real que calca (images §0b-REF): sin enlace me la estoy inventando. '
             'Los 4 formatos validados y sus enlaces, en images §0b-REF-bis', aviso=True)
+        # 2026-08-12: el "Comenta X" volvio, pero DENTRO DE LA IMAGEN (post-workflow
+        # §4.5.0-CTA-IMAGEN). LinkedIn clasifica el texto y no lee la foto: Martin
+        # Arosa lleva el banner 'Comenta "SISTEMA" y te lo envio por mensaje privado'
+        # dentro de la imagen (1.321c el 11/08) y el texto limpio. Este script no ve
+        # imagenes, asi que lo unico que puede hacer es recordarlo en cada entrega.
+        chk(False, 'ENTREGA: el Comenta "PALABRA" va DENTRO de la IMAGEN (§4.5.0-CTA-IMAGEN)',
+            'el texto va limpio (pregunta + gratis + conecta conmigo) y la palabra vive en '
+            'un banner dentro de la foto: Comenta "PALABRA" y te lo envio por mensaje '
+            'privado, con la palabra en color. Comprueba que el prompt del disenador lo '
+            'lleva, porque este script no puede verlo. Evidencia: Martin Arosa 1.321c '
+            '(11/08) y 289c (10/08), Daniel Matias 249c', aviso=True)
         m = re.search(ENTREGABLE_GENERICO, cuerpo, re.I)
         chk(not m, 'Entregable UNO y concreto, no generico (§4.5 Paso 2)',
             f'"{m.group(0)}" — la biblia hizo 1.2x · 2.3K' if m else '')

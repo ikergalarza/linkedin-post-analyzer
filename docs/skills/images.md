@@ -328,7 +328,8 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 | **1.245** | **Solo los logos de Claude y LinkedIn** sobre crema, con una costura naranja/azul en medio y unas líneas de circuito muy suaves. **Cero texto.** | No hay artefacto que enseñar todavía, o el post ya lo cuenta todo |
 | **1.217** | Pantallazo de un **workflow de n8n** con los 4 pasos en bloques de color | El recurso es un proceso |
 
-**⛔ NINGUNA DE LAS CUATRO LLEVA EL CTA DENTRO DE LA IMAGEN (Iker, 2026-08-06).** Nuestro 183c sí lo lleva (*Comenta "perfil" + tu departamento*) y es de los flojos. **El CTA vive en el texto y solo ahí:** repetirlo en la imagen es un segundo CTA, y además se lee como que estamos forzando al lector, que es justo lo que genera rechazo. Es la misma regla que tumbó el *"conecta conmigo"* (`post-workflow §4.4`).
+~~**⛔ NINGUNA DE LAS CUATRO LLEVA EL CTA DENTRO DE LA IMAGEN (Iker, 2026-08-06).** Nuestro 183c sí lo lleva (*Comenta "perfil" + tu departamento*) y es de los flojos. **El CTA vive en el texto y solo ahí.**~~
+**🚨 SUPERADA EL 2026-08-12, y al REVÉS:** desde que LinkedIn capa el `Comenta "X"` escrito en el texto (`post-workflow §4.5.0-CTA`), Martín Arosa hace exactamente lo contrario: **el "comenta" vive SOLO en la imagen** — banner inferior oscuro con 💬 *Comenta "SISTEMA" y te lo envío por mensaje privado* (1.321c el 11/08, 289c el 10/08) — y el texto queda limpio con la pregunta + acceso libre + conecta conmigo. Daniel Matias igual, con franja amarilla arriba (*Connect + Comment "MCP" for access*, 249c). **La regla vieja valía cuando el texto podía llevar el gate; hoy la imagen es el ÚNICO sitio donde puede vivir.** Receta completa en `post-workflow §4.5.0-CTA-IMAGEN`.
 
 **Y el formato sigue siendo NUESTRO: 1:1.** Su 1.245c es 16:9 y su 2.125c casi 2:1; se calca el concepto y se recompone a cuadrado (`§0b`). Su 1.958c ya es 1:1, así que ahí no hay conflicto.
 

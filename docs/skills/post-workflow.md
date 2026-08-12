@@ -1191,6 +1191,26 @@ Acceso libre.
 
 **🔴 LA LECCIÓN DE MÉTODO, que es más cara que la regla:** estuvimos una semana buscando *qué palabra* nos penalizaba, y **cambiando variables de una en una sobre nuestro propio post**. Lo que resolvió el caso en 10 minutos fue **mirar la línea temporal del referente y ver QUÉ CAMBIÓ ÉL Y CUÁNDO**. Cuando algo deja de funcionar de golpe y no sabemos por qué, **lo primero no es auditar nuestro texto: es mirar si el mejor del nicho cambió de mecánica, y en qué fecha.**
 
+#### 🚨🚨 4.5.0-CTA-IMAGEN · EL "COMENTA X" VUELVE, PERO DENTRO DE LA FOTO (Iker, 2026-08-12)
+
+**El workaround que Iker cazó y yo no:** el 11/08 detecté que Martín Arosa había dejado de pedir la palabra. **Lo que no vi es DÓNDE la había metido: en la IMAGEN.** LinkedIn clasifica el TEXTO del post, no lee la foto, así que el gate sobrevive escondido ahí y el texto queda limpio para el algoritmo.
+
+**La evidencia, medida por Unipile el 2026-08-12:**
+
+| post | comentarios | texto | imagen |
+|---|---|---|---|
+| Martín Arosa 11/08 (sistema n8n) | **1.321** | pregunta + acceso libre + conecta conmigo, **cero "comenta"** | banner inferior oscuro: 💬 *Comenta "SISTEMA" y te lo envío por mensaje privado*, palabra en color |
+| Martín Arosa 10/08 (guía Claude Code) | 289 | ídem, cero "comenta" | mismo banner: *¿Quieres esta guía completa? Comenta "HOJA"…*, palabra en naranja |
+| Daniel Matias (`dmtiass`) 11/08 (Claude MCP LinkedIn) | 249 | cero CTA de comentario (cierra con repost) | franja amarilla arriba: *Connect + Comment "MCP" for access* |
+
+**LA RECETA, desde hoy:**
+1. **El TEXTO no cambia** respecto a `§4.5.0-CTA`: pregunta directa + gratis + conecta conmigo. Ni una aparición de "comenta" en el cuerpo (el validador lo sigue vigilando como fallo duro).
+2. **La palabra clave va DENTRO de la imagen**, en un banner al pie (o franja arriba, como Daniel Matias): `Comenta "PALABRA" y te lo envío por mensaje privado`, con la palabra destacada en color. Va **en el prompt del diseñador**, y es la pieza clave de ese prompt.
+3. **Las reglas de la PALABRA de `§4.5.0a` punto 3b siguen vivas** (se entiende sola, es la tesis, sin tilde, no gastada) — aunque en la imagen las referencias la ponen en MAYÚSCULAS y así se calca. La herramienta debe filtrar el comentario sin distinguir mayúsculas.
+4. **Esto reactiva el motor del pilar** (el comentario-peaje) que el CTA de solo-pregunta había dejado cojo: la pregunta invita, el banner da la instrucción exacta.
+
+**⚠️ El validador NO ve la imagen:** por eso hay un AVISO fijo en `--pilar leadmagnet` recordando que el "comenta" vive en la foto y que hay que comprobarlo en el prompt del diseñador antes de entregar.
+
 #### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
 
 **1 · EL GANCHO: DOS PIEZAS VALIDADAS, Y LO ÓPTIMO ES LLEVAR LAS DOS A LA VEZ.**
