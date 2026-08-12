@@ -928,116 +928,125 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 'hay enlace pero no es el de agendar. Prioridad 1 = agendar (demo y venta), '
                 'prioridad 2 = lead magnet (correo). Solo el mapa enlaza a otro sitio, y '
                 'porque su pagina ya lleva el CTA a agendar dentro' if not _dest_ok else '')
-        if tiene_link:
-            # El enlace SIEMPRE con https:// delante, o LinkedIn puede no detectarlo
-            # como clicable (Iker, 2026-07-22). Mismo criterio que los DMs.
-            # Que dominio hace de CTA en ESTE post: en evento es luma.com, en el
-            # resto recursos.neety.com. Antes estaba escrito a fuego y al meter el
-            # pilar evento esto reventaba con StopIteration (Iker, 2026-08-05).
-            _dom = 'luma.com' if (pilar == 'evento' and 'luma.com' in cuerpo) else 'recursos.neety.com'
-            _bare_link = re.search(r'(?<!https://)' + re.escape(_dom), cuerpo)
-            chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
-                f'falta https:// delante de {_dom}' if _bare_link else '')
-            chk('Neety' not in cuerpo.split(_dom)[0].split('\n')[-1],
-                'Spam ninja NO nombra a Neety (§4.4b)', 'nombrar la marca = publicidad encubierta')
-            lineas = [l for l in cuerpo.split('\n') if l.strip()]
-            idx = next(i for i, l in enumerate(lineas) if _dom in l)
-            chk(idx != len(lineas) - 1, 'Spam ninja NO es la última línea (§4.4b)',
-                'el cierre va después' if idx == len(lineas) - 1 else '')
-            for i, b in enumerate(bs):
-                if any(_dom in l for l in b):
-                    # El spam ninja va FUSIONADO: la broma pegada al CTA + enlace,
-                    # máx 2 líneas (Iker, 2026-07-22). Antes se exigía separarlas
-                    # con un blanco; ahora se permite el bloque de 2 (broma / CTA+link)
-                    # y también el de 1. Lo que NO vale es un bloque de 3+.
-                    # ⛔ EXACTAMENTE DOS: DOLOR ARRIBA, ENLACE ABAJO (Iker, 2026-08-10).
-                    # Era 'max 2' y colaba la linea suelta. Medido en clics, el bloque
-                    # de dos gana en los DOS pilares donde aparece: el meme del 29/07
-                    # (0,151%, el mejor meme) y el mapa del 14/07 (0,415%, el mejor
-                    # enlace de venta de la casa). Las cinco lineas sueltas van de
-                    # 0,094% a 0,017%. Ninguna llega al peor de los dos bloques.
-                    #
-                    # No choca con la regla del 07/08 ('una sola oracion + dos puntos
-                    # + enlace, todo pegado'): esa manda sobre la LINEA DEL ENLACE, y
-                    # el meme del 29/07 la cumple. Lo que se anade es la linea de dolor
-                    # ENCIMA, en el mismo bloque.
-                    # ⚠️ Y EL DOLOR PUEDE IR PEGADO CON SALTO SIMPLE O CON LINEA EN
-                    # BLANCO. Lo intente como 'bloque de exactamente 2' y suspendia al
-                    # mapa del 14/07, que es EL MEJOR de la casa (0,415%): el separa sus
-                    # dos lineas con un blanco. El meme del 29/07 las junta con salto
-                    # simple. Las dos formas ganan; lo que ninguna de las dos hace es
-                    # soltar el enlace sin nada delante.
-                    _prev = b[-2] if len(b) >= 2 else (bs[i - 1][-1] if i > 0 else '')
-                    chk(len(b) <= 2 and len(_prev.strip()) > 0,
-                        'Spam ninja: hay una linea de dolor pegada al enlace (§4.4b)',
-                        '%d lineas en el bloque' % len(b) if len(b) > 2
-                        else 'el enlace abre el post sin dolor delante')
-                    # Y la de abajo es la mas CORTA de las dos. Es el orden del corpus
-                    # de email: linea larga de valor y remate corto justo antes del
-                    # enlace, para que caiga como punto final. Nuestros dos ganadores lo
-                    # hacen (52→49 y 73→69 caracteres), pero por 3-4 caracteres, asi que
-                    # va de AVISO: sirve para desempatar, no es ley.
-                    if len(b) == 2:
-                        _arriba = len(b[0])
-                        _abajo = len(re.sub(r'https?://\S+', '', b[1]).strip())
-                        chk(_abajo <= _arriba, 'Spam ninja: la linea del enlace no es mas larga que la de arriba (§4.4b)',
-                            'arriba %d, abajo %d. En el cuerpo la escalera va de corto a '
-                            'largo; en el cierre, al reves' % (_arriba, _abajo)
-                            if _abajo > _arriba else '', aviso=True)
-                    # ⛔ LOS TRES DE ABAJO SALEN DE MEDIR LOS CLICS REALES (2026-08-10).
-                    # El mapa es el pilar que mas convierte (mediana 84 clics, CTR
-                    # 0,315%) y el meme el segundo (0,151%), pero el meme del 06/08
-                    # saco 13 clics con 77.006 impresiones: 0,017%, el peor CTR del
-                    # ano con alcance real. Los tres motivos, medidos:
-                    #
-                    # 1) DONDE CAE EL ENLACE. En los 6 memes con datos, los 4 que
-                    #    ponen el enlace antes del caracter 511 dan 0,050-0,151%; los
-                    #    2 que lo pasan de 650 dan 0,042% y 0,017%. Son justo los dos
-                    #    cuerpos mas largos. El cuerpo largo gana interaccion y pierde
-                    #    clics: para cuando llega el enlace, ya se han ido.
-                    #    OJO: solo aplica donde el cuerpo es PROSA. En el mapa y en
-                    #    los 10 la lista de empresas empuja el enlace mucho mas alla
-                    #    del 650 y aun asi convierten (el mapa de Asier del 14/07 lo
-                    #    pone en el 1.400 y saca 0,415%): alli la lista ES el contenido
-                    #    y el lector la baja entera. En prosa, no.
-                    _pos = cuerpo.find(_dom) if pilar in ('meme', 'historia', 'entregable') else 0
-                    chk(_pos <= 650, 'Spam ninja: el enlace cae antes del caracter 650 (§4.4b)',
-                        'el enlace cae en el %d. Los 2 unicos posts que lo pasaron de 650 '
-                        'son los 2 peores CTR del ano (0,042%% y 0,017%%) frente al '
-                        '0,050-0,151%% de los que lo ponen antes del 511' % _pos
-                        if _pos > 650 else '')
-                    # 2) EL ENLACE VA EN LA SEGUNDA LINEA Y ESA LINEA ES CORTA. El
-                    #    bloque de dos (dolor / promesa corta + enlace) da 0,415% en el
-                    #    mapa de Asier del 14/07. Fusionarlo todo en UNA linea larga da
-                    #    0,172% (Unai 07/07). Iker, 2026-08-10: "que el enlace siempre
-                    #    este en la segunda linea, que esa linea sea corta y punchy".
-                    #    Se mide SIN la URL: el lector no lee la URL, lee la promesa.
-                    _lin = [l for l in b if _dom in l][0]
-                    _lin = re.sub(r'https?://\S+', '', _lin).strip()
-                    chk(len(_lin) <= 80, 'Spam ninja: la linea del enlace es corta (§4.4b)',
-                        '%d caracteres sin contar la URL. La del 0,415%% ocupa 69 y la '
-                        'del 0,172%%, que fusiona dolor y promesa en una sola linea, '
-                        'ocupa 101' % len(_lin) if len(_lin) > 80 else '')
-                    # 3) QUE PROMETE. El dolor validado por los clientes en reunion es
-                    #    ENCONTRAR AL CLIENTE IDEAL, empresa y persona. No el momento.
-                    #    El ninja de 0,415% dice "te marcamos quien va a comprar y
-                    #    cuando": identifica primero. El de 0,017% dice "de montar esa
-                    #    lista nos encargamos nosotros": no identifica a nadie.
-                    _blo = ' '.join(b).lower()
-                    _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)
-                    chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
-                        'el bloque no nombra a quien vas a encontrar. El momento es el '
-                        'dolor secundario: los clientes compran la identificacion de la '
-                        'empresa y la persona' if not _iden else '')
-                    break
-            # post-workflow §4.4 Paso 5 — SI HAY SPAM NINJA, EL CIERRE NO ES OTRO CTA.
-            # Aunque global §4.4b diga que el spam ninja no consume la regla del UNO,
-            # en la practica compite: el que iba a clicar se va a comentar, y la
-            # prioridad es el clic. El cierre es un bold statement, no otro CTA.
-            m = re.search(r'\b(etiqueta|etiquetad|menciona|comenta|comparte)\w*\b', cuerpo, re.I)
-            chk(not m, 'Con spam ninja, el cierre NO es otro CTA (§4.4 Paso 5)',
-                f'"{m.group(0)}" apila un 2o CTA sobre el enlace. Cierra con bold statement'
-                if m else '')
+    # ⛔ ESTE BLOQUE VA FUERA DEL `if pilar in (mapa/los10/meme/evento)` (2026-08-12).
+    # Estaba DENTRO, asi que en HISTORIA (y en cualquier pilar de prosa con enlace)
+    # no se comprobaba ninguna regla del ninja: ni el https, ni que no nombre la
+    # marca, ni que no sea la ultima linea, ni el caracter 650. Y el comentario del
+    # check del 650 ya decia 'historia' expresamente, o sea que la regla estaba
+    # escrita y era inalcanzable. Al sacarlo, la primera historia validada fallo el
+    # 650 a la primera. Si algun dia se vuelve a tocar: el gate por pilar es solo
+    # para 'Spam ninja presente'; las reglas de COMO se escribe el ninja valen para
+    # cualquier post que lleve enlace.
+    if tiene_link:
+        # El enlace SIEMPRE con https:// delante, o LinkedIn puede no detectarlo
+        # como clicable (Iker, 2026-07-22). Mismo criterio que los DMs.
+        # Que dominio hace de CTA en ESTE post: en evento es luma.com, en el
+        # resto recursos.neety.com. Antes estaba escrito a fuego y al meter el
+        # pilar evento esto reventaba con StopIteration (Iker, 2026-08-05).
+        _dom = 'luma.com' if (pilar == 'evento' and 'luma.com' in cuerpo) else 'recursos.neety.com'
+        _bare_link = re.search(r'(?<!https://)' + re.escape(_dom), cuerpo)
+        chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
+            f'falta https:// delante de {_dom}' if _bare_link else '')
+        chk('Neety' not in cuerpo.split(_dom)[0].split('\n')[-1],
+            'Spam ninja NO nombra a Neety (§4.4b)', 'nombrar la marca = publicidad encubierta')
+        lineas = [l for l in cuerpo.split('\n') if l.strip()]
+        idx = next(i for i, l in enumerate(lineas) if _dom in l)
+        chk(idx != len(lineas) - 1, 'Spam ninja NO es la última línea (§4.4b)',
+            'el cierre va después' if idx == len(lineas) - 1 else '')
+        for i, b in enumerate(bs):
+            if any(_dom in l for l in b):
+                # El spam ninja va FUSIONADO: la broma pegada al CTA + enlace,
+                # máx 2 líneas (Iker, 2026-07-22). Antes se exigía separarlas
+                # con un blanco; ahora se permite el bloque de 2 (broma / CTA+link)
+                # y también el de 1. Lo que NO vale es un bloque de 3+.
+                # ⛔ EXACTAMENTE DOS: DOLOR ARRIBA, ENLACE ABAJO (Iker, 2026-08-10).
+                # Era 'max 2' y colaba la linea suelta. Medido en clics, el bloque
+                # de dos gana en los DOS pilares donde aparece: el meme del 29/07
+                # (0,151%, el mejor meme) y el mapa del 14/07 (0,415%, el mejor
+                # enlace de venta de la casa). Las cinco lineas sueltas van de
+                # 0,094% a 0,017%. Ninguna llega al peor de los dos bloques.
+                #
+                # No choca con la regla del 07/08 ('una sola oracion + dos puntos
+                # + enlace, todo pegado'): esa manda sobre la LINEA DEL ENLACE, y
+                # el meme del 29/07 la cumple. Lo que se anade es la linea de dolor
+                # ENCIMA, en el mismo bloque.
+                # ⚠️ Y EL DOLOR PUEDE IR PEGADO CON SALTO SIMPLE O CON LINEA EN
+                # BLANCO. Lo intente como 'bloque de exactamente 2' y suspendia al
+                # mapa del 14/07, que es EL MEJOR de la casa (0,415%): el separa sus
+                # dos lineas con un blanco. El meme del 29/07 las junta con salto
+                # simple. Las dos formas ganan; lo que ninguna de las dos hace es
+                # soltar el enlace sin nada delante.
+                _prev = b[-2] if len(b) >= 2 else (bs[i - 1][-1] if i > 0 else '')
+                chk(len(b) <= 2 and len(_prev.strip()) > 0,
+                    'Spam ninja: hay una linea de dolor pegada al enlace (§4.4b)',
+                    '%d lineas en el bloque' % len(b) if len(b) > 2
+                    else 'el enlace abre el post sin dolor delante')
+                # Y la de abajo es la mas CORTA de las dos. Es el orden del corpus
+                # de email: linea larga de valor y remate corto justo antes del
+                # enlace, para que caiga como punto final. Nuestros dos ganadores lo
+                # hacen (52→49 y 73→69 caracteres), pero por 3-4 caracteres, asi que
+                # va de AVISO: sirve para desempatar, no es ley.
+                if len(b) == 2:
+                    _arriba = len(b[0])
+                    _abajo = len(re.sub(r'https?://\S+', '', b[1]).strip())
+                    chk(_abajo <= _arriba, 'Spam ninja: la linea del enlace no es mas larga que la de arriba (§4.4b)',
+                        'arriba %d, abajo %d. En el cuerpo la escalera va de corto a '
+                        'largo; en el cierre, al reves' % (_arriba, _abajo)
+                        if _abajo > _arriba else '', aviso=True)
+                # ⛔ LOS TRES DE ABAJO SALEN DE MEDIR LOS CLICS REALES (2026-08-10).
+                # El mapa es el pilar que mas convierte (mediana 84 clics, CTR
+                # 0,315%) y el meme el segundo (0,151%), pero el meme del 06/08
+                # saco 13 clics con 77.006 impresiones: 0,017%, el peor CTR del
+                # ano con alcance real. Los tres motivos, medidos:
+                #
+                # 1) DONDE CAE EL ENLACE. En los 6 memes con datos, los 4 que
+                #    ponen el enlace antes del caracter 511 dan 0,050-0,151%; los
+                #    2 que lo pasan de 650 dan 0,042% y 0,017%. Son justo los dos
+                #    cuerpos mas largos. El cuerpo largo gana interaccion y pierde
+                #    clics: para cuando llega el enlace, ya se han ido.
+                #    OJO: solo aplica donde el cuerpo es PROSA. En el mapa y en
+                #    los 10 la lista de empresas empuja el enlace mucho mas alla
+                #    del 650 y aun asi convierten (el mapa de Asier del 14/07 lo
+                #    pone en el 1.400 y saca 0,415%): alli la lista ES el contenido
+                #    y el lector la baja entera. En prosa, no.
+                _pos = cuerpo.find(_dom) if pilar in ('meme', 'historia', 'entregable') else 0
+                chk(_pos <= 650, 'Spam ninja: el enlace cae antes del caracter 650 (§4.4b)',
+                    'el enlace cae en el %d. Los 2 unicos posts que lo pasaron de 650 '
+                    'son los 2 peores CTR del ano (0,042%% y 0,017%%) frente al '
+                    '0,050-0,151%% de los que lo ponen antes del 511' % _pos
+                    if _pos > 650 else '')
+                # 2) EL ENLACE VA EN LA SEGUNDA LINEA Y ESA LINEA ES CORTA. El
+                #    bloque de dos (dolor / promesa corta + enlace) da 0,415% en el
+                #    mapa de Asier del 14/07. Fusionarlo todo en UNA linea larga da
+                #    0,172% (Unai 07/07). Iker, 2026-08-10: "que el enlace siempre
+                #    este en la segunda linea, que esa linea sea corta y punchy".
+                #    Se mide SIN la URL: el lector no lee la URL, lee la promesa.
+                _lin = [l for l in b if _dom in l][0]
+                _lin = re.sub(r'https?://\S+', '', _lin).strip()
+                chk(len(_lin) <= 80, 'Spam ninja: la linea del enlace es corta (§4.4b)',
+                    '%d caracteres sin contar la URL. La del 0,415%% ocupa 69 y la '
+                    'del 0,172%%, que fusiona dolor y promesa en una sola linea, '
+                    'ocupa 101' % len(_lin) if len(_lin) > 80 else '')
+                # 3) QUE PROMETE. El dolor validado por los clientes en reunion es
+                #    ENCONTRAR AL CLIENTE IDEAL, empresa y persona. No el momento.
+                #    El ninja de 0,415% dice "te marcamos quien va a comprar y
+                #    cuando": identifica primero. El de 0,017% dice "de montar esa
+                #    lista nos encargamos nosotros": no identifica a nadie.
+                _blo = ' '.join(b).lower()
+                _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)
+                chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
+                    'el bloque no nombra a quien vas a encontrar. El momento es el '
+                    'dolor secundario: los clientes compran la identificacion de la '
+                    'empresa y la persona' if not _iden else '')
+                break
+        # post-workflow §4.4 Paso 5 — SI HAY SPAM NINJA, EL CIERRE NO ES OTRO CTA.
+        # Aunque global §4.4b diga que el spam ninja no consume la regla del UNO,
+        # en la practica compite: el que iba a clicar se va a comentar, y la
+        # prioridad es el clic. El cierre es un bold statement, no otro CTA.
+        m = re.search(r'\b(etiqueta|etiquetad|menciona|comenta|comparte)\w*\b', cuerpo, re.I)
+        chk(not m, 'Con spam ninja, el cierre NO es otro CTA (§4.4 Paso 5)',
+            f'"{m.group(0)}" apila un 2o CTA sobre el enlace. Cierra con bold statement'
+            if m else '')
 
     # global §2.10 — EL CIERRE PUNCHY ES UNA SOLA LINEA. Dos oraciones largas al
     # final diluyen el remate: un cierre no admite explicacion detras.
