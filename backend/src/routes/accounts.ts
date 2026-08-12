@@ -2848,8 +2848,9 @@ router.get('/lead-magnet/followups', async (req: Request, res: Response) => {
     }
     const { rows } = await pool.query(
       `SELECT s.post_id, s.provider_id, s.provider_name, s.sector, s.followup_text,
-              s.comment_social_id, s.created_at,
-              p.hook_text, p.content_text, c.id AS creator_id, c.name AS creator_name
+              s.comment_social_id, s.created_at, s.text AS invite_text,
+              p.hook_text, p.content_text, c.id AS creator_id, c.name AS creator_name,
+              c.unipile_account_id
          FROM lead_magnet_sends s
          JOIN posts p ON p.id = s.post_id
          JOIN creators c ON c.id = p.creator_id
@@ -2863,7 +2864,62 @@ router.get('/lead-magnet/followups', async (req: Request, res: Response) => {
         ORDER BY s.created_at DESC`,
       params
     );
-    res.json({ followups: rows });
+
+    // ⛔ ¿YA LE LLEGÓ EL RECURSO EN LA PROPIA NOTA? (Iker, 2026-08-12)
+    //
+    // `buildInviteNote` mete el enlace DENTRO de la nota de la invitación, y su
+    // comentario dice literalmente "nunca quites el link". O sea que en un lead
+    // magnet normal, cuando la persona acepta, YA TIENE el recurso: no queda
+    // nada que mandarle. La `lista` es el caso contrario — su nota es un teaser
+    // porque las empresas no caben en 300 caracteres — y por eso guarda un
+    // `followup_text`, que es el segundo mensaje de verdad.
+    //
+    // Se mira el TEXTO REALMENTE ENVIADO y no el tipo de lead magnet: si algún
+    // día una invitación sale sin enlace, el seguimiento vuelve a ofrecerlo solo.
+    // Preguntarle al dato en vez de deducirlo del kind.
+    const conEnlace = (t: string | null) => !!t && /recursos\.neety\.com|lnkd\.in|https?:\/\//i.test(t);
+
+    // 🔧 Y EL NOMBRE, que estaba en null en TODAS las filas: el panel solo lo
+    // mandaba en el lead magnet de tipo "lista". Se resuelve contra Unipile por
+    // provider_id (la fuente autoritativa) y se GUARDA, asi que el coste se paga
+    // una vez por persona y no en cada carga.
+    const sinNombre = rows.filter((r: any) => !r.provider_name && r.unipile_account_id);
+    const resueltos = new Map<string, string>();
+    await Promise.all(
+      [...new Set(sinNombre.map((r: any) => r.provider_id as string))].map(async (pid) => {
+        const fila = sinNombre.find((r: any) => r.provider_id === pid);
+        try {
+          // getProfile acepta el provider_id tal cual: extractLinkedInIdentifier
+          // devuelve la entrada intacta cuando no es una URL de LinkedIn.
+          const u: any = await unipileService.getProfile(pid, fila.unipile_account_id);
+          const nombre = [u?.first_name, u?.last_name].filter(Boolean).join(' ').trim() || u?.name || null;
+          if (nombre) resueltos.set(pid, nombre);
+        } catch (e: any) {
+          // Que no se caiga la lista entera porque un perfil no responda: sin
+          // nombre se sigue pudiendo mandar el mensaje, que es lo importante.
+          console.warn(`[followups] no pude resolver el nombre de ${pid}:`, e?.message);
+        }
+      })
+    );
+    if (resueltos.size) {
+      await pool.query(
+        `UPDATE lead_magnet_sends SET provider_name = c.nombre
+           FROM (SELECT unnest($1::text[]) AS pid, unnest($2::text[]) AS nombre) c
+          WHERE lead_magnet_sends.provider_id = c.pid
+            AND lead_magnet_sends.provider_name IS NULL`,
+        [[...resueltos.keys()], [...resueltos.values()]]
+      );
+    }
+
+    res.json({
+      followups: rows.map(({ unipile_account_id, ...r }: any) => ({
+        ...r,
+        provider_name: r.provider_name || resueltos.get(r.provider_id) || null,
+        // true = la nota de la invitación ya llevaba el recurso, así que esta
+        // persona no tiene nada pendiente y el panel NO debe reofrecerle el link.
+        ya_entregado: !r.followup_text && conEnlace(r.invite_text),
+      })),
+    });
   } catch (err: any) {
     console.error('[accounts/lead-magnet/followups]', err);
     res.status(500).json({ error: err.message });

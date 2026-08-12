@@ -1012,10 +1012,18 @@ function CommenterCard({
           provider_id: thread.author.profile_id,
           kind,
           text: message.trim(),
-          // Solo en la INVITACIÓN de una lista: guarda la lista entera + el sector
-          // + el nombre, para el follow-up por DM cuando la persona acepte.
+          // ⛔ EL NOMBRE VA EN TODA INVITACIÓN, NO SOLO EN LA LISTA (Iker,
+          // 2026-08-12). Estaba dentro del `...(cfg.kind === 'lista' && …)`, así
+          // que en cualquier otro lead magnet se guardaba NULL y Seguimientos
+          // pintaba "Sin nombre" — imposible saber a quién estabas escribiendo.
+          // Nació así porque Seguimientos era solo de la lista; el 06/08 se
+          // generalizó a todos los pilares y este campo se quedó atrás.
+          ...(kind === 'invite' && thread.author.name ? { provider_name: thread.author.name } : {}),
+          // La lista guarda ADEMÁS su segundo mensaje y el sector: su nota es un
+          // teaser porque las empresas no caben en 300 caracteres, así que el DM
+          // de después es la entrega de verdad.
           ...(cfg.kind === 'lista' && kind === 'invite' && followupText
-            ? { followup_text: followupText, sector: sector.trim(), provider_name: thread.author.name }
+            ? { followup_text: followupText, sector: sector.trim() }
             : {}),
         }
       );
@@ -1331,6 +1339,10 @@ interface FollowupRow {
   // lead magnet normal el texto se monta aqui con el recurso de la palabra clave.
   followup_text: string | null;
   comment_social_id: string;
+  // true = la nota de la invitación YA llevaba el enlace del recurso, así que
+  // esta persona no tiene nada pendiente. Lo calcula el backend mirando el texto
+  // realmente enviado, no el tipo de lead magnet.
+  ya_entregado?: boolean;
 }
 
 // La sección de SEGUIMIENTOS del tipo "lista": los invitados (2º grado o más) a
@@ -1422,7 +1434,12 @@ function Seguimientos({ post, creatorId, cfg, voice }: {
   // luego los pendientes de aceptar; al final los ya enviados.
   const rank = (f: FollowupRow) => (sentIds.has(f.provider_id) ? 2 : accepted[f.provider_id] ? 0 : 1);
   const orden = [...followups].sort((a, b) => rank(a) - rank(b));
-  const listos = followups.filter((f) => accepted[f.provider_id] && !sentIds.has(f.provider_id)).length;
+  // Los que YA recibieron el recurso en la nota no cuentan como "listos para
+  // enviar": no hay nada que enviarles. El contador decía "1 listo" señalando a
+  // alguien a quien mandarle algo habría sido repetirse (Iker, 2026-08-12).
+  const listos = followups.filter(
+    (f) => accepted[f.provider_id] && !sentIds.has(f.provider_id) && !f.ya_entregado
+  ).length;
 
   return (
     <div className="bg-bg-card border border-accent/30 rounded-xl p-4 space-y-3">
@@ -1461,6 +1478,27 @@ function Seguimientos({ post, creatorId, cfg, voice }: {
           // ACEPTADO y sin enviar → el cuadro COMPLETO, arriba: la lista guardada,
           // editable, y el botón de mandarla. Es lo que el usuario pedía: que el
           // follow-up no viva perdido entre los comentarios, sino aquí.
+          // ⛔ EL QUE YA RECIBIÓ EL RECURSO EN LA NOTA NO TIENE NADA PENDIENTE
+          // (Iker, 2026-08-12). `buildInviteNote` mete el enlace DENTRO de la
+          // invitación, así que en un lead magnet normal la persona ya lo tiene
+          // cuando acepta. Aquí se le montaba igualmente un DM con el MISMO
+          // enlace y el botón decía "listo para enviar": mandarlo era escribirle
+          // dos veces lo mismo. Se queda visible —aceptar es buena señal y hay
+          // que verlo— pero sin caja de texto y sin botón de envío.
+          if (ok && f.ya_entregado) {
+            return (
+              <div key={f.provider_id} className="flex items-center gap-2 flex-wrap text-sm border-t border-border pt-2">
+                <span className="font-medium">{f.provider_name || 'Sin nombre'}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30">✓ te aceptó</span>
+                <span
+                  className="ml-auto text-[11px] text-text-muted"
+                  title="El enlace del recurso iba dentro de la nota de la invitación, así que ya lo tiene. Volver a mandarlo sería escribirle dos veces lo mismo."
+                >
+                  ya tiene el recurso · nada que enviar
+                </span>
+              </div>
+            );
+          }
           if (ok) {
             const val = texts[f.provider_id] ?? textFor(f);
             return (
