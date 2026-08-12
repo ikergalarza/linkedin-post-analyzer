@@ -82,6 +82,21 @@ interface RecursoDef extends Recurso {
 
 const CATALOGO: RecursoDef[] = [
   {
+    // La palabra vuelve a ser `vibe` (2026-08-12), pero ya no vive en el texto:
+    // va DENTRO de la imagen del post (post-workflow §4.5.0-CTA-IMAGEN), asi
+    // que al post nuevo de Unai lo reconocen las PISTAS, no extractKeyword.
+    // La clave se conserva igual por dos motivos: los comentarios que llegan
+    // dicen "vibe" (lo pide el banner de la foto) y el 632c de abril sigue en
+    // la herramienta con su comenta "vibe" dentro del texto.
+    link: 'https://recursos.neety.com/vibe/',
+    topic: 'cómo montar tu prospección con Claude',
+    claves: ['vibe'],
+    pistas: [
+      'vibe prospecting', 'puerta fria', 'tumbar la prospeccion',
+      'sistema completo', 'visto bueno',
+    ],
+  },
+  {
     link: 'https://recursos.neety.com/subvencion-euskadi/',
     topic: 'la subvención de IA para industria vasca',
     claves: ['subvencion'],
