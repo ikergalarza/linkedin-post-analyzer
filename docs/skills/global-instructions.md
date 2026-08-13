@@ -770,8 +770,16 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 
 **POR QUÉ FUNCIONA EL BLOQUE DE DOS, para no "simplificarlo" otra vez:** la línea de arriba es el **peaje emocional**. Sin ella el enlace aparece después de un blanco, aislado, y se lee como el banner de un anuncio, que es exactamente lo que el ojo ya sabe saltarse. Pegado a la broma se lee como el remate del chiste, y al remate del chiste no se le hace scroll.
 
-**LA BROMA SE SIGUE, NO SE ADORNA.** No vale reciclar una palabra por reciclarla: **los dos mejores ninjas de la casa no repiten NI UNA palabra del gancho** (29/07 `propuesta en visto` → `el que calla`; 31/07 el tatuaje, que sale de la imagen). Lo que se recoge es el **chiste**, no el vocabulario.
-- **El test, y es de cinco segundos:** tapa el post y lee solo las dos líneas. **Si valdrían pegadas a cualquier otra publicación nuestra, están mal.** `De montar esa lista nos encargamos nosotros` vale para los 200 posts que hemos hecho: por eso sacó 4 clics con 95.913 impresiones.
+**⛔⛔ LA BROMA SE REPITE CON SU PALABRA DENTRO, LITERAL (Iker, 2026-08-13).** *"Quiero que repitas explícitamente la broma o lo punchy del gancho siempre en el spam ninja"*. Si el gancho dice `diccionario`, **la palabra `diccionario` aparece dentro del bloque del ninja**. No vale girar el chiste de lejos con otro vocabulario.
+
+> 🔴 **AQUÍ PONÍA LO CONTRARIO, y era mío.** El párrafo anterior decía *"los dos mejores ninjas de la casa no repiten NI UNA palabra del gancho, lo que se recoge es el chiste y no el vocabulario"*. Eso era una **observación mía** sacada de mirar dos posts (`working-preferences §0c`: mis deducciones no son reglas), y encima **se contradecía con la subsección de aquí abajo**, la del ninja sin broma, que desde el 12/08 sí obliga a repetir el OBJETO y el VERBO tal cual. Con las dos escritas, el ninja del meme del 13/08 salió colgado de una palabra de la IMAGEN (`la lista`) en vez de la del gancho. **Iker unifica las dos reglas en una: la palabra se repite siempre, haya chiste o no.**
+
+**Por qué la palabra literal y no solo el chiste:** el gancho es lo único que el lector ha leído seguro, y **la palabra repetida es la señal de que el ninja pertenece al post**. Sin ella, el bloque aparece a mitad de texto con vocabulario nuevo y el ojo lo trata como banner. Con ella se lee como el remate del chiste, y al remate del chiste no se le hace scroll.
+
+- **Repetir la palabra es el SUELO, no el techo.** Encima hay que **girar la broma contra el dolor**, normalmente en la forma *"eso lo hace cualquiera, lo otro no"*. Citar la palabra sin girar nada es peor que no citarla.
+- **El test, y es de cinco segundos:** tapa el post y lee solo las dos líneas. **Si valdrían pegadas a cualquier otra publicación nuestra, están mal**, aunque lleven la palabra dentro. `De montar esa lista nos encargamos nosotros` vale para los 200 posts que hemos hecho: por eso sacó 4 clics con 95.913 impresiones.
+- **Ejemplo del 13/08 (meme de Unai):** gancho `El diccionario cierra más ventas que el teléfono` → ninja `Un nombre nuevo lo saca el diccionario, el de quien paga no.` La palabra está, y encima el chiste se vuelve del revés: lo que el diccionario sí da contra lo que no da.
+- **Mecanizado como FALLO DURO** en `validar-post.py` (`Spam ninja: REPITE una palabra del gancho, literal`), en todos los pilares menos mapa. Compara por raíz de 5 letras y sin tildes, así que el `plantó` del gancho casa con el `planta` del ninja.
 
 ##### 🎯 ¿Y SI EL POST NO TIENE BROMA? SE SIGUE LO MÁS PUNCHY DEL GANCHO: SU OBJETO Y SU VERBO (Iker, 2026-08-12)
 

@@ -1058,29 +1058,46 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 #    El ninja de 0,415% dice "te marcamos quien va a comprar y
                 #    cuando": identifica primero. El de 0,017% dice "de montar esa
                 #    lista nos encargamos nosotros": no identifica a nadie.
-                # 4) QUE SIGA LA BROMA DEL GANCHO. Es la regla 3 de §4.4b desde
-                #    siempre y es la que mas se salta, porque el script solo miraba la
-                #    forma. No se puede exigir por lexico: los dos mejores ninjas de la
-                #    casa reciclan el chiste sin repetir una sola palabra del gancho
-                #    (29/07: "en visto" -> "el que calla"; 31/07: el tatuaje sale de la
-                #    IMAGEN). Asi que va de AVISO, con las palabras del gancho delante
-                #    para que la respuesta sea consciente y no un reflejo.
+                # 4) QUE REPITA LA PALABRA DEL GANCHO, LITERAL. Iker, 2026-08-13:
+                #    "quiero que repitas explicitamente la broma o lo punchy del gancho
+                #    siempre en el spam ninja". Esto era un AVISO porque yo habia escrito
+                #    que "no se puede exigir por lexico", apoyandome en que los dos
+                #    mejores ninjas reciclan el chiste sin repetir palabra. Esa
+                #    observacion era MIA y ademas chocaba con la regla del ninja SIN
+                #    broma (§4.4b, 12/08), que si obliga a repetir el OBJETO y el VERBO.
+                #    Iker unifica las dos: la palabra se repite SIEMPRE, haya chiste o
+                #    no. Y en cuanto es literal, ya es lexico y pasa a FALLO DURO.
+                #    Se compara por raiz de 5 letras sin tildes, para que el "planto" del
+                #    gancho case con el "planta" del ninja.
                 _stop = {'para', 'como', 'desde', 'entre', 'cuando', 'porque', 'sobre',
                          'todos', 'todas', 'nadie', 'nunca', 'siempre', 'tambien',
                          'tampoco', 'estar', 'tener', 'hacer', 'decir', 'quiere',
                          'queria', 'vender', 'ventas'}
+
+                def _sinac(_s):
+                    for _a, _b in zip('áéíóúñ', 'aeioun'):
+                        _s = _s.replace(_a, _b)
+                    return _s
                 _pal = [w for w in re.findall(r'[a-záéíóúñ]{5,}', hook_txt.lower())
-                        if w not in _stop]
-                chk(False, 'ENTREGA: el ninja sigue la BROMA del gancho, o su OBJETO y su VERBO (§4.4b regla 3)',
-                    'el gancho habla de: ' + ', '.join(_pal[:6]) + '. Las dos lineas del ninja '
-                    'giran ESE chiste, no sueltan una frase de catalogo. Y SI EL POST NO TIENE '
-                    'BROMA (historia, mapa, despiece), se recoge lo mas punchy del gancho: su '
-                    'OBJETO y su VERBO, normalmente en la forma "eso lo hace cualquiera, lo otro '
-                    'no" (ej.: gancho "me planto el portatil delante" -> ninja "un portatil lleno '
-                    'de filas lo planta cualquiera, el nombre de dentro no"). Test: tapa el post y '
-                    'lee solo las dos lineas; si valdrian pegadas a cualquier otra publicacion '
-                    'nuestra, estan mal. Medido: los que reciclan el gancho dan 0,151-0,209%; '
-                    'los genericos, 0,004-0,029%', aviso=True)
+                        if _sinac(w) not in _stop]
+                _raiz = _sinac(' '.join(b).lower())
+                _eco = [w for w in _pal if _sinac(w)[:5] in _raiz]
+                chk(_mapa or bool(_eco),
+                    'Spam ninja: REPITE una palabra del gancho, literal (§4.4b regla 3)',
+                    ('el gancho habla de: ' + ', '.join(_pal[:6]) + ', y el ninja no recoge '
+                     'ninguna. No basta con girar el chiste de lejos: la palabra que carga la '
+                     'broma va DENTRO del bloque, tal cual. Si el post no tiene broma (historia, '
+                     'mapa, despiece) se repiten el OBJETO y el VERBO del gancho (gancho "me '
+                     'planto el portatil delante" -> ninja "un portatil lleno de filas lo planta '
+                     'cualquiera, el nombre de dentro no"). Medido: los que reciclan el gancho '
+                     'dan 0,151-0,209%; los genericos, 0,004-0,029%')
+                    if not _eco else 'recoge del gancho: ' + ', '.join(_eco[:3]))
+                chk(False, 'ENTREGA: repetir la palabra es el suelo, el ninja tiene que GIRAR el chiste',
+                    'que la palabra este dentro lo comprueba el check de arriba. Encima, las dos '
+                    'lineas tienen que volver esa broma CONTRA el dolor, normalmente en la forma '
+                    '"eso lo hace cualquiera, lo otro no". Test: tapa el post y lee solo las dos '
+                    'lineas; si valdrian pegadas a cualquier otra publicacion nuestra, estan mal '
+                    'aunque lleven la palabra del gancho dentro', aviso=True)
                 _blo = ' '.join(b).lower()
                 _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)
                 chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
