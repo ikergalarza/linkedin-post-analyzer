@@ -14,6 +14,7 @@ process.on('unhandledRejection', (err: any) => {
 });
 
 import { runMigrations } from './db/migrate';
+import { reclassifyIfRulesChanged } from './services/pillarBackfill';
 import creatorsRouter from './routes/creators';
 import postsRouter from './routes/posts';
 import analysisRouter from './routes/analysis';
@@ -109,6 +110,10 @@ runMigrations()
       console.log(`Backend running on port ${PORT}`);
     });
     startPostMonitor();
+    // Reprocesa el pilar del historico SOLO si han cambiado las reglas de
+    // services/pillar.ts (guarda de version en app_state). No bloquea el
+    // arranque y no corre a diario: el disparador es el cambio de reglas.
+    void reclassifyIfRulesChanged();
   })
   .catch((err) => {
     console.error('Failed to run migrations:', err);

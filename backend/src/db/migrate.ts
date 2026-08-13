@@ -729,6 +729,17 @@ const migration = `
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS pillar TEXT;
   CREATE INDEX IF NOT EXISTS idx_posts_pillar ON posts (pillar) WHERE pillar IS NOT NULL;
 
+  -- Estado interno del backend, clave-valor. Nace para una sola cosa
+  -- (2026-08-13): guardar con que VERSION de las reglas de services/pillar.ts
+  -- se clasifico el historico por ultima vez, para reprocesar al desplegar
+  -- solo si esas reglas han cambiado. Sin esto, la alternativa era reclasificar
+  -- en cada arranque, que reescribe 47k filas para nada.
+  CREATE TABLE IF NOT EXISTS app_state (
+    key        TEXT PRIMARY KEY,
+    value      TEXT NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+
   -- v34: CICLO DE VIDA DEL OUTLIER.
   --
   -- El problema: is_outlier es un booleano que se recalcula ENTERO en cada

@@ -34,6 +34,22 @@
  * post se quedo etiquetado `meme` hasta que Iker lo vio en la parrilla.
  */
 
+/**
+ * VERSION DE LAS REGLAS. Se sube A MANO cada vez que se cambia como clasifica
+ * este fichero, y solo entonces.
+ *
+ * Para que sirve: al arrancar, el backend compara esta cadena con la ultima
+ * guardada en `app_state`. Si son distintas reprocesa el historico UNA vez y
+ * apunta la nueva; si son iguales no toca nada. Asi se cumplen las dos cosas
+ * que pidio Iker (2026-08-13): que **cada despliegue reprocese solo** cuando
+ * hay reglas nuevas, y que **NO se reclasifique cada dia** cuando no las hay.
+ *
+ * ⚠️ Si cambias una regla y NO subes la version, el historico se queda con las
+ * etiquetas viejas — que es exactamente lo que paso el 13/08 con la historia
+ * de Iker: el fix llego 9 minutos despues de publicar y nadie reproceso.
+ */
+export const PILLAR_RULES_VERSION = '2026-08-13.preteritos-historia';
+
 export type Pillar =
   | 'peloteo_mapa'
   | 'peloteo_los10'

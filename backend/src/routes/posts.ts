@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { unipileService } from '../services/unipile';
-import { classifyPillar } from '../services/pillar';
+import { reclassifyAllPosts } from '../services/pillarBackfill';
 import pool from '../db';
 
 function paramId(req: Request): string {
@@ -48,48 +48,19 @@ router.patch('/:id/pillar', async (req: Request, res: Response) => {
   }
 });
 
+// El trabajo vive en services/pillarBackfill.ts y NO se duplica aqui: el
+// arranque del backend reprocesa con la misma funcion cuando cambian las reglas
+// (Iker, 2026-08-13). Dos copias de esto acabarian divergiendo, que es
+// exactamente el fallo que ya nos comimos entre el clasificador y el validador.
 router.post('/classify-pillars', async (req: Request, res: Response) => {
   try {
-    const soloVacios = req.query.only_missing === 'true';
-    const { rows } = await pool.query(
-      `SELECT id, content_text, reaction_mix, content_type, pillar
-         FROM posts
-        WHERE linkedin_post_id <> 'DEMO_LIVE_POST'
-          AND pillar_manual IS NOT TRUE
-          ${soloVacios ? 'AND pillar IS NULL' : ''}`
-    );
-
-    const conteo: Record<string, number> = {};
-    const cambios: { id: string; pilar: string }[] = [];
-    for (const r of rows) {
-      const pilar = classifyPillar({
-        content_text: r.content_text,
-        reaction_mix: r.reaction_mix,
-        content_type: r.content_type,
-      });
-      conteo[pilar] = (conteo[pilar] || 0) + 1;
-      if (pilar !== r.pillar) cambios.push({ id: r.id, pilar });
-    }
-
-    // UNA sentencia, no una por fila. Con el UPDATE dentro del bucle esto eran
-    // ~250 idas y vueltas a Postgres y la ruta devolvia 502 por timeout del
-    // proxy: era inservible justo el dia que hizo falta (Iker, 2026-08-10).
-    // Ademas solo se escriben las filas que CAMBIAN, que suelen ser una o dos.
-    if (cambios.length) {
-      await pool.query(
-        `UPDATE posts SET pillar = c.pilar
-           FROM (SELECT unnest($1::uuid[]) AS id, unnest($2::text[]) AS pilar) c
-          WHERE posts.id = c.id`,
-        [cambios.map((c) => c.id), cambios.map((c) => c.pilar)]
-      );
-    }
-
+    const r = await reclassifyAllPosts({ soloVacios: req.query.only_missing === 'true' });
     res.json({
       ok: true,
-      revisados: rows.length,
-      escritos: cambios.length,
-      por_pilar: conteo,
-      cambios: cambios.slice(0, 50),
+      revisados: r.revisados,
+      escritos: r.escritos,
+      por_pilar: r.por_pilar,
+      cambios: r.cambios.slice(0, 50),
     });
   } catch (err: any) {
     console.error('classify-pillars error:', err);
