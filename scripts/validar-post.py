@@ -1062,11 +1062,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                          'queria', 'vender', 'ventas'}
                 _pal = [w for w in re.findall(r'[a-záéíóúñ]{5,}', hook_txt.lower())
                         if w not in _stop]
-                chk(False, 'ENTREGA: el ninja tiene que seguir la BROMA del gancho (§4.4b regla 3)',
+                chk(False, 'ENTREGA: el ninja sigue la BROMA del gancho, o su OBJETO y su VERBO (§4.4b regla 3)',
                     'el gancho habla de: ' + ', '.join(_pal[:6]) + '. Las dos lineas del ninja '
-                    'giran ESE chiste, no sueltan una frase de catalogo. Test: tapa el post y lee '
-                    'solo las dos lineas; si valdrian pegadas a cualquier otra publicacion '
-                    'nuestra, estan mal. Medido: los que reciclan el chiste dan 0,151-0,209%; '
+                    'giran ESE chiste, no sueltan una frase de catalogo. Y SI EL POST NO TIENE '
+                    'BROMA (historia, mapa, despiece), se recoge lo mas punchy del gancho: su '
+                    'OBJETO y su VERBO, normalmente en la forma "eso lo hace cualquiera, lo otro '
+                    'no" (ej.: gancho "me planto el portatil delante" -> ninja "un portatil lleno '
+                    'de filas lo planta cualquiera, el nombre de dentro no"). Test: tapa el post y '
+                    'lee solo las dos lineas; si valdrian pegadas a cualquier otra publicacion '
+                    'nuestra, estan mal. Medido: los que reciclan el gancho dan 0,151-0,209%; '
                     'los genericos, 0,004-0,029%', aviso=True)
                 _blo = ' '.join(b).lower()
                 _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)

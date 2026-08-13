@@ -773,6 +773,20 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 **LA BROMA SE SIGUE, NO SE ADORNA.** No vale reciclar una palabra por reciclarla: **los dos mejores ninjas de la casa no repiten NI UNA palabra del gancho** (29/07 `propuesta en visto` → `el que calla`; 31/07 el tatuaje, que sale de la imagen). Lo que se recoge es el **chiste**, no el vocabulario.
 - **El test, y es de cinco segundos:** tapa el post y lee solo las dos líneas. **Si valdrían pegadas a cualquier otra publicación nuestra, están mal.** `De montar esa lista nos encargamos nosotros` vale para los 200 posts que hemos hecho: por eso sacó 4 clics con 95.913 impresiones.
 
+##### 🎯 ¿Y SI EL POST NO TIENE BROMA? SE SIGUE LO MÁS PUNCHY DEL GANCHO: SU OBJETO Y SU VERBO (Iker, 2026-08-12)
+
+**Media parrilla no es meme.** Una historia, un mapa o un despiece no llevan chiste, y ahí la regla de arriba se quedaba coja: "seguir la broma" no se puede cumplir si no hay broma, y por ese hueco se cuela la frase de catálogo. Iker: *"si no hay broma, pues aprovechar y seguir lo más punchy del gancho en el spam ninja"*.
+
+**Lo más punchy de un gancho son siempre las mismas dos piezas** (`§2.0a`, que pide objeto físico + verbo con techo): **el OBJETO que pinta la imagen mental y el VERBO que frena el scroll.** Esas dos son las que se recogen.
+
+1. **Subraya el objeto y el verbo del gancho.** *"Le pregunté a qué empresas quería vender y me **plantó** el **portátil** delante"* → objeto `portátil`, verbo `plantar`.
+2. **La línea de dolor los reutiliza girados contra el lector**, normalmente en la forma *"eso lo hace cualquiera, lo otro no"*: *"Un **portátil** lleno de filas lo **planta** cualquiera, el nombre de dentro no."*
+3. **La línea del enlace resuelve exactamente lo que la de arriba dice que falta**, y ahí ya se habla de identificación: *"Ese nombre lo ponemos nosotros, con su teléfono: {link}"*.
+
+**Por qué esto no es adorno:** el gancho es lo único que el lector ha leído seguro (`§2.0`, el corte del "ver más"). Si el ninja usa su objeto y su verbo, el lector reconoce de dónde viene y lo lee como el remate del post. Si usa vocabulario nuevo, el ninja aparece como un cuerpo extraño a mitad del texto, que es cuando el ojo lo trata como banner.
+
+**⛔ Y aquí no se relaja el techo del verbo (`§2.9`):** se reutiliza el mismo verbo del gancho o uno de su familia, no se sube un peldaño más para "mejorarlo". El punch ya estaba elegido arriba; en el ninja solo se recoge.
+
 **Mecanizado en `validar-post.py`**, y hacía falta porque **la regla ya existía desde el 10/08 y los dos memes pasaron con 43/43**: el check aceptaba la línea suelta porque, al no haber línea encima dentro del bloque, cogía como "dolor" la última línea del bloque **anterior**, que casi nunca está vacía. Ahora son dos checks: **`DOS lineas pegadas`** (fallo duro, todos los pilares menos mapa) y **`el ninja tiene que seguir la BROMA del gancho`** (aviso de entrega que imprime las palabras del gancho, porque esto es criterio y por léxico no se puede exigir).
 
 **La única excepción sigue siendo el MAPA**, con su ultra ninja de una línea (`Mapa completo aquí: …`), que es de otra naturaleza y está medido aparte.
