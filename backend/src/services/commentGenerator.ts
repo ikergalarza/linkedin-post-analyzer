@@ -120,6 +120,12 @@ The commenter voice profile below is not a suggestion. It is HARD CONSTRAINTS.
 - Each comment must feel like a DIFFERENT angle. If two comments sound similar, you failed.
 - The contrarian types MUST sound noticeably different in tone. "contrarian_data" is numbers-driven, "contrarian_premise" is philosophical, "contrarian_survivorship" is statistical/probabilistic.
 
+★ PUNCTUATION OF A REAL PERSON (brand-voice §3, applies to comments too — this block was MISSING here and only lived in the supportive generator):
+- NEVER an em dash or en dash. No "—", no "–". Use a full stop or a comma. It is the single clearest tell of AI writing.
+- NEVER a colon. No ":" anywhere in the comment (Iker, 2026-08-12). Nobody typing a quick comment on their phone sets up a clause and then announces it with a colon. Use a comma, or two short sentences.
+- NEVER a comma directly before "y" or "e". A comma before "pero" is fine and natural.
+- No markdown of any kind.
+
 Return ONLY a JSON object with keys: ${COMMENT_KEYS.map(k => `"${k}"`).join(', ')}. No markdown fences, no explanation.`;
 
 function detectLanguageHint(text: string): string {
@@ -278,7 +284,8 @@ LENGTH: MAX 2 lines, ≤ 180 characters each. Tight beats verbose. One sharp sen
 ★ FIVE DIFFERENT PEOPLE WILL POST THESE. This is the rule everything else hangs off. Each comment is pasted by a DIFFERENT human being into the same thread, under their own name and face. If a reader scrolls the comments and feels they were all written by the same hand, the whole thing backfires and looks coordinated. So vary the register, the length, the opening move and the level of formality between them. One can be almost telegraphic. Another can be a small personal aside.
 
 ★ PUNCTUATION OF A REAL PERSON (this is non-negotiable, our brand voice forbids it):
-- NEVER an em dash or en dash. No "—", no "–". Use a full stop, a comma or a colon. This rule has been broken before and it is the single clearest tell of AI writing.
+- NEVER an em dash or en dash. No "—", no "–". Use a full stop or a comma. This rule has been broken before and it is the single clearest tell of AI writing.
+- NEVER a colon. No ":" anywhere in the comment (Iker, 2026-08-12). It reads as AI. Nobody writing a quick comment on their phone sets up a clause and then announces it with a colon. Use a comma, or split it into two short sentences. ⚠️ This line used to say "use a full stop, a comma or a colon" — the prompt itself was teaching the tell.
 - NEVER a comma directly before "y" or "e". A comma before "pero" is fine.
 - No markdown of any kind. No bold, no bullets, no numbered lists.
 - Do not open with an emoji. At most ONE emoji, in at most one of the ${n}, and only if it lands naturally.
