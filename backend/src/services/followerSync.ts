@@ -180,12 +180,22 @@ export async function runFollowerSync(
   state.last_error = null;
 
   void (async () => {
+    const fallos: string[] = [];
     try {
       for (const c of creators) {
         try {
           await syncOneCreator(c);
         } catch (err: any) {
-          state.last_error = `${c.name}: ${err?.message}`.slice(0, 300);
+          // ⛔ SE ACUMULAN TODOS LOS FALLOS, NO SOLO EL ULTIMO (2026-08-13).
+          // Esto era `state.last_error = ...` a secas, asi que cada creador
+          // pisaba el error del anterior y en pantalla solo quedaba UNO. Como
+          // el bucle va `ORDER BY name` (Asier, Iker, Unai), el superviviente
+          // era siempre Unai, y un fallo GLOBAL —el limit_too_high de
+          // `/users/followers`, que reventaba en los tres— se leia como "le
+          // pasa algo a la cuenta de Unai". Un error que miente sobre a quien
+          // le pasa cuesta mas caro que no tener error.
+          fallos.push(`${c.name}: ${err?.message}`);
+          state.last_error = fallos.join(' · ').slice(0, 300);
           console.error(`[followerSync] ${c.name} failed:`, err?.message);
         }
         state.creators_done++;

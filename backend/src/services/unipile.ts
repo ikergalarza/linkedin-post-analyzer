@@ -1032,8 +1032,20 @@ export class UnipileService {
   ): Promise<{ followers: any[]; reachedKnown: boolean; pages: number }> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) throw new Error('No Unipile account_id available for followers fetch');
-    const pageSize = opts.pageSize ?? 100;
-    const maxPages = opts.maxPages ?? 200; // 200 × 100 = 20k followers ceiling
+    // ⛔ 50 ES EL TECHO DEL PROVEEDOR EN ESTE ENDPOINT, NO UNA PREFERENCIA
+    // (medido el 2026-08-13 contra las 3 cuentas). Estaba en 100 y Unipile
+    // respondia 400 `errors/limit_too_high` — "Provider cannot accept such high
+    // pagination limit" — en TODAS, asi que el sync de seguidores llevaba
+    // roto desde entonces para los tres jefes, no solo para uno.
+    // El corte esta acotado a mano: 50 pasa, 51 ya falla. Nada de 64 ni de 75.
+    // ⚠️ Y NO se puede copiar el limite de otro endpoint: `/users/relations`
+    // acepta 100 sin rechistar (probado el mismo dia) y `/posts/{id}/reactions`
+    // tambien. El tope es POR ENDPOINT.
+    const pageSize = opts.pageSize ?? 50;
+    // 400 × 50 = 20k, el mismo techo de seguidores que habia con 200 × 100. Al
+    // bajar el tamaño de pagina hay que subir las paginas o el techo se parte
+    // por la mitad sin que nadie se entere.
+    const maxPages = opts.maxPages ?? 400;
     const knownIds = opts.knownIds;
 
     const followers: any[] = [];
