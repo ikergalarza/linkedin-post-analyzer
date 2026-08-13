@@ -1505,6 +1505,22 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # remate con una LECCIÓN corta. En la BD se eligen por likes >> comentarios
         # (si comentarios > likes es un lead magnet disfrazado, no una historia).
         h = hook_txt.strip()
+        # ⛔ EN HISTORIA, EL GANCHO VA EN UNA SOLA ORACION (Iker, 2026-08-12).
+        # global §2.10 permite una o dos en cualquier pilar; aqui se aprieta a UNA
+        # y solo aqui, asi que vive en el runbook (§4.6) y no en global. El motivo
+        # es del pilar: la historia entra por una ESCENA, y una escena partida en
+        # dos frases se lee como resumen. El punto de en medio mete una pausa antes
+        # de que el lector se haya metido dentro. Se condensa con "y", con coma o
+        # con gerundio, pero el VERBO PUNCHY se queda: el fallo que lo motivo fue
+        # entregar "Le pregunte a que empresas queria vender. Y en vez de
+        # contestarme, me planto el portatil delante", que dice lo mismo que
+        # "Le pregunte a que empresas queria vender y me planto el portatil delante"
+        # con 24 caracteres mas y un frenazo en medio.
+        _ho = [t for t in re.split(r'(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ¿¡])',
+                                   re.sub(r'https?://\S+', '', h)) if len(t.strip()) > 3]
+        chk(len(_ho) <= 1, 'HISTORIA: el hook va en UNA sola oracion (§4.6)',
+            f'{len(_ho)} oraciones. Condensa con "y" o con coma, pero no pierdas el verbo '
+            'punchy: la escena se abre de una tirada, no en dos frases' if len(_ho) > 1 else '')
         chk(not (h.startswith('🚨') or h.startswith('⚰')),
             'HISTORIA: el hook NO abre con alarma 🚨/⚰️ (§4.6)',
             'eso es lead magnet; una historia abre con una ESCENA personal, no gritando')
