@@ -33,14 +33,13 @@ interface ManagedAccount {
   created_at: string | null;
 }
 
-interface Candidate {
-  id: string;
-  name: string | null;
-  headline: string | null;
-  profile_image_url: string | null;
-  followers_count: number;
-  is_managed: boolean;
-}
+// ⛔ NO HAY `Candidate` NI SELECTOR DE CREADORES EN ESTA PAGINA (Iker, 2026-08-13).
+// Accounts gestiona SOLO las 3 cuentas de founder, que estan conectadas a Unipile
+// y no van a cambiar. El selector que habia listaba los 151 creadores del
+// Dashboard con un check de "cual gestiono", y eso es una pregunta que en esta
+// pagina no existe: la respuesta es siempre las mismas tres.
+// Quien gestiona `is_managed` es el Dashboard; aqui se leen via `GET /api/accounts`,
+// que ya filtra por `is_managed = TRUE`.
 
 interface DailyRowPost {
   id: string;
@@ -588,7 +587,11 @@ export default function Accounts() {
     const end = new Date(`${dateRange.end}T00:00:00`);
     return Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
   }, [dateRange]);
-  const [managerOpen, setManagerOpen] = useState(false);
+  // Antes esto era `managerOpen` y abria el selector de creadores. Ahora solo
+  // abre el editor de account_id de Unipile, y arranca CERRADO siempre: es la
+  // otra mitad del arreglo del panel fantasma, porque ningun estado de carga
+  // puede abrirlo por su cuenta (Iker, 2026-08-13).
+  const [unipileOpen, setUnipileOpen] = useState(false);
   const [unipileEdits, setUnipileEdits] = useState<Record<string, string>>({});
   const [scrapingId, setScrapingId] = useState<string | null>(null);
   const [scrapeResult, setScrapeResult] = useState<Record<string, string>>({});
@@ -634,8 +637,14 @@ export default function Accounts() {
     setVisibleTop(TOP_PAGE);
   }, [topPostsTypeFilter]);
 
-  const { data: accounts, refetch: refetchAccounts } = useApi<ManagedAccount[]>('/api/accounts');
-  const { data: candidates, refetch: refetchCandidates } = useApi<Candidate[]>('/api/accounts/candidates');
+  // `loading` NO es decorativo aqui, es lo que arregla el panel fantasma
+  // (Iker, 2026-08-13): `useApi` arranca con `data = null`, asi que en CADA
+  // recarga `hasAccounts` es false hasta que responde la peticion. Cualquier
+  // bloque colgado de `!hasAccounts` se pinta durante ese hueco y parece que no
+  // hay cuentas cuando si las hay. Se distingue "aun no ha cargado" de "no hay
+  // ninguna" con esta bandera, nunca con la longitud del array.
+  const { data: accounts, loading: loadingAccounts, refetch: refetchAccounts } =
+    useApi<ManagedAccount[]>('/api/accounts');
   // Live posts now respect the same top-of-page date range as the analytics
   // charts — the backend STRICTLY filters by published_at within the range
   // when start_date/end_date are present (no 7-day fallback). When the user
@@ -658,16 +667,6 @@ export default function Accounts() {
 
   const analyticsPath = `/api/accounts/analytics?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
   const { data: analytics, loading: loadingAnalytics, refetch: refetchAnalytics } = useApi<Analytics>(analyticsPath);
-
-  const toggleManaged = async (id: string, is_managed: boolean) => {
-    try {
-      await apiPatch(`/api/accounts/${id}`, { is_managed });
-      refetchAccounts();
-      refetchCandidates();
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
 
   const saveUnipileId = async (id: string) => {
     const value = unipileEdits[id] ?? '';
@@ -829,61 +828,24 @@ export default function Accounts() {
           <h1 className="text-3xl font-bold mb-2">Accounts</h1>
           <p className="text-text-secondary">Track the performance of the LinkedIn accounts you manage.</p>
         </div>
-        <button
-          onClick={() => setManagerOpen((v) => !v)}
-          className="px-4 py-2 bg-bg-card border border-border text-text-secondary text-sm rounded-lg hover:border-accent/40 hover:text-text-primary transition-colors"
-        >
-          ⚙️ Manage accounts ({candidates?.filter((c) => c.is_managed).length || 0})
-        </button>
+        {/* Sin engranaje de "Manage accounts" (Iker, 2026-08-13): las cuentas son
+            siempre las mismas tres, asi que no hay nada que gestionar. Lo unico que
+            queda es pegar el account_id de Unipile, que se abre a mano y NUNCA solo. */}
+        {hasAccounts && (
+          <button
+            onClick={() => setUnipileOpen((v) => !v)}
+            className="px-3 py-1.5 bg-bg-card border border-border text-text-muted text-xs rounded-lg hover:border-accent/40 hover:text-text-primary transition-colors"
+          >
+            {unipileOpen ? 'Hide' : 'Unipile IDs'}
+          </button>
+        )}
       </div>
 
-      {/* Account manager panel */}
-      {(managerOpen || !hasAccounts) && candidates && (
+      {/* Unipile account ID per managed account — needed to scrape impressions */}
+      {unipileOpen && hasAccounts && (
         <div className="bg-bg-card border border-border rounded-xl p-5 space-y-3">
-          <div>
-            <h3 className="font-semibold text-text-primary">Select your company accounts</h3>
-            <p className="text-xs text-text-muted">
-              Tick the creators you're managing. Only managed accounts show up in the BI charts.
-            </p>
-          </div>
-          {candidates.length === 0 ? (
-            <p className="text-sm text-text-muted py-4">No creators yet. Add some from the Dashboard first.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto">
-              {candidates.map((c) => (
-                <label
-                  key={c.id}
-                  className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
-                    c.is_managed
-                      ? 'border-accent/40 bg-accent/5'
-                      : 'border-border hover:border-accent/20'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={c.is_managed}
-                    onChange={(e) => toggleManaged(c.id, e.target.checked)}
-                    className="w-4 h-4 rounded border-border accent-accent cursor-pointer"
-                  />
-                  {c.profile_image_url ? (
-                    <img src={c.profile_image_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-bg-primary flex items-center justify-center text-text-muted text-xs">
-                      {(c.name || '?')[0]}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-text-primary truncate">{nombreCuenta(c.name)}</div>
-                    <div className="text-xs text-text-muted truncate">{c.headline || '—'}</div>
-                  </div>
-                </label>
-              ))}
-            </div>
-          )}
-
-          {/* Unipile account ID per managed account — needed to scrape impressions */}
-          {hasAccounts && (
-            <div className="pt-4 mt-4 border-t border-border space-y-3">
+          {(
+            <div className="space-y-3">
               <div>
                 <h4 className="text-sm font-semibold text-text-primary">Unipile account IDs</h4>
                 <p className="text-xs text-text-muted">
@@ -931,9 +893,6 @@ export default function Accounts() {
                     </div>
                   );
                 })}
-                {!accounts?.length && (
-                  <p className="text-xs text-text-muted">Tick some accounts above to configure their Unipile IDs.</p>
-                )}
               </div>
             </div>
           )}
@@ -1047,12 +1006,19 @@ export default function Accounts() {
         </div>
       )}
 
-      {/* Empty state */}
-      {!hasAccounts && (
+      {/* Empty state. ⛔ Va con `!loadingAccounts` DELANTE y no es un detalle de
+          estilo: es el mismo fallo que abria el panel fantasma. Con solo
+          `!hasAccounts`, este bloque se pintaba en cada recarga durante el medio
+          segundo que tarda `GET /api/accounts`, y decia "no hay cuentas" teniendo
+          tres. `hasAccounts` no distingue "vacio" de "aun no ha llegado";
+          `loadingAccounts` si (Iker, 2026-08-13). */}
+      {!loadingAccounts && !hasAccounts && (
         <div className="text-center py-16 text-text-muted border border-dashed border-border rounded-xl">
           <p className="text-4xl mb-4">📈</p>
-          <p className="mb-1">No accounts selected yet.</p>
-          <p className="text-xs">Use "Manage accounts" above to pick the creators you're managing.</p>
+          <p className="mb-1">No managed accounts.</p>
+          <p className="text-xs">
+            Accounts only shows the 3 founder accounts. If none appear, check <code className="text-accent">is_managed</code> on the Dashboard.
+          </p>
         </div>
       )}
 
@@ -1200,7 +1166,7 @@ export default function Accounts() {
               <p className="text-xs">
                 Publish a post from a managed account with its Unipile account_id set, and it'll appear here within 15 min.
                 {accounts?.some((a) => !a.unipile_account_id) && (
-                  <> You still have managed accounts without a Unipile ID configured — open "Manage accounts" to set them.</>
+                  <> You still have managed accounts without a Unipile ID configured — open "Unipile IDs" up top to set them.</>
                 )}
               </p>
             </div>
