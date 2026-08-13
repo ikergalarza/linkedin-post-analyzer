@@ -1401,6 +1401,12 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
    - **Regla general:** antes de nombrar a alguien en una historia, **comprueba que la etiqueta cuadra con el momento del arco en el que esta**. Cliente, proveedor, socio o jefe describen un estado; si el post cuenta como se llego a ese estado, la etiqueta del final no vale para el principio.
    - **Y di donde pasa** (una reunion, una llamada, una comida). Sin sitio no hay escena, hay un resumen.
 
+1c. **⚙️ CÓMO RECONOCE LA HERRAMIENTA QUE ESTO ES UNA HISTORIA: POR EL PRETÉRITO (Iker, 2026-08-12).**
+   La historia del 13/08 salió etiquetada como **meme** en Accounts. El clasificador (`backend/src/services/pillar.ts`) daba por meme cualquier post **corto con foto**, y las 14 historias de la base se libraban solo porque pasaban de 850 caracteres. Esta mide 708.
+   - **La señal que los separa está medida:** de los **62 memes de menos de 850 caracteres** que tenemos publicados, **ninguno llega a 4 verbos en pretérito** (el máximo son 3), porque un meme habla en PRESENTE de una situación que se repite (*"Nadie te avisa"*, *"Empiezas llamando a puerta fría"*). Una historia es una escena que ya pasó: `pregunté`, `plantó`, `soltó`, `llevé`.
+   - **Consecuencia al escribir:** una historia **se cuenta en pasado**. Si la escribes en presente histórico, además de perder la escena, la herramienta la va a clasificar mal y dejará de compararse contra su propio pilar.
+   - **⚠️ La FOTO no sirve de señal** aunque toda historia lleve selfie: el meme también lleva imagen y en la base las dos son `text_image`.
+
 2. **CUERPO:** ritmo de historia — frases cortas, UNA por línea, MUCHO aire. Detalles sensoriales concretos (las botas amarillas, los calcetines: la concreción da credibilidad). Arco: escena → momento → desenlace. Luego un REFRAME/contraste (antes vs ahora). Y una **LECCIÓN corta y universal al final** (*"Moments do"*, *"It can't create a memory"*). La lección ata a tu tema (ventas/marketing) por la HISTORIA, no por el pitch.
 3. **FOTO:** texto puro O una foto **REAL/candid** (un momento de verdad), NUNCA un gráfico diseñado (lo opuesto al lead magnet). Muchos de sus outliers son **text-only** (Josh Braun top).
 4. **CTA:** NO comment-gate. Cierra en la lección; como mucho un PD/spam ninja suave a un recurso.

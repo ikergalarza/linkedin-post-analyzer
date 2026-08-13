@@ -202,6 +202,22 @@ function pareceMeme(texto: string): boolean {
   if (texto.length > 850 || lineas > 18) return false;
   const arranque = texto.slice(0, 60).toUpperCase();
   if (arranque.includes('🚨') || arranque.includes('ÚLTIMA HORA') || arranque.includes('ULTIMA HORA')) return false;
+  // ⛔ Y SI NARRA EN PASADO, NO ES UN MEME: ES UNA HISTORIA (Iker, 2026-08-12).
+  //
+  // Esta funcion no reconoce un meme, solo dice "esto es corto y lleva imagen",
+  // asi que se traga cualquier post de prosa breve con foto. Las 14 historias de
+  // la base pasaban de 850 caracteres y por eso colaban por debajo; la del 13/08
+  // mide 708 y salio etiquetada `meme` en Accounts.
+  //
+  // El corte esta MEDIDO: de los 62 memes de menos de 850 caracteres que tenemos
+  // publicados, ninguno llega a 4 verbos en preterito (el maximo son 3), y la
+  // historia del 13/08 tiene 4. Se sale por aqui y la recoge `pareceHistoria`.
+  //
+  // Y NO se usa la foto como señal, aunque Iker apunte con razon que una historia
+  // siempre lleva selfie: el meme tambien lleva imagen y en la base las dos son
+  // `text_image`. La camara no distingue un selfie de un wojak; el tiempo verbal
+  // sí distingue una escena de un chiste.
+  if (contarPreteritos(texto) >= 4) return false;
   return true;
 }
 
@@ -255,20 +271,79 @@ function esEvento(texto: string): boolean {
 }
 
 /**
- * Anecdota personal: abre con una ESCENA propia en primera persona y no lleva
- * ni lista de menciones ni gate de comentario. Se pide señal doble (apertura
- * personal + narracion en primera persona mas adelante) porque un solo "mi" o
- * "yo" suelto aparece en cualquier post de opinion.
+ * Verbos en PRETERITO: la firma de que un texto NARRA.
+ *
+ * POR QUE ESTA ES LA SEÑAL BUENA DE LA HISTORIA (Iker, 2026-08-12): una historia
+ * es una ESCENA QUE YA PASO, asi que va en preterito — pregunté, plantó, soltó,
+ * llevé. Un meme esta casi siempre en PRESENTE, porque describe una situacion
+ * general que se repite: "Nadie te avisa", "Empiezas llamando a puerta fria",
+ * "Un comercial cambia de humor mas veces en un dia que tu en un mes".
+ *
+ * MEDIDO, no elegido a ojo, sobre los 65 memes y las 14 historias de la base:
+ *   · de los 62 memes de menos de 850 caracteres (los unicos que llegan a la
+ *     rama del meme), el que mas tiene son 3 preteritos. NINGUNO llega a 4.
+ *   · la historia del 13/08 tiene 4, y las de la base van de 4 a 7.
+ * Por eso el umbral es 4: es el hueco real entre las dos poblaciones.
+ *
+ * ⚠️ SOLO PRETERITO, y el imperfecto (-aba, -ia) se queda FUERA a proposito:
+ * arrastra sustantivos ("sangria", "tecnologia", "dia") y condicionales
+ * ("firmaria"), que no narran nada. Con el imperfecto dentro, el meme del
+ * tiburon empataba con la historia y el umbral dejaba de separar.
+ *
+ * ⚠️ Y EL LIMITE DE PALABRA ES A MANO. En JavaScript `\b` es solo ASCII, asi
+ * que las tildes cuentan como separador: `\b\w+ó\b` casa con "reunió" DENTRO de
+ * "reunión", y con eso salian 6 preteritos en textos que no tenian ninguno.
+ * La primera version de este contador estaba mal por esto y la medicion entera
+ * que saque de ella era basura.
+ */
+const LETRA = 'a-záéíóúñü';
+const PRETERITO = new RegExp(`(?<![${LETRA}])[${LETRA}]{2,}(?:é|ó|aron|ieron|yeron)(?![${LETRA}])`, 'g');
+/** Acaban en tilde y no son verbos. */
+const FALSO_PRETERITO = new Set([
+  'que', 'porque', 'asi', 'aqui', 'ahi', 'alli', 'cafe', 'jose', 'ole', 'ademas',
+  'quizas', 'jamas', 'despues', 'tambien', 'segun', 'bebe', 'puree',
+]);
+function contarPreteritos(texto: string): number {
+  return (texto.toLowerCase().match(PRETERITO) || []).filter(
+    (w) => !FALSO_PRETERITO.has(w.normalize('NFD').replace(/[̀-ͯ]/g, ''))
+  ).length;
+}
+
+/**
+ * Anecdota personal: abre con una ESCENA propia y esta CONTADA EN PASADO, sin
+ * lista de menciones ni gate de comentario.
+ *
+ * ⛔ POR QUE YA NO BASTA CON CONTAR "yo/me/mi" (Iker, 2026-08-12): la version
+ * anterior exigia 4 pronombres de primera persona y la historia del 13/08 solo
+ * tiene 3, asi que se caia a 'otro' — o peor, a 'meme'. Y no era un descuido de
+ * redaccion: el propio pilar recomienda **contar lo que le paso a un tercero**
+ * ("hablar de un tercero rinde mas que hablar de uno mismo", `global §4.4b`),
+ * y en cuanto el protagonista es otro los pronombres desaparecen aunque el post
+ * sea una historia de manual. Contar pronombres medía quien es el protagonista,
+ * no si hay historia.
+ *
+ * Lo que sí distingue una historia de todo lo demas es que **narra**: abre con
+ * una escena en primera persona y sigue en pasado. Se aceptan las dos señales
+ * (pronombres O pasado) para no tumbar las 14 historias viejas, que van llenas
+ * de "yo".
+ *
+ * ⚠️ La FOTO no sirve de señal, aunque Iker apunte con razon que una historia
+ * siempre lleva selfie: el meme tambien lleva imagen y en la base las dos son
+ * `text_image`. La cámara no distingue un selfie de un wojak.
  */
 function pareceHistoria(texto: string): boolean {
   const primeras = texto.split('\n').slice(0, 3).join(' ').toLowerCase();
   const abrePersonal =
     /(^|\s)(mi |mis |me |nunca (me|habia)|cuando (yo|tenia|empece)|hace \w+ (años|meses|semanas)|la primera vez|acab[eé]|empec[eé]|recuerdo)/.test(
       primeras
-    );
+    ) ||
+    // Un preterito en el arranque tambien abre escena: "Le pregunté…", "Salí…",
+    // "Aquel dia se plantó…". Es como abre media vara del pilar (Josh Braun: "I
+    // [algo que me paso]") y la version anterior no lo veia.
+    contarPreteritos(primeras) >= 1;
   const yoes = (texto.match(/\b(yo|me|mi|mis|conmigo|acab[eé]|sal[ií]|llegu[eé]|ten[ií]a|hab[ií]a|estaba|sent[ií])\b/gi) || [])
     .length;
-  return abrePersonal && yoes >= 4;
+  return abrePersonal && (yoes >= 4 || contarPreteritos(texto) >= 4);
 }
 
 /**
@@ -340,7 +415,8 @@ export function classifyPillar(post: PillarInput): Pillar {
     if (pareceMeme(t)) return 'meme';
   }
 
-  // 4. Historia personal.
+  // 4. Historia personal. Llega aqui todo lo que no es meme, incluido el post
+  // corto con foto que NARRA en pasado, que `pareceMeme` deja pasar a proposito.
   if (pareceHistoria(t)) return 'historia';
 
   return 'otro';
