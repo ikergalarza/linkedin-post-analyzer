@@ -1405,6 +1405,12 @@ Acceso libre.
 
 Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA real con una lección**. **No tenemos datos propios; la vara es de fuera** (como el lead magnet). Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
 
+> ### 📸 4.6-FOTO · LA HISTORIA VA CON SELFIE SUJETANDO EL MÓVIL CON LA MANO (Iker, 2026-08-13)
+> **La firma visual del pilar, y es lo que lo distingue de un vistazo de un meme.** No es "una foto natural" a secas: es un **selfie de cámara real, con el móvil sujeto en la mano y la mano a la vista**. Es lo que hace que se lea como alguien contando algo, no como una pieza montada.
+> - Sale del **banco de fotos de los jefes** (carpeta HISTORIA), va **cuadrada**, y el recorte se elige mirando, no a ojo de fichero.
+> - Gana la de **sonrisa amplia con ojos abiertos** (`feedback-elegir-foto-real-ctr`), nunca la cara de reventado.
+> - **Y esta señal es para el HUMANO, no para el clasificador.** El código no distingue un selfie de un wojak: los dos entran en la base como `text_image` y no hay visión por ordenador en el backend. Al clasificador lo separa el **tiempo verbal** (`services/pillar.ts`: una historia narra en pretérito, un meme describe en presente). Si alguna vez dudas mirando la parrilla, la foto te lo dice a ti en medio segundo; al script hay que seguir diciéndoselo por el texto.
+
 **Referentes (de nuestra BD, `/api/ideas/inspiration`):** **Josh Braun** (39x *"My mom died yesterday"*, 29x *"When I was younger in sales, I'd get on a plane…"*), **Daniel Disney** (16 outliers: *"I hired the smartest person in the room once"*, *"I had a manager who would scream at the sales floor"*). **Se eligen por `hook_type` story/confesión + LIKES ≫ comentarios** (si comentarios > likes, es un lead magnet disfrazado de historia, no una historia).
 
 1. **HOOK:** primera persona, una ESCENA/anécdota concreta (*"I [algo que me pasó]"*, *"Cuando…"*, *"Nunca…"*), vulnerable o intrigante. **NO alarma, NO claim, NO dato.** Corto.

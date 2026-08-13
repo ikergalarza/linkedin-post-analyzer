@@ -23,6 +23,15 @@
  *
  * REGLA DE ORO: ante la duda, 'otro'. Una etiqueta inventada contamina el
  * analisis mas que un hueco, porque un hueco se ve y una etiqueta mal no.
+ *
+ * ⛔ TOCAR ESTE FICHERO NO ARREGLA LO QUE YA ESTA CLASIFICADO. El pilar se
+ * escribe al ingerir el post, asi que un post que entro con las reglas viejas
+ * se queda con la etiqueta vieja para siempre. Despues de cambiar una regla y
+ * desplegar hay que RELANZAR `POST /api/posts/classify-pillars`.
+ * Paso por no hacerlo (Iker, 2026-08-13): la historia de Iker se publico a las
+ * 10:55 y el fix de `contarPreteritos` se commiteo a las 11:04, nueve minutos
+ * despues. El clasificador estaba bien; lo que faltaba era el reproceso, y el
+ * post se quedo etiquetado `meme` hasta que Iker lo vio en la parrilla.
  */
 
 export type Pillar =
@@ -213,10 +222,15 @@ function pareceMeme(texto: string): boolean {
   // publicados, ninguno llega a 4 verbos en preterito (el maximo son 3), y la
   // historia del 13/08 tiene 4. Se sale por aqui y la recoge `pareceHistoria`.
   //
-  // Y NO se usa la foto como señal, aunque Iker apunte con razon que una historia
-  // siempre lleva selfie: el meme tambien lleva imagen y en la base las dos son
-  // `text_image`. La camara no distingue un selfie de un wojak; el tiempo verbal
-  // sí distingue una escena de un chiste.
+  // Y NO se usa la foto como señal. Iker afino la pista el 13/08 —una historia
+  // lleva selfie SUJETANDO EL MOVIL CON LA MANO, y a ojo se ve en medio segundo—
+  // pero eso sigue siendo invisible aqui: el meme tambien lleva imagen y en la
+  // base las dos son `text_image`, asi que lo unico que sabemos del fichero es
+  // que existe. Distinguir un selfie de un wojak pide vision por ordenador, que
+  // el backend no tiene. La pista vale para el HUMANO que mira la parrilla y
+  // esta escrita en `post-workflow §4.6-FOTO`; al script hay que seguir
+  // diciendoselo por el TEXTO, y ahi el tiempo verbal si separa una escena de
+  // un chiste.
   if (contarPreteritos(texto) >= 4) return false;
   return true;
 }
@@ -327,9 +341,10 @@ function contarPreteritos(texto: string): number {
  * (pronombres O pasado) para no tumbar las 14 historias viejas, que van llenas
  * de "yo".
  *
- * ⚠️ La FOTO no sirve de señal, aunque Iker apunte con razon que una historia
- * siempre lleva selfie: el meme tambien lleva imagen y en la base las dos son
- * `text_image`. La cámara no distingue un selfie de un wojak.
+ * ⚠️ La FOTO no sirve de señal AQUI, y no por falta de señal sino de ojos: la
+ * pista de Iker del 13/08 (selfie sujetando el movil con la mano) es buenisima
+ * para el humano y esta en `post-workflow §4.6-FOTO`, pero en la base tanto el
+ * meme como la historia son `text_image` y el backend no ve la imagen.
  */
 function pareceHistoria(texto: string): boolean {
   const primeras = texto.split('\n').slice(0, 3).join(' ').toLowerCase();
