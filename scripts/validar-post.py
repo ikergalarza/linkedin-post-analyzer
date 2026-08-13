@@ -868,14 +868,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             '0,43x y 2.989. Un post bueno a mala hora rinde la mitad y no se recupera. Y '
             'desde que ningun post lleva anio, esperar a manana no le cuesta nada al texto',
             aviso=True)
-        chk(False, 'ENTREGA: los 5 puntos del prompt de imagen (images §0b + §0h)',
+        chk(False, 'ENTREGA: los 6 puntos del prompt de imagen (images §0b + §0h)',
             '1) abre con SOLO HAZ LO QUE TE PIDO en mayusculas · 2) UN SOLO PARRAFO, del '
             'tiron, como se lo explicarias a un amigo · 3) paleta y tipografia de marca '
             '(Bricolage titulos, Switzer cuerpo, naranja #fe8238, berenjena #431b44) · '
             '4) "en formato cuadrado 1:1" SIEMPRE, aunque la referencia sea vertical: '
             'LinkedIn recorta la preview por arriba y por abajo, y 19 de nuestros 20 '
             'outliers son 1:1 · 5) cierra con "deja todo lo demas intacto y no toques '
-            'nada que no te he pedido", en la ULTIMA frase, nunca al principio',
+            'nada que no te he pedido", en la ULTIMA frase, nunca al principio · '
+            '6) SI LA IMAGEN ES UN PANTALLAZO CON UNA CUENTA DENTRO (tuit, correo, chat), '
+            'de quien es esa cuenta lo decide el ORIGINAL, no la comodidad: si el meme '
+            'original captura a un TERCERO, la nuestra tambien va a nombre de un tercero, '
+            'y ahi se usa una cuenta-ROL sin cara y sin verificar (el "El de Ventas" del '
+            'iMessage, 8,46x), comprobando antes que ese @ no exista de verdad. NUNCA '
+            'nuestro propio nombre salvo que el original use el suyo: con nuestra cara el '
+            'tuit ajeno se convierte en autobombo y deja de repostearse, y ademas lo firma '
+            'el CEO. Si hace falta una foto real nuestra, el prompt pide dejar el circulo '
+            'del avatar VACIO como placeholder y se pega a mano (post-workflow §4.4-IDENTIDAD)',
             aviso=True)
         # ⛔ Y EL PILAR ES COPIAR *Y MEJORAR*. Lo que se calca es la esencia,
         # nunca el encuadre malo ni los defectos: el 1:1 es el primer sitio

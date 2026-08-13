@@ -975,6 +975,25 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 2. **¿Qué hay en cada panel y quién es?** (mismo par repetido, escalera de personas, antes/después…)
 3. **¿La imagen lleva texto? ¿De quién y qué dice?** ¿Es diálogo, son etiquetas, es un titular?
 4. **¿Qué NO lleva la imagen?** ← el más importante. Aquí es donde se cuela lo que solo estaba en el post.
+5. **⭐ ¿DE QUIÉN es la identidad que sale dentro de la imagen?** ← pregunta nueva, ver el bloque de abajo.
+
+### ⛔⛔ 4.4-IDENTIDAD · EN UN PANTALLAZO, DE QUIÉN ES LA CUENTA LO DECIDE EL ORIGINAL (Iker, 2026-08-13)
+
+**La regla, corta: NUNCA ponemos nuestro propio nombre dentro del pantallazo, salvo que en el meme original el autor use el suyo.** Quién firma lo que se ve es **parte de la esencia** (`§4.4-ESENCIA`), igual que el tatuaje o los calvos, y se calca como todo lo demás.
+
+**Qué pasó el 13/08.** La referencia era el pantallazo de un tuit que publicó **brendan short**, pero el tuit **era de conor brennan-burke**, otra persona. Yo leí los dos nombres, me sonaron parecidos y **di por hecho que era el mismo**, así que monté el prompt poniendo a **Unai** como autor del tuit. Iker: *"el que subió el meme se llama Brendan y la captura ponía Brennan, pero no es la misma persona; creo que eso te ha generado confusión"*. Costó un prompt de edición.
+
+**Por qué importa y no es un detalle de forma:**
+- **Cambia el mecanismo.** Un tuit ajeno se lee como *"mirad lo que ha dicho este"*, que es compartible. El mismo tuit con nuestra cara es **autobombo**, y el lector ya no lo reposta.
+- **Y hacia dentro:** si la cuenta que firma es Unai, cualquier cosa que diga el pantallazo la firma **el CEO** (`§4.4-STOP`).
+
+**LAS TRES SALIDAS, por orden:**
+1. **El original usa a un TERCERO → nosotros usamos un tercero.** Y ese tercero no es una persona real ni inventada con nombre y apellido: es una **cuenta-ROL**, que es el recurso que ya nos funcionó con el contacto *"El de Ventas"* del iMessage (8,46x). Nombre y `@` del mismo palo (`Cuota Trimestral` / `@cuotatrimestral`), **avatar por defecto de la plataforma** (la silueta gris), cero cara y cero tick de verificado.
+   - ⚠️ **Antes de subir se comprueba que ese `@` no exista de verdad.** Un usuario-rol que resulta ser de alguien es suplantación.
+2. **El original usa su PROPIA cuenta → nosotros usamos la nuestra.** Es el caso del correo del tatuaje (93.744 imp): captura de ENVIADOS desde la cuenta de Unai, porque el original también era del propio autor.
+3. **Si por lo que sea hay que poner una foto real nuestra**, el prompt pide **dejar el círculo del avatar vacío como placeholder** y la foto se pega a mano en el paso final desde el banco de fotos. Nunca se le pide al generador que dibuje una cara nuestra.
+
+**Y el chequeo, en el inventario del Paso 6a:** antes de escribir el prompt, escribe en literal *"la cuenta del pantallazo es de X, y el que publica el meme es Y"*. **Si X e Y son la misma persona, la nuestra también; si son distintas, las nuestras también.** No se decide por comodidad ni porque el nombre suene parecido.
 
 **⛔ LA TRAMPA QUE YA CAYÓ (2026-07-16): el texto del post y el texto de la imagen son DOS MITADES DISTINTAS. No se mezclan.**
 > ⛔ **EL CRÉDITO SOLO SI LA REFERENCIA ES ESPAÑOLA Y DE VENTAS (Iker, 2026-08-11).**
