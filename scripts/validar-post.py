@@ -976,11 +976,28 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 # dos lineas con un blanco. El meme del 29/07 las junta con salto
                 # simple. Las dos formas ganan; lo que ninguna de las dos hace es
                 # soltar el enlace sin nada delante.
-                _prev = b[-2] if len(b) >= 2 else (bs[i - 1][-1] if i > 0 else '')
-                chk(len(b) <= 2 and len(_prev.strip()) > 0,
-                    'Spam ninja: hay una linea de dolor pegada al enlace (§4.4b)',
-                    '%d lineas en el bloque' % len(b) if len(b) > 2
-                    else 'el enlace abre el post sin dolor delante')
+                # DOS LINEAS PEGADAS, Y VALE PARA TODOS LOS PILARES MENOS EL MAPA
+                # (Iker, 2026-08-12). Antes esto aceptaba una linea suelta: si el
+                # bloque del enlace tenia una sola linea, el codigo cogia como "dolor"
+                # la ultima linea del bloque ANTERIOR, que casi nunca esta vacia, y el
+                # check daba OK. Por ese agujero pasaron con 43/43 el meme del 06/08 y
+                # el del 12/08, los dos peores CTR del ano con alcance real.
+                #
+                # Auditado en clics reales el 2026-08-12 (enlace NUESTRO, sin mapas
+                # porque alli manda el ultra ninja, y con mas de 5.000 impresiones para
+                # que el CTR signifique algo):
+                #   bloque de 2  n=4  CTR mediano 0,205%  ·  36,7 clics/100 interacciones
+                #   linea suelta n=8  CTR mediano 0,069%  ·  16,0 clics/100 interacciones
+                # Y el par que lo demuestra sin ruido, dos memes casi iguales en alcance:
+                # 29/07 con bloque de dos, 93.744 imp y 142 clics; 06/08 con linea
+                # suelta, 95.913 imp y 4 clics. Treinta y cinco veces menos.
+                _mapa = pilar == 'mapa'
+                chk(_mapa or len(b) == 2,
+                    'Spam ninja: DOS lineas pegadas, dolor arriba y enlace abajo (§4.4b)',
+                    '%d lineas en el bloque del enlace. Con una sola el enlace llega sin '
+                    'dolor delante y el CTR se hunde (0,069%% contra 0,205%%); con tres '
+                    'deja de ser un guino y se lee anuncio' % len(b)
+                    if not _mapa and len(b) != 2 else '')
                 # Y la de abajo es la mas CORTA de las dos. Es el orden del corpus
                 # de email: linea larga de valor y remate corto justo antes del
                 # enlace, para que caiga como punto final. Nuestros dos ganadores lo
@@ -1032,6 +1049,25 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 #    El ninja de 0,415% dice "te marcamos quien va a comprar y
                 #    cuando": identifica primero. El de 0,017% dice "de montar esa
                 #    lista nos encargamos nosotros": no identifica a nadie.
+                # 4) QUE SIGA LA BROMA DEL GANCHO. Es la regla 3 de §4.4b desde
+                #    siempre y es la que mas se salta, porque el script solo miraba la
+                #    forma. No se puede exigir por lexico: los dos mejores ninjas de la
+                #    casa reciclan el chiste sin repetir una sola palabra del gancho
+                #    (29/07: "en visto" -> "el que calla"; 31/07: el tatuaje sale de la
+                #    IMAGEN). Asi que va de AVISO, con las palabras del gancho delante
+                #    para que la respuesta sea consciente y no un reflejo.
+                _stop = {'para', 'como', 'desde', 'entre', 'cuando', 'porque', 'sobre',
+                         'todos', 'todas', 'nadie', 'nunca', 'siempre', 'tambien',
+                         'tampoco', 'estar', 'tener', 'hacer', 'decir', 'quiere',
+                         'queria', 'vender', 'ventas'}
+                _pal = [w for w in re.findall(r'[a-záéíóúñ]{5,}', hook_txt.lower())
+                        if w not in _stop]
+                chk(False, 'ENTREGA: el ninja tiene que seguir la BROMA del gancho (§4.4b regla 3)',
+                    'el gancho habla de: ' + ', '.join(_pal[:6]) + '. Las dos lineas del ninja '
+                    'giran ESE chiste, no sueltan una frase de catalogo. Test: tapa el post y lee '
+                    'solo las dos lineas; si valdrian pegadas a cualquier otra publicacion '
+                    'nuestra, estan mal. Medido: los que reciclan el chiste dan 0,151-0,209%; '
+                    'los genericos, 0,004-0,029%', aviso=True)
                 _blo = ' '.join(b).lower()
                 _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)
                 chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',

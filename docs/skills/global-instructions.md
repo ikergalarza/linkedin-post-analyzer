@@ -738,6 +738,45 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
+#### ⛔⛔ 4.4b-FORMA · DOS LÍNEAS PEGADAS Y SIGUIENDO LA BROMA DEL GANCHO. SIEMPRE, EN TODOS LOS PILARES (Iker, 2026-08-12)
+
+**La forma del ninja no es de un pilar. Es global**, y se rompió en dos pilares distintos la misma semana. Iker: *"si el gancho de ayer era de los calvos, deberíamos seguir la broma de eso en el spam ninja"*.
+
+```
+✅ BIEN — dos líneas, un solo salto entre ellas
+[la BROMA DEL GANCHO girada contra el dolor]
+[UNA oración: dolor + quién lo resuelve] + ":" + enlace     ← más corta que la de arriba
+
+❌ MAL — el enlace en una línea suelta, con un blanco encima
+❌ MAL — una frase de venta que valdría pegada a cualquier otro post nuestro
+```
+
+**LA AUDITORÍA QUE LO DECIDE (2026-08-12, clics reales de las 3 cuentas).** Solo posts con **nuestro** enlace, **sin mapas** (allí manda el ultra ninja y el CTA es siempre el mismo) y con **más de 5.000 impresiones**, que por debajo el CTR es ruido:
+
+| forma del ninja | n | CTR mediano | clics / 100 interacciones |
+|---|---|---|---|
+| **bloque de DOS pegadas** | 4 | **0,205%** | **36,7** |
+| línea suelta | 8 | 0,069% | 16,0 |
+
+**Y el par que lo prueba sin ruido posible, dos memes casi idénticos en alcance:**
+
+| post | impresiones | eng/1k | clics | CTR | ninja |
+|---|---|---|---|---|---|
+| **29/07 Unai** (tatuaje) | 93.744 | 2,4 | **142** | **0,151%** | **bloque de 2, sigue la broma** |
+| 06/08 Unai (vender es un caos) | 95.913 | **6,0** | **4** | 0,004% | línea suelta, broma nueva sin recoger |
+| 12/08 Asier (los calvos) | 58.925 | 3,7 | 17 | 0,029% | línea suelta, broma nueva sin recoger |
+
+**⭐ LA PARADOJA QUE LO DESTAPÓ, y es de Iker:** *"¿por qué hemos mejorado todas las métricas y no los clics?"*. El engagement por mil impresiones se ha **multiplicado por casi 4** (1,6 → 6,0 de julio a agosto) y los clics han caído de 76-142 a 4-17. **Un post que gusta más y se pincha menos no es un misterio del algoritmo: es que la puerta está peor puesta.** Los dos mejores posts de agosto en interacción son los dos peores del año en clics, y los dos llevan el enlace en una línea suelta.
+
+**POR QUÉ FUNCIONA EL BLOQUE DE DOS, para no "simplificarlo" otra vez:** la línea de arriba es el **peaje emocional**. Sin ella el enlace aparece después de un blanco, aislado, y se lee como el banner de un anuncio, que es exactamente lo que el ojo ya sabe saltarse. Pegado a la broma se lee como el remate del chiste, y al remate del chiste no se le hace scroll.
+
+**LA BROMA SE SIGUE, NO SE ADORNA.** No vale reciclar una palabra por reciclarla: **los dos mejores ninjas de la casa no repiten NI UNA palabra del gancho** (29/07 `propuesta en visto` → `el que calla`; 31/07 el tatuaje, que sale de la imagen). Lo que se recoge es el **chiste**, no el vocabulario.
+- **El test, y es de cinco segundos:** tapa el post y lee solo las dos líneas. **Si valdrían pegadas a cualquier otra publicación nuestra, están mal.** `De montar esa lista nos encargamos nosotros` vale para los 200 posts que hemos hecho: por eso sacó 4 clics con 95.913 impresiones.
+
+**Mecanizado en `validar-post.py`**, y hacía falta porque **la regla ya existía desde el 10/08 y los dos memes pasaron con 43/43**: el check aceptaba la línea suelta porque, al no haber línea encima dentro del bloque, cogía como "dolor" la última línea del bloque **anterior**, que casi nunca está vacía. Ahora son dos checks: **`DOS lineas pegadas`** (fallo duro, todos los pilares menos mapa) y **`el ninja tiene que seguir la BROMA del gancho`** (aviso de entrega que imprime las palabras del gancho, porque esto es criterio y por léxico no se puede exigir).
+
+**La única excepción sigue siendo el MAPA**, con su ultra ninja de una línea (`Mapa completo aquí: …`), que es de otra naturaleza y está medido aparte.
+
 **⛔ Y ESA ORACIÓN LLEVA LAS DOS COSAS: EL DOLOR *Y* QUE LO RESOLVEMOS (Iker, 2026-08-07).** No basta con nombrar el dolor y soltar el enlace: falta la mitad que convierte el dolor en motivo para pinchar.
 ```
 ✅ Saber quién firma dentro cuesta meses y eso lo resolvemos nosotros: https://…
