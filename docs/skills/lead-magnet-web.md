@@ -163,11 +163,22 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
   Neety]. El CTA nace del hueco, no es un "agenda una reunión" pegado al final.
 - Firma: [Iker | Unai].
 
-2b. COHERENCIA Y OCUPACIÓN DENTRO DE LAS TARJETAS (de la revisión de /criba/)
-- OCUPACIÓN: dentro de una tarjeta grande (el callout de la idea, el teaser del
-  hueco, la card del autor) el texto usa TODO el ancho de la tarjeta. El tope de
-  lectura de 720px va bien sobre el lienzo, pero dentro de una tarjeta deja una
-  columna fantasma a la derecha. Nada de columna vacía dentro de una caja.
+2b. OCUPACIÓN Y PRESUPUESTO DE LÍNEAS EN TODA LA GUÍA (de la revisión de /criba/)
+- OCUPACIÓN, Y ES DE TODO EL DOCUMENTO, NO SOLO DE LAS TARJETAS: se ELIMINA el
+  tope de lectura de ~720px sobre el lienzo. Cada párrafo, esté dentro de una
+  tarjeta o suelto sobre el fondo, aprovecha el ANCHO COMPLETO del container.
+  Nada de columna fantasma a la derecha en ningún sitio.
+- ⛔ Y O TODO O NADA, PORQUE A MEDIAS SE NOTA MÁS: si arreglas solo las tarjetas
+  y dejas el tope en el lienzo, el lector ve alternarse bloques anchos y
+  columnas estrechas, y eso canta más que el defecto original. Ancho completo o
+  tope, pero lo mismo para el documento entero.
+- LA CONTRAPARTIDA ES OBLIGATORIA, UN PRESUPUESTO DE LÍNEAS: a ancho completo,
+  NINGÚN párrafo del lienzo puede pasar de 2 LÍNEAS renderizadas a 1440, que a
+  16px sobre 1032px son unos 255 caracteres. Los párrafos se escriben contra ese
+  presupuesto, no contra un número de frases.
+- CÓMO SE COMPRUEBA: midiendo las líneas RENDERIZADAS de todos los párrafos
+  hermanos en el navegador, nunca contando caracteres a ojo. Si uno se pasa, se
+  recorta el COPY hasta clavarlo. El CSS no se toca jamás.
 - COHERENCIA DE BLOQUES REPETIDOS: los bloques que se repiten tienen que
   renderizar EL MISMO NÚMERO DE LÍNEAS a 1440. Los prompts, iguales entre sí; las
   filas del ejemplo, iguales entre sí. Medido, no estimado: en /criba/ salieron
@@ -212,7 +223,9 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
    puntos). Pégamela con el resultado de cada uno.
 ```
 
-> **⭐ DE DÓNDE SALE EL PUNTO 2b (Iker, 2026-08-14, revisando `/criba/` ya construida).** Al briefing le faltaban **dos reglas medibles**, y las dos las descubrió él a mano después: **coherencia de bloques repetidos** (que los bloques gemelos rendericen las mismas líneas) y **ocupación** (que dentro de una tarjeta no quede columna fantasma). Son de la misma familia que el *"mide, no estimes"* del §4c: **una regla sin su número se incumple**, así que el briefing fija presupuesto de caracteres por bloque en vez de dejar la longitud libre.
+> **⭐ DE DÓNDE SALE EL PUNTO 2b (Iker, 2026-08-14, revisando `/criba/` ya construida).** Al briefing le faltaban **dos reglas medibles**, y las dos las descubrió él a mano después: **coherencia de bloques repetidos** (que los bloques gemelos rendericen las mismas líneas) y **ocupación** (que no quede columna fantasma). Son de la misma familia que el *"mide, no estimes"* del §4c: **una regla sin su número se incumple**, así que el briefing fija presupuesto de caracteres y de líneas en vez de dejar la longitud libre.
+>
+> **⛔ Y LA SEGUNDA TANDA CORRIGIÓ MI PRIMERA VERSIÓN, que es la lección que hay que llevarse.** Yo escribí la ocupación **solo para las tarjetas** y dejé el tope de lectura en el lienzo, y eso es **peor que el defecto de partida**: el lector ve alternarse bloques anchos y columnas estrechas. Iker: *"ancho completo o tope, pero para todo el documento igual"*. **Una regla de maquetación que se aplica a la mitad del documento no es media regla: es una incoherencia nueva.** Y al quitar el tope, la contrapartida no es opcional — sin presupuesto de líneas, un párrafo a ancho completo se va a cuatro líneas y se lee peor que antes.
 
 **Antes de entregar el prompt, comprueba:**
 - ¿La muestra del gate **regala la pieza 1 entera**, y el resto se enseña **bloqueado**, no contado?
