@@ -68,7 +68,14 @@ MARGEN = 113 / 1731
 # inferior izquierda tambien es brillante, y midiendo por luminancia daba la
 # columna 260 como limite, o sea que no cabia ni "La corta no". El azul bebe
 # tiene el verde y el azul altos; el magenta tiene el verde por los suelos.
-HUECO = 0.015   # aire minimo entre la ultima letra y la pieza, en % del ancho
+# ⛔⛔ Y EL HUECO NO ES "QUE NO SE TOQUEN", ES QUE SE VEAN SEPARADAS EN PEQUEÑO
+# (Iker, 2026-08-14): "estas imagenes se ven en pequeño, si ya en grande se
+# nota que se estan chocando, imaginate en pequeño". Con el hueco al 1,5% las
+# once pasaban el check y dos quedaban rozando la pieza.
+# EL SUELO SALE DE SUS PROPIAS RESPUESTAS, no de mi criterio: rechazo las de
+# 4 px y 34 px de aire, y dio por buenas las de 89 px para arriba. 0,05 del
+# ancho son 87 px sobre el lienzo de 1731, justo por debajo de lo aprobado.
+HUECO = 0.05    # aire minimo entre la ultima letra y la pieza, en % del ancho
 
 
 def es_pieza(r, g, b):

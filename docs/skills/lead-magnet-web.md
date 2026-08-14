@@ -163,6 +163,26 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
   Neety]. El CTA nace del hueco, no es un "agenda una reunión" pegado al final.
 - Firma: [Iker | Unai].
 
+2b. COHERENCIA Y OCUPACIÓN DENTRO DE LAS TARJETAS (de la revisión de /criba/)
+- OCUPACIÓN: dentro de una tarjeta grande (el callout de la idea, el teaser del
+  hueco, la card del autor) el texto usa TODO el ancho de la tarjeta. El tope de
+  lectura de 720px va bien sobre el lienzo, pero dentro de una tarjeta deja una
+  columna fantasma a la derecha. Nada de columna vacía dentro de una caja.
+- COHERENCIA DE BLOQUES REPETIDOS: los bloques que se repiten tienen que
+  renderizar EL MISMO NÚMERO DE LÍNEAS a 1440. Los prompts, iguales entre sí; las
+  filas del ejemplo, iguales entre sí. Medido, no estimado: en /criba/ salieron
+  4/4/3/3/3 y 3/3/4/3/3 y hubo que recortar copy hasta dejarlo en 3/3/3/3/3.
+- PRESUPUESTO DE CARACTERES por bloque repetido, en vez de longitud libre:
+  ~430 caracteres por prompt a ancho de container y ~285 por fila de ejemplo.
+- Las CITAS GRANDES de los callouts llevan el salto de línea puesto A MANO con
+  <br>, igual que el H1: a ancho completo el navegador parte dentro de la frase
+  enfatizada.
+- EL CIERRE DEL HUECO A PROPÓSITO va en UN SOLO párrafo condensado de dos
+  líneas, que conserve el diferencial entero: qué te da, qué no te da y a dónde
+  va cada carencia.
+- EL PÁRRAFO DEL AUTOR: dos líneas a ancho completo de su tarjeta, unos 230
+  caracteres.
+
 3. ALTA, INDEXADO Y HOME (si falta uno, se rompe en silencio)
 - Los TRES registros con el mismo literal, igual que el data-resource del gate y
   que el nombre del directorio:
@@ -191,6 +211,8 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
 6. NO ME DIGAS QUE ESTÁ TERMINADO SIN PASAR LA CHECKLIST del playbook §19 (18
    puntos). Pégamela con el resultado de cada uno.
 ```
+
+> **⭐ DE DÓNDE SALE EL PUNTO 2b (Iker, 2026-08-14, revisando `/criba/` ya construida).** Al briefing le faltaban **dos reglas medibles**, y las dos las descubrió él a mano después: **coherencia de bloques repetidos** (que los bloques gemelos rendericen las mismas líneas) y **ocupación** (que dentro de una tarjeta no quede columna fantasma). Son de la misma familia que el *"mide, no estimes"* del §4c: **una regla sin su número se incumple**, así que el briefing fija presupuesto de caracteres por bloque en vez de dejar la longitud libre.
 
 **Antes de entregar el prompt, comprueba:**
 - ¿La muestra del gate **regala la pieza 1 entera**, y el resto se enseña **bloqueado**, no contado?
