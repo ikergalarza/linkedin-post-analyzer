@@ -240,6 +240,13 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Tamaño recomendado: 800x800** (es el que más se repite en los que funcionaron). 480x480 también vale.
 - **⚠️ AL CALCAR UNA REFERENCIA, el formato es NUESTRO, no suyo.** Si el original es vertical (la referencia del meme del perro era **480x720**, ratio 0,67), el remix **se recompone a 1:1**: se calca la esencia, nunca el encuadre malo (`post-workflow §4.4`, tabla de qué se calca). Calcar un 2:3 es entregar un post recortado.
 - **En el prompt de imagen va escrito siempre**, con estas palabras: `en formato cuadrado 1:1`.
+
+> ### ⛔⛔ 0b-ANCHO · PEDIR 1:1 NO BASTA: HAY QUE PEDIR QUE APROVECHE EL ANCHO (Iker, 2026-08-13)
+> **Decir solo "en formato cuadrado 1:1" es una trampa cuando la referencia es vertical, y es el caso NORMAL** (casi todas lo son). El generador cumple el encargo por la vía barata: **te mete dos franjas blancas a los lados** y ya tiene un cuadrado. El contenido sigue igual de estrecho, se ve más pequeño en el feed y queda a medio hacer.
+> - **Pasó el 14/08** con el meme del SpongeBob: 4 filas verticales, cuadrado perfecto y **dos columnas blancas laterales**. Iker: *"al hacerla cuadrada hacia los lados se tiene que aprovechar y que todo llegue hasta los lados, no como ahora que me ha metido dos columnas verticales blancas para hacerlo cuadrado y queda mal"*.
+> - **LA FRASE QUE VA EN EL PROMPT, siempre que la referencia sea más alta que ancha:** `en formato cuadrado 1:1, ensanchando el contenido para que llegue de borde a borde, sin franjas ni márgenes a los lados`.
+> - **Por qué importa y no es estética:** el cuadrado se pide para ganar superficie en el feed (`§0b`). Si esa superficie extra se rellena de blanco, **no has ganado nada**: has hecho el cuadrado y has perdido el motivo por el que lo hacías.
+> - **Y ojo con el reverso:** ensanchar no es deformar. Se estiran las CAJAS y el texto se reajusta al ancho nuevo; los personajes y las fotos no se aplastan ni se estiran (va en el bloque de contención del final).
 - **⚠️ LA ÚNICA EXCEPCIÓN es la imagen de COMPARTIR del recurso web (`§0b-OG`), que no se publica en el feed: la recorta Open Graph, no LinkedIn.** Todo lo que se sube a un post sigue siendo 1:1.
 
 ## 🚨 0a-CAPADO · LINKEDIN CAPA POSTS SUELTOS, Y HAY QUE SABER RECONOCERLO (Iker, 2026-08-06)
@@ -541,9 +548,15 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Y ajusta la densidad de la tabla al numero real de filas:** si la referencia trae treinta y tu llevas quince, el prompt tiene que pedir mas aire entre filas, o la tabla queda apelotonada arriba y medio cuadrado vacio.
 
-## ⭐ 0i-2b · MEME SOBRE PELÍCULA O FAMOSO: NO SE GENERA CON IA, SE MONTA POR ENCIMA (Iker, 2026-07-22)
+## 💡 0i-2b · MEME SOBRE PELÍCULA O FAMOSO: RECORDATORIO, NO BLOQUEO (Iker, 2026-07-22 · degradado el 2026-08-13)
 
-**Medido el 2026-07-22:** el meme del Aquaman/rastrillo (referencia real, 10.4x) hizo que ChatGPT devolviera *"la imagen podría infringir nuestras normas relativas a la similitud con contenido de terceros"*. Es el filtro de **copyright + parecido con persona real** (Aquaman = película de Warner; Jason Momoa = actor real), más duro que el de los logos. **No se salta.**
+> ### 💡 ESTO YA NO ES UN AVISO ROJO. LA CAUSA ERA EL MODO DE GENERACIÓN (Iker, 2026-08-13)
+> **Lo que pasaba de verdad:** el rechazo por copyright salía **usando la generación con inteligencia alta**. *"Desde que uso generar instantánea ya nunca da error."* Comprobado el 13/08 con el SpongeBob progresivo, que es un personaje de Nickelodeon de manual: **generado sin un solo problema.**
+> - **Consecuencia práctica: una referencia con película, personaje o famoso YA NO se descarta ni se manda a montaje manual por defecto.** Se genera con la opción instantánea y punto.
+> - **Se queda como recordatorio, no como bloqueo**, por dos motivos: el filtro sigue existiendo en el modo de inteligencia alta, y si algún día vuelve a saltar ya sabemos que la salida es el overlay a mano de aquí abajo. **No hay que volver a descubrirlo desde cero.**
+> - ⛔ **Y lo que NO cambia:** sigue sin valer decirle al generador que la imagen es nuestra (`§0i-2`). Lo que cambió es el modo, no la honestidad.
+
+**El caso original (2026-07-22):** el meme del Aquaman/rastrillo (referencia real, 10.4x) hizo que ChatGPT devolviera *"la imagen podría infringir nuestras normas relativas a la similitud con contenido de terceros"*. Es el filtro de **copyright + parecido con persona real** (Aquaman = película de Warner; Jason Momoa = actor real), más duro que el de los logos.
 
 **Lo que NO se hace:** ni decir "la imagen es de nuestra propiedad" (es FALSO, no es nuestra), ni cambiar el modo de generación para colarlo. Es la misma mentira que con los logos (`§0i-2`), y además generar con IA un póster de peli y la cara de un actor para un post de marca es justo lo que el filtro bloquea con razón.
 
