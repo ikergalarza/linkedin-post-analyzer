@@ -3160,35 +3160,51 @@ router.post('/lead-magnet/marcar-manual', async (req: Request, res: Response) =>
 // POST /api/accounts/lead-magnet/reverificar
 // Body: { post_id }
 //
-// Relee en LinkedIn TODOS los envíos que este post tiene guardados como
-// 'sent' y corrige los que no llegaron. Es la limpieza de lo que ya está
-// guardado en falso: los envíos del 13/08 siguen puestos como enviados aunque
-// LinkedIn se los tragara, y sin esto no hay forma de saber a quién hay que
-// volver a escribir.
+// Relee en LinkedIn TODOS los envíos que este post tiene guardados —los 'sent'
+// Y los 'failed'— y corrige lo que esté al revés, en las dos direcciones:
 //
-// Solo puede EMPEORAR el estado (sent → failed) o confirmarlo: nunca resucita
-// un fallido, porque un fallido ya está a la vista para reintentarlo a mano.
+//   · un 'sent' cuyo mensaje no aparece → cae a 'failed' (los del baneo del 13/08)
+//   · un 'failed' cuyo mensaje SÍ está en el chat → vuelve a 'sent'
+//
+// ⛔ ESTO DECÍA "NUNCA RESUCITA UN FALLIDO" Y ESA REGLA ERA EL BUG (Iker,
+// 2026-08-14, dos veces en el mismo día). Se escribió cuando el único origen de
+// un 'failed' era que LinkedIn rechazara el envío. Pero ayer apareció el
+// segundo origen: EL PROPIO VERIFICADOR, que con la ventana de 10 mensajes
+// marcó como fallidos los DM a Mario y a Asier que estaban entregados. Con el
+// filtro `status='sent'`, este repaso no volvía a mirarlos jamás: el "revisar
+// envíos" decía "15 comprobados, todos llegaron" con los dos falsos fallidos
+// delante. Un estado que el verificador puede escribir mal tiene que ser un
+// estado que el verificador pueda corregir.
+//
+// La asimetría que SÍ se conserva es por veredicto, no por fila: resucitar
+// exige hallazgo POSITIVO (ok === true, el mensaje encontrado). Un "no lo sé"
+// (null) deja el 'failed' como está — no se blanquea un fallo con una duda.
 router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
   try {
     const postId = (req.body || {}).post_id;
     if (!postId) return res.status(400).json({ error: 'post_id required' });
 
     const { rows } = await pool.query(
-      `SELECT s.provider_id, s.kind, s.text, s.verificado, s.created_at, c.unipile_account_id
+      `SELECT s.provider_id, s.kind, s.text, s.status, s.verificado, s.created_at, c.unipile_account_id
          FROM lead_magnet_sends s
          JOIN posts p ON p.id = s.post_id
          JOIN creators c ON c.id = p.creator_id
-        WHERE s.post_id = $1 AND s.status = 'sent'
+        WHERE s.post_id = $1
         ORDER BY s.created_at DESC`,
       [postId]
     );
     const accountId = rows[0]?.unipile_account_id;
-    if (rows.length === 0) return res.json({ revisados: 0, caidos: 0, sin_comprobar: 0, detalle: [] });
+    if (rows.length === 0) {
+      return res.json({ revisados: 0, caidos: 0, recuperados: 0, sin_comprobar: 0, omitidos: 0, detalle: [] });
+    }
     if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
 
     // Tope de 40, igual que /check-accepted: cada fila son 1-3 llamadas a
     // Unipile y pasarse de ahí es tocar el rate limit de la cuenta.
-    const detalle: { provider_id: string; kind: string; ok: boolean | null; motivo: string | null }[] = [];
+    const detalle: {
+      provider_id: string; kind: string; ok: boolean | null;
+      motivo: string | null; recuperado?: boolean;
+    }[] = [];
     for (const r of rows.slice(0, 40)) {
       // Sin esperas: estas filas llevan horas o días, LinkedIn ya las tiene
       // decididas, y encadenar 40 backoffs se comería el timeout.
@@ -3198,21 +3214,37 @@ router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
             r.provider_id, accountId, r.text || '', null,
             r.created_at ? new Date(r.created_at) : null, [0]
           );
-      detalle.push({ provider_id: r.provider_id, kind: r.kind, ok: v.ok, motivo: v.motivo });
+      // ⚠️ Una INVITACIÓN fallida NO se resucita nunca, aunque el veredicto sea
+      // true. Su comprobación solo mira si EXISTE una invitación pendiente a esa
+      // persona, y en los fallos por `cannot_resend_yet` la que existe es una
+      // ANTERIOR, sin nuestra nota con el recurso: resucitarla diría "recurso
+      // entregado" en falso. El DM y el InMail sí, porque ahí el hallazgo casa
+      // por el TEXTO de nuestro propio mensaje — encontrado es entregado.
+      const puedeResucitar = r.kind !== 'invite';
+      const statusNuevo =
+        v.ok === true ? (r.status === 'sent' || puedeResucitar ? 'sent' : r.status)
+        : v.ok === false ? 'failed'
+        : r.status;
+      detalle.push({
+        provider_id: r.provider_id, kind: r.kind, ok: v.ok, motivo: v.motivo,
+        recuperado: r.status === 'failed' && statusNuevo === 'sent',
+      });
       await pool.query(
         `UPDATE lead_magnet_sends
-            SET status = CASE WHEN $3::boolean IS FALSE THEN 'failed' ELSE status END,
-                verificado = $3,
+            SET status = $3,
+                verificado = $4,
                 -- Confirmado = se limpia el error viejo; si no, se guarda el motivo.
-                error = CASE WHEN $3::boolean IS TRUE THEN NULL ELSE COALESCE($4, error) END
-          WHERE post_id = $1 AND provider_id = $2 AND kind = $5`,
-        [postId, r.provider_id, v.ok, v.motivo, r.kind]
+                error = CASE WHEN $4::boolean IS TRUE AND $3 = 'sent' THEN NULL ELSE COALESCE($5, error) END
+          WHERE post_id = $1 AND provider_id = $2 AND kind = $6`,
+        [postId, r.provider_id, statusNuevo, v.ok, v.motivo, r.kind]
       );
     }
 
     res.json({
       revisados: detalle.length,
       caidos: detalle.filter((d) => d.ok === false).length,
+      // Estaban en 'failed' y el mensaje ha aparecido en el chat: llegaron.
+      recuperados: detalle.filter((d) => d.recuperado).length,
       sin_comprobar: detalle.filter((d) => d.ok === null).length,
       omitidos: Math.max(0, rows.length - detalle.length),
       detalle,

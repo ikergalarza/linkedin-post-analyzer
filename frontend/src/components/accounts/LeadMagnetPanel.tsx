@@ -350,16 +350,21 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     setRevisando(true);
     setRevisionMsg(null);
     try {
-      const r = await apiPost<{ revisados: number; caidos: number; sin_comprobar: number; omitidos: number }>(
-        '/api/accounts/lead-magnet/reverificar',
-        { post_id: post.id }
-      );
+      const r = await apiPost<{
+        revisados: number; caidos: number; recuperados: number;
+        sin_comprobar: number; omitidos: number;
+      }>('/api/accounts/lead-magnet/reverificar', { post_id: post.id });
+      // El mensaje se compone por partes: un repaso puede a la vez tumbar unos
+      // y recuperar otros, y quedarse con una sola frase esconde la otra mitad.
+      const partes: string[] = [];
+      if (r.caidos > 0) partes.push(`✗ ${r.caidos} NO llegaron: marcados como fallidos, hay que volver a escribirles`);
+      if (r.recuperados > 0) partes.push(`↩ ${r.recuperados} que estaban en rojo SÍ habían llegado: recuperados`);
+      if (r.sin_comprobar > 0) partes.push(`${r.sin_comprobar} sin poder comprobar`);
+      if (r.omitidos > 0) partes.push(`quedan ${r.omitidos} sin revisar, vuelve a darle`);
       setRevisionMsg(
-        r.caidos > 0
-          ? `✗ ${r.caidos} de ${r.revisados} NO llegaron: están marcados como fallidos y hay que volver a escribirles.`
-          : `✓ ${r.revisados} envíos comprobados, todos llegaron.` +
-            (r.sin_comprobar ? ` (${r.sin_comprobar} sin poder comprobar)` : '') +
-            (r.omitidos ? ` Quedan ${r.omitidos} sin revisar: vuelve a darle.` : '')
+        partes.length === 0
+          ? `✓ ${r.revisados} envíos comprobados, todos llegaron.`
+          : `${r.caidos > 0 ? '✗' : '✓'} ${r.revisados} revisados · ${partes.join(' · ')}.`
       );
       refetchSends();
     } catch (e: any) {
