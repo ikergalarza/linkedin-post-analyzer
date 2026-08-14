@@ -1486,9 +1486,41 @@ Acceso libre.
 >
 > **Y no se mata el pilar por un mal ratio.** n=1 por cuenta. Se sigue probando **de vez en cuando, por variedad**, que es justo lo que pide la visión de futuro de aquí abajo (dejar de repetir los mismos 3 pilares en las mismas 3 cuentas). No es el caballo ganador y no tiene que serlo.
 >
+> **📌 ACTUALIZADO 2026-08-14 · lo de arriba sigue entero, con dos matices que sí cambian al planificar:** (1) ya hay **n=2 en Iker con números** (`§4.6-MEDIDO`) y el pilar aguanta 5.000-6.500 impresiones y el **mejor CTR de la casa**; (2) **durante agosto deja de ser "de vez en cuando" y pasa a ser SEMANAL** (`§8.0-AGOSTO`), porque ocupa el sitio del peloteo.
+>
 > **Registro del 29/07 (Iker, historia + peloteo):** apostado deliberadamente por la condición 2. El dolor elegido, *que te juzguen por ser joven*, lo ha vivido media audiencia, y el peloteo a 5 clientes reales aportaba la prueba que a nosotros nos falta por no ser conocidos todavía. **Es la mejor tirada posible con las cartas que tenemos.** Anota el resultado en `historial-publicaciones` mirando conversación, no solo el multiplicador.
 
-Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA real con una lección**. **No tenemos datos propios; la vara es de fuera** (como el lead magnet). Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
+> ### 📊 4.6-MEDIDO · LOS DOS DE IKER, CON NÚMEROS REALES (2026-08-14, sacados de la BD, no de memoria)
+>
+> | Fecha | Impresiones | Ratio | Likes | Com. | Reposts | Clics enlace | **CTR** |
+> |---|---|---|---|---|---|---|---|
+> | 29/07 (historia + peloteo) | 6.554 | 0.64x | 31 | 6 | 5 | 19 | 0,290% |
+> | 13/08 (historia sola, Excel) | **5.023** | 0.51x | 28 | 9 | 4 | 26 | **0,518%** |
+>
+> **Se lee por los dos lados, y hay que decir los dos al planificar:**
+> - **El ratio de los dos está por debajo de 1x**, o sea por debajo de la media de la propia cuenta de Iker. **Este pilar sigue sin ser de alcance** y `§4.6-OBJETIVO` sigue en pie entero. Lo que sorprende no es el multiplicador: es que **un pilar sin estructura ultra-validada, con la historia inventada cada vez, sostenga 5.000-6.500 impresiones** en vez de morirse en 1.000 como los lead magnets flojos.
+> - **Lo que sí es un salto medido es el CTR: 0,290% → 0,518%, casi el doble, y con MENOS impresiones** (26 clics contra 19). Pasa de largo la vara de **0,4%** que se puso el 13/08 para juzgar el experimento del ninja, así que **la regla nueva de `global §4.4b-FORMA` (el ninja recicla el objeto y el verbo del gancho) + el enlace 518 posiciones antes SÍ aportan**, y se quedan.
+> - **Es el CTR más alto anotado en este historial**, por encima del mejor mapa (Aragón, 0,44%) y muy por encima del mejor meme (iMessage, 0,09%). **Historia no es el pilar que más gente alcanza: es el que mejor convierte al que alcanza.**
+> - **La conversación sube pero sigue corta:** 6 → 9 comentarios. Con la vara del propio pilar eso sigue siendo poco, así que la palanca a trabajar es esa, no el alcance.
+>
+> **Consecuencia al planificar (Iker, 2026-08-14): historia ENTRA en la rotación semanal de agosto** (`§8.0-AGOSTO`), en el sitio que deja el peloteo. Deja de ser "de vez en cuando, por variedad" mientras dure el override.
+
+> ### 🎭 4.6-INVENTAR · LA ESCENA SE PUEDE INVENTAR. EL DOLOR, NUNCA (Iker, 2026-08-14)
+> **Es la ÚNICA excepción del pilar historia a "nunca inventes nada"**, y es exactamente la misma excepción que ya existía en email (`email-marketing §7`, Iker 2026-07-27). Fuera de estos dos sitios, el innegociable de `CLAUDE.md` sigue entero.
+>
+> **SE PUEDE INVENTAR:** la escena, la reunión, el objeto encima de la mesa, el diálogo, el orden en que pasan las cosas, y el protagonista **con nombre de pila o sin nombre**.
+>
+> **⛔ NO SE INVENTA NUNCA:**
+> - **El DOLOR.** Sale del **feedback real de las reuniones con clientes** (hoy: el informe de las 50 demos). Si el dolor no está en ese material, la historia no se escribe: se escribe otra.
+> - **El nombre de una empresa** (ni inventado ni real reconocible sin permiso), **el apellido de una persona**, ni nada que identifique a un cliente concreto.
+> - **Ninguna cifra atribuida a Neety** (resultados, clientes, porcentajes): esas solo reales y con fuente, como siempre.
+>
+> **Por qué funciona, que es lo que Iker confirmó con el post del 13/08:** el lector no se identifica porque la escena haya pasado, se identifica porque **el dolor es suyo**. Lo que hace viajar a una historia es la condición 2 de `§4.6-OBJETIVO` (identificación masiva), y esa se cumple con el dolor, no con la veracidad de la anécdota. El 13/08 la escena la redactó Claude a partir del **dolor nº1 del informe de 50 demos** (buscar a mano se come el tiempo de contactar) → 5.023 impresiones y el mejor CTR de la casa.
+>
+> **Y esto es lo que abarata el pilar:** sin verificación de empresas, sin CSV, sin menciones que cruzar. **Por eso puede ser semanal en agosto** y el peloteo no.
+> - **Sigue habiendo un gate humano:** la historia se entrega diciendo **de qué dolor del informe sale**, para que Iker la contraste con una reunión real antes de publicar. Inventar la escena no es inventar el material.
+
+Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA con una lección**: real, o **construida sobre un dolor real** (`§4.6-INVENTAR`). **Ya tenemos datos propios, pero pocos** (n=2 en Iker, `§4.6-MEDIDO`; n=2 en Unai): la vara sigue siendo mayormente de fuera, como en el lead magnet. Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
 
 > ### 📸 4.6-FOTO · LA HISTORIA VA CON SELFIE SUJETANDO EL MÓVIL CON LA MANO (Iker, 2026-08-13)
 > **La firma visual del pilar, y es lo que lo distingue de un vistazo de un meme.** No es "una foto natural" a secas: es un **selfie de cámara real, con el móvil sujeto en la mano y la mano a la vista**. Es lo que hace que se lea como alguien contando algo, no como una pieza montada.
@@ -1663,6 +1695,36 @@ Cada post lleva ahora su **etiqueta de PILAR** en la herramienta (chapa de color
 - **Mirar la semana entera, no post a post.** Si al repasar el plan ves que solo hay una apuesta fuerte y seis de relleno, el plan está mal repartido aunque cada pieza cumpla su receta.
 - **El pilar que más mediana da es el peloteo** (21.295 contra 2.925 de un post suelto), así que **una semana sin peloteo en ninguna cuenta es una semana que depende del azar del meme**.
 - **Y avisar de la fragilidad en la propia planificación**, con el número: es más útil decir *"esta semana el 70% del alcance depende del martes"* que repasar siete posts uno a uno.
+
+### 🌴🌴 8.0-AGOSTO · EN AGOSTO NO SE PUBLICA PELOTEO (Iker, 2026-08-14) — OVERRIDE ESTACIONAL CON FECHA DE CADUCIDAD
+
+**Aplica a las semanas del 17/08 y del 24/08 de 2026, y caduca el 31/08.** No es doctrina permanente: es un override de calendario que **manda sobre §8.1 y §8.2 mientras dura**.
+
+**LA REGLA:** las tres cuentas publican **MEME + LEAD MAGNET + HISTORIA**. **Cero peloteo** — ni mapa, ni "Los 10", ni despiece — en ninguna de las tres.
+
+**POR QUÉ, y el motivo es del pilar, no del mes:** el peloteo es **el único pilar cuyo motor está FUERA de nosotros**. Funciona porque la empresa y la persona mencionadas reciben la notificación, entran, reaccionan y reparten el post a SU red. **En agosto en España esa gente está de vacaciones**, así que la notificación cae en un móvil que nadie mira y el motor no arranca. El post puede estar perfecto y aun así no repartir. Es la frase de Iker del `historial-publicaciones`: *"el algoritmo no es un robot, es tu público objetivo"*.
+- **Y ya tenemos el precedente medido, fuera de agosto:** el mapa de Cataluña de Unai (17/07) hizo **0.59x con 3.018 impresiones** cuando sus otros mapas van a 21-36K. La causa que dio Iker: **las empresas nos ignoraron**. Eso en julio fue mala suerte; en agosto está garantizado.
+- **No es que el formato se haya quemado.** El peloteo sigue siendo el pilar de más mediana (21.295 impresiones). Lo que falta es el público, y vuelve en septiembre.
+
+**LO QUE OCUPA SU SITIO, y por qué cada uno aguanta agosto:**
+1. **MEME — 3 FIJOS POR SEMANA, UNO POR CUENTA. No es "si da tiempo".** Iker lo dice con nombre: ha habido semanas en las que el meme se cayó por falta de tiempo y se priorizaron otros pilares; **en agosto eso no pasa**. Es el pilar cuyo motor es **100% nuestro** (imagen + gancho): no depende de que nadie conteste. Y agosto lo confirma — el tatuaje y el de *"vender es un caos"* se dispararon **en agosto**.
+2. **LEAD MAGNET — todas las semanas.** Acabamos de volver a encontrar cómo hacerlo viral: el **CTA dentro de la imagen** (`§4.5.0-CTA-IMAGEN-MEDIDO`), que el 12/08 sacó **71 comentarios sin capado**. Y aguanta agosto porque **quien comenta es gente ACTIVA de fuera de nuestra red**: no necesita que nuestro público objetivo esté en su mesa.
+3. **HISTORIA — entra en la rotación semanal.** Deja de ser el pilar "de vez en cuando, por variedad" de `§4.6-OBJETIVO` **durante agosto**. Con n=2 en Iker sostiene 5.000-6.500 impresiones **sin estructura validada** y da el CTR más alto anotado en el historial (`§4.6-MEDIDO`). Y como la escena se inventa desde un dolor real (`§4.6-INVENTAR`), **no tiene cuello de botella de investigación ni depende de terceros**: es el pilar más barato de producir, que es justo lo que hace falta para sostener 9 posts en agosto.
+
+**QUÉ CAMBIA EN EL CUADRO LATINO (§8.2):** nada de la mecánica. Las tres categorías por día siguen siendo tres y siguen siendo exclusivas; lo único que cambia es **cuáles**: `PELOTEO → HISTORIA`. La alternancia mapa ↔ "Los 10" queda **congelada** y se reanuda en septiembre por donde se quedó.
+
+**⚠️ EL RIESGO, DECLARADO Y ACEPTADO A PROPÓSITO (contra `§8.0-RIESGO`):** una semana sin peloteo es una semana con menos suelo — el peloteo da 21.295 de mediana contra 2.925 de un post suelto. **En agosto se acepta a sabiendas**, y la compensación es que los **tres memes son innegociables** y el lead magnet entra todas las semanas: tres tiros al motor que sí funciona en agosto, en vez de uno. **Al planificar hay que decirlo con el número, no taparlo.**
+
+**⛔ EL AVISO QUE ME TOCA DAR ESTE MES (Iker lo pidió explícitamente):** si en agosto se pide un mapa, un "Los 10" o un despiece, **aviso ANTES de escribir una línea** con el dato de arriba y ofrezco **dejarlo preparado para septiembre** en vez de publicarlo. **No es un veto:** si Iker confirma, se escribe entero y se entrega, que la decisión es suya (`working-preferences §2`). Mecanizado como AVISO (que no resta en el marcador) en `validar-post.py` para `--pilar mapa|los10|objeto` cuando la fecha del sistema cae en agosto.
+
+### 📅 8.0-SEPTIEMBRE · LAS 2 PRIMERAS SEMANAS DE SEPTIEMBRE SE DEJAN ESCRITAS ANTES DE LAS VACACIONES (Iker, 2026-08-14)
+
+**Iker está de vacaciones las 2 primeras semanas de septiembre**, y esas son justo las semanas en las que **el peloteo vuelve a ser prioridad número uno**: la gente ya ha vuelto, las notificaciones se miran y el motor del pilar arranca otra vez.
+
+- **Hay que dejarle PELOTEOS PREPARADOS PARA CADA CUENTA**, escritos, validados y con su imagen montada, **antes de que se vaya**. No se planifican desde la playa.
+- Cada uno con su región nueva por cuenta (`historial-publicaciones`, tabla de cobertura), sus menciones verificadas una a una y su CSV/imagen ya montados.
+- **⚠️ Y hay dos cosas que decidir con Iker antes de montarlos, no las adivino:** (1) la **fecha límite** real (cuándo se va, para tener todo cerrado antes); y (2) si el tope colectivo de `§8.2` pasa de *"un mapa y un Los 10 por semana"* a *"un mapa + un Los 10 + un despiece"*, que es lo que hace falta para que **las tres cuentas** tengan peloteo esas dos semanas — el despiece ya es un formato hecho (`§4.7`, dos publicados) y en la semana del 03/08 ya convivió con un mapa.
+- El despiece pendiente de **alimentación** (`historial-publicaciones`, avisos) es candidato natural para una de esas dos semanas: estaba parado por ser peloteo en agosto.
 
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
 - **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).

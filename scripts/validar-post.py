@@ -18,7 +18,7 @@ Uso:
 
 Salida: tabla de checks + "N/M". Exit 1 si hay violaciones.
 """
-import sys, os, re, argparse, io
+import sys, os, re, argparse, io, datetime
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HISTORIAL = os.path.join(RAIZ, 'docs', 'skills', 'historial-publicaciones.md')
@@ -435,6 +435,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # vaciaria de significado el "20/20", que es justo lo que pasa cuando
         # un post con 20/20 esta mal por criterio.
         r.append((ok, nombre, detalle, aviso))
+
+    # ---------- CALENDARIO ESTACIONAL (post-workflow §8.0-AGOSTO) ----------
+    # AVISO y no fallo, y es deliberado: esto no juzga el TEXTO, juzga el MES.
+    # Un peloteo escrito en agosto puede estar perfecto y aun asi no tocaba
+    # publicarlo (Iker, 2026-08-14): el motor del pilar son los mencionados
+    # reaccionando y repartiendo, y en agosto en España estan de vacaciones.
+    # Precedente medido fuera de agosto: el mapa de Cataluña de Unai hizo 0.59x
+    # con 3.018 impresiones porque las empresas nos ignoraron. Y NO es un veto:
+    # si Iker confirma, el post se escribe entero, asi que restar en el marcador
+    # seria mentir sobre la calidad del texto.
+    if pilar in ('mapa', 'los10', 'objeto'):
+        _hoy = datetime.date.today()
+        chk(_hoy.month != 8, 'AGOSTO: el peloteo no se publica (post-workflow §8.0-AGOSTO)',
+            f'hoy es {_hoy.isoformat()}. En agosto el peloteo se sustituye por meme / lead '
+            'magnet / historia: su motor son los mencionados y estan de vacaciones. Avisa a '
+            'Iker ANTES de escribir y ofrece dejarlo preparado para septiembre'
+            if _hoy.month == 8 else '', aviso=True)
 
     # ---------- UNIVERSALES ----------
     chk(len(hook_txt) <= 210, 'Hook ≤210 caracteres (§2.1)', f'{len(hook_txt)} caracteres')
