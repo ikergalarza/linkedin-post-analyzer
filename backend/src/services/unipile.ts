@@ -956,13 +956,27 @@ export class UnipileService {
   // fetch set the boundary itself; setting Content-Type by hand here would
   // omit the boundary and Unipile would 400.
   //
-  // LinkedIn only delivers a plain DM to a 1st-degree connection. For
-  // anyone else this throws (the caller pre-checks network_distance and
-  // offers an invitation instead).
+  // LinkedIn only delivers a plain DM to a 1st-degree connection. Para el
+  // resto hay DOS canales más, y los dos salen por este mismo endpoint con un
+  // parámetro extra (`opts`):
+  //
+  //  · `invitationId` — la persona nos mandó a NOSOTROS una solicitud y sigue
+  //    pendiente de aceptar. LinkedIn deja contestarla con un mensaje normal
+  //    (`linkedin[invitation_id]`), sin gastar InMail y sin nota.
+  //  · `inmail` + `subject` — no hay conexión ni solicitud por ninguna parte.
+  //    InMail de Premium/Sales Navigator (`linkedin[inmail]=true`), que LinkedIn
+  //    OBLIGA a llevar asunto.
+  //
+  // Los nombres de campo van en notación de corchetes (`linkedin[api]`,
+  // `linkedin[inmail]`, `linkedin[invitation_id]`) porque el objeto `linkedin`
+  // es un campo de primer nivel del multipart, no va anidado bajo `options`.
+  // Confirmado contra el OpenAPI de Unipile el 2026-08-14. `subject` sí es de
+  // primer nivel, al lado de `text`.
   async sendDirectMessage(
     providerId: string,
     text: string,
-    accountIdOverride?: string
+    accountIdOverride?: string,
+    opts: { subject?: string; inmail?: boolean; invitationId?: string } = {}
   ): Promise<{ chat_id: string | null; message_id: string | null }> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) throw new Error('No Unipile account_id available for DM');
@@ -971,9 +985,15 @@ export class UnipileService {
     form.append('account_id', accountId);
     form.append('attendees_ids', providerId);
     form.append('text', text);
+    // El asunto solo lo pinta LinkedIn en el InMail; en un DM normal lo tira.
+    if (opts.subject) form.append('subject', opts.subject);
+    if (opts.inmail || opts.invitationId) form.append('linkedin[api]', 'classic');
+    if (opts.inmail) form.append('linkedin[inmail]', 'true');
+    if (opts.invitationId) form.append('linkedin[invitation_id]', opts.invitationId);
 
     const url = `${this.baseUrl}/api/v1/chats`;
-    console.log(`[Unipile sendDirectMessage] → POST /api/v1/chats attendee=${providerId}`);
+    const canal = opts.inmail ? 'inmail' : opts.invitationId ? 'invitacion-pendiente' : 'dm';
+    console.log(`[Unipile sendDirectMessage] → POST /api/v1/chats attendee=${providerId} canal=${canal}`);
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'X-API-KEY': this.apiKey },
@@ -1015,6 +1035,107 @@ export class UnipileService {
     });
     console.log(`[Unipile sendInvitation] ← ${JSON.stringify(res)}`);
     return res;
+  }
+
+  // ───────────── invitaciones: las que NOS mandan y las que mandamos ─────────────
+  //
+  // ⛔ ESTAS DOS LISTAS SON LA VERDAD DE LINKEDIN, Y LA RESPUESTA DEL POST NO LO ES
+  // (Iker, 2026-08-13). Ese día la herramienta dio por buenas un montón de
+  // invitaciones: Unipile respondió 200, la app las guardó como enviadas, y horas
+  // después los comentaristas escribían diciendo que no les había llegado nada.
+  // La cuenta tenía un baneo de invitaciones y LinkedIn las tiraba en silencio.
+  //
+  // La única forma de saberlo es RELEER: si la invitación existe de verdad, sale
+  // en `/users/invite/sent`. Por eso las dos listas viven aquí y no en la ruta.
+
+  // Las solicitudes que NOS han mandado y siguen pendientes de aceptar.
+  //
+  // Vale para dos cosas: saber a quién podemos escribirle un mensaje normal sin
+  // gastar InMail (LinkedIn deja contestar una solicitud pendiente), y con qué
+  // `invitation_id` hacerlo. Devuelve el id del que invita (`inviter_id`, forma
+  // ACoAA…), que es el mismo provider_id que trae un comentario.
+  async getReceivedInvitations(
+    accountIdOverride?: string,
+    opts: { maxPages?: number; pageSize?: number } = {}
+  ): Promise<{ invitation_id: string; inviter_id: string; inviter_name: string | null }[]> {
+    return this.listInvitations('received', accountIdOverride, opts);
+  }
+
+  // Las invitaciones que HEMOS mandado y siguen pendientes. Es el recibo de una
+  // invitación: si acabas de invitar a alguien y no aparece aquí, no salió.
+  async getSentInvitations(
+    accountIdOverride?: string,
+    opts: { maxPages?: number; pageSize?: number } = {}
+  ): Promise<{ invitation_id: string; inviter_id: string; inviter_name: string | null }[]> {
+    return this.listInvitations('sent', accountIdOverride, opts);
+  }
+
+  // El paginado es idéntico en las dos; lo único que cambia es de qué lado del
+  // objeto sale la persona: en la recibida es `inviter`, en la enviada es el
+  // `invited_user`. Se normalizan a la misma forma para que quien las compara no
+  // tenga que acordarse de cuál es cuál.
+  private async listInvitations(
+    tipo: 'received' | 'sent',
+    accountIdOverride?: string,
+    opts: { maxPages?: number; pageSize?: number } = {}
+  ): Promise<{ invitation_id: string; inviter_id: string; inviter_name: string | null }[]> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for invitations');
+    const pageSize = opts.pageSize ?? 50;
+    const maxPages = opts.maxPages ?? 6;
+
+    const out: { invitation_id: string; inviter_id: string; inviter_name: string | null }[] = [];
+    let cursor: string | undefined;
+    for (let page = 0; page < maxPages; page++) {
+      const params = new URLSearchParams({ account_id: accountId, limit: String(pageSize) });
+      if (cursor) params.set('cursor', cursor);
+      const res = await this.request<{ items?: any[]; cursor?: string }>(
+        `/api/v1/users/invite/${tipo}?${params.toString()}`
+      );
+      const items = res.items || [];
+      for (const it of items) {
+        const id = tipo === 'received' ? it?.inviter?.inviter_id : it?.invited_user_id;
+        if (!id) continue;
+        out.push({
+          invitation_id: String(it.id || ''),
+          inviter_id: String(id),
+          inviter_name: (tipo === 'received' ? it?.inviter?.inviter_name : it?.invited_user) || null,
+        });
+      }
+      cursor = res.cursor;
+      if (!cursor || items.length === 0) break;
+      await new Promise((r) => setTimeout(r, 250)); // pacing entre páginas
+    }
+    console.log(`[Unipile listInvitations:${tipo}] → ${out.length} pendientes`);
+    return out;
+  }
+
+  // Los últimos mensajes de un chat. Es el recibo de un DM o de un InMail: se
+  // relee el chat que devolvió el envío y se busca el mensaje. Si no está, no
+  // salió, diga lo que diga el 200 de la llamada anterior.
+  async getChatMessages(chatId: string, limit = 5): Promise<any[]> {
+    const res = await this.request<{ items?: any[] }>(
+      `/api/v1/chats/${encodeURIComponent(chatId)}/messages?limit=${limit}`
+    );
+    return res.items || [];
+  }
+
+  // Los chats que tenemos con UNA persona, buscados por su provider_id. Es como
+  // se comprueba un envío del que no guardamos el chat_id (los de antes de
+  // 2026-08-14).
+  //
+  // ⚠️ La ruta es `/chat_attendees/{provider_id}/chats`, NO `/chats?attendee_id=`:
+  // ese parámetro existe pero espera el id interno de Unipile, así que con un
+  // provider_id devuelve cero chats sin dar error — o sea, "no le has escrito
+  // nunca" para todo el mundo. Medido el 2026-08-14.
+  async getChatsWithAttendee(providerId: string, accountIdOverride?: string, limit = 5): Promise<any[]> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for chat lookup');
+    const res = await this.request<{ items?: any[] }>(
+      `/api/v1/chat_attendees/${encodeURIComponent(providerId)}/chats` +
+        `?account_id=${encodeURIComponent(accountId)}&limit=${limit}`
+    );
+    return res.items || [];
   }
 
   // List followers via /api/v1/users/followers (confirmed path). Items come

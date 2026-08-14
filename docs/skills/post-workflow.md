@@ -1068,6 +1068,20 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 
+#### ⛔ 4.5.-3 · POR DÓNDE SE ENTREGA EL RECURSO, Y POR QUÉ YA NO SE MANDA NOTA DESDE UNAI (Iker, 2026-08-14)
+
+**Lo que pasó (13/08/2026).** La cuenta de **Unai** tiene un **baneo de invitaciones semanales con nota**. LinkedIn seguía aceptando la llamada por la API —Unipile devolvía OK— y luego **se tragaba la nota en silencio**. La herramienta las guardaba como enviadas, marcaba el comentario como contestado, y horas después escribían los propios comentaristas diciendo que **no habían recibido nada**. Alcance y comentarios gastados, cero entregas.
+
+**LA REGLA. Desde una cuenta con el baneo NO se manda nota NUNCA.** Quedan tres canales, y se eligen en este orden:
+
+1. **1er grado** → mensaje privado normal.
+2. **Nos ha mandado ELLA una solicitud y sigue pendiente de aceptar** → mensaje normal contestando a esa solicitud (`linkedin[invitation_id]`). **Es gratis, no gasta InMail y llega igual.** Va antes que el InMail siempre.
+3. **Ni conexión ni solicitud por ninguna parte** → **InMail**. Las 3 cuentas de founder tienen Sales Navigator (comprobado 2026-08-14), y LinkedIn **obliga a poner asunto**: va siempre `RECURSO XXTEMAXX` en mayúsculas y corto — *"RECURSO VIBE PROSPECTING"*. El asunto es lo único que se lee en la bandeja antes de abrir.
+
+**De momento el baneo es solo de Unai**, pero se prospecta con las 3 cuentas: el día que caiga otra, la lista está en un sitio (`CUENTAS_SIN_NOTA`, en `backend/src/routes/accounts.ts` y su gemela en `frontend/src/components/accounts/leadMagnetCopy.ts`).
+
+**Y LO MÁS IMPORTANTE: ENVIADO ≠ LLEGADO.** El 200 de la API no es prueba de nada. Después de cada envío la herramienta **relee LinkedIn** (el mensaje en el chat, o la invitación en las pendientes enviadas) y solo pinta en verde lo que encuentra; lo que no, lo marca **caído en rojo con el motivo**. En el panel hay un botón **"Revisar envíos"** que repasa los ya guardados y corrige los que se dieron por buenos sin haber salido — es lo que hay que darle para limpiar cualquier tanda anterior al 14/08. **Nunca respondas "Enviado!" en el comentario antes de que el recurso esté comprobado**: el panel ya lo bloquea, pero la regla es de criterio, no de botón.
+
 #### 🔴 4.5.-2 · TODO LEAD MAGNET TIENE QUE CAPTURAR ALGO — AVISO OBLIGATORIO AL ITERAR IDEAS (Iker, 2026-07-22)
 
 **El objetivo NO es solo que se haga viral. Es que se haga viral Y capture, porque vendemos un producto de IA y hay que llevar a la gente hacia comprar.** Un lead magnet que se hace viral y no captura nada es **regalar valor como quien regala calabazas**: el peor resultado, porque gastas el mejor alcance en cero pipeline.

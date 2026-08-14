@@ -2617,7 +2617,35 @@ router.post('/posts/:postId/comments/:commentId/react', async (req: Request, res
 //
 // GET  /api/accounts/lead-magnet/posts?creator_id=  — the post grid
 // GET  /api/accounts/lead-magnet/sends?post_id=     — who we already wrote to
-// POST /api/accounts/lead-magnet/send               — DM or invitation
+// GET  /api/accounts/lead-magnet/canal?creator_id=  — qué canal puede usar la cuenta
+// POST /api/accounts/lead-magnet/send               — DM, InMail o invitación
+// POST /api/accounts/lead-magnet/reverificar        — releer envíos ya guardados
+
+// ⛔ CUENTAS CON LA NOTA PROHIBIDA (Iker, 2026-08-14).
+//
+// A Unai le metieron un baneo de invitaciones semanales con nota: LinkedIn las
+// acepta por la API y luego las TIRA, sin decírselo a nadie (ver el bloque v36
+// de la migración). En esas cuentas no se manda nota NUNCA más, y quedan dos
+// caminos, en este orden:
+//
+//   1. Si esa persona nos ha mandado una solicitud y sigue pendiente → mensaje
+//      normal contestando a la invitación. Es gratis y llega igual que un DM.
+//   2. Si no hay conexión ni solicitud por ninguna parte → InMail, que las 3
+//      cuentas pueden mandar (las tres tienen sales_navigator, comprobado el
+//      2026-08-14) y que LinkedIn obliga a llevar asunto.
+//
+// Se compara por NOMBRE DE PILA, igual que `voiceFor` en el panel: es lo que
+// guarda la tabla creators. Ampliarlo el día que baneen otra cuenta es añadir
+// una palabra a este Set y nada más.
+//
+// TWIN: frontend/src/components/accounts/leadMagnetCopy.ts (`notaBaneada`).
+// Son paquetes separados sin módulo común: si cambia la lista, se tocan los dos.
+const CUENTAS_SIN_NOTA = new Set(['unai']);
+
+function notaBaneada(creatorName: string | null | undefined): boolean {
+  const first = (creatorName || '').trim().split(/\s+/)[0]?.toLowerCase();
+  return !!first && CUENTAS_SIN_NOTA.has(first);
+}
 
 // GET /api/accounts/lead-magnet/posts?creator_id=xxx&limit=20
 //
@@ -2667,7 +2695,7 @@ router.get('/lead-magnet/sends', async (req: Request, res: Response) => {
     const postId = (req.query.post_id as string) || '';
     if (!postId) return res.status(400).json({ error: 'post_id required' });
     const { rows } = await pool.query(
-      `SELECT comment_social_id, provider_id, kind, status, text, error, created_at
+      `SELECT comment_social_id, provider_id, kind, status, text, error, verificado, created_at
          FROM lead_magnet_sends
         WHERE post_id = $1
         ORDER BY created_at DESC`,
@@ -2676,6 +2704,56 @@ router.get('/lead-magnet/sends', async (req: Request, res: Response) => {
     res.json({ sends: rows });
   } catch (err: any) {
     console.error('[accounts/lead-magnet/sends]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/accounts/lead-magnet/canal?creator_id=xxx
+//
+// Por dónde puede escribir ESTA cuenta, en una sola llamada:
+//
+//   · sin_nota   — true si la cuenta tiene la invitación con nota prohibida
+//                  (CUENTAS_SIN_NOTA). El panel deja de ofrecer "Invitar con nota".
+//   · pendientes — las solicitudes que NOS han mandado y siguen sin aceptar,
+//                  como provider_id → invitation_id. A esa gente se le puede
+//                  escribir un mensaje normal sin gastar un InMail.
+//
+// Se pide UNA vez por cuenta al abrir el post, no una por tarjeta: la lista de
+// invitaciones recibidas es la misma para los 400 comentarios del post.
+//
+// Un fallo de Unipile devuelve 200 con `pendientes: []` y `aviso`: sin la lista
+// el panel sigue funcionando (todo el mundo cae al InMail, que también llega),
+// y quedarse sin poder mandar nada sería peor que gastar algún crédito de más.
+router.get('/lead-magnet/canal', async (req: Request, res: Response) => {
+  try {
+    const creatorId = (req.query.creator_id as string) || '';
+    if (!creatorId) return res.status(400).json({ error: 'creator_id required' });
+    const { rows } = await pool.query(
+      `SELECT name, unipile_account_id FROM creators WHERE id = $1`,
+      [creatorId]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Creator not found' });
+    const { name, unipile_account_id: accountId } = rows[0];
+    const sinNota = notaBaneada(name);
+
+    let pendientes: { provider_id: string; invitation_id: string; name: string | null }[] = [];
+    let aviso: string | null = null;
+    if (accountId) {
+      try {
+        const recibidas = await unipileService.getReceivedInvitations(accountId);
+        pendientes = recibidas.map((i) => ({
+          provider_id: i.inviter_id,
+          invitation_id: i.invitation_id,
+          name: i.inviter_name,
+        }));
+      } catch (err: any) {
+        aviso = `No he podido leer las solicitudes pendientes (${err?.message}). Sin esa lista, a quien no sea de 1er grado le tocará InMail aunque te hubiera invitado él.`;
+        console.warn('[accounts/lead-magnet/canal] invitaciones recibidas:', err?.message);
+      }
+    }
+    res.json({ sin_nota: sinNota, pendientes, aviso });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/canal]', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -2759,13 +2837,118 @@ router.post('/lead-magnet/lista', async (req: Request, res: Response) => {
   }
 });
 
+// ─────────────────────── el recibo de cada envío ───────────────────────
+//
+// ⛔ LA RESPUESTA DE UNIPILE NO ES PRUEBA DE NADA (Iker, 2026-08-13).
+//
+// Ese día la cuenta de Unai tenía un baneo de invitaciones. Unipile devolvía
+// 200 a cada nota, la app la guardaba como 'sent', y horas después escribían
+// los comentaristas diciendo que no les había llegado nada — mientras la
+// herramienta enseñaba "✓ invitación enviada" y el comentario, contestado.
+//
+// Por eso, después de mandar, se RELEE LinkedIn y se busca lo que acabamos de
+// enviar. Tres respuestas posibles, y las tres significan cosas distintas:
+//
+//   ok: true   → está ahí. Enviado de verdad.
+//   ok: false  → hemos podido mirar y NO está. Se guarda como fallido.
+//   ok: null   → no hemos podido mirar (la comprobación falló). Se guarda como
+//                enviado pero SIN verificar, y el panel lo dice.
+//
+// Nunca se convierte un null en un true: "no lo sé" pintado de verde es
+// exactamente el bug que estamos arreglando.
+type Verificacion = { ok: boolean | null; motivo: string | null };
+
+// LinkedIn devuelve el texto tal cual, pero los saltos de línea y los espacios
+// viajan mal, así que se compara por huella y no por igualdad.
+function huellaTexto(t: string): string {
+  return (t || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+// ¿Está de verdad en el chat el mensaje (DM o InMail) que acabamos de mandar?
+// `chatId` es el que devuelve el envío; cuando no lo hay (envíos guardados
+// antes del 2026-08-14) se busca el chat por la persona.
+async function verificarMensaje(
+  providerId: string,
+  accountId: string,
+  texto: string,
+  chatId: string | null,
+  // Los reintentos con espera son para el envío que ACABA de salir: LinkedIn
+  // tarda un momento en darlo por bueno y preguntar de inmediato sería
+  // inventarse un error. Al repasar envíos viejos (`/reverificar`) no hace
+  // falta esperar a nada —llevan horas— y 40 filas × 8 segundos se comerían el
+  // timeout de la petición, así que ahí se pasa una sola pasada sin espera.
+  esperas: number[] = [1200, 2500, 4000]
+): Promise<Verificacion> {
+  const buscado = huellaTexto(texto).slice(0, 60);
+  let ultimoError: string | null = null;
+  for (const espera of esperas) {
+    await new Promise((r) => setTimeout(r, espera));
+    try {
+      let id = chatId;
+      if (!id) {
+        const chats = await unipileService.getChatsWithAttendee(providerId, accountId, 3);
+        id = chats[0]?.id || null;
+        if (!id) { ultimoError = 'no hay ningún chat abierto con esta persona'; continue; }
+      }
+      const mensajes = await unipileService.getChatMessages(id, 10);
+      const nuestro = mensajes.find(
+        (m: any) => Number(m?.is_sender) === 1 && huellaTexto(m?.text).includes(buscado)
+      );
+      if (nuestro) return { ok: true, motivo: null };
+      ultimoError = 'el mensaje no aparece en el chat';
+    } catch (err: any) {
+      // Un fallo de la COMPROBACIÓN no es un fallo del envío: se reintenta y,
+      // si no hay manera, se devuelve null (no lo sabemos).
+      ultimoError = err?.message || String(err);
+      return { ok: null, motivo: `no he podido comprobarlo: ${ultimoError}` };
+    }
+  }
+  return {
+    ok: false,
+    motivo: `LinkedIn aceptó la llamada pero ${ultimoError}. Al destinatario NO le ha llegado nada.`,
+  };
+}
+
+// ¿Está de verdad la invitación? Si salió, aparece en las pendientes enviadas.
+// Si no aparece, queda una explicación buena antes de darla por fallida: que la
+// persona la haya ACEPTADO ya (entonces sale de esa lista y pasa a 1er grado).
+async function verificarInvitacion(
+  providerId: string,
+  accountId: string,
+  esperas: number[] = [1500, 3000]
+): Promise<Verificacion> {
+  let ultimoError: string | null = null;
+  for (const espera of esperas) {
+    await new Promise((r) => setTimeout(r, espera));
+    try {
+      const enviadas = await unipileService.getSentInvitations(accountId, { maxPages: 3 });
+      if (enviadas.some((i) => i.inviter_id === providerId)) return { ok: true, motivo: null };
+      ultimoError = 'no aparece en tus invitaciones pendientes';
+    } catch (err: any) {
+      return { ok: null, motivo: `no he podido comprobarlo: ${err?.message || String(err)}` };
+    }
+  }
+  try {
+    const perfil: any = await unipileService.getProfile(providerId, accountId);
+    const nd = String(perfil?.network_distance ?? '').toUpperCase();
+    if (nd === '1' || nd.includes('DISTANCE_1') || nd.includes('FIRST')) {
+      return { ok: true, motivo: null }; // ya te aceptó: por eso no está pendiente
+    }
+  } catch { /* sin perfil no se puede desmentir; se queda en fallida */ }
+  return {
+    ok: false,
+    motivo: `LinkedIn aceptó la llamada pero ${ultimoError}. Suele ser el baneo de invitaciones de la cuenta: la nota NO ha salido.`,
+  };
+}
+
 // POST /api/accounts/lead-magnet/send
-// Body: { post_id, comment_id, provider_id, kind: 'dm'|'invite', text }
+// Body: { post_id, comment_id, provider_id, kind: 'dm'|'invite'|'inmail', text,
+//         subject?, invitation_id? }
 //
 // Delivers the resource to one commenter. `kind` is decided by the CLIENT
-// from the degree badge (1st → dm, otherwise → invite), but we re-derive
-// nothing here: the user can override, and LinkedIn is the real authority
-// on what's allowed — it'll reject what it rejects.
+// from the degree badge and from las solicitudes pendientes, pero la cuenta
+// baneada NO puede mandar nota diga lo que diga el cliente: eso se comprueba
+// aquí (es el único sitio que ve el nombre del creador).
 //
 // A failure is recorded, not swallowed: we persist status='failed' with the
 // error and STILL return 200, because "LinkedIn refused this one" is a
@@ -2776,19 +2959,28 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     // followup_text / sector / provider_name: solo llegan en la INVITACIÓN de una
     // lista, para guardar la lista completa que se manda cuando la persona acepte
     // (ver /lead-magnet/followups). En un DM normal no vienen y se ignoran.
-    const { post_id, comment_id, provider_id, kind, text, followup_text, sector, provider_name } = req.body || {};
+    const {
+      post_id, comment_id, provider_id, kind, text,
+      subject, invitation_id, followup_text, sector, provider_name,
+    } = req.body || {};
     if (!post_id || !comment_id || !provider_id) {
       return res.status(400).json({ error: 'post_id, comment_id and provider_id required' });
     }
-    if (kind !== 'dm' && kind !== 'invite') {
-      return res.status(400).json({ error: "kind must be 'dm' or 'invite'" });
+    if (kind !== 'dm' && kind !== 'invite' && kind !== 'inmail') {
+      return res.status(400).json({ error: "kind must be 'dm', 'invite' or 'inmail'" });
     }
     if (!text || typeof text !== 'string' || !text.trim()) {
       return res.status(400).json({ error: 'text required' });
     }
+    // LinkedIn rechaza el InMail sin asunto, así que aquí se para antes de
+    // gastar el crédito: un 400 con motivo se lee, un rechazo de LinkedIn no.
+    const asunto = String(subject || '').trim().slice(0, 200);
+    if (kind === 'inmail' && !asunto) {
+      return res.status(400).json({ error: 'El InMail necesita asunto (LinkedIn lo exige)' });
+    }
 
     const postQ = await pool.query(
-      `SELECT p.id, c.unipile_account_id
+      `SELECT p.id, c.name AS creator_name, c.unipile_account_id
          FROM posts p
          JOIN creators c ON c.id = p.creator_id
         WHERE p.id = $1`,
@@ -2798,22 +2990,58 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     const accountId = postQ.rows[0].unipile_account_id;
     if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
 
-    // LinkedIn hard-caps the invitation note at 300 chars and rejects the
-    // whole invite if it's longer. Truncating here (rather than trusting the
-    // client) means a long "tema" can never cost us the send.
-    const body = kind === 'invite' ? text.trim().slice(0, 300) : text.trim();
+    // La guarda del baneo vive AQUÍ y no solo en el panel: el cliente puede ir
+    // desactualizado (una pestaña abierta de antes del cambio) y cada nota que
+    // sale de esta cuenta es un lead que se pierde en silencio.
+    if (kind === 'invite' && notaBaneada(postQ.rows[0].creator_name)) {
+      return res.status(400).json({
+        error: `${postQ.rows[0].creator_name} tiene prohibida la invitación con nota: LinkedIn se las traga sin avisar. Usa el mensaje a la solicitud pendiente o el InMail.`,
+      });
+    }
+
+    // Los topes de LinkedIn, aplicados aquí y no confiados al cliente: la nota
+    // son 300 caracteres y rechaza la invitación entera si te pasas; el cuerpo
+    // del InMail son 1.900.
+    const body =
+      kind === 'invite' ? text.trim().slice(0, 300)
+      : kind === 'inmail' ? text.trim().slice(0, 1900)
+      : text.trim();
 
     let status: 'sent' | 'failed' = 'sent';
     let error: string | null = null;
     let result: any = null;
+    let verificado: boolean | null = null;
     try {
-      result = kind === 'dm'
-        ? await unipileService.sendDirectMessage(provider_id, body, accountId)
-        : await unipileService.sendInvitation(provider_id, body, accountId);
+      if (kind === 'invite') {
+        result = await unipileService.sendInvitation(provider_id, body, accountId);
+      } else {
+        result = await unipileService.sendDirectMessage(provider_id, body, accountId, {
+          ...(kind === 'inmail' ? { inmail: true, subject: asunto } : {}),
+          // Contestar a una solicitud pendiente: mensaje normal, sin gastar
+          // InMail. Solo va cuando el panel ha encontrado su invitación.
+          ...(kind === 'dm' && invitation_id ? { invitationId: String(invitation_id) } : {}),
+        });
+      }
     } catch (err: any) {
       status = 'failed';
       error = err?.message || String(err);
       console.warn(`[accounts/lead-magnet/send] ${kind} to ${provider_id} failed:`, error);
+    }
+
+    // El recibo. Solo si la llamada no petó: si ya sabemos que falló, no hay
+    // nada que releer.
+    if (status === 'sent') {
+      const v = kind === 'invite'
+        ? await verificarInvitacion(provider_id, accountId)
+        : await verificarMensaje(provider_id, accountId, body, result?.chat_id ?? null);
+      verificado = v.ok;
+      if (v.ok === false) {
+        status = 'failed';
+        error = v.motivo;
+        console.warn(`[accounts/lead-magnet/send] ${kind} a ${provider_id} NO verificado: ${v.motivo}`);
+      } else if (v.ok === null) {
+        error = v.motivo; // enviado, pero sin recibo: el panel lo dice en ámbar
+      }
     }
 
     // Record the attempt either way, keyed by PERSON (post + provider + kind),
@@ -2823,25 +3051,89 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     // the earlier failure.
     try {
       await pool.query(
-        `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error, followup_text, sector, provider_name)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error, verificado, followup_text, sector, provider_name)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
          ON CONFLICT (post_id, provider_id, kind)
          DO UPDATE SET status = EXCLUDED.status, text = EXCLUDED.text,
                        error = EXCLUDED.error, created_at = NOW(),
+                       verificado = EXCLUDED.verificado,
                        comment_social_id = EXCLUDED.comment_social_id,
                        followup_text = COALESCE(EXCLUDED.followup_text, lead_magnet_sends.followup_text),
                        sector = COALESCE(EXCLUDED.sector, lead_magnet_sends.sector),
                        provider_name = COALESCE(EXCLUDED.provider_name, lead_magnet_sends.provider_name)`,
-        [post_id, comment_id, provider_id, kind, status, body, error,
+        [post_id, comment_id, provider_id, kind, status, body, error, verificado,
          followup_text || null, sector || null, provider_name || null]
       );
     } catch (storeErr: any) {
       console.warn('[accounts/lead-magnet/send] persist failed:', storeErr?.message);
     }
 
-    res.json({ ok: status === 'sent', kind, status, error, result });
+    res.json({ ok: status === 'sent', kind, status, error, verificado, result });
   } catch (err: any) {
     console.error('[accounts/lead-magnet/send]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/lead-magnet/reverificar
+// Body: { post_id }
+//
+// Relee en LinkedIn TODOS los envíos que este post tiene guardados como
+// 'sent' y corrige los que no llegaron. Es la limpieza de lo que ya está
+// guardado en falso: los envíos del 13/08 siguen puestos como enviados aunque
+// LinkedIn se los tragara, y sin esto no hay forma de saber a quién hay que
+// volver a escribir.
+//
+// Solo puede EMPEORAR el estado (sent → failed) o confirmarlo: nunca resucita
+// un fallido, porque un fallido ya está a la vista para reintentarlo a mano.
+router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
+  try {
+    const postId = (req.body || {}).post_id;
+    if (!postId) return res.status(400).json({ error: 'post_id required' });
+
+    const { rows } = await pool.query(
+      `SELECT s.provider_id, s.kind, s.text, s.verificado, c.unipile_account_id
+         FROM lead_magnet_sends s
+         JOIN posts p ON p.id = s.post_id
+         JOIN creators c ON c.id = p.creator_id
+        WHERE s.post_id = $1 AND s.status = 'sent'
+        ORDER BY s.created_at DESC`,
+      [postId]
+    );
+    const accountId = rows[0]?.unipile_account_id;
+    if (rows.length === 0) return res.json({ revisados: 0, caidos: 0, sin_comprobar: 0, detalle: [] });
+    if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    // Tope de 40, igual que /check-accepted: cada fila son 1-3 llamadas a
+    // Unipile y pasarse de ahí es tocar el rate limit de la cuenta.
+    const detalle: { provider_id: string; kind: string; ok: boolean | null; motivo: string | null }[] = [];
+    for (const r of rows.slice(0, 40)) {
+      // Sin esperas: estas filas llevan horas o días, LinkedIn ya las tiene
+      // decididas, y encadenar 40 backoffs se comería el timeout.
+      const v = r.kind === 'invite'
+        ? await verificarInvitacion(r.provider_id, accountId, [0])
+        : await verificarMensaje(r.provider_id, accountId, r.text || '', null, [0]);
+      detalle.push({ provider_id: r.provider_id, kind: r.kind, ok: v.ok, motivo: v.motivo });
+      await pool.query(
+        `UPDATE lead_magnet_sends
+            SET status = CASE WHEN $3::boolean IS FALSE THEN 'failed' ELSE status END,
+                verificado = $3,
+                -- Confirmado = se limpia el error viejo; si no, se guarda el motivo.
+                error = CASE WHEN $3::boolean IS TRUE THEN NULL ELSE COALESCE($4, error) END
+          WHERE post_id = $1 AND provider_id = $2 AND kind = $5`,
+        [postId, r.provider_id, v.ok, v.motivo, r.kind]
+      );
+    }
+
+    res.json({
+      revisados: detalle.length,
+      caidos: detalle.filter((d) => d.ok === false).length,
+      sin_comprobar: detalle.filter((d) => d.ok === null).length,
+      omitidos: Math.max(0, rows.length - detalle.length),
+      detalle,
+    });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/reverificar]', err);
     res.status(500).json({ error: err.message });
   }
 });

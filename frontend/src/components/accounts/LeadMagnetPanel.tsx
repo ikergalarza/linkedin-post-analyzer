@@ -3,8 +3,8 @@ import { useApi, apiPost, apiGet } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
-  buildDm, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
-  commentDepth, detectarRecurso, extractKeyword, extractSector, resolverRecurso, voiceFor,
+  asuntoInmail, buildDm, buildInmail, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
+  commentDepth, detectarRecurso, extractKeyword, extractSector, notaBaneada, resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 
@@ -23,13 +23,22 @@ import type { ListaCompany, Voice } from './leadMagnetCopy';
 //    for the normal case. The AI button only shows on comments that asked a
 //    real question.
 //
-// 2. LinkedIn only delivers a plain DM to a 1st-degree connection. Everyone
-//    else gets an invitation carrying the resource in the note. The card
-//    picks which, from the degree badge, and says so.
+// 2. LinkedIn only delivers a plain DM to a 1st-degree connection. Para el
+//    resto hay tres caminos y la tarjeta elige solo, en este orden:
+//      · nos mandó una solicitud y sigue pendiente → mensaje normal (gratis)
+//      · la cuenta tiene la nota prohibida        → InMail con asunto
+//      · si no                                    → invitación con nota
+//    Ver `canalDe` más abajo.
 //
 // 3. Sends are ONE BY ONE, deliberately. No "send all" — a hundred DMs in a
 //    burst from one account is the pattern LinkedIn restricts accounts for,
 //    and losing the account costs more than any lead magnet earns.
+//
+// 4. UN ENVÍO NO ESTÁ ENVIADO HASTA QUE SE COMPRUEBA (Iker, 2026-08-13). El
+//    backend relee LinkedIn después de mandar y devuelve `verificado`. La
+//    tarjeta pinta tres estados distintos —verificado, sin comprobar, caído—
+//    porque el día que la cuenta de Unai tenía baneadas las invitaciones esto
+//    decía "✓ enviado" sobre gente que no recibió absolutamente nada.
 
 interface ManagedAccount {
   id: string;
@@ -65,11 +74,33 @@ interface CommentsResponse {
 interface SendRecord {
   comment_social_id: string;
   provider_id: string;
-  kind: 'dm' | 'invite';
+  kind: 'dm' | 'invite' | 'inmail';
   status: 'sent' | 'failed';
   text: string | null;
   error: string | null;
+  // El recibo: true = releído en LinkedIn y está ahí. null = no se pudo
+  // comprobar, que NO es lo mismo que enviado. false no llega nunca aquí con
+  // status 'sent' — el backend lo convierte en 'failed'.
+  verificado: boolean | null;
   created_at: string;
+}
+
+// Por dónde se le escribe a esta persona. `kind` (lo que entiende el backend y
+// lo que guarda la BD) es más pobre a propósito: 'dm' y 'dm-solicitud' son el
+// mismo mensaje privado, solo cambia que el segundo va colgado de la solicitud
+// que ella nos mandó.
+type Canal = 'dm' | 'dm-solicitud' | 'inmail' | 'invite';
+
+function kindDeCanal(c: Canal): 'dm' | 'invite' | 'inmail' {
+  return c === 'inmail' ? 'inmail' : c === 'invite' ? 'invite' : 'dm';
+}
+
+// La política de la cuenta + a quién podemos escribirle gratis porque nos ha
+// mandado él la solicitud. Se pide una vez por cuenta, no una por tarjeta.
+interface CanalInfo {
+  sin_nota: boolean;
+  pendientes: { provider_id: string; invitation_id: string; name: string | null }[];
+  aviso: string | null;
 }
 
 // The per-post config (keyword / link / topic). Kept in localStorage keyed by
@@ -288,6 +319,51 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   const { data: sendsData, refetch: refetchSends } = useApi<{ sends: SendRecord[] }>(
     `/api/accounts/lead-magnet/sends?post_id=${post.id}`
   );
+
+  // Por dónde puede escribir esta cuenta. Una llamada para todo el post: la
+  // lista de solicitudes pendientes es la misma para sus 400 comentarios.
+  const { data: canalData } = useApi<CanalInfo>(
+    `/api/accounts/lead-magnet/canal?creator_id=${creatorId}`
+  );
+  // Mientras carga (o si el backend no responde) manda `notaBaneada` con el
+  // nombre del creador: es la misma lista, y por defecto NO ofrecer la nota es
+  // el lado seguro — una nota de más en la cuenta baneada es un lead perdido en
+  // silencio, y un InMail de más solo cuesta un crédito.
+  const sinNota = canalData?.sin_nota ?? notaBaneada(post.creator_name);
+  // provider_id → invitation_id de la solicitud que ESA persona nos mandó.
+  const solicitudesPendientes = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const p of canalData?.pendientes ?? []) m.set(p.provider_id, p.invitation_id);
+    return m;
+  }, [canalData]);
+
+  // Revisar envíos: relee LinkedIn y corrige los que se guardaron como enviados
+  // sin haber llegado. Existe por el 13/08 (ver el comentario de cabecera): sin
+  // esto, esos envíos siguen puestos en verde para siempre.
+  const [revisando, setRevisando] = useState(false);
+  const [revisionMsg, setRevisionMsg] = useState<string | null>(null);
+  const revisarEnvios = async () => {
+    setRevisando(true);
+    setRevisionMsg(null);
+    try {
+      const r = await apiPost<{ revisados: number; caidos: number; sin_comprobar: number; omitidos: number }>(
+        '/api/accounts/lead-magnet/reverificar',
+        { post_id: post.id }
+      );
+      setRevisionMsg(
+        r.caidos > 0
+          ? `✗ ${r.caidos} de ${r.revisados} NO llegaron: están marcados como fallidos y hay que volver a escribirles.`
+          : `✓ ${r.revisados} envíos comprobados, todos llegaron.` +
+            (r.sin_comprobar ? ` (${r.sin_comprobar} sin poder comprobar)` : '') +
+            (r.omitidos ? ` Quedan ${r.omitidos} sin revisar: vuelve a darle.` : '')
+      );
+      refetchSends();
+    } catch (e: any) {
+      setRevisionMsg(`✗ ${e.message}`);
+    } finally {
+      setRevisando(false);
+    }
+  };
 
   // provider_id → the records for that PERSON. Keyed by person, not comment:
   // someone with two keyword-carrying comments has one delivery between them,
@@ -548,7 +624,37 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             {sentCount > 0 && (
               <span className="text-text-muted">· {sentCount} ya recibieron el recurso</span>
             )}
+            {/* Revisar envíos: el botón que desmiente a la propia herramienta.
+                Relee LinkedIn uno por uno y marca en rojo los que se guardaron
+                como enviados sin haber salido. */}
+            {sentCount > 0 && (
+              <button
+                onClick={revisarEnvios}
+                disabled={revisando}
+                className="text-[11px] px-2 py-0.5 rounded border border-border hover:border-accent/40 text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
+                title="Relee LinkedIn y comprueba que cada envío llegó de verdad"
+              >
+                {revisando ? 'Revisando…' : '↻ Revisar envíos'}
+              </button>
+            )}
+            {revisionMsg && (
+              <span className={revisionMsg.startsWith('✗') ? 'text-[11px] text-red-400 font-medium' : 'text-[11px] text-text-muted'}>
+                {revisionMsg}
+              </span>
+            )}
           </div>
+        )}
+
+        {/* La cuenta baneada: se dice una vez arriba, no en cada tarjeta. */}
+        {sinNota && (
+          <p className="text-[11px] text-amber-400 leading-snug pt-1">
+            ⚠️ {post.creator_name} tiene el baneo de invitaciones: LinkedIn se traga las notas sin avisar, así que
+            desde esta cuenta no se manda ninguna. A quien nos haya mandado solicitud se le escribe un mensaje
+            normal; al resto, InMail con asunto.
+          </p>
+        )}
+        {canalData?.aviso && (
+          <p className="text-[11px] text-amber-400 leading-snug pt-1">⚠️ {canalData.aviso}</p>
         )}
       </div>
 
@@ -593,6 +699,10 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           ]}
           invitedCommentIds={invitedCommentIds}
           ownsDm={dmOwnerByPerson.get(t.author.profile_id ?? '') === t.id}
+          sinNota={sinNota}
+          invitacionPendiente={
+            t.author.profile_id ? solicitudesPendientes.get(t.author.profile_id) ?? null : null
+          }
           voice={voice}
           initialReply={takeVariant}
           onSent={refetchSends}
@@ -703,16 +813,33 @@ function CommenterCard({
   // person's other keyword-matching comments, which show only a reply — the
   // resource goes out once, from the comment that actually asked for it.
   ownsDm: boolean;
+  // La cuenta tiene prohibida la invitación con nota (baneo de LinkedIn).
+  sinNota: boolean;
+  // El invitation_id de la solicitud que ESTA persona nos mandó y sigue sin
+  // aceptar, o null. Con ella se le puede escribir un mensaje normal.
+  invitacionPendiente: string | null;
   // The voice of the account that published the post, not of the commenter.
   voice: Voice;
   initialReply: () => string;
   onSent: () => void;
 }) {
   const degree = thread.author.network_distance ?? null;
-  // A plain DM only reaches 1st-degree. Unknown degree → invitation, because
-  // guessing wrong on a DM burns the send; an invitation always at least
-  // arrives.
-  const kind: 'dm' | 'invite' = degree === 1 ? 'dm' : 'invite';
+  // POR DÓNDE SE LE ESCRIBE. El orden importa y no es arbitrario:
+  //
+  //  1. 1er grado → DM normal. Nada que decidir.
+  //  2. Nos mandó solicitud y sigue pendiente → mensaje normal contestando a esa
+  //     solicitud. Va ANTES que todo lo demás porque es gratis (no gasta InMail)
+  //     y llega igual; además a quien te ha invitado no puedes invitarle tú.
+  //  3. La cuenta tiene la nota baneada → InMail con asunto.
+  //  4. Si no → invitación con nota, que es lo de siempre.
+  //
+  // Grado desconocido nunca cae en DM: adivinar mal quema el envío.
+  const canal: Canal =
+    degree === 1 ? 'dm'
+    : invitacionPendiente ? 'dm-solicitud'
+    : sinNota ? 'inmail'
+    : 'invite';
+  const kind = kindDeCanal(canal);
 
   const priorSend = sends.find((s) => s.kind === kind) ?? null;
   // ⭐ Un DM enviado bloquea la tarjeta AUNQUE ahora toque otro `kind`
@@ -721,8 +848,15 @@ function CommenterCard({
   // tarjeta pasaba a buscar un envío de tipo 'dm' bajo el provider_id nuevo, no
   // lo encontraba, y volvía a ofrecer el envío. El recurso ya lo tiene: es un
   // mensaje repetido a alguien que además acaba de darnos su atención.
-  const dmSent = sends.some((s) => s.kind === 'dm' && s.status === 'sent');
+  // El InMail cuenta igual que el DM: los dos son el recurso ya entregado por
+  // privado, y volver a mandarlo por el otro canal es el mismo mensaje repetido
+  // (y encima gastando un crédito).
+  const dmSent = sends.some((s) => (s.kind === 'dm' || s.kind === 'inmail') && s.status === 'sent');
   const alreadySent = priorSend?.status === 'sent' || dmSent;
+  // ¿El envío que dimos por bueno está COMPROBADO en LinkedIn? `false` aquí no
+  // existe (el backend lo pasa a 'failed'); lo que sí existe es `null` = se
+  // mandó pero no se pudo comprobar, y eso se dice, no se pinta de verde.
+  const envioVerificado = (sends.find((s) => s.status === 'sent' && s.kind === kind) ?? null)?.verificado ?? null;
 
   // ¿Esta persona ya recibió la invitación con la lista prometida? Se mira por el
   // id del comentario (estable), NO por el provider_id (cambia al pasar a 1er
@@ -780,6 +914,11 @@ function CommenterCard({
 
   // ── message state ──
   const [message, setMessage] = useState<string>('');
+  // El asunto del InMail. LinkedIn lo exige y es lo único que se lee en la
+  // bandeja, así que se prerrellena («RECURSO VIBE PROSPECTING») pero se deja
+  // editar: el asunto del catálogo puede no encajar con el post de ese día.
+  const [subject, setSubject] = useState<string>('');
+  const [subjectTouched, setSubjectTouched] = useState(false);
   // The user may have edited the draft; don't clobber their text when the
   // location arrives or the topic changes.
   const [msgTouched, setMsgTouched] = useState(false);
@@ -795,8 +934,12 @@ function CommenterCard({
     const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
     if (!recurso) { setMessage(''); return; }
     const input = { name: thread.author.name, location, topic: recurso.topic, link: recurso.link, voice };
-    setMessage(kind === 'dm' ? buildDm(input) : buildInviteNote(input));
-  }, [location, cfg.keyword, cfg.kind, kind, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
+    setMessage(
+      canal === 'invite' ? buildInviteNote(input)
+      : canal === 'inmail' ? buildInmail(input)
+      : buildDm(input)
+    );
+  }, [location, cfg.keyword, cfg.kind, canal, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
 
   // ── lista state (solo tipo 'lista') ──
   // El sector se prerrellena con lo que la persona escribió tras la palabra
@@ -811,10 +954,24 @@ function CommenterCard({
   // cuanto acepten, sin regenerarla (ver la sección Seguimientos).
   const [followupText, setFollowupText] = useState<string>('');
 
+  // El asunto sale del RECURSO, no de la persona: mismo recurso, mismo asunto
+  // para todo el post. En la lista el recurso es distinto por comentario (cada
+  // uno pide su sector), así que ahí lo lleva dentro. Se para en cuanto el
+  // usuario lo toca. Va aquí abajo y no con el resto del borrador porque
+  // necesita `sector`, que se declara justo encima.
+  useEffect(() => {
+    if (canal !== 'inmail' || subjectTouched || alreadySent || !ownsDm) return;
+    setSubject(
+      cfg.kind === 'lista'
+        ? `RECURSO LISTA${sector.trim() ? ` ${sector.trim().toUpperCase()}` : ''}`
+        : asuntoInmail(resolverRecurso(cfg.keyword, cfg.link, cfg.topic))
+    );
+  }, [canal, subjectTouched, alreadySent, ownsDm, cfg.keyword, cfg.link, cfg.topic, cfg.kind, sector]);
+
   const [msgSending, setMsgSending] = useState(false);
-  const [msgResult, setMsgResult] = useState<{ status: 'sent' | 'failed'; error: string | null } | null>(
-    priorSend ? { status: priorSend.status, error: priorSend.error } : null
-  );
+  const [msgResult, setMsgResult] = useState<
+    { status: 'sent' | 'failed'; error: string | null; verificado: boolean | null } | null
+  >(priorSend ? { status: priorSend.status, error: priorSend.error, verificado: priorSend.verificado } : null);
 
   // Se le contesta AL ÚLTIMO QUE HABLÓ, igual que en la pestaña de Comentarios
   // (Iker, 2026-08-11). Si el hilo trae mensajes posteriores a nuestra última
@@ -943,8 +1100,22 @@ function CommenterCard({
     handleAi();
   }, [depth, replySent, replyTouched, ownsDm, cfg.kind]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ⛔ NO SE CONTESTA "ENVIADO!" ANTES DE QUE EL RECURSO HAYA SALIDO
+  // (Iker, 2026-08-13). Ese día pasó justo esto: las notas se caían en silencio,
+  // la respuesta pública sí se publicaba, y la gente contestaba al comentario
+  // diciendo que no había recibido nada. La respuesta de esta pestaña afirma que
+  // el recurso está mandado, así que mientras no lo esté es mentira.
+  //
+  // No se bloquea del todo: hay comentarios que merecen respuesta sin recurso de
+  // por medio, así que queda el "responder igualmente" a un clic.
+  const recursoSinEntregar =
+    cfg.kind !== 'publico' && ownsDm && !!thread.author.profile_id &&
+    !alreadySent && !handledInSeguimientos;
+  const [forzarRespuesta, setForzarRespuesta] = useState(false);
+
   const handleReply = async () => {
     if (!reply.trim()) return;
+    if (recursoSinEntregar && !forzarRespuesta) return;
     setReplySending(true);
     setReplyMsg(null);
     try {
@@ -979,9 +1150,12 @@ function CommenterCard({
         setListaMsg('No encuentro empresas de ese sector. Prueba a reescribirlo.');
         return;
       }
-      if (kind === 'dm') {
-        // Aquí solo llega un 1er grado que NUNCA fue invitado (a los invitados los
-        // gestiona Seguimientos): primer contacto por privado, saludo normal.
+      if (canal !== 'invite') {
+        // Por privado cabe la lista ENTERA, y da igual que sea un DM de 1er
+        // grado, la respuesta a una solicitud pendiente o un InMail: los tres
+        // llegan a la bandeja y ninguno tiene el tope de 300 de la nota. Aquí
+        // solo entra quien NUNCA fue invitado (a los invitados los gestiona
+        // Seguimientos): primer contacto por privado, saludo normal.
         setMessage(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: false }));
       } else {
         // Invitación: la caja lleva la nota corta, pero guardamos la lista ENTERA
@@ -1004,7 +1178,7 @@ function CommenterCard({
     if (!message.trim() || !thread.author.profile_id) return;
     setMsgSending(true);
     try {
-      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null }>(
+      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null; verificado: boolean | null }>(
         `/api/accounts/lead-magnet/send`,
         {
           post_id: postId,
@@ -1012,6 +1186,14 @@ function CommenterCard({
           provider_id: thread.author.profile_id,
           kind,
           text: message.trim(),
+          // El InMail no sale sin asunto: LinkedIn lo exige y el backend corta
+          // antes de gastar el crédito.
+          ...(canal === 'inmail' ? { subject: subject.trim() } : {}),
+          // Contestar a la solicitud que ELLA nos mandó: mensaje normal, sin
+          // gastar InMail y sin nota.
+          ...(canal === 'dm-solicitud' && invitacionPendiente
+            ? { invitation_id: invitacionPendiente }
+            : {}),
           // ⛔ EL NOMBRE VA EN TODA INVITACIÓN, NO SOLO EN LA LISTA (Iker,
           // 2026-08-12). Estaba dentro del `...(cfg.kind === 'lista' && …)`, así
           // que en cualquier otro lead magnet se guardaba NULL y Seguimientos
@@ -1027,10 +1209,10 @@ function CommenterCard({
             : {}),
         }
       );
-      setMsgResult({ status: res.status, error: res.error });
+      setMsgResult({ status: res.status, error: res.error, verificado: res.verificado });
       onSent();
     } catch (e: any) {
-      setMsgResult({ status: 'failed', error: e.message });
+      setMsgResult({ status: 'failed', error: e.message, verificado: false });
     } finally {
       setMsgSending(false);
     }
@@ -1175,11 +1357,19 @@ function CommenterCard({
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={handleReply}
-                    disabled={replySending || !reply.trim()}
+                    disabled={replySending || !reply.trim() || (recursoSinEntregar && !forzarRespuesta)}
                     className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
                   >
                     {replySending ? 'Enviando…' : 'Responder'}
                   </button>
+                  {recursoSinEntregar && !forzarRespuesta && (
+                    <span className="text-[11px] text-amber-400 leading-snug">
+                      Primero mándale el recurso, abajo. Esta respuesta le dice que ya se lo has enviado.{' '}
+                      <button onClick={() => setForzarRespuesta(true)} className="underline hover:text-amber-300">
+                        Responder igualmente
+                      </button>
+                    </span>
+                  )}
                   <EmojiPicker onPick={insertEmoji} disabled={replySending} />
                   {mention && (
                     <span
@@ -1236,15 +1426,52 @@ function CommenterCard({
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-medium text-text-secondary">
                 {cfg.kind === 'lista'
-                  ? (kind === 'dm' ? 'Lista de empresas por privado' : 'Invitación (la lista va al aceptar)')
-                  : (kind === 'dm' ? 'Mensaje privado con el recurso' : 'Invitación con el recurso en la nota')}
+                  ? (canal === 'invite' ? 'Invitación (la lista va al aceptar)' : 'Lista de empresas por privado')
+                  : (canal === 'invite' ? 'Invitación con el recurso en la nota' : 'Mensaje privado con el recurso')}
               </span>
-              {kind === 'invite' && (
-                <span className="text-[10px] text-text-muted tabular-nums">
-                  {message.length}/300
+              {/* Por qué este canal y no otro. Sin esto no se entiende que a uno
+                  le vaya un mensaje normal y al de al lado un InMail. */}
+              {canal === 'dm-solicitud' && (
+                <span
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-accent/15 text-accent"
+                  title="Te mandó una solicitud y sigue sin aceptar. LinkedIn deja contestarla con un mensaje normal: llega igual y no gasta InMail."
+                >
+                  te invitó él · mensaje gratis
                 </span>
               )}
+              {canal === 'inmail' && (
+                <span
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400"
+                  title="Ni sois contacto ni te ha mandado solicitud, y esta cuenta no puede invitar con nota. Sale por InMail, que gasta un crédito."
+                >
+                  InMail · gasta crédito
+                </span>
+              )}
+              {canal === 'invite' && (
+                <span className="text-[10px] text-text-muted tabular-nums">{message.length}/300</span>
+              )}
+              {canal === 'inmail' && (
+                <span className="text-[10px] text-text-muted tabular-nums">{message.length}/1900</span>
+              )}
             </div>
+
+            {/* El asunto del InMail. LinkedIn lo EXIGE y es lo único que se lee
+                en la bandeja antes de abrirlo, así que va a la vista y editable
+                en vez de escondido en el código. */}
+            {canal === 'inmail' && !noProfileId && msgResult?.status !== 'sent' && (
+              <div>
+                <label className="block text-[10px] font-medium text-text-secondary mb-1">
+                  Asunto <span className="text-text-muted">· obligatorio en el InMail</span>
+                </label>
+                <input
+                  value={subject}
+                  onChange={(e) => { setSubject(e.target.value); setSubjectTouched(true); }}
+                  disabled={msgSending}
+                  placeholder="RECURSO VIBE PROSPECTING"
+                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent disabled:opacity-50"
+                />
+              </div>
+            )}
 
             {/* Tipo LISTA: el sector (prerrellenado del comentario, editable) y el
                 botón que busca las empresas y rellena la caja. La lista completa
@@ -1285,9 +1512,21 @@ function CommenterCard({
                 LinkedIn no expone el perfil de esta persona, así que no se le puede escribir. Solo respuesta.
               </p>
             ) : msgResult?.status === 'sent' ? (
-              <p className="text-[11px] text-accent">
-                ✓ {kind === 'dm' ? 'Recurso enviado por DM' : 'Invitación enviada con el recurso'}
-              </p>
+              /* ⛔ ENVIADO ≠ LLEGADO. Solo se pinta en verde lo que el backend ha
+                 releído en LinkedIn. Cuando la comprobación no se pudo hacer va
+                 en ámbar y lo dice, porque el 13/08 el verde de aquí era mentira
+                 para media lista de comentaristas. */
+              (msgResult.verificado ?? envioVerificado) === true ? (
+                <p className="text-[11px] text-accent">
+                  ✓ {canal === 'invite' ? 'Invitación enviada con el recurso' : 'Recurso enviado y comprobado en LinkedIn'}
+                </p>
+              ) : (
+                <p className="text-[11px] text-amber-400 leading-snug">
+                  ⚠️ Enviado, pero NO he podido comprobar que esté en LinkedIn
+                  {msgResult.error ? ` (${msgResult.error})` : ''}. Dale a{' '}
+                  <span className="font-semibold">Revisar envíos</span> arriba antes de darlo por bueno.
+                </p>
+              )
             ) : (
               <>
                 <textarea
@@ -1304,19 +1543,32 @@ function CommenterCard({
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={handleSendResource}
-                    disabled={msgSending || !message.trim() || (cfg.kind === 'dm' && !resolverRecurso(cfg.keyword, cfg.link, cfg.topic))}
+                    disabled={
+                      msgSending || !message.trim() ||
+                      (cfg.kind === 'dm' && !resolverRecurso(cfg.keyword, cfg.link, cfg.topic)) ||
+                      (canal === 'inmail' && !subject.trim())
+                    }
                     className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
                   >
-                    {msgSending ? 'Enviando…' : kind === 'dm' ? 'Enviar DM' : 'Invitar con nota'}
+                    {msgSending
+                      ? 'Enviando y comprobando…'
+                      : canal === 'invite' ? 'Invitar con nota'
+                      : canal === 'inmail' ? 'Enviar InMail'
+                      : canal === 'dm-solicitud' ? 'Contestar a su solicitud'
+                      : 'Enviar DM'}
                   </button>
                   {location && (
                     <span className="text-[10px] text-text-muted" title="Se usa para adaptar el saludo">
                       📍 {location}
                     </span>
                   )}
+                  {/* El fallo, entero y en rojo. Antes se recortaba a 90
+                      caracteres y el motivo real —"no aparece en tus
+                      invitaciones pendientes, es el baneo de la cuenta"— se
+                      quedaba fuera, que es justo lo que hacía falta leer. */}
                   {msgResult?.status === 'failed' && (
-                    <span className="text-[10px] text-red-400" title={msgResult.error || ''}>
-                      ✗ LinkedIn lo rechazó: {(msgResult.error || '').slice(0, 90)}
+                    <span className="text-[11px] text-red-400 font-medium leading-snug">
+                      ✗ NO le ha llegado: {msgResult.error || 'LinkedIn lo rechazó sin decir por qué'}
                     </span>
                   )}
                 </div>
@@ -1417,12 +1669,18 @@ function Seguimientos({ post, creatorId, cfg, voice }: {
     setSending(f.provider_id);
     setErr(null);
     try {
-      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null }>(
+      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null; verificado: boolean | null }>(
         '/api/accounts/lead-magnet/send',
         { post_id: f.post_id, comment_id: f.comment_social_id, provider_id: f.provider_id, kind: 'dm', text }
       );
-      if (res.status === 'sent') setSentIds((s) => new Set(s).add(f.provider_id));
-      else setErr(res.error || 'LinkedIn rechazó el DM');
+      if (res.status === 'sent') {
+        setSentIds((s) => new Set(s).add(f.provider_id));
+        // Enviado pero sin recibo: se dice. Un "✓" sobre algo que no hemos
+        // podido comprobar es el bug del 13/08 otra vez.
+        if (res.verificado !== true) {
+          setErr(`⚠️ Mandado a ${f.provider_name || 'esta persona'}, pero no he podido comprobar que esté en LinkedIn${res.error ? ` (${res.error})` : ''}. Míralo en su chat antes de darlo por bueno.`);
+        }
+      } else setErr(res.error || 'LinkedIn rechazó el DM');
     } catch (e: any) {
       setErr(e.message);
     } finally {
@@ -1461,7 +1719,15 @@ function Seguimientos({ post, creatorId, cfg, voice }: {
       <p className="text-[11px] text-text-muted leading-snug">
         Quien te acepta sube aquí arriba con su lista ya montada: la revisas y se la mandas por DM de un tiro. Los que aún no te han aceptado quedan en espera.
       </p>
-      {err && <p className="text-[11px] text-red-400 font-medium">✗ {err}</p>}
+      {/* Un envío sin comprobar no es un fallo, pero tampoco un ✓: va en ámbar
+          y con su propio texto, no disfrazado de error rojo. */}
+      {err && (
+        <p className={err.startsWith('⚠️')
+          ? 'text-[11px] text-amber-400 font-medium leading-snug'
+          : 'text-[11px] text-red-400 font-medium'}>
+          {err.startsWith('⚠️') ? err : `✗ ${err}`}
+        </p>
+      )}
       <div className="space-y-2">
         {orden.map((f) => {
           const ok = accepted[f.provider_id];

@@ -58,6 +58,12 @@ export interface Recurso {
   link: string;
   // Rellena "el recurso sobre {t}" en el DM.
   topic: string;
+  // EL ASUNTO del InMail, en corto y en mayúsculas ("VIBE PROSPECTING"). El
+  // `topic` es una frase para meter en medio de una línea ("el recurso sobre
+  // cómo montar tu prospección con Claude") y como asunto no vale: LinkedIn lo
+  // enseña en la bandeja al lado del remitente y ahí solo se leen 3-4 palabras.
+  // Ver `asuntoInmail`.
+  asunto?: string;
 }
 
 // ⛔ EL CATALOGO ES LA FUENTE DE VERDAD, Y YA NO SE INDEXA POR PALABRA CLAVE
@@ -90,6 +96,7 @@ const CATALOGO: RecursoDef[] = [
     // la herramienta con su comenta "vibe" dentro del texto.
     link: 'https://recursos.neety.com/vibe/',
     topic: 'cómo montar tu prospección con Claude',
+    asunto: 'VIBE PROSPECTING',
     claves: ['vibe'],
     pistas: [
       'vibe prospecting', 'puerta fria', 'tumbar la prospeccion',
@@ -99,12 +106,14 @@ const CATALOGO: RecursoDef[] = [
   {
     link: 'https://recursos.neety.com/subvencion-euskadi/',
     topic: 'la subvención de IA para industria vasca',
+    asunto: 'SUBVENCION IA EUSKADI',
     claves: ['subvencion'],
     pistas: ['subvencion', 'ayuda publica', 'industria vasca', 'euskadi'],
   },
   {
     link: 'https://recursos.neety.com/prospeccion-manual/',
     topic: 'las señales que avisan de que una empresa va a comprar',
+    asunto: 'SEÑALES DE COMPRA',
     claves: ['manual'],
     pistas: ['prospeccion manual', 'senales que avisan', 'va a comprar', 'senal de compra'],
   },
@@ -115,6 +124,7 @@ const CATALOGO: RecursoDef[] = [
     // sola entrada con dos claves, que es lo que siempre fue.
     link: 'https://recursos.neety.com/firma/',
     topic: 'los 5 mensajes para dar con quien cierra la compra',
+    asunto: 'QUIEN FIRMA LA COMPRA',
     claves: ['firma', 'nombre'],
     pistas: [
       'quien firma', 'firma la compra', 'prospeccion por nombre',
@@ -124,7 +134,7 @@ const CATALOGO: RecursoDef[] = [
 ];
 
 const RECURSOS: Record<string, Recurso> = Object.fromEntries(
-  CATALOGO.flatMap((r) => r.claves.map((c) => [c, { link: r.link, topic: r.topic }]))
+  CATALOGO.flatMap((r) => r.claves.map((c) => [c, { link: r.link, topic: r.topic, asunto: r.asunto }]))
 );
 
 // El recurso de una palabra clave, o null si esa palabra no tiene uno mapeado
@@ -206,7 +216,7 @@ export function detectarRecurso(postText: string | null | undefined): Recurso | 
     else if (n === mejorN) empate = true;
   }
   if (!mejor || empate) return null;
-  return { link: mejor.link, topic: mejor.topic };
+  return { link: mejor.link, topic: mejor.topic, asunto: mejor.asunto };
 }
 
 // ──────────────────────────── name extraction ────────────────────────────
@@ -487,6 +497,74 @@ export function buildInviteNote(input: DmInput): string {
   if (note.length <= 300) return note;
   // Too long → drop the topic, never the link.
   return `${open} Comentaste en mi post, te dejo el recurso: ${input.link}`.slice(0, 300);
+}
+
+// ──────────────────────────── InMail ────────────────────────────
+//
+// El tercer canal, y el que sustituye a la nota en las cuentas baneadas
+// (`notaBaneada`): ni somos contacto ni nos han mandado solicitud, así que solo
+// queda el InMail de Premium/Sales Navigator.
+//
+// Se parece al DM, con una diferencia: lleva la línea de CONTEXTO de la nota de
+// invitación ("Comentaste en mi post"). Un InMail llega frío, con el aviso de
+// LinkedIn de que es un mensaje de alguien de fuera de tu red, y sin esa línea
+// el recurso se lee como spam de un desconocido. Los 300 caracteres de la nota
+// aquí no aplican (el cuerpo del InMail son 1.900), así que sí cabe el cierre.
+export function buildInmail(input: DmInput): string {
+  const rng = input.rng ?? Math.random;
+  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
+  const name = firstName(input.name);
+  const open = name ? `${g} ${name}!` : `${g}!`;
+  const signoff = `${pick(DM_SIGNOFFS, rng)} ${pick(DM_EMOJIS, rng)}`;
+  // Enlace en su propia línea, por lo mismo que en buildDm.
+  return `${open} Comentaste en mi post, así que te dejo el recurso sobre ${input.topic}:\n${input.link}\n\n${signoff}`;
+}
+
+// Palabras que en un asunto no dicen nada. Solo se usan para el asunto de
+// reserva, cuando el catálogo no trae uno escrito a mano.
+const VACIAS_ASUNTO = new Set([
+  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al',
+  'que', 'para', 'con', 'por', 'y', 'a', 'en', 'tu', 'tus', 'su', 'sus',
+  'mi', 'lo', 'como', 'se', 'es',
+]);
+
+// EL ASUNTO DEL INMAIL. LinkedIn lo exige para mandarlo, y es lo único que se
+// lee en la bandeja antes de abrirlo, así que va como pidió Iker (2026-08-14):
+// «RECURSO» + el tema en corto y en mayúsculas — "RECURSO VIBE PROSPECTING".
+//
+// Sale del `asunto` del catálogo, que es la versión escrita a mano. Cuando el
+// enlace se ha metido a mano y no hay catálogo, se apaña con el tema: fuera
+// artículos y preposiciones, y a mayúsculas. Nunca se queda vacío.
+export function asuntoInmail(recurso: Recurso | null): string {
+  const corto = (recurso?.asunto || '').trim();
+  if (corto) return `RECURSO ${corto.toUpperCase()}`;
+  const tema = (recurso?.topic || '').trim();
+  if (!tema) return 'RECURSO';
+  const limpio = tema
+    .split(/\s+/)
+    .filter((w) => !VACIAS_ASUNTO.has(normalize(w).replace(/[^\p{L}\p{N}]/gu, '')))
+    .join(' ')
+    .trim();
+  return `RECURSO ${(limpio || tema).toUpperCase()}`.slice(0, 200);
+}
+
+// ⛔ CUENTAS QUE NO PUEDEN MANDAR INVITACIÓN CON NOTA (Iker, 2026-08-14).
+//
+// A Unai le metieron un baneo de invitaciones semanales y LinkedIn empezó a
+// tragarse las notas en silencio: la API respondía OK y al destinatario no le
+// llegaba nada. En esas cuentas no se ofrece la nota nunca más.
+//
+// Se compara por nombre de pila, igual que `voiceFor`, porque es lo que guarda
+// la tabla creators. Ampliarlo el día que baneen otra cuenta es una palabra.
+//
+// TWIN: backend/src/routes/accounts.ts (`CUENTAS_SIN_NOTA` / `notaBaneada`),
+// que es quien lo impone de verdad — el panel solo deja de ofrecerlo. Son dos
+// paquetes sin módulo común: si cambia la lista, se tocan los dos.
+const CUENTAS_SIN_NOTA = new Set(['unai']);
+
+export function notaBaneada(creatorName: string | null | undefined): boolean {
+  const first = (creatorName || '').trim().split(/\s+/)[0]?.toLowerCase();
+  return !!first && CUENTAS_SIN_NOTA.has(first);
 }
 
 // ──────────────────────────── lista personalizada ───────────────────────────

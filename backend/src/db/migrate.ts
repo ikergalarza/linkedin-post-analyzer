@@ -823,6 +823,43 @@ const migration = `
     ON refresh_jobs (empezado_en DESC);
   CREATE INDEX IF NOT EXISTS idx_refresh_jobs_en_curso
     ON refresh_jobs (latido_en DESC) WHERE estado = 'en_curso';
+
+  -- v36: EL INMAIL COMO TERCER CANAL, Y EL RECIBO DE CADA ENVIO.
+  --
+  -- Dos cambios que vienen del mismo dia malo (2026-08-13). A la cuenta de Unai
+  -- le metieron un baneo de invitaciones y LinkedIn empezo a tirar las notas en
+  -- silencio: Unipile seguia respondiendo 200, la app las guardaba como
+  -- 'sent', y horas despues los comentaristas escribian diciendo que no habian
+  -- recibido nada. La herramienta decia "enviado" y "contestado" sobre gente a
+  -- la que no le habia llegado nada.
+  --
+  --  · 'inmail' — el canal que sustituye a la nota cuando no hay conexion ni
+  --    solicitud pendiente. Sale por /chats con linkedin[inmail] y su asunto.
+  --  · verificado — TRUE solo cuando, DESPUES de enviar, hemos releido LinkedIn
+  --    y el mensaje o la invitacion estaban de verdad ahi. NULL = no se pudo
+  --    comprobar (la comprobacion fallo), que NO es lo mismo que enviado: la UI
+  --    los pinta distinto a proposito.
+  --
+  -- El CHECK viejo se busca por su DEFINICION y no por su nombre: un
+  -- "DROP CONSTRAINT IF EXISTS lead_magnet_sends_kind_check" es un no-op
+  -- silencioso si en esa base el constraint se llama de otra forma, y entonces
+  -- el nuevo se añade AL LADO del viejo — que sigue rechazando 'inmail'. Un
+  -- fallo asi no se ve hasta el primer InMail real.
+  DO $$
+  DECLARE c TEXT;
+  BEGIN
+    FOR c IN
+      SELECT conname FROM pg_constraint
+       WHERE conrelid = 'lead_magnet_sends'::regclass
+         AND contype = 'c'
+         AND pg_get_constraintdef(oid) ILIKE '%kind%'
+    LOOP
+      EXECUTE format('ALTER TABLE lead_magnet_sends DROP CONSTRAINT %I', c);
+    END LOOP;
+  END $$;
+  ALTER TABLE lead_magnet_sends ADD CONSTRAINT lead_magnet_sends_kind_check
+    CHECK (kind IN ('dm','invite','inmail'));
+  ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS verificado BOOLEAN;
 `;
 
 /**
