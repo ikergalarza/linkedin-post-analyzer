@@ -1160,6 +1160,53 @@ Mismo hook, mismo emoji, mismo mes, **40x de diferencia**. La noticia de IA es l
 **2. Llegamos tarde a un tema quemado.** Martín Arosa publicó *"D.E.P. prospección manual"* el **25-jun**; nosotros el **28-jul**, un mes después y con audiencia solapada. **Un tema validado no vale si ya te lo han contado: el que pidió su guía no pide la segunda.**
 - **Antes de elegir tema, comprueba cuándo lo publicó la referencia.** Si tiene más de 2-3 semanas y comparte audiencia con nosotros, o se cambia de tema o se cambia el ÁNGULO por completo. Copiar el molde es bueno; copiar el tema con un mes de retraso es llegar al turno de otro.
 
+#### 🎯🎯 4.5.0-TEMA · LA TEMÁTICA GANADORA ES `CLAUDE + VENTAS + UNA VARIANTE DE PROSPECCIÓN` (Iker, 2026-08-14)
+
+> **La intuición de Iker, textual:** *"la clave 100% temática Claude + ventas, pero aún afinaría más. A esas dos hay que sumarle siempre una variante sobre prospección: vibe prospecting, prospección en frío, prospección manual"*. **Medida el 14/08 contra los 50 últimos posts de Martín Arosa (Unipile) y contra nuestros 41 lead magnets. Sale que sí, y con margen.**
+
+**LO QUE HACE ÉL, ordenado por familia temática** (`comment_counter` real, 50 posts, 30/06 → 14/08):
+
+| familia del post | comentarios |
+|---|---|
+| **Regalo de IA aplicada a captar clientes en LinkedIn** (Claude / ChatGPT / n8n) | 305 · 414 · 493 · 527 · 546 · 614 · 978 · 1.031 · 1.072 · 1.167 · 1.218 · 1.232 · 1.290 · 1.391 · 1.959 · 2.122 |
+| Opinión, noticia de IA, caso de cliente, marca personal | 4 · 5 · 7 · 10 · 11 · 13 · 28 · 30 · 33 · 41 · 49 · 73 · 99 · 111 · 127 · 136 · 146 · 177 |
+
+**Dos órdenes de magnitud, y el corte no es el gancho ni la hora: es que haya un ARTEFACTO de IA que regalar.** Sin regalo, su techo son 177 comentarios con 40.000 seguidores más que nosotros.
+
+**Y DENTRO DE ESA FAMILIA, LA SUB-VARIANTE QUE MÁS REPITE ES LA PROSPECCIÓN:**
+
+| fecha | gancho | comentarios |
+|---|---|---|
+| 14/07 | `🚨 ADIÓS: D.E.P. Prospección Manual 🚨` | **1.031** |
+| 23/07 | `🚨 ADIÓS: D.E.P. prospección manual.` | **1.232** |
+| 10/08 | `¡Elimina YA tu hoja de prospección manual!` | 305 |
+
+**⛔ ESTO CORRIGE `§4.5.0c` EN SU PUNTO 2 ("llegamos tarde a un tema quemado"). El tema NO se quema: él repitió el MISMO tema, con el MISMO enemigo, a nueve días de distancia, y subió de 1.031 a 1.232.** Lo que hundió nuestro 28/07 no fue llegar un mes tarde, fue que **prometimos señales** (punto 1 de esa misma sección, que sigue en pie) y que el post no se repartió. **La regla nueva:** el tema se repite a propósito, como el mapa; **lo que tiene que ser nuevo es el ÁNGULO y el artefacto**, no la temática.
+
+**LA FÓRMULA, PARA ELEGIR TEMA SIN PENSAR:**
+```
+CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PROSPECCIÓN
+```
+- **Variantes ya usadas por nosotros:** `vibe prospecting` (632c, y 2ª ronda el 12/08) · `prospección a puerta fría` (12/08) · `quién firma la compra` (11/08) · `prospección manual · la criba` (14/08, Asier).
+- **Variantes libres:** el follow-up · la lista de rebotes · el primer mensaje · la reunión que no se agenda · el CRM que nadie rellena · el cliente que se fue con otro.
+- **Nuestros datos lo respaldan por el otro lado:** los 5 lead magnets con Claude pasan de 100 comentarios (632 · 285 · 232 · 183 · 167) y la mediana sin IA es 20. **Lo que faltaba escrito es que los cinco, además, van de prospección.**
+
+**⚠️ Y EL AVISO QUE ACOMPAÑA A ESTO: el tema es de él, así que el ÁNGULO tiene que ser NUESTRO.** Su promesa siempre es **volumen** (*"entre 50 y 200 prospectos cualificados en 15 minutos"*). La nuestra, por el informe de 50 demos, es lo contrario: **la criba y la prueba** (`aboutme §1b` pilar 1). Ahí es donde se le gana (`global §2.2b`, ser el segundo mejor), y no copiándole el número.
+
+#### 📈 4.5.0-CTA-IMAGEN-MEDIDO · EL BANNER EN LA FOTO FUNCIONA, Y EL CUELLO DE BOTELLA SE HA MOVIDO (medido 2026-08-14)
+
+**El 12/08 fue el primer post con el `Comenta "X"` metido en la imagen (`§4.5.0-CTA-IMAGEN`). Resultado, contra los cuatro anteriores:**
+
+| post | comentarios | impresiones |
+|---|---|---|
+| 06/08 · 07/08 ×2 (gate en el texto) | 12 · 12 · 14 | **67 · 18 · 163** ← capados |
+| 11/08 (sin gate en ninguna parte) | 19 | 2.740 |
+| **12/08 (gate en la IMAGEN)** | **71** | 2.036 |
+
+- **El mecanismo está resuelto: el gate sobrevive dentro de la foto y el post ya no se capa.** 71 comentarios es el mejor lead magnet nuestro desde mayo, y encima Iker confirma que **por fin llegan comentarios de gente de fuera de nuestra red**, que es la señal que llevábamos meses sin ver.
+- **⛔ Pero el cuello de botella ya no es el CTA, es el ALCANCE.** 2.036 impresiones contra una mediana de corpus de 3.424 y contra las 25.100 del 632c. Con ese alcance, 71 comentarios es una **tasa altísima** (3,5% de los que lo vieron comentaron, contra el 2,5% del 632c): **el problema no es que no convierta, es que no lo ve nadie.**
+- **Consecuencia práctica al planificar:** la palanca del próximo lead magnet **no es tocar el CTA otra vez**, es el TEMA y el GANCHO (`§4.5.0-TEMA`) y la hora (`working-preferences §1h`). Si el siguiente saca 2.000 impresiones otra vez, el problema es de reparto y toca mirar `images §0a-CAPADO`, no el copy.
+
 #### 📋 4.5.0-ENTREGA · EN TODA ENTREGA DE LEAD MAGNET VAN NUESTROS 5 MEJORES GANCHOS (Iker, 2026-08-05)
 
 **Después del texto del post, SIEMPRE, va una tabla con los cinco ganchos de lead magnet que más comentarios nos han dado, ordenados por comentarios.** Iker: *"para que así pueda revisarlo siempre bien"*.
