@@ -928,10 +928,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'derecha, y al pegarlos se llevan los saltos falsos dentro. La unica excepcion '
             'es el TEXTO DEL POST, donde el salto ES contenido (working-preferences §1f)',
             aviso=True)
-        chk(False, 'ENTREGA: adjunta la FOTO de la referencia, no solo su enlace',
-            'bajala y mandala como fichero en el mismo turno que el prompt del disenador. '
-            'El enlace es para Iker; la foto es para el disenador, que la necesita adjunta '
-            '(working-preferences §1d-ter)', aviso=True)
+        chk(False, 'ENTREGA: la FOTO de la referencia y el enlace COMPLETO, en el mensaje final',
+            'bajala DE NUEVO en el momento de entregar (las URL de media.licdn.com caducan y '
+            'dan 403) y mandala como fichero EN EL MISMO MENSAJE que el post y el prompt, no '
+            'suelta a mitad de turno: el 13/08 la adjunte en medio de un turno largo y se '
+            'perdio de vista, y sin foto el disenador no puede calcar nada. Comprueba ademas '
+            'que el post sigue vivo pidiendolo a la API. Y el ENLACE se pega TAL CUAL lo '
+            'devuelve la API, sin acortarlo: ese mismo dia le quite el slug codificado al '
+            'share_url para dejarlo limpio y LinkedIn devolvia error '
+            '(working-preferences §1d-ter y §1d-QUATER)', aviso=True)
 
     chk(False, 'ENTREGA: DOS comparativas (referencia + nuestro mejor del pilar)',
         'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '

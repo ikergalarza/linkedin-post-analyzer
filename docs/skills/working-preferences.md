@@ -69,6 +69,16 @@ Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo
 
 Describir el concepto de la imagen y enlazar la referencia **no es la entrega**: falta lo único que el diseñador puede ejecutar. En **cada** entrega que lleve imagen van las tres cosas juntas: (1) el **concepto**, (2) la **referencia real con su enlace** (outlier validado, `images.md`), y (3) el **prompt cerrado para el diseñador**, en su propio bloque copiable. Si falta el prompt, la entrega está a medias y hay que volver a pedirlo.
 
+## ⛔⛔ 1d-QUATER · EL ENLACE VA COMPLETO Y LA FOTO VA EN LA ENTREGA FINAL (Iker, 2026-08-13)
+
+**Dos fallos del mismo turno, y los dos dejan al diseñador sin poder trabajar.**
+
+**1 · El enlace de la referencia se pega TAL CUAL lo devuelve la API. Nunca se acorta a mano.** Yo cogí el `share_url` de Unipile y le quité el slug codificado por dejarlo "limpio", y **LinkedIn devuelve error sin ese slug**. Iker: *"el enlace da error, no sé si ha caducado o me lo has dado mal"*. Da igual que sea feísimo y ocupe cuatro líneas: se pega entero, con el `%F0%9D...` y con los parámetros.
+
+**2 · La foto de la referencia va en el MISMO mensaje que la entrega, al final, no suelta a mitad de turno.** La regla de `§1d-ter` ya decía que se adjunta siempre, y **yo la adjunté**… en medio de un turno largo lleno de comandos, y se perdió de vista. Iker: *"sin foto de referencia, ¿cómo le voy a decir al diseñador que la calque?"*. **Adjuntarla no basta: tiene que estar donde él la va a buscar**, que es junto al post y al prompt.
+- **Y se vuelve a descargar en el momento de entregar**, no se reutiliza la de hace tres horas: las URL de `media.licdn.com` caducan y dan 403 (`§1d-ter`).
+- **Antes de darla, se comprueba que el post sigue vivo** pidiéndolo a la API. Si el autor lo ha borrado, la referencia ya no vale y hay que decirlo.
+
 ## ⭐ 1d-ter · LA FOTO DE LA REFERENCIA SE ADJUNTA SIEMPRE, NO SOLO SU ENLACE (Iker, 2026-08-06)
 
 **En CUALQUIER entrega que se base en una referencia —meme, lead magnet, mapa, historia, email— la imagen de esa referencia va ADJUNTA en el chat**, además del enlace. Iker: *"a veces me la pasas y a veces no, y me la tienes que pasar siempre para ir más rápido"*.
