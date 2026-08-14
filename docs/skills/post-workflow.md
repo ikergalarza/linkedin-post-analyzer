@@ -1739,8 +1739,28 @@ Cada post lleva ahora su **etiqueta de PILAR** en la herramienta (chapa de color
 - **Semana del 24/08 — el grueso.** Aquí se monta y se cierra todo, con el viernes 28 como tope.
 - **No se planifica desde las vacaciones.** Lo que no esté hecho el 28/08 no sale.
 
-**Qué se prepara:** **peloteo para CADA cuenta las dos semanas** — es el pilar que vuelve a tener motor en septiembre. Cada uno con región nueva por cuenta (`historial-publicaciones`, tabla de cobertura), menciones verificadas una a una y CSV/imagen ya montados. El **despiece de alimentación** que quedó parado en agosto es candidato natural para una de las dos semanas.
-- **Para que las TRES cuentas tengan peloteo hay que abrir el tope colectivo de `§8.2`** de *"un mapa y un Los 10 por semana"* a *"un mapa + un Los 10 + un despiece"*. El despiece ya es formato hecho (`§4.7`, dos publicados) y en la semana del 03/08 ya convivió con un mapa. **⚠️ Confirmar con Iker antes de montarlo**, junto con el volumen total (solo los 6 peloteos, o las semanas completas).
+**📦 EL VOLUMEN ESTÁ CERRADO: 6 POSTS POR SEMANA, 2 POR CUENTA. 12 EN TOTAL (Iker, 2026-08-14).** No son 9. **El recorte es deliberado y no se negocia al alza:** el ritmo normal aspira a 8-9 y esas semanas se publica **dos tercios**, porque sin la capa manual de interacción (`el aviso de abajo`) más volumen no rinde más, solo llena el feed. **No propongas subirlo.**
+
+**LA ESTRUCTURA DE CADA SEMANA — 2 por cuenta = 1 peloteo + 1 de otro pilar:**
+
+| | Cuenta A | Cuenta B | Cuenta C |
+|---|---|---|---|
+| **Peloteo** (1 por cuenta y semana) | **Mapa** | **Despiece** | **"Los 10"** |
+| **El otro post** | meme / lead magnet / historia | ídem | ídem |
+
+- **Los tres jefes llevan peloteo LAS DOS SEMANAS**, y **el formato rota entre ellos**: quien hace mapa la semana del 31/08 no lo repite la del 07/09. Así salen **6 peloteos** (2 mapas, 2 despieces, 2 "Los 10") y **6 posts de los otros pilares**.
+- **⛔ ESTO ABRE EL TOPE COLECTIVO DE `§8.2`** — que decía *un mapa y un "Los 10" por semana entre las tres cuentas* — a **un post de CADA UNO de los tres formatos por semana**. Es lo único que permite que las tres cuentas lleven peloteo. Precedente: en la semana del 03/08 ya convivieron un mapa (Iker, 04/08) y un despiece (Asier, 07/08).
+  - **⚠️ Y esta apertura NO se va a poder validar con esas dos semanas**, porque sus métricas no generan doctrina (aviso de abajo). **Queda como excepción de la ventana, no como regla nueva**, y se decide en octubre con datos limpios. Si en septiembre se ve saturación del pilar, se vuelve al tope de dos.
+- **Región nueva por cuenta** (`historial-publicaciones`, tabla de cobertura, **actualizada el 14/08**), menciones verificadas una a una y CSV/imagen ya montados.
+
+**🔧 FIJO Y DECIDIDO: EL DESPIECE DEL SEGUNDO JEFE ES DE MÁQUINA HERRAMIENTA (Iker, 2026-08-14).**
+- **Él quiere despiece sí o sí**, y el sector tiene que ser **uno que no hayamos hecho nunca**: los dos despieces publicados son de **automoción** (Euskadi 30/07 y Navarra 07/08). Máquina herramienta es sector industrial con interés real de audiencia y no está tocado.
+- **⛔ Pide PLANTILLA NUEVA, y eso es trabajo de diseño, no de texto.** Solo existe la de la llanta (automoción). Se crea con **12 huecos transparentes** como manda `§4.7` Paso 2, misma cocina que la llanta (1254×1254, franja berenjena con el título editable y `XXX` de marcador de región, fondo menta, silueta en línea berenjena). `scripts/montar-llanta.py` **sirve tal cual**: detecta los huecos transparentes solos y los ordena por ángulo.
+- **Siluetas candidatas, a elegir con Iker** (una sola, la más reconocible por cualquiera y no solo por un ingeniero): una **fresa/broca** de mecanizado · un **plato de torno con sus garras** (es un círculo, así que hereda la lectura de reloj de la llanta) · un **engranaje** · una **llave fija**. La regla de `§4.7` Paso 1 manda: reconocible por cualquiera y despiezable.
+- **⚠️ La REGIÓN de este despiece está sin decidir y tiene trampa:** la máquina herramienta se concentra en Euskadi/Gipuzkoa, **y Euskadi ya está gastada para un despiece de Iker** (el coche, 30/07). Repetir región Y formato en la misma cuenta es repetir. Alternativas a mirar: **Castilla y León** (Burgos, Nicolás Correa) — ojo, que Iker ya hizo su mapa el 04/08 —, Cataluña o Valencia. Y aplica el aviso duro del pilar: **si la región no llega a 12 empresas del sector, se cambia de región, no se rellena** (`§4.7` Paso 1).
+- **El despiece de alimentación** que quedó parado en agosto (espátula o gorro de cocinero) sigue vivo como **el segundo despiece**, el de la otra semana y otra cuenta.
+
+**⏱️ AVISO DE CARGA, y es el riesgo real de este plan:** son **6 peloteos + una plantilla nueva desde cero** en **10 días laborables**, publicando a la vez. El peloteo es con diferencia el pilar más caro (12 empresas verificadas una a una, personas con actividad comprobada, CSV, imagen montada). **Recomendación: los 6 peloteos primero y la plantilla la semana del 17/08**, y que los 6 posts "del otro pilar" sean **memes e historias**, que no dependen de verificar a terceros. Si algo se cae, que se caiga por el lado barato.
 
 **🧪 EXPERIMENTO NUEVO: SE PROGRAMA CON LA HERRAMIENTA NATIVA DE LINKEDIN.** Nunca lo hemos probado — siempre se ha subido a mano. La sospecha viene de TikTok (allí lo programado pierde alcance), pero **es un mito sin comprobar en LinkedIn** y ahora hay ocasión de medirlo. Todo lo demás se respeta igual: hora de la franja buena (10:00-11:00), gancho, cuerpo, foto.
 
@@ -1775,6 +1795,7 @@ Cada día de publicación, las 3 cuentas cubren las **3 categorías DISTINTAS** 
   - **No es el tamaño de la región,** que era la excusa fácil: **Navarra (660.000 habitantes) hizo 7,68x y Murcia (1,5 millones) hizo 1,23x**. La región pequeña ganó a la grande. Lo que cambió fue la **frecuencia**.
   - **La causa:** las tres cuentas son la misma empresa, comparten público objetivo y se comparten entre ellas. Aunque cada cuenta respete su espaciado individual, **el formato se quema a nivel COLECTIVO**. El espaciado por cuenta no basta.
   - Y como siempre: regiones distintas y personas distintas, y **nunca repetir el concepto**.
+  - 📌 **EXCEPCIÓN CON FECHA (Iker, 2026-08-14): las semanas del 31/08 y del 07/09** el tope pasa a **un post de cada uno de los TRES formatos por semana** (mapa + despiece + "Los 10"), para que las tres cuentas lleven peloteo mientras Iker está de vacaciones. Es una ventana concreta, no un cambio de regla, y **no se puede validar con esas semanas** porque sus métricas no generan doctrina (`§8.0-SEPTIEMBRE`). Se decide en octubre.
 
 ### 8.3 · Guardarraíles de espaciado (entre semanas) → vía el HISTORIAL
 > **Todo se mide POR CUENTA.** Ninguna de estas reglas es global entre cuentas.

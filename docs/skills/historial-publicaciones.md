@@ -46,10 +46,21 @@
 
 - **Semana del 17/08: se baja el ritmo de publicación a propósito** para liberar horas de preparación. Publicar menos, preparar más.
 - **Semana del 24/08: el grueso**, con el viernes 28 como tope. Lo que no esté hecho el 28 no sale.
-- **Se prepara peloteo para las 3 cuentas × 2 semanas** (región nueva por cuenta, menciones verificadas, CSV e imagen montados). El **despiece de alimentación** entra aquí.
+- **📦 VOLUMEN CERRADO: 6 posts por semana, 2 por cuenta. 12 en total.** No son 9, y el recorte es a propósito: **no se sube**.
+- **Cada cuenta lleva 1 peloteo + 1 post de otro pilar, las dos semanas.** Los tres formatos de peloteo salen cada semana (**mapa + despiece + "Los 10"**, uno por cuenta) y **rotan entre cuentas** de una semana a otra → 6 peloteos y 6 del resto. Esto abre el tope colectivo de `§8.2` **solo para esta ventana**.
+- **🔧 FIJO: el despiece del segundo jefe es de MÁQUINA HERRAMIENTA**, sector nunca tocado (los dos despieces hechos son de automoción). **Pide plantilla NUEVA de 12 huecos** — solo existe la de la llanta. Siluetas candidatas: fresa/broca · plato de torno con garras · engranaje · llave fija. ⚠️ **Región sin decidir y con trampa**: el sector se concentra en Euskadi y **Euskadi ya está gastada para un despiece de Iker** (el coche, 30/07).
+- El **despiece de alimentación** (espátula o gorro de cocinero) sigue vivo como **el segundo despiece**, en la otra semana y otra cuenta.
+- ⏱️ **Aviso de carga:** 6 peloteos + plantilla nueva en 10 días laborables, publicando a la vez. Los peloteos primero (es el pilar caro) y que los 6 posts restantes sean **memes e historias**, que no dependen de verificar a terceros.
 - 🧪 **Se programa con la herramienta nativa de LinkedIn**, cosa que no hemos probado nunca (la sospecha de que penaliza viene de TikTok y en LinkedIn es un mito sin comprobar).
 - ⛔ **LAS MÉTRICAS DEL 31/08 AL 11/09 NO GENERAN DOCTRINA.** Esas dos semanas no tendrán la capa manual que hace funcionar el sistema (comentar y responder rápido desde las 4 cuentas, reparto interno, primera hora), y encima cambia una segunda variable a la vez (programado). **Ni reglas nuevas, ni pilares muertos, ni recetas tocadas con esos números**, y no valen de baseline: se marcan como periodo anómalo, igual que agosto. Detalle en `post-workflow §8.0-SEPTIEMBRE`.
-- ❓ **Pendiente de confirmar con Iker:** (1) abrir el tope colectivo de `§8.2` a **mapa + "Los 10" + despiece** para que las tres cuentas lleven peloteo esas semanas; y (2) el **volumen**: solo los 6 peloteos, o las dos semanas completas.
+- ✅ **Ya decidido el 14/08** (era lo que estaba pendiente): el tope de `§8.2` se abre a los tres formatos en esa ventana, y el volumen son 6 por semana.
+
+### 🛠️ RECORDATORIO PARA LA SEMANA DEL 17/08: SE EMPIEZA LA PLANTILLA DE MÁQUINA HERRAMIENTA
+Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **Es lo primero que hay que empezar**, porque es lo único del paquete de septiembre que depende de diseño y no se puede improvisar el 27/08.
+1. Elegir la **silueta** con Iker (fresa/broca · plato de torno · engranaje · llave fija).
+2. Montar el PSD con **12 huecos transparentes**, 1254×1254, franja berenjena con `XXX` de marcador y fondo menta, igual que `PLANTILLA OBJETO.psd`. El desenfoque de postproducción va **sobre la plantilla, una vez**.
+3. Probar `scripts/montar-llanta.py` contra la silueta nueva **antes** de tener las empresas: detecta los huecos solos y los ordena por ángulo, pero hay que verlo funcionar con esa forma.
+4. Y en paralelo, **elegir región** comprobando que salen **12 empresas de máquina herramienta** con persona activa. Si no llegan a 12, se cambia de región.
 
 ### 🧒 PENDIENTE DE LA SEMANA DEL 17/08: LA HISTORIA DEL PRIMER JEFE CON SU FOTO DE PEQUEÑO (Iker, 2026-08-14)
 **Fija para la semana que viene.** El concepto se quedó pendiente hace tiempo y **nunca se llegó a escribir** (comprobado el 14/08: no está en el repo ni publicado). Iker ya ha conseguido que **el primer jefe (Unai, CEO) le pase una foto suya de pequeño**.
@@ -94,14 +105,17 @@ El de automoción ya está hecho (Asier, 07/08). El siguiente **no repite sector
 
 | Cuenta | MAPAS usados (no repetir en esa cuenta) | "LOS 10" usados | Conceptos gastados por esa cuenta |
 |---|---|---|---|
-| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra · **Murcia** | País Vasco · **Asturias** | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" |
+| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra · Murcia · **Castilla y León** | País Vasco · **Asturias** | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" · "el tejado de la Península" |
 | **Unai** | País Vasco · Bizkaia · Álava · **Cataluña** | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "última parada antes de Francia" |
-| **Asier** | Aragón | — | "secarral que peina el cierzo" |
+| **Asier** | Aragón | — | "secarral que peina el cierzo" · "el felpudo del Pirineo" |
+
+**DESPIECES ya hechos** (cuenta · región · objeto/sector): **Iker** — Euskadi, el coche (automoción, 30/07) · **Asier** — Navarra, el coche (automoción, 07/08). El despiece **no quema la región para mapa ni para "Los 10"** (`post-workflow §4.7` Paso 1), pero **repetir región Y formato en la misma cuenta sí es repetir**: Euskadi ya está gastada para un despiece de Iker.
+> 🔧 **Corregido el 2026-08-14: esta tabla estaba desactualizada y era una bomba de relojería.** Le faltaban **Castilla y León** (mapa de Iker, 04/08) y **Navarra** (despiece de Asier, 07/08), y Castilla y León seguía listada como libre para Iker. Planificar septiembre con ella sin actualizar habría repetido región en la misma cuenta. **Cada vez que se publique un peloteo, esta tabla se toca en el mismo commit que la fila del registro.**
 
 **"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.
 **Personas ya mencionadas en "Los 10"** (no repetir NUNCA a la misma persona en otro "Los 10"): las 10 del País Vasco de Iker (Edorta Arriet Azpiroz, Ana Isabel Portilla, Andoni Iriarte, Oscar Urdangarin, Xabier Otaño Eguidazu, Oier Elguezabal, Carlos Muriel, Borja Jareño Irazola, Javier Gomez de Cadiñanos, Fernando Martínez) y **las 10 de Asturias de Iker** (Javier Soto, Alvaro Vallaure Mori, Jose Antonio Garcia Sanchez, OUAZZANI TOUHAMI ASMA, David Menéndez Mozo, Alvaro Platero Alonso, Alfredo Fernández Olano, Alejandro García Menéndez, José Arturo Gutiérrez García, Alfonso Sanchez Miguez).
 
-**Libres para Iker:** Aragón, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
+**Libres para Iker:** Aragón, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 **Libres para Unai:** Valencia, Andalucía, Galicia, Navarra, Aragón, Asturias, Murcia, Castilla y León, Castilla-La Mancha, Extremadura, La Rioja, Cantabria, Canarias, Baleares.
 
 > **El "país inventado" NO cuenta como región gastada** y no está en esta tabla: no es un mapa de peloteo (no menciona a nadie, la imagen es un dibujo y no una captura de PamPam, y el motor es la controversia). Ficha en `context/global-instructions.md §4.1`. Lo hicieron Unai (7.87x, 12-jun) e Iker (1.24x, 23-jun).
