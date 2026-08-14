@@ -1114,10 +1114,27 @@ export class UnipileService {
   // relee el chat que devolvió el envío y se busca el mensaje. Si no está, no
   // salió, diga lo que diga el 200 de la llamada anterior.
   async getChatMessages(chatId: string, limit = 5): Promise<any[]> {
-    const res = await this.request<{ items?: any[] }>(
-      `/api/v1/chats/${encodeURIComponent(chatId)}/messages?limit=${limit}`
+    return (await this.getChatMessagesPage(chatId, { limit })).items;
+  }
+
+  // Igual, pero devolviendo el cursor para poder SEGUIR SUBIENDO.
+  //
+  // ⛔ Sin esto la comprobación de un envío solo veía los últimos N mensajes, y
+  // un chat que sigue vivo después de mandar el recurso empuja al nuestro fuera
+  // de la ventana en un par de días: el 14/08 el DM a Mario estaba en la
+  // posición 11 y el de Asier en la 10, y los dos se dieron por NO entregados
+  // teniéndolos ellos en su bandeja. Los mensajes llegan del más nuevo al más
+  // viejo, así que quien pagina decide cuándo parar (`buscarMensajeEnviado`).
+  async getChatMessagesPage(
+    chatId: string,
+    opts: { limit?: number; cursor?: string } = {}
+  ): Promise<{ items: any[]; cursor: string | null }> {
+    const params = new URLSearchParams({ limit: String(opts.limit ?? 50) });
+    if (opts.cursor) params.set('cursor', opts.cursor);
+    const res = await this.request<{ items?: any[]; cursor?: string }>(
+      `/api/v1/chats/${encodeURIComponent(chatId)}/messages?${params.toString()}`
     );
-    return res.items || [];
+    return { items: res.items || [], cursor: res.cursor || null };
   }
 
   // Los chats que tenemos con UNA persona, buscados por su provider_id. Es como
@@ -1128,6 +1145,46 @@ export class UnipileService {
   // ese parámetro existe pero espera el id interno de Unipile, así que con un
   // provider_id devuelve cero chats sin dar error — o sea, "no le has escrito
   // nunca" para todo el mundo. Medido el 2026-08-14.
+  // Los chats de UNA BANDEJA concreta.
+  //
+  // ⛔ LINKEDIN TIENE DOS BUZONES Y UNIPILE SOLO ENSEÑA UNO POR DEFECTO
+  // (Iker, 2026-08-14). `GET /chats` sin `folder` devuelve únicamente
+  // `INBOX_LINKEDIN_CLASSIC`; los InMail mandados desde Sales Navigator viven
+  // en `INBOX_LINKEDIN_SALES_NAVIGATOR` y no salían por ningún lado. Iker mandó
+  // uno a mano a Susana Osorio y la herramienta seguía ofreciéndole mandarlo.
+  //
+  // ⚠️ Y OJO CON DOS COSAS DE ESA BANDEJA, medidas el mismo día:
+  //   · Sus attendees usan ids `ACwAA…`, NO los `ACoAA…` que trae un comentario.
+  //     Buscar su chat por el provider_id del comentario da 404 SIEMPRE. Por eso
+  //     ahí se busca por el TEXTO del mensaje y no por la persona.
+  //   · Unipile la sirve DESINCRONIZADA: el 14/08 su chat más reciente era del
+  //     01/06 mientras en la web había mensajes de la víspera. O sea que NO
+  //     encontrar algo aquí no prueba nada, y quien lo use tiene que tratarlo
+  //     como "no lo sé" y nunca como "no ha llegado".
+  async getChatsInFolder(
+    folder: string,
+    accountIdOverride?: string,
+    limit = 50
+  ): Promise<any[]> {
+    const accountId = accountIdOverride || this.accountId;
+    if (!accountId) throw new Error('No Unipile account_id available for chat folder');
+    const params = new URLSearchParams({
+      account_id: accountId,
+      limit: String(limit),
+      folder,
+    });
+    const res = await this.request<{ items?: any[] }>(`/api/v1/chats?${params.toString()}`);
+    // La bandeja repite el mismo chat una vez por participante, así que se
+    // deduplica por id o el barrido lee tres veces la misma conversación.
+    const vistos = new Set<string>();
+    return (res.items || []).filter((c: any) => {
+      const id = c?.id;
+      if (!id || vistos.has(id)) return false;
+      vistos.add(id);
+      return true;
+    });
+  }
+
   async getChatsWithAttendee(providerId: string, accountIdOverride?: string, limit = 5): Promise<any[]> {
     const accountId = accountIdOverride || this.accountId;
     if (!accountId) throw new Error('No Unipile account_id available for chat lookup');

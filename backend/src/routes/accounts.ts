@@ -6,6 +6,7 @@ import { recalcCreatorOutliers } from '../services/outliers';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { maybeTick, capturePostSnapshot } from '../services/postMonitor';
+import { buscarMensajeEnviado, veredictoDeBusqueda } from '../services/verificarEnvio';
 import { generateComments, generateSupportiveComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
 import { sendToGoogleChat } from '../services/googleChat';
@@ -2872,6 +2873,11 @@ async function verificarMensaje(
   accountId: string,
   texto: string,
   chatId: string | null,
+  // Cuándo se mandó. Es lo que ACOTA el barrido hacia atrás: sin esto habría que
+  // elegir entre mirar poco (el falso negativo del 14/08) o barrer chats
+  // enteros. En un envío recién hecho es "ahora"; al repasar uno guardado, su
+  // created_at.
+  desde: Date | null = null,
   // Los reintentos con espera son para el envío que ACABA de salir: LinkedIn
   // tarda un momento en darlo por bueno y preguntar de inmediato sería
   // inventarse un error. Al repasar envíos viejos (`/reverificar`) no hace
@@ -2879,34 +2885,64 @@ async function verificarMensaje(
   // timeout de la petición, así que ahí se pasa una sola pasada sin espera.
   esperas: number[] = [1200, 2500, 4000]
 ): Promise<Verificacion> {
-  const buscado = huellaTexto(texto).slice(0, 60);
-  let ultimoError: string | null = null;
+  let ultimo: Verificacion = { ok: null, motivo: 'no he llegado a comprobarlo' };
+
   for (const espera of esperas) {
     await new Promise((r) => setTimeout(r, espera));
+
+    // TODOS los chats con esa persona, no solo el primero: Asier tenía dos
+    // abiertos con Unai el 14/08 y el mensaje puede estar en cualquiera. El del
+    // propio envío va primero porque es donde más probable es que esté.
+    let chatIds: string[] = [];
     try {
-      let id = chatId;
-      if (!id) {
-        const chats = await unipileService.getChatsWithAttendee(providerId, accountId, 3);
-        id = chats[0]?.id || null;
-        if (!id) { ultimoError = 'no hay ningún chat abierto con esta persona'; continue; }
-      }
-      const mensajes = await unipileService.getChatMessages(id, 10);
-      const nuestro = mensajes.find(
-        (m: any) => Number(m?.is_sender) === 1 && huellaTexto(m?.text).includes(buscado)
-      );
-      if (nuestro) return { ok: true, motivo: null };
-      ultimoError = 'el mensaje no aparece en el chat';
+      const chats = await unipileService.getChatsWithAttendee(providerId, accountId, 10);
+      chatIds = chats.map((c: any) => c?.id).filter(Boolean);
     } catch (err: any) {
-      // Un fallo de la COMPROBACIÓN no es un fallo del envío: se reintenta y,
-      // si no hay manera, se devuelve null (no lo sabemos).
-      ultimoError = err?.message || String(err);
-      return { ok: null, motivo: `no he podido comprobarlo: ${ultimoError}` };
+      const msg = err?.message || String(err);
+      // "Attendee not found" NO es "no le ha llegado": es lo que pasa siempre
+      // con un InMail, cuya bandeja usa otros ids. Se sigue, y si al final no
+      // aparece en ninguna parte el veredicto será "no lo sé", no un rojo.
+      if (!/404|not found/i.test(msg)) {
+        ultimo = { ok: null, motivo: `no he podido comprobarlo: ${msg}` };
+        continue;
+      }
+    }
+    if (chatId && !chatIds.includes(chatId)) chatIds.unshift(chatId);
+
+    // LA SEGUNDA BANDEJA. Un InMail puede estar en la de Sales Navigator, que
+    // no sale por defecto y donde la persona NO se puede buscar por el
+    // provider_id del comentario (usa ids ACwAA). Así que se meten sus chats
+    // POSTERIORES al envío y se busca por el texto, que es lo único que casa
+    // entre las dos bandejas. Acotado por fecha para no barrer años de InMails.
+    try {
+      const salesNav = await unipileService.getChatsInFolder(
+        'INBOX_LINKEDIN_SALES_NAVIGATOR', accountId, 50
+      );
+      const suelo = desde ? desde.getTime() - 24 * 3600 * 1000 : null;
+      for (const c of salesNav) {
+        const t = c?.timestamp ? Date.parse(c.timestamp) : NaN;
+        if (suelo != null && Number.isFinite(t) && t < suelo) continue;
+        if (c?.id && !chatIds.includes(c.id)) chatIds.push(c.id);
+      }
+    } catch (err: any) {
+      // Que no se pueda leer la bandeja de Sales Navigator no invalida lo que
+      // ya tengamos de la clásica; solo se anota.
+      console.warn('[verificarMensaje] bandeja Sales Navigator ilegible:', err?.message);
+    }
+
+    try {
+      const r = await buscarMensajeEnviado(
+        (id, cursor) => unipileService.getChatMessagesPage(id, { limit: 50, cursor }),
+        { chatIds, texto, desde }
+      );
+      const v = veredictoDeBusqueda(r, chatIds.length === 0);
+      if (v.ok === true) return v;
+      ultimo = v;
+    } catch (err: any) {
+      ultimo = { ok: null, motivo: `no he podido comprobarlo: ${err?.message || String(err)}` };
     }
   }
-  return {
-    ok: false,
-    motivo: `LinkedIn aceptó la llamada pero ${ultimoError}. Al destinatario NO le ha llegado nada.`,
-  };
+  return ultimo;
 }
 
 // ¿Está de verdad la invitación? Si salió, aparece en las pendientes enviadas.
@@ -3011,6 +3047,8 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     let error: string | null = null;
     let result: any = null;
     let verificado: boolean | null = null;
+    // Se sella ANTES de mandar: es el suelo del barrido al comprobarlo.
+    const mandadoEn = new Date();
     try {
       if (kind === 'invite') {
         result = await unipileService.sendInvitation(provider_id, body, accountId);
@@ -3033,7 +3071,7 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
     if (status === 'sent') {
       const v = kind === 'invite'
         ? await verificarInvitacion(provider_id, accountId)
-        : await verificarMensaje(provider_id, accountId, body, result?.chat_id ?? null);
+        : await verificarMensaje(provider_id, accountId, body, result?.chat_id ?? null, mandadoEn);
       verificado = v.ok;
       if (v.ok === false) {
         status = 'failed';
@@ -3075,6 +3113,50 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/accounts/lead-magnet/marcar-manual
+// Body: { post_id, comment_id, provider_id, kind, text? }
+//
+// "Este ya se lo mandé yo, a mano." Guarda el envío como hecho SIN mandar nada.
+//
+// ⛔ POR QUÉ HACE FALTA (Iker, 2026-08-14). El InMail a Susana Osorio salió de
+// Sales Navigator a mano, y la herramienta se lo seguía ofreciendo como
+// pendiente. No es un descuido: esa bandeja NO se puede consultar por API con
+// fiabilidad (otros identificadores de persona y días de retraso en Unipile,
+// ver `getChatsInFolder`), así que no hay forma de enterarse solo. Antes que
+// adivinar mal —y un clic de más ahí son un crédito gastado y la misma persona
+// recibiendo el recurso dos veces—, se le deja decirlo.
+//
+// Queda con verificado = NULL a propósito: consta como entregado y deja de
+// ofrecerse, pero sin fingir que lo hemos comprobado nosotros.
+router.post('/lead-magnet/marcar-manual', async (req: Request, res: Response) => {
+  try {
+    const { post_id, comment_id, provider_id, kind, text, provider_name } = req.body || {};
+    if (!post_id || !comment_id || !provider_id) {
+      return res.status(400).json({ error: 'post_id, comment_id and provider_id required' });
+    }
+    if (kind !== 'dm' && kind !== 'invite' && kind !== 'inmail') {
+      return res.status(400).json({ error: "kind must be 'dm', 'invite' or 'inmail'" });
+    }
+    await pool.query(
+      `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error, verificado, provider_name)
+       VALUES ($1, $2, $3, $4, 'sent', $5, $6, NULL, $7)
+       ON CONFLICT (post_id, provider_id, kind)
+       DO UPDATE SET status = 'sent', error = EXCLUDED.error, verificado = NULL,
+                     created_at = NOW(), comment_social_id = EXCLUDED.comment_social_id,
+                     text = COALESCE(EXCLUDED.text, lead_magnet_sends.text),
+                     provider_name = COALESCE(EXCLUDED.provider_name, lead_magnet_sends.provider_name)`,
+      [post_id, comment_id, provider_id, kind,
+       (text || '').trim() || null,
+       'marcado a mano: lo mandaste tú fuera de la herramienta, así que no lo he comprobado',
+       provider_name || null]
+    );
+    res.json({ ok: true });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/marcar-manual]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/accounts/lead-magnet/reverificar
 // Body: { post_id }
 //
@@ -3092,7 +3174,7 @@ router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
     if (!postId) return res.status(400).json({ error: 'post_id required' });
 
     const { rows } = await pool.query(
-      `SELECT s.provider_id, s.kind, s.text, s.verificado, c.unipile_account_id
+      `SELECT s.provider_id, s.kind, s.text, s.verificado, s.created_at, c.unipile_account_id
          FROM lead_magnet_sends s
          JOIN posts p ON p.id = s.post_id
          JOIN creators c ON c.id = p.creator_id
@@ -3112,7 +3194,10 @@ router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
       // decididas, y encadenar 40 backoffs se comería el timeout.
       const v = r.kind === 'invite'
         ? await verificarInvitacion(r.provider_id, accountId, [0])
-        : await verificarMensaje(r.provider_id, accountId, r.text || '', null, [0]);
+        : await verificarMensaje(
+            r.provider_id, accountId, r.text || '', null,
+            r.created_at ? new Date(r.created_at) : null, [0]
+          );
       detalle.push({ provider_id: r.provider_id, kind: r.kind, ok: v.ok, motivo: v.motivo });
       await pool.query(
         `UPDATE lead_magnet_sends

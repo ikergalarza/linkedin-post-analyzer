@@ -1243,6 +1243,39 @@ function CommenterCard({
     }
   };
 
+  // "Este ya se lo mandé yo." Marca el envío como hecho SIN mandar nada.
+  //
+  // ⛔ Existe porque hay envíos que la herramienta NO PUEDE VER (Iker,
+  // 2026-08-14): el InMail a Susana Osorio salió a mano desde Sales Navigator, y
+  // esa bandeja no se puede consultar por API con fiabilidad, así que la tarjeta
+  // se lo seguía ofreciendo. Un clic de más ahí son un crédito de InMail gastado
+  // y la misma persona recibiendo el recurso dos veces.
+  const [marcando, setMarcando] = useState(false);
+  const marcarManual = async () => {
+    if (!thread.author.profile_id) return;
+    setMarcando(true);
+    try {
+      await apiPost('/api/accounts/lead-magnet/marcar-manual', {
+        post_id: postId,
+        comment_id: thread.id,
+        provider_id: thread.author.profile_id,
+        kind,
+        text: message.trim() || null,
+        ...(thread.author.name ? { provider_name: thread.author.name } : {}),
+      });
+      setMsgResult({
+        status: 'sent',
+        error: 'lo marcaste a mano, así que no lo he comprobado yo',
+        verificado: null,
+      });
+      onSent();
+    } catch (e: any) {
+      setMsgResult({ status: 'failed', error: e.message, verificado: false });
+    } finally {
+      setMarcando(false);
+    }
+  };
+
   const noProfileId = !thread.author.profile_id;
 
   return (
@@ -1581,6 +1614,17 @@ function CommenterCard({
                       : canal === 'inmail' ? 'Enviar InMail'
                       : canal === 'dm-solicitud' ? 'Contestar a su solicitud'
                       : 'Enviar DM'}
+                  </button>
+                  {/* La salida para lo que la herramienta no puede ver: un InMail
+                      mandado a mano desde Sales Navigator. Sin esto, la tarjeta
+                      te lo ofrece otra vez y gastas otro crédito. */}
+                  <button
+                    onClick={marcarManual}
+                    disabled={marcando || msgSending}
+                    className="text-[11px] px-2 py-1 rounded border border-border text-text-muted hover:text-accent hover:border-accent/40 disabled:opacity-50 transition-colors"
+                    title="Márcalo como entregado sin mandar nada. Para cuando ya se lo has mandado tú por fuera (por ejemplo un InMail desde Sales Navigator, que no puedo comprobar por API)."
+                  >
+                    {marcando ? 'Marcando…' : '✓ Ya se lo mandé a mano'}
                   </button>
                   {location && (
                     <span className="text-[10px] text-text-muted" title="Se usa para adaptar el saludo">
