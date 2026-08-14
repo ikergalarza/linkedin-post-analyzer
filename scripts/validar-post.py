@@ -935,7 +935,9 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'perdio de vista, y sin foto el disenador no puede calcar nada. Comprueba ademas '
             'que el post sigue vivo pidiendolo a la API. Y el ENLACE se pega TAL CUAL lo '
             'devuelve la API, sin acortarlo: ese mismo dia le quite el slug codificado al '
-            'share_url para dejarlo limpio y LinkedIn devolvia error '
+            'share_url para dejarlo limpio y LinkedIn devolvia error. Y VA EN MARKDOWN '
+            'PULSABLE, [texto corto](URL completa), nunca en bloque de codigo: completo y '
+            'pulsable NO son alternativas, el markdown hace las dos cosas a la vez '
             '(working-preferences §1d-ter y §1d-QUATER)', aviso=True)
 
     chk(False, 'ENTREGA: DOS comparativas (referencia + nuestro mejor del pilar)',

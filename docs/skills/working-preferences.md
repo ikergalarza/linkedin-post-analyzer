@@ -75,6 +75,10 @@ Describir el concepto de la imagen y enlazar la referencia **no es la entrega**:
 
 **1 · El enlace de la referencia se pega TAL CUAL lo devuelve la API. Nunca se acorta a mano.** Yo cogí el `share_url` de Unipile y le quité el slug codificado por dejarlo "limpio", y **LinkedIn devuelve error sin ese slug**. Iker: *"el enlace da error, no sé si ha caducado o me lo has dado mal"*. Da igual que sea feísimo y ocupe cuatro líneas: se pega entero, con el `%F0%9D...` y con los parámetros.
 
+**1b · Y SIEMPRE COMO ENLACE PULSABLE, NUNCA EN BLOQUE DE CÓDIGO (Iker, 2026-08-13).** *"¿Por qué me has dado el enlace en un formato que puedo pulsar y copiar? Siempre los enlaces me los tienes que dar en formato que yo pulso y que salen aquí en azul."* Va en markdown, `[texto corto](URL completa)`, en **cualquier** enlace que le dé: referencias, posts nuestros, documentación, PRs.
+- **⛔ EL FALLO DE FONDO, y es el que hay que recordar: traté "completo" y "pulsable" como si hubiera que elegir.** Primero se lo di pulsable pero acortado (roto), y al corregirlo me fui al extremo y se lo puse en bloque de código para que se copiara entero (no pulsable). **Son independientes:** el markdown lleva la URL entera y fea en el destino y enseña un texto corto en azul. Se cumplen las dos a la vez, siempre.
+- **La única excepción es lo que va DENTRO del post**, donde la URL se escribe en crudo porque LinkedIn no renderiza markdown (`§1`).
+
 **2 · La foto de la referencia va en el MISMO mensaje que la entrega, al final, no suelta a mitad de turno.** La regla de `§1d-ter` ya decía que se adjunta siempre, y **yo la adjunté**… en medio de un turno largo lleno de comandos, y se perdió de vista. Iker: *"sin foto de referencia, ¿cómo le voy a decir al diseñador que la calque?"*. **Adjuntarla no basta: tiene que estar donde él la va a buscar**, que es junto al post y al prompt.
 - **Y se vuelve a descargar en el momento de entregar**, no se reutiliza la de hace tres horas: las URL de `media.licdn.com` caducan y dan 403 (`§1d-ter`).
 - **Antes de darla, se comprueba que el post sigue vivo** pidiéndolo a la API. Si el autor lo ha borrado, la referencia ya no vale y hay que decirlo.
