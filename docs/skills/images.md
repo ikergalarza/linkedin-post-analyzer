@@ -546,6 +546,11 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **Los tres sitios que tienen que decir el mismo numero:** el gancho, la linea del entregable en el cuerpo, y el subtitulo de la imagen. **Si cambias uno, cambias los tres.** Y el numero sigue siendo impar (`global §2.5b`).
 
+**⭐ Y LAS MINIATURAS DE UN VISOR DE PDF TAMBIEN SE CUENTAN, Y VAN CUADRADAS (Iker, 2026-08-14).** Es la misma regla, en el sitio donde no la estaba aplicando: en el lead magnet de la criba el post prometia **5 pasos** y la columna de la izquierda enseñaba **7 miniaturas**. Nadie cuenta 30 filas, pero **7 miniaturas se cuentan de un vistazo**, y ahi el lector ve que le prometemos cinco cosas y le enseñamos siete paginas.
+- **El numero de miniaturas = el numero del gancho.** Es la cuarta pata de los tres sitios de arriba.
+- **Y van CUADRADAS, aunque la referencia las tenga horizontales.** Iker: *"aunque la referencia lo tenia asi, que todas sean cuadradas para que haya coherencia de diseño, y asi estamos copiando y mejorando"*. Las suyas son horizontales porque **su imagen es horizontal**; la nuestra es 1:1 siempre (`§0b`), asi que un documento cuadrado tiene miniaturas cuadradas. Es de la familia de `§0d`: el encuadre del original es un defecto heredado, no el motor.
+- **La miniatura activa se queda NITIDA y con su marco**, y las demas desenfocadas. Es lo que sostiene la ilusion del visor: estas mirando la pagina 1, asi que la pagina 1 no puede estar borrosa.
+
 **Y ajusta la densidad de la tabla al numero real de filas:** si la referencia trae treinta y tu llevas quince, el prompt tiene que pedir mas aire entre filas, o la tabla queda apelotonada arriba y medio cuadrado vacio.
 
 ## 💡 0i-2b · MEME SOBRE PELÍCULA O FAMOSO: RECORDATORIO, NO BLOQUEO (Iker, 2026-07-22 · degradado el 2026-08-13)
