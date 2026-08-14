@@ -850,6 +850,12 @@ sorprende, que es de lo que vive este pilar.
 > **⚠️ Y el coste oculto del realismo:** `images §0a-sexta-bis` dice que en un pantallazo documental el realismo ES la credibilidad, y es verdad, **pero esa credibilidad tiene precio**: cuanto más se lo cree la gente, más real es el enfado del que se lo cree. Ese precio lo paga la persona que firma el post. **Cuanto más creíble sea el montaje, más lejos tiene que estar de la cuenta de Unai.**
 >
 > **Y fuera del meme: cuidado con la REDACCIÓN de todo lo de Unai.** No es solo el pilar. Cualquier frase suya que se pueda leer como chulería, burla o exageración se revisa dos veces (`brand-voice §1b`: tiene que sonar como el director industrial de ~50 años que nos lee, y que le vea como un igual).
+>
+> #### ✅ EL PRIMER CASO DE LA CASCADA FUNCIONANDO AL DERECHO (Iker, 2026-08-13)
+> **Todos los ejemplos de aquí arriba son fracasos**: el tatuaje que le costó un insulto con nombre real a Unai, y el *"I just shit my pants"* limado para que cupiera en su cuenta, que se quedó en 0,31x. Faltaba el caso contrario, que es el que enseña a ELEGIR bien desde el principio.
+> **El meme del 14/08** (SpongeBob progresivo, remate *"salir con la hija del cliente para conseguir la reunión"*) se eligió para **Iker** sabiendo que el remate iba a levantar comentarios. Iker, viendo la imagen montada: *"este meme es bastante peligroso si se hubiese subido en el primer jefe o el tercero, va a generar mucha controversia. Pero como es para el segundo, perfecto: no se va a quejar aunque le insulten, no es tan exquisito"*.
+> - **Lo que confirma:** el filtro de controversia se aplica al ELEGIR LA REFERENCIA, no al redactar. El chiste llegó entero a la cuenta que lo aguanta, sin suavizar nada, que es justo lo que falló con el 0,31x.
+> - **Y para MEDIRLO:** en un meme colocado a propósito en la cuenta de Iker, **los comentarios enfadados no son una señal de fracaso**, son el motor esperado. Lo que se mira es alcance y reposts, no el tono de los comentarios.
 
 > **Input del usuario:** SIEMPRE un **enlace a un post-meme de LinkedIn** de referencia (un caso de éxito). **Si no te lo pasa, PÍDESELO por chat antes de nada.**
 >
