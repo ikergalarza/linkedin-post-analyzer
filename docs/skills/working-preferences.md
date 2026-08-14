@@ -35,6 +35,19 @@ Vale para todo lo que se copia y pega: un prompt de diseñador, el texto de un p
 
 **Y antes de cerrar el turno, comprueba hacia atras:** ¿algo de lo que acabo de descubrir toca un bloque que ya le di? Si toca, ese bloque se rehace.
 
+### ⛔⛔ 1c-BIS · UN ENTREGABLE QUE AUN NO SE HA EJECUTADO SE REHACE ENTERO, NUNCA SE COMPLEMENTA (Iker, 2026-08-14) — GLOBAL
+
+**El caso:** le di un prompt de edicion de imagen con tres correcciones, **el no lo habia pasado todavia**, y volvio con una cuarta idea suya. Le entregue un SEGUNDO prompt con lo nuevo y le dije que pegara los dos seguidos. Iker: *"si tu me das un plan de correccion y sin ejecutarlo yo te doy mas informacion, tienes que completar el prompt que ya tenias y darme uno con todo, tanto lo tuyo como lo mio. Esto es receta global"*.
+
+**La regla:** mientras un entregable **no se haya ejecutado**, sigue estando abierto. Cualquier cosa que llegue despues —una correccion suya, una idea nueva, un dato mio— **se funde dentro y se vuelve a dar el entregable COMPLETO**, una sola pieza para copiar y pegar.
+
+- **`§1c` cubria solo la mitad:** decia que se rehace cuando **YO** descubro algo que lo invalida. Faltaba el caso mas frecuente, que es cuando **EL** añade algo encima de un plan que todavia no ha corrido.
+- **El disparador es si se ha EJECUTADO, no si ha pasado un turno.** Si el prompt ya se paso al diseñador y la imagen ha vuelto, entonces si toca un prompt nuevo y solo con lo nuevo (`images §0i-3`: en edicion no se repite lo que ya esta bien). Si no se ha pasado, es el mismo entregable y se reescribe entero.
+- **⛔ Y no se le manda encadenar piezas.** *"Pegale estos dos seguidos"*, *"y ademas cambiale esto"* o *"coge el de antes y añadele"* son las tres formas de romper esto. Si Iker tiene que juntar dos bloques mios para tener la version buena, esta mal entregado — es exactamente el mismo criterio que `§1` (el post entero dentro del bloque, nunca "cambia esta linea").
+- **⚠️ Y lo que NO vale como excusa, porque es lo que use yo:** que juntarlo lo haga mas largo o mas facil de que el ejecutor se salte la mitad. Eso es una deduccion mia (`§0c`) contra una instruccion suya. Si el prompt se hace largo, se aprieta la redaccion; no se parte en dos.
+
+Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y de programador, textos de post, comandos y briefings.
+
 ## ⭐ 1d · LOS AVISOS CRITICOS VAN MARCADOS EN ROJO (Iker, 2026-07-21)
 
 El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacion o hacerle perder tiempo empieza por 🔴**. Iker lee en diagonal cuando va rapido y un parrafo de texto plano se le pasa.
