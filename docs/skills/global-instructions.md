@@ -469,7 +469,14 @@ Corre estas puertas EN ORDEN:
 3. **Entrega LIVE en comentarios** (audit/roast/consejo one-liner) bate al PDF (**8.52x · 483 com. vs 4.10-4.52x · 232-285 com.**) porque la recompensa es pública, personalizada e inmediata → loop de comentarios. Sanity-check: el entregable live tiene que dar VALOR REAL al que comenta, no ser un chiste a su costa ("traduzco tu comentario al vendedor más cringe" flopeó — sin valor + palabra "cringe" aliena al senior).
 4. **CTA explícita:** fórmula literal **"Comenta [X] + [Y]"**. X = palabra atada al recurso ("GUÍA", "PLANTILLA", "SISTEMA", "CHECKLIST"). Y = algo de esfuerzo mental mínimo (su sector, su CRM, su color favorito). Las formas implícitas ("dímelo abajo", "levanto la mano", "X aquí abajo") están DEPRECADAS — hundieron el conteo de comentarios en dos A/B independientes.
 
-### 2.5b · LAS CIFRAS DEL HOOK, IMPARES Y CUMPLIBLES (Iker, 2026-07-21)
+### 2.5b · LAS CIFRAS IMPARES Y CUMPLIBLES — EN TODO EL POST, NO SOLO EN EL HOOK (Iker, 2026-07-21 · ámbito ampliado 2026-08-13)
+
+> ⛔ **EL TÍTULO DECÍA "DEL HOOK" Y ESO ERA EL FALLO.** Iker, 13/08, sobre el meme del 14/08: *"¿por qué si te he dicho como regla general que los números impares siempre son mejores me has puesto 'plantarte en su portal a las 8'?"*. La cifra estaba en el cuerpo, no en el gancho, y yo leí el título en vez de la regla. **Es GLOBAL: cualquier cifra que ELIJAMOS nosotros, en el gancho, en el cuerpo, en el cierre o dentro de la imagen, va impar.**
+>
+> **La frontera, que es lo único que hay que tener claro:** se aplica a las cifras que **elegimos**, no a las que **verificamos**. Un dato real no se toca jamás para que quede impar — eso sería inventarse el dato, que es la línea que no se cruza (`aboutme`). Si Navarra exporta 9.444,2 M€, van 9.444,2. Si el mapa tiene 12 empresas, son 12.
+> - **Elegida** (va impar): la hora de una escena, el nº de puntos de una lista, "las 25 empresas", un plazo, una edad inventada.
+> - **Verificada** (va como es): exportaciones, facturación, nº real de menciones, impresiones, porcentajes con fuente.
+> - **Caso del 14/08:** *"Plantarte en su portal a las 8"* → **a las 9**. Iker: *"a las 7 de la mañana o a las 5 lo veo excesivo, pero a las 9 sí"*. O sea que impar **y** creíble: el realismo manda sobre la manía del impar, y de los impares creíbles se coge el que mejor suene.
 
 **Impares.** Esta medido fuera que los numeros impares generan mas clics que los redondos: 25 se lee como una cuenta real, 50 como una estimacion de marketing. `§2.5` limitaba a UNA cifra en el hook pero no decia nada de que cifra. **No lo teniamos escrito en ninguna receta.**
 

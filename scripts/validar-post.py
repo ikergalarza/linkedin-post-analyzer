@@ -517,6 +517,39 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     chk(not ms, 'Sin AÑO de fuente en el cuerpo (§3.5b)',
         f'{ms[:2]} → cita el nombre, nunca el año' if ms else '')
 
+    # CIFRAS IMPARES EN TODO EL POST (§2.5b, ambito ampliado por Iker el
+    # 2026-08-13). La regla existia desde julio pero el titulo decia "las cifras
+    # del HOOK", asi que colé un "plantarte en su portal a las 8" en el cuerpo de
+    # un meme. Iker: "como regla general los numeros impares siempre son mejores".
+    #
+    # ⚠️ VA DE AVISO Y NO DE FALLO, Y ES DELIBERADO: la regla solo aplica a las
+    # cifras que ELEGIMOS, no a las que VERIFICAMOS. Un dato real no se redondea
+    # para que quede impar — eso seria inventarselo, que es la linea que no se
+    # cruza. El script no puede distinguir "a las 8" (elegida) de "12 empresas"
+    # (verificada), asi que las lista y decide el humano.
+    #
+    # Se excluyen: la numeracion de una lista al principio de linea (1. 2. 3.),
+    # lo que lleva unidad pegada (€ % M k h) o separador de miles, y los años.
+    # ⚠️ Y LAS URL, que fue el primer falso positivo al probarlo: un enlace
+    # acortado tipo lnkd.in/eB6K6ASH lleva digitos dentro y el check cantaba dos
+    # "6" que no existen en el texto. Se quitan ANTES de buscar nada.
+    _cuerpo_sin_lista = re.sub(r'https?://\S+', ' ', cuerpo)
+    _cuerpo_sin_lista = re.sub(r'(?m)^\s*\d+[.)]\s', '', _cuerpo_sin_lista)
+    _pares = []
+    for _m in re.finditer(r'(?<![\d.,])(\d{1,2})(?![\d.,])', _cuerpo_sin_lista):
+        _n = int(_m.group(1))
+        _cola = _cuerpo_sin_lista[_m.end():_m.end() + 2]
+        if re.match(r'\s*[€%]|\s*[MkKh]\b', _cola):
+            continue
+        if _n % 2 == 0 and _n != 0:
+            _ctx = _cuerpo_sin_lista[max(0, _m.start() - 22):_m.end() + 10].replace('\n', ' ')
+            _pares.append(f'"{_n}" en «…{_ctx.strip()}…»')
+    chk(not _pares, 'Cifras ELEGIDAS en impar, en todo el post (§2.5b)',
+        (' · '.join(_pares[:3]) + ' → si la cifra la eliges tu, va impar y creible '
+         '(el 14/08: "a las 8" pasó a "a las 9", porque a las 7 o a las 5 no se lo cree '
+         'nadie). Si es un dato VERIFICADO, se queda como esta y este aviso se ignora: '
+         'un dato no se retoca para que quede impar') if _pares else '', aviso=True)
+
     # bloques de prosa: ≤3 líneas, y línea individual detrás (§3.2)
     largos = [i for i, b in enumerate(bs) if not es_lista(b) and len(b) >= 4]
     chk(not largos, 'Bloques de prosa ≤3 líneas (§3.2)',
