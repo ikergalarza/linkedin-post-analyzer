@@ -20,9 +20,10 @@ Lo que NO hace y es a proposito:
     (`images §0b-OG`), que es quien la sube.
   · No inventa el diseño. Fondo, posiciones, cuerpos y colores salen del PSD:
     si Iker cambia la plantilla, esto cambia solo.
-  · No encoge el texto para que quepa. Si no cabe, ABORTA con la medida exacta,
-    porque la regla es que se acorta el COPY y nunca se toca el diseño
-    (`lead-magnet-web §4c`). `--forzar` existe para una urgencia, avisando.
+  · No encoge el texto ni mueve nada. Iker, 2026-08-14: "todas tienen que
+    empezar en la misma posicion y tamaño para coherencia de diseño, asi que tu
+    solucion tiene que ser simplemente poner frases mas cortas". Si no cabe,
+    ABORTA con la medida exacta en pixeles. Para eso esta la plantilla.
 
 Lo unico que hay que saber del PSD: el `FontSize` de una capa de texto va en
 unidades del documento, no en pixeles, asi que se multiplica por la escala de
@@ -56,6 +57,41 @@ SALIDA_W, SALIDA_H = 1200, 630
 # lado; si una linea lo invade, el titulo se lee pegado al borde.
 MARGEN = 113 / 1731
 
+# ⛔ PERO EL BORDE DEL LIENZO NO ES EL OBSTACULO REAL: LO SON LAS PIEZAS AZULES
+# (medido el 2026-08-14, con tres de las once imagenes ya montadas y pisadas).
+# Entran en diagonal por la derecha y bajan, asi que el ancho libre DEPENDE DE
+# LA ALTURA a la que caiga cada linea. Con el margen a secas pasaban el check
+# `Es lo que mandas` y `Mientras duermes`, y las dos se comian la pieza.
+# Se mide el fondo de verdad: en la banda vertical de cada linea se busca el
+# primer pixel CLARO viniendo desde la derecha, y ese es el limite.
+# ⚠️ Y se busca el AZUL, no lo "claro" a secas: el halo magenta de la esquina
+# inferior izquierda tambien es brillante, y midiendo por luminancia daba la
+# columna 260 como limite, o sea que no cabia ni "La corta no". El azul bebe
+# tiene el verde y el azul altos; el magenta tiene el verde por los suelos.
+HUECO = 0.015   # aire minimo entre la ultima letra y la pieza, en % del ancho
+
+
+def es_pieza(r, g, b):
+    return b > 150 and g > 120 and b >= r
+
+
+def limite_libre(fondo, base, arriba, abajo):
+    """Hasta que x puede llegar una linea sin pisar las piezas azules.
+
+    Recorre la banda vertical que ocupa el texto y devuelve la x del pixel
+    claro mas a la izquierda: de ahi para la derecha ya hay dibujo.
+    """
+    ancho, alto = fondo.size
+    y0, y1 = max(0, int(base - arriba)), min(alto, int(base + abajo) + 1)
+    pix = fondo.load()
+    tope = ancho * (1 - MARGEN)
+    for y in range(y0, y1, 4):        # de 4 en 4: las piezas son masas grandes
+        for x in range(int(tope)):
+            if es_pieza(*pix[x, y][:3]):
+                tope = min(tope, x - ancho * HUECO)
+                break
+    return tope
+
 
 def estilo(capa):
     """Cuerpo en pixeles, color RGB y linea base de una capa de texto del PSD."""
@@ -74,8 +110,6 @@ def main():
     ap.add_argument('--salida', required=True)
     ap.add_argument('--plantilla', default=PLANTILLA)
     ap.add_argument('--fuente', default=FUENTE)
-    ap.add_argument('--forzar', action='store_true',
-                    help='Encoge el texto si no cabe en vez de abortar. Para una urgencia; lo correcto es acortar el copy')
     a = ap.parse_args()
 
     for ruta, que in ((a.plantilla, 'la plantilla PSD'), (a.fuente, 'la fuente Bricolage Grotesque')):
@@ -97,41 +131,42 @@ def main():
     fondo = psd.composite(force=True).convert('RGB')
     lienzo = ImageDraw.Draw(fondo)
 
-    dibujo = []
+    # ⛔ NI SE ENCOGE NI SE MUEVE NADA (Iker, 2026-08-14): "todas tienen que
+    # empezar en la misma posicion y tamaño para coherencia de diseño, asi que
+    # tu solucion tiene que ser simplemente poner frases mas cortas". Por eso
+    # aqui no hay ningun --forzar: si no cabe, se aborta y se acorta el copy.
+    # ⚠️ Las DOS medidas se toman sobre el fondo LIMPIO, antes de dibujar nada.
+    # Midiendo sobre la marcha, la linea 1 ya pintada se detectaba como pieza
+    # —el mint #ebfff6 tambien tiene el azul y el verde altos— y el limite de la
+    # linea 2 salia en la columna 260, o sea que no cabia ni "La corta no".
+    plan = []
     for capa, texto in ((c1, a.linea1), (c2, a.linea2)):
         cuerpo, color, (x, base) = estilo(capa)
-        dibujo.append([texto, cuerpo, color, x, base])
-
-    # ¿Cabe? Se mide de verdad, no se estima (`lead-magnet-web §4c`).
-    limite = fondo.width * (1 - MARGEN)
-    factor = 1.0
-    for texto, cuerpo, _, x, _ in dibujo:
         f = ImageFont.truetype(a.fuente, int(round(cuerpo)))
         f.set_variation_by_name('ExtraBold')
-        ancho = x + lienzo.textlength(texto, font=f)
-        if ancho > limite:
-            if not a.forzar:
-                sobran = max(1, round((ancho - limite) / (lienzo.textlength(texto, font=f) / max(1, len(texto)))))
-                sys.exit('ERROR: "%s" mide %d px y el limite son %d. ACORTA EL COPY, no el diseño '
-                         '(sobra ~%d caracter/es). Con --forzar lo encojo, pero entonces las dos '
-                         'lineas dejan de tener el cuerpo de la plantilla.'
-                         % (texto, ancho, limite, sobran))
-            factor = min(factor, (limite - x) / lienzo.textlength(texto, font=f))
+        arriba, abajo = f.getmetrics()
+        # Solo la mitad del descendente: la pieza entra en diagonal desde
+        # abajo a la derecha, asi que contando el descendente entero el limite
+        # lo fijaba la punta del triangulo y tumbaba hasta el copy que ya
+        # estaba publicado y se ve bien.
+        plan.append((capa, texto, f, cuerpo, color, x, base,
+                     limite_libre(fondo, base, arriba, abajo // 2)))
 
-    for texto, cuerpo, color, x, base in dibujo:
-        f = ImageFont.truetype(a.fuente, int(round(cuerpo * factor)))
-        f.set_variation_by_name('ExtraBold')
+    for capa, texto, f, cuerpo, color, x, base, limite in plan:
+        largo = lienzo.textlength(texto, font=f)
+        if x + largo > limite:
+            sobran = max(1, round((x + largo - limite) / (largo / max(1, len(texto)))))
+            sys.exit('ERROR: "%s" llega hasta el pixel %d y ahi ya empieza la pieza azul, que manda '
+                     'a partir del %d. ACORTA EL COPY: sobran unos %d caracteres. El cuerpo y la '
+                     'posicion NO se tocan, son los mismos en las once imagenes.'
+                     % (texto, x + largo, limite, sobran))
         # anchor 'ls' = izquierda + linea base, que es justo lo que guarda el PSD.
         lienzo.text((x, base), texto, font=f, fill=color, anchor='ls')
+        print('    %-9s %-26s cuerpo %3.0f px  color #%02x%02x%02x  libre hasta %d' % (
+            capa.name[-1] + ')', texto, cuerpo, color[0], color[1], color[2], limite))
 
     fondo.resize((SALIDA_W, SALIDA_H), Image.LANCZOS).save(a.salida, 'PNG', optimize=True)
     print('OK  %s  %dx%d' % (a.salida, SALIDA_W, SALIDA_H))
-    print('    linea 1  %s  cuerpo %.0f px  color #%02x%02x%02x' % (
-        a.linea1, dibujo[0][1] * factor, *dibujo[0][2]))
-    print('    linea 2  %s  cuerpo %.0f px  color #%02x%02x%02x' % (
-        a.linea2, dibujo[1][1] * factor, *dibujo[1][2]))
-    if factor < 1:
-        print('    AVISO: texto encogido al %.0f%% con --forzar. Lo correcto era acortar el copy' % (factor * 100))
     print('    Sin logo a proposito: lo inserta el chat de la web de recursos al subirla (images 0b-OG)')
 
 
