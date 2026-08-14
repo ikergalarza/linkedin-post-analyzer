@@ -352,6 +352,19 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 
 **El patrón que se lee de la tabla:** cuanto más abstracta es la imagen, peor va. Lo humano (selfie) arriba, lo concreto (artefacto real, cifras reales) en medio, lo conceptual abajo.
 
+## 🤖 0b-OG-SCRIPT · LA IMAGEN DE COMPARTIR YA NO LA GENERA NADIE: LA MONTA UN SCRIPT (Iker, 2026-08-14)
+
+> **La idea es de Iker y resuelve el cuello de botella real del pilar:** *"cada vez tengo que generar dos fotos y perdemos mucho tiempo. Voy a hacer una plantilla PSD editable y me la generas tú, y así yo solo genero la foto de la publicación"*.
+
+**`python scripts/montar-compartir.py --linea1 "…" --linea2 "…" --salida "…\recurso-compartir.png"`**
+
+- **Plantilla:** `Documents/Mario/LINKEDIN GROWTH/LEAD MAGNETS/PLANTILLA COMPARTIR.psd` (1731x909), con el fondo, el halo y las piezas azules ya puestos y **dos capas de texto editables**, `Texto linea 1` y `Texto linea 2`. **La hizo Iker; yo no la toco.**
+- **Del PSD sale TODO menos las palabras:** posición, línea base, cuerpo (122 px la de arriba y 150 la de abajo) y color (`#ebfff6` la 1, `#fe8238` la 2). Si Iker cambia la plantilla, el script cambia solo. Ojo a la trampa de siempre: el `FontSize` del PSD va en unidades del documento, así que se multiplica por la escala de `layer.transform`, y de esa matriz salen también la x y la línea base (lo mismo que en `montar-llanta.py`).
+- **Sale a 1200x630 PNG**, que es lo que pide Open Graph.
+- **⛔ Si el copy no cabe, el script ABORTA con la medida exacta en píxeles** en vez de encogerlo. Es `lead-magnet-web §4c` hecho código: **se acorta el copy, nunca se toca el diseño**. Existe `--forzar` para una urgencia, y avisa.
+- **🔴 Y ESTA IMAGEN YA NO LLEVA POSTPRODUCCIÓN**, porque no ha pasado por un generador ni por Photoshop: no hay acabado de render que suavizar ni firma de IA que borrar. **Misma excepción que "Los 10" y el despiece** (`§0a-penta`). Lo único que queda de su circuito es el último paso: **pasársela al chat de la web de recursos para que le inserte el logo y la suba.**
+- **Qué cambia en la ENTREGA del lead magnet:** las cuatro piezas siguen siendo cuatro, pero ahora **la de compartir va como FICHERO ya montado**, no como prompt. Iker solo genera **una** imagen, la del post.
+
 ## ⭐ 0b-OG · LA IMAGEN DE COMPARTIR DEL RECURSO WEB (Iker, 2026-08-06)
 
 > **Por qué existe esta sección:** lo descubrimos hace tiempo —al compartir un enlace de `recursos.neety.com` salía sin imagen— y **no lo escribí en ningún sitio**, así que en la entrega del lead magnet de `firma` volví a dejarla fuera y Iker tuvo que pasarme la referencia otra vez. Lo aprendido que no se guarda se vuelve a perder.
@@ -398,6 +411,20 @@ Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que 
 - ✅ `aprovecha el espacio que los logos tienen por arriba y por abajo y también por los laterales para que llenen la imagen`
 
 **Y el caso típico donde hace falta: al recomponer una referencia de 16:9 a nuestro 1:1** (`§0b`). El generador conserva el ancho de los elementos y te deja dos bandas muertas arriba y abajo. **Se cuenta como espacio a aprovechar, nunca como "está pequeño".**
+
+### ⭐⭐ 0c-MEDIR · SI HAY UN HERMANO QUE YA ESTÁ BIEN, SE LE MANDA MEDIRLO EN PÍXELES Y COPIAR EL NÚMERO (Iker, 2026-08-14)
+
+**El tercer escalón de esta sección, y el que desatasca lo que no se desatasca con los otros dos.** `§0c` dice que no se le pide un JUICIO (*céntralo*) sino una OPERACIÓN (*aprovecha el espacio de la izquierda*). Faltaba el caso en que ni siquiera eso funciona: cuando el elemento tiene **hermanos que ya están bien** y el generador no acierta a igualarlo.
+
+**Lo que pasó, y son cinco pasadas perdidas:** la miniatura 4 de la columna del visor salía apaisada. Le dijimos *hazla cuadrada*, *igual de proporción y tamaño que las otras* y *auméntale la altura*, y **no funcionó ninguna**. Lo resolvió Iker a la primera con esto:
+
+> *"Solo haz lo que te pido. En la columna de la izquierda, la miniatura 4 tiene menos altura que el resto. Entonces, **calcula cuántos píxeles de altura tiene, por ejemplo, la miniatura 3, y aplica esa altura a la miniatura 4**. Deja todo lo demás intacto y no hagas nada que no te he pedido."*
+
+**Por qué funciona, que es lo que hay que llevarse:** `cuadrada` y `del mismo tamaño` siguen siendo **juicios** — le obligan a evaluar una relación entre dos cosas. `calcula los píxeles de alto de la 3 y aplícaselos a la 4` es una **medición y una copia**, que es lo único que hace bien. Es exactamente el mismo salto que ya dimos de *céntralo* a *aprovecha el espacio*, un peldaño más abajo.
+
+**La plantilla:** `[el elemento X] tiene menos [alto/ancho] que [el elemento Y]. Calcula cuántos píxeles de [alto/ancho] tiene [Y] y aplícaselos a [X].`
+
+**Y el otro medio aprendizaje, que Iker probó ese mismo día: cuando el chat se atasca, se abre uno NUEVO.** Las cinco pasadas fallidas fueron en el mismo hilo; la buena salió en un chat limpio con el mismo prompt. Un hilo largo arrastra sus intentos anteriores y vuelve a caer en ellos. **Si dos pasadas seguidas no arreglan el mismo defecto, el problema ya no es el prompt: es el hilo.**
 
 ## 0d · ⭐ EL OBJETIVO NO ES CALCAR: ES CALCAR Y MEJORAR
 > Al remixar una referencia se copia la **esencia** (`post-workflow §4.4`), pero **los DEFECTOS del original no se heredan: se arreglan**. Ser fiel no es ser fiel a sus fallos.
