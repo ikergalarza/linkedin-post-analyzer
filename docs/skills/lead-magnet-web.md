@@ -194,6 +194,22 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
 - EL PÁRRAFO DEL AUTOR: dos líneas a ancho completo de su tarjeta, unos 230
   caracteres.
 
+2c. VIUDAS Y TOPES HEREDADOS (las dos se ven midiendo, no leyendo el código)
+- VIUDAS: cuadrado el presupuesto de líneas, hay que mirar CÓMO CIERRA la última
+  línea de cada párrafo. Si se queda con una o dos palabras, en la práctica por
+  debajo del 25% del ancho del bloque, se recorta el copy hasta cerrar el párrafo
+  en la línea anterior. Un párrafo que cumple el presupuesto pero deja colgando
+  un "fuente citada." sigue estando mal.
+- Y ESO INCLUYE LOS SALTOS DE LÍNEA PUESTOS A MANO en citas y titulares, que
+  pueden fabricar ellos mismos la viuda que esta regla prohíbe: después de cada
+  <br> manual, mide QUÉ DEJA en la segunda línea.
+- TOPES HEREDADOS: los max-width no viven solo en la regla global del documento.
+  Los componentes copiados de otras guías traen el suyo de serie (el teaser
+  llegó con 600px). Así que al decidir que el texto va a ancho completo: haz un
+  GREP DE max-width sobre todos los bloques y comprueba el ancho RENDERIZADO de
+  cada párrafo uno a uno. Quitar la regla global y dar por hecho que ya está es
+  exactamente por donde se escapó este.
+
 3. ALTA, INDEXADO Y HOME (si falta uno, se rompe en silencio)
 - Los TRES registros con el mismo literal, igual que el data-resource del gate y
   que el nombre del directorio:
@@ -226,6 +242,8 @@ CÓMO QUIERO QUE TRABAJES (antes de escribir una línea de copy)
 > **⭐ DE DÓNDE SALE EL PUNTO 2b (Iker, 2026-08-14, revisando `/criba/` ya construida).** Al briefing le faltaban **dos reglas medibles**, y las dos las descubrió él a mano después: **coherencia de bloques repetidos** (que los bloques gemelos rendericen las mismas líneas) y **ocupación** (que no quede columna fantasma). Son de la misma familia que el *"mide, no estimes"* del §4c: **una regla sin su número se incumple**, así que el briefing fija presupuesto de caracteres y de líneas en vez de dejar la longitud libre.
 >
 > **⛔ Y LA SEGUNDA TANDA CORRIGIÓ MI PRIMERA VERSIÓN, que es la lección que hay que llevarse.** Yo escribí la ocupación **solo para las tarjetas** y dejé el tope de lectura en el lienzo, y eso es **peor que el defecto de partida**: el lector ve alternarse bloques anchos y columnas estrechas. Iker: *"ancho completo o tope, pero para todo el documento igual"*. **Una regla de maquetación que se aplica a la mitad del documento no es media regla: es una incoherencia nueva.** Y al quitar el tope, la contrapartida no es opcional — sin presupuesto de líneas, un párrafo a ancho completo se va a cuatro líneas y se lee peor que antes.
+
+> **⭐ Y LA TERCERA TANDA (Iker, 2026-08-14) añade el punto 2c, que son dos caras de lo mismo: LO QUE SE VE MIDIENDO NO SE VE LEYENDO EL CÓDIGO.** Una **viuda** no está escrita en ningún sitio del HTML — aparece al renderizar, y encima **la puede fabricar un salto manual** que pusimos nosotros para arreglar otra cosa. Y un **max-width heredado** sí está escrito, pero **dentro de un componente que copiamos de otra guía**, así que quitar la regla global y darlo por hecho deja el bloque estrecho igual (el teaser venía con 600px). **La comprobación no es leer el CSS que escribiste: es medir el ancho y las líneas renderizadas de cada párrafo, uno a uno.**
 
 **Antes de entregar el prompt, comprueba:**
 - ¿La muestra del gate **regala la pieza 1 entera**, y el resto se enseña **bloqueado**, no contado?
