@@ -446,6 +446,34 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     [data]
   );
 
+  // ── filtro por grado de red (Iker, 2026-08-14) ──
+  //
+  // "Así siempre empezaré con los de primer grado, que como ya los tengo
+  // agregados, nunca tendré problemas." El orden de trabajo natural es por
+  // CANAL: primero los DM (gratis y sin riesgo), luego el resto.
+  //
+  // El grupo 3 incluye el grado DESCONOCIDO a propósito: la tarjeta trata a
+  // ambos igual (no son DM-ables → InMail), así que separarlos crearía un
+  // cuarto botón para la misma decisión.
+  //
+  // El filtro es SOLO de vista. `dmOwnerByPerson` y compañía siguen calculando
+  // sobre la lista entera: quién es el dueño del recurso de cada persona no
+  // puede depender de qué pestaña estés mirando.
+  const [gradoFiltro, setGradoFiltro] = useState<'todos' | 1 | 2 | 3>('todos');
+  const grupoDe = (t: Thread) => {
+    const d = t.author.network_distance ?? null;
+    return d === 1 ? 1 : d === 2 ? 2 : 3;
+  };
+  const filtrados = useMemo(
+    () => (gradoFiltro === 'todos' ? matches : matches.filter((t) => grupoDe(t) === gradoFiltro)),
+    [matches, gradoFiltro]
+  );
+  const cuentaGrado = useMemo(() => {
+    const c = { 1: 0, 2: 0, 3: 0 } as Record<1 | 2 | 3, number>;
+    for (const t of matches) c[grupoDe(t)]++;
+    return c;
+  }, [matches]);
+
   // Pagination resets whenever the keyword changes (a new keyword is a new
   // list, and inheriting "showing 40" from the previous one is nonsense).
   // The reset is DERIVED rather than done in an effect: we remember which
@@ -490,9 +518,13 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // sentido. Derivado, no en un efecto: se recuerda de que post es el contador
   // y se ignora en cuanto queda obsoleto.
   const PAGE = 10;
-  const [vis, setVis] = useState<{ key: string; n: number }>({ key: post.id, n: PAGE });
-  const visible = vis.key === post.id ? vis.n : PAGE;
-  const showMore = () => setVis({ key: post.id, n: visible + PAGE });
+  // La clave lleva el filtro: cambiar de grado es cambiar de lista, y heredar
+  // el "viendo 40" del filtro anterior es el mismo sinsentido que heredarlo de
+  // otro post.
+  const PAGE_KEY = `${post.id}:${gradoFiltro}`;
+  const [vis, setVis] = useState<{ key: string; n: number }>({ key: PAGE_KEY, n: PAGE });
+  const visible = vis.key === PAGE_KEY ? vis.n : PAGE;
+  const showMore = () => setVis({ key: PAGE_KEY, n: visible + PAGE });
 
   const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 200);
 
@@ -630,6 +662,30 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
               <span className="font-semibold text-text-primary">{matches.length}</span> comentario
               {matches.length === 1 ? '' : 's'} de personas
             </span>
+            {/* Filtro por grado: empezar por los de 1er grado (DM gratis, cero
+                riesgo) y dejar los InMail para el final es el orden de trabajo
+                que pidió Iker (2026-08-14). El grupo 3º+ incluye el grado
+                desconocido: mismo canal, misma decisión. */}
+            <span className="flex items-center gap-1">
+              {([
+                ['todos', `Todos (${matches.length})`],
+                [1, `1er grado (${cuentaGrado[1]})`],
+                [2, `2º (${cuentaGrado[2]})`],
+                [3, `3º+ (${cuentaGrado[3]})`],
+              ] as const).map(([valor, etiqueta]) => (
+                <button
+                  key={String(valor)}
+                  onClick={() => setGradoFiltro(valor)}
+                  className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                    gradoFiltro === valor
+                      ? 'bg-accent/15 text-accent border-accent/40'
+                      : 'border-border text-text-muted hover:border-accent/30 hover:text-text-secondary'
+                  }`}
+                >
+                  {etiqueta}
+                </button>
+              ))}
+            </span>
             {sentCount > 0 && (
               <span className="text-text-muted">· {sentCount} ya recibieron el recurso</span>
             )}
@@ -687,6 +743,11 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           {error} <button onClick={refetch} className="underline">Reintentar</button>
         </p>
       )}
+      {ready && data && matches.length > 0 && filtrados.length === 0 && (
+        <p className="text-center text-text-muted text-sm py-10">
+          Ningún comentario de ese grado en este post.
+        </p>
+      )}
       {ready && data && matches.length === 0 && (
         <p className="text-center text-text-muted text-sm py-10">
           Este post no tiene todavía ningún comentario de una persona.
@@ -695,7 +756,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
 
       {/* Una tarjeta por comentarista, cada una en su propia red: si revienta
           la de uno, esa sale en rojo y las otras 40 siguen usables. */}
-      {ready && matches.slice(0, visible).map((t) => (
+      {ready && filtrados.slice(0, visible).map((t) => (
         <ErrorBoundary key={t.id} donde={`la tarjeta de ${t.author.name || 'este comentario'}`}>
         <CommenterCard
           thread={t}
@@ -721,12 +782,12 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
         </ErrorBoundary>
       ))}
 
-      {ready && matches.length > visible && (
+      {ready && filtrados.length > visible && (
         <button
           onClick={showMore}
           className="w-full py-2.5 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
         >
-          Ver más ({matches.length - visible} restantes) ↓
+          Ver más ({filtrados.length - visible} restantes) ↓
         </button>
       )}
     </div>
@@ -1582,6 +1643,16 @@ function CommenterCard({
               (msgResult.verificado ?? envioVerificado) === true ? (
                 <p className="text-[11px] text-accent">
                   ✓ {canal === 'invite' ? 'Invitación enviada con el recurso' : 'Recurso enviado y comprobado en LinkedIn'}
+                  {/* El InMail de la herramienta sale por la API clásica y vive
+                      en la bandeja NORMAL de linkedin.com/messaging — NO en el
+                      inbox de Sales Navigator, donde solo están los que mandas
+                      tú a mano desde ahí. Iker buscó el de Erick Sandoval en
+                      Sales Navigator, no lo vio, y con razón creyó que la
+                      herramienta le había mentido (2026-08-14). El crédito que
+                      gasta es el mismo. */}
+                  {canal === 'inmail' && (
+                    <span className="text-text-muted"> · está en tu bandeja normal de LinkedIn (linkedin.com/messaging), no en la de Sales Navigator</span>
+                  )}
                 </p>
               ) : (
                 <p className="text-[11px] text-amber-400 leading-snug">
