@@ -1047,12 +1047,28 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 #    0,172% (Unai 07/07). Iker, 2026-08-10: "que el enlace siempre
                 #    este en la segunda linea, que esa linea sea corta y punchy".
                 #    Se mide SIN la URL: el lector no lee la URL, lee la promesa.
-                _lin = [l for l in b if _dom in l][0]
-                _lin = re.sub(r'https?://\S+', '', _lin).strip()
-                chk(len(_lin) <= 80, 'Spam ninja: la linea del enlace es corta (§4.4b)',
-                    '%d caracteres sin contar la URL. La del 0,415%% ocupa 69 y la '
-                    'del 0,172%%, que fusiona dolor y promesa en una sola linea, '
-                    'ocupa 101' % len(_lin) if len(_lin) > 80 else '')
+                #    ⛔ Y EL TOPE ES DE LAS DOS LINEAS, NO SOLO DE LA DEL ENLACE
+                #    (Iker, 2026-08-13). Este check solo miraba la del enlace y con
+                #    un tope de 80, que NO es corto: a 67 caracteres una linea ya se
+                #    parte en el movil y el bloque de dos se lee como cuatro. Iker,
+                #    viendo el meme del 14/08: "te dije a nivel global que el bloque
+                #    de dos con el enlace tuviera cada linea corta, por que me has
+                #    puesto esos pedazo de lineas". Baja a 55 y aplica a AMBAS.
+                #    ⚠️ Y se dice lo que cuesta, porque no es gratis: con 55 se
+                #    habrian marcado la primera linea del tatuaje del 29/07 (69 car,
+                #    0,151% de CTR, el mejor del ano) y la de la historia del 13/08
+                #    (71). Se elige el criterio de Iker sobre esos dos puntos porque
+                #    el que lo ve renderizado en el movil es el. Si algun dia el dato
+                #    dice lo contrario, se sube y se anota aqui.
+                _sin_url = lambda s: re.sub(r'https?://\S+', '', s).strip()
+                _largas = [(i + 1, len(_sin_url(l))) for i, l in enumerate(b)
+                           if len(_sin_url(l)) > 55]
+                chk(not _largas, 'Spam ninja: LAS DOS lineas cortas, <=55 sin la URL (§4.4b)',
+                    ('linea(s) %s. Una linea de mas de 55 se parte en el movil y el bloque '
+                     'de dos se lee como cuatro, que es justo lo que el bloque evita. '
+                     'Referencias que si funcionaron: 30 y 48 caracteres en la linea del '
+                     'enlace' % ', '.join('%d con %d car' % x for x in _largas))
+                    if _largas else '%s car' % ' / '.join(str(len(_sin_url(l))) for l in b))
                 # 3) QUE PROMETE. El dolor validado por los clientes en reunion es
                 #    ENCONTRAR AL CLIENTE IDEAL, empresa y persona. No el momento.
                 #    El ninja de 0,415% dice "te marcamos quien va a comprar y

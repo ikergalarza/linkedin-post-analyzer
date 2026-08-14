@@ -749,7 +749,20 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 
 ❌ MAL — el enlace en una línea suelta, con un blanco encima
 ❌ MAL — una frase de venta que valdría pegada a cualquier otro post nuestro
+❌ MAL — dos líneas largas: el bloque de dos se lee como cuatro
 ```
+
+#### ⛔⛔ LAS DOS LÍNEAS, CORTAS: TOPE DE 55 CARACTERES SIN CONTAR LA URL (Iker, 2026-08-13) — GLOBAL
+
+**El tope es de las DOS líneas, no solo de la del enlace, y 80 no era "corto".** El check solo miraba la segunda y la dejaba llegar a 80, así que colé un ninja de 67 y 61. Iker, viéndolo: *"te dije a nivel global que el bloque de dos con el enlace tuviera cada línea corta, ¿por qué me has puesto esos pedazo de líneas?"*.
+
+**El motivo es mecánico y por eso el número:** pasando de ~55 caracteres la línea **se parte en el móvil**, y entonces el bloque de dos se lee como cuatro, que es exactamente lo que el bloque existe para evitar (`§4.4b-FORMA`: pegado a la broma se lee como el remate del chiste; partido, vuelve a parecer un banner).
+- **La URL no cuenta.** Iker ya lo dijo el 07/08: *"me da igual que la frase con el enlace caiga a 2 líneas"*. Lo que se mide es el TEXTO.
+- **Referencias que sí funcionaron:** la línea del enlace del tatuaje (0,151%, el mejor CTR del año) ocupa **30**; la de la historia del 13/08, **48**.
+- ⚠️ **Y lo que cuesta, dicho en voz alta:** con el tope en 55 se habrían marcado la **primera** línea del tatuaje (69) y la de la historia del 13/08 (71), y las dos son de posts que funcionaron. Se elige el criterio de Iker sobre esos dos puntos porque **el que lo ve renderizado en el móvil es él**. Si algún día el dato dice lo contrario, se sube el número y se anota aquí.
+- **Y ojo con el reparto cuando aprietas:** metiendo dolor Y solución en la segunda línea no cabe. El ninja del 29/07, que es el mejor, lo reparte al revés: **el dolor va arriba con la broma y abajo queda solo la solución corta** (*"Esa parte ya la tenemos hecha:"*). Ese es el molde cuando el espacio va justo.
+
+**Mecanizado** en `validar-post.py` como fallo duro (`Spam ninja: LAS DOS lineas cortas, <=55 sin la URL`), en todos los pilares menos mapa.
 
 **LA AUDITORÍA QUE LO DECIDE (2026-08-12, clics reales de las 3 cuentas).** Solo posts con **nuestro** enlace, **sin mapas** (allí manda el ultra ninja y el CTA es siempre el mismo) y con **más de 5.000 impresiones**, que por debajo el CTR es ruido:
 
