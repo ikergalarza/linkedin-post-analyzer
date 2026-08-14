@@ -1086,6 +1086,8 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 
 **De momento el baneo es solo de Unai**, pero se prospecta con las 3 cuentas: el día que caiga otra, la lista está en un sitio (`CUENTAS_SIN_NOTA`, en `backend/src/routes/accounts.ts` y su gemela en `frontend/src/components/accounts/leadMagnetCopy.ts`).
 
+**⚠️ Si tocas el panel: `npx tsc --noEmit` en `frontend/` NO COMPRUEBA NADA.** Su `tsconfig.json` es un proyecto de solo referencias (`"files": []`), así que ese comando sale limpio siempre, compilando cero ficheros — y `vite build` usa esbuild, que borra los tipos sin mirarlos. Así se coló el 14/08 un `ReferenceError` que dejaba **la pantalla en negro** al abrir un post. **El comando bueno es `npx tsc -b`.**
+
 **Y LO MÁS IMPORTANTE: ENVIADO ≠ LLEGADO.** El 200 de la API no es prueba de nada. Después de cada envío la herramienta **relee LinkedIn** (el mensaje en el chat, o la invitación en las pendientes enviadas) y solo pinta en verde lo que encuentra; lo que no, lo marca **caído en rojo con el motivo**. En el panel hay un botón **"Revisar envíos"** que repasa los ya guardados y corrige los que se dieron por buenos sin haber salido — es lo que hay que darle para limpiar cualquier tanda anterior al 14/08. **Nunca respondas "Enviado!" en el comentario antes de que el recurso esté comprobado**: el panel ya lo bloquea, pero la regla es de criterio, no de botón.
 
 #### 🔴 4.5.-2 · TODO LEAD MAGNET TIENE QUE CAPTURAR ALGO — AVISO OBLIGATORIO AL ITERAR IDEAS (Iker, 2026-07-22)

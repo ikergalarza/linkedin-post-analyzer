@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useApi, apiPost, apiGet } from '../../hooks/useApi';
-import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
+import { Avatar, EmojiPicker, ErrorBoundary, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
   asuntoInmail, buildDm, buildInmail, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
@@ -223,7 +223,11 @@ export default function LeadMagnetPanel({ accounts, onSelectCreator }: Props) {
           REMOUNTS it: every draft, every "ver más" and the loaded config
           belong to one post, and carrying any of it across would mean
           sending post A's resource to post B's commenters. */}
-      {selectedPost && <Workspace key={selectedPost.id} post={selectedPost} creatorId={creator} />}
+      {selectedPost && (
+        <ErrorBoundary donde="el panel del lead magnet">
+          <Workspace key={selectedPost.id} post={selectedPost} creatorId={creator} />
+        </ErrorBoundary>
+      )}
     </div>
   );
 }
@@ -684,9 +688,11 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
         </p>
       )}
 
+      {/* Una tarjeta por comentarista, cada una en su propia red: si revienta
+          la de uno, esa sale en rojo y las otras 40 siguen usables. */}
       {ready && matches.slice(0, visible).map((t) => (
+        <ErrorBoundary key={t.id} donde={`la tarjeta de ${t.author.name || 'este comentario'}`}>
         <CommenterCard
-          key={t.id}
           thread={t}
           postId={post.id}
           creatorId={creatorId}
@@ -707,6 +713,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           initialReply={takeVariant}
           onSent={refetchSends}
         />
+        </ErrorBoundary>
       ))}
 
       {ready && matches.length > visible && (
@@ -768,21 +775,37 @@ function KindPicker({ value, onChange }: { value: LmKind; onChange: (k: LmKind) 
     </div>
   );
 }
-function DegreeBadge({ d }: { d: number | null | undefined }) {
-  if (d === 1) {
-    return (
-      <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
-        1er grado · DM
-      </span>
-    );
-  }
-  const label = d === 2 ? '2º grado' : d === 3 ? '3er grado' : 'grado desconocido';
+// El grado de red Y por dónde se le escribe.
+//
+// ⛔ EL CANAL SE LE PASA, NO SE DEDUCE DEL GRADO (Iker, 2026-08-14). Esto decía
+// "2º grado · invitación" fijo para todo el que no fuera de 1er grado, y desde
+// el baneo de Unai eso es mentira dos veces: ni se manda invitación, ni el 2º
+// grado implica un canal concreto (si esa persona nos mandó solicitud, se le
+// contesta gratis). Un badge que contradice al botón que tiene tres centímetros
+// más abajo es peor que no tener badge.
+function DegreeBadge({ d, canal }: { d: number | null | undefined; canal: Canal }) {
+  const grado = d === 1 ? '1er grado' : d === 2 ? '2º grado' : d === 3 ? '3er grado' : 'grado desconocido';
+  const via =
+    canal === 'dm' ? 'DM'
+    : canal === 'dm-solicitud' ? 'mensaje a su solicitud'
+    : canal === 'inmail' ? 'InMail'
+    : 'invitación';
+  const pista =
+    canal === 'dm' ? 'Es contacto de 1er grado: le llega un mensaje privado normal.'
+    : canal === 'dm-solicitud' ? 'Te mandó una solicitud y sigue sin aceptar. LinkedIn deja contestarla con un mensaje normal: llega igual y no gasta InMail.'
+    : canal === 'inmail' ? 'Ni sois contacto ni te ha mandado solicitud, y esta cuenta no puede invitar con nota: sale por InMail y gasta un crédito.'
+    : 'LinkedIn solo entrega un DM normal a contactos de 1er grado. A esta persona se le manda una invitación con el recurso en la nota.';
+  const resaltado = canal === 'dm' || canal === 'dm-solicitud';
   return (
     <span
-      className="text-[10px] px-1.5 py-0.5 rounded bg-bg-primary text-text-muted border border-border whitespace-nowrap"
-      title="LinkedIn solo entrega un DM normal a contactos de 1er grado. A esta persona se le manda una invitación con el recurso en la nota."
+      className={`text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap border ${
+        resaltado
+          ? 'bg-accent/10 text-accent border-accent/30'
+          : 'bg-bg-primary text-text-muted border-border'
+      }`}
+      title={pista}
     >
-      {label} · invitación
+      {grado} · {via}
     </span>
   );
 }
@@ -797,6 +820,8 @@ function CommenterCard({
   sends,
   invitedCommentIds,
   ownsDm,
+  sinNota,
+  invitacionPendiente,
   voice,
   initialReply,
   onSent,
@@ -1227,7 +1252,7 @@ function CommenterCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 min-w-0 flex-wrap">
             <span className="text-sm font-medium">{thread.author.name || 'Anónimo'}</span>
-            <DegreeBadge d={degree} />
+            <DegreeBadge d={degree} canal={canal} />
             {thread.author.headline && (
               <span className="text-[11px] text-text-muted truncate min-w-0">· {thread.author.headline}</span>
             )}

@@ -175,6 +175,26 @@ export function resolverRecurso(keyword: string, link?: string, topic?: string):
   if (mapeado) return mapeado;
   const l = (link || '').trim();
   if (!l) return null;
+  // ⛔ ANTES DE DARLO POR "ESCRITO A MANO", MIRA EL ENLACE (Iker, 2026-08-14).
+  //
+  // Desde que el recurso se detecta por PISTAS y no por palabra (`detectarRecurso`),
+  // el camino normal en un post nuevo es: sin palabra → aquí, con el enlace del
+  // catálogo pero por la puerta del "a mano". Y por esa puerta se perdía el
+  // `asunto`, así que el InMail salía con el de reserva —"RECURSO MONTAR
+  // PROSPECCIÓN CLAUDE"— en vez del bueno, "RECURSO VIBE PROSPECTING".
+  //
+  // Se compara sin la barra final porque el enlace viaja de las dos formas.
+  const limpio = l.replace(/\/+$/, '');
+  const delCatalogo = CATALOGO.find((r) => r.link.replace(/\/+$/, '') === limpio);
+  if (delCatalogo) {
+    return {
+      link: delCatalogo.link,
+      // El tema escrito a mano sí manda (puede afinarlo para ese post); el
+      // asunto sale del catálogo, que es donde está la versión corta buena.
+      topic: (topic || '').trim() || delCatalogo.topic,
+      asunto: delCatalogo.asunto,
+    };
+  }
   // Sin tema, el DM diria "te dejo el recurso sobre " y se cortaria en seco, asi
   // que hay un texto de reserva en vez de dejar la frase coja.
   return { link: l, topic: (topic || '').trim() || 'lo que pediste en el post' };

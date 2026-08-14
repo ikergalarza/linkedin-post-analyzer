@@ -1,10 +1,63 @@
-import { useEffect, useRef, useState } from 'react';
+import { Component, useEffect, useRef, useState } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { apiPost } from '../../hooks/useApi';
 
 // Pieces shared by the Comentarios tab (RepliesPanel) and the Lead Magnet
 // tab (LeadMagnetPanel). Both show LinkedIn comments and both let you react
 // to them, so the avatar, the relative clock, the emoji picker and the
 // reaction bar live here rather than being copied into each panel.
+
+// ⛔ LA PANTALLA NEGRA (Iker, 2026-08-14).
+//
+// La app no tenía NI UN error boundary, así que cualquier excepción en un
+// render desmontaba el árbol entero y dejaba la pantalla en negro, muda: ni
+// mensaje, ni pista, ni forma de saber si era la app, la red o LinkedIn. Pasó
+// con un `ReferenceError` de dos líneas y costó una sesión entera de
+// diagnóstico a ciegas.
+//
+// Esto no arregla ningún fallo — hace que se VEA, que es lo que faltaba. Y se
+// pone a dos niveles a propósito:
+//   · alrededor de UNA tarjeta → la tarjeta rota se pinta en rojo y las otras
+//     40 siguen funcionando, así que el trabajo del día no se para.
+//   · alrededor del panel      → si lo que revienta es la pantalla, al menos
+//     sale el error escrito en vez del vacío.
+//
+// El mensaje va A LA VISTA y sin recortar: el que lo lee es quien va a
+// pegármelo, y un error recortado no sirve para nada.
+export class ErrorBoundary extends Component<
+  { children: ReactNode; donde: string },
+  { error: Error | null }
+> {
+  state: { error: Error | null } = { error: null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    // A la consola también, con el stack de componentes, que es lo que dice
+    // QUÉ tarjeta y no solo qué línea minificada.
+    console.error(`[${this.props.donde}] se ha roto:`, error, info.componentStack);
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div className="bg-red-500/10 border border-red-500/40 rounded-xl p-4 space-y-1">
+        <p className="text-sm font-medium text-red-400">
+          💥 Se ha roto {this.props.donde}
+        </p>
+        <p className="text-[11px] text-red-300 font-mono break-words whitespace-pre-wrap">
+          {this.state.error.message || String(this.state.error)}
+        </p>
+        <p className="text-[11px] text-text-muted">
+          Esto es un fallo de la herramienta, no de LinkedIn: no se ha mandado nada. Pásame el texto de
+          arriba y lo arreglo. Lo demás de la pantalla sigue funcionando.
+        </p>
+      </div>
+    );
+  }
+}
 
 export interface CommentAuthor {
   name: string | null;
