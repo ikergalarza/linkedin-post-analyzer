@@ -118,6 +118,24 @@ const CATALOGO: RecursoDef[] = [
     pistas: ['prospeccion manual', 'senales que avisan', 'va a comprar', 'senal de compra'],
   },
   {
+    // La criba (Asier, 2026-08-14). Igual que `vibe`, la palabra vive DENTRO de
+    // la imagen y no en el texto, asi que a este post lo reconocen las PISTAS.
+    //
+    // ⚠️ OJO AL SOLAPE CON LA ENTRADA DE ARRIBA: nuestro post dice "prospeccion
+    // manual" en el gancho, que es pista de `/prospeccion-manual/`. Por eso las
+    // de aqui son cuatro y todas exclusivas de este texto: gana por 4 a 1 y no
+    // hay empate, que es lo unico que devolveria null y dejaria al panel
+    // pidiendo el enlace a mano con 300 comentarios esperando.
+    link: 'https://recursos.neety.com/criba/',
+    topic: 'los 5 pasos para cribar tu lista de empresas',
+    asunto: 'LA CRIBA DE EMPRESAS',
+    claves: ['criba'],
+    pistas: [
+      'la criba', 'lista corta', 'prueba que encaja',
+      'enterrar la prospeccion', '5 pasos que sigo',
+    ],
+  },
+  {
     // `firma` y `nombre` apuntaban al mismo sitio con dos entradas duplicadas:
     // el post se reescribio tres veces por un capado de alcance y la palabra
     // cambio, pero la pagina siguio siendo /firma/. Con el catalogo eso es una
