@@ -1705,7 +1705,9 @@ Cada post lleva ahora su **etiqueta de PILAR** en la herramienta (chapa de color
 **LA REGLA:** las tres cuentas publican **MEME + LEAD MAGNET + HISTORIA**. **Cero peloteo** — ni mapa, ni "Los 10", ni despiece — en ninguna de las tres.
 
 **POR QUÉ, y el motivo es del pilar, no del mes:** el peloteo es **el único pilar cuyo motor está FUERA de nosotros**. Funciona porque la empresa y la persona mencionadas reciben la notificación, entran, reaccionan y reparten el post a SU red. **En agosto en España esa gente está de vacaciones**, así que la notificación cae en un móvil que nadie mira y el motor no arranca. El post puede estar perfecto y aun así no repartir. Es la frase de Iker del `historial-publicaciones`: *"el algoritmo no es un robot, es tu público objetivo"*.
-- **Y ya tenemos el precedente medido, fuera de agosto:** el mapa de Cataluña de Unai (17/07) hizo **0.59x con 3.018 impresiones** cuando sus otros mapas van a 21-36K. La causa que dio Iker: **las empresas nos ignoraron**. Eso en julio fue mala suerte; en agosto está garantizado.
+- **🔴 Y ya está MEDIDO EN AGOSTO, no es una hipótesis** (sacado de la BD el 14/08): el **despiece de Navarra de Asier (07/08)** hizo **1.273 impresiones · 0.39x**, con 12 empresas verificadas una a una, 6 personas con actividad comprobada y saliendo en el feed de las 4 cuentas desde el minuto uno. **El pilar tiene 21.295 de mediana: se quedó en el 6%.** El post no falló; faltaba el público.
+- **Y el precedente de fuera de agosto apunta a lo mismo:** el mapa de Cataluña de Unai (17/07) hizo **0.59x con 3.018 impresiones** cuando sus otros mapas van a 21-36K, y la causa que dio Iker fue **que las empresas nos ignoraron**. En julio eso fue mala suerte; en agosto es la norma.
+- **El contraste, la misma semana y en las mismas cuentas:** los memes de agosto van a **95.913 (6.91x)** y **89.320 (6.04x)**. **No es que agosto baje el techo: es que baja el techo del pilar que depende de terceros.**
 - **No es que el formato se haya quemado.** El peloteo sigue siendo el pilar de más mediana (21.295 impresiones). Lo que falta es el público, y vuelve en septiembre.
 
 **LO QUE OCUPA SU SITIO, y por qué cada uno aguanta agosto:**
@@ -1721,12 +1723,30 @@ Cada post lleva ahora su **etiqueta de PILAR** en la herramienta (chapa de color
 
 ### 📅 8.0-SEPTIEMBRE · LAS 2 PRIMERAS SEMANAS DE SEPTIEMBRE SE DEJAN ESCRITAS ANTES DE LAS VACACIONES (Iker, 2026-08-14)
 
-**Iker está de vacaciones las 2 primeras semanas de septiembre**, y esas son justo las semanas en las que **el peloteo vuelve a ser prioridad número uno**: la gente ya ha vuelto, las notificaciones se miran y el motor del pilar arranca otra vez.
+**Las fechas, que ya están cerradas (Iker, 2026-08-14):**
 
-- **Hay que dejarle PELOTEOS PREPARADOS PARA CADA CUENTA**, escritos, validados y con su imagen montada, **antes de que se vaya**. No se planifican desde la playa.
-- Cada uno con su región nueva por cuenta (`historial-publicaciones`, tabla de cobertura), sus menciones verificadas una a una y su CSV/imagen ya montados.
-- **⚠️ Y hay dos cosas que decidir con Iker antes de montarlos, no las adivino:** (1) la **fecha límite** real (cuándo se va, para tener todo cerrado antes); y (2) si el tope colectivo de `§8.2` pasa de *"un mapa y un Los 10 por semana"* a *"un mapa + un Los 10 + un despiece"*, que es lo que hace falta para que **las tres cuentas** tengan peloteo esas dos semanas — el despiece ya es un formato hecho (`§4.7`, dos publicados) y en la semana del 03/08 ya convivió con un mapa.
-- El despiece pendiente de **alimentación** (`historial-publicaciones`, avisos) es candidato natural para una de esas dos semanas: estaba parado por ser peloteo en agosto.
+| Hito | Fecha |
+|---|---|
+| Último día de trabajo | **viernes 28/08** — deadline duro: todo escrito, validado, con imagen y **programado** |
+| Vacaciones | **lunes 31/08 → viernes 11/09** (2 semanas) |
+| Semanas a cubrir | la del **31/08** y la del **07/09** |
+| Vuelta | **lunes 14/09** |
+
+**El calendario de preparación, y arranca YA:**
+- **Semana del 17/08 — se baja el ritmo de publicación a propósito.** Menos posts esa semana, porque las horas se van en dejar septiembre montado. No es dejar de publicar: es publicar menos y preparar más. La semana del 10/08 salió muy bien y da colchón para hacerlo.
+- **Semana del 24/08 — el grueso.** Aquí se monta y se cierra todo, con el viernes 28 como tope.
+- **No se planifica desde las vacaciones.** Lo que no esté hecho el 28/08 no sale.
+
+**Qué se prepara:** **peloteo para CADA cuenta las dos semanas** — es el pilar que vuelve a tener motor en septiembre. Cada uno con región nueva por cuenta (`historial-publicaciones`, tabla de cobertura), menciones verificadas una a una y CSV/imagen ya montados. El **despiece de alimentación** que quedó parado en agosto es candidato natural para una de las dos semanas.
+- **Para que las TRES cuentas tengan peloteo hay que abrir el tope colectivo de `§8.2`** de *"un mapa y un Los 10 por semana"* a *"un mapa + un Los 10 + un despiece"*. El despiece ya es formato hecho (`§4.7`, dos publicados) y en la semana del 03/08 ya convivió con un mapa. **⚠️ Confirmar con Iker antes de montarlo**, junto con el volumen total (solo los 6 peloteos, o las semanas completas).
+
+**🧪 EXPERIMENTO NUEVO: SE PROGRAMA CON LA HERRAMIENTA NATIVA DE LINKEDIN.** Nunca lo hemos probado — siempre se ha subido a mano. La sospecha viene de TikTok (allí lo programado pierde alcance), pero **es un mito sin comprobar en LinkedIn** y ahora hay ocasión de medirlo. Todo lo demás se respeta igual: hora de la franja buena (10:00-11:00), gancho, cuerpo, foto.
+
+**⛔⛔ Y AQUÍ VA EL AVISO QUE MÁS IMPORTA: LAS MÉTRICAS DEL 31/08 AL 11/09 NO GENERAN DOCTRINA.**
+Durante esas dos semanas **no va a estar la capa manual que hace funcionar el sistema**: comentar y responder rápido desde las 4 cuentas, reparto interno, seguimiento de la primera hora. Solo habrá una persona pendiente y sin acceso a todas las cuentas. **Y encima se cambia una segunda variable a la vez** (programado en vez de manual).
+- **Consecuencia operativa:** de esas dos semanas **no sale ninguna regla nueva, ni se declara muerto ningún pilar, ni se toca ninguna receta**. Si un post cae, la explicación por defecto es la falta de interacción, no el copy.
+- **Y no valen de baseline**: al comparar en septiembre y octubre, esas dos semanas se marcan como periodo anómalo, igual que se marca agosto.
+- **Lo que sí se puede medir de ahí, y con cuidado:** el experimento de la programación nativa, comparando **solo** contra posts del mismo pilar y cuenta — y aun así con la advertencia de arriba encima.
 
 ### 8.1 · Las 3 categorías de pilar (unidad de rotación)
 - **PELOTEO (regional)** = { **Mapa regional** | **"Los 10"** directores/comerciales regionales }. Ensalzan una zona o a personas. Los dos formatos cuentan como **la MISMA categoría** a efectos de intercalado (no pueden coincidir dos peloteos el mismo día).
