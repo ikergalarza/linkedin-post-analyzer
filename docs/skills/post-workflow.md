@@ -924,7 +924,25 @@ sorprende, que es de lo que vive este pilar.
 - **Ancla a VENTAS siempre**, aunque la referencia no vaya de ventas: desde el lado de vender, del cliente o del comercial. Amplifica el alcance al máximo sin perder la esencia de ventas.
 
 **Paso 3 — CUERPO: fiel al original en ESTRUCTURA, no solo en tono.** Copia su esqueleto etiqueta por etiqueta y cambia solo el contenido. Ej. real: si el original va `Realidad: / LinkedIn: / Traducción: / Pero hey… / PD:`, el remix va `Realidad: / CRM: / Traducción: / Pero oye… / PD:`. **Escribir un cuerpo propio "en el mismo espíritu" NO es calcar: es otro post.**
-- **Longitud: la del original.** La regla de 3-6 líneas es el DEFAULT del pilar; si la referencia tiene 10 líneas cortas, el remix tiene 10 líneas cortas. Manda la fidelidad.
+
+> ### ⛔⛔ 4.4-CORTO · LA LONGITUD DEL ORIGINAL NO SE CALCA NUNCA. EL CUERPO DEL MEME ES CORTO (Iker, 2026-08-13)
+> **HARDCODE DEL PILAR, y sustituye a lo que ponía aquí** (*"longitud: la del original; si la referencia tiene 10 líneas cortas, el remix tiene 10 líneas cortas"*) y al bullet de `FIDELIDAD > corto y punchy` de más arriba, **solo en lo que toca a la LONGITUD**. Todo lo demás de la fidelidad sigue igual: la idea, el gancho, el esqueleto, el tiempo verbal y la mecánica de la imagen se calcan a muerte.
+>
+> Iker: *"me da igual cómo sea la referencia a nivel de longitud. Igual que cuando la referencia solo tiene una línea tú copias la esencia y aun así me haces gancho y cuerpo, en el caso contrario haz lo mismo: aunque la referencia sea larguísima, el cuerpo lo quiero corto"*. **Es simétrico y por eso es fácil de recordar: la longitud la ponemos nosotros, en los dos sentidos.**
+>
+> **📊 MEDIDO EL 13/08 sobre los 59 memes de las 3 cuentas con más de 500 impresiones**, que es lo que faltaba para que esto dejara de ser una intuición:
+>
+> | longitud del cuerpo | n | mediana de impresiones |
+> |---|---|---|
+> | **≤450 caracteres** | 18 | **11.602** |
+> | 451-700 | 22 | 3.760 |
+> | >700 | 19 | 4.745 |
+>
+> - **Los cortos alcanzan unas 3 veces más**, y los **siete memes más vistos del histórico** (168.926 · 138.828 · 93.744 · 89.320 · 86.815 · 60.443 · 44.997) **están todos por debajo de 450 caracteres**.
+> - ⚠️ **Y el matiz honesto, porque hay excepciones reales:** el likes/impresión sale MÁS ALTO en los largos (1,25% contra 0,38%), pero eso es el artefacto de siempre — a más alcance, menos ratio de interacción —, no una virtud del cuerpo largo. Y hay tres largos que sí volaron (817, 886 y 1.085 car). **La tendencia central manda, la excepción se decide a mano.**
+> - **El segundo motivo, y es de Iker: diferenciar el pilar.** Un meme largo se parece a un lead magnet o a una historia. El meme se reconoce de un vistazo por ser corto.
+>
+> **Objetivo: ≤450 caracteres.** Mecanizado en `validar-post.py --pilar meme`: **aviso pasando de 450** (con las medianas delante) y **fallo duro pasando de 700**, que es la zona donde además el spam ninja se cae por debajo del carácter 650 y el CTR se hunde (`§4.4b-CLICS`).
 - Adaptado a ventas B2B (`§2.3`), pero sin destripar el chiste que cuenta la foto: el texto monta el marco, la foto remata.
 - **Roles de trabajadores:** sin anglicismos ni títulos complejos. Español genérico que un **industrial de 50+ entienda** (comercial, jefe de ventas, director comercial, gerente…) — lo más genérico = más alcance. (Mismo criterio en la foto, Paso 6.)
 

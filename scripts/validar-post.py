@@ -1661,6 +1661,37 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 'despues (mata el chiste antes de contarlo) ni en la ultima linea (se come el '
                 'bold statement). Va en medio, despues de que el chiste haya aterrizado.')
 
+    if pilar == 'meme':
+        # ⛔ LA LONGITUD DEL ORIGINAL NO SE CALCA (Iker, 2026-08-13). "Me da igual
+        # como sea la referencia a nivel de longitud: aunque sea larguisima, el
+        # cuerpo lo quiero corto." Sustituye al "longitud: la del original" de
+        # §4.4 Paso 3, y SOLO en cuanto a longitud: la idea, el gancho, el
+        # esqueleto y el tiempo verbal se siguen calcando a muerte.
+        #
+        # MEDIDO sobre los 59 memes de las 3 cuentas con >500 impresiones:
+        #   <=450 car  n=18  mediana 11.602 impresiones
+        #   451-700    n=22  mediana  3.760
+        #   >700       n=19  mediana  4.745
+        # Los siete memes mas vistos del historico (168.926 / 138.828 / 93.744 /
+        # 89.320 / 86.815 / 60.443 / 44.997) estan TODOS por debajo de 450.
+        #
+        # Por que aviso a 450 y fallo duro a 700, y no fallo duro a 450: hay tres
+        # largos que si volaron (817, 886 y 1.085 car). Bloquearlos seria silenciar
+        # a un ganador, que es justo lo que §3.2 dice que no se hace. Pasando de
+        # 700 ya no es solo alcance: ahi el ninja no cabe antes del caracter 650 y
+        # el CTR se hunde (§4.4b-CLICS), asi que ese si es fallo.
+        _n = len(cuerpo)
+        chk(_n <= 700, 'MEME: cuerpo corto, la longitud del original NO se calca (§4.4-CORTO)',
+            ('%d caracteres. Pasando de 700 el spam ninja ya no cabe antes del 650 y el CTR '
+             'se hunde. Mediana de impresiones por tramo: <=450 -> 11.602 · 451-700 -> 3.760 · '
+             '>700 -> 4.745' % _n) if _n > 700 else '%d caracteres' % _n)
+        if _n <= 700:
+            chk(_n <= 450, 'MEME: en la zona corta, <=450 caracteres (§4.4-CORTO)',
+                ('%d caracteres. No bloquea, pero los 18 memes de <=450 tienen mediana de '
+                 '11.602 impresiones contra 3.760 de los de 451-700, y los siete mas vistos '
+                 'de la casa estan todos por debajo de 450' % _n) if _n > 450 else '',
+                aviso=True)
+
     if pilar == 'meme' and (cuenta or '').strip().lower() == 'unai':
         chk(meme_sobrio,
             'MEME en Unai: confirmado que NO es controversial (§4.4)',
