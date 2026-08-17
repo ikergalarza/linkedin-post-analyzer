@@ -13,7 +13,9 @@
 | **FOTO del post** | foto natural real / selfie (`images §3`) | el usuario, con la recomendación del workflow |
 | **PÁGINA en recursos.neety.com** | el gate de email + el recurso | **el programador**, con el PROMPT que entrega el workflow (esta skill) |
 
-**El flujo completo:** post → comenta la palabra → le pasas el link → **gate** (regala un poco + pide el correo) → **recurso** (el valor prometido) → secuencia de emails → demo.
+**El flujo completo:** post → comenta → le pasas el link por privado → **gate** (regala un poco + pide el correo) → **recurso** (el valor prometido) → secuencia de emails → demo.
+
+**⚠️ EL "LE PASAS EL LINK" TIENE UNA BIFURCACIÓN, Y ES EL CUELLO DE BOTELLA DEL PILAR (Iker, 2026-08-17).** LinkedIn solo entrega un mensaje privado a un contacto de 1er grado. Desde el 17/08 **no agregamos a nadie**: se retiraron la invitación con nota y el InMail (`post-workflow §4.5.-3`). Así que a quien no es contacto y no nos ha mandado solicitud, el link **no le llega en el momento**: se le responde en público pidiéndole que nos mande él la solicitud, y el recurso sale cuando la manda. Consecuencia para el diseño del post: **el gancho y los bullets tienen que valer lo suficiente para que dé ese paso**, porque ahora hay una acción suya entre el comentario y el recurso.
 
 ---
 

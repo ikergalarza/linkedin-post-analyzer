@@ -1074,25 +1074,34 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 
 ### 4.5 · Runbook LEAD MAGNET (comment-gated) — RECETA DEFINITIVA
 
-#### ⛔ 4.5.-3 · POR DÓNDE SE ENTREGA EL RECURSO, Y POR QUÉ YA NO SE MANDA NOTA DESDE UNAI (Iker, 2026-08-14)
+#### ⛔ 4.5.-3 · POR DÓNDE SE ENTREGA EL RECURSO: YA NO AGREGAMOS A NADIE (Iker, 2026-08-17)
 
-**Lo que pasó (13/08/2026).** La cuenta de **Unai** tiene un **baneo de invitaciones semanales con nota**. LinkedIn seguía aceptando la llamada por la API —Unipile devolvía OK— y luego **se tragaba la nota en silencio**. La herramienta las guardaba como enviadas, marcaba el comentario como contestado, y horas después escribían los propios comentaristas diciendo que **no habían recibido nada**. Alcance y comentarios gastados, cero entregas.
-
-**LA REGLA. Desde una cuenta con el baneo NO se manda nota NUNCA.** Quedan tres canales, y se eligen en este orden:
+**LA REGLA DE HOY. La herramienta no manda invitaciones ni InMails. La solicitud la manda ELLA.** Tres canales, los tres gratis, y se eligen en este orden:
 
 1. **1er grado** → mensaje privado normal.
-2. **Nos ha mandado ELLA una solicitud y sigue pendiente de aceptar** → mensaje normal contestando a esa solicitud (`linkedin[invitation_id]`). **Es gratis, no gasta InMail y llega igual.** Va antes que el InMail siempre.
-3. **Ni conexión ni solicitud por ninguna parte** → **InMail**. Las 3 cuentas de founder tienen Sales Navigator (comprobado 2026-08-14), y LinkedIn **obliga a poner asunto**: va siempre `RECURSO XXTEMAXX` en mayúsculas y corto — *"RECURSO VIBE PROSPECTING"*. El asunto es lo único que se lee en la bandeja antes de abrir.
+2. **Nos ha mandado ELLA una solicitud y sigue pendiente de aceptar** → mensaje normal contestando a esa solicitud (`linkedin[invitation_id]`). **Llega igual que un DM y no hay que aceptarla.** No se acepta a propósito: aceptar en masa es lo que dispara los límites de LinkedIn.
+3. **Ni conexión ni solicitud por ninguna parte** → **no se le manda NADA por privado.** Se le responde en público pidiéndole que nos mande él la solicitud, con el porqué («LinkedIn no me deja escribirte si no somos contacto»), y ese pedido se guarda. Cuando la manda, la persona aparece en **«Solicitudes pedidas»** con el recurso ya escrito y sale contestando a su solicitud.
 
-**De momento el baneo es solo de Unai**, pero se prospecta con las 3 cuentas: el día que caiga otra, la lista está en un sitio (`CUENTAS_SIN_NOTA`, en `backend/src/routes/accounts.ts` y su gemela en `frontend/src/components/accounts/leadMagnetCopy.ts`).
+**Por qué se retiraron los dos canales que empujábamos nosotros:**
 
-**⚠️ Y AL REVÉS TAMBIÉN: el InMail que manda LA HERRAMIENTA sale por la API clásica y aterriza en la bandeja NORMAL de LinkedIn (`linkedin.com/messaging`), NO en el inbox de Sales Navigator** — ahí solo se ven los que se mandan a mano desde Sales Navigator. Iker buscó el InMail de Erick Sandoval en el inbox de Sales Navigator, no estaba, y creyó (con razón, por lo del día anterior) que la herramienta mentía; el mensaje estaba entregado (`delivered=1`) en la bandeja clásica. El crédito que gastan es el mismo pool. La tarjeta ya lo dice al confirmar el envío.
+- **La invitación con nota** gasta el cupo semanal, y en la cuenta de **Unai** estaba **baneada** desde el 13/08: LinkedIn aceptaba la llamada por la API —Unipile devolvía OK— y luego **se tragaba la nota en silencio**. La herramienta las guardaba como enviadas, marcaba el comentario como contestado, y horas después escribían los comentaristas diciendo que **no habían recibido nada**.
+- **El InMail** gasta créditos de Premium/Sales Navigator, que son pocos.
 
-**⚠️ HAY DOS BANDEJAS, Y UN ENVÍO NO ENCONTRADO NO ES UN ENVÍO NO ENTREGADO (Iker, 2026-08-14).** Los InMail mandados desde Sales Navigator viven en `INBOX_LINKEDIN_SALES_NAVIGATOR`, que Unipile **no sirve por defecto**, usa otros identificadores de persona (`ACwAA…` en vez de `ACoAA…`) y va **con días de retraso**. Por eso la herramienta mira las dos bandejas y, cuando no encuentra la conversación, dice **"no lo sé" en ámbar y nunca "no ha llegado" en rojo**: un rojo falso ahí te empuja a reenviar, y eso son un crédito gastado y la misma persona recibiendo el recurso dos veces. **Si lo has mandado tú a mano** (por ejemplo un InMail desde Sales Navigator), dale a **"✓ Ya se lo mandé a mano"** en la tarjeta: la herramienta no puede enterarse sola.
+Ninguno de los dos escala y ninguno construye red. Pedir la solicitud no tiene tope, y quien la manda ya te sigue.
+
+**⚠️ SE PIDE SOLICITUD DE CONTACTO, NUNCA UN "SÍGUEME".** Un seguidor sigue siendo de 2º o 3er grado y a ese LinkedIn **no** deja escribirle: pedir un follow es tirar el lead con la sensación de haber hecho algo. Esta distinción es la razón de ser de todo el flujo.
+
+**⚠️ EL COSTE DEL CAMBIO, QUE HAY QUE MEDIR.** Antes la nota llevaba el enlace DENTRO y llegaba **aunque la persona no aceptara nunca**. Ahora quien no manda solicitud **no recibe nada**: la entrega dejó de ser inmediata para todo el que no es contacto. Al primer lead magnet con esto, mirar el ratio **comentarios → recurso entregado** y compararlo con los de agosto antes de dar el cambio por bueno.
+
+**⚠️ PENDIENTE DE COMPROBAR EN REAL.** Que un **segundo** mensaje, días después, salga por el hilo de una solicitud que **sigue pendiente**. No está verificado. Si no sale, cualquier follow-up comercial posterior obligará a aceptar la solicitud, y eso es una decisión que hay que tomar aparte.
+
+**⚠️ LO QUE SE MANDÓ ANTES DEL 17/08 SIGUE VIVO.** Los invitados con nota que aún no habían aceptado siguen en la sección **«Seguimientos»** (la de abajo, histórica): cuando aceptan, se les manda su recurso desde ahí. No se crean invitaciones nuevas, pero esas hay que cerrarlas.
+
+**⚠️ HAY DOS BANDEJAS, Y UN ENVÍO NO ENCONTRADO NO ES UN ENVÍO NO ENTREGADO (Iker, 2026-08-14).** Unipile **no sirve por defecto** la bandeja `INBOX_LINKEDIN_SALES_NAVIGATOR`, usa otros identificadores de persona ahí (`ACwAA…` en vez de `ACoAA…`) y va **con días de retraso**. Por eso la herramienta mira las dos bandejas y, cuando no encuentra la conversación, dice **"no lo sé" en ámbar y nunca "no ha llegado" en rojo**: un rojo falso ahí te empuja a reenviar, y eso es la misma persona recibiendo el recurso dos veces. El barrido de la segunda bandeja **se queda aunque ya no mandemos InMails**: un mensaje colgado de una solicitud pendiente puede aparecer también fuera del chat de siempre. **Si lo has mandado tú a mano**, dale a **"✓ Ya se lo mandé a mano"** en la tarjeta: la herramienta no puede enterarse sola.
 
 **⚠️ Si tocas el panel: `npx tsc --noEmit` en `frontend/` NO COMPRUEBA NADA.** Su `tsconfig.json` es un proyecto de solo referencias (`"files": []`), así que ese comando sale limpio siempre, compilando cero ficheros — y `vite build` usa esbuild, que borra los tipos sin mirarlos. Así se coló el 14/08 un `ReferenceError` que dejaba **la pantalla en negro** al abrir un post. **El comando bueno es `npx tsc -b`.**
 
-**Y LO MÁS IMPORTANTE: ENVIADO ≠ LLEGADO.** El 200 de la API no es prueba de nada. Después de cada envío la herramienta **relee LinkedIn** (el mensaje en el chat, o la invitación en las pendientes enviadas) y solo pinta en verde lo que encuentra; lo que no, lo marca **caído en rojo con el motivo**. En el panel hay un botón **"Revisar envíos"** que repasa los ya guardados y corrige los que se dieron por buenos sin haber salido — es lo que hay que darle para limpiar cualquier tanda anterior al 14/08. **Nunca respondas "Enviado!" en el comentario antes de que el recurso esté comprobado**: el panel ya lo bloquea, pero la regla es de criterio, no de botón.
+**Y LO MÁS IMPORTANTE: ENVIADO ≠ LLEGADO.** El 200 de la API no es prueba de nada. Después de cada envío la herramienta **relee LinkedIn** (el mensaje en el chat) y solo pinta en verde lo que encuentra; lo que no, lo marca **caído en rojo con el motivo**. En el panel hay un botón **"Revisar envíos"** que repasa los ya guardados y corrige los que se dieron por buenos sin haber salido — es lo que hay que darle para limpiar cualquier tanda anterior al 14/08. **Nunca respondas "Enviado!" en el comentario antes de que el recurso esté comprobado**: el panel ya lo bloquea, pero la regla es de criterio, no de botón.
 
 #### 🔴 4.5.-2 · TODO LEAD MAGNET TIENE QUE CAPTURAR ALGO — AVISO OBLIGATORIO AL ITERAR IDEAS (Iker, 2026-07-22)
 
