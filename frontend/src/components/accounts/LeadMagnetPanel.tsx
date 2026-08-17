@@ -725,10 +725,17 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
         )}
       </div>
 
-      {/* Seguimientos: invitados (2º grado+) que esperan la lista, a los que se
-          les manda por DM en cuanto aceptan. Solo en el tipo lista. */}
+      {/* Las dos secciones de seguimiento, en orden de importancia:
+          · Solicitudes pedidas — el flujo de HOY: a quien le pedimos que nos
+            mandara la solicitud, y quién ya la ha mandado.
+          · Seguimientos — el HISTÓRICO: los invitados con nota de antes del
+            17/08. No se crean más, pero los que hay siguen esperando su recurso.
+          Ninguna de las dos aplica al tipo público, que no tiene canal privado. */}
       {cfg.kind !== 'publico' && (
-        <Seguimientos post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
+        <>
+          <SolicitudesPedidas post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
+          <Seguimientos post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
+        </>
       )}
 
       {!ready && (
@@ -1686,6 +1693,225 @@ function CommenterCard({
   );
 }
 
+interface PedidoRow {
+  post_id: string;
+  provider_id: string;
+  provider_name: string | null;
+  sector: string | null;
+  // Solo en el tipo lista: la lista entera, montada al pedirle la solicitud.
+  followup_text: string | null;
+  comment_social_id: string;
+  created_at: string;
+  dias: number;
+  // El id de SU solicitud. Con él, el mensaje sale contestándola: llega igual que
+  // un DM y no hay que aceptar nada. null = todavía no la ha mandado, o ya sois
+  // contacto por otra vía (entonces sale un DM normal).
+  invitation_id: string | null;
+}
+
+// SOLICITUDES PEDIDAS: la gente a la que le respondimos «mándame solicitud».
+//
+// Es la mitad que faltaba del flujo nuevo (Iker, 2026-08-17): la respuesta pública
+// pide el paso, y esto detecta cuándo lo han dado. Sin esta sección, la persona
+// manda su solicitud y nadie se entera nunca.
+//
+// El cruce lo hace el backend con UNA llamada por cuenta. Aquí solo se pintan los
+// dos cubos: los que ya la mandaron (accionables, con el recurso ya escrito) y los
+// que siguen sin darla. Una persona desaparece de aquí en cuanto se le manda el
+// recurso: el backend la excluye en cuanto hay un DM enviado.
+function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
+  post: GridPost; creatorId: string; cfg: LmConfig; voice: Voice;
+}) {
+  const { data, loading, refetch } = useApi<{
+    llegadas: PedidoRow[]; esperando: PedidoRow[]; aviso: string | null;
+  }>(`/api/accounts/lead-magnet/pendientes-solicitud?creator_id=${creatorId}`);
+
+  // Solo las de ESTE post: el endpoint devuelve las de la cuenta entera.
+  const llegadas = useMemo(
+    () => (data?.llegadas ?? []).filter((f) => f.post_id === post.id), [data, post.id]);
+  const esperando = useMemo(
+    () => (data?.esperando ?? []).filter((f) => f.post_id === post.id), [data, post.id]);
+
+  const [texts, setTexts] = useState<Record<string, string>>({});
+  const [sending, setSending] = useState<string | null>(null);
+  const [sentIds, setSentIds] = useState<Set<string>>(new Set());
+  const [err, setErr] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [ascendidos, setAscendidos] = useState<PedidoRow[]>([]);
+
+  // El texto del recurso. La lista guarda el suyo al pedir la solicitud (son 15
+  // empresas que hubo que ir a buscar a Unipile); el resto se monta aquí con el
+  // recurso de la palabra clave.
+  const textFor = useCallback((f: PedidoRow): string => {
+    if (f.followup_text) return f.followup_text;
+    const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
+    if (!recurso) return '';
+    return buildDm({ name: f.provider_name, topic: recurso.topic, link: recurso.link, voice });
+  }, [cfg.keyword, cfg.link, cfg.topic, voice]);
+
+  // EL CASO RARO, y pasa: alguien acaba siendo contacto por otra vía (lo aceptáis
+  // a mano desde el móvil) y entonces desaparece de las solicitudes recibidas, así
+  // que se quedaría en «esperando» para siempre esperando algo que ya se puede
+  // mandar. Esto relee su grado de red y lo sube al cubo accionable, ya sin
+  // invitation_id: a un contacto de 1er grado se le manda un DM normal.
+  const comprobarGrado = async () => {
+    if (esperando.length === 0) return;
+    setChecking(true);
+    setErr(null);
+    try {
+      const r = await apiPost<{ results: { provider_id: string; accepted: boolean }[] }>(
+        '/api/accounts/lead-magnet/check-accepted',
+        { creator_id: creatorId, provider_ids: esperando.map((f) => f.provider_id) }
+      );
+      const ok = new Set(r.results.filter((x) => x.accepted).map((x) => x.provider_id));
+      setAscendidos(esperando.filter((f) => ok.has(f.provider_id)).map((f) => ({ ...f, invitation_id: null })));
+      if (ok.size === 0) setErr('⚠️ Ninguno de los que esperan es contacto todavía.');
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const enviar = async (f: PedidoRow) => {
+    const text = (texts[f.provider_id] ?? textFor(f)).trim();
+    if (!text) return;
+    setSending(f.provider_id);
+    setErr(null);
+    try {
+      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null; verificado: boolean | null }>(
+        '/api/accounts/lead-magnet/send',
+        {
+          post_id: f.post_id, comment_id: f.comment_social_id, provider_id: f.provider_id,
+          kind: 'dm', text,
+          ...(f.invitation_id ? { invitation_id: f.invitation_id } : {}),
+          ...(f.provider_name ? { provider_name: f.provider_name } : {}),
+        }
+      );
+      if (res.status === 'sent') {
+        setSentIds((s) => new Set(s).add(f.provider_id));
+        // Enviado pero sin recibo: se dice. Un "✓" sobre algo que no hemos podido
+        // comprobar es el bug del 13/08 otra vez.
+        if (res.verificado !== true) {
+          setErr(`⚠️ Mandado a ${f.provider_name || 'esta persona'}, pero no he podido comprobar que esté en LinkedIn${res.error ? ` (${res.error})` : ''}. Míralo en su chat antes de darlo por bueno.`);
+        }
+      } else setErr(res.error || 'LinkedIn rechazó el mensaje');
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setSending(null);
+    }
+  };
+
+  // Los ascendidos a mano van con los que ya han mandado la solicitud, sin
+  // duplicar a nadie que estuviera en las dos listas.
+  const accionables = [
+    ...llegadas,
+    ...ascendidos.filter((a) => !llegadas.some((l) => l.provider_id === a.provider_id)),
+  ];
+  const pendientes = esperando.filter((f) => !ascendidos.some((a) => a.provider_id === f.provider_id));
+  const listos = accionables.filter((f) => !sentIds.has(f.provider_id)).length;
+
+  // Nada pedido → no metas ruido en la pantalla.
+  if (loading || (accionables.length === 0 && pendientes.length === 0)) return null;
+
+  return (
+    <div className="bg-bg-card border border-accent/30 rounded-xl p-4 space-y-3">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-sm font-medium">Solicitudes pedidas</span>
+        <span className="text-[11px] text-text-muted">
+          · {listos} listo{listos === 1 ? '' : 's'} para enviar
+          {pendientes.length > 0 ? ` · ${pendientes.length} sin dar el paso` : ''}
+        </span>
+        <button
+          onClick={() => { setAscendidos([]); setErr(null); refetch(); }}
+          className="ml-auto text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 transition whitespace-nowrap"
+          title="Vuelve a mirar en LinkedIn quién te ha mandado ya la solicitud"
+        >
+          ↻ Mirar si han mandado solicitud
+        </button>
+      </div>
+      <p className="text-[11px] text-text-muted leading-snug">
+        A esta gente le pediste que te mandara ella la solicitud. En cuanto la manda sube aquí arriba con el recurso
+        ya escrito: se le contesta a su propia solicitud, así que llega sin aceptarla y sin gastar nada.
+      </p>
+      {data?.aviso && <p className="text-[11px] text-amber-400 leading-snug">⚠️ {data.aviso}</p>}
+      {err && (
+        <p className={err.startsWith('⚠️')
+          ? 'text-[11px] text-amber-400 font-medium leading-snug'
+          : 'text-[11px] text-red-400 font-medium'}>
+          {err.startsWith('⚠️') ? err : `✗ ${err}`}
+        </p>
+      )}
+
+      <div className="space-y-2">
+        {accionables.map((f) => {
+          if (sentIds.has(f.provider_id)) {
+            return (
+              <div key={f.provider_id} className="flex items-center gap-2 flex-wrap text-sm border-t border-border pt-2">
+                <span className="font-medium">{f.provider_name || 'Sin nombre'}</span>
+                {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
+                <span className="ml-auto text-[11px] text-accent">✓ Recurso enviado</span>
+              </div>
+            );
+          }
+          const val = texts[f.provider_id] ?? textFor(f);
+          return (
+            <div key={f.provider_id} className="border-t border-border pt-2 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium text-sm">{f.provider_name || 'Sin nombre'}</span>
+                {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30">
+                  {f.invitation_id ? '✓ te ha mandado solicitud' : '✓ ya sois contacto'}
+                </span>
+              </div>
+              <textarea
+                value={val}
+                onChange={(e) => setTexts((t) => ({ ...t, [f.provider_id]: e.target.value }))}
+                disabled={sending === f.provider_id}
+                className={`w-full text-sm bg-bg-primary border border-border rounded-md px-3 py-2 resize-y focus:outline-none focus:border-accent disabled:opacity-50 ${
+                  cfg.kind === 'lista' ? 'min-h-[240px]' : 'min-h-[80px]'
+                }`}
+              />
+              <button
+                onClick={() => enviar(f)}
+                disabled={sending === f.provider_id || !val.trim()}
+                className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
+              >
+                {sending === f.provider_id
+                  ? 'Enviando y comprobando…'
+                  : f.invitation_id ? 'Contestar a su solicitud' : 'Enviar DM'}
+              </button>
+            </div>
+          );
+        })}
+
+        {pendientes.length > 0 && (
+          <div className="border-t border-border pt-2 space-y-1">
+            {pendientes.map((f) => (
+              <div key={f.provider_id} className="flex items-center gap-2 flex-wrap text-sm">
+                <span className="font-medium">{f.provider_name || 'Sin nombre'}</span>
+                {f.sector && <span className="text-[11px] text-text-muted">· {f.sector}</span>}
+                <span className="ml-auto text-[11px] text-text-muted">
+                  sin mandar solicitud · {f.dias === 0 ? 'hoy' : `hace ${f.dias} día${f.dias === 1 ? '' : 's'}`}
+                </span>
+              </div>
+            ))}
+            <button
+              onClick={comprobarGrado}
+              disabled={checking}
+              className="text-[11px] px-2 py-1 rounded border border-border text-text-muted hover:text-accent hover:border-accent/40 disabled:opacity-50 transition-colors"
+              title="Por si alguno ya es contacto vuestro por otra vía: relee su grado de red en LinkedIn, uno por uno"
+            >
+              {checking ? 'Comprobando…' : '¿Alguno ya es contacto?'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface FollowupRow {
   post_id: string;
   provider_id: string;
@@ -1701,12 +1927,17 @@ interface FollowupRow {
   ya_entregado?: boolean;
 }
 
-// La sección de SEGUIMIENTOS del tipo "lista": los invitados (2º grado o más) a
-// los que ya se les mandó la invitación con la lista completa GUARDADA, y que
-// esperan a recibirla por DM en cuanto acepten. El botón recomprueba el grado de
-// red con Unipile (NO lee su chat); a los que ya te aceptaron, un clic les manda
-// la lista guardada sin regenerarla. Se ocultan solas al recibirla (el backend
-// las excluye en cuanto hay un DM enviado a esa persona en ese post).
+// SEGUIMIENTOS: los invitados con nota que esperan su recurso al aceptar. El botón
+// recomprueba el grado de red con Unipile (NO lee su chat); a los que ya te
+// aceptaron, un clic les manda lo guardado sin regenerarlo. Se ocultan solas al
+// recibirlo (el backend las excluye en cuanto hay un DM enviado a esa persona en
+// ese post).
+//
+// ⚠️ ESTA SECCIÓN ES HISTÓRICA (2026-08-17). Vive de las filas kind='invite', y ya
+// no se crean: la invitación con nota se retiró. Sigue aquí porque la gente que se
+// invitó antes del cambio sigue aceptando y sigue esperando su recurso. El flujo de
+// hoy es `SolicitudesPedidas`, justo encima. Cuando esto se quede vacío para
+// siempre, se puede borrar entero.
 function Seguimientos({ post, creatorId, cfg, voice }: {
   post: GridPost; creatorId: string; cfg: LmConfig; voice: Voice;
 }) {
