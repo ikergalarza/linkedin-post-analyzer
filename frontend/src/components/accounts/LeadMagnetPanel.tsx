@@ -3,8 +3,8 @@ import { useApi, apiPost, apiGet } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ErrorBoundary, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
 import {
-  asuntoInmail, buildDm, buildInmail, buildInviteNote, buildListaDm, buildListaInvite, buildReply,
-  commentDepth, detectarRecurso, extractKeyword, extractSector, notaBaneada, resolverRecurso, voiceFor,
+  buildAskReply, buildDm, buildListaDm, buildReply,
+  commentDepth, detectarRecurso, extractKeyword, extractSector, resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 
@@ -23,12 +23,18 @@ import type { ListaCompany, Voice } from './leadMagnetCopy';
 //    for the normal case. The AI button only shows on comments that asked a
 //    real question.
 //
-// 2. LinkedIn only delivers a plain DM to a 1st-degree connection. Para el
-//    resto hay tres caminos y la tarjeta elige solo, en este orden:
-//      · nos mandó una solicitud y sigue pendiente → mensaje normal (gratis)
-//      · la cuenta tiene la nota prohibida        → InMail con asunto
-//      · si no                                    → invitación con nota
-//    Ver `canalDe` más abajo.
+// 2. LinkedIn solo entrega un mensaje privado a un contacto de 1er grado, y
+//    desde el 2026-08-17 esta herramienta NO AGREGA A NADIE: se retiraron la
+//    invitación con nota y el InMail. Quedan tres caminos, los tres gratis, y la
+//    tarjeta elige sola:
+//      · 1er grado                             → DM normal
+//      · nos mandó solicitud y sigue pendiente → mensaje contestando a esa
+//        solicitud (llega igual, y NO se acepta: aceptar en masa es lo que
+//        dispara los límites de LinkedIn)
+//      · ni una cosa ni la otra                → NADA por privado. Se le pide en
+//        público que nos mande ÉL la solicitud, y cuando llegue salta a
+//        «Solicitudes pedidas», arriba, con el recurso ya escrito.
+//    Ver `canal` en CommenterCard.
 //
 // 3. Sends are ONE BY ONE, deliberately. No "send all" — a hundred DMs in a
 //    burst from one account is the pattern LinkedIn restricts accounts for,
@@ -74,7 +80,10 @@ interface CommentsResponse {
 interface SendRecord {
   comment_social_id: string;
   provider_id: string;
-  kind: 'dm' | 'invite' | 'inmail';
+  // 'invite' e 'inmail' ya no se crean (2026-08-17) pero SIGUEN LLEGANDO: las
+  // filas de antes del cambio se leen igual. 'ask' es el estado nuevo: se le
+  // pidió la solicitud y no se le ha mandado nada.
+  kind: 'dm' | 'invite' | 'inmail' | 'ask';
   status: 'sent' | 'failed';
   text: string | null;
   error: string | null;
@@ -85,20 +94,17 @@ interface SendRecord {
   created_at: string;
 }
 
-// Por dónde se le escribe a esta persona. `kind` (lo que entiende el backend y
-// lo que guarda la BD) es más pobre a propósito: 'dm' y 'dm-solicitud' son el
-// mismo mensaje privado, solo cambia que el segundo va colgado de la solicitud
-// que ella nos mandó.
-type Canal = 'dm' | 'dm-solicitud' | 'inmail' | 'invite';
+// Por dónde se le escribe a esta persona.
+//
+// 'dm' y 'dm-solicitud' son el MISMO mensaje privado (el backend recibe
+// kind:'dm' en los dos), solo cambia que el segundo va colgado de la solicitud
+// que ella nos mandó. 'pedir' no es un canal de envío: es la ausencia de canal, y
+// lo que sale es la respuesta pública.
+type Canal = 'dm' | 'dm-solicitud' | 'pedir';
 
-function kindDeCanal(c: Canal): 'dm' | 'invite' | 'inmail' {
-  return c === 'inmail' ? 'inmail' : c === 'invite' ? 'invite' : 'dm';
-}
-
-// La política de la cuenta + a quién podemos escribirle gratis porque nos ha
-// mandado él la solicitud. Se pide una vez por cuenta, no una por tarjeta.
+// A quién podemos escribirle gratis porque nos ha mandado él la solicitud. Se
+// pide una vez por cuenta, no una por tarjeta.
 interface CanalInfo {
-  sin_nota: boolean;
   pendientes: { provider_id: string; invitation_id: string; name: string | null }[];
   aviso: string | null;
 }
@@ -329,11 +335,6 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   const { data: canalData } = useApi<CanalInfo>(
     `/api/accounts/lead-magnet/canal?creator_id=${creatorId}`
   );
-  // Mientras carga (o si el backend no responde) manda `notaBaneada` con el
-  // nombre del creador: es la misma lista, y por defecto NO ofrecer la nota es
-  // el lado seguro — una nota de más en la cuenta baneada es un lead perdido en
-  // silencio, y un InMail de más solo cuesta un crédito.
-  const sinNota = canalData?.sin_nota ?? notaBaneada(post.creator_name);
   // provider_id → invitation_id de la solicitud que ESA persona nos mandó.
   const solicitudesPendientes = useMemo(() => {
     const m = new Map<string, string>();
@@ -388,14 +389,22 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
     return m;
   }, [sendsData]);
 
-  // Comentarios que YA tienen una invitación enviada, por comment_social_id. Se
-  // usa el id del COMENTARIO (estable) y NO el provider_id: cuando la persona
-  // acepta y pasa a 1er grado, LinkedIn puede devolver otro provider_id, así que
-  // el sends-por-persona no casa y la tarjeta volvía a enseñar los controles de
-  // envío — el riesgo de mandar la lista DOS veces que avisó Iker (2026-07-23). A
-  // esta gente se la gestiona SOLO arriba en Seguimientos.
-  const invitedCommentIds = useMemo(
-    () => new Set((sendsData?.sends ?? []).filter((s) => s.kind === 'invite').map((s) => s.comment_social_id)),
+  // Comentarios cuya entrega YA se gestiona ARRIBA, en las secciones de
+  // seguimiento, por comment_social_id. Se usa el id del COMENTARIO (estable) y
+  // NO el provider_id: cuando la persona acepta y pasa a 1er grado, LinkedIn
+  // puede devolver otro provider_id, así que el sends-por-persona no casa y la
+  // tarjeta volvía a enseñar los controles de envío — el riesgo de mandar la
+  // lista DOS veces que avisó Iker (2026-07-23).
+  //
+  // Son dos casos y los dos se gestionan igual:
+  //   · 'invite' → la invitación vieja, en Seguimientos (histórico).
+  //   · 'ask'    → le pedimos la solicitud, en Solicitudes pedidas.
+  const gestionadosArriba = useMemo(
+    () => new Set(
+      (sendsData?.sends ?? [])
+        .filter((s) => s.kind === 'invite' || s.kind === 'ask')
+        .map((s) => s.comment_social_id)
+    ),
     [sendsData]
   );
 
@@ -453,8 +462,8 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
   // CANAL: primero los DM (gratis y sin riesgo), luego el resto.
   //
   // El grupo 3 incluye el grado DESCONOCIDO a propósito: la tarjeta trata a
-  // ambos igual (no son DM-ables → InMail), así que separarlos crearía un
-  // cuarto botón para la misma decisión.
+  // ambos igual (no son DM-ables → se les pide la solicitud), así que separarlos
+  // crearía un cuarto botón para la misma decisión.
   //
   // El filtro es SOLO de vista. `dmOwnerByPerson` y compañía siguen calculando
   // sobre la lista entera: quién es el dueño del recurso de cada persona no
@@ -640,7 +649,7 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             <span className="text-text-secondary">su sector</span>. En cada
             comentario se lee el sector, y al darle a <span className="text-text-secondary">Generar lista</span> se
             buscan empresas reales españolas de ese sector con su zona y su LinkedIn, y se rellena el DM. A 1er grado
-            va la lista entera; a los demás, una invitación y la lista al aceptar.
+            va la lista entera; a quien no lo sea se le pide la solicitud, y la lista sale en cuanto la mande.
           </p>
         )}
 
@@ -662,10 +671,11 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
               <span className="font-semibold text-text-primary">{matches.length}</span> comentario
               {matches.length === 1 ? '' : 's'} de personas
             </span>
-            {/* Filtro por grado: empezar por los de 1er grado (DM gratis, cero
-                riesgo) y dejar los InMail para el final es el orden de trabajo
-                que pidió Iker (2026-08-14). El grupo 3º+ incluye el grado
-                desconocido: mismo canal, misma decisión. */}
+            {/* Filtro por grado: empezar por los de 1er grado (DM directo, cero
+                friccion) y dejar para el final a los que hay que pedirles la
+                solicitud es el orden de trabajo que pidió Iker (2026-08-14). El
+                grupo 3º+ incluye el grado desconocido: mismo canal, misma
+                decisión. */}
             <span className="flex items-center gap-1">
               {([
                 ['todos', `Todos (${matches.length})`],
@@ -710,14 +720,6 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
           </div>
         )}
 
-        {/* La cuenta baneada: se dice una vez arriba, no en cada tarjeta. */}
-        {sinNota && (
-          <p className="text-[11px] text-amber-400 leading-snug pt-1">
-            ⚠️ {post.creator_name} tiene el baneo de invitaciones: LinkedIn se traga las notas sin avisar, así que
-            desde esta cuenta no se manda ninguna. A quien nos haya mandado solicitud se le escribe un mensaje
-            normal; al resto, InMail con asunto.
-          </p>
-        )}
         {canalData?.aviso && (
           <p className="text-[11px] text-amber-400 leading-snug pt-1">⚠️ {canalData.aviso}</p>
         )}
@@ -769,9 +771,8 @@ function Workspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
             ...(t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []),
             ...(sendsByComment.get(t.id) ?? []),
           ]}
-          invitedCommentIds={invitedCommentIds}
+          gestionadosArriba={gestionadosArriba}
           ownsDm={dmOwnerByPerson.get(t.author.profile_id ?? '') === t.id}
-          sinNota={sinNota}
           invitacionPendiente={
             t.author.profile_id ? solicitudesPendientes.get(t.author.profile_id) ?? null : null
           }
@@ -844,23 +845,21 @@ function KindPicker({ value, onChange }: { value: LmKind; onChange: (k: LmKind) 
 // El grado de red Y por dónde se le escribe.
 //
 // ⛔ EL CANAL SE LE PASA, NO SE DEDUCE DEL GRADO (Iker, 2026-08-14). Esto decía
-// "2º grado · invitación" fijo para todo el que no fuera de 1er grado, y desde
-// el baneo de Unai eso es mentira dos veces: ni se manda invitación, ni el 2º
-// grado implica un canal concreto (si esa persona nos mandó solicitud, se le
-// contesta gratis). Un badge que contradice al botón que tiene tres centímetros
-// más abajo es peor que no tener badge.
+// "2º grado · invitación" fijo para todo el que no fuera de 1er grado, y eso era
+// mentira dos veces: ni se manda invitación, ni el 2º grado implica un canal
+// concreto (si esa persona nos mandó solicitud, se le contesta gratis; y si no,
+// da igual que sea 2º o 3º, se le pide el paso). Un badge que contradice al botón
+// que tiene tres centímetros más abajo es peor que no tener badge.
 function DegreeBadge({ d, canal }: { d: number | null | undefined; canal: Canal }) {
   const grado = d === 1 ? '1er grado' : d === 2 ? '2º grado' : d === 3 ? '3er grado' : 'grado desconocido';
   const via =
     canal === 'dm' ? 'DM'
     : canal === 'dm-solicitud' ? 'mensaje a su solicitud'
-    : canal === 'inmail' ? 'InMail'
-    : 'invitación';
+    : 'le pedimos solicitud';
   const pista =
     canal === 'dm' ? 'Es contacto de 1er grado: le llega un mensaje privado normal.'
-    : canal === 'dm-solicitud' ? 'Te mandó una solicitud y sigue sin aceptar. LinkedIn deja contestarla con un mensaje normal: llega igual y no gasta InMail.'
-    : canal === 'inmail' ? 'Ni sois contacto ni te ha mandado solicitud, y esta cuenta no puede invitar con nota: sale por InMail y gasta un crédito.'
-    : 'LinkedIn solo entrega un DM normal a contactos de 1er grado. A esta persona se le manda una invitación con el recurso en la nota.';
+    : canal === 'dm-solicitud' ? 'Te mandó una solicitud y sigue sin aceptar. LinkedIn deja contestarla con un mensaje normal: llega igual y no hace falta aceptarla.'
+    : 'Ni sois contacto ni te ha mandado solicitud, así que LinkedIn no le entrega un privado. No se le manda nada: la respuesta le pide que te mande él la solicitud, y cuando llegue sale arriba en Solicitudes pedidas.';
   const resaltado = canal === 'dm' || canal === 'dm-solicitud';
   return (
     <span
@@ -884,9 +883,8 @@ function CommenterCard({
   creatorId,
   cfg,
   sends,
-  invitedCommentIds,
+  gestionadosArriba,
   ownsDm,
-  sinNota,
   invitacionPendiente,
   voice,
   initialReply,
@@ -897,15 +895,13 @@ function CommenterCard({
   creatorId: string;
   cfg: LmConfig;
   sends: SendRecord[];
-  // Ids de comentario que ya tienen invitación enviada → su follow-up se gestiona
-  // arriba en Seguimientos, no aquí.
-  invitedCommentIds: Set<string>;
+  // Ids de comentario cuya entrega se gestiona ARRIBA: los invitados de antes
+  // (Seguimientos) y los que tienen la solicitud pedida (Solicitudes pedidas).
+  gestionadosArriba: Set<string>;
   // True on the ONE card per person that carries the resource. False on that
   // person's other keyword-matching comments, which show only a reply — the
   // resource goes out once, from the comment that actually asked for it.
   ownsDm: boolean;
-  // La cuenta tiene prohibida la invitación con nota (baneo de LinkedIn).
-  sinNota: boolean;
   // El invitation_id de la solicitud que ESTA persona nos mandó y sigue sin
   // aceptar, o null. Con ella se le puede escribir un mensaje normal.
   invitacionPendiente: string | null;
@@ -919,20 +915,16 @@ function CommenterCard({
   //
   //  1. 1er grado → DM normal. Nada que decidir.
   //  2. Nos mandó solicitud y sigue pendiente → mensaje normal contestando a esa
-  //     solicitud. Va ANTES que todo lo demás porque es gratis (no gasta InMail)
-  //     y llega igual; además a quien te ha invitado no puedes invitarle tú.
-  //  3. La cuenta tiene la nota baneada → InMail con asunto.
-  //  4. Si no → invitación con nota, que es lo de siempre.
+  //     solicitud. Es gratis, llega igual, y no hace falta aceptarla.
+  //  3. Si no → NO hay canal privado. Se le pide la solicitud en público.
   //
   // Grado desconocido nunca cae en DM: adivinar mal quema el envío.
   const canal: Canal =
     degree === 1 ? 'dm'
     : invitacionPendiente ? 'dm-solicitud'
-    : sinNota ? 'inmail'
-    : 'invite';
-  const kind = kindDeCanal(canal);
+    : 'pedir';
 
-  const priorSend = sends.find((s) => s.kind === kind) ?? null;
+  const priorSend = sends.find((s) => s.kind === 'dm') ?? null;
   // ⭐ Un DM enviado bloquea la tarjeta AUNQUE ahora toque otro `kind`
   // (Iker, 2026-08-06). `kind` se recalcula con el grado de red de HOY: alguien
   // a quien invitaste siendo 2º grado pasa a 1º al aceptarte, y entonces la
@@ -947,16 +939,16 @@ function CommenterCard({
   // ¿El envío que dimos por bueno está COMPROBADO en LinkedIn? `false` aquí no
   // existe (el backend lo pasa a 'failed'); lo que sí existe es `null` = se
   // mandó pero no se pudo comprobar, y eso se dice, no se pinta de verde.
-  const envioVerificado = (sends.find((s) => s.status === 'sent' && s.kind === kind) ?? null)?.verificado ?? null;
+  const envioVerificado = (sends.find((s) => s.status === 'sent' && s.kind === 'dm') ?? null)?.verificado ?? null;
 
-  // ¿Esta persona ya recibió la invitación con la lista prometida? Se mira por el
-  // id del comentario (estable), NO por el provider_id (cambia al pasar a 1er
-  // grado). Si es así, su seguimiento se gestiona ARRIBA en Seguimientos y esta
-  // tarjeta NO muestra controles de envío — así no se manda la lista dos veces.
-  // ⭐ Ya NO se limita al tipo "lista" (Iker, 2026-08-06). El segundo mensaje
-  // después de que te acepten la invitación hace falta en TODOS los lead magnets,
-  // no solo en ese: el flujo invitación → aceptan → recurso es el mismo siempre.
-  const handledInSeguimientos = cfg.kind !== 'publico' && invitedCommentIds.has(thread.id);
+  // ¿La entrega de esta persona se gestiona ya ARRIBA? Se mira por el id del
+  // comentario (estable), NO por el provider_id (cambia al pasar a 1er grado). Si
+  // es así, esta tarjeta NO muestra controles de envío — así no se manda el
+  // recurso dos veces.
+  // ⭐ Ya NO se limita al tipo "lista" (Iker, 2026-08-06). El segundo mensaje hace
+  // falta en TODOS los lead magnets: el flujo pedir → da el paso → recurso es el
+  // mismo siempre.
+  const handledInSeguimientos = cfg.kind !== 'publico' && gestionadosArriba.has(thread.id);
 
   // 'plain' → they dropped the keyword and nothing else; the template IS the
   // answer. 'rich' → they wrote something real, and "remitido!" would be
@@ -971,6 +963,15 @@ function CommenterCard({
     // personalizado, así que se redacta. Un "Enviado!" precargado aquí sería
     // justo lo contrario de lo que hace funcionar al formato.
     if (cfg.kind === 'publico') return '';
+    // ⛔ A QUIEN NO PODEMOS ESCRIBIRLE NO SE LE DICE "ENVIADO" (2026-08-17). Las
+    // 13 variantes de buildReply afirman que el recurso ya salió, y en canal
+    // `pedir` no ha salido nada ni va a salir hasta que la persona mande su
+    // solicitud: "Ya lo tienes" ahí es mentira. Se le pide el paso.
+    //
+    // Sin nombre delante, a diferencia del resto: la petición ya es una frase
+    // larga y con el nombre pegado se lee como una plantilla de mail merge justo
+    // cuando le estamos pidiendo algo.
+    if (canal === 'pedir' && ownsDm) return buildAskReply().text;
     const name = thread.author.name;
     const base = initialReply();
     return name && thread.author.profile_id ? `${name} ${base.charAt(0).toLowerCase()}${base.slice(1)}` : base;
@@ -1005,11 +1006,6 @@ function CommenterCard({
 
   // ── message state ──
   const [message, setMessage] = useState<string>('');
-  // El asunto del InMail. LinkedIn lo exige y es lo único que se lee en la
-  // bandeja, así que se prerrellena («RECURSO VIBE PROSPECTING») pero se deja
-  // editar: el asunto del catálogo puede no encajar con el post de ese día.
-  const [subject, setSubject] = useState<string>('');
-  const [subjectTouched, setSubjectTouched] = useState(false);
   // The user may have edited the draft; don't clobber their text when the
   // location arrives or the topic changes.
   const [msgTouched, setMsgTouched] = useState(false);
@@ -1019,17 +1015,16 @@ function CommenterCard({
     // botón (handleLista), no al montar la tarjeta.
     if (cfg.kind === 'lista') return;
     if (msgTouched || alreadySent || !ownsDm) return;
+    // En canal `pedir` no hay mensaje privado que redactar: no hay a dónde
+    // mandarlo. El recurso se escribe el día que la persona mande su solicitud,
+    // arriba en Solicitudes pedidas.
+    if (canal === 'pedir') { setMessage(''); return; }
     // Enlace y tema salen de la palabra clave (recursoFor). Si la palabra no
     // tiene recurso, no hay nada que mandar: se deja el mensaje vacío y el
     // botón queda bloqueado, en vez de redactar un DM con un enlace en blanco.
     const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
     if (!recurso) { setMessage(''); return; }
-    const input = { name: thread.author.name, location, topic: recurso.topic, link: recurso.link, voice };
-    setMessage(
-      canal === 'invite' ? buildInviteNote(input)
-      : canal === 'inmail' ? buildInmail(input)
-      : buildDm(input)
-    );
+    setMessage(buildDm({ name: thread.author.name, location, topic: recurso.topic, link: recurso.link, voice }));
   }, [location, cfg.keyword, cfg.kind, canal, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
 
   // ── lista state (solo tipo 'lista') ──
@@ -1039,25 +1034,11 @@ function CommenterCard({
   const [sector, setSector] = useState<string>(() => extractSector(thread.text || '', cfg.keyword));
   const [listaLoading, setListaLoading] = useState(false);
   const [listaMsg, setListaMsg] = useState<string | null>(null);
-  // La lista COMPLETA, guardada aparte cuando la persona NO es 1er grado: la
-  // invitación manda solo la nota, pero pre-generamos la lista entera y la
-  // guardamos (se envía al backend con la invitación) para mandarla por DM en
-  // cuanto acepten, sin regenerarla (ver la sección Seguimientos).
+  // La lista COMPLETA, guardada aparte cuando a la persona no se le puede
+  // escribir todavía: se pre-genera entera y se guarda con el pedido de solicitud
+  // (`/lead-magnet/ask`) para mandarla en cuanto la mande, sin regenerarla (ver la
+  // sección Solicitudes pedidas).
   const [followupText, setFollowupText] = useState<string>('');
-
-  // El asunto sale del RECURSO, no de la persona: mismo recurso, mismo asunto
-  // para todo el post. En la lista el recurso es distinto por comentario (cada
-  // uno pide su sector), así que ahí lo lleva dentro. Se para en cuanto el
-  // usuario lo toca. Va aquí abajo y no con el resto del borrador porque
-  // necesita `sector`, que se declara justo encima.
-  useEffect(() => {
-    if (canal !== 'inmail' || subjectTouched || alreadySent || !ownsDm) return;
-    setSubject(
-      cfg.kind === 'lista'
-        ? `RECURSO LISTA${sector.trim() ? ` ${sector.trim().toUpperCase()}` : ''}`
-        : asuntoInmail(resolverRecurso(cfg.keyword, cfg.link, cfg.topic))
-    );
-  }, [canal, subjectTouched, alreadySent, ownsDm, cfg.keyword, cfg.link, cfg.topic, cfg.kind, sector]);
 
   const [msgSending, setMsgSending] = useState(false);
   const [msgResult, setMsgResult] = useState<
@@ -1151,6 +1132,9 @@ function CommenterCard({
                 ? (sector.trim() ? `la lista de ${sector.trim()}` : 'la lista')
                 : (resolverRecurso(cfg.keyword, cfg.link, cfg.topic)?.topic ?? ''))
             : undefined,
+          // Sin contacto no hay envío que prometer: que la respuesta cierre
+          // pidiéndole la solicitud en vez de decir "te lo acabo de mandar".
+          pedir_solicitud: canal === 'pedir',
         }
       );
       setReply(res.reply);
@@ -1199,8 +1183,12 @@ function CommenterCard({
   //
   // No se bloquea del todo: hay comentarios que merecen respuesta sin recurso de
   // por medio, así que queda el "responder igualmente" a un clic.
+  //
+  // En canal `pedir` NO aplica: ahí la respuesta no afirma ningún envío, ES la
+  // acción entera. Bloquearla sería bloquear lo único que se puede hacer con esa
+  // persona.
   const recursoSinEntregar =
-    cfg.kind !== 'publico' && ownsDm && !!thread.author.profile_id &&
+    cfg.kind !== 'publico' && canal !== 'pedir' && ownsDm && !!thread.author.profile_id &&
     !alreadySent && !handledInSeguimientos;
   const [forzarRespuesta, setForzarRespuesta] = useState(false);
 
@@ -1215,6 +1203,31 @@ function CommenterCard({
         { text: reply.trim(), mention }
       );
       setReplySent(true);
+      // ⛔ EL RECIBO DEL PEDIDO VA DESPUÉS DE QUE LA RESPUESTA SALGA, NUNCA ANTES.
+      // Esta fila es lo único que hará que esta persona aparezca en «Solicitudes
+      // pedidas» el día que mande la suya. Grabarla antes sería quedarnos
+      // esperando un paso que nadie le ha pedido.
+      if (canal === 'pedir' && ownsDm && thread.author.profile_id) {
+        try {
+          await apiPost('/api/accounts/lead-magnet/ask', {
+            post_id: postId,
+            comment_id: thread.id,
+            provider_id: thread.author.profile_id,
+            text: reply.trim(),
+            ...(thread.author.name ? { provider_name: thread.author.name } : {}),
+            ...(cfg.kind === 'lista' && sector.trim() ? { sector: sector.trim() } : {}),
+            ...(cfg.kind === 'lista' && followupText ? { followup_text: followupText } : {}),
+          });
+          onSent();
+          setReplyMsg('✓ Respondido · le he pedido la solicitud, sale arriba en Solicitudes pedidas');
+        } catch (e: any) {
+          // La respuesta SÍ salió: se dicen las dos cosas. Sin la fila, esta
+          // persona no volverá a aparecer sola por ningún lado, y eso hay que
+          // leerlo, no esconderlo detrás de un ✓.
+          setReplyMsg(`⚠️ Respondido en LinkedIn, pero NO he podido apuntar el pedido (${e.message}). No va a salir en Solicitudes pedidas: apúntatelo.`);
+        }
+        return;
+      }
       setReplyMsg('✓ Respondido en LinkedIn');
     } catch (e: any) {
       setReplyMsg(`✗ ${e.message}`);
@@ -1241,23 +1254,20 @@ function CommenterCard({
         setListaMsg('No encuentro empresas de ese sector. Prueba a reescribirlo.');
         return;
       }
-      if (canal !== 'invite') {
-        // Por privado cabe la lista ENTERA, y da igual que sea un DM de 1er
-        // grado, la respuesta a una solicitud pendiente o un InMail: los tres
-        // llegan a la bandeja y ninguno tiene el tope de 300 de la nota. Aquí
-        // solo entra quien NUNCA fue invitado (a los invitados los gestiona
-        // Seguimientos): primer contacto por privado, saludo normal.
-        setMessage(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: false }));
-      } else {
-        // Invitación: la caja lleva la nota corta, pero guardamos la lista ENTERA
-        // para mandarla por DM cuando la persona acepte (sección Seguimientos). Esa
-        // copia guardada se ENVÍA siempre como follow-up, así que se monta ya con
-        // `followup: true` (sin saludo de cero: entrega lo prometido).
-        setMessage(buildListaInvite({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice }));
+      const cuantas = `${r.companies.length} empresa${r.companies.length === 1 ? '' : 's'}${r.companies.length < 15 ? ' (no hay más de ese sector)' : ''}`;
+      if (canal === 'pedir') {
+        // No hay a dónde mandarla todavía. Se guarda montada como follow-up (sin
+        // saludo de cero: entrega lo prometido) y viaja con el pedido de
+        // solicitud, para salir entera el día que la persona lo dé.
         setFollowupText(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: true }));
+        setListaMsg(`${cuantas} · guardadas, se le mandan en cuanto te mande la solicitud`);
+        return;
       }
+      // Por privado cabe la lista ENTERA, y da igual que sea un DM de 1er grado o
+      // la respuesta a una solicitud pendiente: los dos llegan a la bandeja.
+      setMessage(buildListaDm({ name: thread.author.name, sector: r.sector, companies: r.companies, location, voice, followup: false }));
       setMsgTouched(true); // ya es un mensaje real; que ningún efecto lo pise
-      setListaMsg(`${r.companies.length} empresa${r.companies.length === 1 ? '' : 's'}${r.companies.length < 15 ? ' (no hay más de ese sector)' : ''}`);
+      setListaMsg(cuantas);
     } catch (e: any) {
       setListaMsg(`✗ ${e.message}`);
     } finally {
@@ -1275,29 +1285,18 @@ function CommenterCard({
           post_id: postId,
           comment_id: thread.id,
           provider_id: thread.author.profile_id,
-          kind,
+          kind: 'dm',
           text: message.trim(),
-          // El InMail no sale sin asunto: LinkedIn lo exige y el backend corta
-          // antes de gastar el crédito.
-          ...(canal === 'inmail' ? { subject: subject.trim() } : {}),
           // Contestar a la solicitud que ELLA nos mandó: mensaje normal, sin
-          // gastar InMail y sin nota.
+          // aceptarla y sin gastar nada.
           ...(canal === 'dm-solicitud' && invitacionPendiente
             ? { invitation_id: invitacionPendiente }
             : {}),
-          // ⛔ EL NOMBRE VA EN TODA INVITACIÓN, NO SOLO EN LA LISTA (Iker,
-          // 2026-08-12). Estaba dentro del `...(cfg.kind === 'lista' && …)`, así
-          // que en cualquier otro lead magnet se guardaba NULL y Seguimientos
-          // pintaba "Sin nombre" — imposible saber a quién estabas escribiendo.
-          // Nació así porque Seguimientos era solo de la lista; el 06/08 se
-          // generalizó a todos los pilares y este campo se quedó atrás.
-          ...(kind === 'invite' && thread.author.name ? { provider_name: thread.author.name } : {}),
-          // La lista guarda ADEMÁS su segundo mensaje y el sector: su nota es un
-          // teaser porque las empresas no caben en 300 caracteres, así que el DM
-          // de después es la entrega de verdad.
-          ...(cfg.kind === 'lista' && kind === 'invite' && followupText
-            ? { followup_text: followupText, sector: sector.trim() }
-            : {}),
+          // ⛔ EL NOMBRE VA SIEMPRE (Iker, 2026-08-12). Estaba dentro del
+          // `...(cfg.kind === 'lista' && …)`, así que en cualquier otro lead
+          // magnet se guardaba NULL y las secciones de seguimiento pintaban "Sin
+          // nombre" — imposible saber a quién estabas escribiendo.
+          ...(thread.author.name ? { provider_name: thread.author.name } : {}),
         }
       );
       setMsgResult({ status: res.status, error: res.error, verificado: res.verificado });
@@ -1314,8 +1313,8 @@ function CommenterCard({
   // ⛔ Existe porque hay envíos que la herramienta NO PUEDE VER (Iker,
   // 2026-08-14): el InMail a Susana Osorio salió a mano desde Sales Navigator, y
   // esa bandeja no se puede consultar por API con fiabilidad, así que la tarjeta
-  // se lo seguía ofreciendo. Un clic de más ahí son un crédito de InMail gastado
-  // y la misma persona recibiendo el recurso dos veces.
+  // se lo seguía ofreciendo y la misma persona recibía el recurso dos veces. Sigue
+  // valiendo para todo lo que se manda por fuera de aquí, a mano.
   const [marcando, setMarcando] = useState(false);
   const marcarManual = async () => {
     if (!thread.author.profile_id) return;
@@ -1325,7 +1324,7 @@ function CommenterCard({
         post_id: postId,
         comment_id: thread.id,
         provider_id: thread.author.profile_id,
-        kind,
+        kind: 'dm',
         text: message.trim() || null,
         ...(thread.author.name ? { provider_name: thread.author.name } : {}),
       });
@@ -1537,70 +1536,43 @@ function CommenterCard({
               clave, y es ahí donde se le avisa del envío.
             </p>
           ) : handledInSeguimientos ? (
-            /* Ya invitada: su seguimiento (mandarle la lista entera al aceptar)
-               vive ARRIBA en Seguimientos. Aquí NO se enseñan controles de envío,
-               para no mandar la lista dos veces (Iker, 2026-07-23). Solo el puntero. */
+            /* Ya en marcha arriba: su entrega vive en una de las dos secciones de
+               seguimiento. Aquí NO se enseñan controles de envío, para no mandar
+               el recurso dos veces (Iker, 2026-07-23). Solo el puntero. */
             <p className="mt-3 pt-3 border-t border-border text-[11px] text-accent leading-snug">
-              ✓ Ya le mandaste la invitación. Su lista se gestiona arriba, en{' '}
-              <span className="font-semibold">Seguimientos</span>: cuando te acepte, se la mandas entera por DM desde
-              ahí. Aquí no, para no mandarla dos veces.
+              ✓ Ya está en marcha arriba. Cuando te mande la solicitud, el recurso se le manda desde{' '}
+              <span className="font-semibold">Solicitudes pedidas</span>. Aquí no, para no mandarlo dos veces.
+            </p>
+          ) : canal === 'pedir' ? (
+            /* ⛔ NO HAY CANAL PRIVADO Y NO SE INVENTA UNO (2026-08-17). Aquí antes
+               había una caja con la nota de la invitación o el InMail. Los dos se
+               retiraron, así que lo honesto es decir por qué no hay nada que
+               mandar y a dónde va a aparecer esta persona cuando dé el paso. */
+            <p className="mt-3 pt-3 border-t border-border text-[11px] text-text-muted leading-snug">
+              No es contacto y no te ha mandado solicitud, así que LinkedIn no le entrega un mensaje privado. No le
+              mandamos nada: la respuesta de aquí arriba le pide la solicitud, y en cuanto la mande sale en{' '}
+              <span className="text-text-secondary font-medium">Solicitudes pedidas</span> con el recurso ya escrito.
             </p>
           ) : (
           <div className="mt-3 pt-3 border-t border-border space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-medium text-text-secondary">
-                {cfg.kind === 'lista'
-                  ? (canal === 'invite' ? 'Invitación (la lista va al aceptar)' : 'Lista de empresas por privado')
-                  : (canal === 'invite' ? 'Invitación con el recurso en la nota' : 'Mensaje privado con el recurso')}
+                {cfg.kind === 'lista' ? 'Lista de empresas por privado' : 'Mensaje privado con el recurso'}
               </span>
               {/* Por qué este canal y no otro. Sin esto no se entiende que a uno
-                  le vaya un mensaje normal y al de al lado un InMail. */}
+                  le vaya un mensaje normal y al de al lado se le pida el paso. */}
               {canal === 'dm-solicitud' && (
                 <span
                   className="text-[10px] px-1.5 py-0.5 rounded bg-accent/15 text-accent"
-                  title="Te mandó una solicitud y sigue sin aceptar. LinkedIn deja contestarla con un mensaje normal: llega igual y no gasta InMail."
+                  title="Te mandó una solicitud y sigue sin aceptar. LinkedIn deja contestarla con un mensaje normal: llega igual y no hace falta aceptarla."
                 >
                   te invitó él · mensaje gratis
                 </span>
               )}
-              {canal === 'inmail' && (
-                <span
-                  className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400"
-                  title="Ni sois contacto ni te ha mandado solicitud, y esta cuenta no puede invitar con nota. Sale por InMail, que gasta un crédito."
-                >
-                  InMail · gasta crédito
-                </span>
-              )}
-              {canal === 'invite' && (
-                <span className="text-[10px] text-text-muted tabular-nums">{message.length}/300</span>
-              )}
-              {canal === 'inmail' && (
-                <span className="text-[10px] text-text-muted tabular-nums">{message.length}/1900</span>
-              )}
             </div>
 
-            {/* El asunto del InMail. LinkedIn lo EXIGE y es lo único que se lee
-                en la bandeja antes de abrirlo, así que va a la vista y editable
-                en vez de escondido en el código. */}
-            {canal === 'inmail' && !noProfileId && msgResult?.status !== 'sent' && (
-              <div>
-                <label className="block text-[10px] font-medium text-text-secondary mb-1">
-                  Asunto <span className="text-text-muted">· obligatorio en el InMail</span>
-                </label>
-                <input
-                  value={subject}
-                  onChange={(e) => { setSubject(e.target.value); setSubjectTouched(true); }}
-                  disabled={msgSending}
-                  placeholder="RECURSO VIBE PROSPECTING"
-                  className="w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent disabled:opacity-50"
-                />
-              </div>
-            )}
-
             {/* Tipo LISTA: el sector (prerrellenado del comentario, editable) y el
-                botón que busca las empresas y rellena la caja. La lista completa
-                solo va por DM; a una invitación se le manda la nota corta y la
-                lista entera cuando la persona acepte.
+                botón que busca las empresas y rellena la caja.
                 Una vez enviado el recurso, la lista ya está generada y mandada:
                 el botón "Generar lista" NO debe seguir ahí (Iker, 2026-07-23). */}
             {cfg.kind === 'lista' && !noProfileId && msgResult?.status !== 'sent' && (
@@ -1642,17 +1614,7 @@ function CommenterCard({
                  para media lista de comentaristas. */
               (msgResult.verificado ?? envioVerificado) === true ? (
                 <p className="text-[11px] text-accent">
-                  ✓ {canal === 'invite' ? 'Invitación enviada con el recurso' : 'Recurso enviado y comprobado en LinkedIn'}
-                  {/* El InMail de la herramienta sale por la API clásica y vive
-                      en la bandeja NORMAL de linkedin.com/messaging — NO en el
-                      inbox de Sales Navigator, donde solo están los que mandas
-                      tú a mano desde ahí. Iker buscó el de Erick Sandoval en
-                      Sales Navigator, no lo vio, y con razón creyó que la
-                      herramienta le había mentido (2026-08-14). El crédito que
-                      gasta es el mismo. */}
-                  {canal === 'inmail' && (
-                    <span className="text-text-muted"> · está en tu bandeja normal de LinkedIn (linkedin.com/messaging), no en la de Sales Navigator</span>
-                  )}
+                  ✓ Recurso enviado y comprobado en LinkedIn
                 </p>
               ) : (
                 <p className="text-[11px] text-amber-400 leading-snug">
@@ -1679,21 +1641,18 @@ function CommenterCard({
                     onClick={handleSendResource}
                     disabled={
                       msgSending || !message.trim() ||
-                      (cfg.kind === 'dm' && !resolverRecurso(cfg.keyword, cfg.link, cfg.topic)) ||
-                      (canal === 'inmail' && !subject.trim())
+                      (cfg.kind === 'dm' && !resolverRecurso(cfg.keyword, cfg.link, cfg.topic))
                     }
                     className="text-xs px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent-light disabled:opacity-50 transition-colors"
                   >
                     {msgSending
                       ? 'Enviando y comprobando…'
-                      : canal === 'invite' ? 'Invitar con nota'
-                      : canal === 'inmail' ? 'Enviar InMail'
                       : canal === 'dm-solicitud' ? 'Contestar a su solicitud'
                       : 'Enviar DM'}
                   </button>
-                  {/* La salida para lo que la herramienta no puede ver: un InMail
-                      mandado a mano desde Sales Navigator. Sin esto, la tarjeta
-                      te lo ofrece otra vez y gastas otro crédito. */}
+                  {/* La salida para lo que la herramienta no puede ver: lo que se
+                      manda a mano por fuera. Sin esto, la tarjeta te lo ofrece
+                      otra vez y esa persona lo recibe dos veces. */}
                   <button
                     onClick={marcarManual}
                     disabled={marcando || msgSending}
