@@ -58,12 +58,6 @@ export interface Recurso {
   link: string;
   // Rellena "el recurso sobre {t}" en el DM.
   topic: string;
-  // EL ASUNTO del InMail, en corto y en mayúsculas ("VIBE PROSPECTING"). El
-  // `topic` es una frase para meter en medio de una línea ("el recurso sobre
-  // cómo montar tu prospección con Claude") y como asunto no vale: LinkedIn lo
-  // enseña en la bandeja al lado del remitente y ahí solo se leen 3-4 palabras.
-  // Ver `asuntoInmail`.
-  asunto?: string;
 }
 
 // ⛔ EL CATALOGO ES LA FUENTE DE VERDAD, Y YA NO SE INDEXA POR PALABRA CLAVE
@@ -96,7 +90,6 @@ const CATALOGO: RecursoDef[] = [
     // la herramienta con su comenta "vibe" dentro del texto.
     link: 'https://recursos.neety.com/vibe/',
     topic: 'cómo montar tu prospección con Claude',
-    asunto: 'VIBE PROSPECTING',
     claves: ['vibe'],
     pistas: [
       'vibe prospecting', 'puerta fria', 'tumbar la prospeccion',
@@ -106,14 +99,12 @@ const CATALOGO: RecursoDef[] = [
   {
     link: 'https://recursos.neety.com/subvencion-euskadi/',
     topic: 'la subvención de IA para industria vasca',
-    asunto: 'SUBVENCION IA EUSKADI',
     claves: ['subvencion'],
     pistas: ['subvencion', 'ayuda publica', 'industria vasca', 'euskadi'],
   },
   {
     link: 'https://recursos.neety.com/prospeccion-manual/',
     topic: 'las señales que avisan de que una empresa va a comprar',
-    asunto: 'SEÑALES DE COMPRA',
     claves: ['manual'],
     pistas: ['prospeccion manual', 'senales que avisan', 'va a comprar', 'senal de compra'],
   },
@@ -128,7 +119,6 @@ const CATALOGO: RecursoDef[] = [
     // pidiendo el enlace a mano con 300 comentarios esperando.
     link: 'https://recursos.neety.com/criba/',
     topic: 'los 5 pasos para cribar tu lista de empresas',
-    asunto: 'LA CRIBA DE EMPRESAS',
     claves: ['criba'],
     pistas: [
       'la criba', 'lista corta', 'prueba que encaja',
@@ -142,7 +132,6 @@ const CATALOGO: RecursoDef[] = [
     // sola entrada con dos claves, que es lo que siempre fue.
     link: 'https://recursos.neety.com/firma/',
     topic: 'los 5 mensajes para dar con quien cierra la compra',
-    asunto: 'QUIEN FIRMA LA COMPRA',
     claves: ['firma', 'nombre'],
     pistas: [
       'quien firma', 'firma la compra', 'prospeccion por nombre',
@@ -152,7 +141,7 @@ const CATALOGO: RecursoDef[] = [
 ];
 
 const RECURSOS: Record<string, Recurso> = Object.fromEntries(
-  CATALOGO.flatMap((r) => r.claves.map((c) => [c, { link: r.link, topic: r.topic, asunto: r.asunto }]))
+  CATALOGO.flatMap((r) => r.claves.map((c) => [c, { link: r.link, topic: r.topic }]))
 );
 
 // El recurso de una palabra clave, o null si esa palabra no tiene uno mapeado
@@ -179,9 +168,8 @@ export function resolverRecurso(keyword: string, link?: string, topic?: string):
   //
   // Desde que el recurso se detecta por PISTAS y no por palabra (`detectarRecurso`),
   // el camino normal en un post nuevo es: sin palabra → aquí, con el enlace del
-  // catálogo pero por la puerta del "a mano". Y por esa puerta se perdía el
-  // `asunto`, así que el InMail salía con el de reserva —"RECURSO MONTAR
-  // PROSPECCIÓN CLAUDE"— en vez del bueno, "RECURSO VIBE PROSPECTING".
+  // catálogo pero por la puerta del "a mano". Reconocerlo es lo que hace que el
+  // tema bien redactado del catálogo mande sobre el de reserva.
   //
   // Se compara sin la barra final porque el enlace viaja de las dos formas.
   const limpio = l.replace(/\/+$/, '');
@@ -189,10 +177,8 @@ export function resolverRecurso(keyword: string, link?: string, topic?: string):
   if (delCatalogo) {
     return {
       link: delCatalogo.link,
-      // El tema escrito a mano sí manda (puede afinarlo para ese post); el
-      // asunto sale del catálogo, que es donde está la versión corta buena.
+      // El tema escrito a mano sí manda: puede afinarlo para ese post.
       topic: (topic || '').trim() || delCatalogo.topic,
-      asunto: delCatalogo.asunto,
     };
   }
   // Sin tema, el DM diria "te dejo el recurso sobre " y se cortaria en seco, asi
@@ -254,7 +240,7 @@ export function detectarRecurso(postText: string | null | undefined): Recurso | 
     else if (n === mejorN) empate = true;
   }
   if (!mejor || empate) return null;
-  return { link: mejor.link, topic: mejor.topic, asunto: mejor.asunto };
+  return { link: mejor.link, topic: mejor.topic };
 }
 
 // ──────────────────────────── name extraction ────────────────────────────
@@ -394,6 +380,55 @@ export function buildReply(
   return { text, variant: chosen.text };
 }
 
+// ─────────────────── la respuesta que PIDE la solicitud ───────────────────
+//
+// Para quien no es contacto y no nos ha mandado solicitud. Desde el 2026-08-17 a
+// esa gente no le mandamos NADA por privado: se retiraron la invitación con nota
+// (gasta el cupo semanal, y en la cuenta de Unai está baneada desde el 14/08) y
+// el InMail (créditos contados). El paso lo da ella.
+//
+// Las tres reglas del texto, y las tres son la diferencia entre que funcione o no:
+//
+//  · Se pide SOLICITUD DE CONTACTO, nunca un "sígueme". Un seguidor sigue siendo
+//    de 2º o 3er grado y a ese LinkedIn no deja escribirle: pedir un follow es
+//    tirar el lead con la sensación de haber hecho algo.
+//  · Va con el PORQUÉ. Sin la excusa de LinkedIn se lee como un peaje que le
+//    ponemos nosotros; con ella es una limitación de la plataforma, que todo el
+//    mundo entiende. Lo eligió Iker sobre la versión seca.
+//  · No promete nada que haya salido. Aquí un "te lo he mandado" es mentira, y es
+//    exactamente el bug del 13/08 con otra cara.
+const ASK_VARIANTS: string[] = [
+  'Mándame solicitud y te lo paso, que LinkedIn no me deja escribirte si no somos contacto',
+  'Te lo mando en cuanto me llegue tu solicitud, LinkedIn no me deja escribir a quien no es contacto',
+  'No me deja LinkedIn escribirte sin ser contactos. Mándame solicitud y va para ti',
+  'Mándame solicitud y te lo paso por privado, que si no somos contactos LinkedIn no me deja',
+  'LinkedIn no me deja mandarte nada sin ser contactos. Échame la solicitud y te lo paso',
+  'En cuanto me mandes solicitud te lo paso, que LinkedIn me lo bloquea si no somos contacto',
+  'Te lo paso encantado, pero mándame antes solicitud: LinkedIn no me deja escribirte de otra forma',
+  'Mándame la solicitud y te lo paso al privado, que LinkedIn no me deja escribir a quien no tengo agregado',
+  'Necesito que me mandes tu solicitud para poder escribirte, cosas de LinkedIn. Y te lo paso',
+  'Si me mandas solicitud te lo paso por privado, LinkedIn no me deja hacerlo de otra manera',
+];
+
+// Una petición. `recent` son las variantes ya usadas en ESTE post, por lo mismo
+// que en buildReply: 40 comentarios con la misma frase es lo que hace que se lea
+// como un bot.
+//
+// Sin estirar vocales y sin nombre delante, a diferencia de buildReply: la frase
+// ya es larga, y "Marta mándame solicitud y te lo paso, que LinkedIn…" se lee como
+// una plantilla de mail merge justo en el momento en que le estamos pidiendo algo.
+export function buildAskReply(
+  opts: { recent?: string[]; rng?: () => number; voice?: Voice } = {}
+): { text: string; variant: string } {
+  const rng = opts.rng ?? Math.random;
+  const recent = opts.recent ?? [];
+  const pool = ASK_VARIANTS.filter((v) => !recent.includes(v));
+  const chosen = pick(pool.length > 0 ? pool : ASK_VARIANTS, rng);
+  // Un emoji en un tercio, como en buildReply: pedir algo a secas suena seco.
+  const text = rng() < 0.33 ? `${chosen} ${pick(REPLY_EMOJIS, rng)}` : chosen;
+  return { text, variant: chosen };
+}
+
 // ────────────────────────────── regional greeting ──────────────────────────
 
 // Region-aware greeting, ONLY when the profile location is unambiguous.
@@ -519,91 +554,19 @@ export function buildDm(input: DmInput): string {
   return `${open} ${body}\n${input.link}\n\n${signoff}`;
 }
 
-// The invitation note — same job as the DM, for people we can't DM because
-// they aren't a 1st-degree connection.
+// ⛔ AQUÍ ESTABAN `buildInviteNote`, `buildInmail` y `asuntoInmail`, y se
+// borraron a propósito (Iker, 2026-08-17).
 //
-// LinkedIn hard-rejects a note over 300 characters, so this is deliberately
-// terser than the DM: greeting, one line of context (they commented, this is
-// the thing), the link. No sign-off. The backend truncates as a backstop, but
-// arriving pre-trimmed means the link is never what gets cut.
-export function buildInviteNote(input: DmInput): string {
-  const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
-  const name = firstName(input.name);
-  const open = name ? `${g} ${name}!` : `${g}!`;
-  const note = `${open} Comentaste en mi post, te dejo el recurso sobre ${input.topic}: ${input.link}`;
-  if (note.length <= 300) return note;
-  // Too long → drop the topic, never the link.
-  return `${open} Comentaste en mi post, te dejo el recurso: ${input.link}`.slice(0, 300);
-}
-
-// ──────────────────────────── InMail ────────────────────────────
+// Eran los dos canales para quien no es contacto: la invitación con nota (el
+// enlace iba DENTRO de la nota, tope 300 caracteres) y el InMail con asunto.
+// Se retiraron los dos: el cupo semanal de invitaciones se acaba, en la cuenta de
+// Unai están baneadas desde el 14/08, y los créditos de InMail son pocos. Ahora a
+// esa gente se le pide la solicitud con `buildAskReply` y el recurso sale por DM
+// cuando la manda.
 //
-// El tercer canal, y el que sustituye a la nota en las cuentas baneadas
-// (`notaBaneada`): ni somos contacto ni nos han mandado solicitud, así que solo
-// queda el InMail de Premium/Sales Navigator.
-//
-// Se parece al DM, con una diferencia: lleva la línea de CONTEXTO de la nota de
-// invitación ("Comentaste en mi post"). Un InMail llega frío, con el aviso de
-// LinkedIn de que es un mensaje de alguien de fuera de tu red, y sin esa línea
-// el recurso se lee como spam de un desconocido. Los 300 caracteres de la nota
-// aquí no aplican (el cuerpo del InMail son 1.900), así que sí cabe el cierre.
-export function buildInmail(input: DmInput): string {
-  const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
-  const name = firstName(input.name);
-  const open = name ? `${g} ${name}!` : `${g}!`;
-  const signoff = `${pick(DM_SIGNOFFS, rng)} ${pick(DM_EMOJIS, rng)}`;
-  // Enlace en su propia línea, por lo mismo que en buildDm.
-  return `${open} Comentaste en mi post, así que te dejo el recurso sobre ${input.topic}:\n${input.link}\n\n${signoff}`;
-}
-
-// Palabras que en un asunto no dicen nada. Solo se usan para el asunto de
-// reserva, cuando el catálogo no trae uno escrito a mano.
-const VACIAS_ASUNTO = new Set([
-  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al',
-  'que', 'para', 'con', 'por', 'y', 'a', 'en', 'tu', 'tus', 'su', 'sus',
-  'mi', 'lo', 'como', 'se', 'es',
-]);
-
-// EL ASUNTO DEL INMAIL. LinkedIn lo exige para mandarlo, y es lo único que se
-// lee en la bandeja antes de abrirlo, así que va como pidió Iker (2026-08-14):
-// «RECURSO» + el tema en corto y en mayúsculas — "RECURSO VIBE PROSPECTING".
-//
-// Sale del `asunto` del catálogo, que es la versión escrita a mano. Cuando el
-// enlace se ha metido a mano y no hay catálogo, se apaña con el tema: fuera
-// artículos y preposiciones, y a mayúsculas. Nunca se queda vacío.
-export function asuntoInmail(recurso: Recurso | null): string {
-  const corto = (recurso?.asunto || '').trim();
-  if (corto) return `RECURSO ${corto.toUpperCase()}`;
-  const tema = (recurso?.topic || '').trim();
-  if (!tema) return 'RECURSO';
-  const limpio = tema
-    .split(/\s+/)
-    .filter((w) => !VACIAS_ASUNTO.has(normalize(w).replace(/[^\p{L}\p{N}]/gu, '')))
-    .join(' ')
-    .trim();
-  return `RECURSO ${(limpio || tema).toUpperCase()}`.slice(0, 200);
-}
-
-// ⛔ CUENTAS QUE NO PUEDEN MANDAR INVITACIÓN CON NOTA (Iker, 2026-08-14).
-//
-// A Unai le metieron un baneo de invitaciones semanales y LinkedIn empezó a
-// tragarse las notas en silencio: la API respondía OK y al destinatario no le
-// llegaba nada. En esas cuentas no se ofrece la nota nunca más.
-//
-// Se compara por nombre de pila, igual que `voiceFor`, porque es lo que guarda
-// la tabla creators. Ampliarlo el día que baneen otra cuenta es una palabra.
-//
-// TWIN: backend/src/routes/accounts.ts (`CUENTAS_SIN_NOTA` / `notaBaneada`),
-// que es quien lo impone de verdad — el panel solo deja de ofrecerlo. Son dos
-// paquetes sin módulo común: si cambia la lista, se tocan los dos.
-const CUENTAS_SIN_NOTA = new Set(['unai']);
-
-export function notaBaneada(creatorName: string | null | undefined): boolean {
-  const first = (creatorName || '').trim().split(/\s+/)[0]?.toLowerCase();
-  return !!first && CUENTAS_SIN_NOTA.has(first);
-}
+// Antes de reescribir cualquiera de las tres, leer el spec:
+// `docs/superpowers/specs/2026-08-17-pedir-solicitud-lead-magnet-design.md`.
+// No se quitaron por un bug, se quitaron por una decisión.
 
 // ──────────────────────────── lista personalizada ───────────────────────────
 //
@@ -703,51 +666,14 @@ export function buildListaDm(input: ListaInput): string {
   return `${intro}\n\n${lines}\n\n${close}\n\n${NINJA_DM}`;
 }
 
-// La nota de invitación, para quien no es 1er grado.
+// ⛔ AQUÍ ESTABA `buildListaInvite`, y se borró a propósito (2026-08-17).
 //
-// La lista ENTERA no cabe: LinkedIn corta la nota a 300 caracteres (es su tope,
-// NO el InMail de pago — la solicitud con nota es gratis y sin cupo con Premium).
-// Así que la nota lleva un ADELANTO real (los primeros nombres + "y N más") y la
-// lista completa se manda por DM en cuanto la persona acepte y sea 1er grado.
-//
-// El adelanto se llena avaramente: se meten nombres reales mientras quepan bajo
-// 300 con el cierre, y el resto se cuenta ("y 12 más"). Si ni un nombre cabe
-// (sector con nombres larguísimos), cae a la nota sin adelanto.
-export function buildListaInvite(
-  input: { name: string | null; sector: string; companies: ListaCompany[]; location?: string | null; voice?: Voice; rng?: () => number }
-): string {
-  const rng = input.rng ?? Math.random;
-  const g = stretchGreeting(baseGreeting(input.location, rng), rng, input.voice ?? 'medio');
-  const name = firstName(input.name);
-  const open = name ? `${g} ${name}!` : `${g}!`;
-  const total = input.companies.length;
-
-  const head = `${open} Aquí va tu lista de ${input.sector}: `;
-  const cierre = (resto: number) =>
-    resto > 0
-      ? ` y ${resto} más. Acéptame y te la mando entera con su LinkedIn.`
-      : `. Acéptame y te la mando entera con su LinkedIn.`;
-
-  const nombres: string[] = [];
-  let usado = head.length;
-  for (const c of input.companies) {
-    const trozo = (nombres.length ? ', ' : '') + c.name;
-    // Reserva sitio para el cierre con el número de "más" que quedaría.
-    if (usado + trozo.length + cierre(total - nombres.length - 1).length > 300) break;
-    nombres.push(c.name);
-    usado += trozo.length;
-  }
-
-  // Ni un nombre cabe → nota sin adelanto (sigue siendo gratis y honesta).
-  if (nombres.length === 0) {
-    const plana = `${open} Te monto la lista de ${input.sector} que pediste. Acéptame y te la paso entera por aquí.`;
-    return plana.slice(0, 300);
-  }
-
-  const resto = total - nombres.length;
-  const note = head + nombres.join(', ') + cierre(resto);
-  return note.length <= 300 ? note : note.slice(0, 300);
-}
+// Montaba la nota de invitación de la lista: un ADELANTO con los primeros nombres
+// que cupieran en 300 caracteres y "y N más", y la lista entera salía por DM al
+// aceptar. Con la invitación retirada ya no hay nota que llenar: a quien no es
+// contacto se le pide la solicitud, la lista completa se guarda montada como
+// follow-up y sale entera en cuanto la manda. Un adelanto de 300 caracteres era
+// una limitación de la nota, no algo que quisiéramos.
 
 // Words that are NOT content: someone typing "MAPA porfa gracias!!" wrote the
 // keyword and nothing else, however many words it technically is.
