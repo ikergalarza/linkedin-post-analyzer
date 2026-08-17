@@ -1510,12 +1510,14 @@ Acceso libre.
 > | Fecha | Impresiones | Ratio | Likes | Com. | Reposts | Clics enlace | **CTR** |
 > |---|---|---|---|---|---|---|---|
 > | 29/07 (historia + peloteo) | 6.554 | 0.64x | 31 | 6 | 5 | 19 | 0,290% |
-> | 13/08 (historia sola, Excel) | **5.023** | 0.51x | 28 | 9 | 4 | 26 | **0,518%** |
+> | 13/08 (historia sola, Excel) | **8.500** | 0.84x | 34 | 10 | 4 | 35 | **0,41%** |
+>
+> 🔴 **Fila del 13/08 RE-MEDIDA el 2026-08-17, con el post ya asentado.** El 14/08 marcaba 5.023 imp · 0.51x · 26 clics · **0,518%**, y de ahí salió la frase "es el CTR más alto de la casa". **Al crecer el denominador el CTR baja a 0,41% y el mapa de Aragón (0,44%) le vuelve a pasar por delante.** Lo que NO cambia: sigue siendo el mejor CTR del pilar y casi dobla al 0,290% del 29/07, así que la regla del ninja de `global §4.4b-FORMA` se queda. **Y la lección de método vale para cualquier medición futura: un CTR tomado a las 24 h está inflado, porque los clics entran antes que las impresiones. Nada se declara récord hasta los 3-4 días.**
 >
 > **Se lee por los dos lados, y hay que decir los dos al planificar:**
 > - **El ratio de los dos está por debajo de 1x**, o sea por debajo de la media de la propia cuenta de Iker. **Este pilar sigue sin ser de alcance** y `§4.6-OBJETIVO` sigue en pie entero. Lo que sorprende no es el multiplicador: es que **un pilar sin estructura ultra-validada, con la historia inventada cada vez, sostenga 5.000-6.500 impresiones** en vez de morirse en 1.000 como los lead magnets flojos.
 > - **Lo que sí es un salto medido es el CTR: 0,290% → 0,518%, casi el doble, y con MENOS impresiones** (26 clics contra 19). Pasa de largo la vara de **0,4%** que se puso el 13/08 para juzgar el experimento del ninja, así que **la regla nueva de `global §4.4b-FORMA` (el ninja recicla el objeto y el verbo del gancho) + el enlace 518 posiciones antes SÍ aportan**, y se quedan.
-> - **Es el CTR más alto anotado en este historial**, por encima del mejor mapa (Aragón, 0,44%) y muy por encima del mejor meme (iMessage, 0,09%). **Historia no es el pilar que más gente alcanza: es el que mejor convierte al que alcanza.**
+> - ~~**Es el CTR más alto anotado en este historial**, por encima del mejor mapa (Aragón, 0,44%)~~ 🔴 **Corregido el 17/08: con el post asentado son 0,41%, justo por debajo de Aragón.** Sigue muy por encima del mejor meme (iMessage, 0,09%) y del propio 29/07. **Historia no es el pilar que más gente alcanza, pero sí de los que mejor convierten al que alcanza.**
 > - **La conversación sube pero sigue corta:** 6 → 9 comentarios. Con la vara del propio pilar eso sigue siendo poco, así que la palanca a trabajar es esa, no el alcance.
 >
 > **Consecuencia al planificar (Iker, 2026-08-14): historia ENTRA en la rotación semanal de agosto** (`§8.0-AGOSTO`), en el sitio que deja el peloteo. Deja de ser "de vez en cuando, por variedad" mientras dure el override.
