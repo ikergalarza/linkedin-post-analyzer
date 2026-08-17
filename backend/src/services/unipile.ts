@@ -1009,33 +1009,18 @@ export class UnipileService {
     return { chat_id: parsed.chat_id ?? null, message_id: parsed.message_id ?? null };
   }
 
-  // Send a connection invitation carrying a personalised note (Lead Magnet
-  // tab: the fallback for commenters who aren't 1st-degree and therefore
-  // can't receive a DM). The note is where the resource link goes.
+  // ⛔ AQUÍ ESTABA `sendInvitation`, Y SE BORRÓ A PROPÓSITO (Iker, 2026-08-17).
   //
-  // Endpoint: POST /api/v1/users/invite — plain JSON {provider_id,
-  // account_id, message}. LinkedIn caps the note at ~300 characters and
-  // rejects longer ones, so the caller truncates before we get here.
-  async sendInvitation(
-    providerId: string,
-    message: string,
-    accountIdOverride?: string
-  ): Promise<any> {
-    const accountId = accountIdOverride || this.accountId;
-    if (!accountId) throw new Error('No Unipile account_id available for invitation');
-    const body: Record<string, unknown> = {
-      account_id: accountId,
-      provider_id: providerId,
-    };
-    if (message) body.message = message;
-    console.log(`[Unipile sendInvitation] → POST /api/v1/users/invite provider=${providerId}`);
-    const res = await this.request<any>(`/api/v1/users/invite`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
-    console.log(`[Unipile sendInvitation] ← ${JSON.stringify(res)}`);
-    return res;
-  }
+  // Mandaba la invitación con nota, que era el canal del lead magnet para quien
+  // no es de 1er grado. Se retiró: gasta el cupo semanal, en la cuenta de Unai
+  // está baneada desde el 14/08 (LinkedIn responde 200 y la tira en silencio) y
+  // no construye red mientras nadie acepte. Ahora la solicitud la manda ELLA y
+  // nosotros contestamos a la suya, que es gratis y no tiene tope.
+  //
+  // Si alguna vez hace falta volver a invitar, es POST /api/v1/users/invite con
+  // {account_id, provider_id, message} y la nota tope 300 caracteres. Pero antes
+  // de reescribirlo, leer `docs/superpowers/specs/2026-08-17-pedir-solicitud-lead-magnet-design.md`:
+  // esto no se quitó por un bug, se quitó por una decisión.
 
   // ───────────── invitaciones: las que NOS mandan y las que mandamos ─────────────
   //

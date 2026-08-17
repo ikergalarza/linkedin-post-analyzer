@@ -31,7 +31,11 @@ export interface ReplyGenerationInput {
   //  · 'publico' → NO pasa por aquí. Tiene su propio generador
   //                (services/rastroGenerator.ts), porque además del texto crea
   //                la página personalizada con el gate de correo.
-  leadMagnet?: { kind: 'dm'; topic: string };
+  //
+  // `pedirSolicitud` le da la vuelta al cierre: cuando esa persona no es contacto
+  // y no nos ha mandado solicitud, LinkedIn no le entrega un privado, el recurso
+  // NO va de camino, y decir que sí es mentira. Lo que toca es pedirle el paso.
+  leadMagnet?: { kind: 'dm'; topic: string; pedirSolicitud?: boolean };
 }
 
 // Las 3 cuentas comparten QUÉ decimos (la voz Neety del commenter_profile, que
@@ -291,18 +295,28 @@ function buildPrompt(input: ReplyGenerationInput, voice: Voice): string {
   const thanksNudge = `THANKS VARIANT for THIS reply (only relevant IF the comment is praise, see RULE 13): use this specific flavour of thanks rather than your usual one: "${thanks}". Adapt the vowel stretch to your voice per RULE 12. If the comment is NOT praise, ignore this line entirely — do not bolt a thanks onto a comment that wasn't complimenting you.`;
 
 
-  // Lead magnet DM: this person didn't just comment, they asked for something —
-  // and they're getting it by DM right now. The reply must do BOTH jobs.
-  const leadMagnetInstruction = input.leadMagnet?.kind === 'dm'
+  // Lead magnet: this person didn't just comment, they asked for something. Lo
+  // que cambia es si ya se lo estamos mandando o si primero tiene que darnos el
+  // paso, y confundir las dos cosas es prometer un envío que no ha salido.
+  const leadMagnetInstruction = !input.leadMagnet
+    ? ''
+    : input.leadMagnet.pedirSolicitud
     ? `\n═══ LEAD MAGNET (applies to THIS reply) ═══
-This person commented on a post that offered a resource about "${input.leadMagnet.kind === 'dm' ? input.leadMagnet.topic : ''}" in exchange for a keyword. You are sending them that resource by private message RIGHT NOW.
+This person commented on a post that offered a resource about "${input.leadMagnet.topic}". You CANNOT send it to them: they are not a connection of yours and LinkedIn does not deliver private messages to non-connections.
+
+So this reply has TWO jobs and needs both:
+1. ENGAGE with what they actually said. They wrote something real (an opinion, their own experience, a question). React to THAT, specifically, the way you would to any good comment. This is the part that matters.
+2. ASK THEM to send YOU the connection request, in a SHORT closing beat, and say WHY: LinkedIn won't let you message someone who isn't a contact. Something in the shape of "mandame solicitud y te lo paso, que LinkedIn no me deja escribirte si no somos contacto".
+
+Order matters: engage FIRST, ask LAST. NEVER claim the resource is sent, on its way, or waiting in their DMs — nothing has been sent and nothing will be until they act; that lie is the whole reason this instruction exists. Ask for the CONNECTION REQUEST ("solicitud"), never for a follow: a follower still cannot be messaged, so asking for a follow would waste the lead. Keep the whole thing to ONE sentence even with both jobs.\n`
+    : `\n═══ LEAD MAGNET (applies to THIS reply) ═══
+This person commented on a post that offered a resource about "${input.leadMagnet.topic}" in exchange for a keyword. You are sending them that resource by private message RIGHT NOW.
 
 So this reply has TWO jobs and needs both:
 1. ENGAGE with what they actually said. They didn't only drop the keyword — they wrote something real (an opinion, their own experience, a question). React to THAT, specifically, the way you would to any good comment. This is the part that matters; a reply that skips it is worthless.
 2. CONFIRM the resource is sent, in a SHORT closing beat — "te lo acabo de mandar", "lo tienes en privado", "te lo he pasado por DM". Casual, tacked on at the end, NOT the headline of the reply.
 
-Order matters: engage FIRST, confirm LAST. Never open with "enviado" — that turns a real comment into a receipt, which is exactly what we're trying to avoid. Keep the whole thing to ONE sentence even with both jobs: engage and confirm in the same breath.\n`
-    : '';
+Order matters: engage FIRST, confirm LAST. Never open with "enviado" — that turns a real comment into a receipt, which is exactly what we're trying to avoid. Keep the whole thing to ONE sentence even with both jobs: engage and confirm in the same breath.\n`;
 
   return `You are ${input.authorName}. Reply to a comment on your own post.
 
