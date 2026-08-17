@@ -860,6 +860,41 @@ const migration = `
   ALTER TABLE lead_magnet_sends ADD CONSTRAINT lead_magnet_sends_kind_check
     CHECK (kind IN ('dm','invite','inmail'));
   ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS verificado BOOLEAN;
+
+  -- v37: 'ask' — el recibo de "a esta persona se le PIDIO que nos mande ella la
+  -- solicitud". Es el unico kind que NO manda nada a LinkedIn: lo que sale de
+  -- verdad es la respuesta publica al comentario, y esta fila es lo que permite,
+  -- dias despues, cruzar contra las solicitudes recibidas y saber quien ha dado
+  -- el paso. Sin ella, la persona manda su solicitud y no aparece por ningun
+  -- lado.
+  --
+  -- Nace de retirar la invitacion con nota y el InMail (Iker, 2026-08-17): la
+  -- herramienta ya no agrega a nadie. El cupo semanal de invitaciones se acaba,
+  -- en la cuenta de Unai estan baneadas desde el 14/08, y los creditos de InMail
+  -- son pocos. Pedir la solicitud no tiene tope y encima construye red.
+  --
+  -- 'invite' e 'inmail' se quedan en el CHECK: sus filas historicas siguen ahi y
+  -- se siguen leyendo (Seguimientos, /reverificar). Lo que ya no se hace es
+  -- crear nuevas, y eso lo impone la ruta, no la BD.
+  --
+  -- El CHECK viejo se busca por su DEFINICION y no por su nombre, por lo mismo
+  -- que en v36: un DROP CONSTRAINT IF EXISTS con el nombre equivocado es un
+  -- no-op silencioso, el constraint viejo se queda, y el fallo no se ve hasta el
+  -- primer lead magnet real.
+  DO $$
+  DECLARE c TEXT;
+  BEGIN
+    FOR c IN
+      SELECT conname FROM pg_constraint
+       WHERE conrelid = 'lead_magnet_sends'::regclass
+         AND contype = 'c'
+         AND pg_get_constraintdef(oid) ILIKE '%kind%'
+    LOOP
+      EXECUTE format('ALTER TABLE lead_magnet_sends DROP CONSTRAINT %I', c);
+    END LOOP;
+  END $$;
+  ALTER TABLE lead_magnet_sends ADD CONSTRAINT lead_magnet_sends_kind_check
+    CHECK (kind IN ('dm','invite','inmail','ask'));
 `;
 
 /**
