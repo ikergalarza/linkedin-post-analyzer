@@ -474,6 +474,48 @@ La única excepción es SINGULARU, que es ecommerce puro de ofertas. **Cero masc
 
 ---
 
+### 8e · ⭐ SEGUNDA SEMANA DE LOS MISMOS REMITENTES (11-17 ago 2026, 39 correos)
+
+El corpus más útil de todos, porque **repite remitentes**: lo que aparece las dos semanas es sistema, lo que aparece una es capricho.
+
+#### Lo que queda CONFIRMADO con dos semanas
+- **La mediana del asunto no se mueve: 36 caracteres / 7 palabras**, con n=32 y n=39. Es el dato más sólido que tenemos.
+- **Las horas, clavadas al minuto otra vez:** Isra Bravo 23:29 (**14 de 14 en dos semanas**) · SINGULARU 09:30 entre semana y 08:30 los domingos · Juan Domínguez 14:02 (6 de 6) · RunnerPro 13:00-13:07 · Content Playbook domingos 13:0x. **La constancia del minuto es el patrón más fuerte del corpus entero.**
+- **Las micro-aperturas se repiten idénticas:** Isra abre *"Mira."*, RunnerPro *"Escúchame."*. No son variaciones: son fórmulas fijas.
+- **Los paréntesis suben de 12% a 15%** de los asuntos.
+
+#### ⭐ Lo NUEVO que merece robarse
+
+**1. El asunto de UNA palabra.** Isra bajó su mediana de 30 a 21 caracteres, con estos: `Gordo` (5c, una palabra) · `10 detalles` · `Cállate, subnormal` · `Tu madre es peligrosa`. **Un asunto de una palabra es el máximo curiosity gap posible**: no hay nada que resolver salvo abriendo. Se puede usar cuando ya tienes relación con la lista; en frío no.
+
+**2. Adelantarse a la ofensa.** *"Este email puede molestar a algunas personas, porque hablo de gordos y digo, gordos."* Es el lector ventrílocuo aplicado a la incomodidad: la nombras tú antes de que la sienta él, y el lector deja de estar a la defensiva.
+
+**3. El personaje con nombre y CIFRA.** *"Germán era amigo mío... Germán tenía veinticinco años. Y veinticinco kilos de más."* La cifra concreta pegada a un nombre de pila es lo que hace real una historia (y encaja con `§7`: nombre de pila sí, empresa nunca).
+
+**4. La universalización, que es la bisagra.** *"Pero lo interesante no es su peso. Es la distancia entre ser consciente de un problema y asumir la responsabilidad de resolverlo."* **Plantilla: "lo interesante no es X, es Y."** Convierte una anécdota de UNO en un principio que le aplica al lector. Es el puente entre historia y venta, y es reutilizable tal cual.
+
+**5. El referido DENTRO del CTA, no en la PD.** *"Si estás en esa situación **o conoces a alguien así**, pásale el capítulo 12."* Le da salida al que no se identifica: en vez de perderlo, lo convierte en distribuidor.
+
+**6. ⭐ El paréntesis que rescata al que no compra.** Hugo López cierra su lanzamiento con `Hoy se cierra la lista prioritaria de Mambo (léelo aunque no entres)`. **El 95% de la lista no va a comprar y ese paréntesis evita que desconecten**, que es lo que mata una secuencia de lanzamiento. Cuesta cuatro palabras.
+
+**7. Usar la escasez y acto seguido rechazarla.** *"111 personas apuntadas para 20 sitios. Pero no quiero que te decidas por las plazas. Quiero que te decidas por esto que voy a contarte."* Pone el dato y renuncia a él en voz alta. Nombrar la manipulación y descartarla hace que el argumento de verdad pese el doble.
+
+**8. Miedo competitivo, no FOMO.** *"Imagínate el sector dentro de seis meses. Van a existir 20 personas que habrán aprendido... y todo el resto haciendo lo de siempre. **Comparten mercado.**"* No es "te lo vas a perder": es "otros van a por tus clientes". Para B2B industrial es directamente trasladable.
+
+**9. La fricción admitida.** RunnerPro: *"No te voy a mentir: las dos primeras semanas las pasó fatal."* Reconocer la parte dura **antes** de prometer el resultado es lo que hace creíble el resultado.
+
+**10. El Pd2 como contador serial.** Evolucionó de una semana a otra: *"¿por cuántas salidas del reto vas?"* → *"semana dos del reto. Si vas por 4-5 salidas, vas perfecto."* **Un contador que avanza entre correos convierte la newsletter en un programa con progreso.**
+
+**11. La PD que explica la mecánica.** Hugo dedica la PD a contar exactamente qué pasa tras rellenar el formulario, paso a paso, rematando con *"Y ojo, que reviso yo. No es un correo automático."* Baja la fricción explicando el proceso, no insistiendo.
+
+#### El contraste que vale de ejemplo: la newsletter de MailerLite
+Sus propios asuntos: *"Welcome to our newsletter! 🎉 Here's what you need to know."* Exclamación, emoji, genérico y sin gap. **La plataforma de email escribe peor que cualquier creador independiente del corpus.** Sirve para recordar que "lo hace una empresa grande" no es argumento.
+
+#### ⛔ Lo que NO se copia, y sigue siendo nuestra ventaja
+Isra Bravo es **99% líneas individuales**. Nosotros mantenemos **líneas sueltas como base pero con bloques de 2 y de 3** (`§3`), porque dan retención y son firma de marca. El corpus dice qué hace el sector; nuestra experiencia dice qué nos funciona a nosotros. **El formateado no se toca.**
+
+---
+
 ## 9 · Entrega y validación (cada email, sin excepción)
 
 - **Cada email va en su bloque cercado** (` ``` ` sin lenguaje), formato exacto:
