@@ -1438,6 +1438,8 @@ Acceso libre.
 
 **La consecuencia práctica, para no dudar nunca más:** el gancho lleva el concepto NUEVO; **la imagen y la web llevan el concepto VIEJO**, que es el que ya está indexado y construido. Y no se toca nada.
 
+**⛔ Y ESTO NO ES SOLO DE LA PALABRA DEL BANNER: ES DE TODO EL TEXTO DE LA FOTO (Iker, 2026-08-18).** Lo escribí pensando en el CTA y por eso dejé la **cabecera** de la imagen calcando el gancho, con `riendas` saliendo dos veces en la misma foto. **La cabecera es otro texto complementario**, con su ancla de ventas y **sin ninguna palabra en naranja**, que la naranja es una por imagen y en este pilar va en el CTA. Los tres checks del título están en `images §0h-COMPLEMENTO`.
+
 #### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
 
 **1 · EL GANCHO: DOS PIEZAS VALIDADAS, Y LO ÓPTIMO ES LLEVAR LAS DOS A LA VEZ.**

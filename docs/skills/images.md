@@ -678,6 +678,24 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 - **UN SOLO PARRAFO**, siempre. Nada de listas, nada de lineas sueltas, nada de `(1) (2) (3)`, cero parentesis y cero comillas.
 - **⚠️ Y ESTO NO ES DEL PROMPT DE IMAGEN: ES GLOBAL** (Iker, 2026-08-18).
 
+## 🛑🛑 0h-COMPLEMENTO · LA COMPLEMENTARIEDAD ES DE **TODO** EL TEXTO DE LA IMAGEN, NO SOLO DEL CTA (Iker, 2026-08-18)
+
+**El fallo, y es de los gordos.** El lead magnet de `/llaves/` salió con la cabecera diciendo *"Claude me robó las riendas de mi LinkedIn"*, que es **el gancho del post calcado**, y con `riendas` apareciendo **dos veces en la misma foto**, arriba y en el banner. Iker: *"hemos estado toda la mañana discutiendo el tema de los textos complementarios y has puesto arriba el mismo texto de la publicación. Es un error garrafal"*.
+
+**⛔ POR QUÉ ME EQUIVOQUÉ, Y ES LO QUE HAY QUE PREVENIR, PORQUE NO FUE FALTA DE CONTEXTO:**
+1. **La regla ya existía** (`§1b`: el título de la imagen no repite el hook). No la corrí.
+2. **El disparador fue un CAMBIO, no la creación.** El primer prompt estaba bien: cabecera `llaves`, gancho `riendas`. Al cambiar el gancho, **propagué el cambio a la cabecera** en vez de alejarla más. **Cuando cambia el gancho, el título de la imagen NO se actualiza para seguirlo: se separa.**
+3. **Y la regla de complementariedad la había escrito hablando de LA PALABRA DEL BANNER**, así que al releerla no me cubría la cabecera. **Error de alcance:** apliqué la regla a un elemento de la imagen y no a todos.
+
+**LA REGLA, ahora sin agujeros: CADA texto de la imagen es complementario al del post. Cabecera, etiquetas, pies y banner.** El único que puede coincidir con algo del post es **la palabra del gate**, y solo porque es la puerta del recurso.
+
+**LOS TRES CHECKS DEL TÍTULO DE LA IMAGEN, antes de meterlo en el prompt:**
+1. **¿Repite alguna palabra del gancho?** Si sí, se reescribe. Ni la metáfora, ni el verbo, ni el remate.
+2. **¿Lleva ancla de VENTAS?** (Iker, 2026-08-18: *"ahora no tiene ni vinculación a ventas"*.) Corto, punchy **y** de ventas, las tres a la vez. Ej. validado: `Un post que no vende, sobra.`
+3. **¿Cuántas palabras naranjas hay en TODA la imagen?** **UNA.** Y en un lead magnet **va en el CTA del banner**, porque es donde tiene que caer el ojo. **El título va entero en berenjena.** Dos naranjas reparten la mirada y matan el CTA, que es el único motor del pilar.
+
+**El test de un vistazo, que resume los tres:** tapa el post, mira solo la foto. **¿Aporta algo que el post no dice, y sabes qué palabra comentar?** Si la foto repite el gancho, has gastado el único espacio visual del post en decir dos veces lo mismo.
+
 ## 🛑🛑 0h-FILTROS · EL TEXTO QUE VA DENTRO DE LA IMAGEN ES COPY NUESTRO Y PASA LOS MISMOS FILTROS QUE EL CUERPO (Iker, 2026-08-18)
 
 **El fallo, y es de los caros porque llega hasta el diseñador.** Para el banner del lead magnet de `/llaves/` copié el literal de Martín Arosa palabra por palabra: `Comenta "PALABRA" y te lo envío por mensaje privado`. Dos líneas donde cabía una, y un `por mensaje privado` que **nuestra propia `brand-voice §2c` prohíbe** (familia 5, sacar gente a privado). Lo cazó Iker mirando la imagen ya generada: *"asegúrate de que esto no vuelva a pasar, tu primer prompt tendría que haber tenido en cuenta estos cambios también"*.
