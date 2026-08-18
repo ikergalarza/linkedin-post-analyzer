@@ -1237,6 +1237,17 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **CÓMO SE ENCUENTRA QUÉ FALTA: se abre el HTML del recurso y se cuenta, no se opina.** En `/llaves/` (18/08): `Claude` salía **6 veces en 111 KB** y las seis fuera del contenido (title, dos metas, hero, una lista de herramientas, ficha del autor), y `prompt` salía **0 veces**. O sea que el post prometía *"monté un sistema con Claude que hace 3 cosas"* y la guía entregaba un playbook manual. **Ese grep es el diagnóstico entero**, y es reproducible en los otros diez.
 
+**🎨 Y LA COHERENCIA DE DISEÑO GLOBAL MANDA SOBRE EL COPY NUEVO (Iker, 2026-08-18).** Al reeditar hay que retocar los textos que venden el recurso (lede del gate, metas, card de la home), y ahí es por donde se rompe la web: *"que no hayas propuesto nuevos títulos que ya vayan a ocupar más de lo que siempre tienen que ocupar"*. **Los invariantes se MIDEN contra los once ya publicados, no se recuerdan.** Medido el 18/08 sobre `index.html`:
+
+| campo | rango real del catálogo (n=11) | dónde está `/llaves/` |
+|---|---|---|
+| `h3` de la card | **30-42 caracteres**, siempre **exactamente UN `<em>` coral** | **42 · el máximo de los once** |
+| `p` de la card | 85-109 caracteres | **109 · el máximo** |
+| `p.card-p-m` (móvil) | 51-65 caracteres | **65 · el máximo** |
+| lede del gate | 155-190 caracteres · 3 líneas a 1440 y 4 a 360 | — |
+
+**Consecuencia práctica, y vale para cualquier reedición:** el copy nuevo entra **a la misma longitud o más corto, nunca más largo**. Si lo que quieres nombrar no cabe, **se recorta el copy**; no se estira la caja ni se toca el CSS (`lead-magnet-web §4c`). Y en `/llaves/` los tres campos están ya en el techo del catálogo, así que ahí el margen es cero.
+
 **⚠️ ESTO NO CONTRADICE `lead-magnet-web §2`** (*"nace de una duda real y repetida, no de reciclar contenido con un título bonito"*). Aquello prohíbe **empaquetar contenido viejo con un título nuevo**; esto obliga a **reeditar un tema que ya demostró que pica**. Lo que se reutiliza es la evidencia, no el relleno.
 
 #### 📈 4.5.0-CTA-IMAGEN-MEDIDO · EL BANNER EN LA FOTO FUNCIONA, Y EL CUELLO DE BOTELLA SE HA MOVIDO (medido 2026-08-14)
