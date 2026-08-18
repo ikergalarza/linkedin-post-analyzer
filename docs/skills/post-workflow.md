@@ -1350,6 +1350,35 @@ moverse, se verifica o se quita.
 
 **Y la longitud sale sola de ahí.** El post pasó de 1.702 a 1.217 caracteres solo con esto, en la zona del 483 y el 232. No se acorta recortando frases: se acorta no contando lo que se regala.
 
+#### 🛑🛑 4.5.0-REFERENTES-PRIMERO · ANTE LA SOSPECHA DE CAPADO, LO PRIMERO ES MIRAR A LOS REFERENTES. AUTOMÁTICO (Iker, 2026-08-18)
+
+> **La regla ya existía** como "lección de método" al final de `§4.5.0-CTA`, y **por estar contada como anécdota no se dispara**. Aquí queda como **reflejo obligatorio**, con su comando.
+
+**EL DISPARADOR, y no hace falta que Iker lo pida:** en cuanto alguien —él o yo— diga *"creo que nos han bloqueado la palabra X"*, **lo PRIMERO que se hace, antes de tocar una coma de nuestro texto, es sacar los últimos posts de Martín Arosa y de Guillermo Flor y ver si ELLOS siguen usando X.** Iker: *"esto deberías haber tenido tú la capacidad de pensar: ostras, vamos a revisar a estos creadores a ver cómo lo están haciendo estos días"*.
+
+**EL COMANDO, para no tener que reconstruirlo bajo presión:**
+```
+GET {UNIPILE_BASE_URL}/api/v1/users/{pid}/posts?account_id={id}&limit=25
+  Martín Arosa   ACoAADZxEhwBY2fsFAEmdrvJato1IwHiB8W0NgQ
+  Guillermo Flor ACoAABBit2ABCYNySanEgukvlFBH-HcIKGlWHu8
+```
+Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `text`. **Solo el TEXTO**: la foto no la clasifica LinkedIn, y de hecho ellos siguen metiendo `comenta` dentro de la imagen.
+
+**EL CASO QUE LO FIJA (18/08, con el post ya subido y a punto de borrarlo).** Hipótesis: *"habrán bloqueado `conecta` como bloquearon `comenta`"*. Medido en 2 minutos:
+
+| hace | comentarios | qué lleva en el TEXTO |
+|---|---|---|
+| **20 h** | **311** | `conecta` + `comenta` + `gratis` |
+| 1 d | **497** | `conecta` + `gratis` |
+| 3 d | **1.380** | `conecta` + `comenta` + `gratis` + `acceso libre` |
+| 3 d | **457** | `conecta` + `comenta` + `gratis` |
+
+**Cuatro posts en tres días con `conecta`, de 311 a 1.380 comentarios. Hipótesis muerta**, y sin tocar nuestro post.
+- **Guillermo Flor no siempre sirve:** sus 15 últimos son noticias de IA, cero lead magnets. **Un referente sin posts del pilar no es evidencia de nada**, ni a favor ni en contra. Se dice y se pasa al siguiente.
+- 🔎 **Y salió un hallazgo lateral que hay que investigar aparte, NO en caliente:** Martín Arosa **ha vuelto a meter `comenta` en el TEXTO** (20 h · 311💬 y 3 d · 1.380💬), justo lo que `§4.5.0-CTA` dio por muerto el 05/08. Si se confirma, esa sección se revisa. **No se toca a mitad de una crisis.**
+
+**⛔ POR QUÉ ESTO VA ANTES QUE BORRAR: borrar tiene coste medido.** El 06 y 07/08 resubimos tres veces y cada resubida fue **peor** que la anterior (67 → 19 → 163 impresiones). **Un borrado no devuelve el post al punto de partida**, así que la sospecha se confirma con datos ajenos antes de gastar esa bala.
+
 #### 🚦🚦 4.5.0-CAPADO-RAPIDO · CÓMO SABER EN 45 MINUTOS SI NOS HAN CAPADO (Iker, 2026-08-18)
 
 **El problema real, y es de decisión, no de análisis:** un post se sube a las 12, se tarda horas en despegar, y si te enteras tarde de que está capado ya has perdido la mejor franja del día. Iker, con el post recién subido: *"¿cómo puedo darme cuenta rápido de si estamos bloqueados o no?"*.
@@ -1361,6 +1390,8 @@ moverse, se verifica o se quita.
 | impresiones a los 60 min | veredicto | evidencia |
 |---|---|---|
 | **< 100** | 🔴 **capado, se borra** | los 3 de agosto: 19 en 1 h · 67 en 24 h · 163 |
+
+**⚠️ Y OJO CON LEER EL SEMÁFORO A LOS 7 MINUTOS, QUE ES CUANDO MÁS MIEDO DA (Iker, 2026-08-18).** El post de `riendas` tenía **20 impresiones a los 7 minutos** e Iker lo dio por bloqueado. **No cuadra con el patrón:** un capado de verdad hizo **19 impresiones en UNA HORA**. 20 en 7 minutos es ~170 al ritmo de la primera hora, o sea **nueve veces el ritmo de un capado**. **El umbral es por HORA y se lee a la hora**; extrapolar los primeros minutos asusta y hace borrar posts sanos.
 | 100-300 | ⚠️ dudoso, esperar a las 3 h | — |
 | **> 300** | ✅ reparto normal | el 12/08 llegó a 2.092 |
 
