@@ -592,7 +592,7 @@ Hay **dos** y hay que repartirlos, o salen duplicados:
 **Hasta ahora la lista se alimentaba de la base del CRM y de los gates de recursos. Desde el 18/08 hay una puerta propia: `recursos.neety.com/newsletter/` (alias `/correo/`), que es un formulario y nada más.**
 - **Le llega tráfico desde el SEGUNDO spam ninja de los posts** (`global §4.4e`): el bloque de correo que va en historia, despiece, insight, evento y meme corto. No va en mapa, ni en "Los 10", ni en el post del lead magnet.
 - **El formulario pide nombre, correo y el desplegable de "¿cómo nos conociste?"**, que es lo que permite segmentar: la mayoría vendrán de LinkedIn, pero no todos. **Ese campo y los UTM se validan mutuamente**, igual que ya pasó el 10/08 con el `origen: newsletter` del que vino del correo 0.
-- **El consentimiento de newsletter es obligatorio ahí** (y también en los gates de recurso desde el 18/08, `lead-magnet-web §3b`), así que todo el que entra por esta vía es alta limpia y no hay que filtrar después.
+- **El consentimiento de newsletter es obligatorio ahí, y esa página es la ÚNICA donde lo es** (`lead-magnet-web §3b`): en un gate de recurso o en `/agendar/` la casilla siempre es voluntaria, porque obligar a suscribirse para descargar otra cosa convierte peor y además es consentimiento agrupado, que por RGPD no vale. En `/correo/` sí, porque ahí el servicio que se pide **es** el correo. Consecuencia buena para nosotros: todo el que entra por esta vía es alta limpia y querida, no hay que filtrar después.
 - ⚠️ **Al planificar una tanda, estos NO son la base fría del CRM**: han pedido el correo ellos. Van a su propio grupo y no se mezclan con los grupos de origen del warm-up.
 
 ### 🔴 LOS UTM SON DE LA CUENTA, NO DE LA CAMPAÑA (Mario, 2026-08-10)

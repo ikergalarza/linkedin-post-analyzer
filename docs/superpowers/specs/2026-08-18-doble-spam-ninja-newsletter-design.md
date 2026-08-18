@@ -44,7 +44,7 @@ sigue cerrando con la frase suelta.
 | MEME | agendar | ⚠️ solo si el post entero cabe en 450 caracteres | Los 18 memes de <=450 tienen mediana de 11.602 impresiones contra 3.760 de los de 451-700. Dos bloques son ~270 caracteres con las URLs. |
 | MAPA | ultra ninja | ❌ | El ultra ninja rinde porque nada en el post huele a venta, y es el pilar que más clics da del histórico. El correo va en la PÁGINA del mapa. |
 | "LOS 10" | agendar | ❌ | Único pilar con quejas reales de CEOs. El diagnóstico escrito: "un homenaje que acaba en un enlace convierte a la empresa mencionada en decorado de un anuncio". Dos enlaces lo duplican sobre 10 personas mencionadas con nombre. |
-| LEAD MAGNET | ❌ | ❌ en el post | Su motor es el conteo de comentarios y cualquier enlace lo parte. El correo entra por el DM privado (que ya lleva ninja) y por el gate, donde el consentimiento de newsletter pasa a obligatorio. |
+| LEAD MAGNET | ❌ | ❌ en el post | Su motor es el conteo de comentarios y cualquier enlace lo parte. El correo entra por el DM privado (que ya lleva ninja) y por la casilla **opcional** del gate. **Obligar a suscribirse en un gate está prohibido** (Iker, 2026-08-18): convierte peor y es consentimiento agrupado, nulo por RGPD. |
 
 ### El copy
 
@@ -76,7 +76,10 @@ y una palabra que un industrial de 55 años entiende a la primera.
   desplegable es el que permite segmentar: la mayoría vendrán de LinkedIn, pero
   no todos.
 - Consentimiento de newsletter **obligatorio y no premarcado** (premarcarlo es
-  nulo por RGPD). Los dos consentimientos que ya lleva el formulario se quedan.
+  nulo por RGPD). **Esta página es la única donde ese consentimiento es
+  obligatorio**: en los gates de recurso y en `/agendar/` sigue siendo voluntario,
+  porque allí sería consentimiento agrupado. Aquí vale porque el servicio que se
+  pide es el correo. Los dos consentimientos que ya lleva el formulario se quedan.
 - CTA que no sea "Enviar".
 - **Notificación a Google Chat igual que los demás formularios**, y alta en
   MailerLite en su propio grupo con el origen.
@@ -108,8 +111,8 @@ pilares que más convierten y se queda solo en historia y despiece.
   (por pilar)" de `§4.4b` con la columna del bloque 2.
 - `docs/skills/post-workflow.md` — el paso del ninja en cada runbook y el
   planificador semanal.
-- `docs/skills/lead-magnet-web.md` — el consentimiento obligatorio en el gate y
-  el ninja de correo en el DM.
+- `docs/skills/lead-magnet-web.md` — la regla de que el consentimiento NUNCA es
+  obligatorio en un gate, y el ninja de correo en el DM.
 - `docs/skills/email-marketing.md` — de dónde entran ahora los suscriptores.
 - `scripts/validar-post.py` — los checks nuevos.
 - `backend/src/services/postPrompt.ts` y el `SYSTEM_PROMPT` de

@@ -69,13 +69,27 @@ El error de bulto va en las dos direcciones y las dos matan:
 
 ---
 
-## 3b · 📬 EL CONSENTIMIENTO DE NEWSLETTER, OBLIGATORIO EN EL GATE (Iker, 2026-08-18)
+## 3b · ⛔⛔ EL CONSENTIMIENTO DE NEWSLETTER NUNCA ES OBLIGATORIO EN UN GATE (Iker, 2026-08-18)
 
-**Desde el 18/08 el lead magnet también capta suscriptores, y lo hace AQUÍ, no en el post.** El post del lead magnet **sigue sin llevar enlace** (`global §4.4b` y `§4.4e`): su motor entero es el conteo de comentarios y cualquier enlace lo parte. Así que el correo entra por las dos superficies donde no compite con nada:
-1. **El GATE** — de los dos consentimientos que el formulario ya lleva por RGPD, **el de recibir el correo pasa a ser obligatorio** para enviar. No se premarca (un consentimiento premarcado es nulo): se marca él, y sin marcarlo el botón no envía. El resto del formulario no se toca.
-2. **El DM privado**, que ya cierra con spam ninja después del recurso (`global §4.4b`, el matiz del 22/07). Ahí el destino puede ser `agendar` o, si el que comenta aún está frío, `https://recursos.neety.com/correo/`.
+> **🔴 ESTO LO PROPUSE AL REVÉS Y ES DE LOS ERRORES QUE MÁS CARO SALEN.** Al montar el segundo spam ninja escribí aquí que el consentimiento de newsletter *"pasa a ser obligatorio"* en el gate del recurso, para que el lead magnet captara suscriptores. **Iker lo tumbó en el momento y tiene razón por dos motivos independientes, cada uno suficiente.**
 
-**Por qué no en el post, dicho una vez para no volver a proponerlo:** el lector que iba a comentar duda entre comentar o clicar, y el conteo de comentarios es TODO el motor del formato. La captura de correo del lead magnet ya existía — es el gate. Lo único que faltaba era **pedir el permiso de newsletter ahí dentro**.
+**1. El motivo de conversión, que es el que dicen los expertos:** *"si tú entras al gate de un recurso es porque quieres el recurso, no porque quieres la newsletter"*. Obligar a suscribirse para descargar algo **traiciona el trato** que el gate acaba de ofrecer. El que iba a dejar el correo se lo piensa, y el que lo deja obligado entra a la lista sin querer estar: abre menos, se da de baja antes y ensucia las métricas de la cuenta de envío.
+
+**2. El motivo legal, que no es opinable:** condicionar un servicio a un consentimiento de marketing que no hace falta para prestarlo es **consentimiento agrupado**, y por RGPD ese consentimiento **no es válido**. El gate entrega un recurso; mandarte correo comercial después es otra cosa distinta, y por eso va aparte y se acepta aparte.
+
+**La regla, entonces:**
+| Dónde | La casilla de recibir el correo |
+|---|---|
+| **Gate de cualquier recurso** | ✅ opcional, sin premarcar. **Nunca obligatoria.** |
+| **Formulario de `/agendar/`** | ✅ opcional, sin premarcar. **Nunca obligatoria.** |
+| **`recursos.neety.com/correo/`** (la landing de suscripción) | ⛔ **obligatoria, y es la ÚNICA excepción** |
+
+**Por qué ahí sí, y por qué eso no contradice nada de lo de arriba:** en `/correo/` **el servicio que se pide ES el correo**. No hay nada agrupado, porque no hay dos cosas: el permiso no es un extra sobre otra entrega, es la entrega. Iker, textual: *"obviamente, nos tienes que dar los permisos para mandarte correo"*. Fuera de esa página, la casilla siempre es voluntaria.
+
+### Entonces, ¿de dónde saca suscriptores un lead magnet?
+El post del lead magnet **sigue sin llevar enlace** (`global §4.4b` y `§4.4e`): su motor entero es el conteo de comentarios y cualquier enlace lo parte. Así que el correo entra por donde no compite con nada y sin forzar a nadie:
+1. **La casilla opcional del gate**, que ya existía. Quien quiera, la marca.
+2. **El DM privado**, que ya cierra con spam ninja después del recurso (`global §4.4b`, el matiz del 22/07). Ahí el destino puede ser `agendar` o, si el que comenta aún está frío, `https://recursos.neety.com/correo/`, que es la puerta barata.
 
 ---
 
