@@ -1350,6 +1350,28 @@ moverse, se verifica o se quita.
 
 **Y la longitud sale sola de ahí.** El post pasó de 1.702 a 1.217 caracteres solo con esto, en la zona del 483 y el 232. No se acorta recortando frases: se acorta no contando lo que se regala.
 
+#### 🚦🚦 4.5.0-CAPADO-RAPIDO · CÓMO SABER EN 45 MINUTOS SI NOS HAN CAPADO (Iker, 2026-08-18)
+
+**El problema real, y es de decisión, no de análisis:** un post se sube a las 12, se tarda horas en despegar, y si te enteras tarde de que está capado ya has perdido la mejor franja del día. Iker, con el post recién subido: *"¿cómo puedo darme cuenta rápido de si estamos bloqueados o no?"*.
+
+**🔴 LO PRIMERO, PORQUE ES LA LECTURA QUE FALLA: QUE SALGA EN "RECIENTE" NO DESCARTA EL CAPADO.** LinkedIn tiene dos feeds y no dicen lo mismo. **Reciente** es cronológico de a quién sigues y apenas pasa por el algoritmo, así que un post capado **también** sale ahí. **Principal** es el que decide el reparto. Mirar Reciente y respirar tranquilo es exactamente el error que hay que evitar. Y en Principal hay que mirar **a los 30-45 minutos**, no a los 3: a los 3 minutos casi nada ha entrado todavía.
+
+**EL SEMÁFORO, con nuestros propios números y no con sensaciones:**
+
+| impresiones a los 60 min | veredicto | evidencia |
+|---|---|---|
+| **< 100** | 🔴 **capado, se borra** | los 3 de agosto: 19 en 1 h · 67 en 24 h · 163 |
+| 100-300 | ⚠️ dudoso, esperar a las 3 h | — |
+| **> 300** | ✅ reparto normal | el 12/08 llegó a 2.092 |
+
+**LAS DOS PRUEBAS DE APOYO, por orden de coste:**
+1. **La cuenta ajena.** Alguien que **NO siga** a la cuenta busca su nombre y mira si el post aparece en el perfil y en su Principal. Si a un no-seguidor no le sale ni entrando al perfil, es señal dura.
+2. **Unipile, en 10 segundos y sin depender de nadie:** `GET /users/{provider_id}/posts?account_id=…&limit=4` devuelve `reaction_counter`, `comment_counter` y `repost_counter` del último post con su antigüedad. **No da impresiones**, así que no sustituye al semáforo, pero **sí distingue un post muerto de uno vivo**: el de `riendas` tenía 1 reacción, 2 comentarios y 1 repost **a los 6 minutos**, y los capados de agosto no tuvieron nada parecido.
+
+**⛔ Y LA DECISIÓN QUE CUELGA DE ESTO: el calentamiento manual del equipo se gasta DESPUÉS de pasar el semáforo, no antes.** Iker no compartió el post en el chat de la empresa hasta comprobarlo, y es lo correcto: **avisar al equipo de un post que no se está repartiendo es quemar la única palanca manual que tenemos.**
+
+**⚠️ `conecta` NO es sospechoso, ya está probado dos veces.** `(Conecta conmigo para que pueda escribirte)` iba en el 12/08 (2.092 imp · 71💬) y en el 14/08, los dos posteriores al bloqueo del 05/08, y ninguno se capó. Antes de sospechar de una palabra, **míralo en el corpus** (`brand-voice §2c`): es la misma lección que con `prompt`.
+
 #### 🔥 4.5.0-CALENTAR · ANTES DE SUBIR, LA CUENTA COMENTA EN OTROS POSTS (Iker, 2026-08-18)
 
 **Iker, contándolo de pasada al ir a publicar:** *"ya he comentado con su cuenta en otras publicaciones para revivir su cuenta antes de subir algo"*.
