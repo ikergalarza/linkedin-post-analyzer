@@ -1208,6 +1208,37 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **⚠️ Y EL AVISO QUE ACOMPAÑA A ESTO: el tema es de él, así que el ÁNGULO tiene que ser NUESTRO.** Su promesa siempre es **volumen** (*"entre 50 y 200 prospectos cualificados en 15 minutos"*). La nuestra, por el informe de 50 demos, es lo contrario: **la criba y la prueba** (`aboutme §1b` pilar 1). Ahí es donde se le gana (`global §2.2b`, ser el segundo mejor), y no copiándole el número.
 
+#### 🔁🔁 4.5.0-REUTILIZAR · EL RECURSO NO SE CREA DE CERO: SE REUSA EL DE UN TEMA YA VALIDADO (Iker, 2026-08-18)
+
+> **Iker, textual:** *"ya que tenemos once, adaptar la mayoría. Primero repetir y double down en los que nos fueron ya hace meses, porque el otro día ya vimos que repitiendo el primero más viral se volvió a ir viral. No hay que perder el tiempo creando recursos de cero si ya tenemos ideas validadas que, con lo que sabemos hoy, podemos mejorarlas. Encima la gente se creerá que son recursos nuevos."*
+
+**LA REGLA: antes de proponer un recurso nuevo, se mira el catálogo de `recursos.neety.com`.** Si hay uno cuyo TEMA ya dio comentarios, se reutiliza **el mismo slug, la misma palabra de gate y el mismo enlace**, y se le mete lo que hemos aprendido desde entonces. Montar una página de cero es la excepción, no el punto de partida.
+
+**POR QUÉ ES BARATO Y ADEMÁS SE PERCIBE COMO NUEVO, y son tres cosas distintas:**
+1. **El slug y los tres registros ya existen** (`GATED`, `RESOURCES`, `withGuide`), el `robots.txt` y el sitemap ya están puestos, y la OG ya está hecha. El programador solo toca copy y bloques.
+2. **El que lo pidió hace meses tiene la cookie `neety_gate` y entra directo** — así que ve la guía nueva sin pagar peaje otra vez. No captura, pero recupera a un lead frío.
+3. **El que no lo vio en su día no distingue un recurso nuevo de uno reeditado.** El feed no tiene memoria; nuestra base de datos sí.
+
+**EL ORDEN DE LA COLA LO MANDA EL POST QUE GENERÓ EL RECURSO, NO LA FECHA DEL RECURSO.** Se ordena por comentarios (`outliers §4.48`: en este pilar el comentario ES la conversión) y se baja por la lista:
+
+| slug | recurso | post origen | com | ratio | estado |
+|---|---|---|---|---|---|
+| `/vibe/` | Claude Code para prospección B2B | 30/04 Unai | **632** | 9.41x | ✅ repetido 12/08 → 96c · 1.54x, **el único post de agosto por encima de 1x** |
+| `/perfil/` | Tu perfil como landing page B2B | 28/05 Iker, *desmonto perfiles* | **483** | 8.66x | ⚠️ reintentado el 17/07 como auditoría de web → 0.32x. Ese ángulo ya se gastó |
+| `/llaves/` | Le tiré las llaves de mi LinkedIn a Claude | 12/05 Unai (285) + 05/05 Iker (232) | **285** | 4.32x | 🔜 en adaptación 18/08 |
+| `/subvencion-euskadi/` | El 60% de tu IA lo paga el Gobierno Vasco | 24/07 Iker | 46 | 1.18x | sin repetir |
+| `/prospeccion-manual/` | 7 señales de que una empresa va a comprar | 28/07 Iker | 31 | 0.83x | sin repetir |
+| `/senales/` · `/errores/` · `/mensajes/` · `/propuesta/` | señales · errores de outbound · mensajes · comité | 28/04 · 21/04 · 18/06 · 15/07 | 23 · 120 · 18 · 20 | ≤2.14x | 🔴 mapeo de `/senales/` y `/errores/` **inferido, sin confirmar** |
+| `/criba/` · `/firma/` | criba · quién firma la compra | 14/08 Asier · 06-11/08 Iker | 16 · 19 | ≤0.54x | demasiado recientes, no tocar |
+
+**⛔ Y EL MATIZ QUE EVITA QUE ESTO SE USE MAL: reutilizar un tema VALIDADO no es lo mismo que reutilizar un tema que flopeó.** De los once, **dos** vienen de posts de 8x-9x y **nueve** de posts que no pasaron de 46 comentarios. Reeditar uno de esos nueve **no es una apuesta barata**: si el tema no picó, la página bonita no lo arregla, y entonces hay que cambiar el ÁNGULO — que ya es trabajo de recurso nuevo con un contenedor viejo. **Primero se agotan los validados.**
+
+**LA ADAPTACIÓN ES LIGERA, Y ESTO ES LO QUE NO SE TOCA NUNCA (Iker, 2026-08-18):** el TEMA, la metáfora del gancho, la palabra del gate, el H1, las secciones de la guía y el cierre. Iker, sobre mi primera versión, que reescribía `/llaves/` entera para llevarla a prospección: *"lo que estás pretendiendo hacer es cambiar por completo el recurso. Yo te había dicho adaptar un poco. No cambiar por completo el contenido para que sea de prospección, eso no tiene sentido"*. **Se corrige lo que hoy sabemos que falta, y nada más.**
+
+**CÓMO SE ENCUENTRA QUÉ FALTA: se abre el HTML del recurso y se cuenta, no se opina.** En `/llaves/` (18/08): `Claude` salía **6 veces en 111 KB** y las seis fuera del contenido (title, dos metas, hero, una lista de herramientas, ficha del autor), y `prompt` salía **0 veces**. O sea que el post prometía *"monté un sistema con Claude que hace 3 cosas"* y la guía entregaba un playbook manual. **Ese grep es el diagnóstico entero**, y es reproducible en los otros diez.
+
+**⚠️ ESTO NO CONTRADICE `lead-magnet-web §2`** (*"nace de una duda real y repetida, no de reciclar contenido con un título bonito"*). Aquello prohíbe **empaquetar contenido viejo con un título nuevo**; esto obliga a **reeditar un tema que ya demostró que pica**. Lo que se reutiliza es la evidencia, no el relleno.
+
 #### 📈 4.5.0-CTA-IMAGEN-MEDIDO · EL BANNER EN LA FOTO FUNCIONA, Y EL CUELLO DE BOTELLA SE HA MOVIDO (medido 2026-08-14)
 
 **El 12/08 fue el primer post con el `Comenta "X"` metido en la imagen (`§4.5.0-CTA-IMAGEN`). Resultado, contra los cuatro anteriores:**

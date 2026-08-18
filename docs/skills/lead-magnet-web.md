@@ -36,6 +36,7 @@ El error de bulto va en las dos direcciones y las dos matan:
 ## 2 · Qué recurso vale (antes de escribir la página)
 
 - **Nace de una duda real y repetida** de nuestro ICP, no de reciclar contenido con un título bonito. La mejor idea está donde tu audiencia repite una pregunta.
+- **⭐ PERO LO PRIMERO NO ES INVENTAR UN RECURSO, ES MIRAR EL CATÁLOGO (Iker, 2026-08-18).** Si ya hay uno en `recursos.neety.com` cuyo TEMA dio comentarios, se **reutiliza el slug, la palabra y el enlace**, y solo se le mete lo aprendido desde entonces. La cola y el matiz de qué temas valen para esto están en `post-workflow §4.5.0-REUTILIZAR`. **Esto no choca con la línea de arriba:** ahí se prohíbe empaquetar contenido viejo con un título nuevo; aquí se obliga a reeditar un tema que ya demostró que pica.
 - **Específico, nunca genérico.** ✅ *"Checklist para saber si tu prospección en LinkedIn está perdiendo oportunidades"* · ❌ *"Guía de ventas"*. (Esto es lo mismo que mató a la biblia 1.20x y al arsenal 0.64x en `global §4.4`.)
 - **Victoria rápida:** big fast value. Cuanto antes obtenga valor, más fácil que suelte el correo.
 - **Fórmula mental:** `resultado deseado + alta probabilidad de conseguirlo + poco tiempo + poco esfuerzo`.
