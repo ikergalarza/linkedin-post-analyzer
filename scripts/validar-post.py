@@ -492,6 +492,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         'entiende. ⚠️ Pero corto no es mutilado: no se recorta el OBJETO que pinta la '
         'imagen ni el matiz que sostiene el concepto', aviso=True)
 
+    # §2.2d-DOBLE — objetos con lectura fisica Y digital. Si el objeto tiene dos
+    # lecturas, gana la de pantalla porque es la que el lector usa a diario, y ahi
+    # se pierde de golpe la imagen mental y la nostalgia.
+    _DOBLE_LECTURA = ('buzon', 'buzones', 'carpeta', 'carpetas', 'archivo', 'archivos',
+                      'ventana', 'ventanas', 'nube', 'muro', 'perfil', 'agenda',
+                      'carrito', 'libreta', 'tablon')
+    _hn = normalizar_entidad(hook_txt)
+    _dobles = [w for w in _DOBLE_LECTURA if re.search(r'\b%s\b' % w, _hn)]
+
     # §2.2d — EL TEST DE LA CREADORA DE VIDEOS (Iker, 2026-08-17). §2.2 punto 1 ya
     # pedia "pintar una imagen", pero era yo juzgandome a mi mismo. Esto pone un
     # juez externo que no puede hacer trampa: una camara no puede grabar un
@@ -501,8 +510,16 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         'segundo? Tiene que haber un sujeto HACIENDO algo con un OBJETO. Si no se le '
         'ocurre ningun plano, el gancho no es lo bastante bueno y se descarta, por '
         'bien escrito que este. ⛔ "tu forma de vender ya no funciona" no se rueda; '
-        '"me planto el portatil delante", "le tire las llaves a Claude" y "saltandome '
-        'la mitad de los buzones" se ruedan solos', aviso=True)
+        '"me planto el portatil delante" y "le tire las llaves a Claude" se ruedan '
+        'solos' + (_dobles and
+        ' · ⛔⛔ Y OJO: el gancho lleva ' + ', '.join(f'"{w}"' for w in _dobles) +
+        ', que tiene DOS lecturas (fisica y de pantalla) y el lector coge la de '
+        'pantalla, que es la que usa a diario. La camara no sabe que grabar. '
+        'Cambiala por una que solo exista en el mundo fisico, o aterrizala con una '
+        'palabra al lado que no deje duda ("el buzon del portal") y mide si te sale a '
+        'cuenta el coste en caracteres (§2.2c). Caso real: "saltandome la mitad de los '
+        'buzones" se leyo como el del correo electronico y paso a "a medio barrio"'
+        or ''), aviso=True)
 
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
@@ -1708,6 +1725,35 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         chk(bool(_ls) and len(_ls[-1]) <= 78,
             'HISTORIA: cierra con una LECCIÓN corta y punchy (§4.6)',
             (f'la última línea {len(_ls[-1])} car' if _ls else 'sin cuerpo') + ' — la moraleja es corta ("Moments do", "El método sirve para cualquiera")')
+        # §4.6 punto 1c — el clasificador (backend/src/services/pillar.ts) separa
+        # historia de meme contando PRETERITOS: hacen falta 4. La del 13/08 tenia
+        # exactamente 4 y con 3 habria caido en 'meme'. Y esto choca de frente con
+        # §4.6-NOSTALGIA, que empuja al IMPERFECTO porque es el tiempo de la
+        # nostalgia en español: si escribes la etapa entera en imperfecto, el post
+        # se clasifica mal y deja de compararse contra su propio pilar. La mezcla
+        # correcta es imperfecto para la costumbre y preterito para los hechos.
+        _pret = [w for w in re.findall(
+            r'(?<![a-záéíóúñü])[a-záéíóúñü]{2,}(?:é|ó|aron|ieron|yeron)(?![a-záéíóúñü])',
+            cuerpo.lower())
+            if normalizar_entidad(w) not in ('que', 'porque', 'asi', 'aqui', 'ahi', 'alli',
+                                        'cafe', 'jose', 'ole', 'ademas', 'quizas',
+                                        'jamas', 'despues', 'tambien', 'segun', 'bebe')]
+        chk(len(_pret) >= 4,
+            'HISTORIA: 4+ preteritos, o la herramienta la clasifica como MEME (§4.6 1c)',
+            f'solo {len(_pret)} ({", ".join(_pret) or "ninguno"}). El clasificador cuenta '
+            'formas en -e/-o/-aron/-ieron acentuadas; un meme habla en PRESENTE y por eso '
+            'nunca llega a 4. ⚠️ Suele pasar al buscar la NOSTALGIA (§4.6-NOSTALGIA), que '
+            'pide imperfecto: usa imperfecto para la costumbre ("andaba en las mismas") y '
+            'PRETERITO para los hechos ("la cerre", "la eche", "pago")'
+            if len(_pret) < 4 else f'{len(_pret)}: {", ".join(_pret)}')
+
+        chk(False, 'ENTREGA: ¿es una ETAPA compartida o solo tu anecdota? (§4.6-NOSTALGIA)',
+            'El nivel que mas rinde no es "me paso esto y a ti tambien", es "aquella '
+            'epoca la vivimos varios a la vez": el lector no se acuerda de si mismo, se '
+            'acuerda de si mismo CON alguien, y por eso se lo manda. Nombra la etapa en '
+            'la linea 2, antes que la escena, y mete al colectivo (la cuadrilla, la '
+            'clase, los del barrio) SIN quitarle el protagonismo al YO', aviso=True)
+
         chk(not re.search(r'comenta\s+"', cuerpo, re.I),
             'HISTORIA: sin comment-gate — no pide comentar una palabra (§4.6)',
             'pedir "comenta X" la convierte en lead magnet; la historia cierra en la lección o lleva un CTA suave')

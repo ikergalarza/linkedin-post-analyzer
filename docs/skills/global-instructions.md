@@ -185,7 +185,15 @@ Iker: *"un gancho que no se pueda representar visualmente una creadora de vídeo
 
 **Encaja con lo que ya sabíamos y lo explica:** `§2.0a` pide **metáfora con objeto físico** y `§2.9` **verbo punchy**. Un plano necesita las dos cosas — algo que se ve y algo que pasa —, así que este test es la comprobación de que las dos están puestas. **Si el gancho no se puede rodar, o le falta el objeto o le falta el verbo.**
 
-**Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: el test de la creadora de videos`), en todos los pilares.
+**⛔ Y EL COROLARIO, QUE ES DONDE SE FALLA DE VERDAD: SI EL OBJETO TIENE DOS LECTURAS, LA CÁMARA NO SABE QUÉ GRABAR (Iker, 2026-08-17).** No basta con que haya objeto: **tiene que ser UNO**. Una palabra que hoy significa a la vez una cosa física y una cosa de pantalla se lee en la de pantalla, porque es la que el lector usa todos los días — y ahí se pierde la imagen mental y la nostalgia de golpe.
+
+**El caso:** el gancho decía *"saltándome la mitad de los buzones"* y Iker lo paró: **`buzón` es hoy antes el del correo electrónico que el del portal.** Cambiado a *"saltándome a medio barrio"*: `barrio` no tiene versión digital, y encima es una palabra de infancia, que es lo que pedía el pilar.
+
+**La familia entera, para reconocerla:** `buzón` · `carpeta` · `archivo` · `ventana` · `nube` · `muro` · `perfil` · `agenda` · `carrito` · `libreta` · `tablón`. Si el gancho descansa en una de estas, **o la cambias por una que solo exista en el mundo físico, o la aterrizas con una palabra al lado que no deje duda** (`el buzón del portal`), y entonces mide si te sale a cuenta el coste en caracteres (`§2.2c`).
+
+**El test rápido:** di el objeto en voz alta sin contexto. **¿Lo primero que ves es una pantalla?** Cámbialo.
+
+**Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: el test de la creadora de videos`), que además canta la familia de palabras de doble lectura si alguna aparece en el gancho.
 
 ### 2.3 · Ancla de sector en la primera línea
 Nuestro sector es **ventas B2B** (la IA es una herramienta que usamos, NO nuestra categoría). El hook debe leerse inequívocamente sobre VENDER. Ancla con la familia entera de señales de venta, **variando** (no reflex-type "ventas" cada vez):

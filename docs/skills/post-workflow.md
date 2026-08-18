@@ -1538,6 +1538,7 @@ Acceso libre.
 > **Las dos ÚNICAS condiciones bajo las que una historia personal sí viaja** (apuntes de expertos que pasó Iker):
 > 1. **Que seas conocido o autoridad.** Si lo eres, a la gente le interesa hasta lo que desayunas. Si no lo eres, a nadie le importa tu anécdota por sí sola. **Nosotros todavía no lo somos**, así que no contamos con esta.
 > 2. **Que le haya pasado a muchísima gente.** Identificación masiva: el lector se ve a sí mismo, lo comparte con un amigo, comenta su propia versión y se monta debate. **Esta es la única palanca que está en nuestra mano**, y por eso la historia se elige por cuánta gente ha vivido eso, no por cuánto nos marcó a nosotros.
+>    - ⭐ **AFINADO EL 2026-08-17 (`§4.6-NOSTALGIA`): no vale cualquier recuerdo compartido. El que más rinde es el de una ETAPA que se vivió CON alguien**, no el de una anécdota que le pasó a mucha gente por separado. Léelo antes de elegir la historia: cambia cuál eliges, no solo cómo la escribes.
 >
 > **Cómo se juzga un post de este pilar, entonces:** no por impresiones ni por ratio, sino por **calidad de conversación**. Comentarios en los que alguien cuenta SU caso · respuestas largas en vez de emojis sueltos · mensajes privados · guardados. Un 1x con quince comentarios personales ha cumplido su objetivo; un 3x con cero conversación, no.
 >
@@ -1563,6 +1564,32 @@ Acceso libre.
 > - **La conversación sube pero sigue corta:** 6 → 9 comentarios. Con la vara del propio pilar eso sigue siendo poco, así que la palanca a trabajar es esa, no el alcance.
 >
 > **Consecuencia al planificar (Iker, 2026-08-14): historia ENTRA en la rotación semanal de agosto** (`§8.0-AGOSTO`), en el sitio que deja el peloteo. Deja de ser "de vez en cuando, por variedad" mientras dure el override.
+
+> ### 🕰️ 4.6-NOSTALGIA · LA ETAPA COMPARTIDA BATE A LA ANÉCDOTA PROPIA (Iker, 2026-08-17)
+> **La actualización más importante de este runbook desde que existe, y afina `§4.6-OBJETIVO` condición 2.** Ahí ponía "que le haya pasado a muchísima gente". **Faltaba decir de qué tipo de recuerdo se trata**, y no todos valen lo mismo.
+>
+> Iker, textual: *"no es solo lo que le gusta a la gente esa primera persona nostalgia identificativa, sino esa primera persona nostalgia identificativa COMPARTIDA. No que te recuerde algo que has hecho tú, sino que te recuerde a una situación compartida con alguien"*.
+>
+> **LA ESCALERA, de menos a más potente:**
+>
+> | nivel | qué cuenta | por qué rinde menos o más |
+> |---|---|---|
+> | 1 · **Mi anécdota** | *"un día me pasó X"* | Solo funciona si eres conocido (`§4.6-OBJETIVO` condición 1), **y no lo somos** |
+> | 2 · **Mi anécdota que también es tuya** | *"me plantó el portátil delante"* | Ya es identificación. Es el nivel del 13/08 |
+> | 3 · **La ETAPA que vivimos varios a la vez** | *"aquel verano media cuadrilla andaba en las mismas"* | ⭐ **El bueno.** El lector no se acuerda de sí mismo, se acuerda de sí mismo **con alguien**, y eso es lo que hace que se lo mande a esa persona |
+>
+> **De dónde sale la observación, y explica por qué el nivel 3 gana:** Iker lo ve en la comunidad de Fortnite. Los vídeos que revientan **no narran una partida concreta con un amigo**, narran **la etapa entera**: cómo era jugar entonces, lo que se hacía, lo que ya no existe. *"Se centran más en hablar de la etapa en sí de nostalgia"* que del momento puntual. Una anécdota se lee; **una etapa se comparte**, porque el lector tiene delante a la persona con la que la vivió.
+>
+> **Y encaja con la firma medida del pilar** (`§4.6-MEDIDO`): historia no alcanza a mucha gente, pero **convierte al que alcanza mejor que ningún otro pilar** (0,41% de CTR contra 0,09% del mejor meme). Esa conversión sale de la cercanía, no del alcance — así que **la palanca del pilar es subir la cercanía, no perseguir impresiones**. La etapa compartida es exactamente eso.
+>
+> **CÓMO SE ESCRIBE, en tres movimientos:**
+> 1. **Nombra la etapa en la línea 2, antes que la escena.** `Aquel verano…`, `Cuando en clase…`, `En los veranos de…`. Es la línea que le dice al lector *"tú también estuviste ahí"*.
+> 2. **Mete al colectivo con el que se vivió** — la cuadrilla, la clase, el equipo, los del barrio —, **pero el protagonista sigue siendo YO** (`brand-voice`, canónico: yo > nosotros > tú). El grupo es el decorado del recuerdo, no el sujeto de la frase.
+> 3. **La escena concreta va DESPUÉS**, y sirve de prueba de que la etapa existió. Al revés no funciona: si abres con el detalle, el lector lo lee como tu historia y no como la suya.
+>
+> **⚙️ Y OJO CON EL CHOQUE TÉCNICO, que lo descubrí escribiendo esta misma publicación:** el tiempo natural de la nostalgia en español es el **IMPERFECTO** (`me pateaba`, `pagaban`, `echaba`), y el clasificador de la herramienta reconoce una historia contando **PRETÉRITOS** (`§4.6` punto 1c: hacen falta **4 o más** en `-é`, `-ó`, `-aron`, `-ieron`). **Si escribes la etapa entera en imperfecto, la herramienta la clasifica como meme y deja de compararse contra su propio pilar.**
+> - **La mezcla que funciona, y es además lo correcto en español:** **imperfecto para la costumbre** (`andaba en las mismas`, `tenía 15 años`) y **pretérito para los hechos** (`la cerré`, `la eché`, `pagó`). El idioma ya distingue el fondo del suceso; solo hay que usarlo bien.
+> - **Se cuenta antes de entregar**, no se supone.
 
 > ### 🎭 4.6-INVENTAR · LA ESCENA SE PUEDE INVENTAR. EL DOLOR, NUNCA (Iker, 2026-08-14)
 > **Es la ÚNICA excepción del pilar historia a "nunca inventes nada"**, y es exactamente la misma excepción que ya existía en email (`email-marketing §7`, Iker 2026-07-27). Fuera de estos dos sitios, el innegociable de `CLAUDE.md` sigue entero.
