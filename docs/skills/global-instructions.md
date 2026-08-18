@@ -143,6 +143,50 @@ Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tr
 2. **Toca una herida psicológica real.** En nuestro nicho (ventas B2B + IA): ser el comercial más lento/manual del equipo, que te reemplace un agente en silencio, no llegar a cuota mientras un compi con IA la revienta, parecer incompetente al lado de alguien más joven + AI-native, que tu rol no exista en 18 meses. Apunta al nervio sin ser cruel; el post es el alivio.
 3. **Maximiza UN pilar** (curiosidad/deseo/miedo). Un hook tibio en los tres es débil; uno despiadadamente en uno viaja.
 
+### ✂️ 2.2c · A IGUALDAD DE SENTIDO, GANA SIEMPRE EL GANCHO MÁS CORTO (universal — Iker, 2026-08-17)
+
+**La regla, y es de las que no admiten matiz:** si el gancho puede decir **exactamente lo mismo** con menos palabras, la versión corta es la buena. Siempre. Iker: *"siempre en la vida es mejor corto y bueno que largo y bueno, sobre todo alargarlo no aporta nada extra y es repetir información o redundante"*.
+
+**Lo que hay que entender, porque es lo que lo hace operativo:** alargar un gancho **nunca** añade fuerza. Lo que añade es o **redundancia** (una palabra que ya se deduce de otra) o **información que le tocaba al cuerpo**. Las dos gastan atención en el único sitio donde no sobra ni un carácter, que es antes del corte del "ver más" (`§2.0`).
+
+**EL PROCEDIMIENTO, y se corre SIEMPRE antes de dar un gancho por bueno:**
+1. **Escribe el gancho que te sale.**
+2. **Tacha una palabra. Y otra. Y otra.** Después de cada tachón, pregunta: *¿la frase sigue diciendo lo mismo?* Si sí, la palabra sobraba y no vuelve.
+3. **Para cuando el siguiente tachón se lleve un matiz de verdad.** Ahí está el gancho.
+4. **Y si dudas entre dos, gana la corta**, salvo que la larga traiga un matiz que el post necesite.
+
+**Los tres sospechosos habituales**, por orden de frecuencia:
+- **El complemento de sitio que el cuerpo ya sitúa.** `del barrio` cuando la línea 2 dice `mi calle`.
+- **El adjetivo de sector que además encoge el alcance** (`§2.3b`: `industriales`).
+- **La aclaración de lo que ya se entiende** (`en vez de contestarme` cuando la `y` ya lo cuenta, `§4.6` punto 1a).
+
+**El caso que la motivó (2026-08-17, historia de Iker):** entregué *"Mi primera venta la cerré saltándome la mitad de los buzones del barrio 🙃"* (73 car) y él lo devolvió por largo, con el concepto intacto. **`del barrio` no aportaba nada**: la línea siguiente ya dice *"me pateé mi calle"*. Quedó en **62 car** con el mismo verbo, el mismo objeto y el mismo bucle. **11 caracteres menos y ni una idea perdida.**
+- ⚠️ **Y el límite, para no pasarse de tijera:** las versiones de **46 y 51 car** también existían y se descartaron, porque cada una se llevaba una pieza real (`la mitad` es el matiz de que elegía unos sí y otros no, que es el concepto entero del post; `buzones` es el objeto que pinta la imagen). **Corto no es mutilado: se recorta lo redundante, nunca lo que hace el trabajo.**
+
+**Y ya está medido en `§2.10`:** la mediana de nuestros ganchos ganadores es **75 car** con una oración, no 110 ni 210. El tope técnico no es el objetivo.
+
+**Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: ¿este gancho se puede decir más corto?`), que imprime la longitud y obliga a pasar el tachón palabra a palabra. Es criterio, así que no puede ser fallo duro: un script no sabe qué palabra carga un matiz.
+
+### 🎬 2.2d · EL TEST DE LA CREADORA DE VÍDEOS: SI NO SE PUEDE RODAR, EL GANCHO SE DESCARTA (universal — Iker, 2026-08-17)
+
+**El test, y se corre en un segundo:** dale el gancho a una persona que hace vídeos. **¿Sabe qué grabar?** Si sí, el gancho vale. **Si no se le ocurre ningún plano, el gancho no es lo bastante bueno y se descarta**, por bien escrito que esté.
+
+Iker: *"un gancho que no se pueda representar visualmente una creadora de vídeos lo descarta, ya que entonces no es lo suficientemente bueno"*.
+
+**Por qué esto no es lo mismo que `§2.2` punto 1, que ya pedía "pintar una imagen":** aquel decía **qué** buscar; este da el **juez**, y es un juez externo que no puede hacer trampa. Yo puedo convencerme de que *"la prospección manual ya tiene fecha de derribo"* pinta algo; **una cámara no puede grabar una fecha de derribo.** Sí puede grabar a alguien saltándose buzones, tirando unas llaves o mirando un portátil que le plantan delante — y esos tres son ganchos nuestros que funcionaron.
+
+**Cómo se aplica sin volverse literal:** no hace falta que el plano sea barato ni real, hace falta que **exista**. La pregunta es *"¿qué se ve en el primer segundo?"*, y la respuesta tiene que ser un **sujeto haciendo algo con un objeto**, no un concepto.
+
+| ⛔ no se puede rodar | ✅ se rueda solo |
+|---|---|
+| *tu forma de vender ya no funciona* | *me plantó el portátil delante* |
+| *la prospección manual tiene fecha de derribo* | *saltándome la mitad de los buzones* |
+| *el 99% de las empresas falla en esto* | *le tiré las llaves de mi LinkedIn a Claude* |
+
+**Encaja con lo que ya sabíamos y lo explica:** `§2.0a` pide **metáfora con objeto físico** y `§2.9` **verbo punchy**. Un plano necesita las dos cosas — algo que se ve y algo que pasa —, así que este test es la comprobación de que las dos están puestas. **Si el gancho no se puede rodar, o le falta el objeto o le falta el verbo.**
+
+**Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: el test de la creadora de videos`), en todos los pilares.
+
 ### 2.3 · Ancla de sector en la primera línea
 Nuestro sector es **ventas B2B** (la IA es una herramienta que usamos, NO nuestra categoría). El hook debe leerse inequívocamente sobre VENDER. Ancla con la familia entera de señales de venta, **variando** (no reflex-type "ventas" cada vez):
 - El **verbo** conjugado: vender / vendes / vendiendo / "cuando vendes…".

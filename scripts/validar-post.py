@@ -475,6 +475,35 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         f'{len(hook_txt)} car. Los ganadores viven en 75-93; el mas largo que ha '
         f'funcionado tiene 115' if len(hook_txt) > 110 else '', aviso=True)
 
+    # §2.2c — A IGUALDAD DE SENTIDO, GANA EL GANCHO MAS CORTO (Iker, 2026-08-17).
+    # "Siempre en la vida es mejor corto y bueno que largo y bueno, sobre todo
+    # alargarlo no aporta nada extra y es repetir informacion o redundante".
+    # NO puede ser fallo duro: un script no sabe que palabra carga un matiz y
+    # cual es relleno. Lo unico que puede hacer es obligar a correr el tachon,
+    # que es donde esta el trabajo. Caso: entregue el gancho de la historia del
+    # 18/08 con "del barrio" cuando la linea 2 ya decia "mi calle" — 73 car que
+    # eran 62 sin perder nada.
+    chk(False, 'ENTREGA: ¿este gancho se puede decir mas corto? (§2.2c)',
+        f'{len(hook_txt)} car (la mediana de nuestros ganadores de 1 oracion son 75). '
+        'Tacha una palabra y relee: si la frase sigue diciendo LO MISMO, sobraba y no '
+        'vuelve. Repite hasta que el siguiente tachon se lleve un matiz de verdad. '
+        'Sospechosos habituales: el complemento de sitio que el cuerpo ya situa, el '
+        'adjetivo de sector que encoge alcance, y la aclaracion de lo que ya se '
+        'entiende. ⚠️ Pero corto no es mutilado: no se recorta el OBJETO que pinta la '
+        'imagen ni el matiz que sostiene el concepto', aviso=True)
+
+    # §2.2d — EL TEST DE LA CREADORA DE VIDEOS (Iker, 2026-08-17). §2.2 punto 1 ya
+    # pedia "pintar una imagen", pero era yo juzgandome a mi mismo. Esto pone un
+    # juez externo que no puede hacer trampa: una camara no puede grabar un
+    # concepto. Si no hay plano, o falta el OBJETO (§2.0a) o falta el VERBO (§2.9).
+    chk(False, 'ENTREGA: el test de la creadora de videos (§2.2d)',
+        'Dale el gancho a alguien que hace videos: ¿sabe QUE grabar en el primer '
+        'segundo? Tiene que haber un sujeto HACIENDO algo con un OBJETO. Si no se le '
+        'ocurre ningun plano, el gancho no es lo bastante bueno y se descarta, por '
+        'bien escrito que este. ⛔ "tu forma de vender ya no funciona" no se rueda; '
+        '"me planto el portatil delante", "le tire las llaves a Claude" y "saltandome '
+        'la mitad de los buzones" se ruedan solos', aviso=True)
+
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
     if generico:
