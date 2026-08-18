@@ -261,6 +261,32 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 **⚠️ POR QUÉ ESTO NO ESTÁ EN `validar-post.py` y no es un olvido.** El script tiene `VERBO_FLOJO`, que es un check NEGATIVO: veta una lista de verbos flojos. Un check POSITIVO ("el gancho DEBE contener un verbo punchy") necesitaría una lista cerrada de verbos punchy, y eso rompe de dos maneras a la vez: tumbaría ganchos buenos con un verbo que no esté en la lista, y sobre todo **la forma más barata de aprobarlo sería pegar siempre un verbo de la lista** — que es EXACTAMENTE como este script se fabricó la muletilla de "En ventas," (ver `MULETILLA_ANCLA`). Vetar palabras tiene infinitas salidas; exigirlas tiene una. **Esto es criterio y se comprueba en el pase de §8, mirando el gancho y preguntándose cuál es el verbo que frena el scroll. Si no lo encuentras, no lo hay.**
 **⭐ Regla UNIVERSAL: aplica a TODO hook, de TODOS los pilares y TODAS las recetas.** No es del meme ni del lead magnet: es de cualquier post. Está en el pase de validación (§8, check 1) porque es lo que más se escapa.
 
+#### ⛔ 2.9-TECHOS · LA ESCALERA TIENE DOS TECHOS, NO UNO: EL DE INTENSIDAD Y EL DE REGISTRO (Iker, 2026-08-17)
+
+**Aquí solo estaba escrito el primero** (`desmontar` → `destripar` se pasa por gore) y por eso el segundo se cuela: **un verbo puede tener la intensidad perfecta y aun así estar fuera porque pertenece a otra generación.**
+
+| techo | qué lo rompe | ejemplo |
+|---|---|---|
+| **1 · Intensidad** | te pasas a gore o a caricatura | `desmontar` ✅ → `destripar` ⛔ (8.52x contra 0.21x) |
+| **2 · Registro** | ⭐ **el verbo es slang teen** y nuestro lector tiene 45-60 | `saltarse` ✅ → `sudar de` ⛔ |
+
+**El caso (2026-08-17, historia de Iker).** Iterando el gancho salió la escalera `ignorando` → `esquivando` → `saltándome` → `sudando de`. **`sudar de` es efectivamente más punchy que `saltarse`, y aun así pierde**, por tres motivos que conviene tener separados:
+1. **Registro.** Es jerga de adolescente y choca con el guardarraíl de `brand-voice §3` (*"NO pasan: random, cringe, POV, modo bestia"*). Iker, y es el criterio: *"ya hemos comprobado que nuestra audiencia prefiere un poco más de seriedad"*.
+2. **Ambigüedad.** `sudar` tiene lectura literal, así que cae en `§2.2d-DOBLE` — la cámara no sabe si grabar a alguien pasando de largo o a alguien sudando.
+3. **No se rueda.** `ignorar` y `sudar de` **no tienen plano** (`§2.2d`); `esquivar` sí, pero es el plano equivocado (esquivar es huir, y aquí el sujeto no huía, descartaba). **De los cuatro, solo `saltarse` es a la vez físico, punchy y semánticamente exacto.**
+
+**La lección de método, que es lo que se repite:** cuando dudes entre dos verbos, **no preguntes cuál pega más. Pregunta cuál se puede grabar y cuál diría el lector.** El punch es el criterio de desempate, no el primero.
+
+### ✂️ 2.9c · LAS PREPOSICIONES DEL GANCHO TAMBIÉN SE TACHAN (Iker, 2026-08-17)
+
+**Corolario de `§2.2c` que merece nombre propio, porque la palabra que sobra casi nunca es un sustantivo: es una preposición o un artículo.** Son invisibles al releer y son las que meten micro-pausas en la frase que más rápido se lee de todo el post.
+
+**El caso:** entregué *"saltándome **a** medio barrio"* y lo cazó Iker: *"la duda es esa preposición de a, que no sé si la veo bien"*. Tenía razón. **Gramaticalmente la `a` es defendible** (`saltarse a alguien`, con `medio barrio` leído como colectivo de personas), **pero no aporta nada y frena**: `medio barrio` funciona igual como lugar y la frase corre. Fuera.
+
+**Y la otra tijera del mismo día:** `la mitad de los` → **`medio`**. Significan exactamente lo mismo y una ocupa 11 caracteres menos. `Mi primera venta la cerré saltándome medio barrio` (51 car) contra la primera versión (73). **22 caracteres, cero ideas perdidas, tres rondas de tijera.**
+
+**Los sospechosos, por orden:** la `a` de complemento · `de los` / `de las` donde cabe `medio` o `medio-` · `que` de relativo evitable · `en el / en la` de sitio que el cuerpo ya da · `un poco`, `ya`, `incluso`, `realmente`.
+
 **⛔ NO REPITAS EL MISMO VERBO en el hook (Iker, 2026-07-23).** *"Te venden que vender es mandar la oferta"* — `venden` + `vender` pegados, queda fatal y mata el punch igual que un verbo flojo. Léelo en alto antes de entregar: si un verbo (o su raíz) se repite, otra pasada. Arreglado: *"Te pintan la venta como una línea recta"*.
 
 **⭐ CALCAR Y MEJORAR ES UNIVERSAL, no solo del meme (Iker, 2026-07-23).** **Y con ello viajan las tres reglas del remix, que estan escritas en el runbook del meme solo porque el primer caso fue un meme:** la esencia se saca de lo OBSERVABLE y nunca de mi teoria (`post-workflow §4.4-ESENCIA`), al espanol del sector ventas se le ACREDITA con @ (`§4.4-CREDITO`), y un ganador propio se DOBLA lo antes posible repitiendo el esqueleto y rotando solo el intensificador (`§4.4-DOBLE`). **Aplican al pilar que sea.** Siempre que se remixa una referencia —meme, lead magnet, remix de mapa, lo que sea— el mínimo es IGUALAR el original y el objetivo es SUPERARLO: verbo más punchy, formato más limpio, mejor ángulo. Copiar tal cual es el SUELO, no la meta. Iker lo dijo para el meme el 22/07 y al día siguiente no lo apliqué en otro hook: **un aprendizaje basado en datos no es del pilar donde se dijo, es de TODOS** — igual que el formateado (`§3`). Apúntalos siempre en global/receta/validador aunque no te lo pidan.
