@@ -1416,7 +1416,9 @@ Acceso libre.
 
 **LA RECETA, desde hoy:**
 1. **El TEXTO no cambia** respecto a `§4.5.0-CTA`: pregunta directa + gratis + conecta conmigo. Ni una aparición de "comenta" en el cuerpo (el validador lo sigue vigilando como fallo duro).
-2. **La palabra clave va DENTRO de la imagen**, en un banner al pie (o franja arriba, como Daniel Matias): `Comenta "PALABRA" y te lo envío por mensaje privado`, con la palabra destacada en color. Va **en el prompt del diseñador**, y es la pieza clave de ese prompt.
+2. **La palabra clave va DENTRO de la imagen**, en un banner al pie (o franja arriba, como Daniel Matias), con la palabra destacada en color y **entrecomillada**. Va **en el prompt del diseñador**, y es la pieza clave de ese prompt.
+   - **⭐ EL LITERAL ES DE UNA SOLA LÍNEA, Y SIN "POR MENSAJE PRIVADO" (Iker, 2026-08-18):** `Comenta "palabra" y te la envío`. Antes calcábamos las dos líneas de Martín Arosa. Iker: *"lo de comenta abajo se podría condensar en una sola línea y quitarlo de por mensaje privado"*. **Y de paso quita un problema:** `por mensaje privado` es **familia 5 de riesgo** en `brand-voice §2c` (sacar gente a privado). Se gana en compacidad y en riesgo a la vez.
+   - **⭐ Y EL PRONOMBRE CONCUERDA CON CÓMO LLAMAMOS AL RECURSO EN EL POST, no con la palabra "recurso".** Si el cuerpo dice *"lo he metido en una **guía**"* y *"**¿La** quieres?"*, el banner dice **`te la envío`**. Poner `te lo envío` deja al lector leyendo dos géneros para la misma cosa en la misma pantalla. Si se quiere el masculino, lo que se cambia es el post (`el sistema`, `el recurso`), nunca solo el banner.
 3. **Las reglas de la PALABRA de `§4.5.0a` punto 3b siguen vivas** (se entiende sola, es la tesis, sin tilde, no gastada) — aunque en la imagen las referencias la ponen en MAYÚSCULAS y así se calca. La herramienta debe filtrar el comentario sin distinguir mayúsculas.
 4. **Esto reactiva el motor del pilar** (el comentario-peaje) que el CTA de solo-pregunta había dejado cojo: la pregunta invita, el banner da la instrucción exacta.
 
