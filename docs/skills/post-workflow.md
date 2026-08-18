@@ -1445,6 +1445,45 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔧 Y EL VALIDADOR IBA EN CONTRA, así que se ha cambiado.** Su check `RITMO: al menos un bloque de TRES` excluía las listas del recuento y por tanto **empujaba a meter un bloque de tres en prosa**, justo lo que esta regla prohíbe. Desde el 18/08, en `--pilar leadmagnet` **la lista numerada de 3 o más líneas ya cumple la densidad** y no hace falta ningún otro bloque de tres. Los demás pilares no cambian.
 
+#### ⛔⛔⛔ 4.5.0-CTA-CERO · NINGUNA PETICIÓN EXPLÍCITA DE ACCIÓN EN EL TEXTO. NUNCA MÁS (Iker, 2026-08-18)
+
+> **Esta sección MANDA sobre todo lo que hay debajo.** `§4.5.0-CTA` y `§4.5.0-CTA-IMAGEN` se leen ya con esta regla puesta.
+
+**LO QUE PASÓ, medido en la misma tarde y en la misma cuenta:**
+
+| versión | qué llevaba el texto | resultado |
+|---|---|---|
+| 1ª subida | `(Conecta conmigo para que pueda escribirte)` | **40 impresiones en 20 minutos** · no aparecía en el feed de ninguna de las 4 cuentas |
+| 2ª subida | **sin esa línea** y sin `Acceso libre` | **apareció en el feed Principal de las 3 cuentas de los jefes en 4 minutos** |
+
+**Es el mismo patrón que `comenta` el 05/08, y ya van dos veces.**
+
+**LA REGLA: el texto del post NO pide NINGUNA acción de plataforma al lector.** Ni comentar, ni conectar, ni compartir, ni guardar, ni seguir, ni etiquetar, ni repostear. **La familia entera, no una lista de palabras**, porque lo que se persigue es la petición, no el verbo concreto.
+
+**⭐ EL PORQUÉ, que es de Iker y es lo que hace la regla PREDECIBLE en vez de supersticiosa:** *"al final estamos aprovechando un exploit. Si pides explícitamente que la gente haga algo, te sube el engagement, y el engagement de la primera hora es lo que hace que el algoritmo te recomiende más"*. **LinkedIn no persigue la palabra: persigue la petición, porque infla artificialmente la única señal con la que decide el reparto.** Por eso da igual qué sinónimo uses, y por eso la lista negra se define por INTENCIÓN.
+
+**⛔ Y SE APLICA AUNQUE LOS REFERENTES LO SIGAN HACIENDO.** Martín Arosa usaba `conecta` y `comenta` en el texto el mismo día con 316 y 497 comentarios. **No es contradicción, es asimetría de confianza de cuenta** (`brand-voice §2c`): lo que una cuenta grande se puede permitir, la nuestra no. Iker: *"pese a que las referencias lo hagan"*. **Se mira a los referentes para detectar CAMBIOS de mecánica, no para copiarles los permisos.**
+
+**DÓNDE VIVE AHORA LA PETICIÓN, que no desaparece, se muda:**
+1. **La palabra a comentar → en el BANNER de la imagen.** LinkedIn todavía no lee el texto de las fotos. Iker: *"seguro que en el futuro también nos lo prohibirán, pero de momento no tiene tanta inteligencia"*. Cuando eso cambie, se vuelve a mover.
+2. **🔴 La petición de solicitud de contacto → en la RESPUESTA a cada comentario.** Es obligatorio y es lo que más fácil se pierde: desde el 17/08 no agregamos a nadie (`§4.5.-3`), así que sin esa frase **el que comenta y no es contacto se queda sin recurso**. Literal:
+   > `Nombre` ahí va. LinkedIn no me deja escribirte si no somos contacto, mándame solicitud y te la paso.
+3. **La pregunta directa (`¿La quieres?`) y `gratis` se QUEDAN en el texto.** No piden una acción de plataforma: ofrecen. Y `gratis` está en el gancho de nuestro nº2 histórico (483💬) con mediana de 3.884 impresiones en 15 posts.
+
+**🔧 Mecanizado y VOLTEADO el mismo día:** el check del validador que **exigía** `(Conecta conmigo…)` ahora lo **prohíbe**, junto a toda la familia. Al hacerlo me colé dos bytes `0x08` en las regex y **lo cazó el autochequeo del propio script**, que existe justamente por el mismo fallo del 06/08. La red funcionó.
+
+#### 🕵️ 4.5.0-FEED · EL DIAGNÓSTICO DE PRIMER NIVEL ES EL FEED, Y ES DE IKER (2026-08-18)
+
+**Por delante del semáforo de impresiones y de la banda del Explorer, va este, porque es el más rápido: recién subido el post, se abre el feed Principal desde otra cuenta y se mira si aparece.**
+
+- **Aparece en pocos minutos** → comportamiento normal, el algoritmo lo está distribuyendo.
+- **No aparece pasados 10-15 minutos en NINGUNA cuenta** → algo va mal, y hay que actuar antes de perder la franja.
+
+**Es un instrumento suyo y le ha funcionado las dos veces**: en agosto con `comenta` y el 18/08 con `conecta`. Iker: *"llevo meses que en cuanto subo una publicación me interactúo conmigo mismo, y que esté recargando el feed y no me aparezca me demuestra que me han bloqueado, porque nunca me ocurre"*. **Gana al semáforo de impresiones porque no hay que esperar a que se acumulen.**
+
+- **⚠️ Ojo: "Reciente" no vale**, es cronológico y ahí sale hasta un post capado. **Solo cuenta "Primero los más relevantes"** (`§4.5.0-CAPADO-RAPIDO`).
+- **📏 Y a partir de ahora se ANOTA el dato:** en cada publicación, **cuántos minutos tarda en aparecer en Principal desde otra cuenta**. Con 5-6 posts hay línea base y la hipótesis de la "cola de revisión" pasa de intuición a número.
+
 #### 🚨🚨 4.5.0-CTA · EL "COMENTA LA PALABRA" DEJÓ DE FUNCIONAR EL 5 DE AGOSTO DE 2026
 
 > **Esto es lo que estuvo capando nuestros lead magnets toda la semana del 03/08, y no era ninguna palabra.** Cuatro publicaciones borradas y resubidas cambiando gancho, cuerpo entero, imagen, y quitando `prompt`, `ÚLTIMA HORA`, `destapa`, `firma`, `regalo` y hasta la foto. **El problema nunca estuvo en el texto: estaba en el MECANISMO.**

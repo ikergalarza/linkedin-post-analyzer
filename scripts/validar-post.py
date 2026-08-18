@@ -1545,10 +1545,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'sus tres ultimos lo dicen dos veces, "de forma gratuita" y "acceso libre". '
             'La palabra gratis no penaliza: medida en 15 posts nuestros, mediana 3.884 '
             'impresiones y ninguno por debajo de 500' if not _regalo else '')
-        _conecta = re.search(r'conecta conmigo', cuerpo, re.I)
-        chk(bool(_conecta), 'CTA: cierra con "(Conecta conmigo para que pueda escribirte)" (§4.5.0-CTA)',
-            'entre parentesis y al final. Sin el gate ya no compite con ningun otro CTA, y hace '
-            'falta para poder mandarle el recurso por privado' if not _conecta else '')
+        # ⛔ VOLTEADO EL 2026-08-18 (Iker). Este check EXIGIA "(Conecta conmigo...)"
+        # y ahora lo PROHIBE. Motivo: el 18/08 el lead magnet de Unai se quedo en
+        # 40 impresiones en 20 minutos con esa linea dentro; al quitarla y resubir,
+        # aparecio en el feed Principal de las 3 cuentas en 4 minutos. Es el mismo
+        # patron que "comenta" el 05/08. Iker: "que nunca mas volvamos a poner en el
+        # texto ni comenta ni conecta ni cosas similares, pese a que las referencias
+        # lo hagan". La peticion sigue viva, pero se mueve a la RESPUESTA al
+        # comentario y al banner de la imagen, que LinkedIn todavia no lee.
+        _pedir = re.search(r'\b(conecta conmigo|conectad?|comenta\w*|comparte|comp[aá]rtelo|'
+                           r'gu[aá]rdal[oa]|s[ií]gueme|etiqueta|repostea|dale a|comp[aá]rteme)\b',
+                           cuerpo, re.I)
+        chk(not _pedir, 'CTA: NINGUNA peticion explicita de accion en el TEXTO (§4.5.0-CTA)',
+            (f'dice "{_pedir.group(0)}". LinkedIn persigue la peticion explicita de engagement '
+             'porque infla la senal de la primera hora, que es la que decide el reparto. Medido '
+             'dos veces en nuestra cuenta: "comenta" el 05/08 y "conecta conmigo" el 18/08 (40 '
+             'impresiones en 20 min; sin la linea, en el feed de las 3 cuentas en 4 min). La '
+             'peticion va en el BANNER de la imagen y en la RESPUESTA al comentario, nunca aqui')
+            if _pedir else '')
 
         _pref = re.search(r'\b(instalar|instalaci[oó]n|descargar|descarga)\b', cuerpo, re.I)
         chk(not _pref, 'Sin "instalar"/"descargar" (preferencia de marca de Iker)',
@@ -1696,7 +1710,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _pron = 'la' if any(w in _bajo for w in _fem) else 'lo'
         _nombre = next((w for w in _fem if w in _bajo), 'el recurso')
         chk(False, 'ENTREGA: el Comenta "PALABRA" va DENTRO de la IMAGEN (§4.5.0-CTA-IMAGEN)',
-            'el texto va limpio (pregunta + gratis + conecta conmigo) y la palabra vive en '
+            'el texto va limpio (pregunta + gratis, y CERO peticiones de accion) y la palabra vive en '
             'un banner dentro de la foto, en UNA SOLA LINEA y sin "por mensaje privado". '
             f'El literal exacto para el prompt del disenador es: Comenta "PALABRA" y te {_pron} envio '
             f'-- el pronombre sale de que el cuerpo llama al recurso "{_nombre}", y tiene que '
