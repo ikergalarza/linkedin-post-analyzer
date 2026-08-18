@@ -678,6 +678,27 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 - **UN SOLO PARRAFO**, siempre. Nada de listas, nada de lineas sueltas, nada de `(1) (2) (3)`, cero parentesis y cero comillas.
 - **⚠️ Y ESTO NO ES DEL PROMPT DE IMAGEN: ES GLOBAL** (Iker, 2026-08-18).
 
+## ✅✅ 0h-CHECKLIST · LA IMAGEN SE CLAVA AL PRIMER PROMPT, NO A LA TERCERA RONDA (Iker, 2026-08-18)
+
+**El caso:** la imagen del lead magnet de `/llaves/` salió perfecta, pero **a la tercera corrección**, y las tres las cazó Iker. *"Ha sido criminal que te haya tenido que estar corrigiendo yo. Tú deberías ser más perfeccionista que yo. En el futuro, con solo un primer prompt me tienes que haber dado este resultado."*
+
+**⛔ Y LO QUE HAY QUE ENTENDER: los tres fallos eran reglas YA ESCRITAS que no corrí.** Ninguno era un juicio estético ni algo que no se pudiera saber de antemano. Por eso esto se arregla con una checklist y no con "poner más atención".
+
+**SE PASA ENTERA ANTES DE ENTREGAR EL PRIMER PROMPT DE IMAGEN, Y SE PEGA EL RESULTADO:**
+
+| # | check | dónde vive | qué falló el 18/08 |
+|---|---|---|---|
+| 1 | **Complementariedad de CADA texto** de la foto contra el post: cabecera, etiquetas, pies y banner | `§0h-COMPLEMENTO` | la cabecera calcaba el gancho |
+| 2 | **UNA sola palabra naranja** en toda la imagen, y en lead magnet va en el CTA | `§0h` regla 3 | había dos |
+| 3 | **Ancla de VENTAS** en el título de la imagen | `§1b` | mi primera propuesta no la tenía |
+| 4 | **Presupuesto de espacio dicho** para cada texto dentro de una caja: nada de `grande` a secas | `§0c` | el banner salió pequeño |
+| 5 | **Filtros de copy** sobre el texto de la imagen: riesgo, anglicismos, puntuación, concordancia, tachón | `§0h-FILTROS` | calqué `por mensaje privado` |
+| 6 | **Los datos de dentro son reales y verificados** contra la fuente | `aboutme` | ✅ las 14 secciones salieron del HTML |
+| 7 | **Cero logos, cero año, cero marca de agua** | `§0h` regla 3 | ✅ |
+| 8 | **El aviso de postproducción** con `⚠️ AVISO, MARIO:` | `§0a-penta` | lo puse con `⚙️` |
+
+**El test final, de un vistazo:** tapa el post y mira solo la foto. **¿Aporta algo que el post no dice, y sabes qué palabra comentar?** Las dos cosas, o vuelve al prompt.
+
 ## 🛑🛑 0h-COMPLEMENTO · LA COMPLEMENTARIEDAD ES DE **TODO** EL TEXTO DE LA IMAGEN, NO SOLO DEL CTA (Iker, 2026-08-18)
 
 **El fallo, y es de los gordos.** El lead magnet de `/llaves/` salió con la cabecera diciendo *"Claude me robó las riendas de mi LinkedIn"*, que es **el gancho del post calcado**, y con `riendas` apareciendo **dos veces en la misma foto**, arriba y en el banner. Iker: *"hemos estado toda la mañana discutiendo el tema de los textos complementarios y has puesto arriba el mismo texto de la publicación. Es un error garrafal"*.

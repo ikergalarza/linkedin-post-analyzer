@@ -1350,6 +1350,18 @@ moverse, se verifica o se quita.
 
 **Y la longitud sale sola de ahí.** El post pasó de 1.702 a 1.217 caracteres solo con esto, en la zona del 483 y el 232. No se acorta recortando frases: se acorta no contando lo que se regala.
 
+#### 🔥 4.5.0-CALENTAR · ANTES DE SUBIR, LA CUENTA COMENTA EN OTROS POSTS (Iker, 2026-08-18)
+
+**Iker, contándolo de pasada al ir a publicar:** *"ya he comentado con su cuenta en otras publicaciones para revivir su cuenta antes de subir algo"*.
+
+**No es un truco suelto, es parte del lanzamiento del pilar que más depende del reparto.** El diagnóstico de agosto es que el copy y el CTA están resueltos y **el cuello de botella es el alcance** (`§4.5.0-CTA-IMAGEN-MEDIDO`: 2.036 impresiones con 71 comentarios). Una cuenta que lleva días sin actividad arranca fría, y el lead magnet **no tiene motor de reposts ni de risa**: si no hay comentarios en las 3 primeras horas, no hay nada que lo salve (`outliers §4.48`).
+
+- **Se hace ANTES de subir**, no después.
+- **Comentarios sustanciosos en posts del nicho con buen alcance**, con las reglas de `brand-voice §7.2`: 3-4 líneas, referencia específica al post, nunca "gran post".
+- **Encaja con lo que ya sabíamos por el otro lado:** los comentarios que HA HECHO alguien son nuestro filtro duro para mencionarle (`CLAUDE.md`, Unipile). Lo que pedimos a los demás nos lo aplicamos.
+
+**⚠️ Y al medir el post, esto es contexto:** si un lead magnet arranca mejor de lo esperado, parte del mérito puede ser el calentamiento y no el copy. Anótalo en el historial junto al resultado.
+
 #### 🏃🏃 4.5.0-RITMO · EL LECTOR VIENE A POR EL BLOQUE NUMÉRICO: SE LLEGA EN 3 LÍNEAS (Iker, 2026-08-18)
 
 > **Iker:** *"igual que en el mapa la gente quiere llegar rápido al bloque numérico para validar la región, en el lead magnet quiere llegar rápido para saber qué incluye. Priorizaría uno de dos antes que uno de tres"*.
