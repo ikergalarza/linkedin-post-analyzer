@@ -277,6 +277,8 @@ function pideComentarPalabra(texto: string): boolean {
  * recurso, decir que se comparte GRATIS, y cerrar con CONECTA CONMIGO (que hace
  * falta para poder mandarlo por privado). Las tres viven en el ultimo tercio.
  */
+const ENLACE_RE = /https?:\/\/|\b\w+\.(com|es|app|io|ai)\b/i;
+
 const ENTREGABLE_RE =
   /\b(gu[ií]a|sistema|plantillas?|checklist|playbook|framework|prompts?|hoja|dossier|manual|recurso|biblioteca|instrucciones)\b/i;
 
@@ -304,7 +306,15 @@ function pideConectar(texto: string): boolean {
   // `conecta conmigo` se queda como ALTERNATIVA, no como requisito, para que los
   // posts viejos que siguen en la base no se caigan del pilar al reclasificar.
   const entregable = ENTREGABLE_RE.test(cola);
-  return pregunta && gratis && (entregable || conecta);
+  // CUARTA PATA, y es la que mata los falsos positivos: un lead magnet NUNCA
+  // lleva enlace en el cuerpo (`post-workflow §4.5.0-CTA`, calcado de los
+  // referentes) y un mapa SIEMPRE lo lleva, porque su cierre es el enlace al
+  // mapa. Medido sobre los 258 posts de las 3 cuentas: sin esta condicion el
+  // mapa de Cataluna del 30/04 entraba como lead magnet; con ella, los falsos
+  // positivos bajan de 4 a 1, y el que queda es un post de 2025 archivado como
+  // 'otro'.
+  const sinEnlace = !ENLACE_RE.test(cola);
+  return pregunta && gratis && (entregable || conecta) && sinEnlace;
 }
 
 /**

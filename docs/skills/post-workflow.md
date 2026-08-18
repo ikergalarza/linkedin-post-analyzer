@@ -1456,6 +1456,27 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔧 Y EL VALIDADOR IBA EN CONTRA, así que se ha cambiado.** Su check `RITMO: al menos un bloque de TRES` excluía las listas del recuento y por tanto **empujaba a meter un bloque de tres en prosa**, justo lo que esta regla prohíbe. Desde el 18/08, en `--pilar leadmagnet` **la lista numerada de 3 o más líneas ya cumple la densidad** y no hace falta ningún otro bloque de tres. Los demás pilares no cambian.
 
+#### 🧿🧿 4.5.0-FIRMA · LOS 4 INVARIANTES QUE HACEN RECONOCIBLE UN LEAD MAGNET (Iker, 2026-08-18)
+
+> **Para qué existe esto:** LinkedIn nos ha tumbado ya dos elementos del CTA, `comenta` el 05/08 y `conecta conmigo` el 18/08, y **las dos veces el clasificador se quedó codificando la regla muerta** y metió el post en el pilar equivocado. Iker: *"busca un patrón en nuestros últimos lead magnets pese a todas las prohibiciones de palabras, y fíjalo tanto en receta como en detección de pilar"*.
+
+**LOS CUATRO. Van SIEMPRE, en el último tercio del texto, y son inamovibles como `exporta` en el mapa:**
+
+| # | invariante | ejemplo | por qué no lo pueden prohibir |
+|---|---|---|---|
+| 1 | **Una PREGUNTA que ofrece el recurso** | `¿La quieres?` | ofrecer no es pedir una acción de plataforma |
+| 2 | **Decir que se comparte GRATIS** | `La estoy compartiendo gratis para quien la pida.` | medido: 15 posts nuestros con `gratis`, mediana **3.884** impresiones contra 3.371 del corpus, y está en el gancho de nuestro **#2** histórico |
+| 3 | **NOMBRAR el entregable** | `una guía` · `el sistema` · `los 3 prompts` | es la cosa que regalas. Un lead magnet sin entregable nombrado no existe |
+| 4 | **CERO enlaces en el cuerpo** | — | ya era regla del pilar, calcada de los referentes |
+
+**⛔ POR QUÉ LOS CUATRO Y NO DOS, QUE ERA LA PROPUESTA INICIAL.** Iker propuso quedarse con la pregunta y el `gratis`, que son los que van en todos. **Medido sobre los 258 posts de las 3 cuentas y no vale:** solo con esos dos hay **4 falsos positivos**, y tres son MAPAS, que también cierran con pregunta y con la palabra gratis. Añadiendo el entregable bajan a 2; añadiendo el "sin enlace" baja a **1**, y el que queda es un post de 2025 archivado como `otro`.
+- **El discriminador que más aporta es el enlace**, y es puro sentido: **el mapa SIEMPRE cierra con su enlace y el lead magnet NUNCA lleva ninguno.**
+- Tiene razón en que 3 y 4 dependen del post, **y por eso se fijan aquí como obligatorios**: si el entregable se nombra siempre, el detector no falla nunca. **La detección no se arregla adivinando mejor, se arregla escribiendo siempre igual.**
+
+**🔧 Mecanizado en `backend/src/services/pillar.ts`**, en `pideConectar`: `pregunta && gratis && (entregable || conecta conmigo) && sin enlace`. `conecta conmigo` se queda como ALTERNATIVA al entregable, no como requisito, para que los posts viejos no se caigan del pilar al reclasificar.
+
+**📌 Y LA REGLA DE MÉTODO, que es la que se ha roto dos veces:** cuando una prohibición de LinkedIn nos obliga a quitar un elemento del CTA, **en el mismo turno se mira el clasificador**. No es una tarea aparte ni para mañana: el pilar es lo que ordena el histórico, y un post mal clasificado envenena las medianas con las que decidimos la semana siguiente.
+
 #### ⛔⛔⛔ 4.5.0-CTA-CERO · NINGUNA PETICIÓN EXPLÍCITA DE ACCIÓN EN EL TEXTO. NUNCA MÁS (Iker, 2026-08-18)
 
 > **Esta sección MANDA sobre todo lo que hay debajo.** `§4.5.0-CTA` y `§4.5.0-CTA-IMAGEN` se leen ya con esta regla puesta.
