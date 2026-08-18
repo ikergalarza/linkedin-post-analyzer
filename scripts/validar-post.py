@@ -1685,12 +1685,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # Arosa lleva el banner 'Comenta "SISTEMA" y te lo envio por mensaje privado'
         # dentro de la imagen (1.321c el 11/08) y el texto limpio. Este script no ve
         # imagenes, asi que lo unico que puede hacer es recordarlo en cada entrega.
+        # EL LITERAL DEL BANNER SE ENTREGA HECHO, NO SE DESCRIBE (Iker, 2026-08-18).
+        # Antes este aviso decia "y te lo envio por mensaje privado", que era el
+        # calco literal de Martin Arosa, y por leerlo aqui se colo en el prompt
+        # del disenador: dos lineas en vez de una y un "por mensaje privado" que
+        # brand-voice §2c prohibe (familia 5, sacar gente a privado). Un aviso que
+        # describe la regla se incumple; uno que te da la linea hecha, no.
+        _fem = ('guia', 'guía', 'plantilla', 'checklist', 'hoja', 'ficha', 'lista')
+        _bajo = cuerpo.lower()
+        _pron = 'la' if any(w in _bajo for w in _fem) else 'lo'
+        _nombre = next((w for w in _fem if w in _bajo), 'el recurso')
         chk(False, 'ENTREGA: el Comenta "PALABRA" va DENTRO de la IMAGEN (§4.5.0-CTA-IMAGEN)',
             'el texto va limpio (pregunta + gratis + conecta conmigo) y la palabra vive en '
-            'un banner dentro de la foto: Comenta "PALABRA" y te lo envio por mensaje '
-            'privado, con la palabra en color. Comprueba que el prompt del disenador lo '
-            'lleva, porque este script no puede verlo. Evidencia: Martin Arosa 1.321c '
-            '(11/08) y 289c (10/08), Daniel Matias 249c', aviso=True)
+            'un banner dentro de la foto, en UNA SOLA LINEA y sin "por mensaje privado". '
+            f'El literal exacto para el prompt del disenador es: Comenta "PALABRA" y te {_pron} envio '
+            f'-- el pronombre sale de que el cuerpo llama al recurso "{_nombre}", y tiene que '
+            'concordar con el. La palabra va entrecomillada y en color. Comprueba que el prompt '
+            'del disenador lo lleva, porque este script no puede ver la imagen. Evidencia: '
+            'Martin Arosa 1.321c (11/08) y 289c (10/08), Daniel Matias 249c', aviso=True)
         m = re.search(ENTREGABLE_GENERICO, cuerpo, re.I)
         chk(not m, 'Entregable UNO y concreto, no generico (§4.5 Paso 2)',
             f'"{m.group(0)}" — la biblia hizo 1.2x · 2.3K' if m else '')

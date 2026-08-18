@@ -414,6 +414,17 @@ Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que 
 - ❌ `hazlos más grandes, sobra mucho espacio vacío`
 - ✅ `aprovecha el espacio que los logos tienen por arriba y por abajo y también por los laterales para que llenen la imagen`
 
+**⛔⛔ Y LA VUELTA DE TUERCA DEL 2026-08-18: ESTO NO ES UNA FÓRMULA PARA CORREGIR, ES PARTE DEL PROMPT DE CREACIÓN.** Iker, sobre el banner del lead magnet de `/llaves/`: *"falta que la frase de abajo sea más grande y aproveche todo el espacio que tiene dentro de la franja morada"*.
+
+**Yo la tenía interiorizada como la frase que se usa cuando algo vuelve mal.** Por eso mi prompt original decía solo *"la primera grande y en blanco"*, que es un adjetivo sin referencia: el generador no sabe grande **respecto a qué**, así que la deja pequeña y sobra media franja. **Y entonces hace falta una ronda de edición que no debería haber existido.**
+
+**LA REGLA: en el prompt de CREACIÓN, todo elemento de texto que viva dentro de una caja, franja o tarjeta lleva su presupuesto de espacio dicho.** No `grande`, no `destacado`, no `protagonista`: **la caja que tiene que llenar y en qué dirección.**
+- ❌ `la primera línea grande y en blanco`
+- ✅ `la línea aprovecha el ancho completo de la franja de lado a lado, sin tocar los bordes`
+
+**El test antes de entregar un prompt de imagen:** busca cada adjetivo de tamaño que hayas escrito (`grande`, `pequeño`, `destacado`, `fino`) y pregúntate **grande respecto a qué caja**. Si no hay caja nombrada, el generador va a elegir por ti y va a elegir pequeño.
+
+
 **Y el caso típico donde hace falta: al recomponer una referencia de 16:9 a nuestro 1:1** (`§0b`). El generador conserva el ancho de los elementos y te deja dos bandas muertas arriba y abajo. **Se cuenta como espacio a aprovechar, nunca como "está pequeño".**
 
 ### ⭐⭐ 0c-MEDIR · SI HAY UN HERMANO QUE YA ESTÁ BIEN, SE LE MANDA MEDIRLO EN PÍXELES Y COPIAR EL NÚMERO (Iker, 2026-08-14)
@@ -658,7 +669,26 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 ✅ **RESUELTO — NO HAY DOS FORMATOS, HAY UNO SOLO (Iker, 2026-07-27).** Aqui ponia que esto "chocaba" con `§0h` y que el parrafo unico era solo para generacion desde cero. **Esa ambiguedad era el bug:** al no saber cual tocaba, acabe entregando un prompt con numeracion `(1) (2) (3)`, que es justo lo que prohibe el punto de arriba. **El formato es UNO y vale para CUALQUIER prompt de imagen: de calca, de edicion, de cero, y de cualquier pilar (mapa, meme, lead magnet, historia, lo que sea).**
 - Abre con **SOLO HAZ LO QUE TE PIDO** en mayusculas.
 - **UN SOLO PARRAFO**, siempre. Nada de listas, nada de lineas sueltas, nada de `(1) (2) (3)`, cero parentesis y cero comillas.
-- **⚠️ Y ESTO NO ES DEL PROMPT DE IMAGEN: ES GLOBAL** (Iker, 2026-08-18). Un bloque, un parrafo y cero simbolos raros vale para **cualquier** prompt que se le entregue a un ejecutor, incluido el del **programador**. La regla manda vive ahora en `working-preferences §1b`; esto es solo su copia local.
+- **⚠️ Y ESTO NO ES DEL PROMPT DE IMAGEN: ES GLOBAL** (Iker, 2026-08-18).
+
+## 🛑🛑 0h-FILTROS · EL TEXTO QUE VA DENTRO DE LA IMAGEN ES COPY NUESTRO Y PASA LOS MISMOS FILTROS QUE EL CUERPO (Iker, 2026-08-18)
+
+**El fallo, y es de los caros porque llega hasta el diseñador.** Para el banner del lead magnet de `/llaves/` copié el literal de Martín Arosa palabra por palabra: `Comenta "PALABRA" y te lo envío por mensaje privado`. Dos líneas donde cabía una, y un `por mensaje privado` que **nuestra propia `brand-voice §2c` prohíbe** (familia 5, sacar gente a privado). Lo cazó Iker mirando la imagen ya generada: *"asegúrate de que esto no vuelva a pasar, tu primer prompt tendría que haber tenido en cuenta estos cambios también"*.
+
+**LA CAUSA RAÍZ, que es lo que hay que retener: traté el texto de la imagen como si fuera del original y no nuestro.** El texto del post sí lo pasaba por los filtros; el de la foto lo calcaba. **Son el mismo copy y los lee la misma persona en la misma pantalla.**
+
+**LOS FILTROS QUE HAY QUE CORRER SOBRE EL TEXTO DE LA IMAGEN, uno a uno, antes de meterlo en el prompt del diseñador:**
+1. **Familias de riesgo** (`brand-voice §2c`). Fue la que falló: `por mensaje privado` es familia 5.
+2. **Anglicismos con traducción llana** (`brand-voice §2b`) y **puntuación delatora** (`§3`): cero guion largo, cero coma antes de "y".
+3. **Concordancia con el cuerpo.** Género, número y **cómo llama el post al recurso**: si el cuerpo dice `una guía`, el banner dice `te la envío`.
+4. **A igualdad de sentido, lo más corto** (`global §2.2c`). El tachón palabra a palabra se corre también aquí: `y te la envío por mensaje privado` → `y te la envío`.
+5. **Nada de año** (`brand-voice`, canónico) y **cero cifras inventadas**.
+
+**⛔ Y LA REGLA GENERAL DE LA QUE ESTO ES UN CASO: calcar una referencia es el SUELO, no la entrega** (`global §2.2b`). Eso ya estaba escrito **para el texto del post**, y yo lo corría solo ahí. **Vale igual para el texto de la imagen, para el del vídeo y para el del prompt del programador.** Si el literal de la referencia choca con una regla nuestra, gana la nuestra.
+
+**🔧 Mecanizado, porque una regla sin su literal se vuelve a incumplir:** el aviso de `--pilar leadmagnet` ya no describe el banner, **lo entrega hecho**, y calcula el pronombre leyendo cómo llama el cuerpo al recurso. Antes ese mismo aviso decía `y te lo envio por mensaje privado`, o sea que **el validador me estaba enseñando el error**. Es el mismo patrón que el `commentGenerator` que ofrecía los dos puntos como alternativa.
+
+ Un bloque, un parrafo y cero simbolos raros vale para **cualquier** prompt que se le entregue a un ejecutor, incluido el del **programador**. La regla manda vive ahora en `working-preferences §1b`; esto es solo su copia local.
 - Dentro, frases cortas y habladas, una orden por frase, encadenadas en el mismo parrafo.
 - Cierra en minusculas con **deja todo lo demas intacto y no toques nada que no te he pedido**.
 Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque rojo de abajo), no COMO se le escribe.
