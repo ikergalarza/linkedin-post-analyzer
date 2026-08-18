@@ -1456,6 +1456,18 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔧 Y EL VALIDADOR IBA EN CONTRA, así que se ha cambiado.** Su check `RITMO: al menos un bloque de TRES` excluía las listas del recuento y por tanto **empujaba a meter un bloque de tres en prosa**, justo lo que esta regla prohíbe. Desde el 18/08, en `--pilar leadmagnet` **la lista numerada de 3 o más líneas ya cumple la densidad** y no hace falta ningún otro bloque de tres. Los demás pilares no cambian.
 
+#### 👀 4.5.0-REFERENTE-OBSERVADO · LO QUE HA CAMBIADO MARTÍN AROSA, Y LO QUE NO COPIAMOS (2026-08-18)
+
+> ⛔ **Esto es una OBSERVACIÓN, no una receta.** Se anota para detectar hacia dónde se mueve el nicho, **nunca como permiso para recuperar lo que nos capa.** Iker, el mismo día: *"yo no quiero poner en mi publicación conecta ni comenta, por mucho que lo haga él. Siempre tenemos que priorizar nuestros datos, y nuestros datos dicen que si ponemos eso no salimos en el feed"*.
+
+**LO QUE NO SE COPIA, y es innegociable:** él sigue usando `conecta` y `comenta` en el texto (316💬 hace 21 h, 497💬 hace 1 d, 1.380💬 hace 3 d). **A nosotros eso nos capa, medido dos veces.** Es asimetría de confianza de cuenta (`brand-voice §2c`), no una contradicción: **los datos que mandan son los nuestros** (`global §0-DATOS`).
+
+**LO QUE SÍ MERECE LA PENA MIRAR, porque es de MECÁNICA DE ENTREGA y no de CTA:** sus dos posts que funcionan de las últimas 24 h **ya no entregan el recurso por privado**. Cierran con *"lo estoy compartiendo en mi comunidad privada y gratuita, +1.300 profesionales"*. Ha movido el destino del DM a una comunidad.
+- **Por qué nos interesa el dato:** nuestro cuello de botella de entrega es que desde el 17/08 no agregamos a nadie, así que a quien no es contacto **el recurso solo le llega si él manda la solicitud** (`§4.5.-3`). Una comunidad no tiene ese peaje.
+- **Y Daniel Matias apunta al mismo sitio por otro camino:** hace 50 minutos, 20 comentarios, **cero peticiones en el texto** y cierre con `♻️ Repost`.
+- **Los dos han salido del "comenta y te lo mando por privado".** Puede que lo que esté envejeciendo no sea una palabra, sino el mecanismo entero.
+- **⚠️ Sin decisión tomada.** Montar comunidad es un proyecto, no un cambio de copy. Se anota para revisarlo cuando toque, no para improvisarlo.
+
 #### 🧿🧿 4.5.0-FIRMA · LOS 4 INVARIANTES QUE HACEN RECONOCIBLE UN LEAD MAGNET (Iker, 2026-08-18)
 
 > **Para qué existe esto:** LinkedIn nos ha tumbado ya dos elementos del CTA, `comenta` el 05/08 y `conecta conmigo` el 18/08, y **las dos veces el clasificador se quedó codificando la regla muerta** y metió el post en el pilar equivocado. Iker: *"busca un patrón en nuestros últimos lead magnets pese a todas las prohibiciones de palabras, y fíjalo tanto en receta como en detección de pilar"*.
