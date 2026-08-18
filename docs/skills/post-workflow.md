@@ -1395,6 +1395,17 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 3. **El semáforo de abajo se queda solo como red de emergencia**, para cuando no haya banda o no se pueda abrir la herramienta. **Detecta el capado extremo, no el post flojo**, y confundir las dos cosas es lo que casi nos hace dejar vivo un post muerto.
 4. ⚠️ **Matiz honesto:** los lead magnets arrancan más lentos que un meme (`historial`, 20/07), así que la banda de la cuenta mezcla pilares. Aun así, **la mitad de p25 no lo explica el pilar**.
 
+**📉📉 LA SEÑAL MÁS FINA NO ES EL NÚMERO, ES LA PENDIENTE (Iker, 2026-08-18).** Las dos versiones del mismo post, el mismo día, la misma cuenta y la misma foto:
+
+| | 7 min | 10-11 min | 20 min | impresiones por minuto |
+|---|---|---|---|---|
+| **BLOQUEADA** (con `conecta conmigo`) | 20 | 30 | 40 | 2,9 → 2,7 → **2,0 · va frenando** |
+| **SANA** (sin la línea) | — | **56** | — | **5,6 · el doble en el mismo minuto** |
+
+**Una publicación bloqueada no arranca baja: DESACELERA.** LinkedIn se la enseña a un puñado, no le funciona con ellos y deja de repartirla. Una sana mantiene el ritmo o lo sube. **Por eso dos medidas separadas 10 minutos valen más que una sola**, por muy pronto que la tomes: una foto fija no distingue "empieza lento" de "le han cortado el grifo", y la pendiente sí.
+
+**CÓMO SE USA, en 12 minutos:** anota impresiones a los 7-8 minutos y otra vez a los 18-20. **Si la segunda medida da MENOS impresiones por minuto que la primera, está capada.** Si da igual o más, está viva. Iker lo resumió así al comparar las dos versiones: *"ya lleva 56 impresiones en 10 minutos, o sea, más que antes en muchísimo más tiempo"*.
+
 **EL SEMÁFORO DE EMERGENCIA, con nuestros propios números y no con sensaciones:**
 
 | impresiones a los 60 min | veredicto | evidencia |
