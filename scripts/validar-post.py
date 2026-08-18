@@ -107,6 +107,7 @@ SPAM_QUEMADO = {
     'dar con el que decide': 'meme Unai 29/07, historia Iker 29/07, mapa Asturias 31/07',
     'son meses a mano': 'lo mismo, en los tres',
     'te lo damos hecho': 'lo mismo, en los tres',
+    'te lo damos resuelto': 'historia de Iker 18/08 (era la variante de "te lo damos hecho")',
 }
 
 # §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
