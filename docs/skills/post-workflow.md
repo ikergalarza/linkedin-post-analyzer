@@ -104,7 +104,7 @@ Aplica al **MAPA y a "LOS 10" por igual**. Una región se puede repetir. **Una e
 3. **Verificación de datos** (donde aplique): cifras contra fuente real + empresas/menciones según §4.0.
 4. **Hook:** 2-3 candidatos (`global-instructions §2`) — copia la anatomía del pilar en `swipe-file` (varía las palabras). **En TODO hook, itera el VERBO hasta el más punchy CON TECHO: la escalera y los verbos validados están en `global-instructions §2.9`.** Medido en nuestras cuentas: "desmonto perfiles" 8.52x vs "destripo perfiles" 0.21x.
 5. **Cuerpo:** `§3` + voz `brand-voice`, con `swipe-file` como molde de estructura (bloques, anáforas, staccato, reveal).
-6. **CTA:** regla del UNO (`§4.5`).
+6. **CTA:** regla del UNO (`§4.5`). **Y desde el 2026-08-18 hay DOS bloques de enlace, no uno** (`global §4.4e`): el spam ninja de `agendar` en su posición de siempre y, más abajo, un **segundo bloque de correo** a `https://recursos.neety.com/correo/`. **Nunca pegados** (≥2 líneas de cuerpo entre ellos) y **el de correo nunca es el último ni el penúltimo bloque**, para que el post siga cerrando con la frase punchy suelta. **NO va en mapa, ni en "Los 10", ni en el post del lead magnet**; en meme solo si el post entero cabe en 450 caracteres. La tabla por pilar y el reparto de las palabras del gancho, en `global §4.4e`.
 7. **Imagen — SIEMPRE un prompt o una recomendación basada en datos** (según el registro correcto, `images §3`):
    - **Mapa:** captura de PamPam (la haces tú) → el workflow no da prompt, entrega el CSV.
    - **"Los 10":** orla de retratos con TU plantilla → el workflow entrega el ZIP de 10 fotos (no prompt).
@@ -987,6 +987,8 @@ sorprende, que es de lo que vive este pilar.
 
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs).
 
+> **📬 EL SEGUNDO BLOQUE DE CORREO, EN MEME, VA CONDICIONADO (`global §4.4e`).** Dos bloques son ~270 caracteres con las URLs, y **los 18 memes de ≤450 caracteres tienen mediana de 11.602 impresiones contra 3.760 de los de 451-700**. Así que: **si el post entero cabe en 450 con los dos, van los dos; si no, va UNO y es el de agendar.** Nunca se recorta el chiste para meter el segundo enlace.
+
 > **⛔ SI HAY SPAM NINJA, EL CIERRE NO PUEDE SER OTRO CTA** (Iker, 2026-07-20). Nada de "Etiqueta al compi que…" ni "Comenta X". Aunque `global §4.4b` diga que el spam ninja no consume la regla del UNO, **en la practica compite**: el lector que iba a clicar el enlace se va a comentar, y la prioridad es el clic. El cierre es un **bold statement de UNA linea**, y punto.
 >
 > ⚠️ **Tiene un coste y hay que saberlo:** la referencia de la calvicie hizo 13.51x cerrando con "Etiqueta al compi que ya empezo a mirar champus anticaida", y el etiquetado es motor de alcance en memes. Se cambia alcance por intencion **a proposito**, no por descuido. Corre el pase de validación (§8). **Output 1 = el TEXTO copy-ready.**
@@ -1715,6 +1717,8 @@ Acceso libre.
 
 #### ⭐⭐ 4.7 · Runbook DESPIECE / OBJETO — el 3er peloteo regional (Iker, 2026-07-30)
 
+> **📬 LLEVA LOS DOS BLOQUES (`global §4.4e`).** Es el peloteo que **sí** admite el segundo bloque de correo, al contrario que el mapa (manda su ultra ninja) y que "Los 10" (el enlace ya convierte el homenaje en decorado de un anuncio, y dos lo duplican). Aquí hay cuerpo de sobra para intercalar: el de `agendar` en su sitio, ≥2 líneas de cuerpo, el de correo, y después todavía cuerpo y el cierre punchy.
+
 **Qué es.** El tercer formato del pilar peloteo. El mapa pelotea EMPRESAS de una región, "Los 10" pelotea PERSONAS, y este pelotea **un OBJETO cotidiano despiezado**: cada pieza, la empresa de la región que la fabrica. **La prioridad es la EMPRESA**, como en el mapa, con la persona al lado. Estrenado el 2026-07-30 en la cuenta de Iker con Euskadi y el coche. Se valida con `--pilar objeto`.
 
 **Paso 1 — OBJETO y REGIÓN.**
@@ -1757,6 +1761,11 @@ Acceso libre.
 **Sin CSV, sin fotos de personas y sin Excel.** El mapa necesita CSV porque se dibuja un mapa; aquí no hay nada que importar.
 
 #### ⭐⭐ 4.6 · Runbook HISTORIA PERSONAL / ANÉCDOTA (Iker, 2026-07-24)
+
+> ### 📬 4.6-CORREO · ESTE PILAR LLEVA LOS DOS BLOQUES, Y ES EL CANARIO (2026-08-18)
+> La historia lleva el spam ninja de `agendar` donde siempre **y**, más abajo, el **segundo bloque de correo** (`global §4.4e`). Encaja mejor que en ningún otro pilar: si el objetivo es cercanía, *"esto lo mando por correo antes que aquí"* es la continuación natural de la anécdota.
+>
+> **🔴 Y POR ESO MISMO ES EL PRIMERO QUE HAY QUE MIRAR CUANDO SE MIDA.** Este pilar tiene el **mejor CTR medido de la casa a `/agendar/`** (0,41% el 13/08, `§4.6-MEDIDO`), o sea que es donde más hay que perder si dos puertas reparten el clic. **Al publicar, los clics a `/agendar/` de la historia se anotan aparte** en `historial-publicaciones`, y si caen por debajo de 0,29% (el suelo del 29/07) el bloque de correo sale de este pilar antes que de ningún otro.
 
 > ### 🎯 4.6-OBJETIVO · ESTE PILAR NO VA DE VIRALIDAD (Iker, 2026-07-29)
 > **Léelo antes de escribir uno y antes de juzgar el resultado de uno.** Los demás pilares buscan alcance. **Este busca cercanía y naturalidad con la audiencia**, y son cosas distintas. Medir una historia por el multiplicador es medirla con la regla de otro pilar y concluir siempre que va mal.

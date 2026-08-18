@@ -588,6 +588,13 @@ Hay **dos** y hay que repartirlos, o salen duplicados:
 - **Banner "Sent by MailerLite":** se quita en Configuración de la cuenta → *MailerLite branding*. Incluido desde el plan Comfort.
 - **Los correos de PRUEBA no generan enlaces de baja ni de preferencias reales**: no se pueden pulsar. Es lo único del checklist que solo se verifica enviando de verdad.
 
+### 📬 DE DÓNDE ENTRAN LOS SUSCRIPTORES DESDE EL 2026-08-18: LA LANDING DE CORREO
+**Hasta ahora la lista se alimentaba de la base del CRM y de los gates de recursos. Desde el 18/08 hay una puerta propia: `recursos.neety.com/newsletter/` (alias `/correo/`), que es un formulario y nada más.**
+- **Le llega tráfico desde el SEGUNDO spam ninja de los posts** (`global §4.4e`): el bloque de correo que va en historia, despiece, insight, evento y meme corto. No va en mapa, ni en "Los 10", ni en el post del lead magnet.
+- **El formulario pide nombre, correo y el desplegable de "¿cómo nos conociste?"**, que es lo que permite segmentar: la mayoría vendrán de LinkedIn, pero no todos. **Ese campo y los UTM se validan mutuamente**, igual que ya pasó el 10/08 con el `origen: newsletter` del que vino del correo 0.
+- **El consentimiento de newsletter es obligatorio ahí** (y también en los gates de recurso desde el 18/08, `lead-magnet-web §3b`), así que todo el que entra por esta vía es alta limpia y no hay que filtrar después.
+- ⚠️ **Al planificar una tanda, estos NO son la base fría del CRM**: han pedido el correo ellos. Van a su propio grupo y no se mezclan con los grupos de origen del warm-up.
+
 ### 🔴 LOS UTM SON DE LA CUENTA, NO DE LA CAMPAÑA (Mario, 2026-08-10)
 El rastreo de enlaces vive en **Configuración de la cuenta → Rastreo del enlace**, y sus tres campos se inyectan en **TODAS** las campañas. Si no se tocan, el correo nº 2 llega a GA4 con el `utm_campaign` del correo nº 1 y los datos se mezclan sin que nadie lo note.
 

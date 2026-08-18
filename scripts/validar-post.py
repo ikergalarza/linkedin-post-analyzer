@@ -131,6 +131,13 @@ PAIS_QUEMADO = {
     'paraguay': 'Castilla y León',
 }
 
+# 4.4e - FRASES QUEMADAS DEL SEGUNDO NINJA, EL DEL CORREO. Misma logica que
+# SPAM_QUEMADO pero lista aparte: el dolor de este bloque es OTRO (enterarte el
+# ultimo, no la identificacion), asi que sus frases se gastan por su cuenta.
+# Al publicar, mete aqui la frase usada. La lista solo crece.
+SPAM_QUEMADO_CORREO = {
+}
+
 CONCEPTO_QUEMADO = {
     'sitio de comer': 'Euskadi',
     'desierto': 'Murcia',
@@ -746,7 +753,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
 
     # brand-voice §4.5 — el nombre del founder gana al del producto. Como mucho
     # UNA vez y nunca en el hook. El check viejo solo miraba el spam ninja.
-    _neety = len(re.findall(r'\bNeety\b', cuerpo, re.I))
+    # §4.4e - LAS URLs NO CUENTAN COMO NOMBRAR LA MARCA. `\bNeety\b` casa dentro
+    # de `recursos.neety.com` porque el punto es frontera de palabra, asi que al
+    # meter el segundo bloque de correo un post limpio pasaba a 2 y suspendia solo.
+    # Y ademas es lo correcto por doctrina: §4.4b dice que el enlace es la unica
+    # firma y que el ninja NO nombra a Neety. Lo que se cuenta es la marca escrita
+    # en el TEXTO, no el dominio del enlace.
+    _neety = len(re.findall(r'\bNeety\b', re.sub(r'https?://\S+', '', cuerpo), re.I))
     # ⛔ MARIO ES LA EXCEPCION, Y ESTABA ESCRITA PERO NO MECANIZADA (Iker,
     # 2026-08-11). `aboutme §2` lo dice desde el 22/07: en la cuenta de Mario las
     # menciones a @Neety y a los 3 jefes son OBLIGATORIAS en TODOS los posts,
@@ -1097,8 +1110,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         idx = next(i for i, l in enumerate(lineas) if _dom in l)
         chk(idx != len(lineas) - 1, 'Spam ninja NO es la última línea (§4.4b)',
             'el cierre va después' if idx == len(lineas) - 1 else '')
+        # 4.4e - desde el 2026-08-18 puede haber DOS bloques con enlace en el mismo
+        # post. Las reglas de aqui abajo son las del ninja de AGENDAR, asi que el
+        # bloque del correo se salta: tiene las suyas, mas abajo.
+        def _es_correo(_b):
+            _j = ' '.join(_b)
+            return (('/correo' in _j or '/newsletter' in _j)
+                    and '/agendar' not in _j and 'luma.com' not in _j)
         for i, b in enumerate(bs):
-            if any(_dom in l for l in b):
+            if any(_dom in l for l in b) and not _es_correo(b):
                 # El spam ninja va FUSIONADO: la broma pegada al CTA + enlace,
                 # máx 2 líneas (Iker, 2026-07-22). Antes se exigía separarlas
                 # con un blanco; ahora se permite el bloque de 2 (broma / CTA+link)
@@ -1170,7 +1190,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 #    del 650 y aun asi convierten (el mapa de Asier del 14/07 lo
                 #    pone en el 1.400 y saca 0,415%): alli la lista ES el contenido
                 #    y el lector la baja entera. En prosa, no.
-                _pos = cuerpo.find(_dom) if pilar in ('meme', 'historia', 'entregable') else 0
+                # 4.4e - se busca el enlace de AGENDAR, no el primer recursos.neety.com
+                # que aparezca: con dos bloques, si el del correo se colara antes, este
+                # check estaria midiendo el bloque equivocado.
+                _dom650 = 'luma.com' if _dom == 'luma.com' else 'recursos.neety.com/agendar'
+                _pos = cuerpo.find(_dom650) if pilar in ('meme', 'historia', 'entregable') else 0
+                _pos = max(_pos, 0)
                 chk(_pos <= 650, 'Spam ninja: el enlace cae antes del caracter 650 (§4.4b)',
                     'el enlace cae en el %d. Los 2 unicos posts que lo pasaron de 650 '
                     'son los 2 peores CTR del ano (0,042%% y 0,017%%) frente al '
@@ -1264,6 +1289,170 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         chk(not m, 'Con spam ninja, el cierre NO es otro CTA (§4.4 Paso 5)',
             f'"{m.group(0)}" apila un 2o CTA sobre el enlace. Cierra con bold statement'
             if m else '')
+
+    # ============================================================================
+    # §4.4e - EL SEGUNDO SPAM NINJA: EL BLOQUE DEL CORREO (Iker, 2026-08-18)
+    # ============================================================================
+    # Todo nuestro alcance desembocaba en dos puertas caras: descargarse un recurso
+    # o rellenar el formulario de agendar. El correo es el paso anterior, con menos
+    # friccion. El bloque hereda ENTERA la forma de 4.4b y solo cambia el destino y
+    # el dolor, asi que aqui se re-comprueba la forma sobre el bloque nuevo (el
+    # bucle de arriba se lo salta a proposito) y se anaden las reglas propias.
+    #
+    # El riesgo esta dicho en 4.4e y se mide, no se supone: toda la doctrina del
+    # ninja esta construida sobre UNA puerta, y la auditoria del 12/08 mide que
+    # cuando la puerta esta peor puesta el post gusta mas y se pincha menos
+    # (eng/1k x4, clics de 142 a 4). El que puede perder es agendar, que es el caro.
+    _correo = 'recursos.neety.com/correo' in cuerpo or 'recursos.neety.com/newsletter' in cuerpo
+    if _correo:
+        _bl = bloques(cuerpo)
+        _j = lambda _b: ' '.join(_b)
+        _i_cor = next((i for i, b in enumerate(_bl)
+                       if '/correo' in _j(b) or '/newsletter' in _j(b)), None)
+        _dom_ag = 'luma.com' if (pilar == 'evento' and 'luma.com' in cuerpo) else 'recursos.neety.com/agendar'
+        _i_ag = next((i for i, b in enumerate(_bl) if _dom_ag in _j(b)), None)
+        _cb = _bl[_i_cor] if _i_cor is not None else []
+        _cj = _j(_cb)
+
+        # 1) DONDE NO VA. Mapa: manda el ultra ninja, y rinde precisamente porque
+        #    nada en el post huele a venta (es el pilar que mas clics da del
+        #    historico). "Los 10": es el unico pilar con quejas reales de CEOs, y el
+        #    diagnostico escrito es que un homenaje que acaba en un enlace convierte
+        #    a la empresa mencionada en decorado de un anuncio; dos enlaces lo
+        #    duplican encima de 10 personas nombradas. Lead magnet: su motor entero
+        #    es el conteo de comentarios y cualquier enlace lo parte.
+        _veto = {'mapa': 'en el mapa manda el ultra ninja y el correo va en la PAGINA del mapa',
+                 'los10': 'el enlace ya convierte el homenaje en decorado de un anuncio, y dos lo duplican',
+                 'leadmagnet': 'el motor es el conteo de comentarios y cualquier enlace lo parte'}
+        chk(pilar not in _veto,
+            'Doble ninja: el bloque de correo NO va en mapa, "Los 10" ni lead magnet (§4.4e)',
+            _veto.get(pilar, '') + '. En lead magnet el correo entra por el DM privado y por '
+            'el consentimiento del gate, no por el post' if pilar in _veto else '')
+
+        # 2) ORDEN. El de agendar no se mueve de su posicion canonica, que es la
+        #    unica medida (antes del caracter 650 en prosa, tras el reveal en
+        #    peloteo). El nuevo ocupa el hueco que sobra, no le quita el sitio.
+        if _i_ag is None:
+            _det_orden = 'no encuentro el bloque de agendar'
+        elif _i_cor == _i_ag:
+            _det_orden = ('los dos enlaces estan en el MISMO bloque. Son dos bloques de dos '
+                          'lineas separados por cuerpo, nunca un bloque de cuatro: pegados se '
+                          'leen como un anuncio, que es justo lo que el bloque de dos evita')
+        elif _i_cor < _i_ag:
+            _det_orden = ('el de correo va antes. El de agendar mantiene su posicion canonica '
+                          'porque es la unica que tenemos medida')
+        else:
+            _det_orden = ''
+        chk(_i_ag is not None and _i_cor is not None and _i_cor > _i_ag,
+            'Doble ninja: el de correo va DESPUES del de agendar, en OTRO bloque (§4.4e)',
+            _det_orden)
+
+        # 3) NUNCA PEGADOS. Dos bloques de venta seguidos son un anuncio de cuatro
+        #    lineas, que es exactamente lo que el bloque de dos existe para evitar.
+        if _i_ag is not None and _i_cor is not None and _i_cor > _i_ag:
+            _entre = sum(len(b) for b in _bl[_i_ag + 1:_i_cor])
+            chk(_entre >= 2, 'Doble ninja: >=2 lineas de cuerpo entre los dos bloques (§4.4e)',
+                '%d linea(s) de cuerpo entre ellos. Pegados se leen como un anuncio de cuatro '
+                'lineas, que es justo lo que el bloque de dos evita' % _entre if _entre < 2 else
+                '%d lineas de cuerpo entre ellos' % _entre)
+
+        # 4) NUNCA AL FINAL. El post cierra con la frase punchy suelta, siempre. Se
+        #    exigen 2 lineas detras: al menos una de cuerpo y el cierre en la suya.
+        if _i_cor is not None:
+            _desp = sum(len(b) for b in _bl[_i_cor + 1:])
+            chk(_desp >= 2, 'Doble ninja: el de correo NO es el ultimo ni el penultimo bloque (§4.4e)',
+                '%d linea(s) detras. Detras tiene que quedar cuerpo Y el cierre punchy en su '
+                'linea: el final del post sigue siendo una frase suelta que remata' % _desp
+                if _desp < 2 else '')
+
+        # 5) LA FORMA SE HEREDA ENTERA DE 4.4b: dos lineas pegadas, cada una <=55 sin
+        #    la URL, la de abajo mas corta, https:// delante y sin nombrar la marca.
+        chk(len(_cb) == 2, 'Doble ninja: el bloque del correo son DOS lineas pegadas (§4.4e)',
+            '%d lineas. Con una sola el enlace llega sin dolor delante y se lee banner '
+            '(0,069%% contra 0,205%%)' % len(_cb) if len(_cb) != 2 else '')
+        _su = lambda s: re.sub(r'https?://\S+', '', s).strip()
+        _lg = [(i + 1, len(_su(l))) for i, l in enumerate(_cb) if len(_su(l)) > 55]
+        chk(not _lg, 'Doble ninja: las dos lineas cortas, <=55 sin la URL (§4.4e)',
+            ('linea(s) %s. Pasando de 55 se parte en el movil y el bloque de dos se lee '
+             'como cuatro' % ', '.join('%d con %d car' % x for x in _lg)) if _lg else
+            '%s car' % ' / '.join(str(len(_su(l))) for l in _cb))
+        if len(_cb) == 2:
+            chk(len(_su(_cb[1])) <= len(_su(_cb[0])),
+                'Doble ninja: la linea del enlace no es mas larga que la de arriba (§4.4e)',
+                'arriba %d, abajo %d' % (len(_su(_cb[0])), len(_su(_cb[1])))
+                if len(_su(_cb[1])) > len(_su(_cb[0])) else '', aviso=True)
+        chk('https://recursos.neety.com/correo' in cuerpo or
+            'https://recursos.neety.com/newsletter' in cuerpo,
+            'Doble ninja: el enlace del correo lleva https:// delante (§4.4e)',
+            'sin el protocolo LinkedIn puede no detectarlo como clicable')
+        chk('Neety' not in _cj, 'Doble ninja: el bloque del correo NO nombra a Neety (§4.4e)',
+            'nombrar la marca = publicidad encubierta')
+
+        # 6) PROHIBIDAS "suscribete" Y "newsletter" DENTRO DEL BLOQUE. Nuestro ICP es
+        #    un director comercial industrial de 50 y pico: se le dice "esto lo mando
+        #    por correo antes que aqui", no "suscribete a nuestra newsletter". La
+        #    primera suena a persona, la segunda a formulario. Por eso la URL que se
+        #    ESCRIBE es /correo/ aunque la canonica sea /newsletter/ (alias 301).
+        _mkt = re.search(r'suscr[ií]b\w*|newsletter|bolet[ií]n', _su(_cj), re.I)
+        chk(not _mkt, 'Doble ninja: ni "suscribete" ni "newsletter" en el texto (§4.4e)',
+            '"%s" suena a formulario. Se dice "esto lo mando por correo antes que aqui"'
+            % _mkt.group(0) if _mkt else '')
+
+        # 7) REPARTO DE LAS PALABRAS DEL GANCHO. 4.4b dice que lo mas punchy de un
+        #    gancho son el OBJETO y el VERBO. El bloque 1 se queda una pieza y el 2 la
+        #    otra: dos bloques colgando de la MISMA palabra se leen como un eco y se
+        #    delatan los dos a la vez.
+        def _sa(_s):
+            for _x, _y in zip(u'áéíóúñ', 'aeioun'):
+                _s = _s.replace(_x, _y)
+            return _s
+        _stopc = {'para', 'como', 'desde', 'entre', 'cuando', 'porque', 'sobre', 'todos',
+                  'todas', 'nadie', 'nunca', 'siempre', 'tambien', 'tampoco', 'estar',
+                  'tener', 'hacer', 'decir', 'quiere', 'queria', 'vender', 'ventas'}
+        _palc = [w for w in re.findall(u'[a-záéíóúñ]{5,}', hook_txt.lower())
+                 if _sa(w) not in _stopc]
+        _rc = _sa(_cj.lower())
+        _ecoc = [w for w in _palc if _sa(w)[:5] in _rc]
+        chk(bool(_ecoc), 'Doble ninja: el bloque del correo recoge una palabra del gancho (§4.4e)',
+            ('el gancho habla de: ' + ', '.join(_palc[:6]) + ', y el bloque del correo no '
+             'recoge ninguna. Sin la palabra del gancho el bloque aparece a mitad de texto '
+             'con vocabulario nuevo y el ojo lo trata como banner') if not _ecoc else
+            'recoge del gancho: ' + ', '.join(_ecoc[:3]))
+        if _i_ag is not None:
+            _ra = _sa(_j(_bl[_i_ag]).lower())
+            _ecoa = [w for w in _palc if _sa(w)[:5] in _ra]
+            _comun = [w for w in _ecoc if w in _ecoa]
+            chk(not _comun, 'Doble ninja: los dos bloques NO cuelgan de la misma palabra (§4.4e)',
+                ('los dos recogen "%s". El gancho tiene DOS piezas punchy, el objeto y el '
+                 'verbo: uno se queda una y el otro la otra. Repetir la misma se lee como un '
+                 'eco y delata los dos bloques a la vez' % '", "'.join(_comun[:3])) if _comun else '')
+
+        # 8) Y ROTA, como el otro. Sin lista de quemadas, en un mes los tres perfiles
+        #    dicen lo mismo (4.4b lo lleva escrito desde el 31/07).
+        _qc = sorted(f for f in SPAM_QUEMADO_CORREO if f in _cj.lower())
+        chk(not _qc, 'Doble ninja: la frase del correo no esta quemada (§4.4e)',
+            ' · '.join('"%s" ya salio en %s' % (f, SPAM_QUEMADO_CORREO[f]) for f in _qc))
+
+        # 9) EL DOLOR ES OTRO, y esto es lo que mas se va a equivocar. El de agendar es
+        #    la identificacion (a quien vender, quien firma dentro). El del correo es
+        #    enterarte el ultimo. Va de aviso porque es criterio y por lexico no se
+        #    puede exigir sin fabricar un tic.
+        chk(False, 'ENTREGA: el dolor del bloque de correo NO es el de agendar',
+            'el de agendar es la identificacion (a quien vender, quien firma dentro). El del '
+            'correo es enterarte el ultimo: la IA esta cambiando como se vende y tu lo lees en '
+            'LinkedIn seis meses tarde. Test de cinco segundos: tapa el post y lee solo las dos '
+            'lineas; si valdrian pegadas a cualquier otra publicacion nuestra, estan mal',
+            aviso=True)
+
+        # 10) EN MEME CUESTA ALCANCE, y el numero esta medido: los 18 memes de <=450
+        #     caracteres tienen mediana de 11.602 impresiones contra 3.760 de los de
+        #     451-700, y dos bloques son ~270 caracteres con las URLs.
+        if pilar == 'meme':
+            chk(len(cuerpo) <= 450, 'Doble ninja en MEME: el post entero cabe en 450 car (§4.4e)',
+                '%d caracteres. Con dos bloques el meme se sale de la zona corta: los 18 memes '
+                'de <=450 tienen mediana de 11.602 impresiones contra 3.760 de los de 451-700. '
+                'Si no cabe, va UN bloque y es el de agendar' % len(cuerpo)
+                if len(cuerpo) > 450 else '%d caracteres' % len(cuerpo))
 
     # global §2.10 — EL CIERRE PUNCHY ES UNA SOLA LINEA. Dos oraciones largas al
     # final diluyen el remate: un cierre no admite explicacion detras.
@@ -1515,8 +1704,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             chk(len(cuerpo) >= 320, 'GENÉRICO: cuerpo LARGO como el suyo (§4.5.0b)',
                 f'{len(cuerpo)} car — el suyo es largo (setup + malo/bueno + lista + ancla de valor); no te quedes corto'
                 if len(cuerpo) < 320 else '')
-        chk(not tiene_link, 'Lead magnet SIN spam ninja (§4.4b, única excepción)',
-            'el link apila un 2º CTA y hunde los comentarios' if tiene_link else '')
+        # 4.4e: el veto vale para los DOS enlaces. El correo tampoco va en el POST
+        # del lead magnet: entra por el DM privado (que ya lleva ninja) y por el
+        # consentimiento del gate, que son superficies donde no compite con nada.
+        chk(not tiene_link, 'Lead magnet SIN spam ninja, ni el de agendar ni el de correo (§4.4b y §4.4e)',
+            'el link apila un 2º CTA y hunde los comentarios. El correo entra por el DM y por '
+            'el gate, no por el post' if tiene_link else '')
         # ⛔⛔ EL CTA DEL LEAD MAGNET CAMBIO EL 2026-08-10 (ver §4.5.0-CTA).
         #
         # Aqui vivian ocho checks alrededor de `Comenta "palabra"`: que estuviera

@@ -1108,14 +1108,15 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 > **Qué hacer:** deja el enlace definitivo escrito ANTES de publicar (una edición posterior es un riesgo conocido de perder el tracking), y **a las 24-48h comprueba en la herramienta que el post con enlace tiene clics y `link_url`**. Si sale 0 sin URL, ese post no medirá: no lo leas como fracaso del CTA ni cambies el copy por eso.
 
 **Dónde va (por pilar):**
-| Pilar | Lleva spam ninja | Colocación |
-|---|---|---|
-| MAPA | ✅ | **Justo después del bloque de menciones** (posición fija) |
-| "LOS 10" | ✅ | **Justo después del REVEAL de región**, que en este pilar va DESPUÉS de la lista (ver ⚠️ abajo) |
-| MEME | ✅ | En el punto más natural del cuerpo (el cuerpo es corto, 3-6 líneas) |
-| Insight / evento / otros con cuerpo | ✅ | Donde el chiste caiga natural |
-| Vídeo (caption) | ✅ | Regla de comercio, no de formato → aplica (`video §0`) |
-| **LEAD MAGNET** | ❌ **NUNCA** | Ver la excepción abajo |
+| Pilar | Lleva spam ninja | Colocación | 2º bloque de correo (`§4.4e`) |
+|---|---|---|---|
+| MAPA | ✅ | **Justo después del bloque de menciones** (posición fija) | ❌ va en la PÁGINA del mapa |
+| "LOS 10" | ✅ | **Justo después del REVEAL de región**, que en este pilar va DESPUÉS de la lista (ver ⚠️ abajo) | ❌ |
+| MEME | ✅ | En el punto más natural del cuerpo (el cuerpo es corto, 3-6 líneas) | ⚠️ solo si el post cabe en 450 car |
+| Insight / evento / otros con cuerpo | ✅ | Donde el chiste caiga natural | ✅ (en evento, Luma ocupa el hueco de agendar) |
+| HISTORIA / DESPIECE | ✅ | Donde lo más punchy del gancho caiga natural | ✅ |
+| Vídeo (caption) | ✅ | Regla de comercio, no de formato → aplica (`video §0`) | ✅ si el caption da para intercalar |
+| **LEAD MAGNET** | ❌ **NUNCA** | Ver la excepción abajo | ❌ en el post · ✅ en el DM y en el gate |
 
 **📊 CUÁNTO RINDE, MEDIDO (2026-07-20 · solo posts con NUESTRO enlace):**
 
@@ -1190,6 +1191,68 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 **En algunos posts —no en todos— va un bloque mencionando a todo el equipo de Neety.** Es la misma mecánica del peloteo pero hacia dentro: cada compañero recibe notificación, y el repost de un empleado llega a una red que se solapa poco con la del founder.
 - **⏳ CUÁNDO: cuando el evento ya haya pasado o esté a punto de pasar.** Antes no: meter a la plantilla en un post de expectación no aporta y gasta el recurso.
 - **No se abusa.** Si sale en todos los posts, deja de ser un gesto y se convierte en firma, y los compañeros dejan de interactuar.
+
+### 📬 4.4e · EL SEGUNDO SPAM NINJA — el correo (Iker, 2026-08-18)
+> **Fuente única de verdad del BLOQUE 2.** Todo lo de `§4.4b` se hereda tal cual (dos líneas pegadas, ≤55 caracteres cada una sin la URL, la de abajo más corta, una sola oración + `:` + enlace, `https://` delante, nunca nombra a Neety). **Aquí solo está escrito lo que CAMBIA.**
+
+**Qué es:** un **segundo** spam ninja en el mismo post que enlaza a **`https://recursos.neety.com/correo/`** en vez de a `/agendar/`. Vende dejar el correo, no agendar.
+
+**Por qué existe (Iker, 2026-08-18):** todo nuestro alcance desembocaba en dos puertas caras, descargarse un recurso o rellenar el formulario de agendar. El correo es **el paso anterior**: menos fricción, primer contacto más probable, y desde ahí ya trabaja el email marketing que ya tenemos montado.
+
+**⚠️ LA URL: se escribe `/correo/`, la canónica es `/newsletter/`.** `/correo/` es un **alias 301**. Se escribe la corta en el post porque son 10 caracteres menos en una línea con tope de 55 y porque *correo* lo entiende un industrial de 55 años a la primera; `/newsletter/` es la que indexa Google y la que casa con el `utm_source=newsletter` que MailerLite ya inyecta. GA4 atribuye al destino final, así que no se pierde nada.
+
+#### ⛔⛔ DÓNDE VA Y DÓNDE NO (decidido con los datos de cada pilar, no a ojo)
+
+| Pilar | Bloque 1 | Bloque 2 (correo) | Por qué |
+|---|---|---|---|
+| **HISTORIA** | agendar | ✅ | Donde mejor encaja: el pilar busca cercanía, y el correo es la continuación natural de "te sigo contando". **🔴 Y es EL CANARIO:** tiene el mejor CTR medido de la casa a `/agendar/` (0,41%), o sea que es donde más hay que perder. Se mide el primero (`post-workflow §4.6-CORREO`). |
+| **DESPIECE** | agendar | ✅ | Cuerpo largo, sitio de sobra. |
+| **INSIGHT / otros con cuerpo** | agendar | ✅ | — |
+| **EVENTO** | Luma | ✅ | **Máximo 2 enlaces.** El de Luma **ocupa el hueco del de agendar** (ya es un CTA de conversión). Nunca tres puertas en un post. |
+| **MEME** | agendar | ⚠️ solo si el post entero cabe en **450** | Dos bloques son ~270 caracteres con las URLs. Los 18 memes de ≤450 tienen **mediana de 11.602 impresiones contra 3.760** de los de 451-700. Si no cabe, va **uno solo y es el de agendar**. |
+| **MAPA** | ultra ninja | ❌ **NO** | El ultra ninja rinde **porque nada en el post huele a venta**, y es el pilar que más clics da del histórico. El correo va **en la PÁGINA del mapa**, mismo precedente que el evento cuando la región queda lejos. |
+| **"LOS 10"** | agendar | ❌ **NO** | Es el **único pilar con quejas reales de CEOs**, y el diagnóstico escrito en `post-workflow §4.3` es literal: *"un homenaje que acaba en un enlace convierte a la empresa mencionada en decorado de un anuncio"*. Dos enlaces duplican eso encima de 10 personas mencionadas con nombre y apellido. |
+| **LEAD MAGNET** | ❌ | ❌ **en el POST** | Su motor entero es el conteo de comentarios y cualquier enlace lo parte (`§4.5`, la regla del UNO). **Pero el correo sí entra por dos superficies que ya existen y no compiten con nada:** el **DM privado** (que ya lleva ninja, `§4.4b`) y el **gate del recurso**, donde el consentimiento de newsletter pasa a ser obligatorio (`lead-magnet-web §3`). |
+
+#### ⛔⛔ LA POSICIÓN: NUNCA PEGADOS Y NUNCA AL FINAL
+
+```
+[cuerpo]
+[NINJA 1 · agendar]         ← NO se mueve de su posición canónica por pilar
+[>=2 líneas de cuerpo]      ← los dos bloques NUNCA van pegados
+[NINJA 2 · correo]
+[>=1 línea de cuerpo]
+[cierre punchy]             ← intacto, en su línea, como siempre
+```
+
+- **El de agendar no se mueve.** Es la única posición que tenemos medida: antes del carácter 650 en prosa (`§4.4b-CLICS`), después del reveal en peloteo. El bloque nuevo ocupa el hueco que sobra, no le quita el sitio.
+- **El de correo va SIEMPRE después.** Y **nunca puede ser el último ni el penúltimo bloque**: detrás tiene que quedar cuerpo y el cierre punchy en su línea. El final del post sigue siendo una frase suelta que remata, que es lo que lo hace memorable.
+- **El 650 sigue siendo del bloque 1.** Al bloque 2 no se le exige, porque quien llega hasta ahí ya ha decidido leer el post entero.
+
+#### ⛔⛔ QUÉ DICE, PARA QUE NO SE VUELVA PLANTILLA EN TRES SEMANAS
+
+**1. El gancho tiene dos piezas punchy y se reparten una cada uno.** `§4.4b` dice que lo más punchy de un gancho son siempre **el OBJETO** que pinta la imagen mental y **el VERBO** que frena el scroll. **El bloque 1 se queda una, el bloque 2 la otra.** Nunca la misma raíz en los dos: dos bloques colgando de la misma palabra se leen como un eco y delatan los dos a la vez.
+> Gancho: *"Le pregunté a qué empresas quería vender y me **plantó** el **portátil** delante"*
+> Bloque 1 (agendar) se queda `portátil` · Bloque 2 (correo) se queda `plantar`.
+
+**2. Si el gancho solo da una pieza**, el bloque 2 tira de **FOMO** con una palabra del cuerpo. Nunca con vocabulario nuevo: eso lo convierte en banner (`§4.4b`).
+
+**3. El DOLOR es OTRO, y esto es lo que más se va a equivocar.** El de agendar es **la identificación** (a quién vender, quién firma dentro). El del correo es **enterarte el último**: la IA está cambiando cómo se vende y tú lo lees en LinkedIn seis meses tarde. Los primeros en saber lo que viene son los que lo reciben, no los que lo ven pasar por el feed.
+- ⚠️ **Por eso al bloque 2 NO se le exige el check de "promete IDENTIFICAR".** Ese es el dolor del bloque 1.
+- **Y sigue siendo corto y punchy.** Lo que compra el lector es que le resuelvas su punto de dolor en una línea, no que le expliques qué es una newsletter.
+
+**4. ⛔ PROHIBIDAS LAS PALABRAS `suscríbete` Y `newsletter` DENTRO DEL BLOQUE.** Nuestro ICP es un director comercial industrial de 50 y pico. A esa persona se le dice *"esto lo mando por correo antes que aquí"*, no *"suscríbete a nuestra newsletter"*. La primera suena a persona, la segunda a formulario. **Mecanizado como fallo duro.**
+
+**5. Rota igual que el otro.** Lista de quemadas propia, `SPAM_QUEMADO_CORREO` en `validar-post.py`. Al publicar se mete ahí la frase usada. Sin esto, en un mes los tres perfiles dicen lo mismo, que es exactamente lo que `§4.4b` lleva escrito desde el 31/07.
+
+#### 🔴 LOS TRES AVISOS, DICHOS ANTES DE EMPEZAR (no después)
+
+1. **Dos puertas reparten el clic.** Toda la doctrina del ninja está construida sobre UNA. La auditoría del 12/08 mide que cuando la puerta está peor puesta el post gusta más y se pincha menos (eng/1k x4, clics de 142 a 4). **El que puede perder es `agendar`, que es el caro.**
+2. **En meme cuesta alcance** (la tabla de arriba). Por eso ahí va condicionado a los 450 caracteres.
+3. **LinkedIn NO nos va a desglosar los clics.** La herramienta guarda **un solo `link_url` por post**. El desglose sale de **GA4** (las dos URLs son distintas y se separan solas por página de destino, sin meter UTMs feos en el post) y de **las altas en MailerLite**.
+
+#### 📊 CÓMO SE DECIDE SI ESTO SE QUEDA
+**La casilla es una: clics a `/agendar/` por post, ANTES contra DESPUÉS.** Si caen más de un tercio y las altas de correo no lo compensan, el bloque 2 se retira de los pilares que más convierten y se queda solo en historia y despiece. **Se re-mide a los 10 posts con doble bloque**, y el resultado se anota aquí.
 
 ### 4.5 · La regla del UNO en el cierre (CTA)
 Exactamente UN cierre: una pregunta que fuerza postura, O un lead-magnet con la fórmula "Comenta X + Y", O un link directo en el cuerpo, O ningún CTA (un claim fuerte cierra). **Nunca apiles cierres.** (Nota: LinkedIn en 2026 NO penaliza links en el cuerpo — el folklore "ponlo en el primer comentario" está obsoleto. Un link en el cuerpo no suprime alcance; lo hemos verificado con posts >100K imp.)

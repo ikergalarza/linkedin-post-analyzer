@@ -69,6 +69,16 @@ El error de bulto va en las dos direcciones y las dos matan:
 
 ---
 
+## 3b · 📬 EL CONSENTIMIENTO DE NEWSLETTER, OBLIGATORIO EN EL GATE (Iker, 2026-08-18)
+
+**Desde el 18/08 el lead magnet también capta suscriptores, y lo hace AQUÍ, no en el post.** El post del lead magnet **sigue sin llevar enlace** (`global §4.4b` y `§4.4e`): su motor entero es el conteo de comentarios y cualquier enlace lo parte. Así que el correo entra por las dos superficies donde no compite con nada:
+1. **El GATE** — de los dos consentimientos que el formulario ya lleva por RGPD, **el de recibir el correo pasa a ser obligatorio** para enviar. No se premarca (un consentimiento premarcado es nulo): se marca él, y sin marcarlo el botón no envía. El resto del formulario no se toca.
+2. **El DM privado**, que ya cierra con spam ninja después del recurso (`global §4.4b`, el matiz del 22/07). Ahí el destino puede ser `agendar` o, si el que comenta aún está frío, `https://recursos.neety.com/correo/`.
+
+**Por qué no en el post, dicho una vez para no volver a proponerlo:** el lector que iba a comentar duda entre comentar o clicar, y el conteo de comentarios es TODO el motor del formato. La captura de correo del lead magnet ya existía — es el gate. Lo único que faltaba era **pedir el permiso de newsletter ahí dentro**.
+
+---
+
 ## 4 · Después del correo (ahí empieza la conversión, no termina)
 Secuencia simple de 4 emails, cada uno continuando la conversación del recurso:
 1. **Entrega** del recurso.
