@@ -277,12 +277,34 @@ function pideComentarPalabra(texto: string): boolean {
  * recurso, decir que se comparte GRATIS, y cerrar con CONECTA CONMIGO (que hace
  * falta para poder mandarlo por privado). Las tres viven en el ultimo tercio.
  */
+const ENTREGABLE_RE =
+  /\b(gu[ií]a|sistema|plantillas?|checklist|playbook|framework|prompts?|hoja|dossier|manual|recurso|biblioteca|instrucciones)\b/i;
+
 function pideConectar(texto: string): boolean {
   const cola = texto.slice(Math.floor(texto.length * 0.6));
   const pregunta = /¿[^?]{5,90}\?/.test(cola);
   const gratis = /\b(gratis|gratuit\w+|acceso libre|sin coste)\b/i.test(cola);
   const conecta = /\bconecta\s+conmigo\b/i.test(cola);
-  return pregunta && gratis && conecta;
+  // ⛔ LA TERCERA PATA YA NO PUEDE SER "CONECTA CONMIGO" (Iker, 2026-08-18).
+  //
+  // Esa frase salio del pilar el 18/08 (`post-workflow §4.5.0-CTA-CERO`): con
+  // ella el post de Unai se quedo en 40 impresiones en 20 minutos y sin aparecer
+  // en ningun feed; sin ella, en el feed Principal de las 3 cuentas en 4 minutos.
+  // Y este clasificador la EXIGIA, asi que ese mismo post entro en la base como
+  // 'meme' por llevar foto. Es la SEGUNDA vez que pasa lo mismo: la primera fue
+  // con "comenta" el 05/08. Cambiamos la receta y el clasificador se queda
+  // codificando la regla muerta.
+  //
+  // Asi que la tercera pata pasa a ser el ENTREGABLE, y no por comodidad: es el
+  // unico invariante del pilar que LinkedIn no puede prohibir. Su lista negra va
+  // contra PETICIONES DE ACCION —comenta, conecta, comparte, guarda— y nombrar
+  // la cosa que regalas no es pedir nada. Un lead magnet sin entregable nombrado
+  // no existe: el entregable ES lo que se ofrece.
+  //
+  // `conecta conmigo` se queda como ALTERNATIVA, no como requisito, para que los
+  // posts viejos que siguen en la base no se caigan del pilar al reclasificar.
+  const entregable = ENTREGABLE_RE.test(cola);
+  return pregunta && gratis && (entregable || conecta);
 }
 
 /**
