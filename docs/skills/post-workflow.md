@@ -1385,7 +1385,17 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔴 LO PRIMERO, PORQUE ES LA LECTURA QUE FALLA: QUE SALGA EN "RECIENTE" NO DESCARTA EL CAPADO.** LinkedIn tiene dos feeds y no dicen lo mismo. **Reciente** es cronológico de a quién sigues y apenas pasa por el algoritmo, así que un post capado **también** sale ahí. **Principal** es el que decide el reparto. Mirar Reciente y respirar tranquilo es exactamente el error que hay que evitar. Y en Principal hay que mirar **a los 30-45 minutos**, no a los 3: a los 3 minutos casi nada ha entrado todavía.
 
-**EL SEMÁFORO, con nuestros propios números y no con sensaciones:**
+**🛑🛑 EL INSTRUMENTO BUENO YA LO TENEMOS Y ES LA BANDA TÍPICA DE LA HERRAMIENTA, NO ESTE SEMÁFORO (Iker, 2026-08-18).** El Explorer pinta, para cada post, **`typical impressions at the same age` con su p25-p75 y su n**. Iker lo sacó de ahí en 10 segundos: su meme del 13/08 tenía **212 impresiones a los 38 minutos** con banda típica **174-278**, y **141 a los 22 minutos**. El lead magnet de hoy iba a **30 a los 11 minutos**, o sea **menos de la mitad de lo normal de su propia cuenta**.
+
+**⛔ Y EL ERROR QUE ESTO CORRIGE ERA MÍO Y DE ESTE MISMO DÍA: yo comparaba contra el SUELO, no contra lo NORMAL.** Puse de vara los tres capados de agosto (19 impresiones en 1 hora) y concluí *"vas a 8 veces el ritmo de un capado, no lo borres"*. **Contra el suelo todo parece sano.** Iker: *"no me puedes decir que 30 impresiones no es raro"*. Tenía razón: el post estaba a menos de la mitad de su banda.
+
+**LA REGLA, entonces:**
+1. **Primero, la banda típica del Explorer** para esa cuenta y esa edad. Es específica de la cuenta, se actualiza sola y tiene n. **Es la única vara buena.**
+2. **Por debajo de p25 a los 20-30 minutos → problema real**, aunque el número absoluto parezca decente.
+3. **El semáforo de abajo se queda solo como red de emergencia**, para cuando no haya banda o no se pueda abrir la herramienta. **Detecta el capado extremo, no el post flojo**, y confundir las dos cosas es lo que casi nos hace dejar vivo un post muerto.
+4. ⚠️ **Matiz honesto:** los lead magnets arrancan más lentos que un meme (`historial`, 20/07), así que la banda de la cuenta mezcla pilares. Aun así, **la mitad de p25 no lo explica el pilar**.
+
+**EL SEMÁFORO DE EMERGENCIA, con nuestros propios números y no con sensaciones:**
 
 | impresiones a los 60 min | veredicto | evidencia |
 |---|---|---|
