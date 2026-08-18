@@ -857,8 +857,25 @@ const migration = `
       EXECUTE format('ALTER TABLE lead_magnet_sends DROP CONSTRAINT %I', c);
     END LOOP;
   END $$;
-  ALTER TABLE lead_magnet_sends ADD CONSTRAINT lead_magnet_sends_kind_check
-    CHECK (kind IN ('dm','invite','inmail'));
+  -- ⛔ AQUI IBA UN "ADD CONSTRAINT CHECK (kind IN ('dm','invite','inmail'))"
+  -- Y TUMBO EL DEPLOY EL 2026-08-18. Se quita a proposito.
+  --
+  -- El fallo: esta migracion NO esta versionada, corre ENTERA en cada arranque.
+  -- La v37 de aqui abajo amplia el CHECK con 'ask' y el codigo empezo a escribir
+  -- filas 'ask'. En el siguiente boot, esta linea volvia a intentar poner el
+  -- CHECK viejo SIN 'ask' sobre una tabla que ya tenia filas 'ask' ->
+  -- "check constraint lead_magnet_sends_kind_check is violated by some row",
+  -- runMigrations lanza, index.ts hace process.exit(1) y el healthcheck se cae
+  -- 11 veces. El build salia en verde: lo que petaba era el arranque.
+  --
+  -- Por que quitarla es seguro: la v37 dropea cualquier CHECK de kind y pone el
+  -- definitivo dos sentencias mas abajo, dentro de la MISMA transaccion. En una
+  -- base nueva el resultado final es identico; en una base viva, deja de haber
+  -- un instante en el que la tabla tiene un CHECK mas estrecho que sus datos.
+  --
+  -- 📌 La leccion, para la proxima migracion: en un runner que reejecuta todo
+  -- en cada boot, una migracion antigua que ESTRECHA un dominio es una bomba de
+  -- relojeria que estalla cuando alguien inserta el primer valor nuevo.
   ALTER TABLE lead_magnet_sends ADD COLUMN IF NOT EXISTS verificado BOOLEAN;
 
   -- v37: 'ask' — el recibo de "a esta persona se le PIDIO que nos mande ella la
@@ -893,8 +910,31 @@ const migration = `
       EXECUTE format('ALTER TABLE lead_magnet_sends DROP CONSTRAINT %I', c);
     END LOOP;
   END $$;
+  -- El CHECK entra NOT VALID y se valida despues en un bloque que captura el
+  -- error. Motivo: una fila con un kind desconocido NO puede volver a impedir
+  -- que el backend arranque. Con NOT VALID el constraint se aplica a todo lo
+  -- que se inserte a partir de ahora, que es lo que de verdad protege, y las
+  -- filas viejas se quedan donde estan hasta que alguien las mire.
   ALTER TABLE lead_magnet_sends ADD CONSTRAINT lead_magnet_sends_kind_check
-    CHECK (kind IN ('dm','invite','inmail','ask'));
+    CHECK (kind IN ('dm','invite','inmail','ask')) NOT VALID;
+
+  -- Y si hay filas fuera del dominio, se AVISA con sus valores y su recuento en
+  -- vez de morir. Un WARNING en el log del deploy es lo que convierte esto en
+  -- algo que se puede arreglar; un exit 1 solo dice que algo fallo.
+  DO $$
+  DECLARE malos TEXT;
+  BEGIN
+    SELECT string_agg(t.kind || ' x' || t.n, ', ') INTO malos
+      FROM (SELECT kind, count(*) AS n
+              FROM lead_magnet_sends
+             WHERE kind NOT IN ('dm','invite','inmail','ask')
+             GROUP BY kind) t;
+    IF malos IS NULL THEN
+      ALTER TABLE lead_magnet_sends VALIDATE CONSTRAINT lead_magnet_sends_kind_check;
+    ELSE
+      RAISE WARNING '[migrate] lead_magnet_sends.kind fuera del CHECK: %. El constraint queda NOT VALID: protege lo nuevo y no bloquea el arranque.', malos;
+    END IF;
+  END $$;
 `;
 
 /**
