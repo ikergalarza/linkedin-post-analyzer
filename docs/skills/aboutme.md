@@ -133,6 +133,17 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 - **Público de Mario: MARKETING, no ventas.** Aunque por dentro hable de ventas, su cuenta se ancla a **marketing / contenido / growth / redes sociales** — es la red que está construyendo (manda solicitudes a gente de marketing de otras empresas). Pelotea a gente y empresas de marketing, y los temas van por ahí.
 - **Ángulos ya usados por Mario (no repetir, como los conceptos del mapa):** 1er post = *"crecer en LinkedIn no es suerte + 1.000.000 de impresiones en 2 meses sin haber tocado la plataforma"*. Cada post nuevo, ángulo nuevo — aunque el tema (contenido, growth) se repita.
 
+### 👤 Helena Baviera Serigó — Partnerships & Customer Success (5ª cuenta, Iker 2026-08-18)
+- Rol: **Partnerships & Customer Success Manager** en Neety. LinkedIn: `in/helena-baviera` · **2.054 seguidores** · Paterna, Valencia. Headline exacto: *Partnerships & Customer Success Manager en Neety*.
+- **Por qué existe, y es la misma lógica que Mario:** a la empresa le conviene que hablen de ella **empleados y perfiles distintos**, no solo los tres jefes, y a ella le conviene el alcance. **Conveniencia mutua, dicha así por Iker.** Y hay un motivo de negocio encima: **trabaja con los clientes todos los días**, así que su autoridad pública nos suma donde el founder no llega.
+- **La razón operativa por la que su cuenta es interesante AHORA:** está **medio muerta** (casi todo reposts de las cuentas de founder), así que **su baseline es bajísima y LinkedIn boostea el primer post bueno**. En los jefes ya cuesta sacar outliers porque su media lleva meses alta. Es exactamente lo que pasó con Mario: menos de 500 seguidores, 2.000 impresiones los primeros días y luego explotó a **32.244 con el 99% fuera de su red**.
+- 🔴 **NO está conectada a Unipile.** Comentarios, respuestas y analíticas, **a mano**, igual que Mario. No la metas en flujos automáticos.
+- **Frecuencia: OPCIONAL, como Mario.** No entra en el cuadro latino 3×3 de las 3 cuentas de founder (`post-workflow §8.2`).
+- **Tono: joven y cercano, pero SIN burradas** (Iker, 18/08). El registro de Mario, con un freno más: nada de tacos, escatología ni chiste bruto. El humor va en la situación, no en la palabra. En la escala de `brand-voice §1b` se coloca **al lado de Iker, un punto por debajo de Mario**.
+- **⛔ SIN MENCIONES: ni @Neety ni los jefes ni nadie.** Es lo contrario a la regla por defecto de Mario y es deliberado: **su cuenta arranca con el experimento ya validado en él** (12/08, sin ninguna mención, 32.244 impresiones). Con cero arrobas de la empresa junto a un enlace, el spam ninja no se lee como publicidad.
+- **⭐ Público y ángulo: ATENCIÓN AL CLIENTE, CUSTOMER SUCCESS y PARTNERSHIPS**, igual que Mario se ancla a marketing. Los mismos pilares que funcionan, pero **la REFERENCIA del meme se busca en su sector** (soporte, tickets, cuentas, renovaciones) y **el gancho ancla a VENTAS**, que es lo que hizo que el de Mario funcionara: referencia de marketing, gancho de ventas.
+- **Referencias ya usadas por Helena:** ninguna todavía. Primer post = 18/08, remix del tuit de métricas perversas de `IT Unprofessional` vía Vik Gambhir.
+
 ---
 
 ## 3 · Una sola voz para los tres: "voz Neety"

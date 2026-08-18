@@ -677,9 +677,21 @@ de inspiración con el filtro meme, y los primeros casi todos ya los hemos usado
 **El corpus está agotado por arriba**: ordenar por ratio devuelve justo lo que ya
 hemos gastado. Lo nuevo hay que ir a buscarlo.
 
-**⚠️ La búsqueda de POSTS de Unipile NO funciona con nuestra cuenta** (probado el
-11/08: `category: posts` devuelve `total_count: 0` con cualquier keyword). Lo que SÍ
-funciona, y es el camino:
+> ### ✅✅ CORREGIDO EL 2026-08-18: LA BÚSQUEDA DE POSTS **SÍ** FUNCIONA, Y ES LA MEJOR VÍA PARA ENTRAR EN UN SECTOR NUEVO
+>
+> Aquí ponía que `category: posts` devolvía `total_count: 0` con cualquier keyword. **Es falso hoy** (probado el 18/08 buscando memes de atención al cliente): devuelve resultados normales, de 10 en 10, paginando con `cursor`.
+> ```
+> POST {BASE}/api/v1/linkedin/search?account_id=…
+> {"api":"classic","category":"posts","keywords":"customer success meme"}
+> ```
+> - **El campo `total_count` viene a `null`, y ESE fue el malentendido**: no significa cero resultados, significa que LinkedIn no devuelve el total. Lo que importa es `items`, que viene lleno. **Mirar `items`, nunca `total_count`.**
+> - Cada item trae `reaction_counter`, `comment_counter`, `repost_counter`, `share_url`, `text`, `author` y `attachments` con la URL de la imagen. O sea, todo lo que hace falta para filtrar sin abrir LinkedIn.
+> - **Para qué vale de verdad:** el camino de abajo (pedirle los posts a un autor que ya conoces) solo te da más de lo mismo. **Cuando hay que saltar a un sector donde no conocemos a nadie** —atención al cliente, partnerships, RRHH— la búsqueda por keyword es la única puerta. El 18/08 dio **496 posts en 12 consultas**, y de ahí salieron 17 candidatos con imagen y más de 100 reacciones.
+> - **Receta de búsqueda que funcionó:** una docena de keywords en INGLÉS mezclando el rol y la palabra `meme` o `funny` (`customer success meme`, `support ticket meme`, `csm meme`, `churn meme`, `account manager meme`), 4-5 páginas cada una. En español devuelve casi nada, igual que ya avisaba `outliers §0`.
+> - **Tarda:** cada consulta va a 10-20 segundos, así que 12 keywords son varios minutos. Lánzalo en segundo plano y sigue con otra cosa.
+> - **Y el filtro de risa se corre después**, sobre los 5-8 finalistas (`GET /posts/{social_id}/reactions?limit=100`), que es lo que separa un meme de verdad de un post con foto: el 18/08 los candidatos iban del **2% al 50%** de `ENTERTAINMENT` con likes parecidos.
+
+La otra vía, que sigue valiendo para exprimir a un autor que ya conoces:
 
 ```
 GET {BASE}/api/v1/users/{provider_id}/posts?account_id=…&limit=30
