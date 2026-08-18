@@ -1267,6 +1267,17 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **Consecuencia práctica, y vale para cualquier reedición:** el copy nuevo entra **a la misma longitud o más corto, nunca más largo**. Si lo que quieres nombrar no cabe, **se recorta el copy**; no se estira la caja ni se toca el CSS (`lead-magnet-web §4c`). Y en `/llaves/` los tres campos están ya en el techo del catálogo, así que ahí el margen es cero.
 
+**⛔⛔ LOS DOS ERRORES SIMÉTRICOS AL REEDITAR, Y LOS COMETÍ LOS DOS EN EL MISMO DÍA (Iker, 2026-08-18):**
+
+| error | qué hice | por qué está mal |
+|---|---|---|
+| **Pasarse** | Propuse llevar `/llaves/` de contenido de LinkedIn a prospección | *"Eso es un cambio radical de temática, y eso no tiene sentido"*. Adaptar a Claude **no** es reescribir de qué va el recurso |
+| **Quedarse corto** | Entregué el gancho calcando casi literal nuestro 285c | *"Está el riesgo de que nos pillen hasta repitiendo una idea"*. Doblar no es copiar y pegar |
+
+**LA LÍNEA, en una frase: el RECURSO no se toca salvo que sea imprescindible, y el GANCHO estrena concepto siempre.** Lo que se adapta del recurso es solo lo que hoy sabemos que le falta (en `/llaves/`, que Claude no aparecía dentro); lo que se inventa nuevo es la metáfora del post. Son dos piezas y se mueven al revés: **la web, quieta; el gancho, nuevo.**
+
+**Y el concepto nuevo lo puede traer cualquiera, no hace falta un método.** `llaves` → `riendas` lo propuso Iker en una línea. Lo que sí hay que hacer siempre es **comprobarlo contra el corpus antes de usarlo** y pasarle el test del objeto (`global §2.9-OBJETO`).
+
 **⚠️ ESTO NO CONTRADICE `lead-magnet-web §2`** (*"nace de una duda real y repetida, no de reciclar contenido con un título bonito"*). Aquello prohíbe **empaquetar contenido viejo con un título nuevo**; esto obliga a **reeditar un tema que ya demostró que pica**. Lo que se reutiliza es la evidencia, no el relleno.
 
 #### 📈 4.5.0-CTA-IMAGEN-MEDIDO · EL BANNER EN LA FOTO FUNCIONA, Y EL CUELLO DE BOTELLA SE HA MOVIDO (medido 2026-08-14)
@@ -1351,6 +1362,12 @@ moverse, se verifica o se quita.
 
 **LO QUE ESTO CORRIGE DE `global §3.2`:** ahí el bloque de tres es un recurso de ritmo válido en cualquier sitio. **En este pilar, antes de la lista, no lo es.** Después de la lista sí.
 
+**⛔ Y DESPUÉS DE LA LISTA HAY QUE ROMPER EL RITMO, QUE ES DONDE FALLÉ (Iker, 2026-08-18).** Aligeré la entrada y dejé **seis líneas individuales seguidas** detrás del bloque numérico. Iker: *"después del bloque numérico todos son líneas individuales. Eso es un ritmo superpredecible, así que corrígelo y que esto no vuelva a pasar"*. **Acortar la entrada no es excusa para que la salida se lea plana:** el lector que sigue leyendo después de la lista es el que más cerca está de pedirte el recurso, y una fila de sueltas le da permiso para irse.
+- **La cola del post lleva al menos DOS bloques múltiples**, y ahí **sí vale el de tres** con su anáfora (`No va de… / No va de… / No va de…`), que además es el molde de nuestro 632c (*"Ya no va de:"*).
+- **La forma que quedó:** `1-1-2-1 · lista · 1-1-3-1-1-1-2-1`. Entrada corta y de dos, cola con un tres y un dos.
+
+**⚠️ Y OJO CON EL EFECTO SECUNDARIO, que me costó dos intentos:** al quitar bloques de la entrada, el ritmo se vuelve `1-2-1-2` y salta el check de **ciclo que se repite**. No se arregla añadiendo bloques a la entrada (rompería esta regla): se arregla **dándole densidad a la cola**.
+
 **🔧 Y EL VALIDADOR IBA EN CONTRA, así que se ha cambiado.** Su check `RITMO: al menos un bloque de TRES` excluía las listas del recuento y por tanto **empujaba a meter un bloque de tres en prosa**, justo lo que esta regla prohíbe. Desde el 18/08, en `--pilar leadmagnet` **la lista numerada de 3 o más líneas ya cumple la densidad** y no hace falta ningún otro bloque de tres. Los demás pilares no cambian.
 
 #### 🚨🚨 4.5.0-CTA · EL "COMENTA LA PALABRA" DEJÓ DE FUNCIONAR EL 5 DE AGOSTO DE 2026
@@ -1404,6 +1421,20 @@ Acceso libre.
 4. **Esto reactiva el motor del pilar** (el comentario-peaje) que el CTA de solo-pregunta había dejado cojo: la pregunta invita, el banner da la instrucción exacta.
 
 **⚠️ El validador NO ve la imagen:** por eso hay un AVISO fijo en `--pilar leadmagnet` recordando que el "comenta" vive en la foto y que hay que comprobarlo en el prompt del diseñador antes de entregar.
+
+#### 🧩🧩 4.5.0-COMPLEMENTO · EL TEXTO DE LA IMAGEN COMPLEMENTA AL DEL POST, NO LO REPITE (Iker, 2026-08-18)
+
+**La regla del meme aplicada aquí, y resuelve un problema que yo estaba arreglando por el camino caro.** En el meme el texto de la imagen nunca calca el del post: lo complementa. **En el lead magnet reeditado eso es exactamente lo que permite estrenar concepto en el gancho sin tocar la web.**
+
+**El caso:** el post estrena `riendas` y el recurso publicado sigue diciendo `llaves`. Yo propuse un addendum para que el programador cambiara el H1 del gate, la meta, la OG y la card. Iker lo paró: *"significan lo mismo, son sinónimos, variedad, complementario. Yo creo que no hace falta que el programador lo toque"*.
+
+**Y tenía razón por partida doble:**
+1. **El puente lo hace la propia foto.** El lector ve `riendas` en el gancho y `llaves` en el banner **a la vez, en la misma pantalla**, así que llega al gate con la palabra ya reconocida. El salto no existe.
+2. **Cero trabajo nuevo.** Reeditar un recurso vale la pena porque es barato; si cada cambio de concepto obliga a repasar seis campos de la web, deja de serlo.
+
+**⛔ ESTO MATIZA `lead-magnet-web §2`**, que pide que el H1 del gate sea el gancho casi palabra por palabra. **Sigue en pie cuando el recurso se construye a la vez que el post.** En una REEDICIÓN, donde el gancho estrena concepto a propósito, basta con que **la palabra del banner sea la del gate**: es ella la que hace de puente, no el gancho.
+
+**La consecuencia práctica, para no dudar nunca más:** el gancho lleva el concepto NUEVO; **la imagen y la web llevan el concepto VIEJO**, que es el que ya está indexado y construido. Y no se toca nada.
 
 #### ⛔⛔ 4.5.0a · LOS INAMOVIBLES DEL LEAD MAGNET (Iker, 2026-08-05). Igual que `exporta` en el mapa.
 
