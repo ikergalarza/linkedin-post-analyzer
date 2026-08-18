@@ -126,6 +126,33 @@ const CATALOGO: RecursoDef[] = [
     ],
   },
   {
+    // RIENDAS (Unai, 2026-08-18). Es la 1a REEDICION de un recurso del catalogo
+    // (`post-workflow §4.5.0-REUTILIZAR`): el post estrena concepto pero la web
+    // sigue siendo la de mayo, asi que la URL es `/llaves/` y NO `/riendas/`.
+    //
+    // Por eso esta entrada lleva las DOS claves:
+    //   · `riendas` — la que pide el banner de la foto del post nuevo.
+    //   · `llaves`  — la de los dos posts de mayo (285c y 232c), que siguen en
+    //     la herramienta con su `comenta "llaves"` dentro del texto.
+    // Las dos resuelven el mismo enlace, que es justo para lo que sirve tener
+    // varias claves por entrada.
+    //
+    // ⚠️ El post del 18/08 NO nombra ninguna palabra en el texto: desde
+    // `§4.5.0-CTA-CERO` el cuerpo no pide ninguna accion y la palabra vive solo
+    // en el banner de la imagen. Asi que a ese post lo reconocen las PISTAS.
+    // Comprobadas una a una contra las otras 5 entradas: cero solapes. Ojo con
+    // los falsos amigos, que casi cuelan: nuestro texto dice "tumbarme el
+    // borrador" (la pista de /vibe/ es "tumbar la prospeccion") y "monte un
+    // sistema" (la de /vibe/ es "sistema completo"). Ninguna de las dos casa.
+    link: 'https://recursos.neety.com/llaves/',
+    topic: 'el sistema con Claude que critica mis borradores antes de publicar',
+    claves: ['riendas', 'llaves'],
+    pistas: [
+      'las riendas', 'riendas de mi linkedin', 'las llaves de mi linkedin',
+      'no pasan el filtro', '3 trabajos', 'lo hacia a ciegas',
+    ],
+  },
+  {
     // `firma` y `nombre` apuntaban al mismo sitio con dos entradas duplicadas:
     // el post se reescribio tres veces por un capado de alcance y la palabra
     // cambio, pero la pagina siguio siendo /firma/. Con el catalogo eso es una
