@@ -69,6 +69,23 @@ Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y d
 
 **El chequeo, antes de cerrar cualquier turno con un entregable dentro:** busca en el bloque las promesas en primera persona (*"te lo paso"*, *"te lo mando"*, *"lo escribo yo"*, *"lo mido y te digo"*). **Cada una de ellas es una línea de MI lista, no de la suya.** Si alguna sigue sin cumplir al final del turno, o se cumple ahí mismo o se marca en rojo.
 
+## 🛑🛑 0d · DESPUES DE CADA EDICION POR SCRIPT, BUSCAR BYTES 0x08. YA VAN TRES
+
+**El fallo, siempre igual:** edito un fichero con un script, la edicion mete un `` de regex, y por el camino se convierte en un **byte de control 0x08**. No da error, no rompe el build, no lo ve el `git diff` a simple vista. **La regex simplemente no casa NUNCA y el check sale OK en falso.**
+
+**Las tres veces:**
+1. **06/08** — 12 regex de `validar-post.py`. AI-tells, menciones y agenda llevaban **semanas** dando OK sin comprobar nada.
+2. **18/08** — otras 2 en el mismo script, al voltear el check de `conecta`. Lo cazo el autochequeo que se puso tras la primera.
+3. **18/08** — 2 en `backend/src/services/pillar.ts`, en la regex del entregable. **Ahi no hay autochequeo**, y de no mirarlo el clasificador habria seguido sin detectar lead magnets, que es justo el bug que estaba arreglando.
+
+**LA COMPROBACION, y va SIEMPRE tras editar codigo con un script:**
+```
+python -c "import io,glob;[print(p,f.count(chr(8))) for p in glob.glob('**/*.ts',recursive=True)+glob.glob('scripts/*.py') for f in [io.open(p,encoding='utf-8').read()] if chr(8) in f]"
+```
+Si sale algo, se sustituye por `` y se vuelve a comprobar.
+
+**⚠️ Y LO QUE ENSEÑA DE FONDO: un check que no casa nunca es PEOR que no tener el check.** Da la señal de que algo esta vigilado cuando no lo esta, y por eso se tarda semanas en descubrirlo. Cuando un check "siempre pasa", la primera sospecha no es que el codigo este bien: es que el check este muerto.
+
 ## ⭐ 1d · LOS AVISOS CRITICOS VAN MARCADOS EN ROJO (Iker, 2026-07-21)
 
 El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacion o hacerle perder tiempo empieza por 🔴**. Iker lee en diagonal cuando va rapido y un parrafo de texto plano se le pasa.
