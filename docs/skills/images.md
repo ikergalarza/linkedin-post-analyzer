@@ -116,7 +116,14 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 
 **Siempre que entregues un prompt de imagen — de calca, de edicion, de cero, de cualquier pilar — justo DEBAJO del bloque del prompt va este aviso en rojo, sin excepcion:**
 
-> 🔴 **Acuérdate Mario de aplicar el desenfoque de superficie en Photoshop y de exportar sin metadatos con Exportar como.**
+> ⚠️ **AVISO, MARIO: acuérdate de aplicar el desenfoque de superficie en Photoshop y de exportar sin metadatos con Exportar como.**
+
+**⛔⛔ EL LITERAL Y EL EMOJI SON EXACTAMENTE ESOS, Y NO ES UN DETALLE DE ESTILO (Iker, 2026-08-18).** Yo venía entregándolo con `⚙️` y con la palabra *postproducción*, que se lee como un paso técnico opcional. Iker: *"si me pones ese emoji de un engranaje no me parece algo urgente, y si un día estoy agobiado o despistado puede que no lo note. Es muy importante que me pongas el emoji del triángulo amarillo y textualmente aviso, Mario, dos puntos, o cuidado, Mario, dos puntos"*.
+
+- **El emoji es `⚠️`.** Ni `⚙️`, ni `🔧`, ni `📌`. El triángulo es el único que él lee como alerta cuando va rápido.
+- **Y empieza nombrándole a él:** `AVISO, MARIO:` o `CUIDADO, MARIO:`. Un aviso dirigido a alguien se salta menos que uno impersonal.
+- **La razón de fondo, que vale para cualquier aviso:** este paso lo ejecuta una persona con prisa justo antes de publicar. **La forma del aviso es parte del aviso.** Si se disfraza de nota técnica, se salta, y entonces la imagen se sube con el acabado de render y la firma del generador dentro.
+
 
 **⛔ UNICA EXCEPCION: el pilar "LOS 10" (Iker, 2026-07-28).** Ahi la imagen NO la genera una IA: la **compone `scripts/montar-orla.py`** pegando las fotos de LinkedIn sobre la plantilla que pasa Iker, pixel a pixel. No hay acabado de render que suavizar ni metadatos de generador que borrar, asi que **en "Los 10" NO se pone el aviso**. En todos los demas pilares si, porque la imagen sale de un generador.
 

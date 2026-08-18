@@ -73,7 +73,12 @@ Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y d
 
 El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacion o hacerle perder tiempo empieza por 🔴**. Iker lee en diagonal cuando va rapido y un parrafo de texto plano se le pasa.
 
-Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo falso, cosas que faltan por adjuntar y sin las cuales el entregable no funciona, y contradicciones entre lo que dice el texto y lo que enseña la imagen. **No se marca** lo que es solo una opinion o una mejora opcional — si se marca todo, deja de destacar nada.
+Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo falso, cosas que faltan por adjuntar y sin las cuales el entregable no funciona, y contradicciones entre lo que dice el texto y lo que enseña la imagen.
+
+**⭐ Y HAY UN SEGUNDO NIVEL, PARA LO QUE TIENE QUE EJECUTAR ÉL A MANO (Iker, 2026-08-18): `⚠️` MÁS SU NOMBRE.** El 🔴 marca lo que puede tumbar la publicación; el **`⚠️ AVISO, MARIO:`** marca **un paso manual que se hace justo antes de publicar y que es facilísimo saltarse con prisa**. El caso que lo motiva es el desenfoque y el export sin metadatos (`images §0a-penta`), que yo entregaba con `⚙️`: *"si me pones ese emoji de un engranaje no me parece algo urgente"*.
+- **Nunca `⚙️`, `🔧` ni `📌`** para algo que él tiene que hacer. Esos se leen como nota técnica y se saltan.
+- **Se le nombra:** `AVISO, MARIO:` o `CUIDADO, MARIO:`. Un aviso dirigido a una persona se salta menos que uno impersonal.
+- **La regla general detrás: la forma del aviso es parte del aviso.** Si el que lo tiene que ejecutar va con prisa, el formato decide si se hace o no. **No se marca** lo que es solo una opinion o una mejora opcional — si se marca todo, deja de destacar nada.
 
 ## 🔴🔴 0c-BIS · ANTES DE ESCRIBIR UNA CORRECCIÓN: ¿ES GLOBAL O ES DE ESTE PILAR? (Iker, 2026-08-06)
 
