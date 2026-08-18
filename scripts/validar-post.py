@@ -920,8 +920,18 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # fichas, que va en bloques de 4 por diseño del pilar.
     if pilar in ('meme', 'mapa', 'los10', 'historia', 'leadmagnet', 'evento', 'objeto') and len(_pat) >= 6:
         _ritmo = '-'.join(map(str, _pat))
-        chk(any(n >= 3 for n in _pat), 'RITMO: al menos un bloque de TRES (§3.2)',
-            f'ritmo {_ritmo} — todo unos y doses se lee plano')
+        # EXCEPCION DEL LEAD MAGNET (Iker, 2026-08-18): aqui el bloque pesado ES
+        # la lista numerada de lo que trae el recurso, y el lector quiere llegar
+        # a ella cuanto antes, igual que en el mapa quiere llegar a las fichas.
+        # Iker: "priorizaria uno de dos, y que entre el gancho y ese bloque
+        # numerico haya como mucho dos o tres lineas individuales o un bloque de
+        # dos". Exigir ADEMAS un bloque de tres en prosa empuja justo al reves,
+        # asi que en este pilar la lista de 3+ lineas ya cumple la densidad.
+        _tres = any(n >= 3 for n in _pat)
+        if pilar == 'leadmagnet' and not _tres:
+            _tres = any(es_lista(b) and len(b) >= 3 for b in bloques(texto))
+        chk(_tres, 'RITMO: al menos un bloque de TRES (§3.2)',
+            f'ritmo {_ritmo} — todo unos y doses y sin lista numerada de 3+, se lee plano')
         # Ciclo de 2: a-b-a-b con a distinto de b. Ciclo de 4: a-b-c-d-a-b-c-d.
         _ciclo2 = any(_pat[i] == _pat[i + 2] and _pat[i + 1] == _pat[i + 3]
                       and _pat[i] != _pat[i + 1] for i in range(len(_pat) - 3))

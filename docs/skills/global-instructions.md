@@ -261,6 +261,29 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 **⚠️ POR QUÉ ESTO NO ESTÁ EN `validar-post.py` y no es un olvido.** El script tiene `VERBO_FLOJO`, que es un check NEGATIVO: veta una lista de verbos flojos. Un check POSITIVO ("el gancho DEBE contener un verbo punchy") necesitaría una lista cerrada de verbos punchy, y eso rompe de dos maneras a la vez: tumbaría ganchos buenos con un verbo que no esté en la lista, y sobre todo **la forma más barata de aprobarlo sería pegar siempre un verbo de la lista** — que es EXACTAMENTE como este script se fabricó la muletilla de "En ventas," (ver `MULETILLA_ANCLA`). Vetar palabras tiene infinitas salidas; exigirlas tiene una. **Esto es criterio y se comprueba en el pase de §8, mirando el gancho y preguntándose cuál es el verbo que frena el scroll. Si no lo encuentras, no lo hay.**
 **⭐ Regla UNIVERSAL: aplica a TODO hook, de TODOS los pilares y TODAS las recetas.** No es del meme ni del lead magnet: es de cualquier post. Está en el pase de validación (§8, check 1) porque es lo que más se escapa.
 
+#### 🎯🎯 2.9-OBJETO · EL TECHO NO LO TIENE EL VERBO SOLO, LO TIENE EL PAR VERBO + OBJETO (Iker, 2026-08-18)
+
+> **Iker, y es el nivel de análisis que me faltaba:** *"el verbo matar es demasiado extremo si no le damos contexto, pero en el caso de Claude acaba de matar no se pasa de extremo, entonces sí que lo podemos usar. Ese nivel de análisis tienes que llegar tú también"*.
+
+**Aquí había una lista de verbos validados y otra de verbos pasados de rosca, como si el techo fuera una propiedad del verbo. No lo es.** Nuestro mejor post de la historia (632 comentarios) abre con **`matar`**, que en abstracto es el verbo más extremo que existe. **Lo que lo hace aceptable es el OBJETO:** mata `el cold outbound`, que es una práctica. Ese mismo verbo sobre una persona o sobre una empresa sería impublicable.
+
+**EL TEST, en dos preguntas, y se corre sobre la frase entera, nunca sobre el verbo suelto:**
+1. **¿Quién recibe la acción?** Una **práctica, un método o una cosa mía** → el verbo fuerte es hipérbole y se lee como energía. Una **persona, un colectivo o una empresa** → es agresión y cae por `brand-voice` (no criticamos a nadie).
+2. **¿Hay víctima?** Si al terminar la frase alguien ha salido perdiendo, el verbo se pasó. Si el que "pierde" soy yo y encima acabo ganando, no hay víctima y el verbo aguanta.
+
+| verbo | objeto | veredicto |
+|---|---|---|
+| matar | `el cold outbound` (práctica) | ✅ **632 comentarios**, nuestro nº1 |
+| matar | una persona o una empresa | ⛔ impublicable |
+| destripar | `perfiles` (de gente real) | ⛔ 0.21x · el objeto son personas |
+| desmontar | `perfiles` | ✅ 8.66x · mismo objeto, verbo un peldaño abajo |
+| **robar** | `me robó las riendas` (mías, y salgo ganando) | ✅ sin víctima, es hipérbole |
+| robar | `le robé el cliente a X` | ⛔ hay perjudicado con nombre |
+
+**⚠️ Y LA TENSIÓN QUE HAY QUE DECIR EN VOZ ALTA, no taparla:** `robar` pertenece a la **familia 3 de riesgo de `brand-voice §2c`** (delito), donde está escrito *"en el gancho, cero familias de riesgo"*. Esa regla nació de `destapa` y `firma`, que suenan a caso judicial y a papel legal, **en tercera persona y sin dueño**. `me robó las riendas` es reflexivo, el objeto es mío y el remate es que vendí más: no hay delito que clasificar. **Se usa, sabiendo que es la excepción y por qué.** Si un post con este verbo sale capado, se anota aquí y se revierte.
+
+**El corolario de método:** cuando dudes de si un verbo se pasa, **no lo compares con la lista. Léelo con su objeto y busca la víctima.** Si no la hay, el techo está más arriba de lo que parece.
+
 #### ⛔ 2.9-TECHOS · LA ESCALERA TIENE DOS TECHOS, NO UNO: EL DE INTENSIDAD Y EL DE REGISTRO (Iker, 2026-08-17)
 
 **Aquí solo estaba escrito el primero** (`desmontar` → `destripar` se pasa por gore) y por eso el segundo se cuela: **un verbo puede tener la intensidad perfecta y aun así estar fuera porque pertenece a otra generación.**

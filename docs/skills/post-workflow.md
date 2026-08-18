@@ -1339,6 +1339,20 @@ moverse, se verifica o se quita.
 
 **Y la longitud sale sola de ahí.** El post pasó de 1.702 a 1.217 caracteres solo con esto, en la zona del 483 y el 232. No se acorta recortando frases: se acorta no contando lo que se regala.
 
+#### 🏃🏃 4.5.0-RITMO · EL LECTOR VIENE A POR EL BLOQUE NUMÉRICO: SE LLEGA EN 3 LÍNEAS (Iker, 2026-08-18)
+
+> **Iker:** *"igual que en el mapa la gente quiere llegar rápido al bloque numérico para validar la región, en el lead magnet quiere llegar rápido para saber qué incluye. Priorizaría uno de dos antes que uno de tres"*.
+
+**LA REGLA: entre el gancho y la lista numerada caben COMO MUCHO 3 líneas**, y esas 3 son o líneas individuales o **un bloque de DOS**. Nunca un bloque de tres, por buena que sea su anáfora.
+
+**Por qué, y es el mismo motivo que en el mapa (`§4.2`):** el bloque numérico **es** la promesa del post. En el mapa el lector baja a comprobar si está su región; aquí baja a ver qué trae el recurso. Todo lo que se interponga es peaje, y el peaje se paga con scroll.
+
+**⚠️ Y HAY UN AGRAVANTE QUE NO TIENE EL MAPA:** desde `§4.5.0-CTA-IMAGEN` la instrucción de comentar vive en la foto, así que **mucha gente decide sin haber leído el cuerpo entero**. El cuerpo ya no es donde se cierra la conversión, es lo que evita perderla. Iker: *"que nunca un usuario pueda decir: el gancho me ha encantado, pero el cuerpo es tan largo que me da pereza"*.
+
+**LO QUE ESTO CORRIGE DE `global §3.2`:** ahí el bloque de tres es un recurso de ritmo válido en cualquier sitio. **En este pilar, antes de la lista, no lo es.** Después de la lista sí.
+
+**🔧 Y EL VALIDADOR IBA EN CONTRA, así que se ha cambiado.** Su check `RITMO: al menos un bloque de TRES` excluía las listas del recuento y por tanto **empujaba a meter un bloque de tres en prosa**, justo lo que esta regla prohíbe. Desde el 18/08, en `--pilar leadmagnet` **la lista numerada de 3 o más líneas ya cumple la densidad** y no hace falta ningún otro bloque de tres. Los demás pilares no cambian.
+
 #### 🚨🚨 4.5.0-CTA · EL "COMENTA LA PALABRA" DEJÓ DE FUNCIONAR EL 5 DE AGOSTO DE 2026
 
 > **Esto es lo que estuvo capando nuestros lead magnets toda la semana del 03/08, y no era ninguna palabra.** Cuatro publicaciones borradas y resubidas cambiando gancho, cuerpo entero, imagen, y quitando `prompt`, `ÚLTIMA HORA`, `destapa`, `firma`, `regalo` y hasta la foto. **El problema nunca estuvo en el texto: estaba en el MECANISMO.**
