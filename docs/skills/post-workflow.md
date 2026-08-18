@@ -1789,6 +1789,18 @@ Acceso libre.
 > - ~~**Es el CTR más alto anotado en este historial**, por encima del mejor mapa (Aragón, 0,44%)~~ 🔴 **Corregido el 17/08: con el post asentado son 0,41%, justo por debajo de Aragón.** Sigue muy por encima del mejor meme (iMessage, 0,09%) y del propio 29/07. **Historia no es el pilar que más gente alcanza, pero sí de los que mejor convierten al que alcanza.**
 > - **La conversación sube pero sigue corta:** 6 → 9 comentarios. Con la vara del propio pilar eso sigue siendo poco, así que la palanca a trabajar es esa, no el alcance.
 >
+> ### 💥 EL DATO QUE VENDE ESTE PILAR HACIA DENTRO (medido el 2026-08-18)
+> **El mejor argumento que tenemos para el pilar, y hay que tenerlo a mano porque sirve para convencer a los jefes, no solo para planificar:**
+>
+> | post | impresiones | clics a la web | CTR |
+> |---|---|---|---|
+> | **historia** · Iker 13/08 | **9.275** | **36** | **0,388%** |
+> | meme · Asier 12/08 (el de más alcance del mes) | **119.029** | 26 | 0,022% |
+>
+> **12,8 veces menos alcance y un 38% MÁS de clics.** No es que el meme sea malo — es el mejor post del mes y su trabajo es el alcance (`outliers §3.11`). Es que **son pilares con trabajos distintos, y el que trae gente a la web es este.**
+> - **Cómo se usa al pedir recursos internos** (fotos, tiempo, un OK): traducido a lo que le importa a un founder, **una historia trae más visitas a la web que el post más viral del mes**. Ese es el titular, y funciona porque es contraintuitivo.
+> - ⚠️ **Y lo honesto, que va dicho:** n=1 contra n=1, y el CTR de un post con 9.000 impresiones tiene mucho más ruido que el de uno con 119.000. La dirección es consistente con las 3 historias medidas (0,290% · 0,388% · pendiente), pero **no es una ley, es la mejor evidencia que tenemos hoy.**
+
 > **Consecuencia al planificar (Iker, 2026-08-14): historia ENTRA en la rotación semanal de agosto** (`§8.0-AGOSTO`), en el sitio que deja el peloteo. Deja de ser "de vez en cuando, por variedad" mientras dure el override.
 
 > ### 🕰️ 4.6-NOSTALGIA · LA ETAPA COMPARTIDA BATE A LA ANÉCDOTA PROPIA (Iker, 2026-08-17)
