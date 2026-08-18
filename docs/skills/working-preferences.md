@@ -48,6 +48,19 @@ Vale para todo lo que se copia y pega: un prompt de diseñador, el texto de un p
 
 Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y de programador, textos de post, comandos y briefings.
 
+## 🛑🛑 1b · TODO PROMPT PARA UN EJECUTOR VA EN **UN SOLO BLOQUE, UN SOLO PÁRRAFO Y SIN SÍMBOLOS RAROS** (Iker, 2026-08-18) — GLOBAL
+
+**Esto ya estaba escrito, pero SOLO en `images §0i-3` como si fuera del prompt del diseñador.** No lo es: vale para **cualquier** prompt que yo le dé a alguien que ejecuta — diseñador, animador, **programador** — y por tenerlo guardado en el sitio equivocado lo incumplí el 18/08 entregándole **cuatro bloques** para un solo encargo. Iker: *"¿por qué me pasas cuatro prompts cuando te he dicho que me pases solo uno, definitivo, con todo, en un solo párrafo, sin símbolos raros? Eso ya lo deberías saber de hace mucho tiempo"*. Es el caso de libro de `§0c-BIS`: **una regla universal escrita dentro de un runbook garantiza que se rompa en los demás.**
+
+**LAS TRES CONDICIONES, y son a la vez:**
+1. **UN SOLO BLOQUE.** Un encargo, un bloque cercado, una sola cosa que copiar y pegar. Si le doy dos, tiene que decidir él en qué orden van y qué hace con cada uno, y eso ya es trabajo mío que le he pasado.
+2. **UN SOLO PÁRRAFO.** Sin listas, sin líneas sueltas, sin apartados numerados, sin saltos de línea de maquetación. Se escribe como se le explicaría a una persona hablando.
+3. **CERO SÍMBOLOS RAROS.** Ni paréntesis, ni corchetes, ni comillas, ni barras, ni flechas, ni asteriscos, ni viñetas, ni numeración con puntos. Las cifras normales sí (18 palabras, 140 caracteres, 360 de ancho).
+
+**⭐ Y LA PREGUNTA QUE LO ROMPÍA: ¿y si el encargo lleva DENTRO textos literales que él tiene que pegar tal cual?** Fue mi excusa el 18/08 con los tres prompts de Claude. **No vale: van dentro del mismo párrafo, delimitados con PALABRAS.** *"El prompt número uno va en la sección 00 y dice así. …texto literal… Ahí termina el prompt número uno."* Se lee igual de bien, se copia de una sola vez, y desaparece el riesgo de que se le quede una pieza fuera.
+
+**Corolario que se me olvida:** si por meterlo todo el párrafo se hace largo, **se aprieta la redacción, no se parte en dos** (`§1c-BIS`). La longitud nunca es motivo para trocear.
+
 ## 🛑🛑 1c-TER · SI UN ENTREGABLE MÍO DICE "TE LO PASO YO", ESA PIEZA ES PENDIENTE MÍO (Iker, 2026-08-18)
 
 **El fallo:** en el prompt para el programador de `/llaves/` escribí *"los tres prompts te los paso yo literal, y hasta que los tengas deja los huecos marcados"*, y luego en el resumen puse **"PENDIENTE — tú: los 3 prompts"**. Iker pasó el prompt, el programador construyó los tres bloques con sus `[PENDIENTE]` dentro, y la web se quedó parada esperando algo que tenía que escribir yo. Iker: *"¿por qué no me has avisado de que le has dicho que tú le vas a pasar el prompt si no se los has pasado?"*.

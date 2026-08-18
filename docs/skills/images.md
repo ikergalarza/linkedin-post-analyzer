@@ -658,6 +658,7 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 ✅ **RESUELTO — NO HAY DOS FORMATOS, HAY UNO SOLO (Iker, 2026-07-27).** Aqui ponia que esto "chocaba" con `§0h` y que el parrafo unico era solo para generacion desde cero. **Esa ambiguedad era el bug:** al no saber cual tocaba, acabe entregando un prompt con numeracion `(1) (2) (3)`, que es justo lo que prohibe el punto de arriba. **El formato es UNO y vale para CUALQUIER prompt de imagen: de calca, de edicion, de cero, y de cualquier pilar (mapa, meme, lead magnet, historia, lo que sea).**
 - Abre con **SOLO HAZ LO QUE TE PIDO** en mayusculas.
 - **UN SOLO PARRAFO**, siempre. Nada de listas, nada de lineas sueltas, nada de `(1) (2) (3)`, cero parentesis y cero comillas.
+- **⚠️ Y ESTO NO ES DEL PROMPT DE IMAGEN: ES GLOBAL** (Iker, 2026-08-18). Un bloque, un parrafo y cero simbolos raros vale para **cualquier** prompt que se le entregue a un ejecutor, incluido el del **programador**. La regla manda vive ahora en `working-preferences §1b`; esto es solo su copia local.
 - Dentro, frases cortas y habladas, una orden por frase, encadenadas en el mismo parrafo.
 - Cierra en minusculas con **deja todo lo demas intacto y no toques nada que no te he pedido**.
 Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque rojo de abajo), no COMO se le escribe.
