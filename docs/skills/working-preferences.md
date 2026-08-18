@@ -48,6 +48,14 @@ Vale para todo lo que se copia y pega: un prompt de diseñador, el texto de un p
 
 Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y de programador, textos de post, comandos y briefings.
 
+## 🛑🛑 1c-TER · SI UN ENTREGABLE MÍO DICE "TE LO PASO YO", ESA PIEZA ES PENDIENTE MÍO (Iker, 2026-08-18)
+
+**El fallo:** en el prompt para el programador de `/llaves/` escribí *"los tres prompts te los paso yo literal, y hasta que los tengas deja los huecos marcados"*, y luego en el resumen puse **"PENDIENTE — tú: los 3 prompts"**. Iker pasó el prompt, el programador construyó los tres bloques con sus `[PENDIENTE]` dentro, y la web se quedó parada esperando algo que tenía que escribir yo. Iker: *"¿por qué no me has avisado de que le has dicho que tú le vas a pasar el prompt si no se los has pasado?"*.
+
+**La regla: cuando un entregable mío delega una pieza EN MÍ, esa pieza se entrega en el MISMO turno.** Si de verdad no se puede, va en el resumen como **bloqueo mío**, con lo que me falta para desbloquearlo. **Nunca en la lista de pendientes de él**, porque ahí la lee como algo que tiene que hacer o esperar, y no es ni una cosa ni la otra.
+
+**El chequeo, antes de cerrar cualquier turno con un entregable dentro:** busca en el bloque las promesas en primera persona (*"te lo paso"*, *"te lo mando"*, *"lo escribo yo"*, *"lo mido y te digo"*). **Cada una de ellas es una línea de MI lista, no de la suya.** Si alguna sigue sin cumplir al final del turno, o se cumple ahí mismo o se marca en rojo.
+
 ## ⭐ 1d · LOS AVISOS CRITICOS VAN MARCADOS EN ROJO (Iker, 2026-07-21)
 
 El terminal no pinta color, asi que **todo aviso que pueda tumbar una publicacion o hacerle perder tiempo empieza por 🔴**. Iker lee en diagonal cuando va rapido y un parrafo de texto plano se le pasa.
