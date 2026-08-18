@@ -521,6 +521,22 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         'buzones" se leyo como el del correo electronico y paso a "a medio barrio"'
         or ''), aviso=True)
 
+    # brand-voice §3b — LA CITA SE PUNTUA COMO LA ESCRIBIO QUIEN LA DIJO. La coma
+    # del vocativo ("Hola, soy Iker") es CORRECTA en español y por eso se cuela:
+    # dentro de una cita la vara no es la gramatica, es la verosimilitud. Un crio
+    # de 15 escribiendo a mano no pone esa coma, y una cita perfectamente puntuada
+    # delata que la ha escrito quien narra y no quien habla (Iker, 2026-08-17:
+    # "parece escrito por inteligencia artificial, dudo que un niño lo sepa
+    # escribir tambien"). Aviso y no fallo: fuera de una cita la coma esta bien.
+    _voc = re.search(r'(?im)^\s*"?(hola|buenas|buenos d[ií]as|buenas tardes|oye|perdona|perdone)\s*,',
+                     cuerpo)
+    chk(not _voc, 'Sin coma de vocativo dentro de una cita (brand-voice §3b)',
+        f'"{_voc.group(0).strip()}" — si eso lo dice un personaje, quitale la coma: es '
+        'correcta en español y justo por eso suena a IA. Dentro de una cita manda la '
+        'VEROSIMILITUD, no la gramatica. Y comprueba de paso que la cita va entre '
+        'comillas rectas, abriendo en la primera linea y cerrando en la ultima'
+        if _voc else '', aviso=True)
+
     nums = re.findall(r'\d+(?:[.,]\d+)?', hook_txt)
     chk(len(nums) <= 1, 'Hook con ≤1 cifra (§2.5)', f'{len(nums)} cifras: {nums}' if len(nums) > 1 else '')
     if generico:

@@ -144,6 +144,23 @@ El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el
 - **NUNCA coma antes de "y" / "e" EN UN POST.** ⚠️ Ámbito acotado el 2026-07-14: esta regla es de la **copy de LinkedIn** (registro corto y hablado, donde canta a IA). **En la WEB de recursos NO aplica igual**: ahí es correcta en español uniendo **dos oraciones independientes largas**, y los seis gates publicados la usan (`docs/lead-magnet-playbook.md §12`). Lo que está mal en los dos sitios es la coma antes de "y" en una **enumeración** ("LinkedIn, email, y automatización"). En el post, ante la duda, se parte en dos frases. ❌ *"Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí"* · ✅ *"Te marcamos quién va a comprar y cuándo. Tu comercial entra solo ahí"*. ❌ *"las 20 que lo sostienen, y quien hay detrás"* · ✅ *"las 20 que lo sostienen y quien hay detrás"*. Si la frase pide una pausa ahí, **parte en dos frases** o quita la coma; no la dejes.
 - Coma antes de **"pero"** sí es natural, esa se queda.
 
+### 🗣️ 3b · UNA CITA SE ESCRIBE COMO LA ESCRIBIÓ QUIEN LA DIJO, NO COMO LA CORREGIRÍA UN EDITOR (Iker, 2026-08-17)
+
+**Global: vale para cualquier pilar que meta una frase de otro** — la historia con su diálogo, el meme de captura documental, el correo del corpus, el mensaje del cliente.
+
+**LAS DOS REGLAS, y las dos saltaron el mismo día:**
+
+**1 · La cita va ENTRECOMILLADA.** Sin comillas, las líneas se leen como la voz del narrador y el lector no sabe que está leyendo un documento. Comillas **rectas** (`"…"`), que son las del móvil y las que ya usamos en el CTA del lead magnet; nada de angulares `«»`, que en LinkedIn cantan a texto importado. Si la cita ocupa varias líneas, se abre en la primera y se cierra en la última, **no una por línea**.
+> ⚠️ Iker sobre esto: *"nunca soy fan de poner símbolos raros, pero yo creo que ese bloque lo pondría entre comillas"*. **Es la excepción consciente a su propia manía**, y por eso está escrito: las comillas no decoran, marcan de quién es la voz.
+
+**2 · Y se puntúa como la puntuó QUIEN LA ESCRIBIÓ.** Aquí es donde se cuela la IA. Yo escribí *"**Hola, soy Iker** y vivo en el 7"* — la coma vocativa es **correcta en español**, y precisamente por eso está mal: **la escribió un crío de 15 años a mano en un papel, y un crío de 15 no pone la coma del vocativo.** Iker: *"parece un poco escrito por inteligencia artificial, dudo que un niño lo sepa escribir también"*. Queda `"Hola soy Iker y vivo en el 7."`.
+
+**La regla de fondo, que es lo que hay que retener:** dentro de una cita, **la corrección gramatical NO es la vara. La verosimilitud lo es.** Una cita perfectamente puntuada delata que la ha escrito quien narra, no quien habla. Vale igual para una nota de un crío, un WhatsApp, un correo de un cliente o un tuit de una captura: se conserva su registro, sus faltas de puntuación y su desorden, exactamente como `post-workflow §4.4-ESENCIA` manda conservar las repeticiones del original.
+
+**Y el límite, para no pasarse:** se relaja la **puntuación**, no la ortografía. Ni faltas de escritura ni erratas inventadas — eso ya no se lee como verosímil, se lee como descuido nuestro.
+
+**Mecanizado** como aviso en `validar-post.py` (`AVISO: coma de vocativo tras un saludo`), que caza el caso concreto que falló.
+
 **Palabras de registro natural** (suenan humanas sin sonar a adolescente — funcionan tanto para el director comercial de 45-60 como para un founder joven; ese solape es el punto dulce):
 - **tocho** (grande/importante): "un curro tocho", "lo más tocho".
 - **movida** (asunto/lío): "toda esta movida de la IA".
