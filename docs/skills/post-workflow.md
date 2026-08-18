@@ -1237,6 +1237,25 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **CÓMO SE ENCUENTRA QUÉ FALTA: se abre el HTML del recurso y se cuenta, no se opina.** En `/llaves/` (18/08): `Claude` salía **6 veces en 111 KB** y las seis fuera del contenido (title, dos metas, hero, una lista de herramientas, ficha del autor), y `prompt` salía **0 veces**. O sea que el post prometía *"monté un sistema con Claude que hace 3 cosas"* y la guía entregaba un playbook manual. **Ese grep es el diagnóstico entero**, y es reproducible en los otros diez.
 
+**🐴 AL REEDITAR, LO QUE ROTA ES EL OBJETO DE LA METÁFORA, NO SOLO EL VERBO (Iker, 2026-08-18).** Doblar un ganador nuestro repitiendo el gancho casi palabra por palabra es lo que hacen Martín Arosa y Guillermo Flor, y les funciona. **Iker lo rechaza a propósito, y da su motivo:** *"está el riesgo de que nos pillen hasta repitiendo una idea, y a nivel personal no me gusta hacer eso. Considero que perjudica la calidad del contenido"*. **Es una decisión de marca por encima del dato, y así queda escrita.**
+
+**LO QUE SE CONSERVA Y LO QUE SE CAMBIA, que es lo que hace que esto no sea tirar el activo:**
+- **Se conserva el VEHÍCULO**, que es lo medido (`global §2.2b`): *yo le entregué el mando de mi LinkedIn a Claude y me fue mejor vendiendo*.
+- **Se cambia el OBJETO**, que es piel: `llaves` → `riendas`. Caso del 18/08, propuesto por Iker.
+- **Y el objeto nuevo se comprueba contra el corpus antes de usarlo.** Medido: `rienda` no aparece **ni una vez en los 258 posts** de las 3 cuentas.
+
+**POR QUÉ `riendas` no es un peor sustituto, y sale de nuestras propias reglas:**
+| criterio | `llaves` | `riendas` |
+|---|---|---|
+| se puede rodar (`§2.2d`) | ✅ el gesto de tirarlas | ✅ la mano que las agarra |
+| doble lectura digital (`§2.2d-DOBLE`) | ⚠️ una llave es también una contraseña | ✅ ninguna |
+| registro del lector de 45-60 | neutro | ✅ **lenguaje de mando**, y encima refrán |
+| gastado en nuestro corpus | ⚠️ 2 posts | ✅ virgen |
+
+**⛔ EL COSTE, Y HAY QUE COMPENSARLO CON EL VERBO:** `tomar las riendas` está **más lexicalizado** que `tirar las llaves`. Como frase hecha, el lector la lee sin ver nada. **Por eso el verbo tiene que devolverle el cuerpo al objeto:** `tomó` y `lleva` son neutros y no pintan; **`me quitó` sí se ve**, y además monta tensión y pago en la misma línea. Escalera: `tomar` → `llevar` → `coger` → `agarrar` → **`quitar`** → `arrebatar` (se pasa).
+
+**🔴 Y LA CONSECUENCIA QUE SE OLVIDA: SI CAMBIA EL OBJETO DEL GANCHO, CAMBIA EL H1 DEL GATE Y LA PALABRA DEL BANNER.** `lead-magnet-web §2` dice que el H1 del gate **es el gancho del post casi palabra por palabra**, porque quien aterriza viene de leer el post. Un gancho de `riendas` contra un gate de `llaves` rompe el reconocimiento justo donde se deja el correo. **El slug SÍ se queda** (`/llaves/`): no se ve en ninguna parte, porque el lead magnet no lleva enlace en el post.
+
 **🎨 Y LA COHERENCIA DE DISEÑO GLOBAL MANDA SOBRE EL COPY NUEVO (Iker, 2026-08-18).** Al reeditar hay que retocar los textos que venden el recurso (lede del gate, metas, card de la home), y ahí es por donde se rompe la web: *"que no hayas propuesto nuevos títulos que ya vayan a ocupar más de lo que siempre tienen que ocupar"*. **Los invariantes se MIDEN contra los once ya publicados, no se recuerdan.** Medido el 18/08 sobre `index.html`:
 
 | campo | rango real del catálogo (n=11) | dónde está `/llaves/` |
