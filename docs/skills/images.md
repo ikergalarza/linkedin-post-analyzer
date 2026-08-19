@@ -726,6 +726,7 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 | 7 | **Cero logos, cero año, cero marca de agua** | `§0h` regla 3 | ✅ |
 | 8 | **El aviso de postproducción** con `⚠️ AVISO, MARIO:` | `§0a-penta` | lo puse con `⚙️` |
 | 9 | **Tamaño de letra y altura de línea IGUALES en todo el bloque**, y prohibido encoger una línea para que quepa el texto | `§0a-septima-quinquies` p.3 | 18/08: se me olvidó pedirlo y el generador **encogió la primera línea** del tuit de Helena para meter dos caracteres |
+| 10 | **El CORTE DE LÍNEA se calca de la referencia**: si su remate va solo en la última línea, el nuestro también. Y nunca se pide *que quepa en N líneas* | `§0b-TEXTO-REF-CORTE` | 18/08: salió en 3 líneas con el remate colgando; la referencia iba en 4 con la palabra sola |
 
 **El test final, de un vistazo:** tapa el post y mira solo la foto. **¿Aporta algo que el post no dice, y sabes qué palabra comentar?** Las dos cosas, o vuelve al prompt.
 
