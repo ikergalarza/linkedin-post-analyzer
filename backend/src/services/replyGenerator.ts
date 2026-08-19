@@ -391,19 +391,31 @@ function llano(t: string): string {
 // general (permitida) en un hecho concreto que no ha pasado (prohibido).
 const PATRONES_ANECDOTA: { re: RegExp; que: string }[] = [
   { re: /\bel otro dia\b/, que: 'el otro dia' },
-  { re: /\bla otra vez\b/, que: 'la otra vez' },
-  { re: /\bhace (poco|nada|un rato|unos dias|unas semanas|unos meses)\b/, que: 'hace poco / hace unos dias' },
+  { re: /\b(la otra vez|una vez|aquella vez|un dia|en su dia)\b/, que: 'una vez / un dia' },
+  { re: /\bhace (poco|nada|un rato|unos|unas|dos|tres|varios|varias|años|anos|meses|dias|semanas)\b/, que: 'hace poco / hace unos años' },
   { re: /\b(ayer|anteayer|anoche)\b/, que: 'ayer / anoche' },
   { re: /\bl[ao] (semana|mes|ano) pasad[ao]\b/, que: 'la semana pasada / el mes pasado' },
   { re: /\besta (misma )?semana\b/, que: 'esta semana' },
-  { re: /\ben una (reunion|llamada|demo|visita|comida|cena|feria)\b/, que: 'en una reunion / en una llamada' },
+  { re: /\b[aen] una (reunion|llamada|demo|visita|comida|cena|feria|mesa)\b/, que: 'en/a una reunion o llamada' },
   { re: /\bun cliente (me|nos) (dijo|conto|comento|escribio|llamo|pidio)\b/, que: 'un cliente me dijo' },
   { re: /\b(me|nos) lo (dijo|conto|comento) un\b/, que: 'me lo dijo un...' },
   { re: /\bteng[o] un cliente que\b|\btenemos un cliente que\b/, que: 'tengo un cliente que' },
   { re: /\buno de (nuestros|mis) clientes\b/, que: 'uno de nuestros clientes' },
   { re: /\bconozco (un|el) caso\b/, que: 'conozco un caso' },
   { re: /\bjusto (hoy|ayer|esta semana)\b/, que: 'justo hoy / justo ayer' },
+  { re: /\blo vivi\b|\ben primera persona\b|\bme toco vivir\b/, que: 'lo vivi en primera persona' },
+  // Preterito indefinido en 1a persona: la firma gramatical de "esto me paso a
+  // mi un dia concreto". Es lo que se le escapa a cualquier lista de frases.
+  // Ojo al ampliar esta lista: 'entre', 'monte' y 'vino' tambien son
+  // preposicion y sustantivos, y metian falsos positivos en respuestas
+  // perfectamente limpias ("entre clientes y proveedores", "el vino").
+  { re: /\b(acompañe|acompane|mande|llame|visite|conoci|estuve|fui|vi|hable|cerre|pregunte|escuche|asisti|coincidi)\b/, que: 'narracion en pasado de un hecho concreto' },
 ];
+
+// Numeros escritos en LETRA. El escaner de digitos no los ve, y son justo por
+// donde se colaban: "en treinta segundos", "en tres dias", "diez minutos".
+const NUMEROS_EN_LETRA =
+  /\b(un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|quince|veinte|treinta|cuarenta|cincuenta|cien|mil)\s+(segundos?|minutos?|horas?|dias?|semanas?|meses|años|anos|euros?|clientes?|reuniones|llamadas|correos?|personas?)\b/;
 
 // Cadenas con digito que NO son un dato: si las contaramos, saltaria la alarma
 // en respuestas perfectamente limpias.
@@ -443,8 +455,77 @@ export function detectarInventos(
   if (/\bde cada (dos|tres|cuatro|cinco|diez|cien|mil)\b/.test(texto) && !/\bde cada\b/.test(fuente)) {
     out.push({ tipo: 'cifra', fragmento: 'X de cada Y' });
   }
+  const enLetra = texto.match(NUMEROS_EN_LETRA);
+  if (enLetra && !NUMEROS_EN_LETRA.test(fuente)) {
+    out.push({ tipo: 'cifra', fragmento: enLetra[0] });
+  }
 
   return out;
+}
+
+// EL JUEZ: lo que ninguna lista de frases va a cubrir.
+//
+// El primer detector era una lista de marcadores ("el otro dia", "un cliente me
+// dijo"). Duro 8 generaciones reales: se colaron "lo vivi en primera persona
+// hace unos años intentando cerrar una reunion con un fondo europeo" y "una vez
+// acompañe a un fondo a una reunion en San Francisco". Ninguna de las dos usaba
+// una frase de la lista, y las dos son exactamente lo prohibido.
+//
+// La leccion: enumerar formas de mentir no termina nunca, porque el lenguaje
+// natural tiene infinitas. Lo que si se puede preguntar es lo unico que importa
+// de verdad — "¿esto que afirma la respuesta esta en el post o en el comentario,
+// si o no?" — y eso lo contesta un modelo barato mejor que cualquier regex.
+//
+// Los patrones se quedan como PRIMER FILTRO: cuestan cero, cazan lo evidente y
+// ahorran la llamada. El juez es la red de debajo.
+async function juezDeInventos(
+  respuesta: string,
+  fuentes: { postContent?: string; commentText?: string }
+): Promise<Invento[]> {
+  try {
+    const message = await trackedCreate('reply_invention_judge', {
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      system: `Eres un revisor de hechos. Te dan un POST, un COMENTARIO y una RESPUESTA que el autor del post quiere publicar.
+
+Tu unico trabajo: decir si la RESPUESTA afirma algun HECHO CONCRETO que no aparece ni en el post ni en el comentario.
+
+CUENTA COMO INVENTADO (responde inventa=true):
+- Narrar un suceso concreto que no consta: una reunion, una llamada, un viaje, una conversacion, un encuentro, algo que "paso" en un momento o lugar determinado.
+- Citar a una persona, un cliente, una empresa o un sitio que no aparece en las fuentes.
+- Dar una cifra, una duracion o una cantidad que no esta en las fuentes, este en digitos o en letra.
+
+NO CUENTA COMO INVENTADO (responde inventa=false):
+- Observaciones generales sin escena: "a la mayoria les pasa", "casi siempre acaba igual", "es lo mas comun".
+- Angulo personal incomprobable y sin escena: "me ha pasado algo parecido", "lo vemos mucho", "por eso lo escribi".
+- Opiniones, valoraciones, preguntas, bromas y acuerdos.
+- Recoger o reformular algo que YA dicen el post o el comentario.
+
+Responde SOLO con JSON: {"inventa": true|false, "que": "<lo inventado, en 8 palabras como mucho, o cadena vacia>"}`,
+      messages: [
+        {
+          role: 'user',
+          content: `POST:\n${fuentes.postContent || '(vacio)'}\n\nCOMENTARIO:\n${
+            fuentes.commentText || '(vacio)'
+          }\n\nRESPUESTA A REVISAR:\n${respuesta}`,
+        },
+      ],
+    });
+    const block = message.content.find((b) => b.type === 'text') as { type: 'text'; text: string } | undefined;
+    const crudo = (block?.text || '').trim();
+    const json = crudo.slice(crudo.indexOf('{'), crudo.lastIndexOf('}') + 1);
+    const veredicto = JSON.parse(json) as { inventa?: boolean; que?: string };
+    if (veredicto?.inventa) {
+      return [{ tipo: 'anecdota', fragmento: veredicto.que || 'un hecho que no consta en el post ni en el comentario' }];
+    }
+    return [];
+  } catch (err: any) {
+    // Que falle el juez NO puede tumbar la generacion: los patrones ya han
+    // pasado y el usuario revisa el borrador antes de publicarlo. Se avisa en
+    // el log para que no se degrade en silencio.
+    console.warn('[replyGenerator] el juez de inventos no ha podido opinar:', err?.message);
+    return [];
+  }
 }
 
 function textoDelAviso(inventos: Invento[]): string {
@@ -490,10 +571,13 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
     const candidato = stripLoneSurrogates(block?.text ?? '').trim();
     if (!candidato) throw new Error('Empty reply from model');
 
-    ultimosInventos = detectarInventos(candidato, {
-      postContent: input.postContent,
-      commentText: input.commentText,
-    });
+    const fuentes = { postContent: input.postContent, commentText: input.commentText };
+    // Primero los patrones (gratis). Solo si pasan se le pregunta al juez, que
+    // es una llamada mas y no hace falta gastarla en lo que ya esta cazado.
+    ultimosInventos = detectarInventos(candidato, fuentes);
+    if (ultimosInventos.length === 0) {
+      ultimosInventos = await juezDeInventos(candidato, fuentes);
+    }
     if (ultimosInventos.length === 0) {
       text = candidato;
       break;
