@@ -918,6 +918,26 @@ const migration = `
   ALTER TABLE lead_magnet_sends ADD CONSTRAINT lead_magnet_sends_kind_check
     CHECK (kind IN ('dm','invite','inmail','ask')) NOT VALID;
 
+  -- v38: CUENTAS QUE ESCRIBIMOS PERO NO CONTROLAMOS (Iker, 2026-08-19).
+  --
+  -- Empezamos a escribir posts para gente de la empresa que no son los 3 jefes.
+  -- Esas cuentas NO estan conectadas por Unipile y no lo van a estar. Antes de
+  -- esto sus posts no existian para la herramienta: ni Live posts, ni dashboard,
+  -- ni forma de saber si funcionaron.
+  --
+  -- La cuenta manual es is_managed = TRUE + is_manual = TRUE, y
+  -- unipile_account_id se queda en NULL. Ese NULL no es un descuido: es LA
+  -- protección. live-refresh y accountSnapshotTick filtran por
+  -- unipile_account_id IS NOT NULL, asi que jamas intentaran capturar
+  -- seguidores de una cuenta que no controlamos. Sin eso, la captura correria
+  -- con la sesion prestada y guardaria los seguidores de Iker como los del
+  -- trabajador — datos corruptos y en silencio.
+  --
+  -- Los posts se leen prestando la sesion de una cuenta conectada, que para
+  -- contenido publico basta. Lo unico que NO se puede leer asi son las
+  -- impresiones (privadas del dueño): esas se escriben a mano.
+  ALTER TABLE creators ADD COLUMN IF NOT EXISTS is_manual BOOLEAN DEFAULT FALSE;
+
   -- Y si hay filas fuera del dominio, se AVISA con sus valores y su recuento en
   -- vez de morir. Un WARNING en el log del deploy es lo que convierte esto en
   -- algo que se puede arreglar; un exit 1 solo dice que algo fallo.

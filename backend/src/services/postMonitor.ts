@@ -2,6 +2,7 @@ import pool from '../db';
 import { unipileService } from './unipile';
 import { calculateEngagement } from './engagement';
 import { recalcCreatorOutliers } from './outliers';
+import { refrescarPostManual } from './manualPost';
 import { captureAccountSnapshots } from './accountSnapshots';
 import { runFollowerSync } from './followerSync';
 import { fetchPremiumAnalytics, savePremiumAnalytics } from './premiumAnalytics';
@@ -50,7 +51,7 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
     // phase cadence in JS so each post only gets hit at its own required interval.
     const { rows: candidates } = await pool.query(
       `SELECT p.id, p.linkedin_post_id, p.published_at,
-              c.id AS creator_id, c.linkedin_id, c.unipile_account_id,
+              c.id AS creator_id, c.linkedin_id, c.unipile_account_id, c.is_manual,
               (SELECT MAX(s.captured_at) FROM post_snapshots s WHERE s.post_id = p.id) AS last_snapshot_at,
               -- La analitica Premium se pide de una en una, asi que va racionada
               -- (ver el bloque de analytics mas abajo). Se re-pide cada 6h en vez
@@ -62,7 +63,10 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
        WHERE c.is_managed = TRUE
-         AND c.unipile_account_id IS NOT NULL
+         -- Conectadas por Unipile O manuales. Las manuales no tienen
+         -- account_id a proposito (migracion v38); sin este OR sus posts
+         -- entrarian en Live posts pero su curva no creceria nunca.
+         AND (c.unipile_account_id IS NOT NULL OR c.is_manual = TRUE)
          AND p.published_at IS NOT NULL
          AND p.published_at > NOW() - INTERVAL '7 days'
          AND p.linkedin_post_id <> 'DEMO_LIVE_POST'`
@@ -99,6 +103,26 @@ async function tick(force = false): Promise<{ captured: number; candidates: numb
 
     for (const [creatorId, posts] of byCreator.entries()) {
       const first = posts[0];
+
+      // CUENTAS MANUALES: no tenemos su sesion, asi que no se puede recorrer su
+      // feed pidiendo impresiones. Se lee post a post con la sesion prestada,
+      // que para contadores publicos basta. Son pocos posts y ademas asi no nos
+      // traemos su contenido personal, que no es asunto nuestro.
+      //
+      // Lo que esta rama NO hace, a proposito: tocar impressions_count. En un
+      // post ajeno Unipile devuelve 0, y escribir ese 0 borraria las impresiones
+      // que el usuario ha copiado a mano de LinkedIn. Son el dato mas caro de
+      // conseguir aqui; solo los cambia otra escritura a mano.
+      if (first.is_manual) {
+        for (const target of posts) {
+          if (!target.linkedin_post_id) continue;
+          const r = await refrescarPostManual(String(target.id), String(target.linkedin_post_id));
+          if (r.ok) touchedCreators.add(creatorId);
+          else console.warn(`[postMonitor] post manual ${target.id} no refrescado:`, r.motivo);
+        }
+        continue;
+      }
+
       if (!first.linkedin_id || !first.unipile_account_id) continue;
 
       try {

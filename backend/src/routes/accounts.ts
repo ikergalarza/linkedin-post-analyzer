@@ -17,6 +17,13 @@ import { roastProfile } from '../services/roaster';
 import { generarRastro } from '../services/rastroGenerator';
 import { runFollowerSync, getFollowerSyncProgress } from '../services/followerSync';
 import { fetchPremiumAnalytics, savePremiumAnalytics } from '../services/premiumAnalytics';
+import {
+  extraerPost,
+  guardarPostManual,
+  actualizarMetricasPrivadas,
+  CAMPOS_PRIVADOS,
+  MetricasPrivadas,
+} from '../services/manualPost';
 
 const router = Router();
 
@@ -163,6 +170,7 @@ router.get('/', async (_req: Request, res: Response) => {
       `SELECT
         c.id, c.name, c.headline, c.profile_image_url, c.followers_count,
         c.location, c.last_scraped_at, c.is_managed, c.unipile_account_id, c.linkedin_id,
+        c.is_manual,
         c.created_at,
         COUNT(p.id)::int AS total_posts,
         COUNT(p.id) FILTER (WHERE p.is_outlier = TRUE)::int AS total_outliers,
@@ -1021,10 +1029,24 @@ router.get('/analytics', async (req: Request, res: Response) => {
     // Build scope: either a specific creator or all managed accounts.
     // Queries use <SCOPE> as a placeholder so each query can append its own params.
     // Demo posts are always excluded so analytics reflect real activity only.
+    // Las cuentas manuales (posts que escribimos para trabajadores cuya cuenta
+    // no esta conectada) suman a todo por defecto. El check de la UI manda
+    // include_manual=false para mirar solo a las cuentas conectadas.
+    //
+    // Por que existe el interruptor: los TOTALES no sufren al mezclar, pero las
+    // MEDIAS si. Un trabajador con 1 post y 8 likes baja el "Avg engagement" de
+    // los 3 jefes, y la tabla por cuenta se llena de filas de 1 post. Con el
+    // check se ven las dos verdades sin tener que elegir una para siempre.
+    const incluirManual = req.query.include_manual !== 'false';
+    const filtroManual = incluirManual ? '' : ' AND is_manual IS NOT TRUE';
+
     const scope = (nextIdx: number) => {
       const demoFilter = `p.linkedin_post_id <> 'DEMO_LIVE_POST'`;
       if (creatorId) return { sql: `p.creator_id = $${nextIdx} AND ${demoFilter}`, params: [creatorId] };
-      return { sql: `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE) AND ${demoFilter}`, params: [] };
+      return {
+        sql: `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE${filtroManual}) AND ${demoFilter}`,
+        params: [],
+      };
     };
 
     const totalsSql = (dateCondition: string, baseParams: any[]) => {
@@ -1275,7 +1297,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
     if (!creatorId) {
       const perAccountQ = await pool.query(
         `SELECT
-          c.id, c.name, c.profile_image_url,
+          c.id, c.name, c.profile_image_url, c.is_manual,
           COUNT(p.id)::int AS posts,
           COUNT(p.id) FILTER (WHERE p.is_outlier = TRUE)::int AS outliers,
           COALESCE(ROUND(AVG(p.engagement_score))::int, 0) AS avg_engagement,
@@ -1287,7 +1309,7 @@ router.get('/analytics', async (req: Request, res: Response) => {
          LEFT JOIN posts p ON p.creator_id = c.id
            AND p.published_at >= $1 AND p.published_at <= $2
            AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-         WHERE c.is_managed = TRUE
+         WHERE c.is_managed = TRUE${filtroManual}
          GROUP BY c.id
          ORDER BY avg_engagement DESC`,
         [currentStartIso, currentEndIso]
@@ -1336,12 +1358,16 @@ router.get('/live-posts', async (req: Request, res: Response) => {
     // caller that hits this endpoint without dates).
     const startDate = (req.query.start_date as string) || null;
     const endDate = (req.query.end_date as string) || null;
+    // Las cuentas manuales entran por defecto. El check de la UI manda
+    // include_manual=false cuando solo se quiere mirar a los jefes.
+    const incluirManual = req.query.include_manual !== 'false';
     const params: any[] = [];
     let creatorFilter = '';
     if (creatorId) {
       params.push(creatorId);
       creatorFilter = `AND c.id = $${params.length}`;
     }
+    if (!incluirManual) creatorFilter += ` AND c.is_manual IS NOT TRUE`;
     let dateFilter: string;
     if (startDate && endDate) {
       params.push(`${startDate} 00:00:00`);
@@ -1360,7 +1386,10 @@ router.get('/live-posts', async (req: Request, res: Response) => {
          FROM posts p
          JOIN creators c ON c.id = p.creator_id
          WHERE c.is_managed = TRUE
-           AND c.unipile_account_id IS NOT NULL
+           -- Conectadas por Unipile O manuales. Las manuales no tienen
+           -- account_id a proposito (ver migracion v38), asi que sin este OR
+           -- sus posts nunca llegarian a Live posts.
+           AND (c.unipile_account_id IS NOT NULL OR c.is_manual = TRUE)
            AND p.published_at IS NOT NULL
            AND p.deleted_from_linkedin_at IS NULL
            ${creatorFilter}
@@ -1372,6 +1401,7 @@ router.get('/live-posts', async (req: Request, res: Response) => {
               p.saves_count, p.sends_count, p.link_clicks_count, p.premium_button_clicks, p.link_url, p.pillar,
          p.engagement_score, p.outlier_ratio, p.is_outlier, p.post_url,
          c.id AS creator_id, c.name AS creator_name, c.profile_image_url AS creator_image,
+         c.is_manual AS creator_is_manual,
          p.snapshot_count,
          p.last_snapshot_at,
          (NOW() - p.published_at < INTERVAL '6 hours') AS is_live,
@@ -1456,6 +1486,77 @@ router.post('/live-refresh', async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[accounts/live-refresh]', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Lee las metricas privadas del cuerpo de una peticion. Solo deja pasar las 8
+// columnas conocidas (nada de volcar req.body en un UPDATE) y convierte "" en
+// null, que es lo que manda un input numerico vacio.
+function leerMetricasPrivadas(body: any, soloLasQueVienen: boolean): MetricasPrivadas {
+  const out: MetricasPrivadas = {};
+  for (const campo of CAMPOS_PRIVADOS) {
+    if (soloLasQueVienen && !(campo in (body || {}))) continue;
+    const bruto = body?.[campo];
+    if (campo === 'link_url') {
+      const t = typeof bruto === 'string' ? bruto.trim() : '';
+      out.link_url = t || null;
+      continue;
+    }
+    if (bruto === '' || bruto === null || bruto === undefined) {
+      (out as any)[campo] = null;
+      continue;
+    }
+    const n = Number(bruto);
+    (out as any)[campo] = Number.isFinite(n) ? Math.round(n) : null;
+  }
+  return out;
+}
+
+// POST /api/accounts/manual-post/preview — que hay en esa URL.
+//
+// NO escribe nada. Existe para que se pueda VER lo extraido antes de guardar:
+// pegar la URL equivocada es facil y descubrirlo despues, con una cuenta ya
+// creada, es un lio de limpiar.
+router.post('/manual-post/preview', async (req: Request, res: Response) => {
+  try {
+    const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+    if (!url) return res.status(400).json({ error: 'Falta la URL de la publicacion.' });
+    const vista = await extraerPost(url);
+    // raw_data fuera de la respuesta: son decenas de KB que el modal no usa.
+    const { raw, ...limpio } = vista;
+    res.json(limpio);
+  } catch (err: any) {
+    console.error('[accounts/manual-post/preview]', err?.message);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// POST /api/accounts/manual-post — guarda el post y, si hace falta, crea la cuenta.
+router.post('/manual-post', async (req: Request, res: Response) => {
+  try {
+    const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+    if (!url) return res.status(400).json({ error: 'Falta la URL de la publicacion.' });
+    const resultado = await guardarPostManual(url, leerMetricasPrivadas(req.body, false));
+    res.json(resultado);
+  } catch (err: any) {
+    console.error('[accounts/manual-post]', err?.message);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// PATCH /api/accounts/posts/:id/manual-metrics — las metricas que solo ve el dueño.
+//
+// Ademas de escribirlas en el post, deja un punto en la curva con su hora. Es
+// lo que permite que un post manual tenga linea de impresiones: si vuelves a
+// mirarlas a las 24h y a las 72h, salen tres puntos.
+router.patch('/posts/:id/manual-metrics', async (req: Request, res: Response) => {
+  try {
+    const privadas = leerMetricasPrivadas(req.body, true);
+    const resultado = await actualizarMetricasPrivadas(req.params.id as string, privadas);
+    res.json(resultado);
+  } catch (err: any) {
+    console.error('[accounts/manual-metrics]', err?.message);
+    res.status(400).json({ error: err.message });
   }
 });
 

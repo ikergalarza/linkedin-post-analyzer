@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useApi, apiPatch, apiPost, apiDelete } from '../hooks/useApi';
+import AddManualPostModal from '../components/accounts/AddManualPostModal';
 import {
   Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, ComposedChart, Area, ReferenceLine,
@@ -25,6 +26,10 @@ interface ManagedAccount {
   is_managed: boolean;
   unipile_account_id: string | null;
   linkedin_id: string | null;
+  // Cuenta de la empresa que NO esta conectada a Unipile (migracion v38): sus
+  // posts se pegan a mano por URL y las metricas privadas las escribe el
+  // usuario. unipile_account_id es NULL a proposito en estas.
+  is_manual?: boolean;
   total_posts: number;
   total_outliers: number;
   avg_engagement: number;
@@ -152,6 +157,9 @@ interface LivePost {
   last_snapshot_at: string | null;
   is_live: boolean;
   phase: 'golden' | 'first_wave' | 'consolidation' | 'long_tail' | 'tail' | 'closed';
+  // Cuenta de la empresa que NO esta conectada a Unipile: el post se pego a
+  // mano y sus metricas privadas las escribe el usuario (ver migracion v38).
+  creator_is_manual?: boolean;
 }
 
 const PHASE_META: Record<LivePost['phase'], { label: string; bg: string; text: string; window: string; cadence: string; blurb: string }> = {
@@ -210,6 +218,7 @@ interface PerAccountRow {
   id: string;
   name: string | null;
   profile_image_url: string | null;
+  is_manual?: boolean;
   posts: number;
   outliers: number;
   avg_engagement: number;
@@ -596,6 +605,13 @@ export default function Accounts() {
   const [scrapingId, setScrapingId] = useState<string | null>(null);
   const [scrapeResult, setScrapeResult] = useState<Record<string, string>>({});
   const [legendOpen, setLegendOpen] = useState(false);
+  // Cuentas manuales: por defecto suman a todo. El check las apaga cuando solo
+  // se quiere mirar a las cuentas conectadas — los TOTALES no sufren al
+  // mezclar, pero las MEDIAS si (un trabajador con 1 post baja el avg de los
+  // jefes), y este interruptor evita tener que elegir una verdad para siempre.
+  const [incluirManuales, setIncluirManuales] = useState(true);
+  const [modalManual, setModalManual] = useState(false);
+  const [editarMetricas, setEditarMetricas] = useState<LivePost | null>(null);
   const [liveRefreshing, setLiveRefreshing] = useState(false);
   const [liveRefreshMsg, setLiveRefreshMsg] = useState<string | null>(null);
   // Bumped on Refresh so the snapshot-backed charts (followers, profile views)
@@ -650,7 +666,7 @@ export default function Accounts() {
   // when start_date/end_date are present (no 7-day fallback). When the user
   // changes the date filter, useApi re-fetches automatically because the URL
   // changes.
-  const livePostsPath = `/api/accounts/live-posts?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
+  const livePostsPath = `/api/accounts/live-posts?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}${incluirManuales ? '' : '&include_manual=false'}`;
   const { data: livePosts, refetch: refetchLive } = useApi<LivePost[]>(livePostsPath);
 
   // Auto-refresh live posts every 2 minutes so new snapshots appear without a page reload
@@ -665,7 +681,7 @@ export default function Accounts() {
     setVisibleLive(LIVE_PAGE);
   }, [selectedCreator]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const analyticsPath = `/api/accounts/analytics?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}`;
+  const analyticsPath = `/api/accounts/analytics?start_date=${dateRange.start}&end_date=${dateRange.end}${selectedCreator !== 'all' ? `&creator_id=${selectedCreator}` : ''}${incluirManuales ? '' : '&include_manual=false'}`;
   const { data: analytics, loading: loadingAnalytics, refetch: refetchAnalytics } = useApi<Analytics>(analyticsPath);
 
   const saveUnipileId = async (id: string) => {
@@ -945,10 +961,29 @@ export default function Accounts() {
             >
               <option value="all">All managed accounts</option>
               {accounts?.map((a) => (
-                <option key={a.id} value={a.id}>{nombreCuenta(a.name)}</option>
+                <option key={a.id} value={a.id}>
+                  {nombreCuenta(a.name)}{a.is_manual ? ' · manual' : ''}
+                </option>
               ))}
             </select>
           </div>
+          {/* El selector SIGUE listando las cuentas manuales aunque el check
+              este apagado: el interruptor cambia lo que se AGREGA, no lo que se
+              puede mirar. Apagarlo y que ademas desapareciera del desplegable
+              seria una segunda regla escondida dentro de la primera. */}
+          {accounts?.some((a) => a.is_manual) && (
+            <label className="flex items-center gap-2 text-xs text-text-muted cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={incluirManuales}
+                onChange={(e) => setIncluirManuales(e.target.checked)}
+                className="accent-accent"
+              />
+              <span title="Las cuentas manuales son posts que escribimos para gente cuya cuenta no esta conectada a Unipile. Apagarlo deja solo las conectadas.">
+                Incluir cuentas manuales
+              </span>
+            </label>
+          )}
           <div className="flex items-center gap-1 flex-wrap">
             <span className="text-xs text-text-muted mr-1">Range:</span>
             {([30, 90, 180] as const).map((d) => (
@@ -1092,6 +1127,13 @@ export default function Accounts() {
                 </button>
               )}
               <button
+                onClick={() => setModalManual(true)}
+                className="text-xs text-text-muted hover:text-accent transition-colors"
+                title="Pegar la URL de un post de una cuenta de la empresa que no esta conectada a Unipile"
+              >
+                + Anadir post
+              </button>
+              <button
                 onClick={async () => {
                   setLiveRefreshing(true);
                   setLiveRefreshMsg(null);
@@ -1178,6 +1220,7 @@ export default function Accounts() {
                   post={p}
                   onOpenChat={() => setChatPostId(p.id)}
                   onRefreshed={refetchLive}
+                  onEditMetrics={() => setEditarMetricas(p)}
                   onRemoveDemo={
                     p.content_text?.startsWith('DEMO ·')
                       ? async () => {
@@ -1564,6 +1607,19 @@ export default function Accounts() {
                                   </div>
                                 )}
                                 <span className="text-text-primary">{nombreCuenta(a.name)}</span>
+                                {/* Sin esto, una fila de 1 post y 8 likes se lee
+                                    igual que la de un jefe con 40 posts, y el
+                                    avg_virality de 1.00x parece un mal dato en
+                                    vez de lo que es: no hay base con la que
+                                    comparar todavia. */}
+                                {a.is_manual && (
+                                  <span
+                                    className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[10px] font-medium"
+                                    title="Cuenta no conectada a Unipile: sus posts se añaden a mano y las impresiones las escribe el usuario."
+                                  >
+                                    manual
+                                  </span>
+                                )}
                               </div>
                             </td>
                             <td className="py-2 px-3 text-right text-text-primary">{a.posts}</td>
@@ -1711,6 +1767,40 @@ export default function Accounts() {
 
       {chatPostId && (
         <GoogleChatModal postId={chatPostId} onClose={() => setChatPostId(null)} />
+      )}
+
+      {modalManual && (
+        <AddManualPostModal
+          onClose={() => setModalManual(false)}
+          onSaved={() => {
+            refetchLive();
+            refetchAccounts();
+            refetchAnalytics();
+            setRefreshSignal((s) => s + 1);
+          }}
+        />
+      )}
+
+      {editarMetricas && (
+        <AddManualPostModal
+          editarPostId={editarMetricas.id}
+          nombreCuenta={nombreCuenta(editarMetricas.creator_name)}
+          valoresIniciales={{
+            impressions_count: editarMetricas.impressions_count ?? null,
+            profile_viewers_count: editarMetricas.profile_viewers_count ?? null,
+            followers_gained_count: editarMetricas.followers_gained_count ?? null,
+            link_clicks_count: editarMetricas.link_clicks_count ?? null,
+            premium_button_clicks: editarMetricas.premium_button_clicks ?? null,
+            saves_count: editarMetricas.saves_count ?? null,
+            sends_count: editarMetricas.sends_count ?? null,
+          }}
+          onClose={() => setEditarMetricas(null)}
+          onSaved={() => {
+            refetchLive();
+            refetchAnalytics();
+            setRefreshSignal((s) => s + 1);
+          }}
+        />
       )}
     </div>
   );
@@ -2175,7 +2265,7 @@ function PostMenu({ post, onHidden }: { post: LivePost; onHidden?: () => void })
   );
 }
 
-function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: LivePost; onRemoveDemo?: () => void; onOpenChat?: () => void; onRefreshed?: () => void }) {
+function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed, onEditMetrics }: { post: LivePost; onRemoveDemo?: () => void; onOpenChat?: () => void; onRefreshed?: () => void; onEditMetrics?: () => void }) {
   const [open, setOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
@@ -2230,6 +2320,18 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="flex items-center gap-2 text-xs text-text-muted flex-wrap min-w-0">
               <span className="text-text-secondary font-medium">{nombreCuenta(post.creator_name)}</span>
+              {/* Cuenta no conectada a Unipile: lo publico se extrajo de la URL
+                  y lo privado lo escribe el usuario. El badge existe para que
+                  nadie lea un 0 de impresiones como "no funciono" cuando en
+                  realidad es "nadie lo ha copiado todavia". */}
+              {post.creator_is_manual && (
+                <span
+                  className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[10px] font-medium"
+                  title="Cuenta no conectada a Unipile. Los contadores publicos se leen solos; las impresiones y los clics los escribes tu."
+                >
+                  manual
+                </span>
+              )}
               <span>·</span>
               <span title={new Date(post.published_at).toLocaleString()}>{fmtPublishedAt(post.published_at)}</span>
               <span
@@ -2243,6 +2345,15 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed }: { post: Li
               </span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
+              {post.creator_is_manual && onEditMetrics && (
+                <button
+                  onClick={onEditMetrics}
+                  className="text-[11px] text-text-muted hover:text-accent transition-colors whitespace-nowrap"
+                  title="Escribir las impresiones y los clics que solo se ven desde la cuenta. Cada guardado deja un punto en la curva."
+                >
+                  metricas
+                </button>
+              )}
               <PostMenu post={post} onHidden={onRefreshed} />
               <PilarBadge pillar={post.pillar} />
               {/* CTR a la izquierda del multiplicador (Iker, 2026-07-29): el ojo
