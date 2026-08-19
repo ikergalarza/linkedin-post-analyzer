@@ -480,7 +480,7 @@ export function detectarInventos(
 // ahorran la llamada. El juez es la red de debajo.
 async function juezDeInventos(
   respuesta: string,
-  fuentes: { postContent?: string; commentText?: string }
+  fuentes: { postContent?: string; commentText?: string; commenterName?: string | null }
 ): Promise<Invento[]> {
   try {
     const message = await trackedCreate('reply_invention_judge', {
@@ -500,14 +500,18 @@ NO CUENTA COMO INVENTADO (responde inventa=false):
 - Angulo personal incomprobable y sin escena: "me ha pasado algo parecido", "lo vemos mucho", "por eso lo escribi".
 - Opiniones, valoraciones, preguntas, bromas y acuerdos.
 - Recoger o reformular algo que YA dicen el post o el comentario.
+- EL NOMBRE DEL DESTINATARIO al principio de la respuesta. Toda respuesta abre con el nombre de quien comento, porque LinkedIn lo convierte en una mencion. Ese nombre NUNCA es una persona inventada.
+- Las formulas de asentimiento de la casa, que son modismos y no afirmaciones: "te compro eso", "lo has clavado", "y tanto", "ahi esta", "ese es el tema", "tal cual", "sin duda". "Te compro eso" significa "estoy de acuerdo", no que nadie haya comprado nada.
 
 Responde SOLO con JSON: {"inventa": true|false, "que": "<lo inventado, en 8 palabras como mucho, o cadena vacia>"}`,
       messages: [
         {
           role: 'user',
-          content: `POST:\n${fuentes.postContent || '(vacio)'}\n\nCOMENTARIO:\n${
-            fuentes.commentText || '(vacio)'
-          }\n\nRESPUESTA A REVISAR:\n${respuesta}`,
+          content: `POST:\n${fuentes.postContent || '(vacio)'}\n\nCOMENTARIO de ${
+            fuentes.commenterName || '(alguien)'
+          }:\n${fuentes.commentText || '(vacio)'}\n\nRESPUESTA A REVISAR (va dirigida a ${
+            fuentes.commenterName || 'quien comento'
+          }, cuyo nombre abre la respuesta como mencion):\n${respuesta}`,
         },
       ],
     });
@@ -532,7 +536,7 @@ function textoDelAviso(inventos: Invento[]): string {
   const anecdotas = inventos.filter((i) => i.tipo === 'anecdota').map((i) => i.fragmento);
   const cifras = inventos.filter((i) => i.tipo === 'cifra').map((i) => i.fragmento);
   const partes: string[] = [];
-  if (anecdotas.length) partes.push(`una anecdota inventada (${anecdotas.join(', ')})`);
+  if (anecdotas.length) partes.push(`una escena que no consta (${anecdotas.join(', ')})`);
   if (cifras.length) partes.push(`una cifra que no sale del post ni del comentario (${cifras.join(', ')})`);
   return partes.join(' y ');
 }
@@ -571,7 +575,11 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
     const candidato = stripLoneSurrogates(block?.text ?? '').trim();
     if (!candidato) throw new Error('Empty reply from model');
 
-    const fuentes = { postContent: input.postContent, commentText: input.commentText };
+    const fuentes = {
+      postContent: input.postContent,
+      commentText: input.commentText,
+      commenterName: input.commenterName,
+    };
     // Primero los patrones (gratis). Solo si pasan se le pregunta al juez, que
     // es una llamada mas y no hace falta gastarla en lo que ya esta cazado.
     ultimosInventos = detectarInventos(candidato, fuentes);
