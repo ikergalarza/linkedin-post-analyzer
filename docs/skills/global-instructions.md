@@ -1209,10 +1209,25 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 | **DESPIECE** | agendar | ✅ | Cuerpo largo, sitio de sobra. |
 | **INSIGHT / otros con cuerpo** | agendar | ✅ | — |
 | **EVENTO** | Luma | ✅ | **Máximo 2 enlaces.** El de Luma **ocupa el hueco del de agendar** (ya es un CTA de conversión). Nunca tres puertas en un post. |
-| **MEME** | agendar | ⚠️ solo si el post entero cabe en **450** | Dos bloques son ~270 caracteres con las URLs. Los 18 memes de ≤450 tienen **mediana de 11.602 impresiones contra 3.760** de los de 451-700. Si no cabe, va **uno solo y es el de agendar**. |
+| **MEME** | agendar | ⚠️ **OPCIONAL, y el presupuesto se mide SIN él** (ver `§4.4e-MEME`) | El chiste sigue teniendo sus 450 caracteres; lo que ocupa la puerta nueva no se le resta. Nunca se recorta el chiste para meter el segundo enlace. |
 | **MAPA** | ultra ninja | ❌ **NO** | El ultra ninja rinde **porque nada en el post huele a venta**, y es el pilar que más clics da del histórico. El correo va **en la PÁGINA del mapa**, mismo precedente que el evento cuando la región queda lejos. |
 | **"LOS 10"** | agendar | ❌ **NO** | Es el **único pilar con quejas reales de CEOs**, y el diagnóstico escrito en `post-workflow §4.3` es literal: *"un homenaje que acaba en un enlace convierte a la empresa mencionada en decorado de un anuncio"*. Dos enlaces duplican eso encima de 10 personas mencionadas con nombre y apellido. |
 | **LEAD MAGNET** | ❌ | ❌ **en el POST** | Su motor entero es el conteo de comentarios y cualquier enlace lo parte (`§4.5`, la regla del UNO). **Pero el correo sí entra por dos superficies que ya existen y no compiten con nada:** el **DM privado** (que ya lleva ninja, `§4.4b`) y la **casilla OPCIONAL del gate**. ⛔ **Obligar a suscribirse dentro de un gate está prohibido** (Iker, 2026-08-18): quien entra a un gate quiere el recurso, no la newsletter, y condicionar una cosa a la otra es consentimiento agrupado, nulo por RGPD. La única página donde la casilla es obligatoria es `/correo/`, porque ahí lo que se pide **es** el correo (`lead-magnet-web §3b`). |
+
+#### 📬 4.4e-MEME · EN MEME ENTRA A VECES, Y EL PRESUPUESTO SE MIDE SIN ÉL (Iker, 2026-08-19)
+
+> **Corrige lo que ponía aquí el 18/08** (*"solo si el post entero cabe en 450"*), que era **demasiado restrictivo y en la práctica lo prohibía**: dos bloques ocupan ~150 caracteres con la URL, así que exigir 450 en total dejaba el chiste en 300. Iker: *"modifica lo de los 140 caracteres o así, que es demasiado restrictivo… aunque añadamos este bloque de dos y entre medias alguna línea individual para que el ritmo no sea predecible, no creo que el texto se vaya a ir demasiado largo. Si no, pues así también probamos"*.
+
+**LA REGLA, y son dos cosas:**
+1. **Es OPCIONAL y se decide post a post. NO se hardcodea que vaya siempre.** En meme el segundo bloque cuesta alcance (es el pilar donde la longitud más pesa), así que entra cuando el cuerpo lo pide y se queda fuera cuando el chiste va justo. **Un meme sin bloque de correo sigue siendo un meme bien hecho.**
+2. **Los 450 caracteres del pilar (`post-workflow §4.4-CORTO`) se miden DESCONTANDO el bloque del correo.** El presupuesto es **del chiste**: la puerta nueva no se lo come. El tope duro de **700 sobre el total** no se mueve, porque ese mide otra cosa (que el ninja de agendar siga cayendo antes del carácter 650, `§4.4b-CLICS`).
+   - ⛔ **Y el corolario:** si el meme ya no cabe en 450 **por sí solo**, lo que sobra es cuerpo, no el bloque. **Nunca se recorta el chiste para meter el segundo enlace.**
+
+**POR QUÉ SE PRUEBA AQUÍ, que es el razonamiento de Iker y conviene tenerlo escrito:** *"de inicio, alguien que no te conoce es bastante raro y genera bastante fricción que no solo pulsen en la web de agendar, sino que nos agenden"*. **Agendar es una puerta cara para un primer contacto**; dejar el correo es mucho más fácil de conceder, y a partir de ahí **convence el email marketing**, que ya está montado. El meme es, además, el pilar que **más alcance frío trae** (gente que no nos conoce de nada), así que es donde esa puerta barata tiene más sentido.
+
+**Y el ritmo se cuida a propósito:** entre los dos bloques van **líneas individuales de cuerpo**, no solo las 2 que exige `§4.4e`. Dos bloques de dos con la misma forma, cerca, se leen como un patrón; una suelta en medio lo rompe (`§3.2`: el ritmo no puede ser predecible).
+
+**Mecanizado** en `validar-post.py`: el check duro pasa a ser `Doble ninja en MEME: sin el bloque de correo, <=450 car`, y el aviso de `§4.4-CORTO` también descuenta el bloque.
 
 #### ⛔⛔ LA POSICIÓN: NUNCA PEGADOS Y NUNCA AL FINAL
 

@@ -1000,7 +1000,7 @@ sorprende, que es de lo que vive este pilar.
 
 **Paso 5 — Cierre + validación:** el post cierra con el **punchline del meme** (regla del UNO, sin apilar CTAs).
 
-> **📬 EL SEGUNDO BLOQUE DE CORREO, EN MEME, VA CONDICIONADO (`global §4.4e`).** Dos bloques son ~270 caracteres con las URLs, y **los 18 memes de ≤450 caracteres tienen mediana de 11.602 impresiones contra 3.760 de los de 451-700**. Así que: **si el post entero cabe en 450 con los dos, van los dos; si no, va UNO y es el de agendar.** Nunca se recorta el chiste para meter el segundo enlace.
+> **📬 EL SEGUNDO BLOQUE DE CORREO, EN MEME, ES OPCIONAL Y NO SE HARDCODEA (`global §4.4e-MEME`, Iker 2026-08-19).** Entra a veces, se decide post a post, y **los 450 caracteres del pilar se miden DESCONTANDO ese bloque**: el presupuesto es del chiste y la puerta nueva no se lo come. El tope duro de 700 sobre el total no se mueve. **Si el meme ya no cabe en 450 por sí solo, lo que sobra es cuerpo, no el bloque, y nunca se recorta el chiste para meter el segundo enlace.**
 
 > **⛔ SI HAY SPAM NINJA, EL CIERRE NO PUEDE SER OTRO CTA** (Iker, 2026-07-20). Nada de "Etiqueta al compi que…" ni "Comenta X". Aunque `global §4.4b` diga que el spam ninja no consume la regla del UNO, **en la practica compite**: el lector que iba a clicar el enlace se va a comentar, y la prioridad es el clic. El cierre es un **bold statement de UNA linea**, y punto.
 >

@@ -1444,15 +1444,27 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'lineas; si valdrian pegadas a cualquier otra publicacion nuestra, estan mal',
             aviso=True)
 
-        # 10) EN MEME CUESTA ALCANCE, y el numero esta medido: los 18 memes de <=450
-        #     caracteres tienen mediana de 11.602 impresiones contra 3.760 de los de
-        #     451-700, y dos bloques son ~270 caracteres con las URLs.
+        # 10) EN MEME: EL BLOQUE NUEVO NO SE COME EL PRESUPUESTO DEL CHISTE
+        #     (Iker, 2026-08-19 — sustituye al "el post entero cabe en 450").
+        #
+        # Antes esto era un fallo duro sobre el TOTAL, y era demasiado restrictivo:
+        # dos bloques ocupan ~150 caracteres con la URL, asi que exigir 450 en total
+        # dejaba el chiste en 300 y el bloque de correo no entraba nunca en meme.
+        # Iker: "modifica lo de los 140 caracteres o asi, que es demasiado
+        # restrictivo; no creo que el texto se vaya a ir demasiado largo".
+        #
+        # LO QUE SE MIDE AHORA es el cuerpo DESCONTANDO el bloque del correo: el
+        # meme sigue teniendo los mismos 450 caracteres de chiste que tenia sin el,
+        # y lo que ocupa la puerta nueva no se le resta al gag. El tope duro de 700
+        # del pilar (§4.4-CORTO) sigue mandando sobre el total.
         if pilar == 'meme':
-            chk(len(cuerpo) <= 450, 'Doble ninja en MEME: el post entero cabe en 450 car (§4.4e)',
-                '%d caracteres. Con dos bloques el meme se sale de la zona corta: los 18 memes '
-                'de <=450 tienen mediana de 11.602 impresiones contra 3.760 de los de 451-700. '
-                'Si no cabe, va UN bloque y es el de agendar' % len(cuerpo)
-                if len(cuerpo) > 450 else '%d caracteres' % len(cuerpo))
+            _coste = len('\n'.join(_cb)) + 2 if _cb else 0
+            _sin = len(cuerpo) - _coste
+            chk(_sin <= 450, 'Doble ninja en MEME: sin el bloque de correo, <=450 car (§4.4e)',
+                '%d caracteres sin contar el bloque de correo (%d en total). El bloque nuevo '
+                'no se le resta al chiste: si el meme ya no cabe en 450 por si solo, lo que '
+                'sobra es cuerpo, no el bloque' % (_sin, len(cuerpo))
+                if _sin > 450 else '%d car sin el bloque · %d en total' % (_sin, len(cuerpo)))
 
     # global §2.10 — EL CIERRE PUNCHY ES UNA SOLA LINEA. Dos oraciones largas al
     # final diluyen el remate: un cierre no admite explicacion detras.
@@ -2079,16 +2091,27 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # a un ganador, que es justo lo que §3.2 dice que no se hace. Pasando de
         # 700 ya no es solo alcance: ahi el ninja no cabe antes del caracter 650 y
         # el CTR se hunde (§4.4b-CLICS), asi que ese si es fallo.
-        _n = len(cuerpo)
-        chk(_n <= 700, 'MEME: cuerpo corto, la longitud del original NO se calca (§4.4-CORTO)',
+        #
+        # ⭐ Y SI LLEVA EL BLOQUE DE CORREO, LOS 450 SE MIDEN SIN EL (Iker,
+        # 2026-08-19). El presupuesto de 450 es del CHISTE; la puerta nueva no se lo
+        # come. El tope duro de 700 sigue siendo sobre el total, porque lo que mide
+        # es si el ninja de agendar cabe antes del caracter 650.
+        _blc = next((b for b in bloques(cuerpo)
+                     if 'recursos.neety.com/correo' in ' '.join(b)
+                     or 'recursos.neety.com/newsletter' in ' '.join(b)), None)
+        _n = len(cuerpo) - (len('\n'.join(_blc)) + 2 if _blc else 0)
+        chk(len(cuerpo) <= 700, 'MEME: cuerpo corto, la longitud del original NO se calca (§4.4-CORTO)',
             ('%d caracteres. Pasando de 700 el spam ninja ya no cabe antes del 650 y el CTR '
              'se hunde. Mediana de impresiones por tramo: <=450 -> 11.602 · 451-700 -> 3.760 · '
-             '>700 -> 4.745' % _n) if _n > 700 else '%d caracteres' % _n)
-        if _n <= 700:
+             '>700 -> 4.745' % len(cuerpo)) if len(cuerpo) > 700 else
+            ('%d caracteres' % len(cuerpo)) if not _blc else
+            '%d car sin el bloque de correo · %d en total' % (_n, len(cuerpo)))
+        if len(cuerpo) <= 700:
             chk(_n <= 450, 'MEME: en la zona corta, <=450 caracteres (§4.4-CORTO)',
-                ('%d caracteres. No bloquea, pero los 18 memes de <=450 tienen mediana de '
+                ('%d caracteres%s. No bloquea, pero los 18 memes de <=450 tienen mediana de '
                  '11.602 impresiones contra 3.760 de los de 451-700, y los siete mas vistos '
-                 'de la casa estan todos por debajo de 450' % _n) if _n > 450 else '',
+                 'de la casa estan todos por debajo de 450'
+                 % (_n, ' sin el bloque de correo' if _blc else '')) if _n > 450 else '',
                 aviso=True)
 
     if pilar == 'meme' and (cuenta or '').strip().lower() == 'unai':
