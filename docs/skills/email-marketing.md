@@ -61,6 +61,33 @@ Misma segmentación, misma respuesta del lector, cero munición.
 
 ---
 
+## 🔵 0c · MIGRACIÓN A BREVO — el runbook (decidido el 2026-08-18)
+
+Tras la cancelación de MailerLite (`§0b`), migramos a Brevo. Esto no es "montar la herramienta otra vez": es aplicar cada lección del post-mortem ANTES del primer envío, no después.
+
+### Lo que se le pide a Iker, y por qué es él y no Mario quien lo decide
+
+1. **🔴 Subdominio de envío, no `neety.com` directo.** Recomendado: algo tipo `mail.neety.com` o `news.neety.com`. Aísla la reputación del envío masivo de la del dominio principal (correo comercial normal, prospección). Era un pendiente ya antes del baneo (ver `§10`) y ahora deja de ser opcional: es la corrección estructural más grande disponible. **Es lo más urgente de pedir**, porque requiere DNS y la propagación + verificación de Brevo puede tardar 24-48 h. Hay que saber YA quién tiene acceso al DNS de neety.com (¿Iker directo, o agencia/hosting?) para meter los registros el mismo día.
+2. **Plan de pago activo desde el minuto uno**, con volumen de sobra para ~1.300 contactos. Una cuenta nueva en plan gratuito/trial con lista importada es exactamente el patrón que MailerLite marcó como sospechoso.
+3. **La API key la genera Iker y se entrega como variable de entorno, nunca pegada en el chat ni commiteada** (regla de la casa, `CLAUDE.md`).
+4. **Exportar del CRM la lista de clientes y de prospectos con conversación abierta — YA, en paralelo, sin esperar a tener Brevo montado.** Es la lista de supresión que faltó la vez pasada y la razón de que se le mandara el correo 0 a Fagor Automation.
+5. **Decisión de a quién se importa primero, y es una decisión de riesgo, no operativa.** Recomendación: solo los contactos con el tick de consentimiento verificado (~50 de 1.310, los de LinkedIn) entran en la primera importación. El resto se queda fuera hasta decidir cómo se re-permisiona sin repetir el correo 0 literal.
+6. **Quién procesa las respuestas a escala.** El reenvío de `hola@` a `mario@` + `iker@` funcionaba a 190 correos; no funciona a 1.000+. Se decide ahora, no cuando ya duela.
+
+### El orden de migración
+
+1. **Dominio primero.** Se lanza la autenticación del subdominio y se deja corriendo en paralelo a todo lo demás.
+2. **Lista de supresión antes que la lista de contactos.** Se construye con: clientes actuales (CRM) + las 5 bajas y los 7 rebotes de MailerLite (`Escritorio/rescate-mailerlite-2026-08-11.md`) + prospectos con conversación abierta. Se importa ESTA primero.
+3. **Importar solo el segmento con consentimiento verificado.** No la base entera.
+4. **Reescribir el correo 0** sin admitir en el texto que no sabemos el origen del contacto (regla de `§0b`).
+5. **Rediseñar el CTA de respuesta.** 0 de 191 contestaron la vez pasada; no se repite el mismo mecanismo sin cambiarlo.
+6. **Escribirle a soporte de Brevo ANTES del primer envío real**, presentando la cuenta, el origen de la lista y el volumen esperado. Presentarse uno mismo cambia quién lleva la iniciativa frente a que te marquen primero.
+7. **Empezar pequeño: 20-30 contactos**, no 54. Verificar entrega, aperturas y que las respuestas llegan de verdad al buzón que se lee.
+8. **Escalar con las mismas reglas ya validadas** (`§9c`): 24 h entre tandas si el salto es ≤2x, 48 h si es mayor. Nunca la última tanda en viernes.
+9. **Todo se registra en `historial-newsletter.md`** al mismo ritmo que antes.
+
+---
+
 ## 1 · Los 4 remitentes (rotación semanal)
 
 **Un email siempre lo firma una PERSONA, nunca "Neety".** Que te hable alguien genera más confianza que que te hable una empresa (validado por los apuntes de expertos, por Carmen/Runner Pro — "cartas del fundador" — y por Timepack, que firma persona).
@@ -665,8 +692,8 @@ El correo llegó a **bandeja Principal de un Gmail externo**, ni Promociones ni 
 
 ## 10 · Huecos pendientes (preguntar, no adivinar)
 
-- [ ] **Herramienta de envío — RECOMENDADA: MailerLite Comfort (~$19/mes con 1.000 suscriptores, verificado en su web el 2026-07-27; $49 al llegar a 5.000). Pendiente del OK del jefe.** Por qué: ganadora doble en los dos análisis independientes que nos pasó Mario (el de gratuitas y el de 26 de pago), automatizaciones completas (cubre la secuencia de bienvenida), analíticas enteras (aperturas, CTR, mapa de clics, A/B, informes comparativos), facturación justa (no cobra bajas, sube Y baja de tramo), autenticación de dominio automatizada (~20 s, clave para calentar) y **API + integración nativa con Claude/MCP** (su tabla de planes la lista), que es lo que esta skill necesita para programar correos. Klaviyo (lo de Carmen) se descarta: más caro a nuestro tamaño y el análisis de 26 lo eliminó por no bajar de plan solo; Mailchimp descartado por sus prácticas de facturación (los apuntes lo destrozan); Resend es para transaccional de developers, no para marketing con campañas; Brevo es digno rival barato pero perdió contra MailerLite en los dos análisis. ⚠️ El plan Free de MailerLite ya NO es de 1.000 contactos como decía el vídeo: hoy son 250 subs / 2.500 emails/mes (verificado 2026-07-27) → con nuestra base de ~1.000 toca pago desde el día 1.
-- [ ] **Calentar el dominio** antes de la primera tanda (y decidir si se envía desde un subdominio tipo `news.neety.com` para proteger el dominio principal). Carmen lo externalizó; aquí falta decidir quién lo hace.
+- [x] ~~Herramienta de envío: MailerLite~~ **CANCELADA el 2026-08-11 (`§0b`). Migrando a Brevo, ver `§0c`.**
+- [ ] **Subdominio de envío para Brevo** (`mail.neety.com` o similar): pendiente de que Iker confirme quién tiene acceso al DNS de neety.com para meter los registros. Es el bloqueante nº 1 de la migración (`§0c`).
 - [ ] **Firma-mantra** de la casa (ver §3.7): decisión de marca.
 - [ ] **Tokens de personalización** ({nombre}…): depende de la herramienta elegida y de qué campos tenemos (muchos contactos son solo un correo).
 - [ ] **Etiqueta `newsletters` en el Gmail** de Iker para que el análisis periódico del corpus (§8) sea un filtro limpio.

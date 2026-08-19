@@ -4,7 +4,10 @@
 > (`email-marketing §6`) antes de escribir nada, y se ACTUALIZA y commitea al aprobar cada tanda.
 > Si falta un dato, PREGUNTA. No lo adivines.
 
-## 🔴 ESTADO: CUENTA CANCELADA (2026-08-11)
+## 🔵 ESTADO: MIGRANDO A BREVO (2026-08-18)
+Arrancó la migración. Runbook completo en `email-marketing §0c`. Pendiente de Iker antes de poder avanzar: acceso a Brevo, API key (por variable de entorno), decisión de subdominio de envío + acceso DNS, plan de pago, y la exportación del CRM (clientes + prospectos abiertos) para la lista de supresión.
+
+## 🔴 ESTADO ANTERIOR: CUENTA MAILERLITE CANCELADA (2026-08-11)
 MailerLite canceló la cuenta 2536617 por supuesta violación de la política anti-spam, tras 3 envíos y 191 correos. **La tanda 3 (337) nunca llegó a salir y la 4 no se montó.** Post-mortem completo en `email-marketing §0b`.
 - **Apelaciones enviadas:** formulario de cumplimiento (x2) y mensaje de LinkedIn a un empleado de soporte desde la cuenta de Iker, el 2026-08-12.
 - **Datos rescatados por API antes de perder el acceso:** `Escritorio/rescate-mailerlite-2026-08-11.md` — las 5 bajas con su motivo, los 7 rebotes, los 4 leads que clicaron y las métricas finales. **Sin ese fichero no se puede reconstruir la lista de supresión en otra plataforma.**
