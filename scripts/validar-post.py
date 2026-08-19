@@ -985,7 +985,11 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'Bricolage Grotesque en titulos y Switzer en cuerpo, y los colores del brandbook '
             '2026: naranja #fe8238, berenjena #431b44 (el UNICO oscuro), azul bebe #a7c5f9 y '
             'mint claro #ebfff6. Los dos claros van de detalle, nunca de masa principal. '
-            'Excepciones: screenshot documental (§0a-sexta-bis) y anatomia (§0i-4)',
+            'Excepciones: TODO LO QUE FINGE SER UN DOCUMENTO O UNA PANTALLA REAL (pantallazo '
+            'de red social, correo, chat, y tambien una transcripcion, un acta o un informe): '
+            'ahi van la tipografia, el tamano y los colores del ORIGINAL, porque lo que hace '
+            'el chiste es reconocer el formato en el primer segundo (§0a-sexta-bis y '
+            '§0a-sexta-ter). Y la anatomia (§0i-4)',
             aviso=True)
         chk(False, 'ENTREGA: UN aviso con ⚠️ debajo del prompt, con que adjuntar',
             'UNA sola linea y con el triangulo amarillo, nunca un clip ni dos avisos '

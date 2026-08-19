@@ -255,6 +255,29 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 
 **La frontera, para no dudar:** ¿la pieza finge ser una captura de algo que existe? → **colores reales de esa interfaz**. ¿La pieza es nuestra y se ve que la hemos hecho? → **paleta de marca**. Caso: el meme del email de la tarta va con el gris de Gmail y el texto en negro sobre blanco, a propósito.
 
+## ⭐⭐ 0a-sexta-ter · LA EXCEPCIÓN NO ES SOLO DE COLOR: EN UN DOCUMENTO FINGIDO SE CALCAN TAMBIÉN LA TIPOGRAFÍA Y EL TAMAÑO (Iker, 2026-08-19)
+
+**El caso.** La primera versión del meme de la transcripción de llamada salió con **nuestra paleta y nuestras fuentes**, y era exactamente lo que yo había pedido en el prompt. Iker, viéndola: *"la fuente la veo muy grande y no se entiende bien, o no parece que es una transcripción. Se tiene que notar todo como más chiquitito, como que es una transcripción de verdad. Mejor copiar la fuente y el tamaño original también, y sin poner ni el naranja ni el morado, sino gris y negro como la referencia, porque la esencia es que en el primer segundo se enteren de que es una transcripción"*.
+
+**LA REGLA, que amplía `§0a-sexta-bis`:** cuando la pieza **finge ser un documento o una pantalla real**, del original se calcan **las tres cosas: los colores, la TIPOGRAFÍA y el TAMAÑO de letra**. Antes aquí solo estaba escrita la excepción de COLOR, y por ese hueco entregué un documento con tipografía de marca a cuerpo de cartel.
+
+| | Pieza NUESTRA (infografía, orla, portada, meme dibujado) | Pieza que FINGE ser un documento o una pantalla |
+|---|---|---|
+| Color | paleta de marca (`§0a-ter`) | **los del original** — aquí, gris y negro |
+| Tipografía | Bricolage Grotesque + Switzer | **la del original** — monoespaciada de máquina de escribir |
+| Tamaño | titular grande, legible en miniatura | **el del documento real**: pequeño, de folio, no de cartel |
+| Palabra naranja | sí, UNA | **ninguna** |
+
+**Por qué, y es lo que hay que entender para saber cuándo aplicarlo:** en este registro **el motor es el RECONOCIMIENTO del formato en el primer segundo**. El lector tiene que pensar *"esto es una transcripción"* antes de leer una sola frase; ahí es donde entra el chiste. Una transcripción con nuestra tipografía a cuerpo grande **deja de leerse como transcripción y pasa a leerse como un cartel con frases**, y con eso se cae el gag entero. Es el mismo mecanismo por el que un pantallazo de X va con los colores de X: **la credibilidad del formato ES la broma** (`§0a-sexta-bis`).
+
+**Y la contradicción aparente, dicha en voz alta porque es real:** `working-preferences §1g` dice que **el prompt nunca sale sin paleta ni tipografía**, y que *"un meme calcado sin nuestra tipografía es el meme de otro con nuestro chiste"*. **Eso sigue siendo verdad para todo lo que diseñamos nosotros.** Lo que esta excepción dice es que **un documento fingido no lo diseñamos nosotros: lo falsificamos**, y una falsificación con la tipografía de la marca es una falsificación mala. Iker: *"aunque a veces tenemos que ser tan fieles a las referencias que sí hay que hacerlo, como cuando calcamos algo de Twitter y copiamos hasta los colores"*.
+
+**Qué cuenta como documento fingido:** transcripción, acta, informe, extracto de banco, factura, ticket, correo, chat, pantallazo de red social, panel de analíticas. **Qué NO:** un meme dibujado, una viñeta, una tabla nuestra, una orla, una portada de recurso — ahí manda la marca.
+
+**El test, antes de escribir el prompt:** *¿esto pretende que el lector se crea, un segundo, que es un documento de verdad?* Si sí, **la marca no entra**: ni fuente, ni paleta, ni palabra naranja. Si no, entra entera.
+
+**Mecanizado** como matiz del aviso `ENTREGA: el prompt lleva PALETA y TIPOGRAFIA de marca` en `validar-post.py`, que ahora nombra esta excepción con sus dos ejemplos.
+
 ## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
 > Aplica a **los 4 pilares y a cualquier foto que publiquemos**: meme, mapa, "Los 10", lead magnet, evento. Es lo primero que se comprueba y lo último que se negocia.
 
