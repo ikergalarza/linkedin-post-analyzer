@@ -108,6 +108,7 @@ SPAM_QUEMADO = {
     'son meses a mano': 'lo mismo, en los tres',
     'te lo damos hecho': 'lo mismo, en los tres',
     'te lo damos resuelto': 'historia de Iker 18/08 (era la variante de "te lo damos hecho")',
+    'te lo marcamos': 'meme de Iker 19/08 (el de la transcripcion de la llamada)',
 }
 
 # §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
@@ -136,6 +137,8 @@ PAIS_QUEMADO = {
 # ultimo, no la identificacion), asi que sus frases se gastan por su cuenta.
 # Al publicar, mete aqui la frase usada. La lista solo crece.
 SPAM_QUEMADO_CORREO = {
+    'lo cuento en el correo antes que aqui': 'meme de Iker 19/08, el PRIMER bloque de correo publicado',
+    'lo cuento en el correo antes que aquí': 'meme de Iker 19/08, el PRIMER bloque de correo publicado',
 }
 
 CONCEPTO_QUEMADO = {
