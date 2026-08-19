@@ -393,7 +393,7 @@ export async function guardarPostManual(
        followers_gained_count = COALESCE(EXCLUDED.followers_gained_count, posts.followers_gained_count),
        link_url = COALESCE(EXCLUDED.link_url, posts.link_url),
        pillar = COALESCE(posts.pillar, EXCLUDED.pillar)
-     RETURNING id`,
+     RETURNING id, impressions_count`,
     [
       creatorId,
       vista.urn,
@@ -434,11 +434,15 @@ export async function guardarPostManual(
   );
 
   const postId = String(rows[0].id);
+  // Las impresiones del snapshot son las EFECTIVAS tras el COALESCE, no las que
+  // venian en el formulario. Si el post ya existia con impresiones y se vuelve a
+  // pegar su URL sin escribir nada, usar el formulario (vacio) meteria un punto
+  // nulo en medio de la curva y la partiria en dos.
   await insertarSnapshot(postId, {
     likes_count: vista.likes_count,
     comments_count: vista.comments_count,
     reposts_count: vista.reposts_count,
-    ...privadas,
+    impressions_count: rows[0].impressions_count ?? null,
   });
 
   return { post_id: postId, creator_id: creatorId, cuenta_creada: creada, nombre: vista.autor.name };
