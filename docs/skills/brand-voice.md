@@ -159,6 +159,13 @@ El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el
 
 **Y el límite, para no pasarse:** se relaja la **puntuación**, no la ortografía. Ni faltas de escritura ni erratas inventadas — eso ya no se lee como verosímil, se lee como descuido nuestro.
 
+**⛔ 3b-BIS · DENTRO DE UNA CITA, EL ARTÍCULO Y LA MULETILLA SE QUEDAN. LA TIJERA ES DEL GANCHO (Iker, 2026-08-18).** `§2.2c` y `§2.9c` de `global` mandan tachar artículos y preposiciones que no aportan… **y eso vale para el GANCHO, donde cada carácter compite antes del "ver más". Dentro de una cita es al revés:** la palabra de relleno es justo lo que hace que suene a persona tecleando.
+
+- **El caso:** el tuit del meme de Helena decía *"debería valer con mandarle hola????????"* e Iker metió el artículo: **`mandarle un hola????????`**. *"Así lo hace más informal"*. Tiene razón y es la misma lógica de arriba: nadie escribe `mandarle hola`, todo el mundo dice `mandarle un hola`. Sin el `un` la frase está **editada**, y una cita editada delata al que la escribió.
+- **La familia entera, que es la que hay que reconocer:** el artículo indefinido delante de la palabra citada (`un hola`, `un gracias`, `un vale`), el `que` de relativo, el `pues`, el `o sea`, el `es que`, el `total`. **En el gancho fuera; en una cita, dentro.**
+- **El test:** léelo en voz alta como si lo estuvieras tecleando tú en el móvil. **Si te sale el artículo solo, va el artículo.**
+- **Y no choca con acortar:** una cita corta sigue siendo mejor que una larga. Lo que no se recorta es **la palabra que hace que suene hablado**.
+
 **Mecanizado** como aviso en `validar-post.py` (`AVISO: coma de vocativo tras un saludo`), que caza el caso concreto que falló.
 
 **Palabras de registro natural** (suenan humanas sin sonar a adolescente — funcionan tanto para el director comercial de 45-60 como para un founder joven; ese solape es el punto dulce):
