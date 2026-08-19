@@ -691,6 +691,30 @@ hemos gastado. Lo nuevo hay que ir a buscarlo.
 > - **Tarda:** cada consulta va a 10-20 segundos, así que 12 keywords son varios minutos. Lánzalo en segundo plano y sigue con otra cosa.
 > - **Y el filtro de risa se corre después**, sobre los 5-8 finalistas (`GET /posts/{social_id}/reactions?limit=100`), que es lo que separa un meme de verdad de un post con foto: el 18/08 los candidatos iban del **2% al 50%** de `ENTERTAINMENT` con likes parecidos.
 
+> ### 📉📉 4.4-PASO-0c · LA CANTERA DE PROGRAMACIÓN NO DA RISA, Y ESO CAMBIA CÓMO SE BUSCA PARA EL TERCER JEFE (medido el 2026-08-19)
+>
+> **Buscando la referencia del carril de Asier** (`aboutme §2-CARRIL`: ventas + programación) se barrieron **~900 posts en 5 tandas y 4 vías** — keywords de ventas, keywords de desarrollo, feeds de fábricas de memes y capturas de tuit. **Resultado: en el carril de programación no hay una sola referencia que pase nuestro listón.**
+>
+> | referencia dev | reacciones | % de risa | risas absolutas |
+> |---|---|---|---|
+> | GeeksforGeeks, el punto y coma | 4.079 | **13%** | 530 |
+> | Kartikey, no despliegues en producción | 1.039 | **9%** | 93 |
+> | Talha, no vuelvo a tocar ese código | 991 | **14%** | 138 |
+> | Pooran, la IA se come lo fácil | 595 | 21% | 124 |
+> | Sachin, el jefe de producto a las 2:47 | 362 | 10% | 36 |
+> | Arthur, datos sucios más IA | 312 | **30%** | 93 |
+> | Ghadeer, vibe coding día 1 contra día 30 | 183 | **28%** | 51 |
+>
+> **Lo que enseña, y es de método:** en la cantera de desarrollo **el volumen y la risa van al revés**. Los posts con miles de reacciones son de páginas enormes cuyo público da "me gusta" de cortesía (13% de risa: eso **no es un meme**, es un post con foto, `§4.4` filtro del 25%), y los que sí hacen reír son pequeños. Compáralo con la cantera de ventas, donde el mismo día salían **1.742 risas absolutas** (Alex Cohen vía brendan short) y **825** (Will Aitken).
+>
+> **CÓMO SE BUSCA ENTONCES EN ESE CARRIL, por orden:**
+> 1. **Por el cruce IA + producto + ventas**, que es donde el carril técnico sí tiene risa y encima es nuestro terreno (`aboutme §1`: *"no vendemos AI SDRs"*). Ahí están el tuit de las herramientas de IA apiladas y la sátira del vibe coding.
+> 2. **Por capturas de tuit**, no por posts nativos: el humor de desarrollo vive en X y llega a LinkedIn reposteado (`§4.4-IDENTIDAD` ya cubre cómo se calca la identidad de la cuenta).
+> 3. **Nunca por páginas de volumen** (GeeksforGeeks y similares): su ratio de risa las descalifica de entrada, por muchas reacciones que tengan.
+> 4. **Y si aun así no sale**, se dice y se pide referencia, que es lo que manda el runbook. **No se rellena con una plantilla genérica.**
+>
+> **⚠️ Y el suelo de risas absolutas no se baja en silencio.** Si para este carril hay que aceptar una referencia de 150-350 reacciones, **es una decisión de Iker y se declara en la entrega**, con la comparación delante.
+
 La otra vía, que sigue valiendo para exprimir a un autor que ya conoces:
 
 ```
