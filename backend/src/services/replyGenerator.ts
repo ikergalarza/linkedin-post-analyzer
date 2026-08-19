@@ -597,6 +597,14 @@ export async function generateReply(input: ReplyGenerationInput): Promise<string
   // Defensive cleanups so a model slip never reaches LinkedIn (RULE 5/8/9):
   // 1. Replace any em/en dash with a comma — it's the AI tell we ban.
   text = text.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',');
+  // 1a-bis. DOS PUNTOS -> COMA (RULE 8b, mecanizada el 2026-08-19).
+  //     La regla existe desde el 12/08 y aun asi 5 de cada 8 respuestas reales
+  //     seguian saliendo con dos puntos. Misma leccion que con las anecdotas: si
+  //     nadie lo comprueba, la regla es una sugerencia. La limpieza es la que
+  //     manda la propia doctrina (brand-voice 7.1): se cambia por una coma.
+  //     Exige un espacio detras a proposito, para no destrozar una hora ("10:30")
+  //     ni una URL ("https://") si alguna vez se cuela una.
+  text = text.replace(/\s*:\s+/g, ', ').replace(/,\s*,/g, ',');
   // 1b. Drop a comma placed directly before "y"/"e" (AI tell, RULE 9).
   //     Runs AFTER the dash→comma step so a "word — y algo" rewrite
   //     ("word, y algo") also gets cleaned to "word y algo".
