@@ -1347,14 +1347,44 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'Doble ninja: el de correo va DESPUES del de agendar, en OTRO bloque (§4.4e)',
             _det_orden)
 
-        # 3) NUNCA PEGADOS. Dos bloques de venta seguidos son un anuncio de cuatro
-        #    lineas, que es exactamente lo que el bloque de dos existe para evitar.
+        # 3) NUNCA PEGADOS, Y CON VARIEDAD ENTRE MEDIAS. Dos bloques de venta
+        #    seguidos son un anuncio de cuatro lineas, que es exactamente lo que el
+        #    bloque de dos existe para evitar. Y no basta con DOS LINEAS: Iker,
+        #    2026-08-19, "entre el primero y el segundo que haya variedad de
+        #    lineas". Dos bloques de dos con la misma forma y casi pegados se leen
+        #    como un patron y el ojo se salta los dos, asi que se piden dos BLOQUES
+        #    distintos de cuerpo (una suelta y otra suelta, o una suelta y un tres).
         if _i_ag is not None and _i_cor is not None and _i_cor > _i_ag:
-            _entre = sum(len(b) for b in _bl[_i_ag + 1:_i_cor])
-            chk(_entre >= 2, 'Doble ninja: >=2 lineas de cuerpo entre los dos bloques (§4.4e)',
-                '%d linea(s) de cuerpo entre ellos. Pegados se leen como un anuncio de cuatro '
-                'lineas, que es justo lo que el bloque de dos evita' % _entre if _entre < 2 else
-                '%d lineas de cuerpo entre ellos' % _entre)
+            _bloques_entre = _bl[_i_ag + 1:_i_cor]
+            _entre = sum(len(b) for b in _bloques_entre)
+            chk(len(_bloques_entre) >= 2,
+                'Doble ninja: >=2 BLOQUES de cuerpo entre los dos (§4.4e-PRONTO)',
+                '%d bloque(s) y %d linea(s) entre ellos. No basta con dos lineas: hacen falta '
+                'dos bloques distintos, o los dos ninjas se leen como un patron y el ojo se '
+                'salta los dos' % (len(_bloques_entre), _entre) if len(_bloques_entre) < 2 else
+                '%d bloques y %d lineas de cuerpo entre ellos' % (len(_bloques_entre), _entre))
+
+        # 3b) Y EL DE AGENDAR NO PUEDE IR PEGADO AL GANCHO (Iker, 2026-08-19).
+        #     El 650 de §4.4b-CLICS es el TECHO y no dice nada del suelo: un enlace
+        #     que aparece antes de que el post haya explicado nada le pide el clic a
+        #     alguien que todavia no sabe de que le hablas. El 19/08 lo puse en el
+        #     caracter 147 de 564 y Iker lo devolvio: "me has adelantado demasiado el
+        #     primer enlace, no va a convertir casi; tiene que ir por el medio hacia
+        #     el final". El suelo es el 30% del texto, y no tumba nada de lo que ya
+        #     funciono: el meme del 14/08 lo pone en el 75% y el del 13/08 en el 83%.
+        #     Se mide en BLOQUES y no en caracteres, y eso es lo que aprendimos: el
+        #     borrador rechazado tenia el enlace en el 36% del texto y aun asi
+        #     estaba mal, porque lo que canta es la ESTRUCTURA (gancho, una linea y
+        #     ya la venta), no el porcentaje. Por delante tiene que haber el gancho
+        #     y AL MENOS DOS bloques de cuerpo.
+        if _i_ag is not None:
+            _cuerpo_antes = _i_ag - 1
+            chk(_i_ag >= 3, 'Doble ninja: el de agendar no va pegado al gancho (§4.4e-PRONTO)',
+                'solo hay %d bloque(s) de cuerpo entre el gancho y la venta. Van al menos DOS: '
+                'un enlace que aparece antes de que el post haya explicado nada le pide el clic '
+                'a alguien que no sabe todavia de que le hablas. Se arregla REORDENANDO, no '
+                'alargando' % max(_cuerpo_antes, 0) if _i_ag < 3 else
+                '%d bloques de cuerpo por delante' % _cuerpo_antes)
 
         # 4) NUNCA AL FINAL. El post cierra con la frase punchy suelta, siempre. Se
         #    exigen 2 lineas detras: al menos una de cuerpo y el cierre en la suya.

@@ -1241,6 +1241,19 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 ```
 
 - **El de agendar no se mueve.** Es la única posición que tenemos medida: antes del carácter 650 en prosa (`§4.4b-CLICS`), después del reveal en peloteo. El bloque nuevo ocupa el hueco que sobra, no le quita el sitio.
+
+> #### ⛔⛔ 4.4e-PRONTO · "ANTES DEL 650" NO ES "CUANTO ANTES": EL SUELO SE MIDE EN BLOQUES (Iker, 2026-08-19)
+>
+> **El fallo:** en el primer post con doble bloque puse el de agendar **de tercer bloque** — gancho, una línea y ya la venta. Iker: *"me has adelantado demasiado el primer enlace, no va a convertir casi. El spam tiene que ir siempre después de haber explicado el contexto de la publicación, o sea, por el medio hacia el final"*.
+>
+> **Por qué el 650 solo no basta:** ese número mide el techo (más allá, el lector ya no llega). **No dice nada del suelo.** Y el suelo importa igual: un enlace que aparece antes de que el post haya explicado nada **le pide el clic a alguien que todavía no sabe de qué le hablas**, y encima se lee como banner, que es justo lo que el bloque de dos existe para evitar (`§4.4b-FORMA`).
+> - **La regla: entre el gancho y el bloque de agendar van AL MENOS DOS bloques de cuerpo.** Y sigue cayendo antes del carácter 650. Ese es el pasillo.
+> - **⚠️ Se mide en BLOQUES, no en caracteres, y esa es la lección:** el borrador que Iker devolvió tenía el enlace **en el 36% del texto** y aun así estaba mal. Lo que canta es la **estructura** (gancho → una línea → venta), no el porcentaje. Un umbral de caracteres lo habría dado por bueno.
+> - **No rompe nada de lo que ya funcionó:** el meme del 14/08 y el del 13/08 lo ponen en el último tercio.
+> - **Y entre los dos bloques van al menos DOS BLOQUES distintos de cuerpo**, no dos líneas cualesquiera: una suelta y otra suelta, o una suelta y un bloque de tres. Iker: *"entre el primero y el segundo que haya variedad de líneas"*. Dos bloques de dos con la misma forma y casi pegados se leen como un patrón, y el ojo se salta los dos.
+> - **⚠️ Y esto se arregla REORDENANDO, no alargando** (Iker, 19/08): *"yo ahora no añadiría nada nuevo, sino que reestructuraría lo que tenemos, manteniendo la misma longitud"*. El presupuesto del meme sigue siendo el de `§4.4e-MEME`.
+>
+> **Mecanizado** en `validar-post.py`: `Doble ninja: el de agendar no va pegado al gancho` (fallo duro, mide bloques) y `>=2 BLOQUES de cuerpo entre los dos` (sustituye al de 2 líneas).
 - **El de correo va SIEMPRE después.** Y **nunca puede ser el último ni el penúltimo bloque**: detrás tiene que quedar cuerpo y el cierre punchy en su línea. El final del post sigue siendo una frase suelta que remata, que es lo que lo hace memorable.
 - **El 650 sigue siendo del bloque 1.** Al bloque 2 no se le exige, porque quien llega hasta ahí ya ha decidido leer el post entero.
 
