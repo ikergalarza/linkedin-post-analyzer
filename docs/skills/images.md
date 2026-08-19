@@ -715,6 +715,19 @@ Fallo real de ese dia: gancho con 25 e imagen con 15. Se corrigio bajando el tex
 
 **El test final, de un vistazo:** tapa el post y mira solo la foto. **¿Aporta algo que el post no dice, y sabes qué palabra comentar?** Las dos cosas, o vuelve al prompt.
 
+### 🔴🔴 0h-CHECKLIST-bis · UN FALLO QUE NO PUEDO MEDIR NO SE CANTA COMO FALLO (2026-08-18)
+
+**El caso, y lo pagó él:** Iker mandó la primera versión del tuit de Helena y yo le dije que **faltaba un interrogante (siete en vez de ocho)** y que **el fondo era gris claro en vez de blanco**. **Las dos cosas eran falsas.** Estaban bien desde el principio: yo conté los signos **a ojo sobre la imagen del chat**, que llega reescalada, y llamé gris a un blanco. Resultado: **una pasada de generación tirada** y dos minutos suyos comprobando algo que ya estaba bien.
+
+**⛔ Por qué esto es peor que callarse:** un aviso falso tiene el mismo coste que un fallo real —otra ronda con el diseñador o el generador— y además **gasta la credibilidad de los avisos que sí valen**. Si le canto tres cosas y una es mentira, la siguiente se la mira con menos ganas.
+
+**LA REGLA, y es de método:**
+1. **Si es CONTABLE o es un COLOR, no se juzga en el chat: se mide en el fichero.** Los signos se cuentan con un script o pidiéndole el fichero; el color se saca del píxel, no del ojo.
+2. **Si no puedo medirlo, no es un fallo: es una PREGUNTA.** *"Cuéntame los interrogantes, que a mí en el render me bailan"* está bien. *"Faltan interrogantes"* sin haberlos contado, no.
+3. **Lo que SÍ se puede cantar a ojo** es lo estructural, que no depende de la resolución: un texto que no está, una palabra cambiada, una franja blanca lateral, el tick que no debería estar, el avatar equivocado.
+
+**El paralelo que ya teníamos escrito:** es la misma lección de `§0a-CAPADO` (*"cuando una hipótesis se puede comprobar en el corpus, se comprueba antes de tocar el post"*) y de `working-preferences §0c`. **Antes de dar un defecto por bueno, mídelo.**
+
 ## 🛑🛑 0h-COMPLEMENTO · LA COMPLEMENTARIEDAD ES DE **TODO** EL TEXTO DE LA IMAGEN, NO SOLO DEL CTA (Iker, 2026-08-18)
 
 **El fallo, y es de los gordos.** El lead magnet de `/llaves/` salió con la cabecera diciendo *"Claude me robó las riendas de mi LinkedIn"*, que es **el gancho del post calcado**, y con `riendas` apareciendo **dos veces en la misma foto**, arriba y en el banner. Iker: *"hemos estado toda la mañana discutiendo el tema de los textos complementarios y has puesto arriba el mismo texto de la publicación. Es un error garrafal"*.
