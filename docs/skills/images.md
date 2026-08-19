@@ -276,6 +276,11 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 
 **El test, antes de escribir el prompt:** *¿esto pretende que el lector se crea, un segundo, que es un documento de verdad?* Si sí, **la marca no entra**: ni fuente, ni paleta, ni palabra naranja. Si no, entra entera.
 
+**⭐ Y LA ETIQUETA DEL DOCUMENTO SE CALCA CON SU PALABRA, AUNQUE REPITA EL GANCHO (Iker, 2026-08-19).** En un documento fingido, el título no es un segundo titular: es **el rótulo que hace que el formato se reconozca**, así que lleva la palabra del original. `COLD CALL TRANSCRIPT` → **`TRANSCRIPCIÓN LITERAL DE UNA LLAMADA EN FRÍO`**.
+- **Se prefiere la palabra explícita a la elegante.** Primero puse `ACTA LITERAL DE UNA PUERTA FRÍA` y es peor por dos sitios: `acta` suena a junta o a notaría y tarda medio segundo más en colocarse, y `puerta fría` obliga a traducir lo que el original ya decía claro. Iker: *"hay que ser más explícito calcando, y más descarado me da igual si va a aclarar a la audiencia a lo que nos referimos"*.
+- **El adjetivo nuestro sí se añade**, que es donde se mejora: `literal` es la ironía (nada de lo que viene debajo lo es) y no existe en el original.
+- **⚠️ Y esto pisa a propósito `§0h-COMPLEMENTO`** (el título de la imagen no repite palabras del gancho): aquí **sí las repite**, porque el rótulo es reconocimiento de formato y no un titular. **Es excepción declarada de este registro, no permiso general.** Precedente a favor: nuestro mejor meme de este tipo (la escalera, 13.92x) repetía el gancho entero en la foto.
+
 **Mecanizado** como matiz del aviso `ENTREGA: el prompt lleva PALETA y TIPOGRAFIA de marca` en `validar-post.py`, que ahora nombra esta excepción con sus dos ejemplos.
 
 ## 0b · ⬛ TODA imagen va CUADRADA (1:1). SIN EXCEPCIONES.
@@ -467,6 +472,18 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 
 **La plantilla:** `aprovecha el espacio que [elemento] tiene hacia [la izquierda/la derecha/arriba/abajo] para que [quede centrado / respire / llene el ancho]`.
 Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que cuelga. **Describe el movimiento y el espacio, nunca el resultado abstracto.**
+
+### ⭐⭐ 0c-TAMAÑO · TODA ORDEN DE TAMAÑO VA CON LA DEL ESPACIO QUE SOBRA, EN LA MISMA FRASE (Iker, 2026-08-19)
+
+**El caso, y el prompt bueno lo escribió él.** Pedí bajar el cuerpo de letra de la transcripción a tamaño de documento y añadí *"deja el bloque centrado con márgenes estrechos"*. El generador hizo lo barato: **encogió el texto y dejó media imagen en blanco**, con una isla de letra pequeña en el centro. El prompt de Iker que lo arregló a la primera fue *"aprovecha todo el espacio que queda por arriba y la izquierda para que todo el texto sea más grande y legible"*.
+
+**La regla: una orden de tamaño sin decir de dónde sale o a dónde va el espacio está a medias.** `hazlo más pequeño` y `hazlo más grande` son las dos mitades de una operación; la otra mitad es **qué pasa con el hueco**. Si no se dice, el generador reparte el sobrante en márgenes, que es lo que menos trabajo le cuesta.
+
+- ❌ `hazla mucho más pequeña, con márgenes estrechos` — `márgenes estrechos` es un juicio, no una operación (`§0c`).
+- ✅ `hazla más pequeña y aprovecha el espacio que queda por arriba y por los lados para que el bloque llegue de borde a borde`.
+- ✅ `aprovecha todo el espacio que queda por arriba y la izquierda para que todo el texto sea más grande y legible`.
+
+**Es la misma familia que `§0b-ANCHO`** (pedir 1:1 no basta: hay que pedir que el contenido llegue de borde a borde). **Cambiar el tamaño y repartir el espacio son la misma instrucción, y se escriben juntas.**
 
 **⭐ Y VALE IGUAL PARA EL TAMAÑO, NO SOLO PARA LA POSICIÓN (Iker, 2026-08-06).** Aquí esto estaba escrito solo para colocar, y por eso el 2026-08-06 pedí *"agrándalos hasta que ocupen bastante más de la mitad del alto"* — que es otra vez pedirle que MIDA y que JUZGUE, el mismo error con otra ropa. **Agrandar también se pide nombrando el espacio libre y la dirección:**
 - ❌ `agrándalos hasta que ocupen más de la mitad del alto`
