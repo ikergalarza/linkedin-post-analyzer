@@ -661,6 +661,26 @@ export default function Accounts() {
   // ninguna" con esta bandera, nunca con la longitud del array.
   const { data: accounts, loading: loadingAccounts, refetch: refetchAccounts } =
     useApi<ManagedAccount[]>('/api/accounts');
+
+  // CUENTAS QUE PUEDEN ACTUAR, no solo aparecer (Iker, 2026-08-19).
+  //
+  // Comentarios y Lead Magnet no LEEN nada: responden, reaccionan y mandan el
+  // recurso por privado. Todo eso necesita la sesion de Unipile de esa cuenta,
+  // y una cuenta manual no la tiene — por eso su unipile_account_id es NULL.
+  //
+  // Sus dos endpoints (/comments/pending y /lead-magnet/posts) ya exigen
+  // `unipile_account_id IS NOT NULL`, asi que elegir una manual en el
+  // desplegable devolvia SIEMPRE una lista vacia: una opcion que no lleva a
+  // ninguna parte y que parece que la herramienta se ha roto.
+  //
+  // El filtro es por unipile_account_id y no por is_manual a proposito: lo que
+  // decide si una cuenta puede actuar es tener sesion, no como se creo. Una
+  // cuenta conectada a la que aun no se le ha puesto el ID tampoco puede hacer
+  // nada en estas dos pestañas, y se configura arriba en "Unipile IDs".
+  const cuentasConSesion = useMemo(
+    () => (accounts || []).filter((a) => !!a.unipile_account_id),
+    [accounts]
+  );
   // Live posts now respect the same top-of-page date range as the analytics
   // charts — the backend STRICTLY filters by published_at within the range
   // when start_date/end_date are present (no 7-day fallback). When the user
@@ -941,11 +961,11 @@ export default function Accounts() {
       )}
 
       {view === 'replies' && hasAccounts && (
-        <RepliesPanel accounts={accounts || []} selectedCreator={selectedCreator} onSelectCreator={setSelectedCreator} />
+        <RepliesPanel accounts={cuentasConSesion} selectedCreator={selectedCreator} onSelectCreator={setSelectedCreator} />
       )}
 
       {view === 'leadmagnet' && hasAccounts && (
-        <LeadMagnetPanel accounts={accounts || []} onSelectCreator={setSelectedCreator} />
+        <LeadMagnetPanel accounts={cuentasConSesion} onSelectCreator={setSelectedCreator} />
       )}
 
       {view === 'bi' && (<>

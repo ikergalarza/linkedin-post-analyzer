@@ -159,6 +159,27 @@ En `Accounts.tsx`:
 - En un post manual, las métricas privadas son editables desde la propia fila
   (reabre el modal en el paso 2).
 
+## Dónde NO deben aparecer las cuentas manuales
+
+Aparecer en el dashboard y poder ser elegidas para trabajar no es lo mismo, y
+confundirlo fue un fallo real (Iker, 19/08): las cuentas manuales salían en el
+desplegable de **Comentarios** y de **Lead Magnet**.
+
+Esas dos pestañas no leen: responden, reaccionan y mandan el recurso por
+privado, y todo eso necesita la sesión de Unipile de esa cuenta. Sus dos
+endpoints ya exigían `unipile_account_id IS NOT NULL`, así que elegir una cuenta
+manual devolvía siempre una lista vacía — una opción que no lleva a ninguna
+parte y que parece que la herramienta se ha roto.
+
+`Accounts.tsx` pasa a esos dos paneles `cuentasConSesion`, filtrado por
+`unipile_account_id` y **no** por `is_manual`: lo que decide si una cuenta puede
+actuar es tener sesión, no cómo se creó. Una cuenta conectada a la que todavía
+no se le ha puesto el ID tampoco puede hacer nada ahí, y se configura en
+"Unipile IDs".
+
+El selector de la pestaña Accounts las sigue listando, con el sufijo `· manual`:
+ahí sí se miran.
+
 ## Qué NO se construye (YAGNI)
 
 - Auto-sincronizar la cuenta manual entera.
