@@ -1027,8 +1027,12 @@ Mira la foto **sola**, tapando el texto del post, y escribe en literal:
 - **Y hacia dentro:** si la cuenta que firma es Unai, cualquier cosa que diga el pantallazo la firma **el CEO** (`§4.4-STOP`).
 
 **LAS TRES SALIDAS, por orden:**
-1. **El original usa a un TERCERO → nosotros usamos un tercero.** Y ese tercero no es una persona real ni inventada con nombre y apellido: es una **cuenta-ROL**, que es el recurso que ya nos funcionó con el contacto *"El de Ventas"* del iMessage (8,46x). Nombre y `@` del mismo palo (`Cuota Trimestral` / `@cuotatrimestral`), **avatar por defecto de la plataforma** (la silueta gris), cero cara y cero tick de verificado.
-   - ⚠️ **Antes de subir se comprueba que ese `@` no exista de verdad.** Un usuario-rol que resulta ser de alguien es suplantación.
+1. **El original usa a un TERCERO → nosotros usamos un tercero.** Y **qué clase de tercero lo decide el original**, no la comodidad:
+   - **Si la cuenta del original es una PERSONA** (nombre propio, aunque sea un anónimo cualquiera) → la nuestra es **una persona ficticia**, con **el mismo sexo** que la del original y **nombre español de la tierra de la cuenta que publica** (vasco por defecto; valenciano en Helena y Mario). Detalle, listas de nombres y quemados en **`images §0a-septima-NOMBRES`**.
+   - **Si la cuenta del original es una CUENTA-ROL, anónima o de parodia** (`IT Unprofessional`, `@it_unprofession`) → la nuestra también: nombre y `@` del mismo palo (`Cuota Trimestral` / `@cuotatrimestral`), que es el recurso que ya nos funcionó con el contacto *"El de Ventas"* del iMessage (8,46x).
+   - **En los dos casos:** **avatar por defecto de la plataforma** (la silueta gris), cero cara y cero tick de verificado.
+   > 🔴 **CORREGIDO EL 2026-08-18, y lo que había escrito aquí era mío.** Esta salida decía que el tercero *"no es una persona inventada con nombre y apellido: es una cuenta-ROL"*, siempre. **Iker lo tumba:** con el tuit de `emily june` puse `Cuenta Clave / @cuentaclave` y su respuesta fue *"pierde un poco de gracia, lo has hecho como si fuera corporativo"*. **Un chiste lo cuenta una persona; una cuenta corporativa lo enfría.** Y el precedente ya estaba a favor suyo y yo no lo miré: el correo del tatuaje (**93.744 impresiones**) usa **nombres de persona inventados** (Mikel, Iñaki), no una cuenta-rol.
+   - ⚠️ **En los dos casos, antes de subir se comprueba que ese `@` no exista de verdad.** Un usuario que resulta ser de alguien es suplantación.
 2. **El original usa su PROPIA cuenta → nosotros usamos la nuestra.** Es el caso del correo del tatuaje (93.744 imp): captura de ENVIADOS desde la cuenta de Unai, porque el original también era del propio autor.
 3. **Si por lo que sea hay que poner una foto real nuestra**, el prompt pide **dejar el círculo del avatar vacío como placeholder** y la foto se pega a mano en el paso final desde el banco de fotos. Nunca se le pide al generador que dibuje una cara nuestra.
 

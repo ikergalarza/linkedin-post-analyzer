@@ -180,6 +180,22 @@ Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo m
 - **La hora** que sale en la captura. **Con minuto impar** (`09:47`, no `10:46`).
 - **El nombre del remitente:** el del dueño de la cuenta donde se publica (Unai, Iker o Asier).
 - **El nombre del destinatario:** un **nombre común en el País Vasco**, que es de donde es la mayor parte de la audiencia. Rota y no repitas. **Ya gastados: Mikel** y **Iñaki** (meme del tatuaje, Unai, 2026-07-29). Libres: Gorka, Aitor, Jon, Ander, Eneko, Julen, Imanol, Beñat, Koldo. **Apunta aquí el que uses cada vez.**
+  > ### ⛔⛔ 0a-septima-NOMBRES · EL NOMBRE INVENTADO COPIA EL SEXO DEL ORIGINAL Y LA TIERRA DE LA CUENTA (Iker, 2026-08-18)
+  > **Vale para CUALQUIER nombre de persona que aparezca dentro de una imagen remixada** — el destinatario de un correo, el autor de un tuit, el contacto de un chat—, y **la lista de arriba se queda corta porque es toda de hombres.**
+  >
+  > **LAS TRES REGLAS, y van juntas:**
+  > 1. **MISMO SEXO QUE EL ORIGINAL.** Antes de escribir el prompt, mira **de quién es la cuenta de la referencia**: si el tuit lo firma una mujer, el nuestro lo firma una mujer. Cambiar el sexo cambia cómo se lee el chiste y encima delata que hemos pasado por encima del original sin mirarlo.
+  > 2. **NOMBRE ESPAÑOL FICTICIO, DE LA TIERRA DE LA CUENTA QUE PUBLICA.** Por defecto **vasco**, porque los tres jefes lo son y ahí está el grueso de la audiencia. **Pero si la cuenta es de Helena o de Mario, que son de Valencia, el nombre va valenciano** (`aboutme §2`). El nombre es un guiño de cercanía: tiene que sonar a alguien del sitio de quien publica.
+  >    - **Mujer, vasco:** Ainhoa · Nerea · Maialen · Leire · Miren · Garbiñe · Amaia · Uxue · Itziar.
+  >    - **Mujer, valenciano:** Aitana · Neus · Empar · Lledó · Núria · Carme · Vicenta · Mar.
+  >    - **Hombre, valenciano:** Vicent · Ximo · Pau · Enric · Salva · Quique · Nel·lo.
+  > 3. **⛔ NUNCA LA TRADUCCIÓN LITERAL DEL ORIGINAL.** Si el original pone `Emily`, el nuestro **no** pone `Emilia`. Iker: *"no seas tan descarado"*. Se coge otro nombre del todo; el calco de nombre es lo único que sí se nota como copia.
+  >
+  > **Y lo que NO se hace, que es lo que motivó la regla: convertir a la persona en una CUENTA CORPORATIVA.** El 18/08 pasé `emily june` a `Cuenta Clave / @cuentaclave` y Iker lo tumbó: *"pierde un poco de gracia, lo has hecho como si fuera corporativo"*. **Un chiste lo cuenta una persona.** Una cuenta-rol tipo `Cuota Trimestral` solo se usa cuando **el original TAMBIÉN es una cuenta anónima o de parodia** (`post-workflow §4.4-IDENTIDAD`, salida 1).
+  >
+  > **Detalles de forma, para que cuele:** se copia el **estilo del original** (si su nombre va en minúscula, el nuestro también; si su `@` lleva guion bajo al final, el nuestro también), va **sin foto y sin tick de verificado** —no fabricamos una verificación—, y **el `@` se comprueba a mano en la plataforma antes de subir**: un usuario que resulta ser de alguien real es suplantación.
+  >
+  > **🚫 NOMBRES FICTICIOS YA GASTADOS (la lista solo crece, `global §2.0b`):** `Mikel` e `Iñaki` (correo del tatuaje, Unai, 29/07) · `Cuota Trimestral` (tuit del diccionario, Unai, 13/08, cuenta-rol) · `aitana lledó` (tuit del seguimiento, Helena, 18/08).
 - **La foto de perfil** que aparezca: la del dueño de la cuenta.
 - Y cualquier dato identificable del original (empresa, ciudad, cifras).
 
