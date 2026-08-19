@@ -103,11 +103,19 @@ RULE 3b — SIN ANGLICISMOS QUE TENGAN TRADUCCION LLANA (Iker, 2026-08-07). El q
 RULE 3c — POR DEFECTO SE APOYA, NO SE REBATE (Iker, 2026-08-07). Quien comenta nuestro post es un lead templado que acaba de darnos atencion EN PUBLICO. Rebatirle delante de todos le quita las ganas de volver y, viniendo de alguien que vende, se lee como listillo. Asi que el movimiento por defecto es SIEMPRE: darle la razon en lo suyo y AÑADIR algo que el no dijo. Nunca corregirle lo que ha dicho.
 ⛔ PROHIBIDO el patron "si, pero lo que yo decia era...": eso no es matizar, es decirle que no ha entendido el post. Tampoco "en realidad", "no es tanto X como Y" ni "el problema no es X, es Y" cuando X es lo que acaba de decir el.
 ✅ SOLO se discrepa en dos casos, y los decide el COMENTARIO, no las ganas: (a) dice algo factualmente falso que perjudicaria a quien lo lea; (b) nos ataca o cuestiona el post. En esos dos, se discrepa con educacion y sin ironia. En todo lo demas, aunque su punto sea flojo o incompleto, se apoya y se suma.
+⚠️ APOYAR NO ES DARLE LA RAZON A CUALQUIER COSA (Iker, 2026-08-19). Si el comentario es racista, machista, xenofobo, denigra a un colectivo o entra en un terreno politico o social inflamable, NO se le da la razon, NO se le sigue la broma y NO se le agradece el aporte. Lo que firma esa respuesta es una cuenta con nombre y apellidos, y un "totalmente de acuerdo" debajo de una barbaridad es nuestro. En ese caso, responde con algo corto, cortes y NEUTRO que no valide lo dicho y no abra pelea, o quedate en el agradecimiento seco por leer sin entrar en el fondo. Ante la duda, neutro: el default de apoyar es para comentarios normales, que son el 99%.
 Ejemplo real del 07/08, y es lo que NO se hace: alguien comento que el estado mental del comercial es fundamental, y la herramienta contesto "el estado mental importa, si, pero lo que yo decia es que ese estado mental lo genera el volumen de oportunidades, no la perseverancia". Le estaba dando la razon y le corregimos. Lo correcto era apoyarle y anadir el angulo del volumen SIN quitarle el suyo.
 
 RULE 3d — CERO CIFRAS INVENTADAS (Iker, 2026-08-12). NUNCA metas un porcentaje ni una cifra en una respuesta: ni "el 80% de las veces", ni "el 80% de los tratos", ni "9 de cada 10", ni "3 veces mas". Suenan a dato y NO ESTAN COMPROBADOS, asi que es exactamente lo que la casa tiene prohibido en los posts: inventar un numero. Y en un comentario es peor, porque el que lo lee puede pedirte la fuente delante de todos.
 Di la MAGNITUD con palabras: "la mayoria de los tratos", "casi siempre", "en la mayoria de los casos", "muy pocas veces", "la mayor parte del tiempo", "rara vez". Dicen lo mismo, se leen igual de fuerte y no se pueden desmentir.
 UNICA excepcion: una cifra que este ESCRITA en el post o que la haya dicho el propio comentarista. Esa se puede recoger, porque ya esta publicada y verificada. Lo prohibido es que la cifra nazca aqui.
+
+RULE 3e — CERO ANECDOTAS INVENTADAS (Iker, 2026-08-19). Es la MISMA regla que la 3d, pero para los hechos en vez de para los numeros, y es igual de innegociable. NUNCA te inventes una escena, un encuentro ni una conversacion que no consta en ningun sitio.
+⛔ PROHIBIDO abrir o rellenar con cosas como: "el otro dia", "la otra vez", "hace poco", "ayer", "la semana pasada", "el mes pasado", "en una reunion", "en una llamada", "en una demo", "en una visita", "un cliente me dijo", "un cliente me conto", "me lo dijo un comercial", "tengo un cliente que", "conozco un caso", "justo esta semana me paso".
+Suenan a experiencia real y NO LO SON. Es exactamente lo que la casa tiene prohibido en los posts —inventar una empresa, una persona o un dato— y en una respuesta publica es peor: cualquiera puede preguntarte quien era ese cliente delante de todo el hilo, y no hay respuesta.
+✅ QUE SE HACE EN SU LUGAR. La respuesta se alimenta de lo que YA EXISTE: lo que dice el comentario, lo que dice el post, o una idea general sin escena. "A los comerciales les pasa constantemente" es valido porque es una observacion general y nadie te va a pedir la factura. "El otro dia un cliente me conto que le pasaba" NO lo es, porque afirma un hecho concreto que no ha ocurrido.
+✅ SI de verdad hace falta un angulo personal, que sea INCOMPROBABLE y sin escena: "me ha pasado algo parecido", "lo vemos mucho", "es de las cosas que mas repetimos". Nada de fecha, nada de sitio, nada de personaje.
+UNICA excepcion: un hecho que este ESCRITO en el post o que lo haya contado el propio comentarista. Eso se puede recoger y comentar, porque ya lo ha publicado el. Lo prohibido es que el hecho NAZCA en esta respuesta.
 
 RULE 4 — TONE: You're the host, not a salesman. Acknowledge the commenter, engage with their actual point (agree, build on it, or ask a sharpening question — NOT push back, ver RULE 3c). NO generic "Thanks for sharing!" / "Great point!" filler. Los emojis los decide la regla EMOJIS del mensaje de usuario, que va por cuenta: no los saques de signature_moves.
 
@@ -123,7 +131,7 @@ RULE 8b — NEVER USE A COLON (Iker, 2026-08-12). Do not write ":" anywhere in t
 
 RULE 9 — NO COMMA BEFORE "Y" / "E": never write a comma directly before the connector "y" (or "e"). "recursos limitados, y la demanda sube" → "recursos limitados y la demanda sube". The comma-before-"y" reads formal/AI; real people drop it. (Comma before "pero" is fine and natural — this rule is only about "y"/"e".)
 
-RULE 10 — VARIETY (don't ban, just don't default): openers like "exacto", "totalmente", "justo", "tal cual", "cierto", "lo curioso es que", "buen punto", "me encanta que", "claro" are perfectly natural and FINE TO USE sometimes — the problem is using one of them on EVERY reply, which is what reads as canned/AI. So don't make any single opener your reflex; aim for genuine variety across replies. Sometimes one of those is exactly right — use it. Other times open a different way entirely. Vary the OPENING MOVE based on what the comment actually says — rotate among: (a) agree + add a specific angle they did NOT mention; (b) build on their point with a concrete example or number; (c) add a nuance que SUMA a la suya, nunca que la corrige; (d) answer their question or curiosity directly; (e) a short punchy reaction line, then one line that expands it; (f) pick up a specific word or phrase THEY used and run with it; (g) a tiny relevant anecdote or behind-the-scenes detail. The first words should feel written for THIS specific comment, not pasted from the same template every time.
+RULE 10 — VARIETY (don't ban, just don't default): openers like "exacto", "totalmente", "justo", "tal cual", "cierto", "lo curioso es que", "buen punto", "me encanta que", "claro" are perfectly natural and FINE TO USE sometimes — the problem is using one of them on EVERY reply, which is what reads as canned/AI. So don't make any single opener your reflex; aim for genuine variety across replies. Sometimes one of those is exactly right — use it. Other times open a different way entirely. Vary the OPENING MOVE based on what the comment actually says — rotate among: (a) agree + add a specific angle they did NOT mention; (b) build on their point by taking it one step further, in general terms; (c) add a nuance que SUMA a la suya, nunca que la corrige; (d) answer their question or curiosity directly; (e) a short punchy reaction line, then one line that expands it; (f) pick up a specific word or phrase THEY used and run with it; (g) connect their point back to something the POST already says. The first words should feel written for THIS specific comment, not pasted from the same template every time.
 
 RULE 11 — NAME-ONLY OR EMOJI-ONLY COMMENTS → REPLY WITH A SINGLE SUPPORT EMOJI. If the comment is ONLY a person's name (someone tagging a colleague, e.g. "@Fulano" or just "Fulano Menganez"), or ONLY emoji(s) / a reaction with no real words, do NOT write sentences. Reply with a SINGLE supportive emoji that fits the tone (🙌 · 🔥 · 💪 · 👏 · ❤️ · 😄). No name lead, no words at all — just the emoji. This OVERRIDES rules 3, 4, 5 and 10 for these cases.
 
@@ -165,15 +173,30 @@ function buildPrompt(input: ReplyGenerationInput, voice: Voice): string {
   // abajo lleva el mismo mecanismo y sí funciona, porque MANDA en vez de sugerir.
   // Lección: un sorteo por llamada solo sirve si es obligatorio. Si le das un "si te
   // encaja", no has sorteado nada.
+  // ⛔ AQUI ESTABA LA FABRICA DE ANECDOTAS INVENTADAS (Iker, 2026-08-19).
+  //
+  // Este sorteo es OBLIGATORIO ("Use THAT one"), y dos de las ocho opciones le
+  // mandaban inventar:
+  //   · 'build on their point with a concrete example or number'
+  //   · 'drop a tiny relevant anecdote or behind-the-scenes detail'
+  // O sea que UNA DE CADA CUATRO respuestas tenia la ORDEN de sacarse una
+  // anecdota o una cifra de la manga. De ahi salian "el otro dia en una reunion
+  // un cliente me dijo…" y compañia. No era el modelo desviandose: era el prompt
+  // pidiendoselo, y encima chocando de frente con la RULE 3d, que prohibe las
+  // cifras inventadas desde el 12/08.
+  //
+  // La variedad se mantiene, pero ahora TODAS las opciones se alimentan de algo
+  // que ya existe: el comentario, el post, o una idea general sin escena. Nada
+  // que obligue a inventarse un hecho.
   const OPENING_MOVES = [
     'agree, then add a specific angle they did NOT mention',
-    'build on their point with a concrete example or number',
+    'build on their point by taking it one step further, in general terms',
     'answer their question / curiosity directly and plainly',
     'open with a short punchy reaction line, then one line that expands it',
     'pick up a specific word or phrase THEY used and run with it',
-    'drop a tiny relevant anecdote or behind-the-scenes detail',
+    'connect their point back to something the POST already says',
     'name the thing they left implicit, the part they did not say out loud',
-    'go straight into the concrete scene, no preamble at all',
+    'state the general rule their comment is an instance of',
   ];
   const move = OPENING_MOVES[Math.floor(Math.random() * OPENING_MOVES.length)];
 
@@ -342,20 +365,149 @@ ${thanksNudge}
 Write the reply now. Plain text, ONE single sentence, in the same language as the post/comment.`;
 }
 
+// EL GUARDARRAIL, PORQUE UN PROMPT ES UNA PETICION Y NO UNA GARANTIA
+//
+// Las RULE 3d (cifras) y 3e (anecdotas) le PIDEN al modelo que no invente. Esto
+// lo COMPRUEBA. La diferencia importa: la 3d lleva desde el 12/08 en el prompt y
+// aun asi el 19/08 seguian saliendo respuestas con "el otro dia un cliente me
+// dijo". Lo que no se mide, no se cumple.
+//
+// Es la misma leccion que este fichero ya tiene escrita para OPENING_MOVES:
+// pedirle algo al modelo "si te encaja" no produce el comportamiento. Aqui se
+// comprueba la salida y, si inventa, se vuelve a pedir con el fallo delante.
+
+export interface Invento {
+  tipo: 'anecdota' | 'cifra';
+  fragmento: string;
+}
+
+// Quita tildes y baja a minusculas, para que "reunion" y "reunión" caigan en el
+// mismo patron y no haya que duplicar cada regex.
+function llano(t: string): string {
+  return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+// Marcadores de ESCENA: fecha, sitio o testigo. Son los que convierten una idea
+// general (permitida) en un hecho concreto que no ha pasado (prohibido).
+const PATRONES_ANECDOTA: { re: RegExp; que: string }[] = [
+  { re: /\bel otro dia\b/, que: 'el otro dia' },
+  { re: /\bla otra vez\b/, que: 'la otra vez' },
+  { re: /\bhace (poco|nada|un rato|unos dias|unas semanas|unos meses)\b/, que: 'hace poco / hace unos dias' },
+  { re: /\b(ayer|anteayer|anoche)\b/, que: 'ayer / anoche' },
+  { re: /\bl[ao] (semana|mes|ano) pasad[ao]\b/, que: 'la semana pasada / el mes pasado' },
+  { re: /\besta (misma )?semana\b/, que: 'esta semana' },
+  { re: /\ben una (reunion|llamada|demo|visita|comida|cena|feria)\b/, que: 'en una reunion / en una llamada' },
+  { re: /\bun cliente (me|nos) (dijo|conto|comento|escribio|llamo|pidio)\b/, que: 'un cliente me dijo' },
+  { re: /\b(me|nos) lo (dijo|conto|comento) un\b/, que: 'me lo dijo un...' },
+  { re: /\bteng[o] un cliente que\b|\btenemos un cliente que\b/, que: 'tengo un cliente que' },
+  { re: /\buno de (nuestros|mis) clientes\b/, que: 'uno de nuestros clientes' },
+  { re: /\bconozco (un|el) caso\b/, que: 'conozco un caso' },
+  { re: /\bjusto (hoy|ayer|esta semana)\b/, que: 'justo hoy / justo ayer' },
+];
+
+// Cadenas con digito que NO son un dato: si las contaramos, saltaria la alarma
+// en respuestas perfectamente limpias.
+const DIGITOS_INOCENTES = /\b(b2b|b2c|24\/7|360|1x1|3d)\b/g;
+
+/**
+ * Devuelve lo que la respuesta se ha INVENTADO: escenas que no constan y cifras
+ * que no salen ni del post ni del comentario.
+ *
+ * La clave es que se compara contra las FUENTES. Si el que comenta dice "ayer me
+ * paso" o el post lleva un 40%, recoger eso no es inventar: ya lo publico otro.
+ * Lo que se persigue es el hecho que NACE aqui.
+ */
+export function detectarInventos(
+  respuesta: string,
+  fuentes: { postContent?: string; commentText?: string }
+): Invento[] {
+  const texto = llano(respuesta);
+  const fuente = llano(`${fuentes.postContent || ''} \n ${fuentes.commentText || ''}`);
+  const out: Invento[] = [];
+
+  for (const { re, que } of PATRONES_ANECDOTA) {
+    // Si el marcador ya estaba en el post o en el comentario, no lo ha traido la
+    // respuesta: lo esta recogiendo, que es lo que la RULE 3e permite.
+    if (re.test(texto) && !re.test(fuente)) {
+      out.push({ tipo: 'anecdota', fragmento: que });
+    }
+  }
+
+  // Cifras: mecaniza la RULE 3d, que hasta hoy solo era una peticion.
+  const limpio = texto.replace(DIGITOS_INOCENTES, ' ');
+  const numeros = limpio.match(/\d+(?:[.,]\d+)?/g) || [];
+  for (const n of numeros) {
+    if (!fuente.includes(n)) out.push({ tipo: 'cifra', fragmento: n });
+  }
+  // "nueve de cada diez" esquiva el escaner de digitos, asi que va aparte.
+  if (/\bde cada (dos|tres|cuatro|cinco|diez|cien|mil)\b/.test(texto) && !/\bde cada\b/.test(fuente)) {
+    out.push({ tipo: 'cifra', fragmento: 'X de cada Y' });
+  }
+
+  return out;
+}
+
+function textoDelAviso(inventos: Invento[]): string {
+  const anecdotas = inventos.filter((i) => i.tipo === 'anecdota').map((i) => i.fragmento);
+  const cifras = inventos.filter((i) => i.tipo === 'cifra').map((i) => i.fragmento);
+  const partes: string[] = [];
+  if (anecdotas.length) partes.push(`una anecdota inventada (${anecdotas.join(', ')})`);
+  if (cifras.length) partes.push(`una cifra que no sale del post ni del comentario (${cifras.join(', ')})`);
+  return partes.join(' y ');
+}
+
 export async function generateReply(input: ReplyGenerationInput): Promise<string> {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not set');
   }
   const voice = voiceForAuthor(input.authorName);
-  const message = await trackedCreate('reply_generator', {
-    model: 'claude-sonnet-4-6',
-    max_tokens: 400,
-    system: buildSystemPrompt(voice),
-    messages: [{ role: 'user', content: buildPrompt(input, voice) }],
-  });
-  const block = message.content.find((b) => b.type === 'text') as { type: 'text'; text: string } | undefined;
-  let text = stripLoneSurrogates(block?.text ?? '').trim();
-  if (!text) throw new Error('Empty reply from model');
+  const prompt = buildPrompt(input, voice);
+
+  // Se genera y se COMPRUEBA. Si se ha inventado algo, se vuelve a pedir con el
+  // fallo delante, hasta 2 veces mas. Un reproche concreto ("te has inventado
+  // 'el otro dia'") corrige mucho mejor que repetir la regla general.
+  //
+  // Si tras los 3 intentos sigue inventando, esto FALLA en vez de devolver el
+  // texto. Es deliberado: la respuesta la publica el usuario con su nombre
+  // delante, y un error que le obliga a escribirla a mano cuesta un minuto,
+  // mientras que un cliente inventado en un hilo publico no se puede recoger.
+  let text = '';
+  let ultimosInventos: Invento[] = [];
+
+  for (let intento = 1; intento <= 3; intento++) {
+    const correccion =
+      intento === 1
+        ? ''
+        : `\n\nEL INTENTO ANTERIOR SE HA SALTADO LA RULE 3d/3e: llevaba ${textoDelAviso(ultimosInventos)}. Eso no ha pasado y no consta en ningun sitio, asi que no se puede escribir. Reescribe la respuesta ENTERA sin ninguna escena inventada y sin ninguna cifra que no este en el post o en el comentario. Di la magnitud con palabras ("la mayoria", "casi siempre") y apoya al que comenta desde lo que EL ha dicho.`;
+
+    const message = await trackedCreate('reply_generator', {
+      model: 'claude-sonnet-4-6',
+      max_tokens: 400,
+      system: buildSystemPrompt(voice),
+      messages: [{ role: 'user', content: prompt + correccion }],
+    });
+    const block = message.content.find((b) => b.type === 'text') as { type: 'text'; text: string } | undefined;
+    const candidato = stripLoneSurrogates(block?.text ?? '').trim();
+    if (!candidato) throw new Error('Empty reply from model');
+
+    ultimosInventos = detectarInventos(candidato, {
+      postContent: input.postContent,
+      commentText: input.commentText,
+    });
+    if (ultimosInventos.length === 0) {
+      text = candidato;
+      break;
+    }
+    console.warn(
+      `[replyGenerator] intento ${intento}/3 descartado, se ha inventado ${textoDelAviso(ultimosInventos)}`
+    );
+  }
+
+  if (!text) {
+    throw new Error(
+      `El generador se ha inventado ${textoDelAviso(ultimosInventos)} en los 3 intentos, asi que no te devuelvo nada: escribe esta respuesta a mano. Inventarse un cliente o una cifra en un hilo publico no se puede deshacer.`
+    );
+  }
   // Drop wrapping quotes if the model added them despite the system rule.
   text = text.replace(/^["“”']+|["“”']+$/g, '').trim();
   // Defensive cleanups so a model slip never reaches LinkedIn (RULE 5/8/9):
