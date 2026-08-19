@@ -329,6 +329,19 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **Preguntas siguen siendo preguntas**, afirmaciones siguen siendo afirmaciones. El tiempo verbal y el modo son parte de la esencia (`post-workflow §4.4` paso 2).
 - **El sustantivo concreto no se cambia por un primo suyo.** `venta` no es `reunión`, igual que `tatuaje` no es `tarta`.
 
+### ⭐⭐ 0b-TEXTO-REF-CORTE · DÓNDE PARTE LA LÍNEA TAMBIÉN SE CALCA, Y MÁS LÍNEAS NO ES PEOR (Iker, 2026-08-18)
+
+**La capa 3 no es solo QUÉ palabras van dentro de la foto: es también CÓMO están partidas.** En un pantallazo, el salto de línea es un beat visual igual que en el cuerpo del post (`global §3.3`: la línea aislada funciona porque el aislamiento ES el efecto).
+
+**El caso, y lo vio Iker antes que yo.** El tuit de Helena salió primero en **3 líneas**, con `hola????????` colgando al final de la tercera. La referencia de `emily june` va en **4**, con `hello????????` **sola en la última**. Al forzar por otro motivo que el texto pasara a 4 líneas, salió sola igual que en el original. Iker: *"impacta mucho más que esa palabra con los interrogantes esté sola en una cuarta fila como la referencia"*. **Y tiene el mismo motor que la referencia: la palabra del remate, aislada, cae como un punto final.**
+
+**⛔ Y LA LECCIÓN CONTRAINTUITIVA, que es la que me habría hecho fallar: MÁS LÍNEAS SALIÓ MEJOR.** Mi reflejo es *"cuanto más corto, mejor"*, y **eso es del TEXTO DEL POST, no del texto de dentro de una imagen**. Aquí pasa lo contrario: al repartir el mismo texto en 4 líneas en vez de 3, **el cuerpo de letra crece** y se lee mejor en el feed, que es lo que pide `§0a-quater`. Apretar líneas dentro de una caja fija **encoge la letra**: ahorras alto y pierdes legibilidad justo donde el 100% de la gente lo ve.
+
+**LO QUE SE HACE, en el PRIMER prompt:**
+1. **Cuenta las líneas de la referencia y dónde parte cada una.** Si su remate va solo en su línea, se pide explícitamente: *"que la palabra X quede sola en la última línea"*.
+2. **Nunca se pide "que quepa en N líneas"** para ahorrar espacio. Se pide tamaño de letra grande y uniforme (`§0h-CHECKLIST` check 9) y **que caiga en las líneas que haga falta**.
+3. **Si dudas entre menos líneas con letra pequeña o más líneas con letra grande, gana la letra grande.** Siempre.
+
 **⭐ Y EL DESCUBRIMIENTO QUE QUITA EL MIEDO A LA CUENTA SOBRIA (Iker, 2026-08-06).** Iker temía que ser formal en la cuenta de Unai matara la gracia: *"si perdemos el humor no va a servir de nada por culpa de querer ser sobrio"*. **Míralo antes de asumirlo: en este original no había NI UNA vulgaridad ni una jerga en las diez frases.** El humor estaba entero en la contradicción entre etiquetas vecinas, no en la ordinariez. **El que se puso informal fui yo, no el original.**
 - **La regla:** antes de "suavizar" para una cuenta sobria, comprueba **cuánto de bruto es el original de verdad**. Si no es bruto, no hay nada que suavizar y calcarlo literal es a la vez lo más fiel y lo más sobrio.
 - Esto **no contradice** `§4.4 PASO 0` (elegir la cuenta que aguanta el meme): sigue siendo verdad que un original bruto no se lima, se manda a Iker. Lo que se añade es que **muchos originales no son brutos y yo los estaba volviendo brutos al traducirlos**.
