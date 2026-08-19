@@ -92,6 +92,28 @@ Interacción en LinkedIn · cambio de puesto · **nueva planta / ampliación / i
 
 Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde julio 2026 las tres están activas y se coordinan entre sí (ver reglas de coordinación abajo y en `global-instructions`).
 
+### ⛔⛔ 2-CARRIL · CADA CUENTA ES **VENTAS + SU OFICIO**, Y ESO DECIDE QUÉ REFERENCIA LE TOCA (Iker, 2026-08-19) — CANÓNICO
+
+> **El fallo que lo motiva, y es mío:** el 19/08 le llevé al TERCER jefe un meme de **transcripción de una llamada a puerta fría**. Iker lo movió al segundo en cuanto lo vio: *"este meme encajaría mucho más con el segundo jefe, ya que él es comercial y él sí que llama por teléfono, entonces ese gancho cuadra"*. La referencia era buena; **la cuenta estaba mal elegida**, y eso se decide ANTES de escribir una línea.
+
+**La regla: las cinco cuentas anclan a VENTAS, siempre y sin excepción. Lo que cambia es el SEGUNDO carril, que es el oficio de esa persona, y es de donde sale la REFERENCIA del meme.**
+
+| Cuenta | Carril | De dónde sale la referencia |
+|---|---|---|
+| **Unai** (1er jefe, CEO) | ventas **+ dirección**: levantar dinero, fundadores, inversores, la imagen seria de la empresa y de la marca | El mundo del founder y del que dirige. Sobrio, cero infantil |
+| **Iker** (2º jefe, comercial) | ventas **+ el comercial de calle**: llamar por teléfono, la puerta fría, el cliente que no coge, el viaje a ver al cliente | Memes de comercial puro. Es la única cuenta que aguanta el registro bruto (`post-workflow §4.4-STOP`) |
+| **Asier** (3er jefe, técnico) | ventas **+ programación y producto**: el que construye lo que el comercial vende | Memes del mundo del desarrollo, **con el gancho anclado a ventas**. Sobrio, cero infantil |
+| **Mario** (marketing) | ventas **+ marketing y contenido** | Ya validado: su meme del 12/08 es de marketing con gancho de ventas |
+| **Helena** (customer success) | ventas **+ atención al cliente y partnerships** | Ya validado: su meme del 18/08 sale de la cantera de Customer Success Collective |
+
+**LAS DOS COSAS SE CUMPLEN A LA VEZ, y ese es todo el criterio:** la referencia viene del **oficio** de esa cuenta y el **gancho ancla a VENTAS** (`global §2.3`, el test del ancla). Con solo una de las dos, el post es de otro. Iker: *"todas las cuentas siempre tienen que tener la vinculación a ventas, al igual que hoy Helena ha sido un meme de ventas más atención al cliente, y el otro día con Mario fue de ventas y de marketing"*.
+
+**⚠️ Esto AFINA la nota de abajo sobre Asier, no la contradice.** Ahí ponía que sus posts se anclan en ventas y no se convierten en contenido para AI-builders: **sigue siendo verdad del GANCHO y del CUERPO**. Lo que se abre es la **referencia**: el chiste puede nacer en el mundo del código (igual que el de Helena nace en soporte), y el ancla lo pone el gancho.
+
+**Y el momento de aplicarlo es al ELEGIR la referencia, no al redactar.** Es la misma lección de `post-workflow §4.4-STOP` con el registro bruto: **cambiar de cuenta es gratis, forzar el encaje no**. Si una referencia buenísima no es del carril de la cuenta que tocaba, se le da a la cuenta de su carril y para la otra se busca otra.
+
+**Mecanizado** como aviso de entrega en `validar-post.py` (`ENTREGA: el carril de esta cuenta`), que imprime el carril de la cuenta que se le pase con `--cuenta`.
+
 ### 👤 Iker Galarza — Cofundador (parte comercial)
 - Rol: **cofounder**, lado **comercial / ventas**.
 - LinkedIn: **https://www.linkedin.com/in/ikergalarza/**

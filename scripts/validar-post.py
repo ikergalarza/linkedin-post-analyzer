@@ -2114,6 +2114,29 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                  % (_n, ' sin el bloque de correo' if _blc else '')) if _n > 450 else '',
                 aviso=True)
 
+    # aboutme §2-CARRIL - CADA CUENTA ES VENTAS + SU OFICIO (Iker, 2026-08-19).
+    # Las cinco cuentas anclan a ventas siempre; lo que cambia es el segundo
+    # carril, que es de donde sale la REFERENCIA. El 19/08 le lleve al tercer
+    # jefe (tecnico) un meme de transcripcion de llamada a puerta fria e Iker lo
+    # movio al segundo, que es el comercial que llama de verdad. La referencia
+    # era buena y la cuenta estaba mal elegida, y eso se decide ANTES de escribir.
+    # Es criterio, asi que va de aviso: el script no sabe de que mundo sale un
+    # chiste, pero si puede poner el carril delante para que no se olvide.
+    _CARRIL = {
+        'unai': 'ventas + DIRECCION (levantar dinero, fundadores, inversores, la imagen seria de marca). Sobrio, cero infantil',
+        'iker': 'ventas + EL COMERCIAL DE CALLE (llamar, puerta fria, el cliente que no coge). La unica que aguanta el registro bruto',
+        'asier': 'ventas + PROGRAMACION Y PRODUCTO (el que construye lo que el comercial vende). Sobrio, cero infantil',
+        'mario': 'ventas + MARKETING Y CONTENIDO',
+        'helena': 'ventas + ATENCION AL CLIENTE Y PARTNERSHIPS',
+    }
+    _c = (cuenta or '').strip().lower()
+    if _c in _CARRIL:
+        chk(False, 'ENTREGA: el carril de esta cuenta',
+            '%s = %s. La REFERENCIA sale de ese oficio y el GANCHO ancla a ventas, las dos '
+            'cosas a la vez. Si la referencia no es de su carril, se le da a la cuenta que si '
+            'lo tiene y para esta se busca otra: cambiar de cuenta es gratis, forzar el encaje '
+            'no (aboutme §2-CARRIL)' % (_c, _CARRIL[_c]), aviso=True)
+
     if pilar == 'meme' and (cuenta or '').strip().lower() == 'unai':
         chk(meme_sobrio,
             'MEME en Unai: confirmado que NO es controversial (§4.4)',
