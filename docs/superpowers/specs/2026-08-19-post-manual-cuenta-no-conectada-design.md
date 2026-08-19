@@ -67,6 +67,11 @@ cual: `impressions_count`, `link_clicks_count`, `saves_count`, `sends_count`,
 `premium_button_clicks`, `profile_viewers_count`, `followers_gained_count`,
 `link_url`.
 
+`post_snapshots` NO se toca: guarda solo las cuatro métricas que la curva dibuja
+(impresiones, likes, comentarios, reposts). Los clics, guardados y envíos viven
+en `posts` con su valor actual y no se historifican, porque nadie los pinta en
+el tiempo. Añadir siete columnas para un histórico que no se lee es peso muerto.
+
 Una cuenta manual es `is_managed = TRUE`, `is_manual = TRUE`,
 `unipile_account_id = NULL`. Ese NULL es la protección: `live-refresh` y
 `accountSnapshotTick` filtran por `unipile_account_id IS NOT NULL`, así que
@@ -138,8 +143,10 @@ Dos pasos dentro del mismo modal:
    nombre del autor, si la cuenta ya existe o se va a crear, la imagen del post,
    el texto entero y los contadores públicos. **Nada se guarda hasta que
    confirmo.** Es el seguro contra pegar la URL equivocada.
-2. Debajo, los seis campos privados, todos vacíos y todos opcionales, con la
-   etiqueta de dónde se leen en LinkedIn.
+2. Debajo, los siete campos numéricos privados más el enlace del post, todos
+   vacíos y todos opcionales, con la etiqueta de dónde se lee cada uno en
+   LinkedIn. Un hueco significa "no lo he mirado" y un 0 significa "lo he
+   mirado y no hay": esa diferencia es la que evita que la curva mienta.
 
 En `Accounts.tsx`:
 - El botón `+ Añadir post` a la izquierda de `+ Get new posts`, mismo
@@ -159,6 +166,31 @@ En `Accounts.tsx`:
 - Comentarios, respuestas o lead magnet sobre posts manuales: esos flujos
   necesitan la sesión del dueño para actuar, no solo para leer.
 - Analítica Premium automática. Es privada del dueño, punto.
+
+## Comprobado (2026-08-19, contra producción)
+
+1. `parsearUrlPost`: 9 casos, incluidos `ugcPost`, `activity`, `share`,
+   `/feed/update/`, id suelto y tres entradas basura. 9/9.
+2. `POST /manual-post/preview` con una URL real: 200, resuelve `ugcPost` desde
+   el slug, autor y `/company/` correctos, texto y contadores reales, y `raw`
+   fuera de la respuesta.
+3. `POST /manual-post` sobre un post NUESTRO ya existente: devuelve el MISMO
+   `post_id` (no duplica), `cuenta_creada: false`, y **las 6.654 impresiones
+   siguen ahí** — la prueba de que el COALESCE protege lo escrito a mano. Con
+   `PostModel.bulkUpsert` ese número habría pasado a 0.
+4. `PATCH /manual-metrics`: escribe, siembra el punto en la curva (23 → 24
+   snapshots) y deja intactas las métricas que no viajaban en el cuerpo.
+5. Errores: URL sin id de post y PATCH vacío devuelven 400 con mensaje útil.
+6. Interfaz: el botón sale junto a `+ Get new posts`, el modal extrae y pinta
+   autor, foto, texto y los 7 campos, y el botón de guardar solo aparece
+   después de extraer. El check "Incluir cuentas manuales" no se pinta mientras
+   no exista ninguna cuenta manual, que es lo previsto.
+
+## Pendiente de comprobar con datos reales
+
+Solo queda el camino de **crear una cuenta manual nueva**: se probó el de cuenta
+ya existente para no dejar un creator de pruebas en la base de datos de
+producción. Se cierra el día que se pegue la primera URL de verdad.
 
 ## Cómo se comprueba
 
