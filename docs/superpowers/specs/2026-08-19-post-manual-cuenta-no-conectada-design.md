@@ -186,11 +186,53 @@ En `Accounts.tsx`:
    después de extraer. El check "Incluir cuentas manuales" no se pinta mientras
    no exista ninguna cuenta manual, que es lo previsto.
 
-## Pendiente de comprobar con datos reales
+## Cerrado con los dos primeros posts reales (2026-08-19, Mario y Helena)
 
-Solo queda el camino de **crear una cuenta manual nueva**: se probó el de cuenta
-ya existente para no dejar un creator de pruebas en la base de datos de
-producción. Se cierra el día que se pegue la primera URL de verdad.
+Iker pegó las URLs de un post de **Mario Carrillo** (12/08, con las siete
+métricas privadas escritas) y otro de **Helena Baviera Serigó** (19/08). Las dos
+cuentas se crearon solas con su nombre y foto. Eso cerró el único camino que
+faltaba —crear cuenta manual nueva— y destapó tres fallos que solo se ven con
+datos dentro:
+
+1. **`/impressions-monthly` ignoraba `include_manual`.** Apagar el interruptor
+   bajaba los KPI de arriba y dejaba la barra "Impressions per month" intacta:
+   dos números que se contradicen en la misma pantalla, que es exactamente lo
+   que el interruptor existía para evitar. Arreglado.
+2. **El botón ↻ de la fila devolvía siempre `ok:false` en un post manual.**
+   `capturePostSnapshot` exige `unipile_account_id`, y en estas cuentas es NULL
+   a propósito. Ahora esos posts salen por `refrescarPostManual`, igual que en el
+   tick. Arreglado.
+3. **`outlier_ratio` se quedaba en 0** y la fila mostraba `0.0x`, que se lee como
+   que el post ha fracasado (Mario, con 397 de engagement). Se recalcula al
+   guardar y al escribir métricas: con un solo post sale `1.00x`, que es lo
+   honesto — todavía no hay con qué comparar. Arreglado.
+
+Números tras el arreglo, mismo rango (20/07–19/08):
+
+| | Con manuales | Sin manuales |
+|---|---|---|
+| Posts | 34 | 32 |
+| Impresiones (KPI) | 487.442 | 454.954 |
+| Impressions per month (agosto) | 314.049 | 281.561 |
+
+Las tres diferencias son exactamente las 32.488 impresiones y los 2 posts de
+Mario y Helena. Las secciones ya no se contradicen.
+
+Y las dos pruebas que faltaban:
+
+- **El COALESCE aguanta un refresco real.** Pulsado ↻ sobre el post de Mario:
+  las siete privadas intactas (32.488 impresiones, 72 clics, 17 guardados, 9
+  envíos, 55 visitas, 8 seguidores) y un punto más en la curva.
+- **El tick automático captura un post manual sin que nadie lo fuerce.** El de
+  Helena se capturó solo a las 12:55:27 UTC y recogió un cambio real (likes
+  6 → 7). Vencía a las 12:48 y entró a las 12:55 porque el tick corre en su
+  propia rejilla de 15 minutos: un post que vence entre dos disparos se captura
+  en el siguiente.
+
+Un límite que no es un fallo: el post de Mario es del 12/08, o sea fase
+`closed`. El seguimiento automático solo cubre 7 días, así que sus números se
+quedan en lo escrito salvo que se pulse ↻. Es la regla de toda la herramienta,
+no algo de las cuentas manuales.
 
 ## Cómo se comprueba
 
