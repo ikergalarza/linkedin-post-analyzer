@@ -2,6 +2,7 @@ import pool from '../db';
 import { unipileService } from './unipile';
 import { enrichPost } from './engagement';
 import { classifyPillar } from './pillar';
+import { recalcCreatorOutliers } from './outliers';
 
 // POSTS DE CUENTAS QUE NO ESTAN CONECTADAS A UNIPILE (Iker, 2026-08-19).
 //
@@ -445,6 +446,14 @@ export async function guardarPostManual(
     impressions_count: rows[0].impressions_count ?? null,
   });
 
+  // El multiplicador se queda en 0 hasta que alguien lo recalcula, y un post
+  // recien guardado que muestra "0.0x" se lee como que ha fracasado. Con un solo
+  // post de la cuenta sale 1.00x, que es lo honesto: todavia no hay con que
+  // comparar.
+  await recalcCreatorOutliers(creatorId).catch((e: any) =>
+    console.warn('[manualPost] recalc outliers fallo:', e?.message)
+  );
+
   return { post_id: postId, creator_id: creatorId, cuenta_creada: creada, nombre: vista.autor.name };
 }
 
@@ -517,6 +526,17 @@ export async function actualizarMetricasPrivadas(
   // curva lleve tambien los contadores publicos del momento y no solo lo que
   // se acaba de teclear.
   await insertarSnapshot(postId, rows[0]);
+
+  // Escribir las impresiones cambia la media de impresiones de la cuenta, y con
+  // ella el multiplicador de sus posts. Sin este recalculo, el numero grande de
+  // la derecha se queda con el valor de antes de teclear.
+  const { rows: duenio } = await pool.query(`SELECT creator_id FROM posts WHERE id = $1`, [postId]);
+  if (duenio[0]?.creator_id) {
+    await recalcCreatorOutliers(String(duenio[0].creator_id)).catch((e: any) =>
+      console.warn('[manualPost] recalc outliers fallo:', e?.message)
+    );
+  }
+
   return { post_id: postId };
 }
 

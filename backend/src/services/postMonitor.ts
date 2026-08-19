@@ -241,7 +241,7 @@ export async function capturePostSnapshot(postId: string): Promise<{
 }> {
   const { rows } = await pool.query(
     `SELECT p.id, p.linkedin_post_id, p.creator_id,
-            c.linkedin_id, c.unipile_account_id
+            c.linkedin_id, c.unipile_account_id, c.is_manual
        FROM posts p
        JOIN creators c ON c.id = p.creator_id
       WHERE p.id = $1
@@ -250,11 +250,37 @@ export async function capturePostSnapshot(postId: string): Promise<{
   );
   const target = rows[0];
   if (!target) return { ok: false, reason: 'post not found' };
-  if (!target.linkedin_id || !target.unipile_account_id) {
-    return { ok: false, reason: 'creator missing linkedin_id or unipile_account_id' };
-  }
   if (!target.linkedin_post_id) {
     return { ok: false, reason: 'post has no linkedin_post_id (cannot match against feed)' };
+  }
+
+  // CUENTAS MANUALES: no tienen unipile_account_id (es la proteccion de la v38),
+  // asi que el guarda de abajo las rechazaba y el boton de refrescar de su fila
+  // devolvia siempre ok:false. Se leen post a post con la sesion prestada, igual
+  // que en el tick. Las metricas privadas no se tocan: son del usuario.
+  if (target.is_manual) {
+    const r = await refrescarPostManual(postId, String(target.linkedin_post_id));
+    if (!r.ok) return { ok: false, reason: r.motivo };
+    const { rows: fresco } = await pool.query(
+      `SELECT likes_count, comments_count, reposts_count, impressions_count, engagement_score
+         FROM posts WHERE id = $1`,
+      [postId]
+    );
+    await recalcCreatorOutliers(target.creator_id).catch((e: any) =>
+      console.warn('[capturePostSnapshot] recalc manual fallo:', e?.message)
+    );
+    return {
+      ok: true,
+      likes: fresco[0]?.likes_count,
+      comments: fresco[0]?.comments_count,
+      reposts: fresco[0]?.reposts_count,
+      impressions: fresco[0]?.impressions_count ?? null,
+      engagement: fresco[0]?.engagement_score,
+    };
+  }
+
+  if (!target.linkedin_id || !target.unipile_account_id) {
+    return { ok: false, reason: 'creator missing linkedin_id or unipile_account_id' };
   }
 
   try {

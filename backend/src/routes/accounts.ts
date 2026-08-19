@@ -382,8 +382,15 @@ router.get('/impressions-monthly', async (req: Request, res: Response) => {
     const creatorId = (req.query.creator_id as string) || null;
     const range = parseDateRange(req);
 
+    // El interruptor de cuentas manuales tiene que llegar TAMBIEN aqui. Sin
+    // esto, apagarlo bajaba los totales de arriba pero dejaba intacta la barra
+    // de "Impressions per month": dos numeros que se contradicen en la misma
+    // pantalla, que es justo lo que el interruptor existia para evitar.
+    const incluirManual = req.query.include_manual !== 'false';
+    const filtroManual = incluirManual ? '' : ' AND is_manual IS NOT TRUE';
+
     const params: any[] = [];
-    let scopeSql = `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE)`;
+    let scopeSql = `p.creator_id IN (SELECT id FROM creators WHERE is_managed = TRUE${filtroManual})`;
     if (creatorId) {
       params.push(creatorId);
       scopeSql = `p.creator_id = $${params.length}`;
