@@ -4,7 +4,30 @@
 > (`email-marketing §6`) antes de escribir nada, y se ACTUALIZA y commitea al aprobar cada tanda.
 > Si falta un dato, PREGUNTA. No lo adivines.
 
-## 🔵 ESTADO: BREVO CONECTADO AL CRM (2026-08-20)
+## 🟢 ESTADO: PRIMER ENVÍO DESDE BREVO (2026-08-20)
+
+**Kaixito 01 reescrito y enviado.** Fin de la parada de nueve días desde la cancelación de MailerLite.
+
+| | Tanda 1 | Tanda 2 |
+|---|---|---|
+| Destinatarios | **25** | **50** |
+| Fecha | 2026-08-20, `[PENDIENTE · hora exacta, mirar en Brevo]` | 2026-08-21, **09:05** (programada) |
+| Lista | `Brevo · Correo 1 · Tanda 1` | `Brevo · Correo 1 · Tanda 2` |
+| `utm_campaign` | `kaixito-01-tanda-1` | `kaixito-01-tanda-2` |
+
+- **El texto, el preheader y los GIFs están en `corpus-correos-enviados.md`.** Lo que cambió respecto a la versión que costó la cuenta: `"los correos que nos dejaron el año pasado"` se sustituye por **`"En su día me diste permiso para escribirte. Lo que no tengo muy claro es de dónde saliste."`** La broma se queda entera; lo que la mascota ha perdido ya no es el permiso, es la puerta por la que entraste.
+- **Quedan 4 tandas** creadas y APAGADAS: 100, 200, 400 y 380. La 3 no sale antes del **lunes 24**: el fin de semana el ICP no está delante del correo.
+- **Pie nuevo, con las dos cosas que hay que tener:** enlace de baja (`{Date de baja aquí}`, en tú) y dirección postal. Al poner el pie personalizado, Brevo **borra el suyo**, y con él el enlace de baja: hay que volver a meterlo a mano o sale un correo comercial sin forma de darse de baja.
+- **`utm_source` es `brevo` y NO se puede cambiar** (ver `email-marketing §9c`). La atribución en GA4 queda partida: hasta el 11/08 `newsletter`, desde el 20/08 `brevo`.
+- **09:05 y no 09:00** a propósito: a la hora en punto salen todas las campañas programadas del país a la vez.
+
+### 🔴 Lo primero de mañana, antes de las 09:05
+
+**Mirar los rebotes duros de la tanda 1.** Un rebote duro es un rechazo SMTP y llega en minutos, así que a esa hora el dato ya está completo. **Más de 1 rebote en 25 (4%) y se cancela la tanda 2**, que en Brevo se puede hasta el momento del envío.
+
+Las varas del histórico de MailerLite: 3,7% de rebotes en la tanda 1 y 2,92% en la 2, las dos **por encima del 2% que el sector considera peligroso**.
+
+## 🔵 CÓMO SE CONECTÓ (2026-08-20)
 
 Cuenta de Brevo creada, dominio conectado desde Cloudflare y verificado, API key generada y metida en el CRM (Marketing → Integraciones). **El CRM ya habla con Brevo**: `src/brevo.js` sustituye a `src/mailerlite.js` en `sales-crm-Neety`, spec en `docs/superpowers/specs/2026-08-20-migracion-mailerlite-a-brevo-design.md` de ese repo.
 
