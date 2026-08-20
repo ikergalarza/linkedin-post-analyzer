@@ -843,6 +843,11 @@ Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque
    - **LA DISTINCION, y es la que hay que tener clara:** mis ORDENES pueden ir sin acentos, que es como escribo yo. **El TEXTO LITERAL que se va a dibujar, no.** Ese se escribe **exacto**, con tildes, eñes, `¿` y `¡`. Antes de pegar el prompt, se buscan las cadenas que van a acabar renderizadas y se repasan una a una.
    - **Y ademas se le PIDE explicitamente**, en la misma frase: *respeta las tildes tal cual te las escribo*. Con eso se cubre el otro fallo conocido, que es que copie las faltas de la referencia (`§0a-septima-quinquies`, que decia esto mismo pero **solo para pantallazos**: es global y vale para cualquier imagen con texto).
    - **Las que mas se cuelan, por si sirve de lista:** sesion, envio, numeracion, pagina, titulo, linea, tambien, mas, aqui, asi, informacion, prospeccion, señales.
+   - **⭐⭐ Y DENTRO DE UN DOCUMENTO FINGIDO, CADA VOZ TIENE SU REGISTRO (Iker, 2026-08-19).** En una captura conviven dos manos y **no se escriben igual**:
+     - **Lo que TECLEA una persona** (una barra de búsqueda, un chat, un asunto de correo): **minúsculas, sin punto final y sin capitalizar siglas** — se escribe `ia`, no `IA`. Es lo que hace que parezca tecleado a las dos de la tarde y no redactado.
+     - **Lo que PUBLICA una web o un sistema** (el título de un resultado, un titular, una etiqueta de interfaz): **capitalización normal y siglas en mayúscula** — ahí sí `IA`.
+     - **⚠️ Pero las TILDES van en las dos.** La tilde es ortografía, no puntuación, y `§3b` de `brand-voice` solo relaja la puntuación. Caso real: la barra decía `hacer que mi mensaje de ventas no parezca ia` y quedó **`cómo hacer que mi mensaje de ventas no parezca ia`** — con tilde en `cómo` y con `ia` en minúscula, las dos cosas a la vez. Y sin el `cómo` la frase se lee como una orden, no como una búsqueda.
+     - **El test:** ¿esto lo tecleó alguien o lo publicó una máquina? Lo primero va informal y con tildes; lo segundo, formal y con tildes.
 
 **La forma de fallar este chequeo es no hacerlo.** Si el prompt anterior salio bien, este sale igual: se copia el molde, no se improvisa.
 
