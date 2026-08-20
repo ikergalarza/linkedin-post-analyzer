@@ -2036,6 +2036,8 @@ La regla que más se falla, de su §1: **ni todo ni nada.** Regalar todo en el g
 ### 4.6 · Runbook TARJETA (imagen sola) — EN PRUEBA, fuera de rotación (Iker, 2026-08-20)
 
 > **Estado: PRUEBA, no pilar.** 3 tarjetas en 3 semanas, una cuenta distinta cada vez, **fuera del cuadro latino de §8.2**. Se decide con datos al terminar. Entra solo si tú lo pides (§8.4).
+>
+> **Arranca en la cuenta de IKER** (Iker, 2026-08-20): *"se empezará en la cuenta del segundo jefe, que es donde tenemos más libertad"*. Mismo criterio que el meme controversial (): lo que se está probando no va al CEO. Las otras dos tarjetas van a Asier y a Unai, en ese orden.
 
 **Input del usuario:** la creencia comercial que quieres desmontar. Si no la da, pídesela.
 
