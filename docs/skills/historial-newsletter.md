@@ -23,9 +23,23 @@ Cuenta de Brevo creada, dominio conectado desde Cloudflare y verificado, API key
 - 🧹 **`news.neety.com` tiene un SPF de HubSpot** (`include:145372616.spf10.hubspotemail.net`), resto de otra herramienta. Inofensivo hoy porque es otro subdominio; hay que limpiarlo si algún día se usa `news.` para enviar.
 - **DMARC:** `p=none`, con reportes a Cloudflare. **MX:** `smtp.google.com` (Workspace).
 
+### ⚠️ LA RESTRICCIÓN DE IP DE BREVO (mordió el 2026-08-20, tardó una tarde)
+
+Brevo trae **lista blanca de IPs por defecto** en las API keys nuevas. La primera llamada del CRM dio 401 con este texto:
+
+> *"We have detected you are using an unrecognised IP address 152.55.177.117"*
+
+**No era la clave.** Se rehízo tres veces sin necesidad, porque el mensaje que enseñaba el CRM decía "revísala en Integraciones" y se comía el motivo de Brevo. Corregido: ahora sale el texto literal de Brevo y un recuadro con el tipo de credencial.
+
+- `152.55.177.117` es la **IP de salida de Railway** (AS400940, Santa Clara). Comprobado.
+- 🔴 **Railway NO garantiza IP de salida fija en el plan estándar.** Si cambia en un redeploy, el sync horario muere EN SILENCIO con ese mismo 401 y nadie se entera hasta echar de menos contactos. La alternativa es quitar la restricción en `app.brevo.com/security/authorised_ips`.
+- **Si algún día vuelve un 401, mira PRIMERO la IP, no la clave.** El botón "Probar conexión" ya lo dice solo.
+- Las tres causas de un 401 en Brevo, que se ven idénticas sin el mensaje: clave regenerada · **restricción de IP** · clave SMTP (`xsmtpsib-`) en vez de API key v3 (`xkeysib-`).
+
 ### 🔴 Pendiente antes de enviar nada (en orden)
 1. **Rearmar el espejo de cada audiencia a mano** en Marketing → Audiencias. La migración las apagó todas a propósito: los ids guardados eran de grupos de MailerLite y el worker los habría usado para empujar contactos a listas equivocadas.
-2. **Registrar el webhook de bajas** (Integraciones → "Registrar webhook de bajas"). Sin esto, una baja hecha en Brevo no llega al CRM.
+2. ✅ **Conexión con Brevo verificada el 2026-08-20** (1 lista visible, clave `xkeysib-`, 89 caracteres).
+3. **Registrar el webhook de bajas** (Integraciones → "Registrar webhook de bajas"). Sin esto, una baja hecha en Brevo no llega al CRM.
 3. **Probar con 2-3 correos internos** antes de tocar la audiencia buena. Ningún OK de la API prueba un envío: se verifica leyendo el buzón.
 4. **Plan de pago activo, idioma de la cuenta en español**, y escribir a soporte de Brevo presentando la cuenta antes del primer envío grande.
 5. **Lista de supresión desde el CRM** (clientes + prospectos con conversación abierta + las 5 bajas y los 7 rebotes del rescate), ANTES de subir la lista buena.
