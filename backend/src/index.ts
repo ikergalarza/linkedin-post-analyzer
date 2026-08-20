@@ -15,6 +15,7 @@ process.on('unhandledRejection', (err: any) => {
 
 import { runMigrations } from './db/migrate';
 import { reclassifyIfRulesChanged } from './services/pillarBackfill';
+import { recalcTopSiCambiaronLasReglas } from './services/topCreadorBackfill';
 import creatorsRouter from './routes/creators';
 import postsRouter from './routes/posts';
 import analysisRouter from './routes/analysis';
@@ -116,6 +117,10 @@ runMigrations()
     // services/pillar.ts (guarda de version en app_state). No bloquea el
     // arranque y no corre a diario: el disparador es el cambio de reglas.
     void reclassifyIfRulesChanged();
+    // Marca `top_del_creador` en todo el historico SOLO si han cambiado sus
+    // reglas (misma guarda de version). Sin esto el Explorer se queda vacio
+    // hasta que cada cuenta pase por el scraper.
+    void recalcTopSiCambiaronLasReglas();
   })
   .catch((err) => {
     console.error('Failed to run migrations:', err);

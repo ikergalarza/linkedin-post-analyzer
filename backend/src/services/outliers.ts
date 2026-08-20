@@ -222,4 +222,109 @@ export async function recalcCreatorOutliers(creatorId: string): Promise<void> {
     );
     await registrarTransiciones(rows as FilaTransicion[]);
   }
+
+  // Aditivo y NO CRITICO: si esto peta, el recalculo de is_outlier de arriba ya
+  // esta escrito y el scrapeo que nos llamo no puede caerse por un campo que
+  // solo alimenta al Explorer. Se avisa por log y se sigue.
+  await recalcTopDelCreador(creatorId).catch((e: any) =>
+    console.warn(`[top_del_creador] fallo al recalcular ${creatorId}: ${e?.message}`)
+  );
+}
+
+/**
+ * Exponente del suelo de `top_del_creador`, en desviaciones tipicas.
+ *
+ * El suelo es `mediana * (p84/mediana)^K`, o sea "K sigmas por encima de su
+ * propia mediana" escrito como multiplo. K=1,5 es el valor MEDIDO sobre los
+ * 37.168 posts de la BD: es el mas alto que no deja a NINGUN creador sin nada
+ * en el Explorer.
+ *
+ *   fijo 2x mediana        -> 2.902 posts,  0 creadores ciegos
+ *   fijo 3x mediana        -> 2.330,        4 ciegos (Grant, Lara, Jasmin, Adam Ali)
+ *   por tamano (<150k=3x)  -> 2.560,        2 ciegos
+ *   K=1,5                  -> 2.647,        0 ciegos   <-- este
+ *   K=2,0                  -> 1.269,        5 ciegos
+ */
+const K_SIGMAS_TOP = 1.5;
+
+/** Percentil minimo dentro del creador. Acota el resultado al top ~8%. */
+const PERCENTIL_TOP = 0.92;
+
+/**
+ * Marca `top_del_creador` para todos los posts de un creador.
+ *
+ * DOS condiciones, y las dos hacen falta:
+ *   1. percentil >= 0,92 dentro del creador  -> el TOPE (nunca mas del ~8%)
+ *   2. engagement >= mediana * (p84/mediana)^1,5 -> el SUELO (filtra cuentas planas)
+ *
+ * El suelo NO es un multiplo fijo: cada cuenta se lo saca de su propia forma,
+ * porque lo que ciega a una cuenta es su DISPERSION, no su tamano. Medido:
+ * corr(log seguidores, p84/mediana) = -0,161, mientras que
+ * corr(p84/mediana, max/mediana) = +0,764. Adam Ali tiene 10.499 seguidores y
+ * p84/mediana 1,54; Lara Acosta tiene 354.139 y 1,39 — igual de planos y
+ * tamanos opuestos. Un corte por seguidores los separa mal y deja a Adam Ali
+ * a cero.
+ *
+ * Multiplo que le acaba tocando a cada uno:
+ *   Jasmin Alic 1,4x · Lara Acosta 1,6x · Adam Ali 1,9x · Adam Grant 2,1x
+ *   Unai 4,1x · Iker 4,8x · Miguel Florido 7,6x · Daniel Disney 8,4x
+ *
+ * ⚠️ Es el mismo z robusto que se DESCARTO para is_outlier, y no es
+ * contradiccion: alli era la unica condicion y generaba falsos negativos en
+ * cuentas de cola pesada. Aqui es un suelo acotado por el percentil, sobre un
+ * campo aditivo. Disney conserva sus 50 is_outlier intactos y ademas recibe 28
+ * aqui.
+ */
+export async function recalcTopDelCreador(creatorId: string): Promise<void> {
+  await pool.query(
+    `WITH base AS (
+       SELECT id, engagement_score
+         FROM posts
+        WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'
+     ),
+     stats AS (
+       SELECT
+         percentile_cont(0.50) WITHIN GROUP (ORDER BY engagement_score)::float AS mediana,
+         percentile_cont(0.84) WITHIN GROUP (ORDER BY engagement_score)::float AS p84
+         FROM base
+     ),
+     suelo AS (
+       -- Si la mediana es 0 (cuenta practicamente muerta) no hay forma de la que
+       -- sacar un multiplo, asi que el suelo se apaga y manda solo el percentil.
+       SELECT CASE
+                WHEN s.mediana > 0 AND s.p84 > s.mediana
+                  THEN s.mediana * power(s.p84 / s.mediana, $2::float)
+                ELSE 0
+              END AS minimo
+         FROM stats s
+     ),
+     pct AS (
+       SELECT id, engagement_score,
+              percent_rank() OVER (ORDER BY engagement_score) AS percentil
+         FROM base
+     ),
+     -- ¿Le pasa el suelo a ALGUIEN en esta cuenta? Postgres interpola
+     -- percentile_cont, asi que en cuentas con pocos posts el p84 sale mas alto
+     -- que con un percentil por indice y el suelo se endurece de golpe: medido,
+     -- dejaba a Adam Ali (n=20) y a Fran Quintero (n=11) sin NADA en el Explorer.
+     --
+     -- No se arregla bajando la constante — se arregla garantizando el
+     -- INVARIANTE: si el suelo no lo pasa nadie, se apaga para esa cuenta y
+     -- manda solo el percentil. Asi ninguna cuenta con >=2 posts se queda ciega,
+     -- pase lo que pase con sus datos. (Con 1 post el percent_rank es 0 por
+     -- definicion y no hay nada que decidir: un post solo no puede ser "lo mejor
+     -- de la cuenta".) Rescata a 6 creadores de los 153.
+     hay AS (
+       SELECT bool_or(pct.percentil >= $3::float AND pct.engagement_score >= suelo.minimo) AS alguno
+         FROM pct, suelo
+     )
+     UPDATE posts p
+        SET top_del_creador = (
+              pct.percentil >= $3::float
+              AND (pct.engagement_score >= suelo.minimo OR NOT COALESCE(hay.alguno, FALSE))
+            )
+       FROM pct, suelo, hay
+      WHERE p.id = pct.id`,
+    [creatorId, K_SIGMAS_TOP, PERCENTIL_TOP]
+  );
 }

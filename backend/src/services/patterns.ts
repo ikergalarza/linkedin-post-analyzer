@@ -10,8 +10,25 @@ interface PatternInsight {
 
 export function detectPatterns(allPosts: Post[]): PatternInsight[] {
   const insights: PatternInsight[] = [];
-  const outliers = allPosts.filter((p) => p.is_outlier);
-  const nonOutliers = allPosts.filter((p) => !p.is_outlier);
+
+  // Los patrones se sacan de `top_del_creador`, NO de `is_outlier`.
+  //
+  // Con is_outlier esta funcion cortaba en seco (`if (outliers.length === 0)
+  // return []`) en las cuentas ultraconsistentes, que son justo las que mas
+  // hay que estudiar: Adam Grant tiene max/media = 2,75x contra un umbral de
+  // 3,00x, o sea CERO outliers por construccion, y el Explorer no sacaba ni un
+  // patron de la cuenta mas viral de LinkedIn. Le pasaba a 4 de 142 cuentas.
+  //
+  // `top_del_creador` es relativo a la forma de cada cuenta, asi que siempre
+  // devuelve algo mientras la cuenta tenga posts: 0 creadores vacios sobre los
+  // 145 de la BD con >=10 posts.
+  //
+  // Fallback a is_outlier solo para no romper si llega un post viejo sin
+  // recalcular todavia (la columna es NOT NULL DEFAULT FALSE).
+  let outliers = allPosts.filter((p) => p.top_del_creador);
+  if (outliers.length === 0) outliers = allPosts.filter((p) => p.is_outlier);
+  const marcados = new Set(outliers.map((p) => p.id));
+  const nonOutliers = allPosts.filter((p) => !marcados.has(p.id));
 
   if (outliers.length === 0) return insights;
 
@@ -208,8 +225,15 @@ export function detectPatterns(allPosts: Post[]): PatternInsight[] {
 }
 
 export function getCrossCreatorPatterns(allPosts: Post[], creatorTimezones: Record<string, string> = {}) {
-  const outliers = allPosts.filter((p) => p.is_outlier);
-  const nonOutliers = allPosts.filter((p) => !p.is_outlier);
+  // Union de las dos señales, no solo `is_outlier`. En una lista MEZCLADA de
+  // creadores, `is_outlier` esta sesgado hacia las cuentas de cola pesada y
+  // excluye por completo a las ultraconsistentes: los 2.278 outliers de la
+  // competencia solo tenian 6 posts de imagen-sola (0,26%) porque las tres
+  // cuentas que viven de ese formato (Adam Grant, Alex y Leila Hormozi) casi no
+  // aparecian. Con la union, esa distribucion deja de mentir.
+  const outliers = allPosts.filter((p) => p.is_outlier || p.top_del_creador);
+  const marcados = new Set(outliers.map((p) => p.id));
+  const nonOutliers = allPosts.filter((p) => !marcados.has(p.id));
 
   // Content type distribution across all outliers
   const typeCounts: Record<string, number> = {};

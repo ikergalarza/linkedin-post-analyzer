@@ -1011,6 +1011,29 @@ const migration = `
   -- JSONB y no cuatro columnas: los cuatro campos se leen y se escriben SIEMPRE
   -- juntos, y nunca se filtra ni se ordena por ellos.
   ALTER TABLE posts ADD COLUMN IF NOT EXISTS lead_magnet_config JSONB;
+
+  -- top_del_creador: "los mejores posts DE ESTA CUENTA", que es una pregunta
+  -- DISTINTA de is_outlier y por eso es una columna aparte y no un umbral nuevo.
+  --
+  --   is_outlier       = alerta.      "esto ha destacado de verdad"
+  --   top_del_creador  = inspiracion. "esto es lo mejor que hace esta cuenta"
+  --
+  -- Existe porque el 3x sobre la media es CIEGO A LA DISPERSION. Adam Grant
+  -- (5,6M seguidores) tiene media 15.525 y maximo 42.642: max/media = 2,75x,
+  -- asi que con el umbral en 3,00x NO PUEDE tener un outlier jamas. Y sin
+  -- outliers, patterns.ts cortaba en seco y el Explorer no sacaba ni un patron
+  -- de la cuenta mas viral de LinkedIn. Le pasa a 4 de 142 cuentas con >=20
+  -- posts, y las cuatro son ultraconsistentes (CV 0,31-0,55 frente a 2-7 del
+  -- resto): Adam Grant, Lara Acosta, Jasmin Alic y Adam Ali.
+  --
+  -- NO se toca is_outlier. Se probo sustituirlo por un z robusto y se descarto
+  -- con datos: con cualquier umbral que destape a Grant, las cuentas de cola
+  -- pesada pierden outliers LEGITIMOS (en Daniel Disney salian 29 de 50, y el
+  -- mas alto estaba a 10,7x su mediana). Son dos preguntas, no una.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS top_del_creador BOOLEAN NOT NULL DEFAULT FALSE;
+
+  CREATE INDEX IF NOT EXISTS idx_posts_top_del_creador
+    ON posts (creator_id, top_del_creador) WHERE top_del_creador;
 `;
 
 /**

@@ -29,6 +29,12 @@ export interface Post {
   engagement_score: number;
   outlier_ratio: number;
   is_outlier: boolean;
+  /**
+   * "De los mejores DE ESTA CUENTA". Pregunta distinta de is_outlier: aquel es
+   * la ALERTA (destaco de verdad), este es la INSPIRACION (lo mejor que hace
+   * esta cuenta). Se calcula en outliers.ts::recalcTopDelCreador.
+   */
+  top_del_creador: boolean;
   hook_text: string | null;
   word_count: number;
   has_hashtags: boolean;
@@ -86,7 +92,7 @@ export const PostModel = {
               published_at, likes_count, comments_count, reposts_count,
               impressions_count, profile_viewers_count, followers_gained_count,
               saves_count, sends_count, link_clicks_count, premium_button_clicks, link_url, pillar,
-              engagement_score, outlier_ratio, is_outlier,
+              engagement_score, outlier_ratio, is_outlier, top_del_creador,
               hook_text, word_count, char_count, line_break_count,
               has_aggressive_spacing, hook_type, post_structure,
               comment_like_ratio, share_like_ratio, text_tone,
@@ -183,9 +189,27 @@ export const PostModel = {
       `SELECT
         COUNT(*) as total_posts,
         COUNT(*) FILTER (WHERE is_outlier = TRUE) as total_outliers,
+        COUNT(*) FILTER (WHERE top_del_creador = TRUE) as total_top_del_creador,
         AVG(engagement_score) as avg_engagement,
         PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY engagement_score) as median_engagement,
         STDDEV(engagement_score) as stddev_engagement,
+        -- SEÑALES DE CUENTA (no de post): sirven para detectar un PERFIL raro,
+        -- no un post raro. Adam Grant sale CV 0,55 y 52,0% de formato raro
+        -- contra una mediana de mercado de CV ~2,4 y 0,65%. Eso es lo que le
+        -- delata como perfil anomalo sin mirar post a post.
+        --
+        -- consistencia = coeficiente de variacion. Bajo = cuenta plana, y una
+        -- cuenta plana NUNCA puede disparar el 3x de is_outlier (por eso existe
+        -- top_del_creador). Las 4 cuentas ciegas de la BD estan en 0,31-0,55;
+        -- el resto, entre 2 y 7.
+        CASE WHEN AVG(engagement_score) > 0
+          THEN STDDEV_POP(engagement_score) / AVG(engagement_score)
+          ELSE NULL END as consistencia,
+        -- pct_formato_raro = % de posts que son imagen sin texto. La mediana
+        -- del mercado es 0,65% (241 de 37.168 posts de la BD).
+        (COUNT(*) FILTER (
+           WHERE content_type = 'image' OR COALESCE(char_count, 0) = 0
+         )::float / NULLIF(COUNT(*), 0)) as pct_formato_raro,
         MIN(published_at) as first_post_date,
         MAX(published_at) as last_post_date
       FROM posts WHERE creator_id = $1 AND linkedin_post_id <> 'DEMO_LIVE_POST'`,
@@ -257,18 +281,48 @@ export const PostModel = {
     return rows as { day: string; engagement: number }[];
   },
 
+  /**
+   * Los mejores posts de TODA la BD, mezclando creadores.
+   *
+   * Dos cosas que no son obvias y conviene no deshacer:
+   *
+   * 1. El filtro es `is_outlier OR top_del_creador`. Solo con is_outlier, las
+   *    cuentas ultraconsistentes NO APARECEN NUNCA: Adam Grant (5,6M
+   *    seguidores) tiene max/media = 2,75x contra un umbral de 3,00x, o sea
+   *    cero outliers por construccion. Y con ellas desaparecia su formato: de
+   *    los 2.278 outliers de la competencia solo 6 eran imagen-sola (0,26%),
+   *    cuando ese formato es el 52% de lo que publica Grant.
+   *
+   * 2. Se ordena por PERCENTIL DENTRO DEL CREADOR, no por outlier_ratio.
+   *    outlier_ratio no es comparable entre creadores (se calcula con dos
+   *    metodos distintos y su escala depende de la dispersion de la cuenta),
+   *    asi que ordenar una lista MEZCLADA por el hunde a las cuentas planas al
+   *    fondo: el mejor post del año de Grant tiene ratio 2,75 y saldria por
+   *    detras de cualquier post mediocre de una cuenta a rachas. El percentil
+   *    si significa lo mismo para todos.
+   */
   async getTopOutliersGlobal(limit = 500) {
     const { rows } = await pool.query(
-      `SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,
+      `WITH pct AS (
+         SELECT id,
+                percent_rank() OVER (PARTITION BY creator_id ORDER BY engagement_score) AS percentil
+           FROM posts
+          WHERE linkedin_post_id <> 'DEMO_LIVE_POST'
+       )
+       SELECT p.id, p.creator_id, p.linkedin_post_id, p.content_text, p.content_type,
               p.published_at, p.likes_count, p.comments_count, p.reposts_count,
-              p.engagement_score, p.outlier_ratio, p.is_outlier,
+              p.engagement_score, p.outlier_ratio, p.is_outlier, p.top_del_creador,
+              ROUND(pct.percentil::numeric, 3)::float AS percentil_creador,
               p.hook_text, p.hook_type, p.post_structure, p.text_tone,
               p.word_count, p.has_emoji, p.has_hashtags, p.has_call_to_action,
               p.comment_like_ratio, p.share_like_ratio, p.post_url,
               c.name as creator_name, c.profile_image_url as creator_image
-       FROM posts p JOIN creators c ON p.creator_id = c.id
-       WHERE p.is_outlier = TRUE AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
-       ORDER BY p.outlier_ratio DESC
+       FROM posts p
+       JOIN creators c ON p.creator_id = c.id
+       JOIN pct ON pct.id = p.id
+       WHERE (p.is_outlier = TRUE OR p.top_del_creador = TRUE)
+         AND p.linkedin_post_id <> 'DEMO_LIVE_POST'
+       ORDER BY pct.percentil DESC, p.outlier_ratio DESC
        LIMIT $1`,
       [limit]
     );

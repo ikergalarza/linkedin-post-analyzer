@@ -48,6 +48,14 @@ interface CrossCreatorData {
     engagement_score: number;
     outlier_ratio: number;
     is_outlier: boolean;
+    /** "De los mejores DE SU CUENTA". Ver outliers.ts::recalcTopDelCreador. */
+    top_del_creador?: boolean;
+    /**
+     * Percentil del post dentro de SU creador. Es el orden bueno de esta lista:
+     * outlier_ratio no es comparable entre creadores y hunde a las cuentas
+     * planas al fondo (el mejor post del año de Adam Grant tiene ratio 2,75).
+     */
+    percentil_creador?: number | null;
     hook_text: string | null;
     hook_type?: string;
     post_structure?: string;
@@ -837,6 +845,27 @@ export default function OutlierExplorer() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredOutliers.map((post) => (
                   <div key={post.id} className="flex flex-col">
+                    {/*
+                      Distingue las dos señales, que responden a preguntas
+                      distintas: `is_outlier` es la ALERTA (destaco de verdad) y
+                      `top_del_creador` es la INSPIRACION (lo mejor que hace esa
+                      cuenta). Los posts que solo llevan la segunda son los que
+                      ANTES NO SE VEIAN: cuentas tan consistentes que su mejor
+                      post no llega al 3x sobre su propia media, como Adam Grant
+                      (max/media 2,75x) o Lara Acosta (2,42x).
+                    */}
+                    {post.top_del_creador && !post.is_outlier && (
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-accent/15 text-accent">
+                          TOP DE SU CUENTA
+                        </span>
+                        {post.percentil_creador != null && (
+                          <span className="text-[9px] text-text-muted">
+                            percentil {Math.round(post.percentil_creador * 100)} · cuenta muy consistente
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <PostCard post={post} />
                     {/* Deep analysis panel */}
                     {post.ai_explanation && (
