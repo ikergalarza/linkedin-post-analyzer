@@ -24,15 +24,21 @@ const router = Router();
 // flecha en medio en vez de "→ @Empresa - @Persona". Marcar pillar_manual
 // hace que classify-pillars se lo salte, asi que la correccion sobrevive al
 // reproceso de las 47.828 filas.
-const PILARES = new Set([
-  'peloteo_mapa', 'peloteo_los10', 'peloteo_objeto',
-  'meme', 'lead_magnet', 'historia', 'evento', 'otro',
-]);
+//
+// ⛔ LA LISTA DE PILARES VALIDOS YA NO VIVE AQUI (Iker, 2026-08-20). Era un Set
+// escrito a mano y eso hacia imposible el desplegable del frontend: crear una
+// categoria nueva exigia un commit. Ahora la fuente de verdad es la tabla
+// `pillars`, que es la misma que lee el desplegable. Dos listas siempre acaban
+// divergiendo, que es el fallo que ya nos comimos entre el clasificador y el
+// validador.
 router.patch('/:id/pillar', async (req: Request, res: Response) => {
   try {
     const pillar = String(req.body?.pillar || '');
-    if (!PILARES.has(pillar)) {
-      return res.status(400).json({ error: `pillar must be one of ${[...PILARES].join(', ')}` });
+    const { rows: valido } = await pool.query(
+      'SELECT 1 FROM pillars WHERE slug = $1', [pillar]
+    );
+    if (valido.length === 0) {
+      return res.status(400).json({ error: `"${pillar}" no esta en el catalogo de pilares` });
     }
     const { rows } = await pool.query(
       `UPDATE posts SET pillar = $2, pillar_manual = TRUE

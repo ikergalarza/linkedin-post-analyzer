@@ -955,6 +955,49 @@ const migration = `
       RAISE WARNING '[migrate] lead_magnet_sends.kind fuera del CHECK: %. El constraint queda NOT VALID: protege lo nuevo y no bloquea el arranque.', malos;
     END IF;
   END $$;
+
+  -- v35: CATALOGO DE PILARES, editable desde el frontend (Iker, 2026-08-20).
+  --
+  -- POR QUE: el pilar lo detecta services/pillar.ts al ingerir el post, y falla
+  -- —un mapa dibujado sin bloque de menciones, una historia corta con foto—.
+  -- Hasta hoy cada fallo era un mensaje a Claude y un commit tocando reglas: una
+  -- semana de latencia para arreglar UNA etiqueta. Con esto Iker pulsa el badge
+  -- y lo cambia, y puede crear categorias que el clasificador no conoce.
+  --
+  -- ⚠️ posts.pillar NO lleva clave foranea a esta tabla, y es deliberado: hay
+  -- 47.828 filas y alguna arrastra etiquetas de reglas viejas que ya no estan en
+  -- el catalogo. Una FK las tumbaria al migrar. Esta tabla manda en lo que se
+  -- puede ELEGIR, no en lo que ya hay guardado.
+  --
+  -- ⚠️ La columna color guarda una CLAVE ('esmeralda'), no clases de Tailwind.
+  -- Tailwind compila las clases que ve en el codigo fuente: una que llega de la BD
+  -- en tiempo de ejecucion no existe en el CSS y el badge saldria sin color.
+  CREATE TABLE IF NOT EXISTS pillars (
+    slug       TEXT PRIMARY KEY,
+    label      TEXT NOT NULL,
+    color      TEXT NOT NULL DEFAULT 'gris',
+    ayuda      TEXT,
+    -- Los 8 de serie. No se borran ni cambian de slug: el clasificador los emite
+    -- POR NOMBRE, asi que borrar 'meme' solo consigue que el siguiente reproceso
+    -- lo reinvente, con sus posts ya movidos a 'otro'.
+    builtin    BOOLEAN NOT NULL DEFAULT FALSE,
+    sort_order INTEGER NOT NULL DEFAULT 100,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+
+  -- Semilla: los 8 pilares de hoy, con la etiqueta, el color y la ayuda que ya
+  -- tenian en PILAR_META del frontend, para que nada cambie de aspecto el dia
+  -- del despliegue. ON CONFLICT DO NOTHING: no pisa lo que Iker haya renombrado.
+  INSERT INTO pillars (slug, label, color, ayuda, builtin, sort_order) VALUES
+    ('peloteo_mapa',   'Peloteo Regional (mapa)',   'esmeralda', 'Peloteo regional en formato MAPA (foto del mapa + ~20 menciones)', TRUE, 10),
+    ('peloteo_los10',  'Peloteo Regional (los 10)', 'esmeralda', 'Peloteo regional en formato LOS 10 (foto "los 10" + ~10 menciones)', TRUE, 20),
+    ('peloteo_objeto', 'Peloteo Regional (objeto)', 'esmeralda', 'Peloteo regional por OBJETO: un objeto cotidiano despiezado en las empresas que lo fabrican', TRUE, 30),
+    ('lead_magnet',    'Lead Magnet',               'cielo',     'Ofrece un recurso y lo entrega por privado a quien comenta o conecta', TRUE, 40),
+    ('evento',         'Evento',                    'ambar',     'Anuncia una jornada nuestra y lleva el enlace de inscripcion de Luma', TRUE, 50),
+    ('meme',           'Meme',                      'naranja',   'El motor es la imagen y las reacciones de risa se disparan (>25%)', TRUE, 60),
+    ('historia',       'Historia',                  'morado',    'Anecdota personal en primera persona', TRUE, 70),
+    ('otro',           'Otro',                      'gris',      'Sin pilar claro. Ante la duda se deja en "otro" en vez de inventar etiqueta', TRUE, 999)
+  ON CONFLICT (slug) DO NOTHING;
 `;
 
 /**

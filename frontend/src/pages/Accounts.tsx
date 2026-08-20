@@ -14,6 +14,7 @@ import MediaViewer, { NO_MEDIA_TYPES } from '../components/MediaViewer';
 import MonthlyBarChart from '../components/MonthlyBarChart';
 import RepliesPanel from '../components/accounts/RepliesPanel';
 import LeadMagnetPanel from '../components/accounts/LeadMagnetPanel';
+import PilarSelector, { PilaresProvider } from '../components/accounts/PilarSelector';
 
 interface ManagedAccount {
   id: string;
@@ -304,73 +305,16 @@ function fmtNum(n: number): string {
 }
 
 /* PILAR de contenido: qué formato de la parrilla es el post.
-   Lo calcula el backend (services/pillar.ts) y lo guarda en `pillar`. Aquí solo
-   se pinta. Sirve para no comparar peras con manzanas al leer la tabla: un meme
-   es corto por diseño y vive de la imagen, un mapa son 2.000 caracteres, y
-   mezclarlos daba conclusiones falsas (Iker, 2026-07-27). */
-const PILAR_META: Record<string, { etiqueta: string; clase: string; ayuda: string }> = {
-  peloteo_mapa: {
-    etiqueta: 'Peloteo Regional (mapa)',
-    clase: 'bg-emerald-500/15 text-emerald-400',
-    ayuda: 'Peloteo regional en formato MAPA (foto del mapa + ~20 menciones)',
-  },
-  peloteo_los10: {
-    etiqueta: 'Peloteo Regional (los 10)',
-    clase: 'bg-emerald-500/15 text-emerald-400',
-    ayuda: 'Peloteo regional en formato LOS 10 (foto "los 10" + ~10 menciones)',
-  },
-  // Tercer formato de peloteo (Iker, 2026-07-27): el foco es un OBJETO
-  // reconocible despiezado en las empresas de la region que fabrican cada
-  // pieza. Aun sin publicar; la etiqueta ya existe para cuando salga.
-  peloteo_objeto: {
-    etiqueta: 'Peloteo Regional (objeto)',
-    clase: 'bg-emerald-500/15 text-emerald-400',
-    ayuda: 'Peloteo regional por OBJETO: un objeto cotidiano despiezado en las empresas que lo fabrican',
-  },
-  lead_magnet: {
-    etiqueta: 'Lead Magnet',
-    clase: 'bg-sky-500/15 text-sky-400',
-    // La ayuda decía "pide comentar una palabra", y ese gate murió el
-    // 05/08/2026: LinkedIn dejó de repartirlo. Hoy el CTA es pregunta + gratis
-    // + conecta conmigo, y el recurso sale por privado igual.
-    ayuda: 'Ofrece un recurso y lo entrega por privado a quien comenta o conecta',
-  },
-  // ⛔ FALTABA, y por eso el anuncio del evento del 11/08 se pintaba como
-  // "Otro" aunque en la base estuviera bien (Iker, 2026-08-11). PilarBadge cae
-  // a PILAR_META.otro cuando no conoce el pilar, así que crear un pilar en el
-  // backend sin darle su etiqueta aquí lo deja invisible: la tabla dice una
-  // cosa y la base otra, que es peor que no tener el pilar.
-  evento: {
-    etiqueta: 'Evento',
-    clase: 'bg-amber-500/15 text-amber-400',
-    ayuda: 'Anuncia una jornada nuestra y lleva el enlace de inscripción de Luma',
-  },
-  meme: {
-    etiqueta: 'Meme',
-    clase: 'bg-accent/15 text-accent',
-    ayuda: 'El motor es la imagen y las reacciones de risa se disparan (>25%)',
-  },
-  historia: {
-    etiqueta: 'Historia',
-    clase: 'bg-purple-500/15 text-purple-400',
-    ayuda: 'Anécdota personal en primera persona',
-  },
-  otro: {
-    etiqueta: 'Otro',
-    clase: 'bg-bg-secondary border border-border text-text-muted',
-    ayuda: 'Sin pilar claro. Ante la duda se deja en "otro" en vez de inventar etiqueta',
-  },
-};
+   Lo detecta el backend (services/pillar.ts) al ingerir, y AHORA se puede
+   corregir a mano desde el propio badge (Iker, 2026-08-20): el catálogo de
+   pilares, sus colores y el desplegable viven en components/accounts/
+   PilarSelector.tsx, que los lee de la tabla `pillars`.
 
-function PilarBadge({ pillar }: { pillar?: string | null }) {
-  if (!pillar) return null;
-  const m = PILAR_META[pillar] || PILAR_META.otro;
-  return (
-    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${m.clase}`} title={m.ayuda}>
-      {m.etiqueta}
-    </span>
-  );
-}
+   ⛔ La tabla PILAR_META que había aquí se borró a propósito. Era una lista
+   escrita a mano y, cada vez que nacía un pilar en el backend sin pasar por
+   aquí, el badge lo pintaba como "Otro" — la tabla decía una cosa y la base
+   otra, que es peor que no tener pilar (pasó con `evento` el 11/08). Ahora la
+   fuente de verdad es una sola y está en la base de datos. */
 
 /* ¿El cuerpo del post lleva un enlace?
    LinkedIn reescribe TODO enlace del cuerpo a su acortador `lnkd.in/xxxx`, así
@@ -569,7 +513,7 @@ function presetRange(days: number): { start: string; end: string } {
   return { start: toIsoDay(start), end: toIsoDay(today) };
 }
 
-export default function Accounts() {
+function AccountsInner() {
   const [selectedCreator, setSelectedCreator] = useState<string>('all');
   // Date range model: preset = one of [30, 90, 180] OR 'custom' (free
   // start/end selection). We compute startDate + endDate from the
@@ -2375,7 +2319,7 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed, onEditMetric
                 </button>
               )}
               <PostMenu post={post} onHidden={onRefreshed} />
-              <PilarBadge pillar={post.pillar} />
+              <PilarSelector postId={post.id} pillar={post.pillar} />
               {/* CTR a la izquierda del multiplicador (Iker, 2026-07-29): el ojo
                   lee de izquierda a derecha y lo ultimo que ve es lo que se le
                   queda, asi que el outlier va el mas a la derecha y en grande.
@@ -2616,7 +2560,7 @@ function TopPostRow(
                   {post.outlier_ratio.toFixed(1)}x
                 </span>
               )}
-              <PilarBadge pillar={post.pillar} />
+              <PilarSelector postId={post.id} pillar={post.pillar} />
             </div>
           </div>
           <ExpandablePostText text={post.content_text || post.hook_text} />
@@ -2719,5 +2663,15 @@ function TopPostRow(
         </div>
       )}
     </div>
+  );
+}
+
+/* El catálogo de pilares se carga UNA vez para toda la página. Con 60 posts en
+   pantalla, un fetch por selector serían 60 peticiones al mismo endpoint. */
+export default function Accounts() {
+  return (
+    <PilaresProvider>
+      <AccountsInner />
+    </PilaresProvider>
   );
 }

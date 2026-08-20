@@ -32,6 +32,18 @@
  * 10:55 y el fix de `contarPreteritos` se commiteo a las 11:04, nueve minutos
  * despues. El clasificador estaba bien; lo que faltaba era el reproceso, y el
  * post se quedo etiquetado `meme` hasta que Iker lo vio en la parrilla.
+ *
+ * ✅ Y DESDE EL 20/08 NO HACE FALTA ESPERAR A UN COMMIT PARA ARREGLAR UNA
+ * ETIQUETA SUELTA: en Accounts se pulsa el badge del pilar y se cambia a mano
+ * (`routes/pillars.ts` + `components/accounts/PilarSelector.tsx`). Eso marca
+ * `pillar_manual`, asi que el reproceso respeta la correccion. Tocar las reglas
+ * de aqui sigue siendo lo correcto cuando el clasificador falla EN PATRON —un
+ * formato entero mal leido—, no cuando falla en un post.
+ *
+ * ⚠️ El catalogo de pilares vive ahora en la tabla `pillars`, no en una lista de
+ * codigo. Si se añade un pilar NUEVO aqui, hay que sembrarlo tambien en la
+ * migracion: si no, el clasificador escribira un slug que el desplegable no
+ * conoce y el badge lo pintara en gris con el nombre crudo.
  */
 
 /**
