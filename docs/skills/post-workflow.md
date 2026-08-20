@@ -1559,43 +1559,42 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔧 Mecanizado y VOLTEADO el mismo día:** el check del validador que **exigía** `(Conecta conmigo…)` ahora lo **prohíbe**, junto a toda la familia. Al hacerlo me colé dos bytes `0x08` en las regex y **lo cazó el autochequeo del propio script**, que existe justamente por el mismo fallo del 06/08. La red funcionó.
 
-#### 🚨🚨 4.5.0-PUERTAS · EL CAPADO DEL 19/08 ERA `COGER` SIN OBJETO, NO LA DOBLE PUERTA (2026-08-20)
+#### 🚨🚨 4.5.0-DATOS · EL CAPADO DEL 19/08 ERA DECIR QUE HABÍAMOS TRANSCRITO UNA LLAMADA (Iker, 2026-08-20)
 
-> **Este bloque nació el 20/08 por la mañana culpando a la doble puerta y quedó REFUTADO el mismo día.** Se deja escrito con el error dentro a propósito: el error es la lección.
+> **CERRADO con un test de UNA SOLA VARIABLE, y la hipótesis era de Iker.** El mismo meme, con las **3 conjugaciones de `transcribir` cambiadas por `apuntar`** y **todo lo demás intacto**, salió a la primera: apareció en el feed nada más subirlo (`§4.5.0-FEED`). Se cambió una cosa y solo una.
 
-**⛔ REFUTADA MI HIPÓTESIS DE LA DOBLE PUERTA.** Sostuve que capaba llevar dos enlaces (agendar + correo), estrenados el 19/08. **El meme de Asier del 20/08 lleva los mismos dos enlaces y se repartió** (49 imp a los 25 min → 214 a la hora y pico, subiendo). **La doble puerta no capa y vuelve a estar disponible.**
-- **Por qué me equivoqué, y ya van tres:** era la única variable NUEVA que veía, que es exactamente el argumento que `images §0a-CAPADO` marca como débil — el mismo con el que defendí el logo de la imagen el 07/08. **"Es lo único que ha cambiado" no es una prueba: es una lista de sospechosos de uno.** Iker apostó por el texto las tres veces y las tres veces tenía razón.
+**El recorrido, con mis dos hipótesis muertas por el camino:**
 
-**⛔ DESCARTADO TAMBIÉN: no es `transcribir` / `transcripción`** (era la hipótesis de Iker). El post de Asier se comporta distinto sin llevarla, no está en ninguna familia de riesgo, y la transcripción de llamadas es una categoría enorme y legítima en LinkedIn (Gong, Fireflies).
-
-**✅ LO QUE SÍ SALIÓ, y salió de un diferencial de vocabulario contra los 174 posts nuestros que se repartieron: `coge` SUELTO, SIN COMPLEMENTO.**
-
-```
-Es la empresa.
-Es el que coge.
-Es el que decide y no coge.
-```
-
-**En español de América `coger` sin objeto es vulgar (follar), y el clasificador de LinkedIn es de español GLOBAL, no peninsular.** Ahí no hay ningún objeto escrito: el teléfono es elíptico, lo ponemos nosotros al leer. Dos veces, en líneas aisladas y cortas, que es donde más pesa cada palabra.
-
-**Y la palabra NO está prohibida. Las 5 veces que sale en un post nuestro que voló, lleva SIEMPRE objeto explícito:**
-
-| post | forma | imp |
+| hipótesis | de quién | veredicto |
 |---|---|---|
-| 15/07 | `No me **cogió el teléfono**` | **192.303** ← el mayor de la casa |
-| 13/05 | `sigue **cogiendo el teléfono**` | 24.993 |
-| 30/07 | `algo de color hemos **cogido**` | 7.266 |
-| 01/07 | `**Cojo empresas** catalanas` | 6.572 |
-| 09/01 | `te **coge pulso** de la sien` | 5.539 |
-| **19/08** | `Es el que **coge**.` (desnudo, ×2) | **133** |
+| La doble puerta (2 enlaces) | mía | ⛔ **refutada** — el meme de Asier del 20/08 lleva los mismos dos enlaces y se repartió |
+| `coger` sin objeto (vulgar en América) | mía | ⛔ **refutada** — el resubido que voló **lleva `coge` dentro, sin tocar** |
+| `transcribir` y familia | **Iker** | ✅ **confirmada** |
 
-**LA REGLA: `coger` va SIEMPRE con su complemento escrito.** `coge el teléfono`, `coge la llamada`, o se cambia por `descuelga`, que no tiene doble lectura en ningún país. **Cuesta dos palabras y quita el riesgo entero.**
-- **Mecanizado como FALLO DURO** en `validar-post.py` (`COGER siempre con objeto explícito`). Verificado que falla el post del 19/08 y pasa el de 192.303.
-- **Sigue siendo hipótesis con n=1**, pero se aplica igual porque **tiene mecanismo** (a diferencia de `prompt` o `Claude`, que eran sospechas sin explicación) y **arreglarlo no cuesta nada**. La prueba limpia: resubir ese mismo meme cambiando SOLO esas dos líneas.
+**⚠️⚠️ Y AHORA LO QUE MÁS IMPORTA, PORQUE CONFUNDIRLO NOS CUESTA POSTS: LA PALABRA NO ESTÁ PROHIBIDA.**
 
-**🆕 Y ABRE UNA FAMILIA NUEVA DE RIESGO, la 6 de `brand-voice §2c`: la palabra que es inocente en España y vulgar en América.** No la vemos porque escribimos en peninsular y nos suena bien. **El clasificador no es de Bilbao.** Candidatas de nuestro registro comercial, todas normales aquí: `coger`, `pijo/a`, `polla` (de gallina), `concha`, `pico`, `follón`, `cachondeo`, `currar`. **El test: ¿esta palabra, SIN el resto de la frase, significa otra cosa en México o Argentina?** Si sí, se le pone el objeto o se cambia.
+| post | cómo aparece | imp |
+|---|---|---|
+| 05/06 | `6️⃣ **Grabar la llamada**` — ítem de una lista de herramientas del sector, **infinitivo, impersonal** | **165.526** · 12.05x ← **nuestro mayor meme** |
+| 08/05 | `Sintetizar **12 transcripciones** de discovery` — plural, sin artículo | 4.082 |
+| 24/09 | `recibirás **la grabación**` — la de nuestro propio webinar | 967 |
+| **19/08** | `**La transcribo** igual` · `**La transcripción** es mentira` — **primera persona, y publicando el documento** | **133** |
 
-**🔴 LA LECCIÓN DE MÉTODO, que es la más cara y ya es la tercera vez:** ante un capado todos buscamos *la palabra prohibida* leyendo el post, y leyendo no se encuentra — porque la palabra culpable **nos suena bien, por eso la escribimos**. Lo que la encontró en 10 minutos fue **el diferencial contra el corpus**: sacar el vocabulario del post capado y restarle el de los 174 posts que se repartieron. **Ante el próximo capado, eso es el primer paso, antes de opinar.** Y el segundo: buscar el post capado que **NO** comparte la palabra sospechosa, que es lo que mata las hipótesis falsas.
+**LA REGLA, y es de mecanismo, no de vocabulario:** lo que capa es **reclamar en primera persona que hemos grabado o transcrito una conversación con un tercero**, y encima enseñar el documento. Eso LinkedIn lo lee como **tratamiento de datos de un tercero sin su consentimiento**, y lo decide ANTES de repartir. Iker: *"interpretan que estamos haciendo algo ilegal o peligroso a nivel de derechos de los usuarios, de sus datos, protección de datos"*.
+
+- ✅ **Impersonal o de terceros pasa:** `Grabar la llamada` (infinitivo, en una lista) · `las herramientas de transcripción` · `12 transcripciones`.
+- ⛔ **Primera persona no pasa:** `la transcribo` · `grabé la llamada` · `mi transcripción` · `la grabación de esa reunión`.
+- **Los sinónimos que ya usamos y funcionan:** `apuntar` · `dejar por escrito` · `pasar a papel` · `copiar`. **⛔ `grabar` NO sirve de recambio**: grabar una llamada es más delicado que transcribirla, no menos.
+- **La foto sí puede llevar la palabra**, y es donde debe vivir: LinkedIn **no lee la imagen** (`§4.5.0-CTA-IMAGEN`). El rótulo `TRANSCRIPCIÓN LITERAL DE UNA LLAMADA EN FRÍO` se quedó intacto y el post voló. **Motor viral en la foto, texto limpio para el clasificador.**
+
+**🆕 FAMILIA 7 de `brand-voice §2c`: DAR A ENTENDER QUE MANEJAMOS DATOS O CONVERSACIONES DE TERCEROS.** Es la familia más peligrosa que tenemos **porque es la que roza lo que vendemos de verdad** (encontrar empresas y personas). Y no es nueva del todo: `§4.5.0a punto 3b` ya decía que *"`me da el nombre` gana a `me encuentra a quien`, porque `encontrar a alguien` roza el registro de rastrear personas"*. **Ese instinto estaba escrito hace dos semanas sin mecanismo; ahora lo tiene y está medido.**
+- **El test, antes de entregar:** *¿esta frase, leída por un abogado y sin contexto, suena a que hemos cogido datos de alguien que no nos los dio?* Si sí, se pasa a impersonal o se cambia el verbo.
+- **Mecanizado:** fallo duro para la primera persona (`transcribo`, `grabé`…) y aviso para `la transcripción` / `la grabación`. Verificado que **falla el post capado, pasa el resubido y pasa el de 165.526**.
+
+**🔴 LA LECCIÓN DE MÉTODO, que ya son tres capados y tres aciertos suyos:**
+1. **Iker ha acertado las tres veces apostando por el TEXTO** (`comenta`, `conecta conmigo`, `transcribir`). Yo he fallado tres veces buscando la explicación estructural: el logo de la imagen (07/08), la doble puerta y `coger` (20/08). **Cuando un post se capa al segundo de subirlo, la causa está en el texto, y la discusión debe empezar ahí.**
+2. **El diferencial de vocabulario contra el corpus es necesario pero no suficiente.** Me dio los cuatro candidatos correctos (`transcribir`, `transcribo`, `transcripción`) y yo los descarté por parecerme inocentes. **La lista se ordena por MECANISMO —¿qué riesgo legal ve una máquina aquí?—, no por lo que a mí me suene mal en español.**
+3. **Y el corpus se mira ENTERO antes de escribir la regla.** Si hubiera escrito "transcribir está prohibida" me habría cargado el patrón de nuestro mayor meme. **La palabra casi nunca es la regla: la regla es la forma de decirla.**
 
 #### 🕵️ 4.5.0-FEED · EL DIAGNÓSTICO DE PRIMER NIVEL ES EL FEED, Y ES DE IKER (2026-08-18)
 

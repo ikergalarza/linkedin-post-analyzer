@@ -594,25 +594,28 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     chk(not m, 'Hook sin jerga que estrecha alcance (§2.3)', f'"{m.group(0)}" fuera del hook' if m else '')
     m = re.search(r'[—–]', cuerpo)
     chk(not m, 'Sin guion largo (brand-voice §3)', 'delator de IA nº1' if m else '')
-    # 2026-08-20 — COGER SIN OBJETO. El meme del 19/08 se capó nada más subirlo
-    # (133 imp contra 24.500 del meme anterior de la MISMA cuenta con el MISMO
-    # enlace, y el de Asier del 20/08 con los dos enlaces se repartió). Lo único que
-    # ese texto tiene y no tiene ningún post nuestro que se repartió: `coge` SUELTO,
-    # sin complemento, dos veces y en líneas aisladas ("Es el que coge." / "Es el
-    # que decide y no coge."). En español de América `coger` sin objeto es vulgar, y
-    # el clasificador de LinkedIn es de español GLOBAL, no peninsular. Las 5 veces
-    # que `coger` sale en un post nuestro que voló lleva SIEMPRE objeto explícito:
-    # "cogiendo el teléfono" (24.993), "No me cogió el teléfono" (192.303, nuestro
-    # mayor post), "coge pulso", "Cojo empresas", "hemos cogido color". La palabra
-    # NO está prohibida: lo que canta es la forma desnuda, y arreglarlo cuesta dos
-    # palabras. Hipótesis con n=1, pero con mecanismo y coste cero.
-    m = re.search(r'\b(cog[eo]|coges|cogen|coger|cogemos|cogi|cogio|cogido|cogiendo)\s*(?=[.,;:!?)]|$)',
-                  cuerpo, re.I | re.M)
-    chk(not m, 'COGER siempre con objeto explícito (brand-voice §2c familia 6)',
-        f'"{m.group(0)}" va suelto: en español de América eso se lee como vulgar y lo '
-        'clasifica un motor de español GLOBAL. Ponle el complemento ("coge el teléfono", '
-        '"el que descuelga"). Capó el meme del 19/08 a 133 imp; con objeto hicimos '
-        '192.303 ("No me cogió el teléfono")' if m else '')
+    # 2026-08-20 — FAMILIA 7: DECIR EN PRIMERA PERSONA QUE HEMOS TRANSCRITO O
+    # GRABADO UNA CONVERSACION. El meme del 19/08 se capó a 133 imp y el MISMO post
+    # con las 3 conjugaciones de `transcribir` cambiadas por `apuntar` salió a la
+    # primera (test de una sola variable, con `coge` dentro: por eso el check de
+    # `coger` que puse esa mañana queda REFUTADO y borrado).
+    # ⚠️ LA PALABRA NO ESTA PROHIBIDA, y confundir eso nos costaría posts: nuestro
+    # MAYOR meme (165.526 imp, 12.05x) lleva "6⃣ Grabar la llamada" como ítem de una
+    # lista de herramientas del sector, en INFINITIVO e impersonal, y voló. Y otro
+    # con "12 transcripciones de discovery" hizo 4.082. Lo que canta es la RECLAMACION
+    # EN PRIMERA PERSONA de haber grabado o transcrito a un tercero, que es lo que
+    # LinkedIn lee como tratamiento de datos sin consentimiento (Iker, 2026-08-20).
+    m = re.search(r'\b(transcribo|transcribí|transcribimos|transcribiendo|grabo|grabé|grabamos|grabando)\b',
+                  cuerpo, re.I)
+    chk(not m, 'Sin transcribir/grabar en PRIMERA PERSONA (brand-voice §2c familia 7)',
+        f'"{m.group(0)}" dice que hemos grabado a alguien. LinkedIn lo lee como datos de un '
+        'tercero sin consentimiento y capa el post ANTES de repartirlo (19/08: 133 imp). '
+        'Cambia el verbo (apuntar, dejar por escrito, pasar a papel) o pasa la frase a '
+        'IMPERSONAL: "Grabar la llamada" en infinitivo hizo 165.526' if m else '')
+    m = re.search(r'\b(la|mi|esta|esa|nuestra) (transcripci[oó]n|grabaci[oó]n)\b', cuerpo, re.I)
+    chk(not m, 'Sin "la transcripción/grabación" con artículo (§2c familia 7)',
+        f'"{m.group(0)}" afirma que existe una, hecha por nosotros. En plural y sin artículo '
+        'no cantó ("12 transcripciones de discovery", 4.082 imp)' if m else '', aviso=True)
     ms = re.findall(r'[^\s]+,\s+[ye]\s', cuerpo)
     chk(not ms, 'Sin coma antes de "y"/"e" (brand-voice §3)', f'{len(ms)}: {ms[:3]}' if ms else '')
     ms = re.findall(r'\*\*|__|^#{1,6}\s|`', cuerpo, re.M)
