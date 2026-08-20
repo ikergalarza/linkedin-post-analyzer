@@ -1199,7 +1199,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 **Por qué existe (Iker, 2026-08-18):** todo nuestro alcance desembocaba en dos puertas caras, descargarse un recurso o rellenar el formulario de agendar. El correo es **el paso anterior**: menos fricción, primer contacto más probable, y desde ahí ya trabaja el email marketing que ya tenemos montado.
 
-**⚠️ LA URL: se escribe `/correo/`, la canónica es `/newsletter/`.** `/correo/` es un **alias 301**. Se escribe la corta en el post porque son 10 caracteres menos en una línea con tope de 55 y porque *correo* lo entiende un industrial de 55 años a la primera; `/newsletter/` es la que indexa Google y la que casa con el `utm_source=newsletter` que MailerLite ya inyecta. GA4 atribuye al destino final, así que no se pierde nada.
+**⚠️ LA URL: se escribe `/correo/`, la canónica es `/newsletter/`.** `/correo/` es un **alias 301**. Se escribe la corta en el post porque son 10 caracteres menos en una línea con tope de 55 y porque *correo* lo entiende un industrial de 55 años a la primera; `/newsletter/` es la que indexa Google y la que casa con el `utm_source=newsletter`. GA4 atribuye al destino final, así que no se pierde nada.
 
 #### ⛔⛔ DÓNDE VA Y DÓNDE NO (decidido con los datos de cada pilar, no a ojo)
 
@@ -1277,7 +1277,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 1. **Dos puertas reparten el clic.** Toda la doctrina del ninja está construida sobre UNA. La auditoría del 12/08 mide que cuando la puerta está peor puesta el post gusta más y se pincha menos (eng/1k x4, clics de 142 a 4). **El que puede perder es `agendar`, que es el caro.**
 2. **En meme cuesta alcance** (la tabla de arriba). Por eso ahí va condicionado a los 450 caracteres.
-3. **LinkedIn NO nos va a desglosar los clics.** La herramienta guarda **un solo `link_url` por post**. El desglose sale de **GA4** (las dos URLs son distintas y se separan solas por página de destino, sin meter UTMs feos en el post) y de **las altas en MailerLite**.
+3. **LinkedIn NO nos va a desglosar los clics.** La herramienta guarda **un solo `link_url` por post**. El desglose sale de **GA4** (las dos URLs son distintas y se separan solas por página de destino, sin meter UTMs feos en el post) y de **las altas en Brevo**.
 
 #### 📊 CÓMO SE DECIDE SI ESTO SE QUEDA
 **La casilla es una: clics a `/agendar/` por post, ANTES contra DESPUÉS.** Si caen más de un tercio y las altas de correo no lo compensan, el bloque 2 se retira de los pilares que más convierten y se queda solo en historia y despiece. **Se re-mide a los 10 posts con doble bloque**, y el resultado se anota aquí.

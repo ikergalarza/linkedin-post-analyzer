@@ -14,7 +14,7 @@ Exportado el 2026-08-03 desde el repo `linkedin-post-analyzer`, rama `main`.
 | 3 | `brand-voice.md` | Cómo suena la marca. **§3 = tabla anti-IA y puntuación** (nunca guion largo, nunca coma antes de "y"): aplica igual al email | **SÍ** |
 | 4 | `global-instructions.md` | El manual del post de LinkedIn. Para email importa sobre todo **§3 (formateado y ritmo)** y **§2.5 (densidad de números)**, que el correo hereda con un matiz (ver abajo) | **SÍ** |
 | 5 | `working-preferences.md` | Cómo se entrega el trabajo y cuándo se avisa de un riesgo | Recomendable |
-| 6 | `historial-newsletter.md` | **ESTADO, no doctrina.** Qué se ha enviado, estado de la cuenta de MailerLite, grupos creados. Se lee antes de planificar y se actualiza después | **SÍ** |
+| 6 | `historial-newsletter.md` | **ESTADO, no doctrina.** Qué se ha enviado, estado de la cuenta de Brevo, listas creadas. Se lee antes de planificar y se actualiza después | **SÍ** |
 | 7 | `images.md` | Solo si tocas imagen o mascota: **§4.0 = paleta del brandbook 2026** y la regla de que el isotipo no se redibuja con IA | Según la tarea |
 | 8 | `validar-email.py` | El validador mecánico. 22 checks. Se corre antes de CADA entrega | **SÍ** |
 
@@ -67,8 +67,13 @@ Los .eml originales NO van en este paquete (son cientos de megas). Si hace falta
 
 ## Estado del sistema a fecha de exportación
 
-- **Herramienta:** MailerLite, cuenta `management@neety.com`, conectada por MCP.
-- **Dominio `neety.com`:** autenticado. Remitente de la newsletter: `hola@neety.com`, con forwarding probado.
-- **Creado:** campo `origen` + 7 grupos (`origen-desconocido`, `linkedin-recursos`, `web`, `evento`, `webinar`, `referido`, `contacto-comercial`).
-- 🔴 **Pendiente:** el idioma de la cuenta sigue en inglés. Es el último bloqueante antes de enviar.
+> ⚠️ **Este bloque quedó obsoleto el 2026-08-11.** MailerLite canceló la cuenta y
+> desde el 2026-08-20 el proveedor es **Brevo**. El estado vivo está en
+> `historial-newsletter.md`, que es el que hay que leer. Lo de aquí abajo se
+> conserva solo para entender qué había montado.
+
+- **Herramienta: ~~MailerLite, conectada por MCP~~ → BREVO, por API, sin MCP.** El que llama a Brevo es un worker desatendido del CRM, no un chat. ⚠️ El conector MCP de MailerLite que sigue apareciendo en la sesión está MUERTO: no lo uses.
+- **Dominio `neety.com`:** autenticado (en MailerLite; en Brevo verificado el 2026-08-20 desde Cloudflare). Remitente de la newsletter: `hola@neety.com`, con forwarding probado.
+- **~~Creado: campo `origen` + 7 grupos~~** — vivían en la cuenta cancelada. En Brevo hay que rehacerlos.
+- 🔴 **Pendiente:** ver la lista ordenada en `historial-newsletter.md`, bloque de Brevo.
 - **Primer correo listo y validado 22/22:** el correo 0 segmentador, remitente Kaixito, asunto `no te acuerdas de mí?`. Va solo al segmento de origen desconocido, sin enlaces, y su métrica son las RESPUESTAS.

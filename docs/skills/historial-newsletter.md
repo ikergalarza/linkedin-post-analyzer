@@ -4,8 +4,21 @@
 > (`email-marketing §6`) antes de escribir nada, y se ACTUALIZA y commitea al aprobar cada tanda.
 > Si falta un dato, PREGUNTA. No lo adivines.
 
-## 🔵 ESTADO: MIGRANDO A BREVO (2026-08-18)
-Arrancó la migración. Runbook completo en `email-marketing §0c`. Pendiente de Iker antes de poder avanzar: acceso a Brevo, API key (por variable de entorno), decisión de subdominio de envío + acceso DNS, plan de pago, y la exportación del CRM (clientes + prospectos abiertos) para la lista de supresión.
+## 🔵 ESTADO: BREVO CONECTADO AL CRM (2026-08-20)
+
+Cuenta de Brevo creada, dominio conectado desde Cloudflare y verificado, API key generada y metida en el CRM (Marketing → Integraciones). **El CRM ya habla con Brevo**: `src/brevo.js` sustituye a `src/mailerlite.js` en `sales-crm-Neety`, spec en `docs/superpowers/specs/2026-08-20-migracion-mailerlite-a-brevo-design.md` de ese repo.
+
+- **Se usa la API a secas, NO el conector MCP** (decidido el 2026-08-20). El que llama a Brevo no es un chat: es un worker desatendido en Railway cada 60 min. MCP es un protocolo para que un agente conversacional use herramientas; un servicio Node necesita `fetch()`. **No hay conector MCP de Brevo conectado y no hace falta.** ⚠️ El conector MCP de MailerLite que sigue apareciendo en la sesión está MUERTO: la cuenta está cancelada. No lo uses para nada.
+- **Los tres bloques y cuál se rompió:** recursos.neety.com capta el lead → el CRM lo lee (`resources_leads.js`, solo lectura) y es la fuente de la verdad → el proveedor envía. **Solo se rompió el tercero.** `neety-resources` no tiene ni una referencia al proveedor: es agnóstico por diseño y no se tocó.
+- **Las bajas van ahora en los DOS sentidos.** Antes solo entraban (webhook del proveedor → CRM). La dirección CRM → proveedor existía escrita pero **no se llamaba desde ningún sitio**: quien se daba de baja por el enlace del correo seguía en la lista del proveedor y habría recibido la siguiente campaña. Cerrado el 2026-08-20.
+
+### 🔴 Pendiente antes de enviar nada (en orden)
+1. **Rearmar el espejo de cada audiencia a mano** en Marketing → Audiencias. La migración las apagó todas a propósito: los ids guardados eran de grupos de MailerLite y el worker los habría usado para empujar contactos a listas equivocadas.
+2. **Registrar el webhook de bajas** (Integraciones → "Registrar webhook de bajas"). Sin esto, una baja hecha en Brevo no llega al CRM.
+3. **Probar con 2-3 correos internos** antes de tocar la audiencia buena. Ningún OK de la API prueba un envío: se verifica leyendo el buzón.
+4. **Decidir el subdominio de envío** (`mail.` o `news.neety.com`). ⚠️ **Dato que falta: no consta si el dominio verificado en Brevo es `neety.com` directo o un subdominio.** Si es el directo, sigue pendiente la corrección estructural más grande que hay disponible (`email-marketing §0c` punto 1). PREGUNTAR, no adivinar.
+5. **Sustituir el SPF de MailerLite** en el TXT de `neety.com` por el de Brevo (`email-marketing §10`).
+6. Plan de pago activo, lista de supresión desde el CRM, y el resto del runbook de `§0c`.
 
 ## 🔴 ESTADO ANTERIOR: CUENTA MAILERLITE CANCELADA (2026-08-11)
 MailerLite canceló la cuenta 2536617 por supuesta violación de la política anti-spam, tras 3 envíos y 191 correos. **La tanda 3 (337) nunca llegó a salir y la 4 no se montó.** Post-mortem completo en `email-marketing §0b`.
@@ -14,6 +27,12 @@ MailerLite canceló la cuenta 2536617 por supuesta violación de la política an
 - ⚠️ **De los 4 que clicaron, uno (`ahernandez@fagorautomation.es`) es CLIENTE**, no un lead: recibió el correo por no existir lista de supresión. Leads reales: 3.
 
 ## Estado del sistema
+
+> ⚰️ **TODO ESTE BLOQUE ES HISTÓRICO, de la cuenta CANCELADA.** Se conserva porque
+> explica qué había montado y qué hubo que reconstruir. **El estado vivo está
+> arriba, en el bloque de Brevo.** Nada de aquí abajo se puede usar hoy: la
+> cuenta, los grupos, el campo `origen` y el conector MCP están muertos.
+
 - **Herramienta de envío: MailerLite, CONECTADA y VERIFICADA el 2026-07-28** (cuenta `management@neety.com`, id 2536617, token hasta jul 2027). Conector MCP probado con lecturas reales: grupos, campañas, campos y suscriptores responden. Escritura disponible (campañas, grupos, segmentos, importación, automatizaciones).
 - **Contenido actual:** 1 suscriptor (Iker/`management@neety.com`) · 1 campaña borrador vacía del 27-jul ("Campaña sin título", sin contenido ni asunto: se puede borrar, pendiente del OK de Mario).
 - **Estructura creada por Claude vía MCP el 2026-07-29:** campo personalizado **`origen`** (texto, id 1403523) + **7 grupos de segmentación**: `origen-desconocido` · `linkedin-recursos` · `web` · `evento` · `webinar` · `referido` · `contacto-comercial`. Todos vacíos, listos para la importación.
@@ -68,7 +87,7 @@ MailerLite canceló la cuenta 2536617 por supuesta violación de la política an
 - 🔵 `pablo.rivadulla@nextbitt.com` es **corporativo: la persona se fue, la EMPRESA sigue siendo prospecto.** En un CRM B2B se invalida el correo, **no se borra la ficha ni el histórico**.
 - ✅ **La comprobación gratuita de MX acertó:** marcó `bravorobot.com` como dominio sin servidor de correo y ese fue exactamente el único rebote blando. Detecta poco (1 de 71) pero lo que detecta, acierta. **Merece la pena correrla siempre antes de una tanda: es gratis.**
 
-⛔ **En MailerLite NO se borra a un rebotado.** El estado `bounced` es lo que lo bloquea, y es automático. Borrarlo pierde esa protección y una reimportación posterior lo devuelve limpio. **Y toda importación va con `resubscribe: false`**, o los rebotados y los dados de baja reviven.
+⛔ **A un rebotado NO se le borra, en ningún proveedor.** El estado que lo bloquea es automático; borrarlo pierde esa protección y una reimportación posterior lo devuelve limpio. En Brevo ese estado es `emailBlacklisted`, y el CRM lo respeta por los dos lados: los dados de baja **se quedan dentro de la lista a propósito** (sacarlos y reimportarlos algún día los resucitaría), y el sync nunca los vuelve a subir.
 
 **Son 4 tandas y caben todas en la misma semana.** Con 47+138 = 185 enviados, meter los ~987 restantes de golpe sería un salto de 5x con un 4,3% de rebotes detrás; en dos pasos (2,9x y 1,5x) no.
 

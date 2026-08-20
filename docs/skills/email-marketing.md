@@ -61,9 +61,25 @@ Misma segmentación, misma respuesta del lector, cero munición.
 
 ---
 
-## 🔵 0c · MIGRACIÓN A BREVO — el runbook (decidido el 2026-08-18)
+## 🔵 0c · MIGRACIÓN A BREVO — el runbook (decidido el 2026-08-18, técnica hecha el 2026-08-20)
 
 Tras la cancelación de MailerLite (`§0b`), migramos a Brevo. Esto no es "montar la herramienta otra vez": es aplicar cada lección del post-mortem ANTES del primer envío, no después.
+
+### ✅ Lo que YA está hecho (2026-08-20) y no hay que volver a decidir
+
+- **Cuenta de Brevo creada, dominio conectado desde Cloudflare y verificado.**
+- **API a secas, NUNCA el conector MCP.** El que llama a Brevo no es un chat: es un worker desatendido del CRM en Railway, cada 60 min. MCP es un protocolo para que un agente conversacional use herramientas; un servicio Node necesita `fetch()`. ⚠️ El conector MCP de **MailerLite** que sigue apareciendo en la sesión está **MUERTO** (cuenta cancelada): no lo uses para nada.
+- **La API key vive en el CRM** (Marketing → Integraciones), guardada en `app_settings`, **nunca pegada en el chat ni commiteada**. Así se rota sin desplegar.
+- **El CRM ya habla con Brevo.** `src/brevo.js` sustituye a `src/mailerlite.js` en `sales-crm-Neety`. Spec completa con el porqué de cada decisión: `docs/superpowers/specs/2026-08-20-migracion-mailerlite-a-brevo-design.md` **de ese repo**.
+- **Las bajas van en los DOS sentidos**, que antes no. La dirección CRM → proveedor estaba escrita pero no se llamaba: quien se daba de baja por el enlace del correo seguía en la lista del proveedor.
+- **Los contactos suben a GOTEO, no por importación masiva** — y es una decisión de riesgo, no técnica. Brevo tiene `POST /contacts/import` (una llamada, hasta 10 MB), pero **la señal nº 1 de las seis que dibujaron el perfil de spammer en MailerLite fue "cuenta nueva importando 1.310 contactos por API, sin pasar por ningún formulario"**. Ese endpoint en una cuenta recién abierta es literalmente ese patrón. El goteo de altas individuales es indistinguible de una app que da de alta gente según se registra. Con ~50 contactos tarda seis segundos: no hay nada que optimizar.
+
+### 🔴 Lo que sigue pendiente y es de Iker
+
+El estado vivo, en orden, está en `historial-newsletter.md`. Lo que NO se puede dar por hecho:
+
+- **No consta si el dominio verificado en Brevo es `neety.com` directo o un subdominio de envío.** Si es el directo, el punto 1 de abajo sigue abierto. PREGUNTAR, no adivinar.
+- El SPF de `neety.com` **todavía apunta a MailerLite** (`include:_spf.mlsend.com`), de la cuenta cancelada (`§10`).
 
 ### Lo que se le pide a Iker, y por qué es él y no Mario quien lo decide
 
@@ -125,7 +141,7 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 - **Las minúsculas SE MANTIENEN** aunque sean el 0% del corpus. Es una decisión de registro, no un error, y ahí la desviación es el objetivo: en una bandeja de Asuntos Con Mayúscula, el nuestro parece escrito por una persona.
 - **La regla general:** desviarse del corpus en **estilo** es diferenciarse; desviarse en **corrección** es parecer descuidado.
 
-**⭐ A/B DE ASUNTO (verificado en nuestra cuenta el 2026-08-06):** MailerLite permite testar **solo el asunto** manteniendo el mismo cuerpo (`type: "ab"`, `test_type: "subject"`). ⚠️ El conector MCP **no** puede configurarlo entero: solo admite un campo de asunto, así que la variante B se mete en el panel.
+**⭐ A/B DE ASUNTO (verificado en nuestra cuenta el 2026-08-06, ⚰️ en MailerLite — hay que rehacerlo en Brevo):** MailerLite permitía testar **solo el asunto** manteniendo el mismo cuerpo (`type: "ab"`, `test_type: "subject"`). ⚠️ El conector MCP **no** puede configurarlo entero: solo admite un campo de asunto, así que la variante B se mete en el panel.
 - **⛔ Y ojo con qué se mide.** El A/B declara ganador por APERTURAS. Si el correo tiene otra métrica (respuestas, en el correo 0), **el ganador se decide por esa métrica, no por la que declare la herramienta.** Un asunto agresivo puede abrir más y hacer responder menos.
 - **No se hace A/B en las tandas de calentamiento.** Con 25-50 por variante no mide nada. El A/B va en la tanda grande, cuando ya hay volumen.
 - **Sesgo de negatividad (Mario, 2026-08-06):** un asunto en negativo ("¿no te acuerdas de mí?") suele abrir más que su versión neutra, y es un efecto real y documentado. El riesgo no está en la apertura sino en que un reproche baje la respuesta. **Es exactamente el tipo de cosa que hay que testar en vez de decidir a ojo.**
@@ -220,11 +236,12 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
   - **Snippet estándar** (280 px, centrado, con alt porque muchos clientes bloquean imágenes):
     `<p style="margin:0 0 24px;text-align:center;"><img src="URL" alt="..." width="280" height="280" style="display:block;margin:0 auto;width:280px;max-width:70%;height:auto;border:0;outline:none;text-decoration:none;"></p>`
   - ⚠️ **Antes de meter una URL nueva en una campaña, comprobar que responde 200 y `image/gif`.** Un `src` roto se envía sin que nadie lo note.
-- **⚠️ EL SANITIZADOR DE MAILERLITE DUPLICA LAS ETIQUETAS DE FUSIÓN (2026-08-06).** Si al `update_campaign` le mandas un documento completo (`<!DOCTYPE>`, `<html>`, `<head>`, `<style>`), la plataforma lo envuelve en SU esqueleto y acaba con **dos `{$body_bottom}`**, que es donde inyecta el pie legal y el enlace de baja: saldrían duplicados. **Se manda SOLO el fragmento interior** (divs y tablas), sin html, sin head, sin style y sin etiquetas de fusión. Comprobar después que `{$head_top}`, `{$body_top}` y `{$body_bottom}` salen una sola vez.
+- ⚰️ **Lo de aquí abajo (sanitizador, `update_campaign`, límites del conector) es de MAILERLITE y su conector MCP, los dos MUERTOS desde el 2026-08-11.** Se conserva porque el TIPO de trampa se repite en cualquier plataforma —el editor envuelve tu HTML en su esqueleto, y tocar por API pisa lo configurado en el panel— así que hay que volver a comprobarlo en Brevo antes de fiarse. **Ninguna de estas reglas está verificada en Brevo.**
+- **⚠️ EL SANITIZADOR DE MAILERLITE DUPLICABA LAS ETIQUETAS DE FUSIÓN (2026-08-06).** Si al `update_campaign` le mandas un documento completo (`<!DOCTYPE>`, `<html>`, `<head>`, `<style>`), la plataforma lo envuelve en SU esqueleto y acaba con **dos `{$body_bottom}`**, que es donde inyecta el pie legal y el enlace de baja: saldrían duplicados. **Se manda SOLO el fragmento interior** (divs y tablas), sin html, sin head, sin style y sin etiquetas de fusión. Comprobar después que `{$head_top}`, `{$body_top}` y `{$body_bottom}` salen una sola vez.
 - **🔴🔴 `update_campaign` POR API RESETEA LOS AJUSTES DEL PANEL (2026-08-06, comprobado en vivo).** Al actualizar el HTML de una campaña por API, MailerLite **revierte** el idioma a inglés, el texto plano a la plantilla en inglés y **los destinatarios a "todos los suscriptores"**. Pasó con la campaña `Kaixito 01`: estaba en español, con texto plano traducido y apuntada a 53 personas, y tras un cambio de estilo volvió a inglés y a 1.333 destinatarios.
   - **REGLA: en cuanto una campaña esté configurada en el panel, NO se toca más por API.** Los retoques de HTML se hacen en el editor de código del panel.
   - Si hay que tocarla por API igualmente, **después hay que volver a poner a mano idioma, texto plano y destinatarios**, y verificar el contador de destinatarios antes de enviar.
-- **Lo que el conector NO puede hacer en MailerLite** (lo hace el usuario en el panel): subir ficheros, fijar el campo `preheader`, editar el texto plano, cambiar el idioma de la campaña y fijar los destinatarios. **El preheader se resuelve igual** metiendo un div oculto al principio del fragmento HTML, que es la técnica estándar y funciona aunque el campo esté a `null`.
+- **Lo que el conector NO podía hacer en MailerLite** (lo hacía el usuario en el panel): subir ficheros, fijar el campo `preheader`, editar el texto plano, cambiar el idioma de la campaña y fijar los destinatarios. **El preheader se resuelve igual** metiendo un div oculto al principio del fragmento HTML, que es la técnica estándar y funciona aunque el campo esté a `null`.
 - **Producción del GIF (flujo de Mario, 2026-07-27):** el diseño de la mascota SE MANTIENE tal cual (el logo con ojos, brazos y libro: es marca en cada gag, no se rediseña). El prompt al generador es **UN párrafo** que pide **UN solo archivo**. Siempre: personaje entero y centrado, estilo plano sin 3D, loop perfecto 2-3 s.
 - **Colores de Kaixito con el brandbook 2026 (fijados el 2026-07-29):** cuerpo **Naranja `#fe8238`** · tapas del libro **Berenjena `#431b44`** (sustituyen al verde: es el único oscuro de la paleta y da el contraste que el libro necesita contra el cuerpo naranja y contra el fondo claro) · páginas interiores del libro **Azul bebé `#a7c5f9`** (aquí sí funciona un claro, porque va rodeado del berenjena oscuro) · brazos, manos y ojos en negro. ⛔ El libro NO va en azul bebé ni en mint: a tamaño miniatura un claro sobre fondo claro se disuelve (`images §4.0`).
 - **⚠️ EL FONDO DEL GIF VA EN CREMA `#f9f3ef`, NO EN TRANSPARENTE NI EN MAGENTA (corregido el 2026-07-27).** Primero se pidió magenta para recortarlo a mano, y es la técnica correcta solo si la animación tiene que ir sobre fondos distintos (web, vídeo). **Para email es peor:** el GIF solo tiene transparencia de 1 bit (opaco o invisible, sin alfa parcial), así que recortar un personaje con bordes suavizados deja dientes de sierra o halo de color. La solución limpia es **generar el GIF ya sobre el fondo del correo**, que es el Alabastro de la paleta (`images §283`): integración perfecta, cero recorte, cero halos. Corolario: **el fondo del cuerpo del email es Alabastro `#f9f3ef`**, no blanco puro.
@@ -591,9 +608,25 @@ Igual que en LinkedIn se avisa de adjuntar la imagen o de pasarle las tipografí
 
 ---
 
-## ⭐ 9c · OPERAR MAILERLITE — todo lo aprendido montando el correo 0 (2026-08-06)
+## ⭐ 9c · OPERAR LA HERRAMIENTA — todo lo aprendido montando el correo 0 (2026-08-06)
 
 Un día entero de fricción, destilado. **Léelo antes de montar cualquier campaña.**
+
+> ⚰️⚠️ **ESTA SECCIÓN SE ESCRIBIÓ SOBRE EL PANEL DE MAILERLITE, y desde el
+> 2026-08-20 el proveedor es Brevo (`§0c`). Ninguno de los pasos concretos de
+> panel está verificado en Brevo.**
+>
+> Lo que SIGUE VALIENDO es el **tipo** de trampa, porque se repite en cualquier
+> plataforma y es lo que costó un día descubrir: los UTM cuelgan de la cuenta y
+> no de la campaña · el pie legal no se puede quitar · hay ajustes que se
+> resetean al tocar por API · darle a enviar no es haber enviado · la
+> verificación gratuita de listas no cubre nuestro caso · la lista de supresión
+> se monta ANTES que nada.
+>
+> **Cada apartado hay que volver a comprobarlo en Brevo la primera vez que se
+> use, y corregir aquí lo que cambie.** Lo que NO depende del proveedor —la
+> lista de supresión (`§9c` LISTA DE SUPRESIÓN), el ritmo de tandas, los
+> testers por cliente de correo, el dominio que no dice el país— vale tal cual.
 
 ### Lo que se edita SIEMPRE por duplicado
 **⛔ Un correo tiene DOS capas y hay que tocar las dos.** El HTML es lo que ve la gente; el **texto plano** es una versión alternativa oculta que **leen los filtros de spam**. Si el HTML va en español y el texto plano se queda en la plantilla inglesa por defecto, es una incoherencia que puntúa en contra. Cada vez que se cambia una frase, se cambia en los dos sitios.
