@@ -368,6 +368,17 @@ Cuando tengas 2+ frases que sean estructura paralela, enumeración, dato+consecu
 - **Anáfora DENTRO del bloque, variedad ENTRE bloques:** dentro de un bloque paralelo, las líneas comparten arranque (ej. un bloque de 2 con las dos líneas empezando por "No es por…"). Pero **NO hagas que TODOS los bloques del post empiecen igual** — cada bloque paralelo usa un arranque DISTINTO (uno "No es…", otro "Lo levantó…", otro por sustantivo, otro por verbo, otro por lugar). Mil variantes, no la misma muletilla repetida (`working-preferences §4`).
   - **⛔ TODAS las líneas del bloque comparten arranque, sin excepción (Iker, 2026-07-22).** El fallo típico: un bloque de 3 de "negación-negación-AFIRMACIÓN" donde las dos primeras van con "No…" y la tercera con "Lo…" — la tercera rompe la anáfora. **No se arregla forzando la tercera a "No"** (perderías la afirmación): se **parte** en un **bloque de 2** (las dos negaciones, anáfora "No lo… / No lo…") **+ una línea suelta** con la afirmación, separada por blanco. Caso real (Murcia): *"No lo riega el turismo. / No lo cargan las terrazas." → [blanco] → "Lo cargan naves que encienden la luz a las 6."* De paso ese corte te REGALA un bloque de 2, que suele faltar.
 - **COLOCACIÓN: un bloque de 2 PRONTO, no al final (Iker, 2026-07-24).** Tras el gancho cae una línea individual (nunca un bloque pegado al gancho), pero **justo después ya tiene que haber un bloque de 2** — no arranques con 5-6 líneas sueltas seguidas antes del primer bloque, se lee monótono. El ritmo `individual → bloque` empieza arriba, no en la mitad del post.
+
+#### ⛔ 3.2-ESPEJO · UN TRAMO SIMÉTRICO ES TAN PREDECIBLE COMO UN CICLO (Iker, 2026-08-19)
+
+**El caso:** el meme del 20/08 tenía ritmo `1-1-2-1-1-2-1-3-1-2-1-1` y pasaba todos los checks de ciclo. Iker lo devolvió igual: *"después del primer bloque es un ritmo de dos líneas individuales, luego el bloque de dos y luego otra vez dos líneas individuales. Eso es predecible"*.
+
+**Lo que faltaba escrito:** los checks vigilaban la **repetición** (a-b-a-b) y no la **simetría**. Un tramo `1-1-X-1-1` — dos sueltas, un bloque, dos sueltas — se lee igual del derecho que del revés, y **canta el doble cuando el bloque del medio es el de la venta**, porque el ojo detecta el patrón justo donde le pides el clic.
+
+- **Se arregla MOVIENDO un bloque de sitio, nunca alargando el post.** En el caso real bastó con subir el bloque de 2 al arranque como tres líneas sueltas y dejar el de 3 entre las dos puertas: `1-1-1-1-2-1-3-1-2-1-1`.
+- **⚠️ Y va de AVISO, no de fallo duro, porque el dato lo obliga:** el sandwich aparece en **el wojak de la caja de herramientas** (nuestro mejor post) y en **el mapa de Navarra (7.9x)**. Tumbarlo sería silenciar a dos ganadores, que es lo que `§3.2` prohíbe hacer cuando un check tumba uno. **Es preferencia de frescura de Iker, no una ley medida**, y por eso se canta y decide quien escribe.
+
+**Mecanizado** en `validar-post.py` (`RITMO: ningun tramo en espejo`), que imprime el tramo culpable y recuerda los dos ganadores que lo llevan.
 - **⚠️ La variedad de anáfora (línea 155) ya es regla, y aun así la incumplí (Mario, 2026-07-24): dos bloques de 3, uno "No es… x3" y otro "Tu… x3".** Aplicarla no es opcional: si un bloque ya usa una muletilla de arranque, el siguiente bloque paralelo usa OTRA (o no es paralelo: sustantivo/verbo/lugar variados).
 - Frases cortas, verbos claros, sin buzzwords (voz founder en trincheras).
 

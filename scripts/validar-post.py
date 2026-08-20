@@ -949,6 +949,32 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             _tres = any(es_lista(b) and len(b) >= 3 for b in bloques(texto))
         chk(_tres, 'RITMO: al menos un bloque de TRES (§3.2)',
             f'ritmo {_ritmo} — todo unos y doses y sin lista numerada de 3+, se lee plano')
+        # ⛔ RITMO ESPEJO (Iker, 2026-08-19). El ciclo no es la unica forma de ser
+        # predecible: un tramo SIMETRICO tambien lo es, y encima no lo caza ningun
+        # check de ciclo. Iker, sobre el meme del 20/08: "antes del primer bloque es
+        # un ritmo diferente, pero despues del primer bloque es dos lineas
+        # individuales, luego el bloque de dos y luego otra vez dos lineas
+        # individuales. Eso es predecible". El tramo era 1-1-2-1-1, un palindromo
+        # perfecto alrededor del bloque de venta. Se busca cualquier espejo de 5+
+        # bloques; se arregla moviendo un bloque, no alargando el post.
+        # El caso concreto es el SANDWICH: dos sueltas, un bloque y otras dos
+        # sueltas. Un espejo con alternancia (1-2-1-3-1-2-1) NO cuenta: ese es el
+        # ritmo sano de bloque-suelta-bloque y tumbaria posts nuestros que
+        # funcionaron. Lo que canta es el par de sueltas repetido a los dos lados.
+        _espejo = next((i for i in range(len(_pat) - 4)
+                        if _pat[i] == _pat[i + 1] == 1 and _pat[i + 2] > 1
+                        and _pat[i + 3] == _pat[i + 4] == 1), None)
+        # ⚠️ VA DE AVISO, NO DE FALLO, y el motivo es un dato: el sandwich aparece en
+        # DOS ganadores nuestros — el wojak de la caja de herramientas (el mejor post
+        # del historico) y el mapa de Navarra (7.9x). Bloquearlo seria silenciar a un
+        # ganador, que es justo lo que §3.2 dice que no se hace cuando un check tumba
+        # uno. Asi que se canta y lo decide quien escribe.
+        chk(_espejo is None, 'RITMO: ningun tramo en espejo (§3.2)',
+            ('ritmo %s — hay un tramo 1-1-%d-1-1: dos sueltas, un bloque y otras dos sueltas. '
+             'Se lee igual del derecho que del reves, y salta mas cuando el bloque del medio '
+             'es el de la venta. Muevelo de sitio, no alargues el post. OJO: no bloquea porque '
+             'el wojak de 16.5x y el mapa de Navarra lo llevan'
+             % (_ritmo, _pat[_espejo + 2])) if _espejo is not None else '', aviso=True)
         # Ciclo de 2: a-b-a-b con a distinto de b. Ciclo de 4: a-b-c-d-a-b-c-d.
         _ciclo2 = any(_pat[i] == _pat[i + 2] and _pat[i + 1] == _pat[i + 3]
                       and _pat[i] != _pat[i + 1] for i in range(len(_pat) - 3))
