@@ -444,3 +444,25 @@ Este es un tema importante para mí: **quiero seguir sorprendiendo al lector**. 
 - [x] Canal de entrega: **el chat de Claude Code**, y los entregables grandes (CSV, ZIP, fotos) al Escritorio. Decidido 2026-07-14.
 - [ ] ¿Hay días/horas de publicación fijos por cuenta que quieras que asuma? (el sistema sugiere martes-jueves, 11:00-12:00 y 14:00-15:00 hora local).
 - [ ] ¿Quieres que lleve yo el control de qué formato tocó a cada cuenta cada día (para la regla de exclusividad) o me lo dices tú en cada sesión?
+
+## Aprendizaje 2026-08-20 — verificar frontend sin backend local
+
+No hay Postgres local ni `.env` de backend, asi que un panel nuevo no se puede
+probar contra datos reales antes de desplegar. Lo que SI funciona, y es lo que se
+usa desde ahora en cualquier cambio de panel:
+
+Un banco de pruebas temporal: `frontend/src/__sandbox_<algo>.tsx` + su
+`__sandbox_<algo>.html` en la raiz de `frontend/` (copia de `index.html` con el
+script cambiado), que sustituye `window.fetch` por respuestas simuladas y monta
+el componente de verdad. Con eso se comprueba lo que un typecheck no ve: que un
+boton dispara la llamada correcta, contra el id correcto, y cuantas llamadas
+salen al abrir. Se borra al terminar y NO se commitea.
+
+Dos trampas:
+- El banco tiene que hacer `import './App'`. Tailwind descubre las clases por el
+  grafo de modulos en dev, y con solo el componente la mitad de la paleta no se
+  genera: el badge sale gris y parece un bug del codigo.
+- Con el panel del navegador oculto, Chrome no recalcula estilos de nodos que ya
+  existian: `getComputedStyle` devuelve el estilo del PRIMER render. Un clon del
+  mismo nodo si sale bien. Verificar comportamiento por DOM, no colores por
+  computed style.
