@@ -45,6 +45,7 @@ Carga `docs/skills/email-marketing.md` **más** `aboutme.md`, `brand-voice.md` y
   `python scripts/validar-post.py <fichero.txt> --pilar mapa|los10|meme|leadmagnet [--cuenta X]`
   Escribe el borrador a un fichero temporal y pásaselo. **En la entrega, fuera del bloque, va SIEMPRE una línea con el resultado** (`✅ Validador 18/18` o las violaciones). Si esa línea falta, es que te lo has saltado. No es opcional y no se sustituye por "lo he revisado".
 - Corre además el pase de validación de criterio (`global §8`) en silencio: es lo que el script NO puede ver (motor, ángulo quemado, dato falso, remix mal robado).
+- **Señal de ilegalidad: se sustituye sola, no se pregunta.** Si una palabra o frase de un post puede leerse como que manejamos **datos o conversaciones de terceros sin permiso**, no la entregues y no consultes: dala ya cambiada por un sinónimo **igual de punchy** (`brand-voice §2c-DATOS`), con una línea fuera del bloque diciendo qué cambiaste. Aplica aunque no esté confirmada. ⛔ **No es una lista negra de palabras**: `rastrear` (15.424) y `perseguir` (16.769) están en posts que volaron. Lo que capa es la RECLAMACIÓN en primera persona: `La transcribo` hundió un meme a 133, y `Grabar la llamada` en infinitivo está en el de 165.526.
 - Avisa del riesgo ANTES o junto al borrador, con dato concreto (`working-preferences §2`). No esperes a que te pregunten si va a funcionar: esa pregunta la respondes tú.
 
 ## Credenciales (léelas del entorno, nunca las hardcodees ni las commitees)

@@ -118,6 +118,53 @@ Escribe como un founder-operador se lo diría **a un director comercial de 55 a�
 - **Antes de cambiar una palabra por sospecha, se mira en el corpus** (`§0a-CAPADO` de `images` tiene el procedimiento). El 07/08 Iker sospechaba de `prompt` y los datos dijeron que no —7 posts nuestros con ella bien repartidos y Martín Arosa la usa en 15 de sus 50 últimos—. **Se cambió igual, pero por AUDIENCIA (es un anglicismo, `§2b`), no por algoritmo.** Esa distinción es la que evita que acabemos con una lista de palabras prohibidas por superstición.
 - **Y una marca de reciente basta**: `ahora` da la novedad sin la sirena (`post-workflow §4.5.0a`).
 
+### 🚨🚨 2c-DATOS · FAMILIA 7 EN DETALLE: LA SEÑAL DE ILEGALIDAD SE SUSTITUYE SOLA, NO SE PREGUNTA (Iker, 2026-08-20)
+
+> **La orden, literal:** *"si crees que va a tener algún tipo de señal de que es ilegal, o que LinkedIn nos va a bloquear, no me lo des. No la tienes ni que avisar directamente, me tienes que dar un sinónimo, que sea igual de punchy, pero que no pueda percibirse que es ilegal."*
+
+**Cómo se ejecuta, y es la TERCERA SALIDA del pase de validación (`working-preferences §2`):** no es un aviso, no es una pregunta y no espera respuesta. **Se sustituye y se entrega el post limpio**, con una línea fuera del bloque diciendo qué se cambió. **Aplica aunque la sospecha no esté confirmada**: el recambio no cuesta nada y el capado cuesta el post entero.
+
+**⛔⛔ Y LO PRIMERO, PORQUE ES DONDE ME IBA A EQUIVOCAR OTRA VEZ: ESTO NO ES UNA LISTA NEGRA DE PALABRAS.** Iba a escribir una y el corpus la desmontó entera. **Todas estas suenan a rastreo y todas están en posts nuestros que se repartieron:**
+
+| palabra | mejor post nuestro que la lleva |
+|---|---|
+| `perseguir` | **16.769** |
+| `rastrear` | **15.424** |
+| `base de datos` | **25.126** |
+| `cazar` | 7.851 (y el gancho de un lead magnet de 183 comentarios) |
+| `robar` | 7.172 · mediana 5.505 en 5 posts |
+| `scrapear` | 5.792 |
+
+**Si prohíbo la palabra, me cargo seis patrones que funcionan y no arreglo nada.** La mediana del corpus es 3.253: todas están por encima.
+
+**LO QUE DISPARA ES LA RECLAMACIÓN, NO EL SUSTANTIVO.** El mismo concepto, en dos formas:
+
+| forma | ejemplo real nuestro | imp |
+|---|---|---|
+| ✅ **Impersonal, del sector, en infinitivo** | `6️⃣ Grabar la llamada` (ítem de una lista de herramientas) | **165.526** |
+| ✅ **Plural, sin artículo posesivo** | `12 transcripciones de discovery` | 4.082 |
+| ⛔ **Primera persona, sobre un tercero, y enseñando el documento** | `La transcribo igual` · `La transcripción es mentira` | **133** |
+
+**EL TEST, uno solo y se hace en dos segundos:**
+> *¿Esta frase, leída por un abogado y sin el contexto del post, suena a que NOSOTROS hemos cogido datos o palabras de alguien que no nos los dio?*
+
+Si sí → se cambia el verbo o se pasa a impersonal. Si no → se queda como está, aunque la palabra suene fuerte.
+
+**RECAMBIOS QUE YA HAN FUNCIONADO:**
+
+| ⛔ | ✅ | nota |
+|---|---|---|
+| `la transcribo` | **`la apunto`** · `la dejo por escrito` · `la paso a papel` | el que voló el 20/08 |
+| `grabé la llamada` | `me quedé con lo que dijo` | ⛔ **`grabar` no vale de recambio de `transcribir`**: es más delicado, no menos |
+| `la transcripción` | `el papel` · `lo apuntado` | |
+| `te encuentro a quien decide` | **`te doy el nombre de quien decide`** | ya estaba en `post-workflow §4.5.0a 3b` por instinto, ahora con mecanismo |
+
+**⚠️ EL PELIGRO DE ESTA REGLA, dicho en voz alta: que me vuelva blando.** Proteger el post no es lijarlo. **El sinónimo pasa por la escalera de `global §2.9` igual que cualquier otro verbo**, y si sale más flojo que el original, no he terminado. `transcribo → apunto` mantuvo el ritmo y el gancho quedó 5 caracteres más corto; `transcribo → "documento el contenido de la conversación"` habría sido peor que el capado.
+
+**⚠️ Y LA FOTO NO ENTRA EN ESTA REGLA.** LinkedIn no lee la imagen (`post-workflow §4.5.0-CTA-IMAGEN`). El rótulo `TRANSCRIPCIÓN LITERAL DE UNA LLAMADA EN FRÍO` se quedó intacto y el post voló. **Si la palabra es el motor del gag, vive en la foto y sale del texto.**
+
+**⛔ ÁMBITO: solo posts y textos de LinkedIn (Iker, 2026-08-20).** La web de `recursos.neety.com` **no** entra: ahí no hay clasificador que reparta y el registro es otro.
+
 ## 3 · Cuerpo natural, no robótico (matar los AI-tells)
 
 El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el lenguaje flojo — es el **lenguaje corporativo-robótico** (equilibrado, hedgy, abstracto, lleno de conectores, sabor nota de prensa).
