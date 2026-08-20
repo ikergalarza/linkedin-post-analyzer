@@ -178,6 +178,10 @@ Al remixar una referencia hay **dos capas** y se confunden con facilidad. **Yo m
 
 **LO QUE SÍ HAY QUE CAMBIAR SIEMPRE, para que no nos pillen el calco:**
 - **La hora** que sale en la captura. **Con minuto impar** (`09:47`, no `10:46`).
+- **⭐⭐ Y TODAS las cifras visibles de la captura, no solo LA hora (Iker, 2026-08-19).** Aquí ponía "la hora" en singular porque nuestras capturas eran de un correo o un chat, donde solo hay una. **En un documento con FILAS hay una marca de tiempo por fila**, y todas se cambian: `hace 6 días`, `hace 9 horas`, contadores de reacciones, número de resultados, precios, cualquier número que se lea.
+  - **El fallo:** en la captura de la búsqueda de Google del meme del 20/08 dejé los cuatro tiempos calcados del original (**6 días, 9 horas, 21 horas, 6 días**) y encima con el 6 repetido. Iker: *"cada una de las cuatro páginas tiene un número; quiero que los cambies todos y que sean impares, y que así no se detecte la copia"*.
+  - **Las tres condiciones a la vez:** **impares** (`§2.5b`: son cifras que elegimos nosotros), **distintas entre sí** (dos filas con el mismo número cantan a plantilla) y **distintas de las del original** (que es para lo que existe esta sección). Quedaron 3 días · 7 horas · 19 horas · 5 días.
+  - **Y que sigan cuadrando con lo que cuenta cada fila:** lo que se presenta como recién salido lleva horas, y lo que se presenta como antiguo lleva días. Cambiar el número no es sortearlo.
 - **El nombre del remitente:** el del dueño de la cuenta donde se publica (Unai, Iker o Asier).
 - **El nombre del destinatario:** un **nombre común en el País Vasco**, que es de donde es la mayor parte de la audiencia. Rota y no repitas. **Ya gastados: Mikel** y **Iñaki** (meme del tatuaje, Unai, 2026-07-29). Libres: Gorka, Aitor, Jon, Ander, Eneko, Julen, Imanol, Beñat, Koldo. **Apunta aquí el que uses cada vez.**
   > ### ⛔⛔ 0a-septima-NOMBRES · EL NOMBRE INVENTADO COPIA EL SEXO DEL ORIGINAL Y LA TIERRA DE LA CUENTA (Iker, 2026-08-18)
