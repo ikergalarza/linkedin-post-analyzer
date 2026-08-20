@@ -1823,13 +1823,28 @@ function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
           · {listos} listo{listos === 1 ? '' : 's'} para enviar
           {pendientes.length > 0 ? ` · ${pendientes.length} sin dar el paso` : ''}
         </span>
-        <button
-          onClick={() => { setAscendidos([]); setErr(null); refetch(); }}
-          className="ml-auto text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 transition whitespace-nowrap"
-          title="Vuelve a mirar en LinkedIn quién te ha mandado ya la solicitud"
-        >
-          ↻ Mirar si han mandado solicitud
-        </button>
+        {/* Las dos comprobaciones son hermanas y van juntas arriba a la derecha: una
+            mira quién te ha mandado solicitud, la otra quién ya era contacto por otra
+            vía. Escondida abajo, después de la lista, la segunda no se veía. */}
+        <div className="ml-auto flex items-center gap-2 flex-wrap justify-end">
+          <button
+            onClick={() => { setAscendidos([]); setErr(null); refetch(); }}
+            className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 transition whitespace-nowrap"
+            title="Vuelve a mirar en LinkedIn quién te ha mandado ya la solicitud"
+          >
+            ↻ Mirar si han mandado solicitud
+          </button>
+          {pendientes.length > 0 && (
+            <button
+              onClick={comprobarGrado}
+              disabled={checking}
+              className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 disabled:opacity-50 transition whitespace-nowrap"
+              title="Por si alguno ya es contacto vuestro por otra vía: relee su grado de red en LinkedIn, uno por uno"
+            >
+              {checking ? 'Comprobando…' : '¿Alguno ya es contacto?'}
+            </button>
+          )}
+        </div>
       </div>
       <p className="text-[11px] text-text-muted leading-snug">
         A esta gente le pediste que te mandara ella la solicitud. En cuanto la manda sube aquí arriba con el recurso
@@ -1897,14 +1912,6 @@ function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
                 </span>
               </div>
             ))}
-            <button
-              onClick={comprobarGrado}
-              disabled={checking}
-              className="text-[11px] px-2 py-1 rounded border border-border text-text-muted hover:text-accent hover:border-accent/40 disabled:opacity-50 transition-colors"
-              title="Por si alguno ya es contacto vuestro por otra vía: relee su grado de red en LinkedIn, uno por uno"
-            >
-              {checking ? 'Comprobando…' : '¿Alguno ya es contacto?'}
-            </button>
           </div>
         )}
       </div>
