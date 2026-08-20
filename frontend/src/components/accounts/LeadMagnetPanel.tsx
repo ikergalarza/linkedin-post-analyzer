@@ -1841,7 +1841,7 @@ function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
               className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 disabled:opacity-50 transition whitespace-nowrap"
               title="Por si alguno ya es contacto vuestro por otra vía: relee su grado de red en LinkedIn, uno por uno"
             >
-              {checking ? 'Comprobando…' : '¿Alguno ya es contacto?'}
+              {checking ? 'Comprobando…' : '↻ Mirar si ya son contacto'}
             </button>
           )}
         </div>
