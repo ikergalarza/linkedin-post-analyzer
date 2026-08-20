@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { PostGroup } from './CommentCards';
 import type { PendingGroup } from './CommentCards';
+import SolicitudesGlobal from './SolicitudesGlobal';
+import type { CuentaResumen } from './SolicitudesGlobal';
 
 // RepliesPanel — the "Comentarios" sub-tab. Pick one of the managed posts
 // (newest first), see its unanswered top-level comments, generate a draft
@@ -25,6 +27,9 @@ interface Props {
 // Shape returned by GET /api/accounts/comments/pending.
 interface PendingResponse {
   groups: PendingGroup[];
+  // Una fila por cuenta del filtro, con sus solicitudes ya llegadas. La calcula
+  // el backend con UNA llamada a Unipile por cuenta.
+  cuentas?: CuentaResumen[];
   total_pending: number;
   posts_scanned: number;
 }
@@ -60,6 +65,9 @@ export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
     ? allGroups
     : allGroups.filter((g) => g.post.creator_id === choice);
   const totalPending = groups.reduce((n, g) => n + g.pending_count, 0);
+  // Las cuentas del bloque de solicitudes se filtran igual que los grupos: con
+  // una cuenta elegida, las solicitudes de las otras dos no pintan nada aqui.
+  const cuentas = (data?.cuentas ?? []).filter((c) => choice === 'all' || c.creator_id === choice);
 
   const pick = (v: string) => {
     setChoice(v);
@@ -101,6 +109,11 @@ export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
           </button>
         )}
       </div>
+
+      {/* Las solicitudes pedidas, arriba del todo y de TODAS las cuentas del
+          filtro. Ya no hace falta entrar a ningun post para verlas, que era por
+          donde se perdian leads. */}
+      {choice && cuentas.length > 0 && <SolicitudesGlobal cuentas={cuentas} />}
 
       {!choice && (
         <p className="text-center text-text-muted text-sm py-10">

@@ -1465,8 +1465,13 @@ function CommenterCard({
 // dos cubos: los que ya la mandaron (accionables, con el recurso ya escrito) y los
 // que siguen sin darla. Una persona desaparece de aquí en cuanto se le manda el
 // recurso: el backend la excluye en cuanto hay un DM enviado.
+//
+// ⚠️ `post` ES OPCIONAL DESDE EL 2026-08-20. En Comments este bloque sale arriba
+// del todo, para la cuenta entera y sin ningun post elegido: era la mitad que
+// faltaba de "a veces se me olvida entrar a lead magnets y perdemos leads".
+// Sin post no se filtra, y salen todas las solicitudes pedidas de esa cuenta.
 export function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
-  post: GridPost; creatorId: string; cfg: LmConfig; voice: Voice;
+  post?: GridPost; creatorId: string; cfg: LmConfig; voice: Voice;
 }) {
   const { data, loading, refetch } = useApi<{
     llegadas: PedidoRow[]; esperando: PedidoRow[]; aviso: string | null;
@@ -1474,9 +1479,9 @@ export function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
 
   // Solo las de ESTE post: el endpoint devuelve las de la cuenta entera.
   const llegadas = useMemo(
-    () => (data?.llegadas ?? []).filter((f) => f.post_id === post.id), [data, post.id]);
+    () => (data?.llegadas ?? []).filter((f) => !post || f.post_id === post.id), [data, post]);
   const esperando = useMemo(
-    () => (data?.esperando ?? []).filter((f) => f.post_id === post.id), [data, post.id]);
+    () => (data?.esperando ?? []).filter((f) => !post || f.post_id === post.id), [data, post]);
 
   const [texts, setTexts] = useState<Record<string, string>>({});
   const [sending, setSending] = useState<string | null>(null);
