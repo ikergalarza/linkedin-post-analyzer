@@ -1559,6 +1559,33 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔧 Mecanizado y VOLTEADO el mismo día:** el check del validador que **exigía** `(Conecta conmigo…)` ahora lo **prohíbe**, junto a toda la familia. Al hacerlo me colé dos bytes `0x08` en las regex y **lo cazó el autochequeo del propio script**, que existe justamente por el mismo fallo del 06/08. La red funcionó.
 
+#### 🚨🚨 4.5.0-PUERTAS · LOS DOS ÚNICOS POSTS CON DOBLE PUERTA SON LOS DOS ÚNICOS CAPADOS (2026-08-20)
+
+> **HIPÓTESIS ABIERTA, n=2.** No es ley todavía. Lo que SÍ está cerrado con datos es lo de abajo: **no es una palabra**.
+
+**El caso.** El 19/08 se estrenó la **doble puerta** en meme (agendar + correo, `global §4.4e-MEME`, decidida por Iker el 19/08). Los dos únicos posts que la llevan están los dos fuera de escala:
+
+| fecha | post | enlaces | ¿lleva `transcri`? | imp |
+|---|---|---|---|---|
+| 14/08 | meme Iker (descafeinado) | **1** · `eB6K6ASH` | no | **24.500** |
+| 18/08 | historia Iker (barrio) | **1** · `eB6K6ASH` | no | **8.725** |
+| **19/08** | **meme Iker (transcripción)** | **2** · `eB6K6ASH` + `eeYuXDth` | **sí** | **133** |
+| **20/08** | **meme Asier (Google)** | **2** · `egsptXWD` + `ex7GsCJs` | **no** | **49** (a 25 min) |
+
+**⛔⛔ DESCARTADO CON DATOS: NO ES LA PALABRA `transcribir` / `transcripción` (2026-08-20).** Era la hipótesis de Iker —sale en tres conjugaciones en el post del 19/08— y la mata el post siguiente: **el del 20/08 se comporta igual y no contiene `transcri` ni una vez.** Además `transcribir` no está en ninguna de las 5 familias de riesgo de `brand-voice §2c`. **Es la tercera vez que buscamos la palabra culpable y la tercera que no existe** (`prompt` 07/08, `Claude` 10/08, `transcribir` 20/08).
+
+**⛔ DESCARTADO: NO ES EL ENLACE DE AGENDAR.** `eB6K6ASH` es **la misma URL** en los cuatro posts de Iker: voló a 24.500 y 8.725 con una puerta, y se hundió a 133 con dos. El enlace está exonerado; lo que cambia es que haya **dos destinos distintos**.
+
+**⚠️ LO QUE NO SE PUEDE AFIRMAR, y va escrito para no engañarnos:**
+- **No es "contar enlaces".** Un post nuestro del 11/09/2025 lleva **6 enlaces** y hizo 4.893. Los de 2024 con "2 enlaces" repiten **la misma URL** dos veces, así que son una puerta, no dos. **La variable no es el número, es que sean DOS DESTINOS COMERCIALES NUESTROS distintos** (dos CTAs sacando del feed a la vez, familia 5 de `brand-voice §2c` en versión enlace).
+- **El del 20/08 tenía 25 minutos** cuando se midió. 49 impresiones ahí es señal, no prueba.
+- n=2, y los dos son consecutivos: podría estar confundido con cualquier otra cosa que cambiara el 19/08.
+
+**✅ LA PRUEBA, que es gratis y de UNA sola variable:** el siguiente meme sale con **UNA sola puerta** (agendar, la de siempre) y todo lo demás igual. Si vuela, la doble puerta es la causa. **Y hasta entonces la doble puerta se suspende**, porque el coste de equivocarse es un post entero a 133 impresiones y el beneficio era un clic extra.
+- Antes de tocar nada: **el test de `§4.5.0-FEED`**, que resuelve en un minuto y no hay que esperar a que se acumulen impresiones.
+
+**🔴 LA LECCIÓN DE MÉTODO, que ya es la tercera vez y por eso sube aquí:** ante un capado, **el primer reflejo de todos es buscar la palabra prohibida, y nunca ha sido una palabra.** Las tres veces la causa era un **MECANISMO** (el `Comenta "X"` en el texto, y ahora la segunda puerta). **Antes de auditar el vocabulario: lista lo que cambió de MECÁNICA y en qué fecha, y busca el post capado que NO comparte la palabra sospechosa.** Ese post es el que cierra el caso en 10 minutos.
+
 #### 🕵️ 4.5.0-FEED · EL DIAGNÓSTICO DE PRIMER NIVEL ES EL FEED, Y ES DE IKER (2026-08-18)
 
 **Por delante del semáforo de impresiones y de la banda del Explorer, va este, porque es el más rápido: recién subido el post, se abre el feed Principal desde otra cuenta y se mira si aparece.**
