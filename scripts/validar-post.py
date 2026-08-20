@@ -13,7 +13,8 @@ Lo que NO hace: no juzga si un dato es cierto, si el ángulo es aburrido o si el
 hueso del remix está bien robado. Eso es criterio y vive en global-instructions §8.
 
 Uso:
-    python scripts/validar-post.py <fichero.txt> --pilar mapa|los10|meme|leadmagnet
+    python scripts/validar-post.py <fichero.txt> --pilar mapa|los10|meme|leadmagnet|tarjeta
+    (pilar tarjeta: ademas --tarjeta <fichero con el texto de dentro de la imagen>)
                                    [--cuenta Iker|Unai|Asier]
 
 Salida: tabla de checks + "N/M". Exit 1 si hay violaciones.
@@ -423,6 +424,180 @@ def validar_entregable(texto):
     r.append((not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else ''))
     return r
 
+RE_EMOJI_TARJETA = re.compile(
+    '[\U0001F300-\U0001FAFF\U00002600-\U000027BF\U0001F1E6-\U0001F1FF⬀-⯿️]'
+)
+
+
+def validar_tarjeta(texto, card=None):
+    """Pilar TARJETA (`post-workflow §4.6`), EN PRUEBA desde 2026-08-20.
+
+    POR QUE ES UNA FUNCION APARTE Y NO 22 `if pilar in (...)` MAS
+    -------------------------------------------------------------
+    El aviso de la linea 426 dice que un pilar nuevo hay que cablearlo a los
+    gates que ya existen. Aqui la respuesta a casi todos es NO, y por un motivo
+    estructural, no por comodidad: **en una TARJETA el gancho vive DENTRO de la
+    imagen**, y el texto de LinkedIn son 150-400 caracteres que arrancan ya en
+    cuerpo. No hay hook que medir, no hay escalera, no hay bloque de dos, no hay
+    reveal. Es el mismo caso que `entregable`: otro artefacto.
+
+    Decidido gate a gate, por escrito, como manda el procedimiento:
+      · hook (formato, verbo, ancla, nº de frases, densidad de cifras) → NO.
+        El gancho esta en la imagen; el validador solo ve el texto de LinkedIn.
+      · ritmo §3.2 (bloque de dos, escalera, espejo, alternancia)      → NO.
+        Con 400 caracteres no cabe. Mismo motivo por el que el meme queda
+        fuera (`global §3.2`): la forma la decide el formato, no nuestro ritmo.
+      · menciones / empresas / regiones                                 → NO.
+        La tarjeta ataca una creencia, nunca nombra empresa ni persona.
+      · anti-IA (guion largo, coma antes de "y", openers quemados)      → SI.
+        Es copy nuestro y lo lee el ICP igual que cualquier post.
+      · cifras en digito (§3.6)                                         → SI.
+        Universal, y aqui ademas hay una cifra segura: la de P2.
+      · spam ninja de agendar + pasillo de §4.4e-PRONTO                 → SI.
+        Iker, 2026-08-20: en este pilar el ninja entra.
+      · CTA imperativo                                                  → SI,
+        pero AL REVES: aqui esta PROHIBIDO. Es lo unico que los datos
+        castigan (Alex Hormozi 0,80x, Leila 0,90x con CTA).
+
+    `card` es el texto que va DENTRO de la tarjeta, si se pasa con --tarjeta.
+    Sin el no se puede comprobar la anatomia de 3 parrafos, que es el corazon
+    del pilar, asi que su ausencia es un FALLO y no un aviso.
+    """
+    r = []
+
+    def chk(ok, nombre, detalle='', aviso=False):
+        r.append((ok, nombre, detalle, aviso))
+
+    # ---------------------------------------------------------------- TEXTO
+    m = re.search(r'[—–]', texto)
+    chk(not m, 'Sin guion largo (brand-voice §3)', 'delator de IA nº1' if m else '')
+
+    ms = re.findall(r'[^\s]+,\s+[ye]\s', texto)
+    chk(not ms, 'Sin coma antes de "y"/"e" (brand-voice §3)', f'{len(ms)}: {ms[:3]}' if ms else '')
+
+    m = re.search(OPENERS_QUEMADOS, texto, re.I)
+    chk(not m, 'Sin openers quemados (§2.8)', f'"{m.group(0)}"' if m else '')
+
+    # 150-400. El suelo importa tanto como el techo: por debajo de 150 no cabe
+    # el ninja con su pasillo, y por encima de 400 el post deja de leerse de un
+    # golpe, que es lo unico que hace funcionar al formato.
+    n = len(texto)
+    chk(150 <= n <= 400, 'TARJETA: el texto de LinkedIn cae entre 150 y 400 caracteres (§4.6-PASO-3)',
+        f'{n} caracteres. Medido en Hormozi: 1-150 da 0,95x-1,06x y 151-400 da 0,91x-1,11x; '
+        f'a partir de 900 se hunde a 0,71x')
+
+    ms = re.findall(r'#\w+', texto)
+    chk(not ms, 'TARJETA: cero hashtags (§4.6-PASO-3)', f'{len(ms)}: {ms[:3]}' if ms else
+        '0 de 14 tarjetas de Grant llevan')
+
+    ms = RE_EMOJI_TARJETA.findall(texto)
+    chk(not ms, 'TARJETA: cero emoji (§4.6-PASO-3)', f'{len(ms)}: {ms[:3]}' if ms else
+        '0 de 14 tarjetas de Grant llevan')
+
+    # El unico rasgo que los datos castigan de verdad. No confundir con el spam
+    # ninja, que es un enlace enterrado en cuerpo y NO cuenta como CTA.
+    m = re.search(r'\b(comenta|comentad|coment[aá]lo|escr[ií]beme|escribidme|desc[aá]rgat?e?|'
+                  r's[ií]gueme|seguidme|dime qu[eé] opinas|qu[eé] opinas|etiqueta a|comparte '
+                  r'esto|guarda esto)\b', texto, re.I)
+    chk(not m, 'TARJETA: sin CTA imperativo (§4.6-PASO-3)',
+        f'"{m.group(0)}" — Grant lleva 0 CTA en 75 posts, y en Hormozi el CTA rinde 0,80x y 0,90x'
+        if m else 'lo unico que los datos castigan en este formato')
+
+    # ------------------------------------------------------------ SPAM NINJA
+    tiene_agendar = 'recursos.neety.com/agendar' in texto
+    chk(tiene_agendar, 'TARJETA: lleva el spam ninja de agendar (§4.6-PASO-3)',
+        '' if tiene_agendar else 'obligatorio en este pilar; el de correo es opcional')
+
+    if tiene_agendar:
+        bs = bloques(texto)
+        idx = next((i for i, b in enumerate(bs)
+                    if any('recursos.neety.com/agendar' in l for l in b)), None)
+        # §4.4e-PRONTO se mide en BLOQUES, no en caracteres. Aqui NO hay gancho
+        # en el texto (vive en la imagen), asi que los 2 bloques se cuentan
+        # desde el principio: el enlace no puede ser el 1º ni el 2º bloque.
+        chk(idx is not None and idx >= 2,
+            'TARJETA: >=2 bloques de cuerpo antes del ninja de agendar (§4.4e-PRONTO)',
+            f'va en el bloque {(idx or 0) + 1} de {len(bs)}. El gancho vive en la imagen, asi que '
+            f'los 2 bloques se cuentan desde el inicio del texto')
+
+    if 'recursos.neety.com/correo' in texto or 'recursos.neety.com/newsletter' in texto:
+        bs = bloques(texto)
+        idx = next((i for i, b in enumerate(bs)
+                    if any(('recursos.neety.com/correo' in l or 'recursos.neety.com/newsletter' in l)
+                           for l in b)), None)
+        chk(idx is not None and idx <= len(bs) - 3,
+            'TARJETA: el ninja de correo no es el ultimo ni el penultimo bloque (§4.4e)',
+            f'va en el bloque {(idx or 0) + 1} de {len(bs)}; detras tiene que quedar cuerpo y el '
+            f'cierre punchy en su linea')
+        m = re.search(r'\b(suscr[ií]b|newsletter)\w*', texto, re.I)
+        chk(not m, 'TARJETA: sin "suscribete" ni "newsletter" en el bloque de correo (§4.4e)',
+            f'"{m.group(0)}" suena a formulario; a un industrial de 55 se le dice "esto lo mando '
+            f'por correo antes que aqui"' if m else '')
+
+    # Universal §3.6: si hay cifras, en digito.
+    ms = re.findall(r'\b(dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|veinte|treinta|'
+                    r'cuarenta|cincuenta|cien|doscientos|quinientos|seiscientos|mil)\b',
+                    texto, re.I)
+    chk(not ms, 'Cifras en digito, nunca en letra (§3.6)', f'{ms[:3]}' if ms else '')
+
+    # ------------------------------------------------------------- LA TARJETA
+    if card is None:
+        chk(False, 'TARJETA: falta el texto de la tarjeta (--tarjeta <fichero>)',
+            'sin el no se puede comprobar la anatomia de 3 parrafos, que ES el pilar '
+            '(13 de 14 en Grant)')
+        return r
+
+    card = norm(card)
+    parr = [p.strip() for p in re.split(r'\n\s*\n', card) if p.strip()]
+
+    chk(len(parr) == 3, 'TARJETA: la tarjeta tiene 3 parrafos (§4.6-PASO-1)',
+        f'{len(parr)}. Medido: 3 en 13 de 14 tarjetas de Grant. La unica de 2 es un contraste '
+        f'puro ("En culturas toxicas... / En culturas sanas...")')
+
+    if parr:
+        m = re.search(r'\d', parr[0])
+        chk(not m, 'TARJETA: P1 sin ninguna cifra (§4.6-PASO-1)',
+            f'"{m.group(0)}" en P1. Cero de catorce tarjetas de Grant llevan cifra en P1; '
+            f'la cifra vive SIEMPRE en P2' if m else '')
+
+    if len(parr) >= 3:
+        chk(len(parr[2]) < len(parr[0]) and len(parr[2]) < len(parr[1]),
+            'TARJETA: P3 es mas corta que P1 y P2 (§4.6-PASO-1)',
+            f'P1={len(parr[0])} P2={len(parr[1])} P3={len(parr[2])}. P3 es el aforismo y es lo '
+            f'que la gente repostea: 14 de 14 en Grant')
+
+    ms = re.findall(r'#\w+', card)
+    chk(not ms, 'TARJETA: cero hashtags DENTRO de la tarjeta (§4.6-PASO-1)', f'{ms[:3]}' if ms else '')
+
+    ms = RE_EMOJI_TARJETA.findall(card)
+    chk(not ms, 'TARJETA: cero emoji DENTRO de la tarjeta (§4.6-PASO-1)', f'{ms[:3]}' if ms else '')
+
+    ms = re.findall(r'https?://|www\.|@\w+', card)
+    chk(not ms, 'TARJETA: cero enlaces y cero menciones DENTRO de la tarjeta (§4.6-PASO-1)',
+        f'{ms[:3]} (el @handle de la cabecera no cuenta: no va en este fichero)' if ms else '')
+
+    # images §0h-FILTROS: el texto de dentro de la imagen es copy NUESTRO y pasa
+    # los MISMOS filtros que el cuerpo. Los tres, no solo el guion largo.
+    m = re.search(r'[—–]', card)
+    chk(not m, 'TARJETA: sin guion largo dentro de la tarjeta (images §0h-FILTROS)',
+        'el texto de la imagen es copy nuestro y pasa los mismos filtros' if m else '')
+
+    ms = re.findall(r'[^\s]+,\s+[ye]\s', card)
+    chk(not ms, 'TARJETA: sin coma antes de "y"/"e" dentro de la tarjeta (images §0h-FILTROS)',
+        f'{len(ms)}: {ms[:3]}' if ms else '')
+
+    m = re.search(OPENERS_QUEMADOS, card, re.I)
+    chk(not m, 'TARJETA: sin openers quemados dentro de la tarjeta (§2.8)',
+        f'"{m.group(0)}"' if m else '')
+
+    # La tarjeta ataca una creencia del mundo del trabajo, nunca habla de nosotros.
+    m = re.search(r'\b(neety|nuestra herramienta|nuestro producto|nosotros)\b', card, re.I)
+    chk(not m, 'TARJETA: la tarjeta no habla de Neety (§4.6-PASO-1)',
+        f'"{m.group(0)}". Las 14 de Grant atacan una creencia del mundo del trabajo: ni producto, '
+        f'ni empresa, ni "yo". En cuanto nombra la marca deja de ser este formato' if m else '')
+
+    return r
+
 # ⚠️ AL AÑADIR UN PILAR NUEVO, CABLEALO A LOS GATES QUE YA EXISTEN.
 # Iker, 2026-08-05: meti el pilar `evento` y solo le escribi SUS checks nuevos,
 # sin revisar los 22 `if pilar in (...)` que ya habia. Resultado: el validador
@@ -431,10 +606,12 @@ def validar_entregable(texto):
 # validador existe para evitar.
 # EL PROCEDIMIENTO: grep "if pilar" y decidir SI o NO para cada uno, por escrito.
 
-def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False, card=None):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
+    if pilar == 'tarjeta':
+        return validar_tarjeta(texto, card)
     bs = bloques(texto)
     hook = bs[0] if bs else []
     hook_txt = ' '.join(hook)
@@ -2258,12 +2435,25 @@ def _autochequeo():
 
 
 def main():
+    # La consola de Windows por defecto es cp1252 y el validador imprime cajas
+    # (└─), flechas y ≤. Sin esto, CUALQUIER check con detalle tumbaba el script
+    # con UnicodeEncodeError en vez de dar el marcador — y el marcador es lo
+    # unico que se pega en la entrega. Preexistente, detectado el 2026-08-20.
+    for _f in (sys.stdout, sys.stderr):
+        try:
+            _f.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     _autochequeo()
     ap = argparse.ArgumentParser()
     ap.add_argument('fichero')
     ap.add_argument('--pilar', required=True,
-                    choices=['mapa', 'los10', 'objeto', 'meme', 'leadmagnet', 'historia', 'entregable', 'evento'])
+                    choices=['mapa', 'los10', 'objeto', 'meme', 'leadmagnet', 'historia', 'entregable', 'evento', 'tarjeta'])
     ap.add_argument('--cuenta', default=None)
+    ap.add_argument('--tarjeta', default=None, dest='tarjeta',
+                    help='Fichero con el texto que va DENTRO de la tarjeta (pilar tarjeta). '
+                         'Sin el no se puede comprobar la anatomia de 3 parrafos, que ES el '
+                         'pilar, asi que su ausencia cuenta como fallo.')
     ap.add_argument('--meme-sobrio', action='store_true', dest='meme_sobrio',
                     help='Confirma que un meme para la cuenta de UNAI no es controversial. '
                          'Es controversial si CUALQUIERA de estas es que si: el chiste depende de '
@@ -2290,7 +2480,8 @@ def main():
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
-    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones)
+    card = io.open(a.tarjeta, encoding='utf-8').read() if a.tarjeta else None
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones, card)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.

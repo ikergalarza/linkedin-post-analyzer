@@ -2033,6 +2033,147 @@ La regla que más se falla, de su §1: **ni todo ni nada.** Regalar todo en el g
 
 ---
 
+### 4.6 · Runbook TARJETA (imagen sola) — EN PRUEBA, fuera de rotación (Iker, 2026-08-20)
+
+> **Estado: PRUEBA, no pilar.** 3 tarjetas en 3 semanas, una cuenta distinta cada vez, **fuera del cuadro latino de §8.2**. Se decide con datos al terminar. Entra solo si tú lo pides (§8.4).
+
+**Input del usuario:** la creencia comercial que quieres desmontar. Si no la da, pídesela.
+
+#### 4.6.0 · La evidencia, para que no se olvide de dónde sale
+
+Barrido de **153 creadores y 37.168 posts** de nuestra BD (2026-08-20). El formato es **imagen sola, sin nada de texto en LinkedIn**, y es rarísimo: **241 posts de 37.168 (0,65%)**. De los 2.278 outliers de la competencia, solo 6 son imagen-sola (0,26%). Quien lo hace de verdad:
+
+| Cuenta | Seguidores | % imagen-sola | eng. imagen | eng. resto | lift |
+|---|---|---|---|---|---|
+| Adam Grant | 5,6M | **52,0%** (39/75) | 20.408 | 10.510 | **1,94x** |
+| Alex Hormozi | 1,0M | 14,2% (65/458) | 5.477 | 3.815 | **1,44x** |
+| Leila Hormozi | 409k | 12,2% (49/403) | 1.874 | 1.578 | **1,19x** |
+
+**13 de los 15 mejores posts del año de Adam Grant son imagen sola.**
+
+**⚠️ Chris Donnelly NO cuenta como referencia viva.** Su post de 2023 (102.802 reacciones) es el origen del formato con métricas simuladas — y son **creíbles, no millonarias**: `11.096 reacciones · 274 comentarios · 429 reposts`, cuando el post real acabó 9x por encima. Pero en sus últimos 500 posts (jun-25 → ago-26) **no queda ni uno**: hoy hace texto largo con puerta de comentario. Se bajó del formato. No se puede probar que LinkedIn lo nerfeara; sí que el que lo inventó lo dejó.
+
+#### ⛔ 4.6-RIESGO · LOS DOS AVISOS QUE VAN ANTES DEL BORRADOR
+
+**1. Este formato QUITA comentarios.** Medido en las tres cuentas, sin una sola excepción:
+
+| | comentarios/likes imagen | resto | reposts/likes imagen | resto |
+|---|---|---|---|---|
+| Adam Grant | **3,2%** | 5,0% | **5,5%** | 4,7% |
+| Alex Hormozi | **9,9%** | 14,2% | **4,5%** | 3,8% |
+| Leila Hormozi | **13,1%** | 15,7% | **4,2%** | 3,2% |
+
+Es una **máquina de alcance y repost, no de conversación**. → **Se juzga por alcance y reposts, NUNCA por comentarios.** Y por eso no puede tocar el slot del lead magnet, que vive del conteo.
+
+**2. Ninguna cuenta pequeña de la BD lo ha hecho funcionar.** Todas las de menos de ~150k seguidores que lo intentaron tienen lift < 1: Matt Lakajev 0,23x · Kimberly Price 0,39x · Álvaro Fontela 0,29x · Edson Noyola 0,09x. Son muestras de 1-5 posts y probablemente ni siquiera este formato, así que **no es doctrina** — pero la dirección es unánime y nosotros estamos en 126-146 de engagement medio, no en 15.000. **Por eso es prueba y no pilar.**
+
+#### 4.6-PASO-1 · La tarjeta: 3 párrafos, y el orden no se toca
+
+Anatomía medida sobre **14 de 14 tarjetas de Adam Grant**, leídas una a una:
+
+| Rasgo | Medida |
+|---|---|
+| Párrafos | **3 en 13 de 14** (la otra son 2, contraste puro) |
+| Cifra en P1 | **0 de 14** |
+| Dato en P2 | 5 de 14 (`24 experiments:` · `6 studies:` · `Study of problem-solving teams:` · `Data on >34k stars`) |
+| P3 aforismo | **14 de 14**, siempre más corta que P1 y P2 |
+| Hashtags / emoji / enlaces / menciones | **0 de 14** |
+| Barra de métricas | **recortada en 14 de 14** |
+
+```
+P1   LA CREENCIA FALSA del mundo comercial. SIN cifra. 1-2 líneas.
+     (línea en blanco)
+P2   LA EVIDENCIA. Abre nombrando la fuente. Aquí SÍ va la cifra.
+     (línea en blanco)
+P3   EL AFORISMO. Más corto que P1 y P2. Es lo que se comparte.
+```
+
+**Los 3 submoldes de P1, por frecuencia medida:**
+1. **Negación + afirmación** — `No es X. Es Y.` El más frecuente. De Grant: *"The cure for ignorance is not information. It's humility and curiosity."*
+2. **Afirmación tajante** sobre un colectivo. De Grant: *"Too many mediocre men talk over capable women."*
+3. **Vocativo de regañina al jefe** — `Hey leaders:` / `Dear leaders:`, 2 de 14. Traducido: **`Directores comerciales:`**. Es el que más cerca queda de nuestro ICP y del motor de rabia que ya sabemos que funciona.
+
+**El tema: las 14 atacan una creencia del MUNDO DEL TRABAJO.** Ni producto, ni empresa, ni "yo". En cuanto la tarjeta habla de Neety, deja de ser este formato.
+
+- **La cifra de P2 va verificada contra fuente real** y se cita **el nombre, nunca el año** (`global §3.5b`). El año va en la entrega interna, para responder en comentarios.
+- **⛔ Y P1 NUNCA lleva cifra.** Cero de catorce.
+
+#### 4.6-PASO-2 · El artefacto (registro screenshot documental, `images §3` registro 2)
+
+**La tarjeta finge ser un post de X.** Eso la mete de lleno en `images §0a-sexta-ter`, que ya lo dice con estas palabras: *"a veces tenemos que ser tan fieles a las referencias que sí hay que hacerlo, como cuando calcamos algo de Twitter y copiamos hasta los colores"*.
+
+**→ NO entra la marca: ni paleta Neety, ni Bricolage/Switzer, ni palabra naranja.** Es una falsificación, y una falsificación con la tipografía de la marca es una falsificación mala.
+
+```
+[avatar REAL del jefe]  Nombre exacto ✔ (check azul)
+                        @handle
+                                        ← RECORTE AQUÍ. Nunca la barra de métricas.
+
+P1
+(blanco)
+P2
+(blanco)
+P3
+```
+
+**Paleta medida (rota, y nunca dos seguidas iguales):**
+
+| HEX | Tono | Veces en las 14 |
+|---|---|---|
+| `#FFFFE5` | crema | 2 |
+| `#F3FFFF` | azul hielo | 3 |
+| `#F1FEEC` | verde menta | 3 |
+| `#F2E2E5` | rosa polvo | 2 |
+| `#FEFBF4` | marfil | 1 |
+| `#FFFFFF` | blanco | 3 |
+
+Texto `#0F1419`, sans, **cuerpo grande**. Grant va de 0,91 a 1,00 de ratio; nosotros **1:1 y 800x800**, que es lo que manda `images §0b` sin excepciones y además cae dentro de su rango.
+
+**⛔ NUNCA APAISADO.** Andy Elliott es el único de la BD que lo hace apaisado (1,55-1,74) y es el que peor rinde del grupo.
+
+**⛔ Y NUNCA MÉTRICAS FALSAS.** Los tres que viven del formato hoy recortan por encima de la barra de likes. El único que las puso se bajó del formato. No hay razón para heredar la parte que ya no sostiene nadie.
+
+#### 4.6-PASO-3 · El texto de LinkedIn
+
+**150-400 caracteres.** La tarjeta **ES el gancho**, así que el texto **arranca ya en cuerpo**: no repite la frase de la tarjeta ni explica la imagen (`global §2.0c`).
+
+**Que el texto entre no es opinión, está medido** en las cuentas de referencia:
+
+| chars | Alex Hormozi | Leila Hormozi |
+|---|---|---|
+| 0 | 1,00x (n=65) | 1,00x (n=49) |
+| **1-150** | **0,95x (n=111)** | **1,06x (n=114)** |
+| **151-400** | **0,91x (n=49)** | **1,11x (n=39)** |
+
+Con muestras de más de 100 posts, el texto corto es **neutro o sube**.
+
+**Lo que SÍ penaliza es el CTA imperativo:** Alex 0,80x y Leila 0,90x contra sus propios posts sin CTA. Recuento de CTA: Grant **0 de 75**, Alex 11 de 393, Leila 8 de 353.
+
+- **✅ Spam ninja de agendar: OBLIGATORIO**, en su posición canónica. No es un CTA imperativo — es un enlace enterrado en cuerpo, y la doble puerta ya está refutada como no-capadora (`§4.5.0-PUERTAS`).
+- **⚠️ Spam ninja de correo: OPCIONAL post a post**, igual que en meme (`global §4.4e-MEME`).
+- **⛔ CTA imperativo: PROHIBIDO.** Nada de `comenta`, `descarga`, `sígueme`, `dime qué opinas`.
+- **⛔ Hashtags y emoji: CERO**, dentro y fuera de la tarjeta.
+
+**El pasillo de `§4.4e-PRONTO`, resuelto para este pilar:** esa regla exige ≥2 bloques de cuerpo entre el gancho y el ninja de agendar. Aquí el gancho vive en la imagen, así que **se siguen contando 2 bloques desde el inicio del texto**, lo que deja el enlace sobre el carácter 200.
+
+**⛔ Y las reglas de ritmo de `global §3.2` NO aplican**, por el mismo motivo por el que no aplican al meme: con 150-400 caracteres no hay sitio para escalera, par obligatorio ni alternancia de bloques. Forzarlas aquí es inventarse un post largo que este formato no tiene.
+
+#### 4.6-PASO-4 · Validación y entrega
+
+```bash
+python scripts/validar-post.py <fichero.txt> --pilar tarjeta [--cuenta X]
+```
+
+Entrega, fuera del bloque: la línea del validador, el tag de viralidad, los **dos avisos de `§4.6-RIESGO`**, el prompt de la tarjeta y **el año de la fuente de P2**.
+
+**Al publicar, al historial** (`docs/skills/historial-publicaciones.md`): cuenta, fecha, creencia atacada, fondo usado y **alcance + reposts** (no comentarios).
+
+#### 4.6-PENDIENTE · El handle
+
+La tarjeta lleva un `@`. Iker (2026-08-20) decidió **ser fiel a la referencia y simular X**, con el mismo criterio que ya se aplica a los memes que simulan capturas: *"cuando subimos memes que simulan capturas, casi siempre son capturas de personas que en Twitter no existen"*. **Falta decidir el handle exacto de cada cuenta antes de la primera tarjeta.**
+
+---
+
 ## 5 · Dónde el círculo SE PARA y te devuelve (gates humanos — aquí mandan las skills)
 El playbook empuja autonomía total; para posts quedan estas paradas, pero **más ligeras que antes** (ahora Claude rellena, tú validas, no rellenas desde cero):
 1. **Empresas y menciones @:** Claude las **rellena con reales verificadas** (§4.0) y te da la lista "revisa estas". Tu trabajo pasa de *rellenar* a *dar el visto bueno* — salvo lo que quede marcado `[PENDIENTE · no verificado]`, que sí completas tú.

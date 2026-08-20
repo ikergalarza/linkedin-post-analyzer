@@ -1062,5 +1062,74 @@ Una infografía (tabla/diagrama/multi-caja resumiendo herramientas/pasos) va 0-d
 - **Mapa regional** → la imagen del POST la hace el USUARIO (captura de la web PamPam); el workflow NO genera imagen de post para mapas (entrega un CSV para PamPam en su lugar — ver `post-workflow §4.2`). Esta skill no aplica al mapa. **Excepción que NO es imagen de post:** el workflow sí entrega una **foto de portada de la región para la web del mapa** (`post-workflow §4.2` Paso 11) — no se genera ni se diseña, se busca en **fuentes de licencia libre** (Wikimedia Commons / Unsplash / Pexels), nunca en Google Imágenes, y se entrega con licencia y autor.
 - **"Los 10"** → orla de retratos (cabezas), NO personas sobre mapa. Cabecera fuerte en paleta Neety, palabra clave en naranja (validado: "LOS 10 QUE **LEVANTAN** LA INDUSTRIA VASCA", 4.81x). **El usuario la monta con SU plantilla en otra herramienta**; el workflow NO genera la imagen — entrega las **10 fotos en un ZIP en orden de mención** + **los 2 PROMPTS literales** para su plantilla (`post-workflow §4.3` Paso 6b: uno cambia el gentilicio de la cabecera, otro inserta las caras sin deformarlas).
 - **Meme** → §6 (o calcar referencia, §5-B).
+- **TARJETA** (pilar en prueba, `post-workflow §4.6`) → **tarjeta que finge un post de X**, registro 2 con la excepción de `§0a-sexta-ter`: sin paleta Neety, sin Bricolage/Switzer y sin palabra naranja. Ver `§9`.
 - **Deseo / números** → screenshot documental real (registro 2).
 - **Personal / founder / lead-magnet / evento** → foto natural real (registro 3). En eventos: selfie/grupo/microfonados/detalle (vino en mano).
+
+---
+
+## 9 · 🐦 LA TARJETA DE X (pilar TARJETA, en prueba — Iker, 2026-08-20)
+
+> Artefacto del pilar `TARJETA` (`post-workflow §4.6`). Es **registro 2 (screenshot documental)** con la excepción de `§0a-sexta-ter` aplicada entera: **la marca no entra**.
+
+### 9.1 · Por qué la marca NO entra aquí
+
+La tarjeta **finge ser un post de X**. `§0a-sexta-ter` ya nombra este caso con estas palabras: *"a veces tenemos que ser tan fieles a las referencias que sí hay que hacerlo, como cuando calcamos algo de Twitter y copiamos hasta los colores"*. Y `§0a-sexta-bis` lo cierra: **en este registro el realismo ES la credibilidad**.
+
+| | Pieza nuestra | **Tarjeta de X** |
+|---|---|---|
+| Color | paleta Neety | **los de X y los fondos medidos abajo** |
+| Tipografía | Bricolage + Switzer | **sans neutra, la de X** |
+| Palabra naranja | sí, UNA | **ninguna** |
+| Logo Neety | nunca | nunca |
+
+### 9.2 · La anatomía, medida sobre 14 tarjetas de Adam Grant
+
+```
+[avatar REAL del jefe, circular]  Nombre exacto  ✔ (check azul de X)
+                                  @handle en gris
+                                                  ← RECORTE AQUÍ
+
+P1   la creencia falsa · SIN cifra · 1-2 líneas
+     (línea en blanco)
+P2   la evidencia · abre nombrando la fuente · aquí SÍ va la cifra
+     (línea en blanco)
+P3   el aforismo · más corto que P1 y P2
+```
+
+- **3 párrafos en 13 de 14.** El único de 2 es un contraste puro (`En culturas tóxicas… / En culturas sanas…`).
+- **P3 siempre es la más corta.** Es la frase que la gente repostea.
+- **0 hashtags, 0 emoji, 0 enlaces, 0 menciones** dentro de la tarjeta. Cero de catorce.
+
+### 9.3 · ⛔ LA BARRA DE MÉTRICAS SE RECORTA. SIEMPRE.
+
+**Las 14 tarjetas de Grant están recortadas por encima de la barra de likes.** Las de Alex y Leila Hormozi, también. **No se ve ni un número.**
+
+El único creador de la BD que puso métricas simuladas es **Chris Donnelly, en 2023** (`11.096 reacciones · 274 comentarios · 429 reposts` en un post que acabó haciendo 102.802 reacciones, o sea 9x lo que la imagen decía). En sus últimos 500 posts **no queda ninguna**. Se bajó del formato.
+
+**No heredamos la parte que ya no sostiene nadie.** Además es la parte que nos obligaría a poner una cifra inventada en una imagen, que es exactamente lo que `CLAUDE.md` prohíbe en su primera línea.
+
+### 9.4 · La paleta (extraída de los ficheros, no de memoria)
+
+| HEX | Tono | Veces en las 14 |
+|---|---|---|
+| `#FFFFE5` | crema | 2 |
+| `#F3FFFF` | azul hielo | 3 |
+| `#F1FEEC` | verde menta | 3 |
+| `#F2E2E5` | rosa polvo | 2 |
+| `#FEFBF4` | marfil | 1 |
+| `#FFFFFF` | blanco | 3 |
+
+- **Todos son pasteles casi blancos, con un degradado radial muy suave.** Nunca un color saturado, nunca un fondo oscuro.
+- **Rotan: nunca dos tarjetas seguidas con el mismo fondo.** Se apunta el usado en `historial-publicaciones.md`.
+- **Texto `#0F1419`** (el casi-negro de X), sans, **cuerpo grande**: el bloque de texto ocupa casi todo el ancho.
+- ⚠️ **Ojo, ese fondo NO es de X.** X es blanco, gris oscuro o negro. El pastel es lo que hace que la tarjeta sea **un idioma visual y no la falsificación de un tuit concreto** — y es también lo que la separa de las 10.000 capturas grises que ya circulan.
+
+### 9.5 · Formato
+
+- **1:1, 800x800.** Manda `§0b` sin excepciones, y además cae dentro del rango medido de Grant (0,91-1,00).
+- **⛔ NUNCA APAISADO.** Andy Elliott es el único de la BD que lo hace apaisado (1,55-1,74) y es el que peor rinde de los que usan el formato.
+
+### 9.6 · El texto de la tarjeta pasa los mismos filtros que el cuerpo
+
+`§0h-FILTROS` aplica entero: lo que va dentro de la imagen **es copy nuestro**. La cifra de P2 va verificada contra fuente real, se cita el **nombre y nunca el año** (`global §3.5b`), y no se inventa ni una empresa ni una persona.
