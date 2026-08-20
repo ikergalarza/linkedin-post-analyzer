@@ -573,6 +573,13 @@ Son artefactos distintos con reglas opuestas. **No apliques la del post a la ima
 - ❌ **Caso real:** el hook se corrigió a *"En ventas, el pedido encoge…"* porque "pedido" es ancla ambigua… y el título de la imagen se quedó en **"LA VIDA DE UN PEDIDO"**, igual de genérico. Lo puede firmar un jefe de logística. Se arregló el hook y se dejó el mismo agujero al lado.
 - ✅ **Corregido a "EL PEDIDO SUBE. LA VENTA NO."** — ancla fuerte ("VENTA") y encima cuenta el chiste.
 
+**1-bis · ⛔ SI LA IMAGEN TIENE VARIOS ELEMENTOS, EL ANCLA VA EN TODOS, NO EN UNO (Iker, 2026-08-19).** La regla de arriba se escribió pensando en imágenes con UN título. Cuando la pieza es un documento con varias filas —4 resultados de un buscador, las líneas de un chat, las filas de una tabla, los turnos de una transcripción— **cada una es una oportunidad de ancla, y dejar solo una anclada desperdicia el resto**.
+
+- **El caso:** la primera versión del meme de la búsqueda de Google salió con 4 resultados y **solo el segundo hablaba de ventas**. Iker: *"en esta foto solo la segunda búsqueda se ha adaptado a ventas, así que estaría bien que se adapten las cuatro"*.
+- **Y el que más manda es el campo de búsqueda**, o la cabecera del documento, que es lo primero que se lee: ahí el ancla no es opcional. `como hacer que mi mensaje no parezca escrito por una ia` → **`hacer que mi mensaje de ventas no parezca ia`**, que además es más corto y cabe a más tamaño.
+- **⚠️ Pero se ancla VARIANDO el vocabulario del oficio**, no repitiendo `de ventas` cuatro veces: mensaje en frío, comercial, prospecto, cliente, equipo comercial. Cuatro filas con la misma coletilla se leen a plantilla y delatan que lo hemos fabricado.
+- **Y si un elemento existe para atar el meme al carril de la cuenta** (aquí, el resultado del foro de desarrollo, que es lo que lo hace de Asier), **ese no se sacrifica: se ancla también**, cruzando las dos cosas — *un programador montó el limpiador que le pidió el equipo de ventas*.
+
 **1b · ⭐ EL TÍTULO ES UN SEGUNDO GANCHO: CORTO, PUNCHY Y GENERICO** (Iker, 2026-07-20).
 No basta con que ancle a ventas y no repita el hook. **Se le exige lo MISMO que al gancho del post**, porque compite con el en la misma pantalla:
 - **CORTO.** 3-5 palabras. Si necesita una subordinada, no es un titulo, es una frase.
