@@ -74,12 +74,19 @@ Tras la cancelación de MailerLite (`§0b`), migramos a Brevo. Esto no es "monta
 - **Las bajas van en los DOS sentidos**, que antes no. La dirección CRM → proveedor estaba escrita pero no se llamaba: quien se daba de baja por el enlace del correo seguía en la lista del proveedor.
 - **Los contactos suben a GOTEO, no por importación masiva** — y es una decisión de riesgo, no técnica. Brevo tiene `POST /contacts/import` (una llamada, hasta 10 MB), pero **la señal nº 1 de las seis que dibujaron el perfil de spammer en MailerLite fue "cuenta nueva importando 1.310 contactos por API, sin pasar por ningún formulario"**. Ese endpoint en una cuenta recién abierta es literalmente ese patrón. El goteo de altas individuales es indistinguible de una app que da de alta gente según se registra. Con ~50 contactos tarda seis segundos: no hay nada que optimizar.
 
+### ✅ El dominio, cerrado el 2026-08-20 (comprobado en el DNS, no solo en el panel)
+
+`neety.com` está **autenticado de verdad**: DKIM puesto por la conexión automática de Brevo con Cloudflare, resolviendo, con dos claves RSA 2048.
+
+- 🔴 **La trampa al comprobarlo:** la conexión **automática** deja **CNAME** en `brevo1._domainkey` y `brevo2._domainkey`; la **manual** deja **TXT** en `mail._domainkey`. Preguntar solo por TXT da "no existe" con el dominio perfectamente autenticado. Se consulta por los dos tipos y contra el NS autoritativo.
+- **El SPF no necesita a Brevo:** DMARC pasa si alinea SPF **o** DKIM, y DKIM ya alinea. No es un olvido.
+- **Se envía desde `neety.com` directo, no desde subdominio** (decisión de Iker). El punto 1 de abajo queda CERRADO por decisión, no por olvido: no se vuelve a proponer salvo incidente de entregabilidad. El coste asumido es que la reputación del envío masivo y la del correo comercial de los founders son la misma.
+- **`hola@neety.com` va en los dos sentidos** desde que se activó el Grupo de Workspace: se le escribe y las respuestas llegan.
+- 🧹 Queda quitar el `include:_spf.mlsend.com` de la cuenta cancelada. No bloquea; autoriza a un proveedor muerto (`§10`).
+
 ### 🔴 Lo que sigue pendiente y es de Iker
 
-El estado vivo, en orden, está en `historial-newsletter.md`. Lo que NO se puede dar por hecho:
-
-- **No consta si el dominio verificado en Brevo es `neety.com` directo o un subdominio de envío.** Si es el directo, el punto 1 de abajo sigue abierto. PREGUNTAR, no adivinar.
-- El SPF de `neety.com` **todavía apunta a MailerLite** (`include:_spf.mlsend.com`), de la cuenta cancelada (`§10`).
+El estado vivo, en orden, está en `historial-newsletter.md`.
 
 ### Lo que se le pide a Iker, y por qué es él y no Mario quien lo decide
 

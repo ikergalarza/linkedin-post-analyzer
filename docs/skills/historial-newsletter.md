@@ -12,13 +12,24 @@ Cuenta de Brevo creada, dominio conectado desde Cloudflare y verificado, API key
 - **Los tres bloques y cuál se rompió:** recursos.neety.com capta el lead → el CRM lo lee (`resources_leads.js`, solo lectura) y es la fuente de la verdad → el proveedor envía. **Solo se rompió el tercero.** `neety-resources` no tiene ni una referencia al proveedor: es agnóstico por diseño y no se tocó.
 - **Las bajas van ahora en los DOS sentidos.** Antes solo entraban (webhook del proveedor → CRM). La dirección CRM → proveedor existía escrita pero **no se llamaba desde ningún sitio**: quien se daba de baja por el enlace del correo seguía en la lista del proveedor y habría recibido la siguiente campaña. Cerrado el 2026-08-20.
 
+### ✅ DNS y dominio: VERIFICADO EN EL DNS REAL el 2026-08-20 (no solo en el panel)
+
+- **DKIM de Brevo: puesto y resolviendo.** `brevo1._domainkey.neety.com` y `brevo2._domainkey.neety.com` son **CNAME** a `b1/b2.neety-com.dkim.brevo.com`, cada uno con su clave RSA 2048. Lo montó la conexión automática de Brevo con Cloudflare.
+- 🔴 **TRAMPA AL COMPROBARLO: la conexión AUTOMÁTICA usa CNAME en `brevo1`/`brevo2`, la MANUAL usa TXT en `mail._domainkey`.** Preguntar por TXT en `mail._domainkey` da "no existe" con el dominio perfectamente autenticado, y parece que falta el DKIM cuando está. **Se consulta por CNAME y TXT, en los dos selectores, y contra el NS autoritativo** (`bristol.ns.cloudflare.com`), no contra un resolver público que cachea negativos.
+- **El SPF NO necesita a Brevo, y no es un olvido.** DMARC pasa si alinea SPF **o** DKIM; con DKIM firmando como `neety.com` ya alinea, y Brevo usa su propio return-path. Añadir `include:spf.brevo.com` no aporta nada.
+- **Se envía desde `neety.com` DIRECTO, no desde un subdominio** (decisión de Iker, 2026-08-20). ⚠️ Significa que la reputación del envío masivo y la del correo comercial de los founders son la misma: una campaña marcada como spam la paga también `iker@neety.com` prospectando. Con DMARC en `p=none` no hay rechazo inmediato. **No se vuelve a proponer el subdominio salvo que haya un incidente de entregabilidad.**
+- **`hola@neety.com` funciona en los dos sentidos** desde que se activó el Grupo de Google Workspace (2026-08-20): se le puede escribir y las respuestas llegan. Es la condición que sostiene el correo 0, cuya métrica son las RESPUESTAS.
+- 🧹 **Queda el `include:_spf.mlsend.com`** de la cuenta cancelada. No bloquea nada, pero autoriza a cualquier cliente de MailerLite a pasar SPF como `neety.com`. Se quita dejando `v=spf1 include:_spf.google.com a mx ~all`.
+- 🧹 **`news.neety.com` tiene un SPF de HubSpot** (`include:145372616.spf10.hubspotemail.net`), resto de otra herramienta. Inofensivo hoy porque es otro subdominio; hay que limpiarlo si algún día se usa `news.` para enviar.
+- **DMARC:** `p=none`, con reportes a Cloudflare. **MX:** `smtp.google.com` (Workspace).
+
 ### 🔴 Pendiente antes de enviar nada (en orden)
 1. **Rearmar el espejo de cada audiencia a mano** en Marketing → Audiencias. La migración las apagó todas a propósito: los ids guardados eran de grupos de MailerLite y el worker los habría usado para empujar contactos a listas equivocadas.
 2. **Registrar el webhook de bajas** (Integraciones → "Registrar webhook de bajas"). Sin esto, una baja hecha en Brevo no llega al CRM.
 3. **Probar con 2-3 correos internos** antes de tocar la audiencia buena. Ningún OK de la API prueba un envío: se verifica leyendo el buzón.
-4. **Decidir el subdominio de envío** (`mail.` o `news.neety.com`). ⚠️ **Dato que falta: no consta si el dominio verificado en Brevo es `neety.com` directo o un subdominio.** Si es el directo, sigue pendiente la corrección estructural más grande que hay disponible (`email-marketing §0c` punto 1). PREGUNTAR, no adivinar.
-5. **Sustituir el SPF de MailerLite** en el TXT de `neety.com` por el de Brevo (`email-marketing §10`).
-6. Plan de pago activo, lista de supresión desde el CRM, y el resto del runbook de `§0c`.
+4. **Plan de pago activo, idioma de la cuenta en español**, y escribir a soporte de Brevo presentando la cuenta antes del primer envío grande.
+5. **Lista de supresión desde el CRM** (clientes + prospectos con conversación abierta + las 5 bajas y los 7 rebotes del rescate), ANTES de subir la lista buena.
+6. El resto del runbook de `§0c`. ✅ El DNS ya NO está pendiente: ver el bloque de arriba.
 
 ## 🔴 ESTADO ANTERIOR: CUENTA MAILERLITE CANCELADA (2026-08-11)
 MailerLite canceló la cuenta 2536617 por supuesta violación de la política anti-spam, tras 3 envíos y 191 correos. **La tanda 3 (337) nunca llegó a salir y la 4 no se montó.** Post-mortem completo en `email-marketing §0b`.
