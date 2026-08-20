@@ -37,10 +37,20 @@ export interface PendingGroup {
   // Su pilar es `lead_magnet`: al desplegarlo se monta el workspace entero en
   // vez de las tarjetas de comentario sueltas.
   es_lead_magnet?: boolean;
-  // Personas que comentaron y siguen sin su recurso. Es la segunda razon por la
-  // que un post puede estar en esta lista, y en un lead magnet contestado del
-  // todo es la UNICA.
-  recursos_pendientes?: number;
+  // ⛔ LAS TRES CUENTAS DEL LEAD MAGNET, Y NO UNA (Iker, 2026-08-20). Habia un
+  // solo `recursos_pendientes` que contaba "comentaristas sin recurso", y saco un
+  // post con "18 sin mandar" donde no habia UNA sola persona a la que pudieras
+  // mandarle nada: eran 18 esperando a que ellos dieran el paso. Pendiente no es
+  // lo mismo que disponible.
+  //
+  // accionables       → puedes actuar YA (DM directo, DM a su solicitud, o
+  //                     pedirle el paso porque aun no se lo has pedido)
+  // esperando_su_paso → ya se lo pediste y no lo ha dado. La pelota es suya y
+  //                     por si sola NO saca el post en esta lista.
+  // fallidos          → el DM salio y NO llego. Hay que volver a escribirle.
+  accionables?: number;
+  esperando_su_paso?: number;
+  fallidos?: number;
 }
 
 // One post + its pending comments. Shows the first PER_POST comments with
@@ -63,11 +73,14 @@ export function PostGroup({ group, children }: { group: PendingGroup; children?:
   const { post } = group;
   const threads = group.pending_threads.filter((t) => !dismissed.has(t.id));
   const esLm = !!group.es_lead_magnet;
-  const recursos = group.recursos_pendientes ?? 0;
-  // ⛔ EN UN LEAD MAGNET NO SE PLIEGA POR NO QUEDAR COMENTARIOS. Un lead magnet
-  // contestado del todo puede seguir debiendo doce recursos, y esa es justo la
-  // fila que no puede desaparecer.
-  if (threads.length === 0 && !(esLm && recursos > 0)) return null;
+  const accionables = group.accionables ?? 0;
+  const esperando = group.esperando_su_paso ?? 0;
+  const fallidos = group.fallidos ?? 0;
+  // ⛔ EN UN LEAD MAGNET NO SE PLIEGA POR NO QUEDAR COMENTARIOS: puede seguir
+  // debiendo recursos. Pero `esperando_su_paso` NO cuenta para quedarse: si lo
+  // unico que hay es gente a la que ya le pediste la solicitud, aqui no puedes
+  // hacer nada y el post solo te haria abrirlo para nada.
+  if (threads.length === 0 && !(esLm && (accionables > 0 || fallidos > 0))) return null;
 
   const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 160);
 
@@ -94,16 +107,35 @@ export function PostGroup({ group, children }: { group: PendingGroup; children?:
               Lead Magnet
             </span>
           )}
-          {/* Las dos deudas, por separado y con su color. Juntarlas en un solo
-              numero esconderia justo la que se olvida: la de los recursos. */}
+          {/* Cada deuda con su color, y separadas. Juntarlas en un numero solo
+              esconde la que importa y mezcla trabajo con espera. */}
           {threads.length > 0 && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
               {threads.length} sin responder
             </span>
           )}
-          {recursos > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
-              {recursos} sin mandar
+          {accionables > 0 && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap"
+              title="Puedes actuar ya: mandarles el recurso por privado, o pedirles la solicitud a los que aún no se la has pedido"
+            >
+              {accionables} para actuar
+            </span>
+          )}
+          {fallidos > 0 && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/30 whitespace-nowrap"
+              title="El envío salió y NO llegó. Dentro, el filtro «Fallidos» los deja solos para reintentar."
+            >
+              {fallidos} fallidos
+            </span>
+          )}
+          {/* En gris y sin borde a proposito: NO es trabajo tuyo, es gente a la
+              que ya le pediste la solicitud y no la ha mandado. Se dice para que
+              el numero de arriba no parezca que se ha perdido a alguien. */}
+          {esperando > 0 && (
+            <span className="text-[10px] text-text-muted whitespace-nowrap" title="Ya les pediste la solicitud y no la han mandado. No hay nada que puedas hacer con ellos ahora.">
+              · {esperando} esperando su paso
             </span>
           )}
         </div>

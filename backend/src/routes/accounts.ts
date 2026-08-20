@@ -2392,23 +2392,71 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
       params
     );
 
-    // A quien de cada lead magnet YA se le mando el recurso. Una sola consulta
-    // para todos los posts, no una por post: son 30 posts como mucho y esto es
-    // la parte barata (la cara es leer los comentarios de LinkedIn).
+    // ⛔ PENDIENTE NO ES LO MISMO QUE DISPONIBLE (Iker, 2026-08-20).
+    //
+    // La primera version contaba "comentaristas sin recurso" y eso saco un post
+    // con "18 sin mandar" en el que, al abrirlo, no habia UNA sola persona a la
+    // que pudieras mandarle nada: eran 18 esperando a que ellos dieran el paso.
+    // Un contador que no se corresponde con ningun trabajo posible es peor que
+    // no tener contador, porque te hace abrir el post para nada.
+    //
+    // Asi que se cuentan tres cosas distintas:
+    //   · accionables → puedes actuar YA: 1er grado o nos mando solicitud (DM), o
+    //                   todavia no le hemos pedido el paso (respuesta publica).
+    //   · esperando   → ya le pedimos el paso y no lo ha dado. La pelota es suya.
+    //   · fallidos    → el DM salio y NO llego. Hay que volver a escribirle.
+    // Y el post solo entra en la lista si hay accionables o fallidos.
     const idsLm = posts.filter((p) => p.pillar === 'lead_magnet').map((p) => p.id);
-    const enviadosPorPost = new Map<string, Set<string>>();
+    const dmEnviadoPorPost = new Map<string, Set<string>>();
+    const dmFallidoPorPost = new Map<string, Set<string>>();
+    const askPorPost = new Map<string, Set<string>>();
     if (idsLm.length > 0) {
       const { rows: envios } = await pool.query(
-        `SELECT post_id, provider_id FROM lead_magnet_sends
-          WHERE post_id = ANY($1::uuid[]) AND kind = 'dm' AND status = 'sent'`,
+        `SELECT post_id, provider_id, kind, status FROM lead_magnet_sends
+          WHERE post_id = ANY($1::uuid[])`,
         [idsLm]
       );
+      const meter = (m: Map<string, Set<string>>, k: string, v: string) => {
+        const set = m.get(k) ?? new Set<string>();
+        set.add(v);
+        m.set(k, set);
+      };
       for (const e of envios) {
-        const set = enviadosPorPost.get(e.post_id) ?? new Set<string>();
-        set.add(e.provider_id);
-        enviadosPorPost.set(e.post_id, set);
+        // El inmail cuenta como entregado igual que el DM: los dos son el recurso
+        // ya en su buzon, y volver a mandarlo es el mismo mensaje repetido.
+        if ((e.kind === 'dm' || e.kind === 'inmail') && e.status === 'sent') {
+          meter(dmEnviadoPorPost, e.post_id, e.provider_id);
+        } else if (e.kind === 'dm' && e.status === 'failed') {
+          meter(dmFallidoPorPost, e.post_id, e.provider_id);
+        } else if (e.kind === 'ask' && e.status === 'sent') {
+          meter(askPorPost, e.post_id, e.provider_id);
+        }
       }
     }
+
+    // Las invitaciones recibidas, UNA llamada por cuenta y ANTES del barrido:
+    // hacen falta para saber a quien se le puede escribir ya. Es la misma lista
+    // que luego alimenta el bloque de solicitudes de arriba, asi que se pide una
+    // sola vez para las dos cosas.
+    const cuentasUnicas = [...new Map(posts.map((p) => [p.creator_id, p])).values()];
+    const invitacionesPorCuenta = new Map<string, Set<string>>();
+    const avisosPorCuenta = new Map<string, string>();
+    await Promise.all(cuentasUnicas.map(async (c) => {
+      if (!c.unipile_account_id) return;
+      try {
+        const recibidas = await unipileService.getReceivedInvitations(c.unipile_account_id);
+        invitacionesPorCuenta.set(c.creator_id, new Set(recibidas.map((i) => i.inviter_id)));
+      } catch (err: any) {
+        // Un fallo aqui NO tumba la pantalla: la cuenta sale con su aviso y los
+        // comentarios pendientes se siguen viendo. Quedarse sin panel por no
+        // poder leer unas invitaciones seria el peor cambio posible.
+        avisosPorCuenta.set(
+          c.creator_id,
+          `No he podido leer las solicitudes recibidas de ${c.creator_name || 'esta cuenta'} (${err?.message}).`
+        );
+        console.warn('[comments/pending] invitaciones:', err?.message);
+      }
+    }));
 
     // Fetch threads for each post in parallel, small concurrency cap.
     const POST_CONCURRENCY = 6;
@@ -2421,27 +2469,45 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
             const { threads } = await buildThreadsForPost(post);
             const pending = threads.filter((t) => !t.answered_by_author);
 
-            // Personas que comentaron y todavia no han recibido el recurso. Las
-            // paginas de empresa fuera: no se puede mandar un DM a una pagina y
-            // su comentario no es un lead.
+            // Las tres cuentas del lead magnet. Las paginas de empresa fuera: no
+            // se puede mandar un DM a una pagina y su comentario no es un lead.
             const esLm = post.pillar === 'lead_magnet';
-            let recursos_pendientes = 0;
+            let accionables = 0;
+            let esperando_su_paso = 0;
+            let fallidos = 0;
             if (esLm) {
-              const ya = enviadosPorPost.get(post.id) ?? new Set<string>();
-              const personas = new Set<string>();
+              const entregado = dmEnviadoPorPost.get(post.id) ?? new Set<string>();
+              const fallado = dmFallidoPorPost.get(post.id) ?? new Set<string>();
+              const pedido = askPorPost.get(post.id) ?? new Set<string>();
+              const invitaciones = invitacionesPorCuenta.get(post.creator_id) ?? new Set<string>();
+              const vistos = new Set<string>();
               for (const t of threads) {
                 const pid = t.author?.profile_id;
-                if (pid && !t.author?.is_company && !ya.has(pid)) personas.add(pid);
+                if (!pid || t.author?.is_company || vistos.has(pid)) continue;
+                vistos.add(pid);
+                if (entregado.has(pid)) continue;          // ya lo tiene
+                if (fallado.has(pid)) { fallidos++; continue; }
+                // Se le puede escribir por privado: 1er grado, o nos mando ella
+                // la solicitud y sigue pendiente (se le contesta a esa solicitud).
+                const puedeDm = t.author?.network_distance === 1 || invitaciones.has(pid);
+                // Y si no se le puede escribir pero TAMPOCO le hemos pedido el
+                // paso todavia, hay trabajo: contestarle en publico pidiendoselo.
+                if (puedeDm || !pedido.has(pid)) accionables++;
+                else esperando_su_paso++;
               }
-              recursos_pendientes = personas.size;
             }
 
             // ⛔ UN LEAD MAGNET NO SE MIDE POR COMENTARIOS SIN RESPONDER
             // (Iker, 2026-08-20). Contestar en publico y entregar el recurso por
             // privado son dos trabajos distintos: un lead magnet contestado del
-            // todo pero con 12 recursos sin mandar desaparecia de esta lista, y
-            // ese es exactamente el lead que se queria dejar de perder.
-            if (pending.length === 0 && recursos_pendientes === 0) return null;
+            // todo pero con recursos sin mandar desaparecia de esta lista, y ese
+            // es exactamente el lead que se queria dejar de perder.
+            //
+            // ⛔ PERO `esperando_su_paso` NO DA DERECHO A SALIR. Si lo unico que
+            // queda son personas a las que ya les pediste la solicitud y no la
+            // han mandado, aqui no hay nada que hacer: sacar el post solo
+            // consigue que lo abras para nada (Iker, 2026-08-20).
+            if (pending.length === 0 && accionables === 0 && fallidos === 0) return null;
             return {
               post: {
                 id: post.id,
@@ -2461,7 +2527,9 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
               pending_threads: pending,
               pending_count: pending.length,
               es_lead_magnet: esLm,
-              recursos_pendientes,
+              accionables,
+              esperando_su_paso,
+              fallidos,
             };
           } catch (err: any) {
             console.warn(`[comments/pending] post ${post.id} failed:`, err?.message);
@@ -2472,50 +2540,36 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
       for (const r of results) if (r) groups.push(r);
     }
 
-    // Las solicitudes que YA han llegado, por cuenta (Iker, 2026-08-20).
-    //
-    // UNA sola llamada a Unipile por cuenta, y sirve para lo que hoy piden por
-    // separado /lead-magnet/canal y /lead-magnet/pendientes-solicitud: las dos
-    // llaman a getReceivedInvitations con el mismo account_id.
+    // Las solicitudes que YA han llegado, por cuenta. Las invitaciones ya se
+    // pidieron arriba, ANTES del barrido, asi que aqui no se vuelve a llamar a
+    // Unipile: es una consulta a la base contra la lista que ya tenemos.
     //
     // ⛔ AQUI NO SE COMPRUEBA SI ALGUIEN "YA ES CONTACTO". Eso es una llamada a
     // Unipile POR PERSONA (/lead-magnet/check-accepted, tope 40): con 20
     // esperando en tres cuentas serian 60 llamadas cada vez que se abre la
     // pestana. Ese sigue siendo un boton que se pulsa a mano.
-    //
-    // Un fallo de Unipile NO tumba la respuesta: la cuenta sale con su aviso y
-    // el resto de la pantalla funciona. Quedarse sin comentarios pendientes por
-    // no poder leer las invitaciones seria el peor cambio posible.
-    const cuentasUnicas = [...new Map(posts.map((p) => [p.creator_id, p])).values()];
     const cuentas = await Promise.all(cuentasUnicas.map(async (c) => {
+      const invitadores = invitacionesPorCuenta.get(c.creator_id) ?? new Set<string>();
       let solicitudes_llegadas = 0;
-      let aviso: string | null = null;
-      if (c.unipile_account_id) {
-        try {
-          const recibidas = await unipileService.getReceivedInvitations(c.unipile_account_id);
-          const invitadores = new Set(recibidas.map((i) => i.inviter_id));
-          const { rows } = await pool.query(
-            `SELECT DISTINCT s.provider_id
-               FROM lead_magnet_sends s
-               JOIN posts p ON p.id = s.post_id
-              WHERE p.creator_id = $1 AND s.kind = 'ask' AND s.status = 'sent'
-                AND NOT EXISTS (
-                  SELECT 1 FROM lead_magnet_sends d
-                   WHERE d.post_id = s.post_id AND d.provider_id = s.provider_id
-                     AND d.kind = 'dm' AND d.status = 'sent')`,
-            [c.creator_id]
-          );
-          solicitudes_llegadas = rows.filter((r) => invitadores.has(r.provider_id)).length;
-        } catch (err: any) {
-          aviso = `No he podido leer las solicitudes recibidas de ${c.creator_name || 'esta cuenta'} (${err?.message}).`;
-          console.warn('[comments/pending] invitaciones:', err?.message);
-        }
+      if (invitadores.size > 0) {
+        const { rows } = await pool.query(
+          `SELECT DISTINCT s.provider_id
+             FROM lead_magnet_sends s
+             JOIN posts p ON p.id = s.post_id
+            WHERE p.creator_id = $1 AND s.kind = 'ask' AND s.status = 'sent'
+              AND NOT EXISTS (
+                SELECT 1 FROM lead_magnet_sends d
+                 WHERE d.post_id = s.post_id AND d.provider_id = s.provider_id
+                   AND d.kind = 'dm' AND d.status = 'sent')`,
+          [c.creator_id]
+        );
+        solicitudes_llegadas = rows.filter((r) => invitadores.has(r.provider_id)).length;
       }
       return {
         creator_id: c.creator_id,
         creator_name: c.creator_name,
         solicitudes_llegadas,
-        aviso,
+        aviso: avisosPorCuenta.get(c.creator_id) ?? null,
       };
     }));
 

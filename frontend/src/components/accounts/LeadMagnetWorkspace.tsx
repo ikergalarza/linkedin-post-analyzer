@@ -238,20 +238,43 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
   // El filtro es SOLO de vista. `dmOwnerByPerson` y compañía siguen calculando
   // sobre la lista entera: quién es el dueño del recurso de cada persona no
   // puede depender de qué pestaña estés mirando.
-  const [gradoFiltro, setGradoFiltro] = useState<'todos' | 1 | 2 | 3>('todos');
+  const [gradoFiltro, setGradoFiltro] = useState<'todos' | 1 | 2 | 3 | 'fallidos'>('todos');
   const grupoDe = (t: Thread) => {
     const d = t.author.network_distance ?? null;
     return d === 1 ? 1 : d === 2 ? 2 : 3;
   };
+
+  // ⛔ EL FILTRO DE FALLIDOS (Iker, 2026-08-20). «Revisar envios» dice "8 NO
+  // llegaron" y el boton de reenviar YA existia —un envio en `failed` no cuenta
+  // como entregado, asi que la tarjeta vuelve a ofrecer el envio—, pero esos 8
+  // estaban repartidos entre 50 tarjetas paginadas de 10 en 10. No es que no
+  // pudieras reintentar: es que no los encontrabas.
+  //
+  // Se mira por PERSONA y por COMENTARIO, igual que todo lo demas de aqui: el
+  // provider_id cambia cuando alguien pasa a 1er grado, y solo con el se pierden
+  // los envios ya hechos.
+  const fallo = useCallback((t: Thread) => {
+    const ss = [
+      ...(t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []),
+      ...(sendsByComment.get(t.id) ?? []),
+    ];
+    // Si acabo llegando por otra via, no es un fallo pendiente: es un entregado.
+    if (ss.some((x) => (x.kind === 'dm' || x.kind === 'inmail') && x.status === 'sent')) return false;
+    return ss.some((x) => x.kind === 'dm' && x.status === 'failed');
+  }, [sendsByPerson, sendsByComment]);
+
   const filtrados = useMemo(
-    () => (gradoFiltro === 'todos' ? matches : matches.filter((t) => grupoDe(t) === gradoFiltro)),
-    [matches, gradoFiltro]
+    () => (gradoFiltro === 'todos' ? matches
+      : gradoFiltro === 'fallidos' ? matches.filter(fallo)
+      : matches.filter((t) => grupoDe(t) === gradoFiltro)),
+    [matches, gradoFiltro, fallo]
   );
   const cuentaGrado = useMemo(() => {
     const c = { 1: 0, 2: 0, 3: 0 } as Record<1 | 2 | 3, number>;
     for (const t of matches) c[grupoDe(t)]++;
     return c;
   }, [matches]);
+  const cuentaFallidos = useMemo(() => matches.filter(fallo).length, [matches, fallo]);
 
   // Pagination resets whenever the keyword changes (a new keyword is a new
   // list, and inheriting "showing 40" from the previous one is nonsense).
@@ -321,7 +344,12 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
     return text;
   };
 
-  const sentCount = (sendsData?.sends ?? []).filter((s) => s.status === 'sent').length;
+  // ⛔ SOLO LAS ENTREGAS DE VERDAD (Iker, 2026-08-20). Esto contaba TODA fila con
+  // status 'sent', y las filas 'ask' —«mándame la solicitud»— tambien lo son. En
+  // un post con 2 peticiones y 2 DM caidos decia "2 ya recibieron el recurso"
+  // cuando no lo habia recibido absolutamente nadie. Pedir no es entregar.
+  const sentCount = (sendsData?.sends ?? [])
+    .filter((s) => (s.kind === 'dm' || s.kind === 'inmail') && s.status === 'sent').length;
 
   return (
     <div className="space-y-4 min-w-0">
@@ -465,18 +493,26 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
                 decisión. */}
             <span className="flex items-center gap-1">
               {([
-                ['todos', `Todos (${matches.length})`],
-                [1, `1er grado (${cuentaGrado[1]})`],
-                [2, `2º (${cuentaGrado[2]})`],
-                [3, `3º+ (${cuentaGrado[3]})`],
-              ] as const).map(([valor, etiqueta]) => (
+                ['todos', `Todos (${matches.length})`, false],
+                [1, `1er grado (${cuentaGrado[1]})`, false],
+                [2, `2º (${cuentaGrado[2]})`, false],
+                [3, `3º+ (${cuentaGrado[3]})`, false],
+                // La chapa de fallidos solo aparece si hay alguno: un "✗ Fallidos
+                // (0)" fijo entrena a no mirarlo, y es justo el que hay que mirar.
+                ...(cuentaFallidos > 0
+                  ? [['fallidos', `✗ Fallidos (${cuentaFallidos})`, true] as const]
+                  : []),
+              ] as const).map(([valor, etiqueta, rojo]) => (
                 <button
                   key={String(valor)}
                   onClick={() => setGradoFiltro(valor)}
+                  title={rojo ? 'El envío salió y NO llegó. Cada tarjeta trae su error y el botón para volver a mandarlo.' : undefined}
                   className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
                     gradoFiltro === valor
-                      ? 'bg-accent/15 text-accent border-accent/40'
-                      : 'border-border text-text-muted hover:border-accent/30 hover:text-text-secondary'
+                      ? (rojo ? 'bg-red-500/15 text-red-400 border-red-500/40' : 'bg-accent/15 text-accent border-accent/40')
+                      : (rojo
+                          ? 'border-red-500/30 text-red-400 hover:border-red-500/60'
+                          : 'border-border text-text-muted hover:border-accent/30 hover:text-text-secondary')
                   }`}
                 >
                   {etiqueta}
@@ -548,7 +584,9 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
       )}
       {ready && data && matches.length > 0 && filtrados.length === 0 && (
         <p className="text-center text-text-muted text-sm py-10">
-          Ningún comentario de ese grado en este post.
+          {gradoFiltro === 'fallidos'
+            ? 'Ningún envío fallido en este post.'
+            : 'Ningún comentario de ese grado en este post.'}
         </p>
       )}
       {ready && data && matches.length === 0 && (
