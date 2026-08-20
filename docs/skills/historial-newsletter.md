@@ -11,7 +11,8 @@
 | | Tanda 1 | Tanda 2 |
 |---|---|---|
 | Destinatarios | **25** | **50** |
-| Fecha | 2026-08-20, `[PENDIENTE · hora exacta, mirar en Brevo]` | 2026-08-21, **09:05** (programada) |
+| Fecha | 2026-08-20, **18:40** | 2026-08-21, **09:05** (programada) |
+| Entregados | **25 de 25 · 100%**, cero rebotes | — |
 | Lista | `Brevo · Correo 1 · Tanda 1` | `Brevo · Correo 1 · Tanda 2` |
 | `utm_campaign` | `kaixito-01-tanda-1` | `kaixito-01-tanda-2` |
 
@@ -20,6 +21,8 @@
 - **Pie nuevo, con las dos cosas que hay que tener:** enlace de baja (`{Date de baja aquí}`, en tú) y dirección postal. Al poner el pie personalizado, Brevo **borra el suyo**, y con él el enlace de baja: hay que volver a meterlo a mano o sale un correo comercial sin forma de darse de baja.
 - **`utm_source` es `brevo` y NO se puede cambiar** (ver `email-marketing §9c`). La atribución en GA4 queda partida: hasta el 11/08 `newsletter`, desde el 20/08 `brevo`.
 - **09:05 y no 09:00** a propósito: a la hora en punto salen todas las campañas programadas del país a la vez.
+
+**La entrega de la tanda 1 salió limpia: 25 de 25, 0 rebotes.** Comparado con MailerLite, que dio 3,7% en su tanda 1 y 2,92% en la 2, es la mejor señal del día. Y no es casualidad: esta lista pasó por la limpieza de `audience_clean` y por las 12 supresiones del rescate, cosa que la de MailerLite no.
 
 ### 🔴 Lo primero de mañana, antes de las 09:05
 
