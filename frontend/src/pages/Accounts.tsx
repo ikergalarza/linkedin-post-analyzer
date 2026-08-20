@@ -2170,7 +2170,12 @@ function SnapshotCurve({ postId, publishedAt, autoRefresh }: { postId: string; p
 //
 // Confirmacion obligatoria, porque el boton vive pegado a las chapas de pilar y
 // de multiplicador y un clic sin querer es facil.
-function PostMenu({ post, onHidden }: { post: LivePost; onHidden?: () => void }) {
+// "Añadir métricas" vive AQUI DENTRO desde el 20/08 (Iker). Estaba suelto en la
+// cabecera, en gris y sin borde, asi que parecia una etiqueta y no un boton: se
+// podia pulsar y nadie lo pulsaba. Un menu es el sitio de las acciones raras.
+function PostMenu({ post, onHidden, onEditMetrics }: {
+  post: LivePost; onHidden?: () => void; onEditMetrics?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -2213,14 +2218,30 @@ function PostMenu({ post, onHidden }: { post: LivePost; onHidden?: () => void })
       </button>
       {open && (
         <div className="absolute right-0 top-full mt-1 z-20 min-w-[15rem] rounded-lg border border-border bg-bg-card shadow-lg py-1">
+          {/* PRIMERO, y solo en las cuentas no conectadas: es la accion que se
+              usa a diario en esos posts. Ocultar es la excepcional. */}
+          {post.creator_is_manual && onEditMetrics && (
+            <button
+              onClick={() => { setOpen(false); onEditMetrics(); }}
+              className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-bg-secondary"
+            >
+              Añadir métricas
+              <span className="block text-[10px] text-text-muted mt-0.5 whitespace-nowrap">
+                Impresiones y clics de la cuenta.
+              </span>
+            </button>
+          )}
           <button
             onClick={ocultar}
             disabled={busy}
             className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-bg-secondary disabled:opacity-50"
           >
             {busy ? 'Ocultando…' : 'Ocultar del panel'}
-            <span className="block text-[10px] text-text-muted mt-0.5">
-              Si ya lo has borrado en LinkedIn. No pierde métricas.
+            {/* Una linea y corta: con "No pierde métricas" detras partia en dos
+                y el menu parecia un parrafo. Eso lo dice igual la confirmacion,
+                que es donde de verdad hace falta el aviso. */}
+            <span className="block text-[10px] text-text-muted mt-0.5 whitespace-nowrap">
+              Si ya lo borraste en LinkedIn.
             </span>
           </button>
         </div>
@@ -2309,16 +2330,10 @@ function LivePostRow({ post, onRemoveDemo, onOpenChat, onRefreshed, onEditMetric
               </span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              {post.creator_is_manual && onEditMetrics && (
-                <button
-                  onClick={onEditMetrics}
-                  className="text-[11px] text-text-muted hover:text-accent transition-colors whitespace-nowrap"
-                  title="Escribir las impresiones y los clics que solo se ven desde la cuenta. Cada guardado deja un punto en la curva."
-                >
-                  metricas
-                </button>
-              )}
-              <PostMenu post={post} onHidden={onRefreshed} />
+              {/* "metricas" ya no vive aqui: era texto gris sin borde entre dos
+                  chapas, asi que se leia como una etiqueta y no como algo que se
+                  pulsa (Iker, 2026-08-20). Ahora es la primera opcion del menu. */}
+              <PostMenu post={post} onHidden={onRefreshed} onEditMetrics={onEditMetrics} />
               <PilarSelector postId={post.id} pillar={post.pillar} />
               {/* CTR a la izquierda del multiplicador (Iker, 2026-07-29): el ojo
                   lee de izquierda a derecha y lo ultimo que ve es lo que se le
