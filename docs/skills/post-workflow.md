@@ -1559,32 +1559,43 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 **🔧 Mecanizado y VOLTEADO el mismo día:** el check del validador que **exigía** `(Conecta conmigo…)` ahora lo **prohíbe**, junto a toda la familia. Al hacerlo me colé dos bytes `0x08` en las regex y **lo cazó el autochequeo del propio script**, que existe justamente por el mismo fallo del 06/08. La red funcionó.
 
-#### 🚨🚨 4.5.0-PUERTAS · LOS DOS ÚNICOS POSTS CON DOBLE PUERTA SON LOS DOS ÚNICOS CAPADOS (2026-08-20)
+#### 🚨🚨 4.5.0-PUERTAS · EL CAPADO DEL 19/08 ERA `COGER` SIN OBJETO, NO LA DOBLE PUERTA (2026-08-20)
 
-> **HIPÓTESIS ABIERTA, n=2.** No es ley todavía. Lo que SÍ está cerrado con datos es lo de abajo: **no es una palabra**.
+> **Este bloque nació el 20/08 por la mañana culpando a la doble puerta y quedó REFUTADO el mismo día.** Se deja escrito con el error dentro a propósito: el error es la lección.
 
-**El caso.** El 19/08 se estrenó la **doble puerta** en meme (agendar + correo, `global §4.4e-MEME`, decidida por Iker el 19/08). Los dos únicos posts que la llevan están los dos fuera de escala:
+**⛔ REFUTADA MI HIPÓTESIS DE LA DOBLE PUERTA.** Sostuve que capaba llevar dos enlaces (agendar + correo), estrenados el 19/08. **El meme de Asier del 20/08 lleva los mismos dos enlaces y se repartió** (49 imp a los 25 min → 214 a la hora y pico, subiendo). **La doble puerta no capa y vuelve a estar disponible.**
+- **Por qué me equivoqué, y ya van tres:** era la única variable NUEVA que veía, que es exactamente el argumento que `images §0a-CAPADO` marca como débil — el mismo con el que defendí el logo de la imagen el 07/08. **"Es lo único que ha cambiado" no es una prueba: es una lista de sospechosos de uno.** Iker apostó por el texto las tres veces y las tres veces tenía razón.
 
-| fecha | post | enlaces | ¿lleva `transcri`? | imp |
-|---|---|---|---|---|
-| 14/08 | meme Iker (descafeinado) | **1** · `eB6K6ASH` | no | **24.500** |
-| 18/08 | historia Iker (barrio) | **1** · `eB6K6ASH` | no | **8.725** |
-| **19/08** | **meme Iker (transcripción)** | **2** · `eB6K6ASH` + `eeYuXDth` | **sí** | **133** |
-| **20/08** | **meme Asier (Google)** | **2** · `egsptXWD` + `ex7GsCJs` | **no** | **49** (a 25 min) |
+**⛔ DESCARTADO TAMBIÉN: no es `transcribir` / `transcripción`** (era la hipótesis de Iker). El post de Asier se comporta distinto sin llevarla, no está en ninguna familia de riesgo, y la transcripción de llamadas es una categoría enorme y legítima en LinkedIn (Gong, Fireflies).
 
-**⛔⛔ DESCARTADO CON DATOS: NO ES LA PALABRA `transcribir` / `transcripción` (2026-08-20).** Era la hipótesis de Iker —sale en tres conjugaciones en el post del 19/08— y la mata el post siguiente: **el del 20/08 se comporta igual y no contiene `transcri` ni una vez.** Además `transcribir` no está en ninguna de las 5 familias de riesgo de `brand-voice §2c`. **Es la tercera vez que buscamos la palabra culpable y la tercera que no existe** (`prompt` 07/08, `Claude` 10/08, `transcribir` 20/08).
+**✅ LO QUE SÍ SALIÓ, y salió de un diferencial de vocabulario contra los 174 posts nuestros que se repartieron: `coge` SUELTO, SIN COMPLEMENTO.**
 
-**⛔ DESCARTADO: NO ES EL ENLACE DE AGENDAR.** `eB6K6ASH` es **la misma URL** en los cuatro posts de Iker: voló a 24.500 y 8.725 con una puerta, y se hundió a 133 con dos. El enlace está exonerado; lo que cambia es que haya **dos destinos distintos**.
+```
+Es la empresa.
+Es el que coge.
+Es el que decide y no coge.
+```
 
-**⚠️ LO QUE NO SE PUEDE AFIRMAR, y va escrito para no engañarnos:**
-- **No es "contar enlaces".** Un post nuestro del 11/09/2025 lleva **6 enlaces** y hizo 4.893. Los de 2024 con "2 enlaces" repiten **la misma URL** dos veces, así que son una puerta, no dos. **La variable no es el número, es que sean DOS DESTINOS COMERCIALES NUESTROS distintos** (dos CTAs sacando del feed a la vez, familia 5 de `brand-voice §2c` en versión enlace).
-- **El del 20/08 tenía 25 minutos** cuando se midió. 49 impresiones ahí es señal, no prueba.
-- n=2, y los dos son consecutivos: podría estar confundido con cualquier otra cosa que cambiara el 19/08.
+**En español de América `coger` sin objeto es vulgar (follar), y el clasificador de LinkedIn es de español GLOBAL, no peninsular.** Ahí no hay ningún objeto escrito: el teléfono es elíptico, lo ponemos nosotros al leer. Dos veces, en líneas aisladas y cortas, que es donde más pesa cada palabra.
 
-**✅ LA PRUEBA, que es gratis y de UNA sola variable:** el siguiente meme sale con **UNA sola puerta** (agendar, la de siempre) y todo lo demás igual. Si vuela, la doble puerta es la causa. **Y hasta entonces la doble puerta se suspende**, porque el coste de equivocarse es un post entero a 133 impresiones y el beneficio era un clic extra.
-- Antes de tocar nada: **el test de `§4.5.0-FEED`**, que resuelve en un minuto y no hay que esperar a que se acumulen impresiones.
+**Y la palabra NO está prohibida. Las 5 veces que sale en un post nuestro que voló, lleva SIEMPRE objeto explícito:**
 
-**🔴 LA LECCIÓN DE MÉTODO, que ya es la tercera vez y por eso sube aquí:** ante un capado, **el primer reflejo de todos es buscar la palabra prohibida, y nunca ha sido una palabra.** Las tres veces la causa era un **MECANISMO** (el `Comenta "X"` en el texto, y ahora la segunda puerta). **Antes de auditar el vocabulario: lista lo que cambió de MECÁNICA y en qué fecha, y busca el post capado que NO comparte la palabra sospechosa.** Ese post es el que cierra el caso en 10 minutos.
+| post | forma | imp |
+|---|---|---|
+| 15/07 | `No me **cogió el teléfono**` | **192.303** ← el mayor de la casa |
+| 13/05 | `sigue **cogiendo el teléfono**` | 24.993 |
+| 30/07 | `algo de color hemos **cogido**` | 7.266 |
+| 01/07 | `**Cojo empresas** catalanas` | 6.572 |
+| 09/01 | `te **coge pulso** de la sien` | 5.539 |
+| **19/08** | `Es el que **coge**.` (desnudo, ×2) | **133** |
+
+**LA REGLA: `coger` va SIEMPRE con su complemento escrito.** `coge el teléfono`, `coge la llamada`, o se cambia por `descuelga`, que no tiene doble lectura en ningún país. **Cuesta dos palabras y quita el riesgo entero.**
+- **Mecanizado como FALLO DURO** en `validar-post.py` (`COGER siempre con objeto explícito`). Verificado que falla el post del 19/08 y pasa el de 192.303.
+- **Sigue siendo hipótesis con n=1**, pero se aplica igual porque **tiene mecanismo** (a diferencia de `prompt` o `Claude`, que eran sospechas sin explicación) y **arreglarlo no cuesta nada**. La prueba limpia: resubir ese mismo meme cambiando SOLO esas dos líneas.
+
+**🆕 Y ABRE UNA FAMILIA NUEVA DE RIESGO, la 6 de `brand-voice §2c`: la palabra que es inocente en España y vulgar en América.** No la vemos porque escribimos en peninsular y nos suena bien. **El clasificador no es de Bilbao.** Candidatas de nuestro registro comercial, todas normales aquí: `coger`, `pijo/a`, `polla` (de gallina), `concha`, `pico`, `follón`, `cachondeo`, `currar`. **El test: ¿esta palabra, SIN el resto de la frase, significa otra cosa en México o Argentina?** Si sí, se le pone el objeto o se cambia.
+
+**🔴 LA LECCIÓN DE MÉTODO, que es la más cara y ya es la tercera vez:** ante un capado todos buscamos *la palabra prohibida* leyendo el post, y leyendo no se encuentra — porque la palabra culpable **nos suena bien, por eso la escribimos**. Lo que la encontró en 10 minutos fue **el diferencial contra el corpus**: sacar el vocabulario del post capado y restarle el de los 174 posts que se repartieron. **Ante el próximo capado, eso es el primer paso, antes de opinar.** Y el segundo: buscar el post capado que **NO** comparte la palabra sospechosa, que es lo que mata las hipótesis falsas.
 
 #### 🕵️ 4.5.0-FEED · EL DIAGNÓSTICO DE PRIMER NIVEL ES EL FEED, Y ES DE IKER (2026-08-18)
 
