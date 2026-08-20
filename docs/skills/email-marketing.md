@@ -665,7 +665,11 @@ Hay **dos** y hay que repartirlos, o salen duplicados:
 ### 🔴 LOS UTM SON DE LA CUENTA, NO DE LA CAMPAÑA (Mario, 2026-08-10)
 El rastreo de enlaces vive en **Configuración de la cuenta → Rastreo del enlace**, y sus tres campos se inyectan en **TODAS** las campañas. Si no se tocan, el correo nº 2 llega a GA4 con el `utm_campaign` del correo nº 1 y los datos se mezclan sin que nadie lo note.
 
-- `utm_source` = `newsletter` y `utm_medium` = `email` — **fijos, no se tocan nunca.**
+- ⚠️ **CORREGIDO EL 2026-08-20 AL MIGRAR A BREVO.** La regla de abajo (`utm_source = newsletter`) era de MailerLite, donde el valor se podía editar. **En Brevo NO se puede**: `utm_source` y `utm_medium` están fijos en `brevo` y `email`, sin lápiz ni en la campaña ni en Configuración → Parámetros UTM. Solo son editables `utm_campaign`, `utm_content`, `utm_term` y `utm_id`.
+  - **No se pelea con la herramienta: se cambia la regla.** `brevo` es incluso más preciso que `newsletter`, porque dice qué herramienta lo mandó.
+  - 🔴 **Al leer GA4, la atribución está partida en dos:** hasta el **2026-08-11** la fuente es `newsletter` (MailerLite) y desde el **2026-08-20** es `brevo`. Para comparar periodos hay que filtrar las dos. El campo `origen` de los leads de `recursos.neety.com` hereda ese mismo corte.
+  - **Lo que SÍ se controla es `utm_campaign`**, y es lo que importa: `remitente-numero-tanda` en minúsculas y con guiones (`kaixito-01-tanda-1`). Sin eso, todas las tandas caen en el mismo cubo y se pierde justo lo que hay que medir. **Al DUPLICAR una campaña para la tanda siguiente, se arrastra el de la anterior: hay que cambiarlo a mano.**
+- ~~`utm_source` = `newsletter` y `utm_medium` = `email` — **fijos, no se tocan nunca.**~~ (histórico, MailerLite)
 - `utm_campaign` = **el CORREO**, en kebab-case (`kaixito-01-segmentar`). **Se cambia cuando cambia el correo, NO cuando cambia la tanda:** las tandas son el mismo correo y deben agregarse juntas en GA4.
 - `utm_content` = **la tanda** (`tanda-2`). Así GA4 agrega por campaña y deja desglosar por tanda. Es el campo que estaba vacío y resuelve el conflicto.
 - **Va al checklist de pre-envío (§9b, punto 12): antes de CADA envío, comprobar que `utm_campaign` es el del correo que se manda.**
