@@ -9,6 +9,7 @@
    PRIMERO sin contestar, las sub-respuestas y las reacciones son exactamente el
    mismo codigo que llevaba meses funcionando. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { apiPost } from '../../hooks/useApi';
 import { Avatar, EmojiPicker, ReactionBar, fmtRelative } from './shared';
 import type { Thread } from './shared';
@@ -25,9 +26,21 @@ export interface PendingGroup {
     creator_id: string;
     creator_name: string | null;
     creator_image: string | null;
+    // Los tres de abajo llegan desde el 2026-08-20, al fusionar Lead Magnet en
+    // esta pestana: los pide el workspace del lead magnet cuando se monta aqui.
+    comments_count?: number | null;
+    likes_count?: number | null;
+    pillar?: string | null;
   };
   pending_threads: Thread[];
   pending_count: number;
+  // Su pilar es `lead_magnet`: al desplegarlo se monta el workspace entero en
+  // vez de las tarjetas de comentario sueltas.
+  es_lead_magnet?: boolean;
+  // Personas que comentaron y siguen sin su recurso. Es la segunda razon por la
+  // que un post puede estar en esta lista, y en un lead magnet contestado del
+  // todo es la UNICA.
+  recursos_pendientes?: number;
 }
 
 // One post + its pending comments. Shows the first PER_POST comments with
@@ -35,65 +48,109 @@ export interface PendingGroup {
 // disappears + the count drops) without a full re-scan; the header's
 // "Actualizar" does the real refetch. When every comment is handled, the
 // whole group collapses.
-export function PostGroup({ group }: { group: PendingGroup }) {
+export function PostGroup({ group, children }: { group: PendingGroup; children?: ReactNode }) {
   const PER_POST = 3;
   const [visible, setVisible] = useState(PER_POST);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  // ⛔ ARRANCA PLEGADO, Y EL CUERPO NO SE MONTA HASTA ABRIRLO (Iker, 2026-08-20).
+  //
+  // No es cosmetico. El workspace de un lead magnet pide sus comentarios a
+  // LinkedIn al montarse: con diez grupos abiertos de golpe serian diez llamadas
+  // que nadie ha pedido. Por eso el cuerpo se MONTA al abrir y no se esconde con
+  // CSS, que es la forma facil y la que dispararia las diez.
+  const [abierto, setAbierto] = useState(false);
 
   const { post } = group;
   const threads = group.pending_threads.filter((t) => !dismissed.has(t.id));
-  if (threads.length === 0) return null; // all handled → collapse
+  const esLm = !!group.es_lead_magnet;
+  const recursos = group.recursos_pendientes ?? 0;
+  // ⛔ EN UN LEAD MAGNET NO SE PLIEGA POR NO QUEDAR COMENTARIOS. Un lead magnet
+  // contestado del todo puede seguir debiendo doce recursos, y esa es justo la
+  // fila que no puede desaparecer.
+  if (threads.length === 0 && !(esLm && recursos > 0)) return null;
 
   const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 160);
 
   return (
     <div className="bg-bg-card border border-border rounded-xl p-4 min-w-0">
-      {/* Post header — always shows the creator avatar+name (even with a
-          single account selected): the small repetition is preferred over
-          any ambiguity about whose post each group is. */}
-      <div className="mb-3 pb-3 border-b border-border">
+      {/* La cabecera es el interruptor. Siempre lleva el avatar y el nombre de
+          la cuenta (aunque haya una sola elegida): la repeticion pequena es
+          preferible a dudar de quien es cada post. */}
+      {/* El enlace a LinkedIn va FUERA del boton: un <a> dentro de un <button> es
+          HTML invalido y el navegador puede tragarse el clic de uno de los dos. */}
+      <div className={`flex items-start gap-2 ${abierto ? 'mb-3 pb-3 border-b border-border' : ''}`}>
+      <button
+        onClick={() => setAbierto((v) => !v)}
+        className="flex-1 text-left min-w-0"
+      >
         <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <span className="text-text-muted text-xs w-3 flex-shrink-0">{abierto ? '▾' : '▸'}</span>
           <Avatar src={post.creator_image} name={post.creator_name} size={24} />
           <span className="text-sm font-medium whitespace-nowrap">{post.creator_name}</span>
           <span className="text-[10px] text-text-muted whitespace-nowrap">·</span>
           <span className="text-[11px] text-text-muted whitespace-nowrap">{fmtRelative(post.published_at)}</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
-            {threads.length} pendiente{threads.length === 1 ? '' : 's'}
-          </span>
-          {post.post_url && (
-            <a
-              href={post.post_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] text-accent hover:text-accent-light ml-auto whitespace-nowrap"
-            >
-              Ver en LinkedIn →
-            </a>
+          {esLm && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400 border border-sky-500/30 whitespace-nowrap">
+              Lead Magnet
+            </span>
+          )}
+          {/* Las dos deudas, por separado y con su color. Juntarlas en un solo
+              numero esconderia justo la que se olvida: la de los recursos. */}
+          {threads.length > 0 && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
+              {threads.length} sin responder
+            </span>
+          )}
+          {recursos > 0 && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+              {recursos} sin mandar
+            </span>
           )}
         </div>
         {headline && <p className="text-xs text-text-primary line-clamp-2 mt-1.5">{headline}</p>}
-      </div>
-
-      {/* Pending comments */}
-      <div className="space-y-3">
-        {threads.slice(0, visible).map((t) => (
-          <ThreadCard
-            key={t.id}
-            thread={t}
-            postId={post.id}
-            onReplied={() => setDismissed((s) => new Set(s).add(t.id))}
-          />
-        ))}
-      </div>
-
-      {threads.length > visible && (
-        <button
-          onClick={() => setVisible((v) => v + PER_POST)}
-          className="w-full mt-3 py-2 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+      </button>
+      {post.post_url && (
+        <a
+          href={post.post_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[11px] text-accent hover:text-accent-light whitespace-nowrap flex-shrink-0 pt-0.5"
         >
-          Ver más comentarios de este post ({threads.length - visible} restantes) ↓
-        </button>
+          Ver en LinkedIn →
+        </a>
       )}
+      </div>
+
+      {/* ⛔ Y AQUI NO SE PINTAN LAS DOS COSAS A LA VEZ. En un lead magnet, el
+          workspace (`children`) ya trae una tarjeta por comentarista CON su caja
+          de respuesta publica dentro: sacar ademas las ThreadCard sueltas seria
+          ofrecer dos cajas distintas para el mismo comentario, y contestar por
+          las dos manda dos respuestas. */}
+      {abierto && (esLm && children ? (
+        children
+      ) : (
+        <>
+          <div className="space-y-3">
+            {threads.slice(0, visible).map((t) => (
+              <ThreadCard
+                key={t.id}
+                thread={t}
+                postId={post.id}
+                onReplied={() => setDismissed((s) => new Set(s).add(t.id))}
+              />
+            ))}
+          </div>
+
+          {threads.length > visible && (
+            <button
+              onClick={() => setVisible((v) => v + PER_POST)}
+              className="w-full mt-3 py-2 text-xs font-medium text-accent hover:text-accent-light border border-border hover:border-accent/40 rounded-lg transition-colors"
+            >
+              Ver más comentarios de este post ({threads.length - visible} restantes) ↓
+            </button>
+          )}
+        </>
+      ))}
     </div>
   );
 }

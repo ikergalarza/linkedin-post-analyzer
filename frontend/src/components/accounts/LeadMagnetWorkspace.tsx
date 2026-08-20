@@ -26,7 +26,15 @@ import type {
   PedidoRow, SendRecord,
 } from './lmTypes';
 
-export default function LeadMagnetWorkspace({ post, creatorId }: { post: GridPost; creatorId: string }) {
+//
+// `compacto` = montado DENTRO de un grupo de la pestana Comments (2026-08-20). Ahi
+// la cabecera del post ya la pinta la fila del grupo, y las solicitudes pedidas
+// las pinta el bloque global de arriba. Sin esta bandera salian las dos cosas
+// duplicadas — y en el caso de las solicitudes eso son DOS botones para mandarle
+// el mismo recurso a la misma persona, que es el fallo que mas caro sale aqui.
+export default function LeadMagnetWorkspace({ post, creatorId, compacto = false }: {
+  post: GridPost; creatorId: string; compacto?: boolean;
+}) {
   // No "reload on post change" effect: the parent keys this component by
   // post id, so a different post is a fresh mount and this initialiser runs
   // again on its own.
@@ -317,7 +325,23 @@ export default function LeadMagnetWorkspace({ post, creatorId }: { post: GridPos
 
   return (
     <div className="space-y-4 min-w-0">
-      {/* The post we're working on */}
+      {/* Dentro de Comments la cabecera del post ya esta en la fila del grupo, y
+          repetirla es leer dos veces lo mismo. Lo unico que NO se puede perder es
+          «Recargar comentarios»: mientras un lead magnet esta vivo llegan
+          comentarios por minuto y ese es el boton que se pulsa una y otra vez. */}
+      {compacto && (
+        <div className="flex items-center gap-3 justify-end">
+          <button
+            onClick={() => { refetch(); refetchSends(); }}
+            disabled={loading}
+            className="text-[11px] text-text-muted hover:text-accent disabled:opacity-50 transition-colors whitespace-nowrap"
+            title="Vuelve a leer los comentarios de este post en LinkedIn"
+          >
+            {loading ? '↻ Buscando…' : '↻ Recargar comentarios'}
+          </button>
+        </div>
+      )}
+      {!compacto && (
       <div className="bg-bg-card border border-border rounded-xl p-4">
         <div className="flex items-center gap-2 flex-wrap min-w-0 mb-1.5">
           <Avatar src={post.creator_image} name={post.creator_name} size={24} />
@@ -353,6 +377,7 @@ export default function LeadMagnetWorkspace({ post, creatorId }: { post: GridPos
         </div>
         {headline && <p className="text-xs text-text-primary line-clamp-2">{headline}</p>}
       </div>
+      )}
 
       {/* Tipo de lead magnet + su config. El tipo va PRIMERO y arriba porque
           decide qué campos tienen sentido debajo: son dos formatos distintos,
@@ -495,7 +520,14 @@ export default function LeadMagnetWorkspace({ post, creatorId }: { post: GridPos
           Ninguna de las dos aplica al tipo público, que no tiene canal privado. */}
       {cfg.kind !== 'publico' && (
         <>
-          <SolicitudesPedidas post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
+          {/* En compacto las solicitudes NO se pintan aqui: el bloque de arriba de
+              Comments ya las trae, y de TODA la cuenta, no solo de este post. Dos
+              copias serian dos botones para mandarle lo mismo a la misma persona. */}
+          {!compacto && (
+            <SolicitudesPedidas post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
+          )}
+          {/* Seguimientos SI se queda: son los invitados con nota de antes del
+              17/08 y no los cubre ningun bloque global. */}
           <Seguimientos post={post} creatorId={creatorId} cfg={cfg} voice={voice} />
         </>
       )}

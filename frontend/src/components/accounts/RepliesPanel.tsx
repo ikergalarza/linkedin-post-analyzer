@@ -4,6 +4,9 @@ import { PostGroup } from './CommentCards';
 import type { PendingGroup } from './CommentCards';
 import SolicitudesGlobal from './SolicitudesGlobal';
 import type { CuentaResumen } from './SolicitudesGlobal';
+import LeadMagnetWorkspace from './LeadMagnetWorkspace';
+import { ErrorBoundary } from './shared';
+import type { GridPost } from './lmTypes';
 
 // RepliesPanel — the "Comentarios" sub-tab. Pick one of the managed posts
 // (newest first), see its unanswered top-level comments, generate a draft
@@ -136,7 +139,35 @@ export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
       )}
 
       {groups.slice(0, visibleGroups).map((g) => (
-        <PostGroup key={g.post.id} group={g} />
+        <PostGroup key={g.post.id} group={g}>
+          {/* Un lead magnet se trabaja con SU panel entero, el mismo que tenia la
+              pestana Lead Magnet: la config del recurso, el filtro por grado, los
+              dos bloques de seguimiento y una tarjeta por comentarista con la
+              respuesta publica Y el envio privado. Es el mismo componente, no una
+              copia: las tres defensas contra el doble envio viven ahi dentro.
+              Se monta solo al desplegar, que es lo que evita que abrir la pestana
+              dispare una llamada a LinkedIn por cada lead magnet de la lista. */}
+          {g.es_lead_magnet ? (
+            <ErrorBoundary donde={`el lead magnet de ${g.post.creator_name || 'este post'}`}>
+              <LeadMagnetWorkspace
+                post={{
+                  id: g.post.id,
+                  hook_text: g.post.hook_text,
+                  content_text: g.post.content_text,
+                  content_type: g.post.content_type,
+                  published_at: g.post.published_at,
+                  post_url: g.post.post_url,
+                  comments_count: g.post.comments_count ?? null,
+                  likes_count: g.post.likes_count ?? null,
+                  creator_name: g.post.creator_name,
+                  creator_image: g.post.creator_image,
+                } satisfies GridPost}
+                creatorId={g.post.creator_id}
+                compacto
+              />
+            </ErrorBoundary>
+          ) : null}
+        </PostGroup>
       ))}
 
       {groups.length > visibleGroups && (
