@@ -15,6 +15,7 @@ Exportado el 2026-08-03 desde el repo `linkedin-post-analyzer`, rama `main`.
 | 4 | `global-instructions.md` | El manual del post de LinkedIn. Para email importa sobre todo **§3 (formateado y ritmo)** y **§2.5 (densidad de números)**, que el correo hereda con un matiz (ver abajo) | **SÍ** |
 | 5 | `working-preferences.md` | Cómo se entrega el trabajo y cuándo se avisa de un riesgo | Recomendable |
 | 6 | `historial-newsletter.md` | **ESTADO, no doctrina.** Qué se ha enviado, estado de la cuenta de Brevo, listas creadas. Se lee antes de planificar y se actualiza después | **SÍ** |
+| 6b | **`corpus-correos-enviados.md`** | **El texto LITERAL de cada correo que ha salido, con sus métricas.** Antes de reescribir o continuar un correo enviado, se lee aquí el original. Reescribir de memoria pierde lo que lo hizo funcionar | **SÍ si tocas un correo ya enviado** |
 | 7 | `images.md` | Solo si tocas imagen o mascota: **§4.0 = paleta del brandbook 2026** y la regla de que el isotipo no se redibuja con IA | Según la tarea |
 | 8 | `validar-email.py` | El validador mecánico. 22 checks. Se corre antes de CADA entrega | **SÍ** |
 
