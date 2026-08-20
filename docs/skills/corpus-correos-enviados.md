@@ -161,3 +161,36 @@ Snippet estándar de `§9c`, 280 px, centrado y con `alt` porque muchos clientes
 ```
 
 ⚠️ **Outlook de escritorio solo enseña el PRIMER FOTOGRAMA.** Por eso el primer fotograma tiene que funcionar como imagen fija: para media plantilla de una empresa, ese ES el GIF.
+
+
+---
+
+# 🔁 DUPLICAR UNA CAMPAÑA EN BREVO PARA LA TANDA SIGUIENTE
+
+Las tandas de un mismo correo se montan duplicando la anterior. Brevo pregunta qué conservar y **viene todo marcado**:
+
+Remitente · **Destinatarios** · Asunto · Diseño · **Configuración adicional**
+
+## ⛔ Desmarca "Destinatarios". Siempre.
+
+Marcado, la campaña nueva nace apuntando a **la lista de la tanda anterior** y hay que acordarse de cambiarla. Desmarcado, nace sin destinatarios y **Brevo no deja programar** hasta elegir una.
+
+La diferencia es entre un examen de memoria y un error imposible. Y el fallo que evita es gordo: mandar la tanda N a la lista de la tanda N-1 significa que **unos reciben el mismo correo dos veces y otros no reciben nada**. En un correo que dice *"no me acuerdo de dónde saliste"*, recibirlo dos veces parece un sistema roto y se lleva por delante la broma.
+
+## ⚠️ "Configuración adicional" arrastra los UTM
+
+Se deja marcada (ahí van los ajustes de seguimiento), pero eso significa que **`utm_campaign` viene con el valor de la tanda anterior**. Hay que cambiarlo a mano: `kaixito-01-tanda-1` → `kaixito-01-tanda-2`.
+
+Si no, todas las tandas caen en el mismo cubo de GA4 y se pierde lo único que el UTM podía medir de verdad, que es **qué tanda trajo la reunión**.
+
+## El orden completo, sin saltos
+
+1. **CRM** → Audiencias → 📤 Brevo · Tandas → encender la tanda N → **↑ Subir a Brevo**
+2. Comprobar en Brevo → Listas que la lista existe y tiene los contactos que toca
+3. Brevo → campaña anterior → **⋮ Duplicar**, con **Destinatarios DESMARCADO**
+4. Renombrar a `Kaixito 01 · Tanda N`
+5. Elegir la lista de la tanda N
+6. **Cambiar `utm_campaign`**
+7. Programar
+
+El paso 1 es el que se olvida: sin él, en el paso 5 no hay lista que elegir.
