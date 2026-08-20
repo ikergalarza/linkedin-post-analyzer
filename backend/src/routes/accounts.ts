@@ -2354,8 +2354,22 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
       `WITH ranked AS (
          SELECT p.id, p.linkedin_post_id, p.content_text, p.hook_text, p.published_at,
                 p.content_type, p.post_url, p.creator_id,
+                -- pillar + contadores: los pide el workspace del lead magnet, que
+                -- desde el 2026-08-20 se monta desde aqui al desplegar un post.
+                p.pillar, p.comments_count, p.likes_count,
                 c.name AS creator_name, c.linkedin_id AS creator_linkedin_id,
                 c.profile_image_url AS creator_image, c.unipile_account_id,
+                -- ¿Este post tiene solicitudes pedidas sin resolver? Es lo que le
+                -- da derecho a saltarse la ventana de 30 dias: al desaparecer la
+                -- pestana Lead Magnet ya no hay donde ir a buscarlo a mano.
+                EXISTS (
+                  SELECT 1 FROM lead_magnet_sends a
+                   WHERE a.post_id = p.id AND a.kind = 'ask' AND a.status = 'sent'
+                     AND NOT EXISTS (
+                       SELECT 1 FROM lead_magnet_sends d
+                        WHERE d.post_id = a.post_id AND d.provider_id = a.provider_id
+                          AND d.kind = 'dm' AND d.status = 'sent')
+                ) AS tiene_pendiente,
                 ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY p.published_at DESC) AS rn
            FROM posts p
            JOIN creators c ON c.id = p.creator_id
@@ -2367,11 +2381,34 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
             ${creatorFilter}
        )
        SELECT * FROM ranked
-        WHERE (published_at >= NOW() - INTERVAL '1 day' * ${RECENT_DAYS} OR rn <= ${MIN_POSTS})
+        WHERE (published_at >= NOW() - INTERVAL '1 day' * ${RECENT_DAYS}
+               OR rn <= ${MIN_POSTS}
+               -- Un lead magnet con gente esperando entra AUNQUE sea viejo. El
+               -- techo de MAX_POSTS se le sigue aplicando: es lo que impide que
+               -- una cuenta con 200 posts dispare 200 llamadas a Unipile.
+               OR (pillar = 'lead_magnet' AND tiene_pendiente))
           AND rn <= ${MAX_POSTS}
         ORDER BY published_at DESC`,
       params
     );
+
+    // A quien de cada lead magnet YA se le mando el recurso. Una sola consulta
+    // para todos los posts, no una por post: son 30 posts como mucho y esto es
+    // la parte barata (la cara es leer los comentarios de LinkedIn).
+    const idsLm = posts.filter((p) => p.pillar === 'lead_magnet').map((p) => p.id);
+    const enviadosPorPost = new Map<string, Set<string>>();
+    if (idsLm.length > 0) {
+      const { rows: envios } = await pool.query(
+        `SELECT post_id, provider_id FROM lead_magnet_sends
+          WHERE post_id = ANY($1::uuid[]) AND kind = 'dm' AND status = 'sent'`,
+        [idsLm]
+      );
+      for (const e of envios) {
+        const set = enviadosPorPost.get(e.post_id) ?? new Set<string>();
+        set.add(e.provider_id);
+        enviadosPorPost.set(e.post_id, set);
+      }
+    }
 
     // Fetch threads for each post in parallel, small concurrency cap.
     const POST_CONCURRENCY = 6;
@@ -2383,7 +2420,28 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
           try {
             const { threads } = await buildThreadsForPost(post);
             const pending = threads.filter((t) => !t.answered_by_author);
-            if (pending.length === 0) return null;
+
+            // Personas que comentaron y todavia no han recibido el recurso. Las
+            // paginas de empresa fuera: no se puede mandar un DM a una pagina y
+            // su comentario no es un lead.
+            const esLm = post.pillar === 'lead_magnet';
+            let recursos_pendientes = 0;
+            if (esLm) {
+              const ya = enviadosPorPost.get(post.id) ?? new Set<string>();
+              const personas = new Set<string>();
+              for (const t of threads) {
+                const pid = t.author?.profile_id;
+                if (pid && !t.author?.is_company && !ya.has(pid)) personas.add(pid);
+              }
+              recursos_pendientes = personas.size;
+            }
+
+            // ⛔ UN LEAD MAGNET NO SE MIDE POR COMENTARIOS SIN RESPONDER
+            // (Iker, 2026-08-20). Contestar en publico y entregar el recurso por
+            // privado son dos trabajos distintos: un lead magnet contestado del
+            // todo pero con 12 recursos sin mandar desaparecia de esta lista, y
+            // ese es exactamente el lead que se queria dejar de perder.
+            if (pending.length === 0 && recursos_pendientes === 0) return null;
             return {
               post: {
                 id: post.id,
@@ -2395,9 +2453,15 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
                 creator_id: post.creator_id,
                 creator_name: post.creator_name,
                 creator_image: post.creator_image,
+                // Los tres que pide el workspace del lead magnet al montarse aqui.
+                comments_count: post.comments_count,
+                likes_count: post.likes_count,
+                pillar: post.pillar,
               },
               pending_threads: pending,
               pending_count: pending.length,
+              es_lead_magnet: esLm,
+              recursos_pendientes,
             };
           } catch (err: any) {
             console.warn(`[comments/pending] post ${post.id} failed:`, err?.message);
@@ -2408,8 +2472,56 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
       for (const r of results) if (r) groups.push(r);
     }
 
+    // Las solicitudes que YA han llegado, por cuenta (Iker, 2026-08-20).
+    //
+    // UNA sola llamada a Unipile por cuenta, y sirve para lo que hoy piden por
+    // separado /lead-magnet/canal y /lead-magnet/pendientes-solicitud: las dos
+    // llaman a getReceivedInvitations con el mismo account_id.
+    //
+    // ⛔ AQUI NO SE COMPRUEBA SI ALGUIEN "YA ES CONTACTO". Eso es una llamada a
+    // Unipile POR PERSONA (/lead-magnet/check-accepted, tope 40): con 20
+    // esperando en tres cuentas serian 60 llamadas cada vez que se abre la
+    // pestana. Ese sigue siendo un boton que se pulsa a mano.
+    //
+    // Un fallo de Unipile NO tumba la respuesta: la cuenta sale con su aviso y
+    // el resto de la pantalla funciona. Quedarse sin comentarios pendientes por
+    // no poder leer las invitaciones seria el peor cambio posible.
+    const cuentasUnicas = [...new Map(posts.map((p) => [p.creator_id, p])).values()];
+    const cuentas = await Promise.all(cuentasUnicas.map(async (c) => {
+      let solicitudes_llegadas = 0;
+      let aviso: string | null = null;
+      if (c.unipile_account_id) {
+        try {
+          const recibidas = await unipileService.getReceivedInvitations(c.unipile_account_id);
+          const invitadores = new Set(recibidas.map((i) => i.inviter_id));
+          const { rows } = await pool.query(
+            `SELECT DISTINCT s.provider_id
+               FROM lead_magnet_sends s
+               JOIN posts p ON p.id = s.post_id
+              WHERE p.creator_id = $1 AND s.kind = 'ask' AND s.status = 'sent'
+                AND NOT EXISTS (
+                  SELECT 1 FROM lead_magnet_sends d
+                   WHERE d.post_id = s.post_id AND d.provider_id = s.provider_id
+                     AND d.kind = 'dm' AND d.status = 'sent')`,
+            [c.creator_id]
+          );
+          solicitudes_llegadas = rows.filter((r) => invitadores.has(r.provider_id)).length;
+        } catch (err: any) {
+          aviso = `No he podido leer las solicitudes recibidas de ${c.creator_name || 'esta cuenta'} (${err?.message}).`;
+          console.warn('[comments/pending] invitaciones:', err?.message);
+        }
+      }
+      return {
+        creator_id: c.creator_id,
+        creator_name: c.creator_name,
+        solicitudes_llegadas,
+        aviso,
+      };
+    }));
+
     res.json({
       groups,
+      cuentas,
       total_pending: groups.reduce((n, g) => n + g.pending_count, 0),
       posts_scanned: posts.length,
     });
