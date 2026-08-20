@@ -56,6 +56,11 @@ export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
     choice ? '/api/accounts/comments/pending' : null
   );
 
+  // Sube con cada «↻ Actualizar» y remonta el bloque de solicitudes, que tiene su
+  // propia peticion. Sin esto, Actualizar recargaba los comentarios y dejaba las
+  // solicitudes congeladas — y ese es el sitio donde estan los leads.
+  const [recargaKey, setRecargaKey] = useState(0);
+
   const GROUPS_PAGE = 5;
   const [visibleGroups, setVisibleGroups] = useState(GROUPS_PAGE);
   useEffect(() => {
@@ -103,7 +108,7 @@ export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
         )}
         {choice && (
           <button
-            onClick={refetch}
+            onClick={() => { refetch(); setRecargaKey((k) => k + 1); }}
             disabled={loading}
             className="ml-auto text-xs text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
             title="Vuelve a buscar comentarios pendientes en tus posts recientes"
@@ -116,7 +121,7 @@ export default function RepliesPanel({ accounts, onSelectCreator }: Props) {
       {/* Las solicitudes pedidas, arriba del todo y de TODAS las cuentas del
           filtro. Ya no hace falta entrar a ningun post para verlas, que era por
           donde se perdian leads. */}
-      {choice && cuentas.length > 0 && <SolicitudesGlobal cuentas={cuentas} />}
+      {choice && cuentas.length > 0 && <SolicitudesGlobal cuentas={cuentas} recargaKey={recargaKey} />}
 
       {!choice && (
         <p className="text-center text-text-muted text-sm py-10">

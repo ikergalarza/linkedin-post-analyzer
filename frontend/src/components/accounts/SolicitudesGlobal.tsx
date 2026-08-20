@@ -27,12 +27,17 @@ export interface CuentaResumen {
 // de un post.
 const CFG_DEFECTO: LmConfig = { kind: 'dm', keyword: '', link: '', topic: '' };
 
-export default function SolicitudesGlobal({ cuentas }: { cuentas: CuentaResumen[] }) {
+// `recargaKey` sube cuando pulsas «↻ Actualizar» arriba. Va en la `key` de cada
+// bloque para REMONTARLO: asi se releen las solicitudes y se vuelve a comprobar
+// quien ya es contacto, sin necesidad de un segundo boton de recargar aqui.
+export default function SolicitudesGlobal({ cuentas, recargaKey = 0 }: {
+  cuentas: CuentaResumen[]; recargaKey?: number;
+}) {
   if (cuentas.length === 0) return null;
   return (
     <div className="space-y-3">
       {cuentas.map((c) => (
-        <div key={c.creator_id} className="space-y-1">
+        <div key={`${c.creator_id}:${recargaKey}`} className="space-y-1">
           {/* El aviso va FUERA del bloque: si Unipile no contesta,
               `SolicitudesPedidas` no pinta nada y el aviso se perderia con el. */}
           {c.aviso && (

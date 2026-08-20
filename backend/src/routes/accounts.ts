@@ -3796,6 +3796,23 @@ router.get('/lead-magnet/pendientes-solicitud', async (req: Request, res: Respon
   }
 });
 
+// Cache en memoria del grado de red, por cuenta y persona.
+//
+// POR QUE EXISTE (Iker, 2026-08-20): esta comprobacion paso a ser AUTOMATICA al
+// abrir Comments, y era un boton que se pulsaba una vez al dia. Sin cache, cada
+// cambio del filtro de cuenta rehace las mismas llamadas —una POR PERSONA, con
+// 400ms de pausa—, asi que con 40 esperando serian 16 segundos de Unipile cada
+// vez que tocas el desplegable.
+//
+// TTL corto a proposito: lo que se cachea es "todavia NO es contacto", y eso
+// cambia solo. Cinco minutos es bastante para cubrir un rato de trabajo sin que
+// alguien que acaba de aceptar se quede escondido media manana.
+//
+// ⚠️ Vive en memoria del proceso: un despliegue lo vacia. Es lo correcto — no es
+// un dato, es el ahorro de una llamada.
+const gradoCache = new Map<string, { accepted: boolean; at: number }>();
+const GRADO_TTL_MS = 5 * 60 * 1000;
+
 // POST /api/accounts/lead-magnet/check-accepted
 // Body: { creator_id, provider_ids: [...] }
 //
@@ -3822,10 +3839,21 @@ router.post('/lead-magnet/check-accepted', async (req: Request, res: Response) =
     };
 
     const results: { provider_id: string; accepted: boolean }[] = [];
+    const ahora = Date.now();
     for (const pid of provider_ids.slice(0, 40)) {
+      // Lo ya sabido no se vuelve a preguntar: es lo que hace que abrir Comments
+      // tres veces seguidas no sean tres rondas de llamadas a Unipile.
+      const clave = `${accountId}:${pid}`;
+      const guardado = gradoCache.get(clave);
+      if (guardado && ahora - guardado.at < GRADO_TTL_MS) {
+        results.push({ provider_id: String(pid), accepted: guardado.accepted });
+        continue;
+      }
       try {
         const profile = await unipileService.getProfile(String(pid), accountId);
-        results.push({ provider_id: String(pid), accepted: isFirstDegree(profile) });
+        const accepted = isFirstDegree(profile);
+        gradoCache.set(clave, { accepted, at: Date.now() });
+        results.push({ provider_id: String(pid), accepted });
       } catch (err: any) {
         console.warn(`[check-accepted] ${pid} failed:`, err?.message);
         results.push({ provider_id: String(pid), accepted: false });

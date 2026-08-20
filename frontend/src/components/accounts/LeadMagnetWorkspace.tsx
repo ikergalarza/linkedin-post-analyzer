@@ -1543,7 +1543,10 @@ function CommenterCard({
 export function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
   post?: GridPost; creatorId: string; cfg: LmConfig; voice: Voice;
 }) {
-  const { data, loading, refetch } = useApi<{
+  // Sin `refetch`: el refresco a mano se hace remontando el bloque desde el
+  // «↻ Actualizar» de arriba de Comments, que es el unico boton de recargar que
+  // queda en la pantalla. Tener dos era tener que elegir cual.
+  const { data, loading } = useApi<{
     llegadas: PedidoRow[]; esperando: PedidoRow[]; aviso: string | null;
   }>(`/api/accounts/lead-magnet/pendientes-solicitud?creator_id=${creatorId}`);
 
@@ -1575,24 +1578,57 @@ export function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
   // que se quedaría en «esperando» para siempre esperando algo que ya se puede
   // mandar. Esto relee su grado de red y lo sube al cubo accionable, ya sin
   // invitation_id: a un contacto de 1er grado se le manda un DM normal.
-  const comprobarGrado = async () => {
-    if (esperando.length === 0) return;
+  //
+  // ⛔ ESTO YA NO ES UN BOTON (Iker, 2026-08-20). Con Lead Magnet fusionado en
+  // Comments, tener que pulsar «mirar si ya son contacto» cada vez es pedirle al
+  // usuario que se acuerde de una cosa que la herramienta puede hacer sola — y
+  // olvidarse era exactamente el problema que la fusion venia a resolver.
+  //
+  // Se dispara SOLA al cargar, en segundo plano: el bloque se pinta ya con las
+  // solicitudes que han llegado (eso es una unica llamada) y los que esperan van
+  // subiendo si resulta que ya son contacto.
+  //
+  // ⚠️ Es la parte CARA: una llamada a Unipile POR PERSONA, con 400ms de pausa.
+  // El backend cachea el grado 5 minutos justo por esto, para que cambiar el
+  // filtro de cuenta no rehaga la ronda entera.
+  //
+  // ⚠️ Y en automatico NO se avisa de que no hay nadie nuevo. Como boton, «ninguno
+  // es contacto todavia» era la respuesta a una pregunta que habias hecho tu; al
+  // dispararse solo seria un aviso permanente de que no ha pasado nada.
+  const comprobarGrado = useCallback(async (filas: PedidoRow[], silencioso: boolean) => {
+    if (filas.length === 0) return;
+    const ids = filas.map((f) => f.provider_id);
     setChecking(true);
-    setErr(null);
+    if (!silencioso) setErr(null);
     try {
       const r = await apiPost<{ results: { provider_id: string; accepted: boolean }[] }>(
         '/api/accounts/lead-magnet/check-accepted',
-        { creator_id: creatorId, provider_ids: esperando.map((f) => f.provider_id) }
+        { creator_id: creatorId, provider_ids: ids }
       );
       const ok = new Set(r.results.filter((x) => x.accepted).map((x) => x.provider_id));
-      setAscendidos(esperando.filter((f) => ok.has(f.provider_id)).map((f) => ({ ...f, invitation_id: null })));
-      if (ok.size === 0) setErr('⚠️ Ninguno de los que esperan es contacto todavía.');
+      setAscendidos(filas.filter((f) => ok.has(f.provider_id)).map((f) => ({ ...f, invitation_id: null })));
+      if (ok.size === 0 && !silencioso) setErr('⚠️ Ninguno de los que esperan es contacto todavía.');
     } catch (e: any) {
-      setErr(e.message);
+      // En silencio tampoco se grita: si Unipile no contesta, lo unico que pasa
+      // es que nadie sube de cubo, y el bloque sigue siendo util tal cual esta.
+      if (!silencioso) setErr(e.message);
+      else console.warn('[solicitudes] comprobar grado:', e?.message);
     } finally {
       setChecking(false);
     }
-  };
+  }, [creatorId]);
+
+  // Una sola vez por (cuenta + gente que espera). La clave lleva los ids para que
+  // volver a montar el bloque con la misma lista NO rehaga la ronda, pero que si
+  // aparece alguien nuevo esperando si se le compruebe.
+  const yaComprobado = useRef<string>('');
+  useEffect(() => {
+    if (esperando.length === 0) return;
+    const clave = `${creatorId}|${esperando.map((f) => f.provider_id).sort().join(',')}`;
+    if (yaComprobado.current === clave) return;
+    yaComprobado.current = clave;
+    void comprobarGrado(esperando, true);
+  }, [creatorId, esperando, comprobarGrado]);
 
   const enviar = async (f: PedidoRow) => {
     const text = (texts[f.provider_id] ?? textFor(f)).trim();
@@ -1644,28 +1680,17 @@ export function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
           · {listos} listo{listos === 1 ? '' : 's'} para enviar
           {pendientes.length > 0 ? ` · ${pendientes.length} sin dar el paso` : ''}
         </span>
-        {/* Las dos comprobaciones son hermanas y van juntas arriba a la derecha: una
-            mira quién te ha mandado solicitud, la otra quién ya era contacto por otra
-            vía. Escondida abajo, después de la lista, la segunda no se veía. */}
-        <div className="ml-auto flex items-center gap-2 flex-wrap justify-end">
-          <button
-            onClick={() => { setAscendidos([]); setErr(null); refetch(); }}
-            className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 transition whitespace-nowrap"
-            title="Vuelve a mirar en LinkedIn quién te ha mandado ya la solicitud"
-          >
-            ↻ Mirar si han mandado solicitud
-          </button>
-          {pendientes.length > 0 && (
-            <button
-              onClick={comprobarGrado}
-              disabled={checking}
-              className="text-[11px] font-medium px-2.5 py-1 rounded bg-accent text-white hover:brightness-110 disabled:opacity-50 transition whitespace-nowrap"
-              title="Por si alguno ya es contacto vuestro por otra vía: relee su grado de red en LinkedIn, uno por uno"
-            >
-              {checking ? 'Comprobando…' : '↻ Mirar si ya son contacto'}
-            </button>
-          )}
-        </div>
+        {/* ⛔ AQUI YA NO HAY BOTONES (Iker, 2026-08-20). Las dos comprobaciones
+            —quien te ha mandado solicitud y quien ya era contacto por otra via— se
+            hacen SOLAS al cargar. Pedirle al usuario que se acuerde de pulsarlas
+            era exactamente el olvido que la fusion venia a arreglar.
+            Lo unico que queda es decir cuando la segunda esta en marcha, porque
+            tarda: es una llamada a Unipile por persona. */}
+        {checking && (
+          <span className="ml-auto text-[11px] text-text-muted whitespace-nowrap">
+            comprobando quién ya es contacto…
+          </span>
+        )}
       </div>
       <p className="text-[11px] text-text-muted leading-snug">
         A esta gente le pediste que te mandara ella la solicitud. En cuanto la manda sube aquí arriba con el recurso
