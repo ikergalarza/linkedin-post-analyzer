@@ -146,10 +146,13 @@ lleva botón de enviar abajo.**
 
 ### Marcha atrás
 
-Se hace en una rama. La pestaña Lead Magnet se **oculta**, no se borra: el
-fichero y su ruta siguen ahí hasta que Iker haya usado la vista nueva un día y
-dé el visto bueno. Si algo no encaja, se vuelve a enseñar la pestaña con una
-línea.
+**Todo va a `main`, sin rama.** Railway despliega desde `main` y es donde Iker
+prueba: una rama significaria que no puede probarlo, que es peor red de
+seguridad que ninguna.
+
+La red es otra: **la pestaña Lead Magnet se queda VISIBLE**, marcada como
+«antiguo», hasta que Iker haya usado la vista nueva un dia y dé el visto bueno.
+Las dos conviven y se comparan con datos reales. No se borra nada hasta el OK.
 
 ## Fuera de alcance
 
