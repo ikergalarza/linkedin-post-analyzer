@@ -846,8 +846,9 @@ Lo unico que cambia entre calca y edicion es **QUE se le cuenta** (ver el bloque
    - **⭐⭐ Y DENTRO DE UN DOCUMENTO FINGIDO, CADA VOZ TIENE SU REGISTRO (Iker, 2026-08-19).** En una captura conviven dos manos y **no se escriben igual**:
      - **Lo que TECLEA una persona** (una barra de búsqueda, un chat, un asunto de correo): **minúsculas, sin punto final y sin capitalizar siglas** — se escribe `ia`, no `IA`. Es lo que hace que parezca tecleado a las dos de la tarde y no redactado.
      - **Lo que PUBLICA una web o un sistema** (el título de un resultado, un titular, una etiqueta de interfaz): **capitalización normal y siglas en mayúscula** — ahí sí `IA`.
-     - **⚠️ Pero las TILDES van en las dos.** La tilde es ortografía, no puntuación, y `§3b` de `brand-voice` solo relaja la puntuación. Caso real: la barra decía `hacer que mi mensaje de ventas no parezca ia` y quedó **`cómo hacer que mi mensaje de ventas no parezca ia`** — con tilde en `cómo` y con `ia` en minúscula, las dos cosas a la vez. Y sin el `cómo` la frase se lee como una orden, no como una búsqueda.
-     - **El test:** ¿esto lo tecleó alguien o lo publicó una máquina? Lo primero va informal y con tildes; lo segundo, formal y con tildes.
+     - **⚠️ Y LO TECLEADO TAMPOCO LLEVA TILDES (Iker, 2026-08-19).** Yo defendí lo contrario diez minutos antes apoyándome en la regla de arriba, y **esa regla es del texto DENTRO de un documento** — nació porque el generador se comía las eñes de un correo —, no de lo que alguien teclea. Iker: *"para hacerlo más natural ponemos como sin acento en la búsqueda"*. Tiene razón: en un buscador **nadie pone tildes**, y con `ia` ya en minúscula, `cómo` con tilde era justo la pieza que desentonaba. Queda **`como hacer que mi mensaje de ventas no parezca ia`**.
+     - **⛔ El límite es el mismo de `brand-voice §3b`:** falta de TILDE sí, falta de ORTOGRAFÍA no. Nada de `aser` ni `mensage`, que eso ya no se lee como tecleo sino como descuido nuestro.
+     - **El test:** ¿esto lo tecleó alguien o lo publicó una máquina? Lo tecleado va en minúsculas, sin tildes y sin capitalizar siglas; lo publicado va formal, con tildes y con las siglas en mayúscula.
 
 **La forma de fallar este chequeo es no hacerlo.** Si el prompt anterior salio bien, este sale igual: se copia el molde, no se improvisa.
 
