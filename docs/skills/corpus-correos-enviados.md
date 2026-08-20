@@ -45,6 +45,18 @@ El 2026-08-20, al ir a reescribir el correo 0 para Brevo, resultó que **el text
 
 ⚠️ **No coincide con el diseñado en `§5c-0`, que decía `tú quién eres`.** El que salió lleva signos de interrogación y una palabra más. Es el que produjo el 46% de aperturas, así que manda este sobre el documentado.
 
+### El preheader
+
+```
+Normal, es la primera vez que te escribo.
+```
+
+⚠️ **Casi se pierde.** No estaba en el cuerpo que se rescató, porque el preheader no se ve al abrir el correo: solo aparece en la bandeja, detrás del asunto. Iker lo cazó mirando una captura de Gmail.
+
+**Es una pieza de copy, no un relleno**, y hace lo que tiene que hacer un preheader: **responder al asunto en vez de repetirlo.** `¿no te acuerdas de mí?` → `Normal, es la primera vez que te escribo.` El chiste se completa en la bandeja, antes de abrir.
+
+📌 **Regla: el preheader se guarda SIEMPRE junto al asunto y el cuerpo.** Es el segundo texto que más se lee (lo ven todos los que abren y todos los que no) y es el que más fácil se pierde, porque no está dentro del correo.
+
 ### El cuerpo, literal
 
 ```
