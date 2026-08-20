@@ -998,6 +998,19 @@ const migration = `
     ('historia',       'Historia',                  'morado',    'Anecdota personal en primera persona', TRUE, 70),
     ('otro',           'Otro',                      'gris',      'Sin pilar claro. Ante la duda se deja en "otro" en vez de inventar etiqueta', TRUE, 999)
   ON CONFLICT (slug) DO NOTHING;
+
+  -- v36: la config del lead magnet, a la base (Iker, 2026-08-20).
+  --
+  -- Vivia en localStorage con clave por post. Con la pestana Lead Magnet
+  -- fusionada en Comments eso ya no vale: el TIPO (dm/lista/publico) decide QUE
+  -- mensaje se genera, y perderlo al limpiar el navegador significa mandarle a
+  -- alguien el texto equivocado. El pilar dice que el post ES un lead magnet;
+  -- esto dice de cual de los tres tipos, que el clasificador no puede saber
+  -- porque no esta en el texto.
+  --
+  -- JSONB y no cuatro columnas: los cuatro campos se leen y se escriben SIEMPRE
+  -- juntos, y nunca se filtra ni se ordena por ellos.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS lead_magnet_config JSONB;
 `;
 
 /**

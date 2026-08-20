@@ -19,7 +19,8 @@ import {
   commentDepth, detectarRecurso, extractKeyword, extractSector, resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
-import { loadConfig, saveConfig } from './lmConfigLocal';
+import { loadConfig } from './lmConfigLocal';
+import { useLmConfig } from './useLmConfig';
 import type {
   Canal, CanalInfo, CommentsResponse, FollowupRow, GridPost, LmConfig, LmKind,
   PedidoRow, SendRecord,
@@ -47,7 +48,13 @@ export default function LeadMagnetWorkspace({ post, creatorId }: { post: GridPos
   // abajo. La palabra se sigue guardando porque `commentDepth` y
   // `extractSector` la usan para limpiarla del comentario en los posts viejos;
   // en los nuevos vale '' y las dos funciones lo tratan bien.
-  const [cfg, setCfg] = useState<LmConfig>(() => {
+  //
+  // ⚠️ DESDE EL 2026-08-20 ESTO NO ES LA FUENTE DE VERDAD: es la SEMILLA. La
+  // config vive en la base (`posts.lead_magnet_config`) porque el tipo decide
+  // que mensaje se genera y perderlo al limpiar el navegador significa mandarle
+  // a alguien el texto de otro formato. `useLmConfig` pide la de la base y, si
+  // no hay, sube esta. Lo de aqui abajo es exactamente lo que habia.
+  const semilla = useMemo<LmConfig>(() => {
     const saved = loadConfig(post.id);
     // Lo escrito a mano manda: si ya hay enlace guardado, no se toca.
     if (saved.link.trim()) return saved;
@@ -58,8 +65,8 @@ export default function LeadMagnetWorkspace({ post, creatorId }: { post: GridPos
       link: auto?.link ?? saved.link,
       topic: auto?.topic ?? saved.topic,
     };
-  });
-  useEffect(() => { saveConfig(post.id, cfg); }, [post.id, cfg]);
+  }, [post.id, post.content_text]);
+  const [cfg, setCfg] = useLmConfig(post.id, semilla);
 
   // Si la palabra clave es «lista», ES el lead magnet de la lista: cambia solo al
   // tipo «Lista personalizada» para no pedir enlace ni tema y generar el DM con

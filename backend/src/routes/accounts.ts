@@ -2800,6 +2800,58 @@ router.get('/lead-magnet/posts', async (req: Request, res: Response) => {
   }
 });
 
+// GET/PUT /api/accounts/lead-magnet/config?post_id=xxx
+//
+// El TIPO de lead magnet (dm/lista/publico) y su recurso, por post. Vivia en el
+// localStorage del navegador de Iker hasta el 2026-08-20; se sube a la base
+// porque el tipo decide QUE mensaje se genera y perderlo al limpiar el navegador
+// significa mandarle a alguien el texto de otro formato.
+//
+// ⚠️ `link` y `topic` NO se validan contra ningun catalogo, a proposito: son la
+// salida manual para cuando la deteccion falla o el recurso es nuevo, y bloquear
+// un envio por no reconocer un enlace es exactamente el viernes a la una con el
+// post ya subido que ya nos comimos una vez (ver la SALIDA MANUAL del panel).
+router.get('/lead-magnet/config', async (req: Request, res: Response) => {
+  try {
+    const postId = (req.query.post_id as string) || '';
+    if (!postId) return res.status(400).json({ error: 'post_id required' });
+    const { rows } = await pool.query(
+      'SELECT lead_magnet_config FROM posts WHERE id = $1',
+      [postId]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    res.json({ config: rows[0].lead_magnet_config ?? null });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/config:get]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/lead-magnet/config', async (req: Request, res: Response) => {
+  try {
+    const { post_id, config } = req.body || {};
+    if (!post_id || !config) return res.status(400).json({ error: 'post_id and config required' });
+    // El tipo SI se acota: es el unico campo que cambia el mensaje que sale, y un
+    // valor raro aqui haria que el panel cayera al DM normal sin decir nada.
+    const kind = ['dm', 'publico', 'lista'].includes(config.kind) ? config.kind : 'dm';
+    const limpio = {
+      kind,
+      keyword: String(config.keyword || '').slice(0, 120),
+      link: String(config.link || '').slice(0, 500),
+      topic: String(config.topic || '').slice(0, 300),
+    };
+    const { rowCount } = await pool.query(
+      'UPDATE posts SET lead_magnet_config = $2 WHERE id = $1',
+      [post_id, JSON.stringify(limpio)]
+    );
+    if (rowCount === 0) return res.status(404).json({ error: 'Post not found' });
+    res.json({ ok: true, config: limpio });
+  } catch (err: any) {
+    console.error('[accounts/lead-magnet/config:put]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/accounts/lead-magnet/sends?post_id=xxx
 //
 // Everyone we've already sent the resource to on this post, so the UI can
