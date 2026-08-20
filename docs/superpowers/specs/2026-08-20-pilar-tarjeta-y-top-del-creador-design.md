@@ -274,5 +274,5 @@ Los tres submoldes de P1, por frecuencia medida en Grant:
 
 ## PENDIENTES (bloquean la primera tarjeta, no el spec)
 
-- **El `@handle` de la tarjeta.** Iker/Unai/Asier no tienen cuenta de X conocida. Decisión de Iker (2026-08-20): se es fiel a la referencia y **se simula X**, con el mismo criterio que ya se aplica a los memes que simulan capturas de gente que no existe. Falta **decidir el handle exacto de cada uno** antes de generar la primera tarjeta.
+- ~~El `@handle` de la tarjeta.~~ **CERRADO (Iker, 2026-08-20).** Se simula X, y el handle sale del identificador REAL de LinkedIn de cada uno, sin guiones (en X no son validos): `@ikergalarza` · `@unaiarambarri` · `@asierolaizola`. El de Unai se acorta a dos palabras porque los handles de las referencias son cortos (`@AdamMGrant`, `@AlexHormozi`). **El NOMBRE de la linea 1 va completo y exacto**; lo que se acorta es el handle. Detalle en `post-workflow §4.6-HANDLE`.
 - **Qué cuenta abre la prueba** y con qué creencia comercial.

@@ -2168,10 +2168,25 @@ Entrega, fuera del bloque: la línea del validador, el tag de viralidad, los **d
 
 **Al publicar, al historial** (`docs/skills/historial-publicaciones.md`): cuenta, fecha, creencia atacada, fondo usado y **alcance + reposts** (no comentarios).
 
-#### 4.6-PENDIENTE · El handle
+#### 4.6-HANDLE · La cabecera de la tarjeta (CERRADO, Iker 2026-08-20)
 
-La tarjeta lleva un `@`. Iker (2026-08-20) decidió **ser fiel a la referencia y simular X**, con el mismo criterio que ya se aplica a los memes que simulan capturas: *"cuando subimos memes que simulan capturas, casi siempre son capturas de personas que en Twitter no existen"*. **Falta decidir el handle exacto de cada cuenta antes de la primera tarjeta.**
+La tarjeta simula X, así que la cabecera son **dos líneas**: nombre exacto con check azul, y debajo el `@handle`. En LinkedIn no existen los handles; en X sí, y por eso hay que rellenarlo.
 
+**Decisión de Iker: se es fiel a la referencia y se simula X**, con el mismo criterio que ya se aplica a los memes que simulan capturas: *"cuando subimos memes que simulan capturas, casi siempre son capturas de personas que en Twitter no existen"*.
+
+**LOS TRES HANDLES, y no se cambian post a post:**
+
+| Cuenta | Nombre exacto (línea 1) | Handle (línea 2) |
+|---|---|---|
+| Iker | `Iker Galarza Rodríguez` | `@ikergalarza` |
+| Unai | `Unai Arambarri Yeregui` | `@unaiarambarri` |
+| Asier | `Asier Olaizola` | `@asierolaizola` |
+
+- **Salen de vuestro identificador REAL de LinkedIn** (`ikergalarza`, `unai-arambarri-yeregui`, `asier-olaizola`), no de la nada. No se inventa ninguna identidad: es el nombre propio.
+- **⛔ Se quitan los guiones.** En X un handle solo admite letras, números y guion bajo. `@unai-arambarri-yeregui` delata la tarjeta a quien la mire dos segundos.
+- **⛔ Y se acorta el de Unai a dos palabras.** `@unaiarambarriyeregui` son 20 caracteres y se lee como un churro; los handles de las referencias son cortos (`@AdamMGrant`, `@AlexHormozi`, `@LeilaHormozi`).
+- **El nombre de la línea 1 va COMPLETO y exacto**, como en LinkedIn (`feedback_nombres_nunca_acortados`). Lo que se acorta es el handle, no el nombre.
+- **La foto es la REAL del jefe**, la misma del perfil. Es lo que sostiene la cabecera.
 ---
 
 ## 5 · Dónde el círculo SE PARA y te devuelve (gates humanos — aquí mandan las skills)
