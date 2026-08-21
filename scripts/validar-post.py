@@ -1007,7 +1007,14 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # bastante barrera como para meterle un salto mas. Asi que el check ni salta:
     # no es una mejora pendiente, es una decision tomada.
     _solo_luma = bool(_fuera) and all('luma.com' in u for u in _fuera)
-    if not (pilar == 'evento' and _solo_luma):
+    # ⭐ AMPLIADO 2026-08-21: el enlace de Luma vale en CUALQUIER pilar, no solo
+    # en --pilar evento. La doctrina lo dice desde el 05/08 (global §4.4e y el
+    # bloque del evento): un post informativo del evento no lo lee nadie, asi que
+    # el evento viaja DENTRO de un pilar que ya es outlier (historia, meme, mapa)
+    # y alli Luma ocupa el hueco del enlace de agendar. El check seguia atado al
+    # pilar y tumbaba la historia de Unai del 21/08, que es justo como manda
+    # venderlo. Lo que decide es que el UNICO enlace de fuera sea el de Luma.
+    if not _solo_luma:
         chk(not _fuera, 'El enlace apunta a recursos.neety.com, no fuera (outliers §3.14)',
             f'{_fuera[:2]} — un clic a web ajena no es un clic nuestro' if _fuera else '')
 
@@ -1297,7 +1304,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
 
     # ---------- POR PILAR ----------
     # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.
-    tiene_link = 'recursos.neety.com' in cuerpo or (pilar == 'evento' and 'luma.com' in cuerpo)
+    tiene_link = 'recursos.neety.com' in cuerpo or 'luma.com' in cuerpo
     if pilar in ('mapa', 'los10', 'meme', 'evento'):
         chk(tiene_link, 'Spam ninja presente (§4.4b)', 'falta el link de agendar' if not tiene_link else '')
         # ⛔ 2026-08-06, Iker: este check decia "falta el link de agendar" pero se
@@ -1332,7 +1339,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # Que dominio hace de CTA en ESTE post: en evento es luma.com, en el
         # resto recursos.neety.com. Antes estaba escrito a fuego y al meter el
         # pilar evento esto reventaba con StopIteration (Iker, 2026-08-05).
-        _dom = 'luma.com' if (pilar == 'evento' and 'luma.com' in cuerpo) else 'recursos.neety.com'
+        _dom = 'luma.com' if 'luma.com' in cuerpo else 'recursos.neety.com'
         _bare_link = re.search(r'(?<!https://)' + re.escape(_dom), cuerpo)
         chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
             f'falta https:// delante de {_dom}' if _bare_link else '')
@@ -1541,7 +1548,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _j = lambda _b: ' '.join(_b)
         _i_cor = next((i for i, b in enumerate(_bl)
                        if '/correo' in _j(b) or '/newsletter' in _j(b)), None)
-        _dom_ag = 'luma.com' if (pilar == 'evento' and 'luma.com' in cuerpo) else 'recursos.neety.com/agendar'
+        _dom_ag = 'luma.com' if 'luma.com' in cuerpo else 'recursos.neety.com/agendar'
         _i_ag = next((i for i, b in enumerate(_bl) if _dom_ag in _j(b)), None)
         _cb = _bl[_i_cor] if _i_cor is not None else []
         _cj = _j(_cb)
