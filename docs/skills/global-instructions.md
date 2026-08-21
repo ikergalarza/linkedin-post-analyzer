@@ -252,6 +252,25 @@ Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cade
 **⭐ EL TEST DEL ANCLA (correr en TODO post, no solo en remixes): "¿esto solo puede publicarlo una cuenta de VENTAS?"**
 Lee el post e imagina que lo sube una consultora, una agencia o una constructora. **Si cuela, está mal.** El peor error posible es que tu publicación la pudiera subir cualquier cuenta: entonces es un post huérfano y el algoritmo no sabe a quién dárselo. **El algoritmo ES la audiencia, no es suerte** — contenido de ventas, audiencia de ventas. El post tiene que leerse como algo que SOLO es posible en una cuenta de ventas, y eso se consigue con el vocabulario del oficio (vender, cerrar, cliente, comercial, venta, precio, cuota, facturar, exportar), no solo con un tema traducible. Caso real en `outliers-database §3.9c` Paso 7.
 
+### 🔥🔥 2.3d · EL INTENSIFICADOR: CADA PILAR TIENE SU "Y POCO MÁS" (Iker, 2026-08-21) — UNIVERSAL
+
+> **Iker:** *"para enfatizar, como hacemos en los ganchos de los peloteos de mapa regional, añadimos una cosa que da más rabia, diciendo cosas como y poco más. El objetivo de esta publicación es disparar ese bucle abierto y la emoción de la curiosidad al máximo"*. Y el recordatorio de por qué importa: **`§1` obliga a llevar UNO de los tres pilares al extremo, y ese extremo se dispara EN EL GANCHO**, no en el cuerpo. Un gancho tibio no lo arregla un cuerpo bueno.
+
+**LO QUE FALTABA ESCRITO:** la frase-rabia del mapa (`y poco más`) no es una pieza del mapa, es **el intensificador de SU emoción**. Todo gancho lleva uno; lo que cambia es cuál, según qué pilar emocional dispare. Sin él, el gancho enuncia y no aprieta.
+
+| pilar emocional | qué intensifica | la pieza | validado en |
+|---|---|---|---|
+| **RABIA / orgullo** (peloteo) | el desprecio ajeno, para que el local salte a defender | **el remate de menosprecio**: `y poco más`, `y para de contar`, `y a otra cosa` | Navarra 7.72x · Galicia 7.28x |
+| **CURIOSIDAD** (historia, insight) | la distancia entre lo que había y lo que hay | **el superlativo de incredulidad**: `lo último que me esperaba`, `en la vida habría dicho`, `ni de broma` | historia de Unai 21/08 |
+| **MIEDO** | lo cerca que está el problema | **el plazo o el ya**: `y ya ha empezado`, `y todavía no lo sabes` | pendiente de medir |
+| **DESEO** | lo poco que cuesta llegar | **el contraste de esfuerzo**: `sin tocar una tecla`, `en una tarde` | pendiente de medir |
+
+**CÓMO SE ELIGE, y es una pregunta, no una lista:** *¿qué emoción quiero al máximo?* → se coge SU intensificador. Meter el de otra emoción es la dilución nº1 de `§1` (tocar los tres pilares a la vez).
+
+**⚠️ Y EL INTENSIFICADOR CUESTA CARACTERES, así que compite con `§2.2c` (a igualdad de sentido gana el corto).** Iker lo dijo él mismo mientras lo pedía: *"esto contradice lo que te he dicho, siempre hay que intentar corto y bueno"*. **No se contradice si el intensificador CAMBIA la emoción, que es justo lo que `§2.2c` protege**: ahí la tijera quita lo redundante, no lo que hace el trabajo. El caso del 21/08: el gancho pasó de 62 a 78 caracteres, +16, y lo que compran esos 16 es el superlativo. **La prueba es la de siempre: quítalo y mira si el gancho sigue apretando igual.** Si sigue igual, sobraba.
+
+**⛔ Y NO SE APILAN DOS.** Un superlativo y un remate de menosprecio en la misma frase se anulan, exactamente igual que tres verbos punchy (`§2.9`). Uno, y que caiga solo.
+
 ### 2.4 · Claim universal dentro del sector
 El claim (el shock, la tensión, el reframe) debe aterrizar para CUALQUIERA cerca del B2B comercial: SDRs, AEs, sales managers, RevOps, founders B2B. Test: ¿un sales manager pararía el scroll con esto? ¿un founder B2B? Si solo lo pilla el SDR ultra-técnico, es un hook del 1% — amplía.
 
