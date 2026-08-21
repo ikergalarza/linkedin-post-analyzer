@@ -110,6 +110,8 @@ SPAM_QUEMADO = {
     'te lo damos hecho': 'lo mismo, en los tres',
     'te lo damos resuelto': 'historia de Iker 18/08 (era la variante de "te lo damos hecho")',
     'te lo marcamos': 'meme de Iker 19/08 (el de la transcripcion de la llamada)',
+    'acertar con quien no': 'historia de Unai 21/08 (la de las webs a los 13)',
+    'acertar con quién no': 'historia de Unai 21/08 (la de las webs a los 13)',
 }
 
 # §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
