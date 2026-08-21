@@ -95,6 +95,14 @@ export interface PedidoRow {
   // un DM y no hay que aceptar nada. null = todavía no la ha mandado, o ya sois
   // contacto por otra vía (entonces sale un DM normal).
   invitation_id: string | null;
+  // ⛔ EL RECURSO VIAJA CON LA FILA (Iker, 2026-08-20). El bloque de solicitudes
+  // de arriba de Comments no tiene ningún post elegido, así que sin esto el DM
+  // salía EN BLANCO y `Enviar DM` mandaba un mensaje vacío. Y el recurso de una
+  // persona no es el del post que estés mirando: es el del post donde ELLA
+  // comentó, que es de donde salen estos dos campos.
+  lead_magnet_config?: LmConfig | null;
+  post_content_text?: string | null;
+  post_creator_name?: string | null;
 }
 
 

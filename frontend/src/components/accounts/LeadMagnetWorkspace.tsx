@@ -238,7 +238,11 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
   // El filtro es SOLO de vista. `dmOwnerByPerson` y compañía siguen calculando
   // sobre la lista entera: quién es el dueño del recurso de cada persona no
   // puede depender de qué pestaña estés mirando.
-  const [gradoFiltro, setGradoFiltro] = useState<'todos' | 1 | 2 | 3 | 'fallidos'>('todos');
+  // ⛔ ARRANCA EN «PARA ACTUAR», NO EN «TODOS» (Iker, 2026-08-20). Un post con 50
+  // comentarios de los que 32 ya recibieron el recurso te obligaba a ir bajando
+  // por 32 tarjetas muertas para dar con las 11 que tienen trabajo. La lista por
+  // defecto es el trabajo; «Todos» sigue ahi para mirar.
+  const [gradoFiltro, setGradoFiltro] = useState<'accionables' | 'todos' | 1 | 2 | 3 | 'fallidos'>('accionables');
   const grupoDe = (t: Thread) => {
     const d = t.author.network_distance ?? null;
     return d === 1 ? 1 : d === 2 ? 2 : 3;
@@ -263,12 +267,36 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
     return ss.some((x) => x.kind === 'dm' && x.status === 'failed');
   }, [sendsByPerson, sendsByComment]);
 
+  // ⛔ QUIEN TIENE TRABAJO PENDIENTE EN ESTE POST.
+  //
+  // Fuera los dos cubos que no son trabajo tuyo:
+  //   · ya recibio el recurso        → no hay nada que hacer
+  //   · ya le pediste la solicitud   → la pelota es suya. Y cuando la mande, o
+  //     cuando te agregue, REAPARECE arriba en «Solicitudes pedidas» con su DM
+  //     ya escrito, que es donde toca mandarselo.
+  // Un envio FALLIDO si es trabajo: hay que volver a escribirle.
+  const accionable = useCallback((t: Thread) => {
+    const ss = [
+      ...(t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []),
+      ...(sendsByComment.get(t.id) ?? []),
+    ];
+    if (ss.some((x) => (x.kind === 'dm' || x.kind === 'inmail') && x.status === 'sent')) return false;
+    if (ss.some((x) => x.kind === 'dm' && x.status === 'failed')) return true;
+    // `gestionadosArriba` es la misma senal que usa la tarjeta para esconder sus
+    // controles de envio: se mira por id de COMENTARIO, no por provider_id, que
+    // cambia cuando la persona pasa a 1er grado.
+    if (gestionadosArriba.has(t.id) || ss.some((x) => x.kind === 'ask' && x.status === 'sent')) return false;
+    return true;
+  }, [sendsByPerson, sendsByComment, gestionadosArriba]);
+
   const filtrados = useMemo(
-    () => (gradoFiltro === 'todos' ? matches
+    () => (gradoFiltro === 'accionables' ? matches.filter(accionable)
+      : gradoFiltro === 'todos' ? matches
       : gradoFiltro === 'fallidos' ? matches.filter(fallo)
       : matches.filter((t) => grupoDe(t) === gradoFiltro)),
-    [matches, gradoFiltro, fallo]
+    [matches, gradoFiltro, fallo, accionable]
   );
+  const cuentaAccionables = useMemo(() => matches.filter(accionable).length, [matches, accionable]);
   const cuentaGrado = useMemo(() => {
     const c = { 1: 0, 2: 0, 3: 0 } as Record<1 | 2 | 3, number>;
     for (const t of matches) c[grupoDe(t)]++;
@@ -493,6 +521,7 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
                 decisión. */}
             <span className="flex items-center gap-1">
               {([
+                ['accionables', `Para actuar (${cuentaAccionables})`, false],
                 ['todos', `Todos (${matches.length})`, false],
                 [1, `1er grado (${cuentaGrado[1]})`, false],
                 [2, `2º (${cuentaGrado[2]})`, false],
@@ -586,6 +615,8 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
         <p className="text-center text-text-muted text-sm py-10">
           {gradoFiltro === 'fallidos'
             ? 'Ningún envío fallido en este post.'
+            : gradoFiltro === 'accionables'
+            ? 'Nada que hacer aquí: a todos se les mandó el recurso o se les pidió la solicitud. Los que la manden salen arriba, en Solicitudes pedidas.'
             : 'Ningún comentario de ese grado en este post.'}
         </p>
       )}
@@ -1566,11 +1597,26 @@ export function SolicitudesPedidas({ post, creatorId, cfg, voice }: {
   // El texto del recurso. La lista guarda el suyo al pedir la solicitud (son 15
   // empresas que hubo que ir a buscar a Unipile); el resto se monta aquí con el
   // recurso de la palabra clave.
+  // ⛔ EL RECURSO SALE DEL POST DE ESA PERSONA, NO DEL QUE ESTES MIRANDO (Iker,
+  // 2026-08-20). Antes se resolvia siempre con `cfg`, y arriba en Comments no hay
+  // post elegido: `cfg` iba vacio, `resolverRecurso` devolvia null y el DM salia
+  // EN BLANCO con el boton de enviar activo. Un mensaje vacio a un lead.
+  //
+  // Orden: lo guardado al pedir la solicitud (la lista, que costó ir a buscarla a
+  // Unipile) → la config del post de esa fila → detectarlo de su texto → el cfg
+  // del post abierto, que es lo unico que habia antes.
   const textFor = useCallback((f: PedidoRow): string => {
     if (f.followup_text) return f.followup_text;
-    const recurso = resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
+    const suya = f.lead_magnet_config ?? null;
+    const recurso =
+      resolverRecurso(suya?.keyword ?? '', suya?.link, suya?.topic)
+      ?? (f.post_content_text ? detectarRecurso(f.post_content_text) : null)
+      ?? resolverRecurso(cfg.keyword, cfg.link, cfg.topic);
     if (!recurso) return '';
-    return buildDm({ name: f.provider_name, topic: recurso.topic, link: recurso.link, voice });
+    // La voz es la de la cuenta que publico ESE post: en el bloque global hay
+    // filas de las tres cuentas y todas heredaban la voz de la primera.
+    const suVoz = f.post_creator_name ? voiceFor(f.post_creator_name) : voice;
+    return buildDm({ name: f.provider_name, topic: recurso.topic, link: recurso.link, voice: suVoz });
   }, [cfg.keyword, cfg.link, cfg.topic, voice]);
 
   // EL CASO RARO, y pasa: alguien acaba siendo contacto por otra vía (lo aceptáis

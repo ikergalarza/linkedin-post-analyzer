@@ -2479,7 +2479,6 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
               const entregado = dmEnviadoPorPost.get(post.id) ?? new Set<string>();
               const fallado = dmFallidoPorPost.get(post.id) ?? new Set<string>();
               const pedido = askPorPost.get(post.id) ?? new Set<string>();
-              const invitaciones = invitacionesPorCuenta.get(post.creator_id) ?? new Set<string>();
               const vistos = new Set<string>();
               for (const t of threads) {
                 const pid = t.author?.profile_id;
@@ -2487,13 +2486,15 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
                 vistos.add(pid);
                 if (entregado.has(pid)) continue;          // ya lo tiene
                 if (fallado.has(pid)) { fallidos++; continue; }
-                // Se le puede escribir por privado: 1er grado, o nos mando ella
-                // la solicitud y sigue pendiente (se le contesta a esa solicitud).
-                const puedeDm = t.author?.network_distance === 1 || invitaciones.has(pid);
-                // Y si no se le puede escribir pero TAMPOCO le hemos pedido el
-                // paso todavia, hay trabajo: contestarle en publico pidiendoselo.
-                if (puedeDm || !pedido.has(pid)) accionables++;
-                else esperando_su_paso++;
+                // ⛔ EL CONTADOR CUENTA LO QUE VAS A VER EN EL POST (Iker,
+                // 2026-08-20). Quien tiene un `ask` NO sale en la lista del post:
+                // su entrega la gobierna el bloque de «Solicitudes pedidas» de
+                // arriba, que es donde aparece en cuanto manda la solicitud o te
+                // agrega. Contarlo aqui hacia que «11 para actuar» no cuadrase
+                // con las tarjetas de debajo, y ese descuadre es el que te hace
+                // abrir el post a buscar a alguien que no esta.
+                if (pedido.has(pid)) { esperando_su_paso++; continue; }
+                accionables++;
               }
             }
 
@@ -3754,8 +3755,17 @@ router.get('/lead-magnet/pendientes-solicitud', async (req: Request, res: Respon
     // que hace que una persona desaparezca de aquí en cuanto se le manda el
     // recurso, igual que en /followups.
     const { rows } = await pool.query(
+      // ⛔ LA CONFIG Y EL TEXTO DEL POST VIAJAN CON CADA FILA (Iker, 2026-08-20).
+      //
+      // Sin esto, el bloque de solicitudes de arriba de Comments generaba el DM
+      // en BLANCO: alli no hay ningun post elegido, asi que no habia recurso que
+      // resolver y `Enviar DM` mandaba un mensaje vacio. Y el recurso de una
+      // persona no es el del post que estes mirando: es el del post donde ELLA
+      // comento.
       `SELECT s.post_id, s.provider_id, s.provider_name, s.sector, s.followup_text,
               s.comment_social_id, s.created_at,
+              p.lead_magnet_config, p.content_text AS post_content_text,
+              c.name AS post_creator_name,
               EXTRACT(DAY FROM NOW() - s.created_at)::int AS dias
          FROM lead_magnet_sends s
          JOIN posts p ON p.id = s.post_id
