@@ -1916,6 +1916,14 @@ Acceso libre.
 > - **La mezcla que funciona, y es además lo correcto en español:** **imperfecto para la costumbre** (`andaba en las mismas`, `tenía 15 años`) y **pretérito para los hechos** (`la cerré`, `la eché`, `pagó`). El idioma ya distingue el fondo del suceso; solo hay que usarlo bien.
 > - **Se cuenta antes de entregar**, no se supone.
 
+> ### 🔴🔴 4.6-BIO · ANTES DE INVENTAR NADA, MIRA LA BIOGRAFÍA DEL DUEÑO DE LA CUENTA (Iker, 2026-08-21)
+> **`§4.6-INVENTAR` AUTORIZA a inventar la escena. No OBLIGA, y esa diferencia me costó dos borradores.** Escribí la historia de Unai con una escena de cromos en el patio, correctísima según la receta, y él la devolvió: *"el contexto de los 13 años tienes que enfocarlo más con la verdad de la historia del primer jefe"* — y pasó la línea de su propio perfil de LinkedIn: **"Llevo construyendo tecnología desde los 13 años, cuando programaba mis primeras webs"**.
+> - **El hecho real gana siempre que exista y encaje con el dolor.** Aguanta preguntas en los comentarios, y la inventada no: a una escena construida cualquiera le puede pedir el detalle delante de todos.
+> - **Y encima trae material gratis**: una biografía real viene con época, oficio y vocabulario propios, que es justo lo que hace que la historia no se pueda copiar-pegar a otra cuenta.
+> - **EL PASO, y va ANTES de elegir la escena:** leer el **perfil del dueño de la cuenta** (headline y el "acerca de") y preguntarle a Iker por lo que no esté escrito ahí. ⚠️ **Unipile NO devuelve el `summary`** — comprobado el 21/08, viene vacío —, así que esa parte se pide, no se saca por API.
+> - **La escena inventada sigue siendo la salida buena cuando NO hay hecho real que encaje.** Es lo que abarata el pilar y no se toca (`§4.6-INVENTAR` entero sigue en pie).
+> - **Lo real y lo inventado se separan en la entrega, línea por línea.** En este post: real los 13 años, las primeras webs y que no ha parado de construir; inventados el taller del barrio y que fuera la primera que usó alguien.
+>
 > ### 🎭 4.6-INVENTAR · LA ESCENA SE PUEDE INVENTAR. EL DOLOR, NUNCA (Iker, 2026-08-14)
 > **Es la ÚNICA excepción del pilar historia a "nunca inventes nada"**, y es exactamente la misma excepción que ya existía en email (`email-marketing §7`, Iker 2026-07-27). Fuera de estos dos sitios, el innegociable de `CLAUDE.md` sigue entero.
 >
