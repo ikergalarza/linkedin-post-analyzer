@@ -228,7 +228,13 @@ ANCLA_VENTAS = f'({ANCLA_FUERTE}|{ANCLA_AMBIGUA})'
 # La cuenta de Mario NO es de ventas: es la de MARKETING/growth (aboutme §2). Su
 # hook ancla en marketing, no en "vender". Sin esto, todo post suyo falla el ancla.
 MARKETING_ANCLA = (r'\b(marketing|contenido|redes|crecer|crecimiento|alcance|impresiones'
-                   r'|audiencia|viral|engagement|seguidores|marca personal|perfil|linkedin)\b')
+                   r'|audiencia|viral|engagement|seguidores|marca personal|perfil|linkedin'
+                   # 2026-08-21 — el post de la caida de los influencers de Mario. Un gancho
+                   # con "influencer" dentro fallaba el ancla, y es la palabra mas de
+                   # marketing que existe: esta en la misma familia que "viral" y
+                   # "audiencia", que ya estaban. Mismo caso para los oficios del mundo
+                   # del contenido, que es el carril de esa cuenta (aboutme §2-CARRIL).
+                   r'|influencers?|creador(?:es)? de contenido|youtubers?|streamers?)\b')
 # §2.3 — estrechan el alcance, FUERA del hook. Lista canónica: gana a la de
 # "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
 # aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
