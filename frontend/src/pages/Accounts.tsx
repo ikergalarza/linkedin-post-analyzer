@@ -531,6 +531,13 @@ function AccountsInner() {
 
   const dateRange = useMemo(() => {
     if (datePreset === 'custom') {
+      // Entre el primer clic y el segundo, `customEnd` está VACÍO. Sin este
+      // guard, `''` ordenaba antes que cualquier fecha y el rango salía
+      // `{start:'', end:'2026-07-31'}`; luego `new Date('T00:00:00')` era
+      // Invalid Date y en la barra se leía "NaN days" (Iker, 2026-08-21).
+      // Con un solo día elegido, el rango es ese día: un día.
+      if (!customEnd) return { start: customStart, end: customStart };
+      if (!customStart) return { start: customEnd, end: customEnd };
       // Guard against inverted ranges — UI prevents this but defend anyway.
       const a = customStart <= customEnd ? customStart : customEnd;
       const b = customStart <= customEnd ? customEnd : customStart;
@@ -992,10 +999,16 @@ function AccountsInner() {
                   setDatePreset('custom');
                   setShowCalendar((v) => !v);
                 }}
-                className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                // El ancho DEPENDE de lo que ponga dentro. Con "Custom" cabe en
+                // nada; con un rango entero (`2026-07-31 → 2026-08-15`) hacen
+                // falta 23 caracteres y antes se cortaba. Se reserva el ancho
+                // en cuanto hay rango, en vez de dejar que el botón crezca y
+                // encoja: si el ancho bailara con cada clic, los presets de al
+                // lado se moverían debajo del cursor (Iker, 2026-08-21).
+                className={`py-1 rounded text-xs transition-colors whitespace-nowrap ${
                   datePreset === 'custom'
-                    ? 'bg-accent/20 text-accent border border-accent/30'
-                    : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                    ? 'px-3 min-w-[218px] bg-accent/20 text-accent border border-accent/30 tabular-nums'
+                    : 'px-2.5 bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
                 }`}
               >
                 📅 {datePreset === 'custom' && customStart
