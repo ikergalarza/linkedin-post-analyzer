@@ -1939,6 +1939,7 @@ Acceso libre.
 >
 > **Y esto es lo que abarata el pilar:** sin verificación de empresas, sin CSV, sin menciones que cruzar. **Por eso puede ser semanal en agosto** y el peloteo no.
 > - **Sigue habiendo un gate humano:** la historia se entrega diciendo **de qué dolor del informe sale**, para que Iker la contraste con una reunión real antes de publicar. Inventar la escena no es inventar el material.
+> - **⭐ Y EL ARGUMENTO PARA DEFENDERLO HACIA DENTRO, MEDIDO (2026-08-21).** Cuando un jefe pregunte si nos lo hemos inventado, la respuesta no es teórica: **los dos mejores posts del pilar son los dos que llevan escena construida.** Iker 13/08 (escena redactada a partir del dolor nº1 del informe) → **10.2k imp · 1.01x · 0,41% de CTR, el mejor del pilar**; Iker 18/08 (portal, 143 nombres y el filtro del césped, inventados) → **9.5k imp · 0.95x, el de más alcance del pilar**. **Y el matiz que cierra la conversación: no nos inventamos el DOLOR, que sale de 50 reuniones reales. Nos inventamos el decorado.**
 
 Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA con una lección**: real, o **construida sobre un dolor real** (`§4.6-INVENTAR`). **Ya tenemos datos propios, pero pocos** (n=2 en Iker, `§4.6-MEDIDO`; n=2 en Unai): la vara sigue siendo mayormente de fuera, como en el lead magnet. Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
 
@@ -1954,6 +1955,23 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
 > - **Y esta señal es para el HUMANO, no para el clasificador.** El código no distingue un selfie de un wojak: los dos entran en la base como `text_image` y no hay visión por ordenador en el backend. Al clasificador lo separa el **tiempo verbal** (`services/pillar.ts`: una historia narra en pretérito, un meme describe en presente). Si alguna vez dudas mirando la parrilla, la foto te lo dice a ti en medio segundo; al script hay que seguir diciéndoselo por el texto.
 
 **Referentes (de nuestra BD, `/api/ideas/inspiration`):** **Josh Braun** (39x *"My mom died yesterday"*, 29x *"When I was younger in sales, I'd get on a plane…"*), **Daniel Disney** (16 outliers: *"I hired the smartest person in the room once"*, *"I had a manager who would scream at the sales floor"*). **Se eligen por `hook_type` story/confesión + LIKES ≫ comentarios** (si comentarios > likes, es un lead magnet disfrazado de historia, no una historia).
+
+> ### 🎯🎯 4.6-PROMESA · LA SEGUNDA FORMA DE GANCHO DEL PILAR: NO LA ESCENA, LA PROMESA (Iker, 2026-08-21)
+> **El punto 1 de aquí abajo dice que la historia entra por una ESCENA. Sigue siendo el default, pero NO es la única forma**, y la segunda nació el 21/08 con la historia de Unai. Iker, pidiéndola: *"que cuando leas ese gancho digas: vale, me está contando que va a revolucionar la industria de las ventas, pero no me está contando cómo"*.
+>
+> | forma | el gancho | el bucle | cuándo |
+|---|---|---|---|
+> | **ESCENA** (default) | *Le pregunté a qué empresas quería vender y me plantó el portátil delante* | ¿qué pasó? | la historia se sostiene sola |
+> | **PROMESA** | *Con 13 años jamás me imaginé la forma de vender que vamos a reinventar* | ¿qué viene? | **cuando el post tiene que vender algo que aún no ha pasado** (un evento, un lanzamiento) |
+>
+> **Es el mismo bucle abierto de `global §2.0`, pero CARGADO EN EL FUTURO.** Y es lo que permite meter un evento dentro de una historia sin que huela a promoción, que es el problema que teníamos escrito desde el 05/08 (*un post informativo del evento no lo lee nadie*).
+>
+> **LAS TRES CONDICIONES, y las tres son obligatorias:**
+> 1. **La FOTO no puede delatar.** Selfie o foto real, jamás el cartel. El precedente contrario es el post de evento de Unai del 11/08: gancho de refrán invertido buenísimo y **el cartel con fecha, nombre y patrocinadores de imagen** → *"se notaba que era una promoción desde el segundo 1"*, **0.47x**.
+> 2. **El claim va en FUTURO y el intensificador en pasado** (`global §2.3d-FUTURO`). Si el verbo da el hecho por cumplido, no queda nada que esperar y se cae el bucle.
+> 3. **El cuerpo tiene que PAGAR la promesa antes del enlace**, con una línea puente que no desvele (*Lo de septiembre empieza justo ahí*). Sin ella el enlace aparece a pelo y el gancho se queda a deber.
+>
+> **⚠️ Y lo honesto: n=1, sin medir.** Ninguna de las 5 cuentas tenía un gancho de promesa antes de este. Se prueba a propósito y **el primer resultado decide si la forma se queda**.
 
 1. **HOOK:** primera persona, una ESCENA/anécdota concreta (*"I [algo que me pasó]"*, *"Cuando…"*, *"Nunca…"*), vulnerable o intrigante. **NO alarma, NO claim, NO dato.** Corto.
 1a. **⛔⛔ Y EN UNA SOLA ORACIÓN, SIEMPRE (Iker, 2026-08-12). HARDCODE DE ESTE PILAR.**

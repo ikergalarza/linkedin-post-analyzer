@@ -262,6 +262,11 @@ Iker: *"un gancho que no se pueda representar visualmente una creadora de vídeo
 
 **El test rápido:** di el objeto en voz alta sin contexto. **¿Lo primero que ves es una pantalla?** Cámbialo.
 
+**⭐ AMPLIADO AL CUERPO EL 2026-08-21, y hasta hoy esto estaba escrito solo para el GANCHO.** Iker preguntó si en la historia de Unai era mejor `un taller del barrio` o `una tienda del barrio`. **Gana `taller`, y el motivo es este mismo test aplicado tres líneas más abajo del gancho:** `tienda` hoy se lee antes como *tienda online* que como el local de la esquina, así que el lector pierde la imagen del negocio de barrio justo en la frase que sostiene la escena. `taller` no tiene versión digital.
+- **La familia crece con `tienda`**, que se suma a `buzón`, `carpeta`, `archivo`, `ventana`, `nube`, `muro`, `perfil`, `agenda`, `carrito`, `libreta` y `tablón`.
+- **Por qué vale también en el cuerpo, aunque `§2.3b` diga que la especificidad va ahí:** una cosa es **estrechar el público** (eso solo cuesta en el gancho) y otra **romper la imagen mental** (eso cuesta en cualquier línea). Son dos problemas distintos y solo el primero es exclusivo del gancho.
+- **Y de propina, el objeto del cuerpo puede anclar al ICP sin nombrarlo**: un taller es una empresa pequeña, una tienda es comercio minorista. En el cuerpo esa precisión sale gratis.
+
 **Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: el test de la creadora de videos`), que además canta la familia de palabras de doble lectura si alguna aparece en el gancho.
 
 ### 2.3 · Ancla de sector en la primera línea
@@ -1403,6 +1408,32 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 **⛔ Lo que NO es esto:** una excusa para quitar agendar porque cuesta escribirlo. Si el post habla de vender, de clientes o de prospección, agendar entra y manda. Esto es solo para el post cuyo tema vive fuera de eso.
 
 **Mecanizado** con `--solo-correo` en `validar-post.py`, que convierte el fallo de orden en un check declarado. **Se declara, no se omite:** sin el flag, el validador sigue exigiendo el bloque de agendar, que es lo que tiene que pasar el 90% de las veces.
+
+#### 🤥🤥 4.4b-PROMESA · EL NINJA NO PUEDE PROMETER LO QUE EL DESTINO NO DA (Mario, 2026-08-21) — GLOBAL
+
+> **Mario:** *"nuestra newsletter de ventas no va a ser sobre contar salseos o noticias polémicas como esta, sino que ataca el punto de dolor de la gente que quiere encontrar clientes y no los encuentra"*.
+
+**El fallo, y es el que más me preocupa de todos los de hoy, porque el bloque estaba PERFECTO por fuera:** escribí *"De la próxima caída te vas a enterar aquí tarde. / Lo mandamos antes en el correo de ventas"*. Pasaba los siete checks —dos líneas, ≤55, la de abajo más corta, recogía la palabra del gancho, plural, sin nombrar la marca— **y aun así estaba mal, porque decía que en ese correo se cuentan polémicas. Y no se cuentan.**
+
+**LA REGLA:** el ninja se cuelga del gancho, **pero lo que PROMETE lo decide el destino, no el gancho.** Colgarse del gancho es la forma; la promesa es el contrato.
+
+**EL TEST, y va después de los mecánicos, nunca antes:**
+> *Si alguien pincha el enlace ahora mismo, ¿se encuentra lo que estas dos líneas le han dicho que se iba a encontrar?*
+
+Si la respuesta es que no, da igual lo bien que suene: **es publicidad engañosa y encima quema el enlace**, porque el que entra una vez y no encuentra lo prometido no vuelve a entrar nunca.
+
+| destino | qué puede prometer | qué NO |
+|---|---|---|
+| `/agendar/` | la identificación: a quién vender, quién firma dentro (`§4.4b-ORDEN`) | resultados garantizados, que escriba la IA |
+| `/correo/` | cómo encontrar clientes y vender más, antes que nadie | noticias, polémicas, actualidad, salseo |
+| gate de un recurso | exactamente el entregable que hay dentro | "todo lo demás" |
+
+**⭐ Y CUANDO EL TEMA DEL POST NO ES EL DEL DESTINO, NO SE MIENTE: SE TIENDE UN PUENTE.** Es lo que resuelve el caso, y la forma del puente es siempre la misma: **la primera línea dice lo que el tema del post SÍ te da y lo que NO**, y la segunda dice que de lo que no, va el enlace. Es la forma `eso lo hace cualquiera, lo otro no` de `§4.4b`, aplicada al TEMA en vez de a la broma.
+```
+Una caída te trae atención. No te trae clientes.
+De eso va nuestro correo de ventas: {link}
+```
+La palabra del gancho sigue dentro (`caída`), el chiste sigue girado, **y la promesa por fin es verdad.**
 
 #### 🏢 4.4e-QUIÉN · EL BLOQUE DEL CORREO VA EN PLURAL, PORQUE LA NEWSLETTER ES DE LA EMPRESA (Iker, 2026-08-21)
 

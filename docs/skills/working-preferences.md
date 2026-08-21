@@ -69,6 +69,25 @@ Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y d
 
 **El chequeo, antes de cerrar cualquier turno con un entregable dentro:** busca en el bloque las promesas en primera persona (*"te lo paso"*, *"te lo mando"*, *"lo escribo yo"*, *"lo mido y te digo"*). **Cada una de ellas es una línea de MI lista, no de la suya.** Si alguna sigue sin cumplir al final del turno, o se cumple ahí mismo o se marca en rojo.
 
+## 🛑🛑 0e · NUNCA `git add -A`: SE AÑADEN MIS FICHEROS POR NOMBRE (2026-08-21)
+
+**El fallo, y lo descubrí yo auditando mis propios commits, no me lo dijo nadie:** dos commits míos del 21/08 se llevaron por delante **cambios de frontend que no eran míos** (`DateRangeCalendar.tsx`, 163 líneas nuevas, y `Accounts.tsx`), que estaban sin commitear en el árbol cuando empecé. Usé `git add -A` y me llevé lo que había suelto, **con un mensaje de commit que hablaba de recetas de copy**.
+
+**Lo que hace de esto algo peor que un despiste:** el código quedó **mal atribuido en el historial**. Quien busque cuándo entró ese componente va a encontrar un commit sobre ganchos de LinkedIn. Y si hubiera que revertir mi commit, se revertiría trabajo ajeno con él.
+
+**LA REGLA, sin excepciones:**
+1. **`git status --short` ANTES de añadir nada.** Si aparece algo que yo no he tocado, es de otro.
+2. **`git add <ruta> <ruta>`, por nombre.** Nunca `-A`, nunca `.`, nunca `-u`.
+3. **Si hay cambios ajenos sueltos, se dicen en la entrega y se dejan donde están.** No se commitean por cortesía ni se descartan por limpieza: **borrar trabajo que no es mío es peor que el error que estoy arreglando.**
+
+## 🛑🛑 0f · UNA LISTA DE QUEMADAS SE TOCA AL PUBLICAR, NUNCA AL ENTREGAR (2026-08-21)
+
+**Metí `acertar con quién no` en `SPAM_QUEMADO` con el post todavía sin subir, por no olvidarme luego.** Resultado: **el validador tumbaba el propio post que acababa de aprobar**, porque su ninja lleva esa frase.
+
+**Las listas de quemadas (`SPAM_QUEMADO`, `SPAM_QUEMADO_CORREO`, `CONCEPTO_QUEMADO`, `FRASE_RABIA_USADA`, `VERBO_PREJUICIO_QUEMADO`, `PAIS_QUEMADO`) describen lo que YA SE PUBLICÓ.** Adelantarlas convierte el validador en un obstáculo contra el borrador vivo, que es justo lo contrario de para lo que está.
+- **El disparador es la confirmación de que está subido**, no la entrega ni la aprobación.
+- **Y para no olvidarlo, va en la lista de PENDIENTES MÍOS del resumen** (`§1c-TER`: lo que prometo en primera persona es mi lista, no la suya), nunca dentro del código antes de tiempo.
+
 ## 🛑🛑 0d · DESPUES DE CADA EDICION POR SCRIPT, BUSCAR BYTES 0x08. YA VAN TRES
 
 **El fallo, siempre igual:** edito un fichero con un script, la edicion mete un `` de regex, y por el camino se convierte en un **byte de control 0x08**. No da error, no rompe el build, no lo ve el `git diff` a simple vista. **La regex simplemente no casa NUNCA y el check sale OK en falso.**
