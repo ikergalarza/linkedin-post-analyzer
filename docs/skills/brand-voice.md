@@ -218,6 +218,21 @@ El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el
 
 **La regla de fondo, que es lo que hay que retener:** dentro de una cita, **la corrección gramatical NO es la vara. La verosimilitud lo es.** Una cita perfectamente puntuada delata que la ha escrito quien narra, no quien habla. Vale igual para una nota de un crío, un WhatsApp, un correo de un cliente o un tuit de una captura: se conserva su registro, sus faltas de puntuación y su desorden, exactamente como `post-workflow §4.4-ESENCIA` manda conservar las repeticiones del original.
 
+### ⛔ 3c-COLOCACIÓN · EL VERBO NO SOLO PIDE OBJETO: PIDE **SU** OBJETO (Iker, 2026-08-21)
+
+**Segunda mitad de `§3c`, y sale de una corazonada de Iker que él no sabía explicar:** *"y si en vez de reescribir decimos reinventar, suena muchísimo más natural y mejor, no sé explicar por qué"*. **El porqué es la COLOCACIÓN**, que es la pareja verbo-sustantivo que el idioma ya tiene hecha:
+
+| verbo | lo que pide | ejemplo |
+|---|---|---|
+| **reescribir** | algo ESCRITO | reescribir *las reglas*, *el manual*, *el guion* |
+| **reinventar** | una FORMA de hacer algo | reinventar *la forma de vender*, *el oficio*, *el método* |
+
+**Lo que pasó, y es la trampa:** el gancho decía `reescribir las reglas` y estaba bien. Al acortarlo quité `las reglas` y el verbo se quedó con `la forma de vender`, **un objeto que no es el suyo**. Nada saltaba en el validador y la frase seguía siendo gramatical, pero el oído lo nota. `reinventar la forma de vender` es una pareja que ya existe en español; `reescribir la forma de vender` hay que montarla.
+
+**LA REGLA: cuando cambies el OBJETO de un verbo, vuelve a mirar el VERBO.** No basta con que el verbo tenga objeto (`§3c`): tiene que ser de los que ese verbo pide. **Se comprueba diciendo la pareja sola, sin el resto de la frase** — *reinventar la forma* ✅ · *reescribir la forma* ⚠️.
+
+**Y el corpus lo respalda, que era la otra duda:** `reinventar` **no está quemado** como lo está `revolucionar` (`global §2.9-REVOLUCIONAR`). 47 posts en la base, repartidos entre autores distintos y con los mejores en **6.36x, 6.27x y 4.37x**, ninguno de cuentas de noticias apiladas. No es una palabra que el lector vea diez veces al día.
+
 **Y el límite, para no pasarse:** se relaja la **puntuación**, no la ortografía. Ni faltas de escritura ni erratas inventadas — eso ya no se lee como verosímil, se lee como descuido nuestro.
 
 **⛔ 3b-BIS · DENTRO DE UNA CITA, EL ARTÍCULO Y LA MULETILLA SE QUEDAN. LA TIJERA ES DEL GANCHO (Iker, 2026-08-18).** `§2.2c` y `§2.9c` de `global` mandan tachar artículos y preposiciones que no aportan… **y eso vale para el GANCHO, donde cada carácter compite antes del "ver más". Dentro de una cita es al revés:** la palabra de relleno es justo lo que hace que suene a persona tecleando.
