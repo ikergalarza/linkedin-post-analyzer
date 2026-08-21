@@ -2410,26 +2410,52 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
     const dmEnviadoPorPost = new Map<string, Set<string>>();
     const dmFallidoPorPost = new Map<string, Set<string>>();
     const askPorPost = new Map<string, Set<string>>();
+    const seguimientoPorPost = new Map<string, Set<string>>();
     if (idsLm.length > 0) {
       const { rows: envios } = await pool.query(
-        `SELECT post_id, provider_id, kind, status FROM lead_magnet_sends
+        `SELECT post_id, provider_id, comment_social_id, kind, status, text
+           FROM lead_magnet_sends
           WHERE post_id = ANY($1::uuid[])`,
         [idsLm]
       );
-      const meter = (m: Map<string, Set<string>>, k: string, v: string) => {
-        const set = m.get(k) ?? new Set<string>();
-        set.add(v);
-        m.set(k, set);
+      // ⛔ SE INDEXA POR PERSONA **Y** POR COMENTARIO (Iker, 2026-08-21).
+      //
+      // Indexar solo por provider_id era la causa de que la chapa dijera "10 para
+      // actuar" y debajo apareciera UNA tarjeta: LinkedIn devuelve OTRO
+      // provider_id cuando la persona pasa a 1er grado, asi que el envio ya hecho
+      // no casaba con el autor de hoy y se recontaba como pendiente. El id del
+      // COMENTARIO no cambia nunca. El panel ya cruzaba por los dos; este
+      // contador no, y por eso decian cosas distintas.
+      const meter = (m: Map<string, Set<string>>, post: string, e: any) => {
+        const set = m.get(post) ?? new Set<string>();
+        if (e.provider_id) set.add(e.provider_id);
+        if (e.comment_social_id) set.add(e.comment_social_id);
+        m.set(post, set);
       };
+      // ⛔ Y UNA INVITACION CON EL ENLACE DENTRO **ES** UNA ENTREGA (Iker,
+      // 2026-08-21). `buildInviteNote` metia el recurso en la propia nota, asi que
+      // esa gente YA lo tiene y no existe ninguna fila 'dm' suya. Contarlos como
+      // pendientes es lo que hacia que un post con 3 invitados que ponen "ya tiene
+      // el recurso · nada que enviar" dijera "3 para actuar".
+      // Se le pregunta al TEXTO REALMENTE ENVIADO, no al tipo: mismo criterio que
+      // `conEnlace` en /lead-magnet/followups.
+      const llevaEnlace = (t: string | null) =>
+        !!t && /recursos\.neety\.com|lnkd\.in|https?:\/\//i.test(t);
       for (const e of envios) {
         // El inmail cuenta como entregado igual que el DM: los dos son el recurso
         // ya en su buzon, y volver a mandarlo es el mismo mensaje repetido.
         if ((e.kind === 'dm' || e.kind === 'inmail') && e.status === 'sent') {
-          meter(dmEnviadoPorPost, e.post_id, e.provider_id);
+          meter(dmEnviadoPorPost, e.post_id, e);
         } else if (e.kind === 'dm' && e.status === 'failed') {
-          meter(dmFallidoPorPost, e.post_id, e.provider_id);
+          meter(dmFallidoPorPost, e.post_id, e);
         } else if (e.kind === 'ask' && e.status === 'sent') {
-          meter(askPorPost, e.post_id, e.provider_id);
+          meter(askPorPost, e.post_id, e);
+        } else if (e.kind === 'invite' && e.status === 'sent') {
+          if (llevaEnlace(e.text)) meter(dmEnviadoPorPost, e.post_id, e);
+          // Sin enlace es un SEGUIMIENTO de verdad (el caso `lista`): su recurso
+          // sigue sin salir y se manda desde el bloque Seguimientos del post, no
+          // desde las tarjetas. Cuenta aparte para que el post no desaparezca.
+          else meter(seguimientoPorPost, e.post_id, e);
         }
       }
     }
@@ -2475,25 +2501,41 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
             let accionables = 0;
             let esperando_su_paso = 0;
             let fallidos = 0;
+            let seguimientos_pendientes = 0;
             if (esLm) {
               const entregado = dmEnviadoPorPost.get(post.id) ?? new Set<string>();
               const fallado = dmFallidoPorPost.get(post.id) ?? new Set<string>();
               const pedido = askPorPost.get(post.id) ?? new Set<string>();
+              const enSeguimiento = seguimientoPorPost.get(post.id) ?? new Set<string>();
+              const invitaciones = invitacionesPorCuenta.get(post.creator_id) ?? new Set<string>();
               const vistos = new Set<string>();
               for (const t of threads) {
                 const pid = t.author?.profile_id;
                 if (!pid || t.author?.is_company || vistos.has(pid)) continue;
                 vistos.add(pid);
-                if (entregado.has(pid)) continue;          // ya lo tiene
-                if (fallado.has(pid)) { fallidos++; continue; }
-                // ⛔ EL CONTADOR CUENTA LO QUE VAS A VER EN EL POST (Iker,
-                // 2026-08-20). Quien tiene un `ask` NO sale en la lista del post:
-                // su entrega la gobierna el bloque de «Solicitudes pedidas» de
-                // arriba, que es donde aparece en cuanto manda la solicitud o te
-                // agrega. Contarlo aqui hacia que «11 para actuar» no cuadrase
-                // con las tarjetas de debajo, y ese descuadre es el que te hace
-                // abrir el post a buscar a alguien que no esta.
-                if (pedido.has(pid)) { esperando_su_paso++; continue; }
+                // Los conjuntos llevan provider_id Y comment_social_id, asi que se
+                // pregunta por los dos: el provider cambia, el comentario no.
+                const suyo = (m: Set<string>) => m.has(pid) || m.has(t.id);
+
+                if (suyo(entregado)) continue;                              // ya lo tiene
+                if (suyo(fallado)) { fallidos++; continue; }                // hay que reintentar
+                if (suyo(enSeguimiento)) { seguimientos_pendientes++; continue; }
+                // ⛔ EL CONTADOR CUENTA LO QUE VAS A VER EN LA LISTA DEL POST
+                // (Iker, 2026-08-20). Quien tiene un `ask` no sale en las tarjetas:
+                // su entrega la gobierna «Solicitudes pedidas», arriba, que es
+                // donde aparece en cuanto manda la solicitud o te agrega.
+                if (suyo(pedido)) { esperando_su_paso++; continue; }
+
+                // ⛔ Y SI YA LE CONTESTASTE Y NO PUEDES ESCRIBIRLE, NO QUEDA NADA
+                // QUE HACER (Iker, 2026-08-21). A un 3er grado sin solicitud solo
+                // se le puede contestar en publico pidiendole el paso; si el
+                // comentario ya esta respondido, esa accion esta hecha y la pelota
+                // es suya. Sale como «esperando su paso» aunque no exista fila
+                // `ask` —la respuesta pudo salir desde la pestana Comments, desde
+                // LinkedIn a mano, o antes de que existiera ese registro—.
+                const puedeDm = t.author?.network_distance === 1 || invitaciones.has(pid);
+                if (!puedeDm && t.answered_by_author) { esperando_su_paso++; continue; }
+
                 accionables++;
               }
             }
@@ -2508,7 +2550,8 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
             // queda son personas a las que ya les pediste la solicitud y no la
             // han mandado, aqui no hay nada que hacer: sacar el post solo
             // consigue que lo abras para nada (Iker, 2026-08-20).
-            if (pending.length === 0 && accionables === 0 && fallidos === 0) return null;
+            if (pending.length === 0 && accionables === 0 && fallidos === 0
+                && seguimientos_pendientes === 0) return null;
             return {
               post: {
                 id: post.id,
@@ -2531,6 +2574,7 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
               accionables,
               esperando_su_paso,
               fallidos,
+              seguimientos_pendientes,
             };
           } catch (err: any) {
             console.warn(`[comments/pending] post ${post.id} failed:`, err?.message);

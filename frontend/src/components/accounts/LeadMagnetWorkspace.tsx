@@ -275,19 +275,35 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
   //     cuando te agregue, REAPARECE arriba en «Solicitudes pedidas» con su DM
   //     ya escrito, que es donde toca mandarselo.
   // Un envio FALLIDO si es trabajo: hay que volver a escribirle.
+  // ⚠️ ESTA REGLA ESTA ESCRITA DOS VECES: aqui y en `/comments/pending` del
+  // backend, que es quien pinta la chapa «N para actuar» de la fila plegada. Si
+  // cambias una y no la otra, la chapa dice 10 y debajo aparece 1 — que es
+  // exactamente lo que paso el 21/08. Las dos tienen que decir lo mismo.
   const accionable = useCallback((t: Thread) => {
     const ss = [
       ...(t.author.profile_id ? sendsByPerson.get(t.author.profile_id) ?? [] : []),
       ...(sendsByComment.get(t.id) ?? []),
     ];
+    // 1. Ya lo tiene. Cuenta el inmail, y cuenta la invitacion cuya nota LLEVABA
+    //    el enlace dentro: esa gente recibio el recurso sin que exista fila 'dm'.
+    const llevaEnlace = (x: string | null) =>
+      !!x && /recursos\.neety\.com|lnkd\.in|https?:\/\//i.test(x);
     if (ss.some((x) => (x.kind === 'dm' || x.kind === 'inmail') && x.status === 'sent')) return false;
+    if (ss.some((x) => x.kind === 'invite' && x.status === 'sent' && llevaEnlace(x.text))) return false;
+    // 2. Salio y no llego: hay que volver a escribirle.
     if (ss.some((x) => x.kind === 'dm' && x.status === 'failed')) return true;
-    // `gestionadosArriba` es la misma senal que usa la tarjeta para esconder sus
-    // controles de envio: se mira por id de COMENTARIO, no por provider_id, que
-    // cambia cuando la persona pasa a 1er grado.
-    if (gestionadosArriba.has(t.id) || ss.some((x) => x.kind === 'ask' && x.status === 'sent')) return false;
+    // 3. Su entrega la gobierna un bloque de arriba (Solicitudes pedidas o
+    //    Seguimientos), no esta tarjeta. `gestionadosArriba` se mira por id de
+    //    COMENTARIO, que no cambia; el provider_id si cambia al pasar a 1er grado.
+    if (gestionadosArriba.has(t.id)
+      || ss.some((x) => (x.kind === 'ask' || x.kind === 'invite') && x.status === 'sent')) return false;
+    // 4. No podemos escribirle y YA le contestamos: la unica accion posible era
+    //    pedirle el paso en publico y esta hecha. La pelota es suya.
+    const puedeDm = (t.author.network_distance ?? null) === 1
+      || (t.author.profile_id ? solicitudesPendientes.has(t.author.profile_id) : false);
+    if (!puedeDm && t.answered_by_author) return false;
     return true;
-  }, [sendsByPerson, sendsByComment, gestionadosArriba]);
+  }, [sendsByPerson, sendsByComment, gestionadosArriba, solicitudesPendientes]);
 
   const filtrados = useMemo(
     () => (gradoFiltro === 'accionables' ? matches.filter(accionable)

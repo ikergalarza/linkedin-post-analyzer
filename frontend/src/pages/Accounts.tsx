@@ -884,16 +884,19 @@ function AccountsInner() {
           Magnet delivers the resource to whoever commented the keyword. */}
       {hasAccounts && (
         <div className="flex items-center gap-1 border-b border-border">
-          {/* ⏳ "Lead Magnet (antiguo)" se queda VISIBLE a proposito (Iker,
-              2026-08-20). Comments ya hace todo lo suyo —detecta el pilar, monta
-              el mismo panel al desplegar y saca las solicitudes arriba sin elegir
-              nada— pero esto se despliega a produccion, no a una rama, asi que la
-              red de seguridad es que las dos convivan y se comparen con datos
-              reales. Se retira cuando Iker haya usado la nueva un dia y dé el OK. */}
+          {/* ✅ La pestaña "Lead Magnet" se retiro el 2026-08-21, con el OK de Iker
+              despues de usar Comments con datos reales: detecta el pilar, monta el
+              mismo panel al desplegar y saca las solicitudes arriba sin elegir
+              nada.
+
+              El componente y su rama de render SIGUEN en el codigo
+              (`LeadMagnetPanel.tsx`, view === 'leadmagnet'): volver a enseñarla es
+              devolver esta linea a la lista. Se dejo asi a proposito por si algun
+              dia hace falta la vista de "un post a fondo". */}
           {([
             { key: 'bi', label: 'Accounts', ayuda: '' },
             { key: 'replies', label: 'Comments', ayuda: 'Todo lo que queda por hacer: comentarios sin responder, recursos de lead magnet sin entregar y solicitudes ya llegadas' },
-            { key: 'leadmagnet', label: 'Lead Magnet (antiguo)', ayuda: 'Comments ya hace todo esto solo. Esta pestaña desaparece en cuanto confirmes que la nueva vista te vale.' },
+
           ] as const).map((t) => (
             <button
               key={t.key}
@@ -903,7 +906,7 @@ function AccountsInner() {
                 view === t.key
                   ? 'border-accent text-text-primary'
                   : 'border-transparent text-text-muted hover:text-text-secondary'
-              } ${t.key === 'leadmagnet' ? 'opacity-60' : ''}`}
+              }`}
             >
               {t.label}
             </button>

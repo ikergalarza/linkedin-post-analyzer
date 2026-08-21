@@ -51,6 +51,11 @@ export interface PendingGroup {
   accionables?: number;
   esperando_su_paso?: number;
   fallidos?: number;
+  // Invitados con nota que NO llevaba el enlace (el caso `lista`, historico): su
+  // recurso sigue sin salir y se manda desde el bloque Seguimientos del post, no
+  // desde las tarjetas. Cuenta aparte para que el post no desaparezca de la lista
+  // llevandose ese trabajo con el.
+  seguimientos_pendientes?: number;
 }
 
 // One post + its pending comments. Shows the first PER_POST comments with
@@ -76,11 +81,12 @@ export function PostGroup({ group, children }: { group: PendingGroup; children?:
   const accionables = group.accionables ?? 0;
   const esperando = group.esperando_su_paso ?? 0;
   const fallidos = group.fallidos ?? 0;
+  const seguimientos = group.seguimientos_pendientes ?? 0;
   // ⛔ EN UN LEAD MAGNET NO SE PLIEGA POR NO QUEDAR COMENTARIOS: puede seguir
   // debiendo recursos. Pero `esperando_su_paso` NO cuenta para quedarse: si lo
   // unico que hay es gente a la que ya le pediste la solicitud, aqui no puedes
   // hacer nada y el post solo te haria abrirlo para nada.
-  if (threads.length === 0 && !(esLm && (accionables > 0 || fallidos > 0))) return null;
+  if (threads.length === 0 && !(esLm && (accionables > 0 || fallidos > 0 || seguimientos > 0))) return null;
 
   const headline = (post.hook_text || post.content_text || '').replace(/\s+/g, ' ').trim().slice(0, 160);
 
@@ -128,6 +134,14 @@ export function PostGroup({ group, children }: { group: PendingGroup; children?:
               title="El envío salió y NO llegó. Dentro, el filtro «Fallidos» los deja solos para reintentar."
             >
               {fallidos} fallidos
+            </span>
+          )}
+          {seguimientos > 0 && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/30 whitespace-nowrap"
+              title="Invitados con nota antes del 17/08 cuyo recurso sigue sin salir. Se mandan desde el bloque Seguimientos, dentro del post."
+            >
+              {seguimientos} en seguimiento
             </span>
           )}
           {/* En gris y sin borde a proposito: NO es trabajo tuyo, es gente a la
