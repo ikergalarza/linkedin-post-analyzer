@@ -169,10 +169,19 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
   // Son dos casos y los dos se gestionan igual:
   //   · 'invite' → la invitación vieja, en Seguimientos (histórico).
   //   · 'ask'    → le pedimos la solicitud, en Solicitudes pedidas.
+  //
+  // ⛔ Y SOLO SI SALIO DE VERDAD (Iker, 2026-08-21). Esto no miraba el `status`, y
+  // una fila FALLIDA no gobierna nada: ni /followups ni /pendientes-solicitud las
+  // listan (los dos exigen status='sent'), asi que esa gente desaparecia de la
+  // herramienta entera —la tarjeta les decia "ya esta en marcha arriba" y arriba
+  // no estaban—. Medido en el post de Unai del 12/08: 9 invitaciones y 1 ask en
+  // 'failed' del dia que su cuenta tenia las invitaciones bloqueadas, y DOS de
+  // esas personas eran de 1er grado, o sea recursos que se podian mandar ya.
+  // Es tambien lo que hacia que la chapa dijera 2 y la lista 0.
   const gestionadosArriba = useMemo(
     () => new Set(
       (sendsData?.sends ?? [])
-        .filter((s) => s.kind === 'invite' || s.kind === 'ask')
+        .filter((s) => (s.kind === 'invite' || s.kind === 'ask') && s.status === 'sent')
         .map((s) => s.comment_social_id)
     ),
     [sendsData]

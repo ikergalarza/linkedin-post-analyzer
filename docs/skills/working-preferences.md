@@ -486,6 +486,22 @@ cualquier contador nuevo sobre `lead_magnet_sends`:
 3. **Trabajo hecho fuera de la herramienta.** Una respuesta enviada desde
    LinkedIn a mano, o desde otra pestana, no deja fila `ask`. Preguntarle al
    HECHO (`answered_by_author`) y no solo al registro propio.
+4. **El `status` de la fila.** Un `invite` o un `ask` en `failed` NO gobierna
+   nada: ni `/followups` ni `/pendientes-solicitud` los listan (los dos exigen
+   `status='sent'`). Un filtro que mire solo el `kind` esconde a esa persona de
+   la herramienta ENTERA: la tarjeta le dice "ya esta en marcha arriba" y arriba
+   no esta. Medido el 21/08 en el post de Unai del 12/08: 9 invitaciones y 1 ask
+   en `failed` del dia del baneo de invitaciones, y DOS de esas personas eran de
+   1er grado —recursos que se podian mandar ya y llevaban 9 dias escondidos—.
+
+**Y para depurar esto NO hay que adivinar: el backend de produccion se puede
+consultar.** `https://linkedin-post-analyzer-production.up.railway.app` con
+`APP_BASIC_USER`/`APP_BASIC_PASS` responde 200 (verificado 2026-08-21; el
+`outliers-database.md §` que decia que estaba bloqueado por egress ya no aplica).
+Con `/api/accounts/lead-magnet/sends?post_id=` y `/api/accounts/posts/:id/comments`
+se reproduce el caso exacto y se simulan las dos reglas en un script antes de
+tocar una linea. Asi se paso de "creo que es X" a "son 9 invitaciones fallidas y
+estas son las dos personas".
 
 Regla: si la misma decision se calcula en dos sitios, cada uno lleva un aviso
 cruzado nombrando al otro. Sin eso, el siguiente cambio rompe el par otra vez.
