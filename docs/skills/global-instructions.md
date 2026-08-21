@@ -137,6 +137,27 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 2. **Si un elemento repetible NO tiene lista, es un hueco**: se crea. Así aparecieron `CONCEPTO_QUEMADO` y `FRASE_RABIA_USADA`, que llevaban meses con un "no repitas" en la receta y **nada detrás con qué comprobarlo**.
 3. **La mejor variante no sale de un banco de frases, sale del GANCHO de ese post.** Si el post va de un tatuaje, el spam ninja habla de tatuajes. Un banco de alternativas es el plan B, no el plan A.
 
+### 📰 2.1b · LA TENDENCIA ES UN MOTOR Y LO ESTAMOS DESAPROVECHANDO (Mario, 2026-08-21) — GLOBAL
+
+> **Mario, textual:** *"a nivel de marketing, uno de los pilares muy importantes a la hora de hacer ideas es el tema de las tendencias, y creo que no lo estamos aprovechando lo suficiente"*.
+
+**Qué es:** un tema que la audiencia YA está discutiendo esta semana fuera de LinkedIn (prensa, X, TikTok). No es un pilar: **es un motor que se le mete DENTRO a un pilar que ya funciona**, exactamente igual que el evento de septiembre (`§4.4b`: *"el evento solo se vende dentro de formatos que ya son outlier"*). Un post informativo sobre la tendencia no lo lee nadie; la tendencia viaja dentro de un meme, una historia o un peloteo.
+
+**POR QUÉ ES UN MOTOR DE VERDAD, y no una manía:** encaja con lo primero de `outliers-database §3.1` — los dos motores dominantes del corpus son **Controversy (254)** y **Social Currency (139)**. Una tendencia viva trae los dos ya montados: hay bandos (controversia) y compartirla te posiciona (moneda social). Es el único motor que **no tenemos que fabricar nosotros**.
+
+**⏰ LA REGLA QUE LO DECIDE TODO: LA VENTANA. Y ya la hemos fallado una vez.**
+- **Caso medido (Mario):** el remix del meme de los calvos adaptado a la final del Mundial se publicó **2 o 3 días tarde** e hizo **algo más de 10.000 impresiones**. *"Está bastante bien, pero no pilló todo el potencial que podría. Ya que llegamos tarde"*. La referencia era buena y el remix estaba bien hecho: **lo que faltó fue la hora**.
+- **Consecuencia práctica: una idea de tendencia sube HOY o no sube.** Es la única familia de posts donde `working-preferences §1h` (esperar a las 10:00 de mañana porque rinde 0,80x contra 0,43x) **puede perder**: media franja mala de hoy bate a una franja buena cuando el tema ya se ha enfriado. **Se dice en voz alta al entregar y lo decide Iker**, no se asume ninguna de las dos.
+- **Ojo con lo que NO cambia:** el post sigue sin llevar año dentro (`brand-voice`). La tendencia se nombra por su nombre (`la caída de los influencers`), nunca por su fecha, y así el post se puede reflotar.
+
+**CÓMO SE ELIGE UNA, en dos preguntas:**
+1. **¿La ha vivido nuestro ICP?** Si el director comercial de 55 años no se ha enterado, no hay tendencia: hay una burbuja de nuestro sector.
+2. **¿Tenemos algo que NADIE más puede decir de esto?** Es el test win/lose de `§0` aplicado a la actualidad. Si nuestra postura la podría firmar cualquier cuenta, el tema está de moda pero el post es huérfano. La tendencia da el ALCANCE; la autoridad propia es lo que lo convierte en nuestro.
+
+**Y LA TENDENCIA NO EXIME DE NADA.** Sigue haciendo falta el ancla de sector (`§2.3`), el bucle abierto (`§2.0`), el verbo con techo (`§2.9`) y el pilar entero. Un post de actualidad sin pilar debajo es un post suelto, y la mediana del post suelto es **3.072 impresiones** contra las 24.152 de un mapa (`§4.4b`).
+
+**⚠️ EL AVISO QUE VA CON CADA UNA:** una tendencia trae bandos, y ahí es fácil romper el canónico de `brand-voice` (no criticamos a nadie, ni a un colectivo, ni al lector). **La postura se toma contra el fenómeno o contra el sistema, nunca contra la gente que está al otro lado**, y si la frase acusa, se reescribe para que **incluya al que publica**.
+
 ### 2.2 · Calidad de la idea del hook (antes de que el formato pueda salvarlo)
 Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tres, dóblala hasta que pueda:
 1. **Pinta una imagen en la cabeza.** Los hooks fuertes te hacen VER algo involuntariamente ("Tiré las llaves a Claude"). Prefiere acción física concreta + objeto real sobre afirmaciones abstractas. Si no puedes dibujarlo como un frame, es demasiado abstracto.
