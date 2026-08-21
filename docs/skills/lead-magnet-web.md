@@ -119,6 +119,28 @@ Nunca empieces pidiendo la llamada: primero valor, después la invitación.
 - Snippet: `const L = el => +(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)).toFixed(2);`
 - **Si el copy no cuadra, se acorta el copy. NUNCA se toca el CSS**, que es el mismo de los otros seis.
 
+## 4d · ⚠️ LA MINIATURA DEL ENLACE EN EL DM: SI SALE MAL, ES LA CACHÉ DE LINKEDIN
+
+Cuando el DM con el enlace de `recursos.neety.com` sale **sin foto o con la foto
+equivocada**, el primer impulso es tocar la página. **No la toques todavía.**
+
+Comprobado el 2026-08-21 (Iker): el mismo enlace que días antes salía sin
+miniatura hoy sale con su tarjeta entera —imagen, título «Vibe prospecting · El
+playbook» y dominio—. Nadie tocó la web en medio. **Era la caché de LinkedIn.**
+
+Qué hacer, en este orden:
+
+1. **Espera y vuelve a mirar en otro DM.** LinkedIn cachea el `og:image` de una
+   URL la primera vez que alguien la pega, y si esa vez la página aún no estaba
+   desplegada se queda con el hueco durante días.
+2. Solo si sigue igual pasadas 24 h, mira las etiquetas `og:` de la página.
+3. Y si hay que forzarlo, cambia la URL (`/vibe/` → `/vibe`, o un parámetro):
+   para LinkedIn es otra URL y la vuelve a leer.
+
+⛔ **Lo que NO se hace: rehacer la página ni cambiar la imagen.** Se pierde media
+mañana arreglando algo que no estaba roto, y encima el cambio hace que la
+próxima vez la caché tenga que rehacerse otra vez.
+
 ## 5 · Qué entrega el workflow: el PROMPT PARA EL PROGRAMADOR
 
 > **📖 El detalle de construcción vive en `docs/lead-magnet-playbook.md`** (destilado de montar `/propuesta/` entero: invariantes medidos del gate, la escalera del titular, el `<em>` coral, el alta en 3 registros, el indexado, la home, las trampas del entorno de medición y la checklist de 18 puntos). **Esta skill decide QUÉ recurso y QUÉ se regala; el playbook dice CÓMO se construye.** El prompt no lo repite: lo referencia y le mete lo específico de ESTE recurso.
