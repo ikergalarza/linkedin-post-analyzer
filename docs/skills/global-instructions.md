@@ -1388,6 +1388,33 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 **Mecanizado** en `validar-post.py`: el check duro pasa a ser `Doble ninja en MEME: sin el bloque de correo, <=450 car`, y el aviso de `§4.4-CORTO` también descuenta el bloque.
 
+#### ⛔⛔ 4.4e-SOLO · SI EL TEMA DEL POST NO TOCA VENDER, EL DE AGENDAR NO ENTRA Y EL CORREO VA SOLO (Iker, 2026-08-21)
+
+> **Iker, sobre el post de la caída de los influencers:** *"esta publicación no tiene nada que ver con vender más, entonces el spam de agendar no tendría sentido. El de correo lo veo muchísimo mejor, genera menos fricción"*.
+
+**La tabla de arriba dice en qué pilares CABE cada bloque. Faltaba la otra pregunta, que es del POST y no del pilar: ¿el tema da para colgar el dolor de agendar?**
+
+- **El dolor de `/agendar/` es UNO y está cerrado** (`§4.4b-ORDEN`): la identificación, a quién vender y quién firma dentro. **No es elástico.** Si el post va de otra cosa, ese dolor hay que **importarlo**, y un dolor importado produce exactamente la frase de catálogo que `§4.4b` prohíbe: *"tapa el post y lee solo las dos líneas; si valdrían pegadas a cualquier otra publicación nuestra, están mal"*.
+- **El del correo sí es elástico**, porque su dolor es **enterarte el último**, y de eso se puede hablar desde casi cualquier tema.
+- **Y encima es la puerta barata** (`§4.4e-MEME`): agendar pide una reunión, el correo pide un correo. En un post que trae alcance frío y no habla de vender, la puerta cara no solo no convierte, **delata**.
+
+**LA REGLA:** cuando el tema del post no toque vender, **el bloque de agendar se QUITA, no se fuerza**, y el de correo se queda de única puerta. Y entonces hereda lo que era del bloque 1: **cae antes del carácter 650** en prosa y va **del medio hacia el final** con al menos dos bloques de cuerpo por delante (`§4.4e-PRONTO`).
+
+**⛔ Lo que NO es esto:** una excusa para quitar agendar porque cuesta escribirlo. Si el post habla de vender, de clientes o de prospección, agendar entra y manda. Esto es solo para el post cuyo tema vive fuera de eso.
+
+**Mecanizado** con `--solo-correo` en `validar-post.py`, que convierte el fallo de orden en un check declarado. **Se declara, no se omite:** sin el flag, el validador sigue exigiendo el bloque de agendar, que es lo que tiene que pasar el 90% de las veces.
+
+#### 🏢 4.4e-QUIÉN · EL BLOQUE DEL CORREO VA EN PLURAL, PORQUE LA NEWSLETTER ES DE LA EMPRESA (Iker, 2026-08-21)
+
+> *"No es una newsletter de Mario personal, es una newsletter de ventas de la empresa en la que yo manejo el marketing. No quiero confundirles y que piensen que la newsletter es mía."*
+
+**El fallo:** escribí *"Yo la cuento por correo antes que aquí"*. En primera persona del singular eso promete **una newsletter personal del que publica**, y esa newsletter no existe. Es una promesa que el enlace no cumple.
+
+- **La forma correcta ya estaba escrita y no la apliqué:** `brand-voice`, canónico de la persona, **excepción 1** — *"el spam ninja va en NOSOTROS: ahí el sujeto es la empresa ofreciendo, no la persona confesando"*. El plural es lo único que dice de quién es sin tener que nombrar la marca.
+- **Y hay una razón de negocio, no solo de honestidad** (Iker): el post se publica **en horario de trabajo**, así que **necesita un vínculo con la empresa** para que las cuentas de los jefes puedan comentarlo sin que cante. El bloque del correo es ese vínculo, y por eso conviene que se lea corporativo.
+- **Cómo se dice sin romper nada:** `Lo mandamos antes en el correo de ventas:`. El **plural** lo hace de la casa, **`de ventas`** dice de qué va, y **sigue sin nombrar a Neety** (`§4.4b` regla 2) y sin usar `newsletter` ni `suscríbete` (`§4.4e` punto 4).
+- **⚠️ Ojo con el artículo:** `el correo de ventas` (determinado, sin posesivo) es institucional; `mi correo` es personal. Un posesivo cambia el dueño de la newsletter en dos letras.
+
 #### ⛔⛔ LA POSICIÓN: NUNCA PEGADOS Y NUNCA AL FINAL
 
 ```

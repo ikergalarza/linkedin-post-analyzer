@@ -612,7 +612,7 @@ def validar_tarjeta(texto, card=None):
 # validador existe para evitar.
 # EL PROCEDIMIENTO: grep "if pilar" y decidir SI o NO para cada uno, por escrito.
 
-def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False, card=None):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False, card=None, solo_correo=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -1611,8 +1611,20 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # 2) ORDEN. El de agendar no se mueve de su posicion canonica, que es la
         #    unica medida (antes del caracter 650 en prosa, tras el reveal en
         #    peloteo). El nuevo ocupa el hueco que sobra, no le quita el sitio.
-        if _i_ag is None:
-            _det_orden = 'no encuentro el bloque de agendar'
+        # ⛔ EL CASO NUEVO: EL CORREO VA SOLO (Iker, 2026-08-21). Si el TEMA del post
+        #    no toca vender mas, el bloque de agendar no tiene dolor al que agarrarse
+        #    y se convierte en la frase de catalogo que §4.4b prohibe. Entonces no se
+        #    mete a la fuerza: se quita, y el correo se queda de unica puerta. Se
+        #    declara con --solo-correo para que sea una decision y no un olvido.
+        if solo_correo and _i_ag is None:
+            chk(True, 'Doble ninja: el correo va SOLO, sin agendar (§4.4e-SOLO)',
+                'declarado con --solo-correo: el tema del post no toca vender, asi que el '
+                'bloque de agendar se queda fuera en vez de importarle un dolor prestado')
+            _det_orden = None
+        elif _i_ag is None:
+            _det_orden = ('no encuentro el bloque de agendar. Si es a proposito porque el tema '
+                          'del post no toca vender, pasa --solo-correo y quedara por escrito '
+                          '(§4.4e-SOLO)')
         elif _i_cor == _i_ag:
             _det_orden = ('los dos enlaces estan en el MISMO bloque. Son dos bloques de dos '
                           'lineas separados por cuerpo, nunca un bloque de cuatro: pegados se '
@@ -1622,9 +1634,10 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                           'porque es la unica que tenemos medida')
         else:
             _det_orden = ''
-        chk(_i_ag is not None and _i_cor is not None and _i_cor > _i_ag,
-            'Doble ninja: el de correo va DESPUES del de agendar, en OTRO bloque (§4.4e)',
-            _det_orden)
+        if _det_orden is not None:
+            chk(_i_ag is not None and _i_cor is not None and _i_cor > _i_ag,
+                'Doble ninja: el de correo va DESPUES del de agendar, en OTRO bloque (§4.4e)',
+                _det_orden)
 
         # 3) NUNCA PEGADOS, Y CON VARIEDAD ENTRE MEDIAS. Dos bloques de venta
         #    seguidos son un anuncio de cuatro lineas, que es exactamente lo que el
@@ -2511,6 +2524,12 @@ def main():
                     help='La referencia del meme NO es española ni del sector de ventas, asi que su '
                          'autor no comparte audiencia con nosotros y no hace falta acreditarlo en el '
                          'cuerpo. Si es española Y de ventas, NO pases este flag: acredita.')
+    ap.add_argument('--solo-correo', action='store_true', dest='solo_correo',
+                    help='El post lleva SOLO el bloque de correo, sin el de agendar '
+                         '(Iker, 2026-08-21). Se pasa cuando el TEMA del post no toca vender '
+                         'mas: ahi el bloque de agendar no tiene dolor al que agarrarse y se '
+                         'convierte en la frase de catalogo que global 4.4b prohibe. Es una '
+                         'decision, no un olvido, y por eso hay que declararla.')
     ap.add_argument('--sin-menciones', action='store_true', dest='sin_menciones',
                     help='EXPERIMENTO de Iker (2026-08-11), solo para la cuenta de Mario: un '
                          'post suyo SIN mencionar a @Neety ni a los 3 jefes, escrito como si '
@@ -2528,7 +2547,7 @@ def main():
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
     card = io.open(a.tarjeta, encoding='utf-8').read() if a.tarjeta else None
-    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones, card)
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones, card, a.solo_correo)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.
