@@ -98,6 +98,20 @@ PD. Si respondes ni idea, tranquilo, es la más honesta de todas. Y si prefieres
 PPD. A ti no te encuentro. A tus clientes sí. Te lo enseñamos en 20 minutos: https://recursos.neety.com/agendar/
 ```
 
+> ⚠️ **`20 minutos` es un ERROR, y este bloque lo conserva a propósito.** Las tandas 1 y 2 salieron
+> así y el archivo tiene que decir lo que se envió, no lo que habría que haber enviado. **Las
+> reuniones duran 30 minutos**, que es lo que dice `recursos.neety.com/agendar/`: el correo prometía
+> una cosa y la página de reserva pedía otra. Corregido por Iker el 2026-08-21.
+>
+> **De la tanda 3 en adelante la PPD es esta, y se copia de aquí:**
+>
+> ```
+> PPD. A ti no te encuentro. A tus clientes sí. Te lo enseñamos en 30 minutos: https://recursos.neety.com/agendar/
+> ```
+>
+> Es el único cambio respecto a lo enviado. Nada más del cuerpo se toca: el asunto abre al 48 %
+> y lo que falla es la conversión, no el gancho.
+
 Pie (lo pone la plataforma, no se puede quitar):
 
 ```

@@ -8,13 +8,28 @@
 
 **Kaixito 01 reescrito y enviado.** Fin de la parada de nueve días desde la cancelación de MailerLite.
 
-| | Tanda 1 | Tanda 2 |
-|---|---|---|
-| Destinatarios | **25** | **50** |
-| Fecha | 2026-08-20, **18:40** | 2026-08-21, **09:05** (programada) |
-| Entregados | **25 de 25 · 100%**, cero rebotes | — |
-| Lista | `Brevo · Correo 1 · Tanda 1` | `Brevo · Correo 1 · Tanda 2` |
-| `utm_campaign` | `kaixito-01-tanda-1` | `kaixito-01-tanda-2` |
+| | Tanda 1 | Tanda 2 | Tanda 3 |
+|---|---|---|---|
+| Destinatarios | **25** | **50** | **100** |
+| Fecha | 2026-08-20, **18:40** | 2026-08-21, **09:05** | 2026-08-24, **09:05** (en cola) |
+| Entregados | 23 de 25 | 42 de 50 | — |
+| **Rebotes duros** | **2 · 8,0%** | **3 · 6,0%** | — |
+| Rebotes blandos | 0 | 4 (+1 diferido) | — |
+| Aperturas reales | 7 (+1 de Apple) | 10 (+1 de Apple) | — |
+| Clics al enlace de reserva | **0** | **0** | — |
+| Bajas | 0 | 1 | — |
+| Lista Brevo (id) | `Tanda 1` (5) | `Tanda 2` (6) | `Tanda 3` (7) |
+| Campaña Brevo (id) | 2 | 3 | **4** |
+| `utm_campaign` | `kaixito-01-tanda-1` | `kaixito-01-tanda-2` | `kaixito-01-tanda-3` |
+
+> Leído de la API el 2026-08-21 (`GET /emailCampaigns/{id}?statistics=globalStats`). **Ojo con
+> los dos sitios donde Brevo da las aperturas**: `globalStats.uniqueViews` es el número bueno,
+> y `campaignStats[].uniqueViews` da menos (8 vs 2 en la tanda 1). El dashboard del CRM lee
+> `globalStats`; si algún día sale un número raro, es que se leyó el otro.
+>
+> **La tanda 2 marca 1 clic único, pero `linksStats` del enlace de reserva está a 0.** Ese clic
+> es casi seguro el enlace de baja, que también se cuenta. **Nadie ha pinchado en agendar
+> todavía: 0 de 191.**
 
 - **El texto, el preheader y los GIFs están en `corpus-correos-enviados.md`.** Lo que cambió respecto a la versión que costó la cuenta: `"los correos que nos dejaron el año pasado"` se sustituye por **`"En su día me diste permiso para escribirte. Lo que no tengo muy claro es de dónde saliste."`** La broma se queda entera; lo que la mascota ha perdido ya no es el permiso, es la puerta por la que entraste.
 - **Quedan 4 tandas** creadas y APAGADAS: 100, 200, 400 y 380. La 3 no sale antes del **lunes 24**: el fin de semana el ICP no está delante del correo.
@@ -22,11 +37,29 @@
 - **`utm_source` es `brevo` y NO se puede cambiar** (ver `email-marketing §9c`). La atribución en GA4 queda partida: hasta el 11/08 `newsletter`, desde el 20/08 `brevo`.
 - **09:05 y no 09:00** a propósito: a la hora en punto salen todas las campañas programadas del país a la vez.
 
-**La entrega de la tanda 1 salió limpia: 25 de 25, 0 rebotes.** Comparado con MailerLite, que dio 3,7% en su tanda 1 y 2,92% en la 2, es la mejor señal del día. Y no es casualidad: esta lista pasó por la limpieza de `audience_clean` y por las 12 supresiones del rescate, cosa que la de MailerLite no.
+### 🔴 Y esto es lo que hay que mirar, no las aperturas
+
+**Los rebotes de Brevo son PEORES que los de MailerLite, que es de lo que nos cerraron la cuenta.**
+
+| | Tanda 1 | Tanda 2 |
+|---|---|---|
+| MailerLite | 3,7% | 2,92% |
+| **Brevo** | **8,0%** | **6,0%** |
+
+**Acumulado en Brevo: 5 rebotes duros de 75 envíos = 6,7%.** El umbral del sector es el **2%**.
+
+Y no vale decir que la lista está limpia porque pasó por `audience_clean`: pasó, y aun así
+rebotó el 8%. Lo que `audience_clean` detecta (formato, buzones automáticos, desechables,
+erratas) no es lo que rebota. **Lo que rebota son dominios que no existen y buzones cerrados**, y
+eso no se ve mirando el texto de la dirección.
+
+⚠️ **Corregido el 2026-08-21: un rebote duro NO llega en minutos.** Aquí se dio por bueno lo
+contrario y por eso la tanda 1 se apuntó como "25 de 25, cero rebotes". A las 18:45 iba 25 de 25;
+dos horas después eran 23. **Mínimo 2-3 horas antes de leer el dato, y mejor al día siguiente.**
 
 ### 🔴 Lo primero de mañana, antes de las 09:05
 
-**Mirar los rebotes duros de la tanda 1.** Un rebote duro es un rechazo SMTP y llega en minutos, así que a esa hora el dato ya está completo. **Más de 1 rebote en 25 (4%) y se cancela la tanda 2**, que en Brevo se puede hasta el momento del envío.
+~~**Mirar los rebotes duros de la tanda 1.** Un rebote duro es un rechazo SMTP y llega en minutos.~~ **Falso, ver arriba.** El dato tardó horas, se leyó demasiado pronto y la tanda 2 salió con la tanda 1 aparentando cero rebotes cuando llevaba 2.
 
 Las varas del histórico de MailerLite: 3,7% de rebotes en la tanda 1 y 2,92% en la 2, las dos **por encima del 2% que el sector considera peligroso**.
 
@@ -153,3 +186,59 @@ MailerLite canceló la cuenta 2536617 por supuesta violación de la política an
 
 ## Ángulos ya usados (no repetir, como los conceptos del mapa)
 _(ninguno)_
+
+
+---
+
+## 📡 Detección de rebotes SIN pagar validador (2026-08-21)
+
+Iker: *"no vamos a pagar. Eso de limpiar los correos, deberíamos ser nosotros capaces de
+detectarlo antes de tiempo."*
+
+### ❌ Lo que se probó y NO funciona: puntuar direcciones absurdas
+
+Salió de una observación buena suya: `mongol@gmail.com` estaba en la tanda 3, y quien pone eso
+en un formulario no está dejando su correo. La idea era generalizarlo puntuando la parte local
+por consonantes seguidas, ratio de vocales y bigramas repetidos.
+
+**Se calibró contra las 100 direcciones reales de la tanda 3 y no separa.** Los números:
+
+| dirección | puntuación | ¿es real? |
+|---|---|---|
+| `teleservicesmultiservicios@gmail.com` | 19,4 | sí |
+| `horebbusinessgroup@gmail.com` | 14 | sí |
+| `fuewatclauidia@cfuwomdtradigi.com` | **13** | **no** |
+| `fabio.archila@...` | 13 | sí |
+| `endtoendgmks.com` (dominio) | 20,8 | sí |
+| `bcncgroup.com` (dominio) | 17 | sí |
+| `cfuwomdtradigi.com` (dominio) | **11** | **no** |
+
+**No hay umbral.** Cualquier corte que cace `fuewatclauidia` se lleva por delante
+`fabio.archila`, y cualquiera que cace `cfuwomdtradigi.com` mata `bcncgroup.com`. Descartado con
+datos, no con opinión. Está escrito en `sales-crm-Neety/src/mx.js` para que nadie lo reintente.
+
+### ✅ Lo que sí funciona, y ya está en el CRM
+
+**Audiencia → 📡 Comprobar dominios.** Pregunta al DNS, no puntúa nada:
+
+| veredicto | significa | ¿accionable? |
+|---|---|---|
+| `inexistente` | el dominio no está registrado | **sí, quitar** |
+| `sin-buzon` | existe pero sin MX ni A | **sí, quitar** |
+| `ok` | tiene MX, o tiene A | no |
+| `desconocido` | el DNS no contestó | **no**, es "no lo sé" |
+
+Tres trampas evitadas, cada una con su test:
+- **Sin MX pero con A recibe correo** (RFC 5321). Mirar solo el MX es el fallo típico.
+- Un timeout **nunca** cuenta como muerto.
+- Se agrupa por dominio: 40 gmails son 1 consulta.
+
+**Lo que NO puede saber:** si el BUZÓN existe. Con `@gmail.com` siempre dirá que sí, y media
+lista es Gmail. Sirve para cazar dominios inventados, que es de donde sale el rebote más caro.
+
+### La palabra de broma, que sí se quedó
+
+`audience_clean` marca (**no quita**) las direcciones que son una palabra de broma o un relleno
+de formulario. Se compara la palabra **entera**, nunca como subcadena: `serrano` lleva "ano" y
+`paniculosa` lleva "culo". Hay un test con 30 direcciones reales de la tanda 3 que falla si
+alguien mete en la lista una palabra que además es un apellido.
