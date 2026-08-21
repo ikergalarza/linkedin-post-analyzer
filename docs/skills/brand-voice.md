@@ -450,6 +450,25 @@ que la frase **incluya al que publica**, así no señala a nadie:
 frase y sentirse señalado?* Si la respuesta no es un no rotundo, se reescribe contra
 el proceso.
 
+### ⛔⛔ 5b · Y TAMPOCO SE HABLA **EN NOMBRE** DE OTRO COLECTIVO, AUNQUE SEA PARA DEFENDERLO (Mario, 2026-08-21)
+
+> **Mario, sobre el post de la caída de los influencers:** *"la frase de hostelería la voy a quitar porque me puede perjudicar. Quiero un post blindado"*. La frase era *"Tengo amigos en hostelería que cierran a las 3 y madrugan igual"*.
+
+**Lo de arriba cubre CRITICAR a un colectivo. Faltaba la otra mitad, y es la que se cuela sin darte cuenta porque suena bien: usar la dureza de OTRO oficio como prueba retórica de tu argumento.**
+
+**Por qué perjudica aunque la intención sea buena:**
+- **Nadie te ha nombrado su portavoz.** La frase habla de lo que aguantan ellos para ganar un punto que va de lo tuyo, y el que lo aguanta de verdad puede leerlo como que se le usa de decorado.
+- **Es la línea que se recorta.** En un post polémico, la frase que se saca de contexto y circula sola es siempre la que menciona a un tercero, no la que te menciona a ti.
+- **Y no hace falta:** el trabajo que hacía esa línea (probar que entiendes la rabia) lo hace mejor una **confesión en primera persona**, que es lo que ya manda el canónico de la persona: `YO > NOSOTROS > TÚ`.
+
+| ⛔ habla por otros | ✅ misma función, en primera persona |
+|---|---|
+| `Tengo amigos en hostelería que cierran a las 3 y madrugan igual` | `A mí también me ha quemado más de una colaboración` |
+
+**⭐ Y EL EFECTO QUE NO ESPERABA, y por eso vale la pena escribirlo** *(deducción mía, `working-preferences §0c`, no medida)*: **la confesión BLINDA hacia abajo.** En cuanto el que publica se mete él solo en el grupo, las frases colectivas que vienen después dejan de leerse como acusación. En ese post, `Años dándoles al play` y `Todos quieren su caída` sonaban a reproche al lector **hasta** que la línea de arriba dijo *"a mí también"*. Una sola línea arregló tres.
+
+**Dónde aplica más:** en cualquier post que tome partido en una polémica, y muy especialmente en las cuentas que hablan del trabajo de dentro (Mario, Helena), donde el reproche se lee como bronca interna.
+
 ## ⛔⛔ CANÓNICO · LA PERSONA: YO > NOSOTROS > TÚ (Iker, 2026-08-11) — GLOBAL
 
 **Para afirmar, confesar o nombrar un dolor, se habla en PRIMERA PERSONA DEL
