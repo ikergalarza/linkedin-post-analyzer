@@ -155,6 +155,28 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 - **Público de Mario: MARKETING, no ventas.** Aunque por dentro hable de ventas, su cuenta se ancla a **marketing / contenido / growth / redes sociales** — es la red que está construyendo (manda solicitudes a gente de marketing de otras empresas). Pelotea a gente y empresas de marketing, y los temas van por ahí.
 - **Ángulos ya usados por Mario (no repetir, como los conceptos del mapa):** 1er post = *"crecer en LinkedIn no es suerte + 1.000.000 de impresiones en 2 meses sin haber tocado la plataforma"*. Cada post nuevo, ángulo nuevo — aunque el tema (contenido, growth) se repita.
 
+#### 🌉🌉 EL PUENTE DE LA CUENTA DE MARIO: **ATENCIÓN → CLIENTES** (Mario, 2026-08-21) — CANÓNICO
+
+> **Mario, y es la pieza que faltaba para que su cuenta cierre:** *"si les interesa este tema, seguro que les interesa cómo captar la atención de la gente, como hemos hecho nosotros con esta publicación y con este gancho, para aprender luego a vender más. Marketing y ventas van de la mano"*.
+
+**El problema que resuelve, y es de negocio antes que de copy:** su cuenta ancla a **marketing**, pero el enlace que lleva dentro vende **ventas**. Sin un puente, o el post no pega con el enlace, o el enlace parece pegado con celo. Y hay una consecuencia práctica que él dice en voz alta: **su post sale en horario de trabajo y los jefes lo van a leer.** Un post suyo que no se pueda justificar ante ellos es un problema aunque haga 30.000 impresiones.
+
+**EL PUENTE, y es siempre el mismo, así que se usa de plantilla:**
+> **El post capta la atención. El enlace vende lo que convierte esa atención en clientes.**
+
+**Y el post es la DEMOSTRACIÓN de su propia tesis**, que es lo que lo hace elegante: el lector ha llegado hasta ahí porque el gancho funcionó. No hay que explicarlo, ya ha pasado.
+
+**Cómo se escribe, en dos líneas** (la forma `eso lo hace cualquiera, lo otro no` de `global §4.4b`, aplicada al TEMA):
+```
+[lo que el tema del post SÍ te trae]. [lo que NO te trae].
+De eso va nuestro correo de ventas: {link}
+```
+Caso real, el post de la caída de los influencers: *"Una caída te trae atención. No te trae clientes."*
+
+- **⚠️ El puente NO es una excusa para colar cualquier enlace.** Sigue mandando `global §4.4b-PROMESA`: el destino tiene que dar de verdad lo que las dos líneas prometen. El puente hace que el salto de marketing a ventas sea honesto, no que deje de importar adónde lleva.
+- **Y esto es lo que decide entre `/agendar/` y `/correo/` en su cuenta:** si el tema del post no toca vender, el de agendar no tiene dolor al que agarrarse y se queda fuera (`global §4.4e-SOLO`). El correo aguanta casi cualquier tema **porque el puente lo sostiene**.
+- **Vale igual para HELENA**, cambiando el carril: su post capta atención desde atención al cliente, y el enlace vende lo que convierte eso en cuentas que se quedan.
+
 ### 👤 Helena Baviera Serigó — Partnerships & Customer Success (5ª cuenta, Iker 2026-08-18)
 - Rol: **Partnerships & Customer Success Manager** en Neety. LinkedIn: `in/helena-baviera` · **2.054 seguidores** · Paterna, Valencia. Headline exacto: *Partnerships & Customer Success Manager en Neety*.
 - **Por qué existe, y es la misma lógica que Mario:** a la empresa le conviene que hablen de ella **empleados y perfiles distintos**, no solo los tres jefes, y a ella le conviene el alcance. **Conveniencia mutua, dicha así por Iker.** Y hay un motivo de negocio encima: **trabaja con los clientes todos los días**, así que su autoridad pública nos suma donde el founder no llega.
