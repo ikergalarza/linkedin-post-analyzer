@@ -46,6 +46,7 @@ Una única voz de marca para las tres cuentas (Iker, Unai, Asier): la **voz Neet
 
 **La frontera: el adverbio de negación absoluta funciona; la expresión coloquial hecha, no.** `jamás me imaginé` lo firma un CEO delante de un inversor; `ni de broma me imaginaba` es la misma idea contada en una barra de bar. **En Iker sí valen las de la izquierda**, que para eso es la cuenta cercana.
 - **Y no cuesta caracteres:** `jamás` son 5 y `ni de broma` 11. La versión sobria salió **más corta** que la de calle, así que aquí no hay que elegir entre tono y longitud.
+- **✅ Y `jamás` NO es una preferencia, está MEDIDO en su propia cuenta (21/08):** su meme del 29/07 abre con *"A mí un cliente no me deja una propuesta en visto. **Jamás** 👇"* y hizo **6.83x · 93.744 impresiones**, uno de sus dos mejores posts del verano. **El intensificador que le pega ya se lo habíamos dado antes y funcionó**; lo que faltaba era tenerlo escrito para no volver a ofrecerle `ni de broma`.
 - **Vale para todo lo que escriba esta cuenta**, no solo el gancho: cuerpo, spam ninja y respuestas a comentarios.
 
 **⚠️ SOBRIO NO ES ACARTONADO.** Los tres siguen siendo naturales, punchy, con clichés y con el formateado de siempre. **Lo que cambia es el volumen, no el idioma.** Un Unai corporativo sería un fallo peor que un Unai informal.
