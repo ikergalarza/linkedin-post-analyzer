@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useApi, apiPatch, apiPost, apiDelete } from '../hooks/useApi';
 import AddManualPostModal from '../components/accounts/AddManualPostModal';
+import { DateRangeCalendar } from '../components/DateRangeCalendar';
 import {
   Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, ComposedChart, Area, ReferenceLine,
@@ -522,6 +523,9 @@ function AccountsInner() {
   // still wants a single number (e.g. ProfileViewChart's "vs last Nd"
   // delta label).
   const [datePreset, setDatePreset] = useState<30 | 90 | 180 | 'custom'>(30);
+  // El calendario solo se despliega al pulsar Custom. Antes salían dos campos
+  // de fecha en cuanto se elegía Custom, y ocupaban media barra de filtros.
+  const [showCalendar, setShowCalendar] = useState(false);
   const [customStart, setCustomStart] = useState<string>(() => presetRange(30).start);
   const [customEnd, setCustomEnd] = useState<string>(() => presetRange(30).end);
 
@@ -978,36 +982,35 @@ function AccountsInner() {
                 {`${d}d`}
               </button>
             ))}
-            <button
-              onClick={() => setDatePreset('custom')}
-              className={`px-2.5 py-1 rounded text-xs transition-colors ${
-                datePreset === 'custom'
-                  ? 'bg-accent/20 text-accent border border-accent/30'
-                  : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
-              }`}
-            >
-              📅 Custom
-            </button>
-            {datePreset === 'custom' && (
-              <div className="flex items-center gap-1.5 ml-2">
-                <input
-                  type="date"
-                  value={customStart}
-                  max={customEnd}
-                  onChange={(e) => setCustomStart(e.target.value)}
-                  className="bg-bg-card border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
+            {/* El calendario es NUESTRO, no el `<input type="date">`: ese panel
+                lo dibuja el navegador y no se puede estilar. Salía el día en
+                azul de Chrome y con la fuente del sistema. Ver el comentario de
+                DateRangeCalendar. */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setDatePreset('custom');
+                  setShowCalendar((v) => !v);
+                }}
+                className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                  datePreset === 'custom'
+                    ? 'bg-accent/20 text-accent border border-accent/30'
+                    : 'bg-bg-secondary text-text-muted border border-border hover:border-accent/30'
+                }`}
+              >
+                📅 {datePreset === 'custom' && customStart
+                  ? `${customStart}${customEnd ? ` → ${customEnd}` : ' → …'}`
+                  : 'Custom'} {showCalendar ? '▴' : '▾'}
+              </button>
+              {showCalendar && (
+                <DateRangeCalendar
+                  start={customStart}
+                  end={customEnd}
+                  onChange={(s, e) => { setCustomStart(s); setCustomEnd(e); }}
+                  onClose={() => setShowCalendar(false)}
                 />
-                <span className="text-xs text-text-muted">→</span>
-                <input
-                  type="date"
-                  value={customEnd}
-                  min={customStart}
-                  max={toIsoDay(new Date())}
-                  onChange={(e) => setCustomEnd(e.target.value)}
-                  className="bg-bg-card border border-border rounded px-2 py-1 text-xs text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-            )}
+              )}
+            </div>
             {datePreset === 'custom' && (
               <span className="text-[10px] text-text-muted ml-2">{days} day{days === 1 ? '' : 's'}</span>
             )}

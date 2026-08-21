@@ -319,7 +319,27 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 
 **Y la razón de fondo, para reconocer la familia entera:** `revolucionar` es un verbo **gastado en LinkedIn**. El verbo del gancho tiene un trabajo, frenar el scroll (`§2.9`), y una palabra que el lector ve diez veces al día no frena nada — la salta. Misma familia: `transformar`, `disruptir`, `redefinir`, `cambiar las reglas del juego`, `llevar al siguiente nivel`.
 
-**El recambio se busca por la escalera de siempre**, con el objeto puesto (`§2.9-OBJETO`). Para el gancho de Unai, con objeto `en ventas` —una práctica, sin víctima— la escalera fue `mover` (flojo, describe) → `reescribir` (correcto pero sin punch, lo tumbó Iker) → **`romper`** (punchy, llano, 6 caracteres) → `reventar` (fuera: es el registro de Iker, no el del CEO). **Y sale más corto que la palabra que se quería usar**: 59 caracteres contra 65.
+**El recambio se busca por la escalera de siempre**, con el objeto puesto (`§2.9-OBJETO`). Para el gancho de Unai la escalera fue `mover` → `reescribir` → `romper` → `reventar`, **y ganó `reescribir`**, que es el que yo había dado por poco punchy. Por qué, en el punto de abajo.
+
+##### ⛔⛔ 2.9-ABSTRACTO · `ROMPER` Y `REVENTAR` PIDEN UN OBJETO QUE SE VEA. SOBRE UN ABSTRACTO SUENAN A FANFARRONADA (Iker, 2026-08-21)
+
+**Iker, y va contra mi recomendación:** *"romper no me gusta y no encaja con su tono. De hecho, aunque sea más punchy, tampoco me encajaría ni con el segundo jefe. Hasta mover me gusta más, aunque mover es flojo, y reescribir yo creo que sí que era mejor"*.
+
+**Y esto NO tumba la familia punchy de `§2.9`, que está medida. La afina, y el eje es el OBJETO:**
+
+| verbo | objeto | veredicto |
+|---|---|---|
+| tirar | `las llaves de mi LinkedIn` (objeto que se ve) | ✅ 4.52x |
+| desmontar | `perfiles` (cosas concretas, una por una) | ✅ 8.52x |
+| enterrar | `el cold calling` (una práctica con nombre propio del oficio) | ✅ 16.45x |
+| matar | `el cold outbound` (idem) | ✅ 632 comentarios |
+| **romper** | **`un mercado`, `en ventas`** (abstracto y enorme) | ⛔ **suena a fanfarronada** |
+
+**La diferencia no es la intensidad, es el TAMAÑO del objeto.** `enterrar el cold calling` señala una práctica concreta que el lector reconoce y puede discutir. `romper el mercado` no señala nada: es una frase que cualquiera puede decir sin comprometerse, y por eso se lee como bravata en vez de como golpe. **Y en un gancho de PROMESA el riesgo se dobla**, porque ahí el verbo habla de lo que vamos a hacer NOSOTROS, no de lo que le pasa al sector.
+
+**LA REGLA:** cuando el objeto del verbo sea un abstracto grande (el mercado, el sector, la industria, las ventas, la forma de vender), **baja un peldaño de la escalera y coge el verbo que describe QUÉ cambia, no cuánto**. `reescribir` dice que las reglas van a quedar de otra manera; `romper` solo dice que va a haber ruido.
+
+**Y el corolario que más me cuesta:** ⚠️ **el techo de registro de la casa está por debajo de `romper` incluso en la cuenta de IKER**, que es la más cercana de las cinco. `reventar` y compañía siguen valiendo **con objeto concreto**; sobre un abstracto, no los quiere en ninguna cuenta. **`punchy` no es un valor absoluto: se mide contra el objeto que lleva al lado** (`§2.9-OBJETO`, y esto es su segunda mitad).
 
 #### ⛔ 2.9-TECHOS · LA ESCALERA TIENE DOS TECHOS, NO UNO: EL DE INTENSIDAD Y EL DE REGISTRO (Iker, 2026-08-17)
 
