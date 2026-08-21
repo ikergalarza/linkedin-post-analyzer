@@ -36,6 +36,18 @@ Una única voz de marca para las tres cuentas (Iker, Unai, Asier): la **voz Neet
 | **Asier** | Crea contenido | **Punto medio.** Más sobrio que Iker, menos que Unai. Natural y directo, sin hype. **En memes va con Unai, no con Iker** (`images §0g`) |
 | **Iker** | Crea contenido | **El más cercano**, el que más se permite el guiño. Aun así, **un punto por debajo de lo que era** |
 
+#### ⛔ EL INTENSIFICADOR DE UNAI ES EL ADVERBIO FORMAL, NUNCA LA EXPRESIÓN DE CALLE (Iker, 2026-08-21)
+
+**La sobriedad de Unai también capa los INTENSIFICADORES del gancho** (`global §2.3d`), y eso no estaba escrito: yo iba probando y él iba tumbando uno por uno. Iker, resumiendo la cuenta: *"es que este tío tiene muchas limitaciones"*.
+
+| ⛔ tumbados en Unai | ✅ los suyos |
+|---|---|
+| `ni de broma` · `flipa` · `de locos` · `se queda tieso` | **`jamás`** · `nunca` · `en la vida` · `lo último que me imaginaba` |
+
+**La frontera: el adverbio de negación absoluta funciona; la expresión coloquial hecha, no.** `jamás me imaginé` lo firma un CEO delante de un inversor; `ni de broma me imaginaba` es la misma idea contada en una barra de bar. **En Iker sí valen las de la izquierda**, que para eso es la cuenta cercana.
+- **Y no cuesta caracteres:** `jamás` son 5 y `ni de broma` 11. La versión sobria salió **más corta** que la de calle, así que aquí no hay que elegir entre tono y longitud.
+- **Vale para todo lo que escriba esta cuenta**, no solo el gancho: cuerpo, spam ninja y respuestas a comentarios.
+
 **⚠️ SOBRIO NO ES ACARTONADO.** Los tres siguen siendo naturales, punchy, con clichés y con el formateado de siempre. **Lo que cambia es el volumen, no el idioma.** Un Unai corporativo sería un fallo peor que un Unai informal.
 
 **Lo que dicen los datos, y matiza la regla (medido el 2026-07-16):** el mejor post de la historia de Unai (**16.62x**) abre con *"En ventas, cada año la caja de herramientas engorda pero el comercial cierra menos"*. **Ese texto YA es sobrio**: suena a industrial, no a creador. Lo infantil estaba en la **imagen** (un wojak), no en el texto.
