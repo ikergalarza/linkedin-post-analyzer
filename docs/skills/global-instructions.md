@@ -176,6 +176,17 @@ Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tr
 3. **Para cuando el siguiente tachón se lleve un matiz de verdad.** Ahí está el gancho.
 4. **Y si dudas entre dos, gana la corta**, salvo que la larga traiga un matiz que el post necesite.
 
+**⭐ EL CUARTO SOSPECHOSO, Y ES EL QUE MÁS CARACTERES SUELTA: EL ÁMBITO PEGADO AL FINAL (Iker, 2026-08-21).** Cuando el gancho acaba en `en el mundo de las ventas`, `en el sector de X` o `en la industria de Y`, ahí hay **25 caracteres haciendo el trabajo de una palabra**. La salida no es acortar ese bloque: es **convertirlo en el OBJETO DIRECTO del verbo**, que además arregla de paso lo que `brand-voice §3c` prohíbe (el verbo sin su objeto).
+
+```
+❌ jamás me imaginé LO QUE vamos a reescribir EN EL MUNDO DE LAS VENTAS   (82 car)
+✅ jamás me imaginé LA FORMA DE VENDER que vamos a reescribir             (72 car)
+```
+
+**Diez caracteres menos y tres cosas que MEJORAN, no que se pierden:** el verbo recupera su objeto (`reescribir la forma de vender`), el ancla sube de `ventas` a **`vender`, que el validador marca como FUERTE**, y **el verbo punchy pasa a ser la última palabra de la frase**, que es justo donde `§2.9` lo quiere. El bucle no se toca: sigue sin decirse ni el qué ni el cómo.
+
+**La pregunta que lo dispara:** *¿el gancho termina en un complemento de ámbito?* Si sí, prueba a meterlo dentro como objeto del verbo antes de dar el gancho por bueno.
+
 **Los tres sospechosos habituales**, por orden de frecuencia:
 - **El complemento de sitio que el cuerpo ya sitúa.** `del barrio` cuando la línea 2 dice `mi calle`.
 - **El adjetivo de sector que además encoge el alcance** (`§2.3b`: `industriales`).
