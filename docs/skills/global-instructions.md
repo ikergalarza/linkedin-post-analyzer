@@ -305,6 +305,22 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 
 **El corolario de método:** cuando dudes de si un verbo se pasa, **no lo compares con la lista. Léelo con su objeto y busca la víctima.** Si no la hay, el techo está más arriba de lo que parece.
 
+##### ⛔ 2.9-REVOLUCIONAR · EL VERBO QUE PARECE DE DIRECTIVO Y NO LO ES (medido el 2026-08-21)
+
+**Iker lo pidió dos veces para el gancho de Unai** — *"¿estás seguro de que revolucionar no podemos poner?"* —, y la respuesta no es de estilo, es de corpus. Medido sobre los **124 posts con `revolucion*`** de la base:
+
+| dónde va | ejemplos | cómo rinde |
+|---|---|---|
+| **En NUESTRAS cuentas** | 3 posts, los tres de 2024 y los tres con la palabra en el CUERPO | **0.68x · 0.53x · 0.45x**. Ni uno llega a 1x |
+| **En el GANCHO, de cuentas de noticias de IA** | Henry Jiménez, Kike Sanchis | de **0.32x a 1.55x** |
+| **En el gancho, dicho de un TERCERO** | *"El gigante eléctrico chino BYD ha presentado una tecnología revolucionaria"* | **27.20x** |
+
+**LO QUE DICE EL DATO, y es más útil que la palabra:** no hay **ni un solo caso** en el corpus en el que alguien anuncie que **ÉL** va a revolucionar algo y funcione. Cuando funciona, **la revolución es de otro y nosotros la contamos**. Encaja exacto con lo que ya está escrito en el bloque del evento (*hablar de un tercero rinde más que hablar de uno mismo*: el post de los clientes en el escenario hizo 4.140 y el de nuestro premio, menos).
+
+**Y la razón de fondo, para reconocer la familia entera:** `revolucionar` es un verbo **gastado en LinkedIn**. El verbo del gancho tiene un trabajo, frenar el scroll (`§2.9`), y una palabra que el lector ve diez veces al día no frena nada — la salta. Misma familia: `transformar`, `disruptir`, `redefinir`, `cambiar las reglas del juego`, `llevar al siguiente nivel`.
+
+**El recambio se busca por la escalera de siempre**, con el objeto puesto (`§2.9-OBJETO`). Para el gancho de Unai, con objeto `en ventas` —una práctica, sin víctima— la escalera fue `mover` (flojo, describe) → `reescribir` (correcto pero sin punch, lo tumbó Iker) → **`romper`** (punchy, llano, 6 caracteres) → `reventar` (fuera: es el registro de Iker, no el del CEO). **Y sale más corto que la palabra que se quería usar**: 59 caracteres contra 65.
+
 #### ⛔ 2.9-TECHOS · LA ESCALERA TIENE DOS TECHOS, NO UNO: EL DE INTENSIDAD Y EL DE REGISTRO (Iker, 2026-08-17)
 
 **Aquí solo estaba escrito el primero** (`desmontar` → `destripar` se pasa por gore) y por eso el segundo se cuela: **un verbo puede tener la intensidad perfecta y aun así estar fuera porque pertenece a otra generación.**

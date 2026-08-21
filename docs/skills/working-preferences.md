@@ -466,3 +466,26 @@ Dos trampas:
   existian: `getComputedStyle` devuelve el estilo del PRIMER render. Un clon del
   mismo nodo si sale bien. Verificar comportamiento por DOM, no colores por
   computed style.
+
+## Aprendizaje 2026-08-21 — un contador y su lista no pueden vivir en dos sitios
+
+La chapa «10 para actuar» de la fila plegada la calcula el BACKEND (no ha leido
+los comentarios todavia) y la lista de tarjetas la calcula el FRONTEND (que si
+los ha leido). Son dos implementaciones de la misma regla, y divergieron en
+cuanto se toco una: la chapa decia 10 y debajo aparecia 1.
+
+Las tres formas en que divergieron, y valen como lista de comprobacion para
+cualquier contador nuevo sobre `lead_magnet_sends`:
+
+1. **Los `kind` que no miras.** Solo se miraba `dm`/`inmail`. Una fila `invite`
+   cuya nota llevaba el enlace ES una entrega, y no genera fila `dm`.
+2. **`provider_id` NO es estable.** LinkedIn devuelve otro cuando la persona
+   pasa a 1er grado. Todo cruce contra un envio guardado tiene que preguntar
+   tambien por `comment_social_id`, que no cambia nunca. Esto ya estaba escrito
+   en el panel desde el 23/07 y aun asi se repitio en el contador nuevo.
+3. **Trabajo hecho fuera de la herramienta.** Una respuesta enviada desde
+   LinkedIn a mano, o desde otra pestana, no deja fila `ask`. Preguntarle al
+   HECHO (`answered_by_author`) y no solo al registro propio.
+
+Regla: si la misma decision se calcula en dos sitios, cada uno lleva un aviso
+cruzado nombrando al otro. Sin eso, el siguiente cambio rompe el par otra vez.
