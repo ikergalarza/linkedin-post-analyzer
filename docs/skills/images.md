@@ -304,6 +304,45 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 > - **Y ojo con el reverso:** ensanchar no es deformar. Se estiran las CAJAS y el texto se reajusta al ancho nuevo; los personajes y las fotos no se aplastan ni se estiran (va en el bloque de contención del final).
 - **⚠️ LA ÚNICA EXCEPCIÓN es la imagen de COMPARTIR del recurso web (`§0b-OG`), que no se publica en el feed: la recorta Open Graph, no LinkedIn.** Todo lo que se sube a un post sigue siendo 1:1.
 
+> ## ✂️✂️ 0b-RECORTE · CÓMO SE RECORTA UNA FOTO REAL A CUADRADO (Mario, 2026-08-21)
+> **`§0b` dice que la imagen VA cuadrada. Faltaba entero el CÓMO se llega a cuadrada partiendo de una foto de móvil**, que es lo que hace el pilar historia con el banco de fotos, y ahí fallé tres veces seguidas el mismo día: composición, color y orientación. **Está mecanizado en `scripts/recortar-cuadrada.py`, que hace las tres cosas y las COMPRUEBA al guardar.**
+>
+> ### 1 · LO IMPORTANTE VA AL CENTRO. Lo decorativo es lo que se sacrifica
+> > Mario: *"con los recortes cuadrados tienes que siempre intentar procurar que en el centro de la imagen, después de recortar, se quede lo más importante"*.
+>
+> **El fallo:** dejé sus dos placas de YouTube al **75% de la altura**, con medio cuadro decorativo ocupando la parte de arriba. *"El cuadro es bonito, pero no es lo más importante"*.
+> - **El procedimiento:** se identifica **la CAJA de lo importante** (el sujeto y lo que lleva en las manos), se calcula su centro, y el cuadrado más grande que quepa se centra ahí. Es lo que hace `--sujeto x1,y1,x2,y2`.
+> - **Y el orden de sacrificio, cuando no cabe todo:** primero el fondo decorativo (cuadros, pared, techo), después el mobiliario, y **lo último el sujeto**.
+> - **⚠️ Cuando el sujeto está pegado al borde del original, el cuadrado NO se encoge: se empuja hacia dentro.** Encogerlo recortaría al sujeto, que es justo lo que no se hace. El script lo resuelve así y avisa si ni siquiera cabe.
+>
+> ### 2 · NO SE RECORTA NADA QUE CARGUE EL SIGNIFICADO, y las manos cargan
+> > Mario, sobre el recorte viejo de `unai casa camiseta`: *"has recortado su señal que hace y su gesto con las manos, y su cara está un poco desplazada a la derecha. Su cara y su mano como conjunto deberían estar centradas"*.
+>
+> **La caja de lo importante casi nunca es solo la cara.** En un selfie con gesto son **cara + mano, como una sola unidad**, y es esa unidad la que se centra. Cortar la mano deja al sujeto haciendo un gesto invisible, que es peor que no tener gesto.
+> - **La familia de elementos que cargan y que hay que meter dentro:** manos y gestos · el objeto que sujeta (una placa, un portátil, un café) · la mirada · el logo de marca si sale.
+> - **Corolario, y es la razón por la que se MIRA la foto antes de recortar:** un script no sabe qué carga el chiste. La caja la decide un humano. Por eso `--rejilla` vuelca la foto con las coordenadas encima: se mira, se apuntan los números y se pasan.
+>
+> ### 3 · LA EXCEPCIÓN AL CENTRADO: un PERFIL mira hacia dentro del encuadre
+> Si el sujeto está de perfil, **el hueco se deja delante de la mirada, no detrás**. Centrarlo a la fuerza deja al sujeto mirando a la pared y el aire a su espalda, que se lee mal aunque esté "centrado".
+> - Caso real: `unai puesto polo`. Está en el borde derecho del original mirando a la izquierda, así que el cuadrado se pega a la derecha y él queda en el tercio derecho **mirando hacia el resto de la foto**. Es composición correcta, no un fallo de centrado.
+>
+> ### 4 · 🎨 EL PERFIL DE COLOR NO SE TOCA. Solo se tira el EXIF
+> > Mario: *"haces que pierda un poco el color, cosa que no puede ser. Asegúrate de no cambiarme el perfil de color"*. Tenía razón y se ve a simple vista.
+>
+> **La causa, para que no se repita:** para quitar los metadatos hice `Image.new('RGB') + paste`, y **eso se lleva por delante el perfil ICC además del EXIF**. Las fotos de móvil son **Display P3** (gama ancha); sin el perfil, el visor las interpreta como sRGB y salen **lavadas**.
+> - **Lo que se QUITA:** el EXIF, y solo por privacidad (lleva GPS y modelo de móvil).
+> - **Lo que se CONSERVA:** el `icc_profile`, tal cual venía. Nunca se convierte ni se re-etiqueta.
+> - **Y se COMPRUEBA al guardar**, no se supone: el script relee el fichero y **falla** si el ICC de salida no es idéntico al del original. Un check que solo "confía" es un check muerto (`working-preferences §0d`).
+> - **Ojo con los PNG del banco:** vienen en RGBA y JPEG no admite alfa. Se aplanan sobre **blanco**, nunca sobre el negro que pone `convert` por defecto, que deja halos oscuros en los bordes.
+>
+> ### 5 · ⚠️ Y ANTES DE NADA: comprobar si la foto está girada EN LOS PÍXELES
+> Dos fotos del banco de Unai estaban **tumbadas 90° en los píxeles con el EXIF diciendo `orientación 1`**, o sea sin bandera que lo corrigiera. Si recortas sin enderezar, mides sobre una foto tumbada y sale cualquier cosa.
+> - **Se mira SIEMPRE antes de medir**, y si está tumbada se endereza primero y se mide sobre la enderezada.
+> - `ImageOps.exif_transpose` **no lo arregla** en este caso, precisamente porque el EXIF dice que está bien.
+>
+> ### 6 · Cuando el cuadrado no puede con todo, se DICE
+> En una foto de grupo ancha el cuadrado no da para todos. Se elige el subgrupo que sostiene el sentido de la foto y **se declara en la entrega a quién se ha dejado fuera**, para que sea una decisión y no un descuido. Casos reales: `unai equipo salon` y `unai equipo cafe` pierden a las personas del extremo opuesto.
+
 ## 🚨 0a-CAPADO · LINKEDIN CAPA POSTS SUELTOS, Y HAY QUE SABER RECONOCERLO (Iker, 2026-08-06)
 
 **El capado es POR POST, no por cuenta ni por dispositivo.** Iker lo vio antes que yo: *"ya nos pasó la semana pasada con Asier y solo fue con el post del meme, con el resto de cuentas fueron bien"*. Yo había apuntado a las 4 cuentas del mismo equipo interactuando desde la misma wifi, y **eso no lo explica**: si fuera el dispositivo, habrían caído las tres cuentas a la vez, y no pasó.
