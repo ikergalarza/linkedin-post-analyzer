@@ -271,6 +271,24 @@ Lee el post e imagina que lo sube una consultora, una agencia o una constructora
 
 **⛔ Y NO SE APILAN DOS.** Un superlativo y un remate de menosprecio en la misma frase se anulan, exactamente igual que tres verbos punchy (`§2.9`). Uno, y que caiga solo.
 
+#### ⛔⛔ 2.3d-FUTURO · EN UN GANCHO DE PROMESA, EL INTENSIFICADOR NO PUEDE DAR EL HECHO POR CUMPLIDO (Iker, 2026-08-21)
+
+**El fallo, y lo canta el oído antes que la gramática:** puse *"lo último que me esperaba **era reescribir** el mundo de las ventas"*. Iker: *"estás diciendo que ya lo has hecho cuando no es verdad"*. **Y tenía razón: `era reescribir` es un atributo cerrado, cuenta un hecho consumado.** El gancho de promesa (`§2.0`, cargado en el futuro) vive de que **algo está a punto de pasar**; si el verbo lo da por hecho, se cae el bucle entero y encima afirmamos algo que todavía no ha ocurrido, que es la línea que no cruzamos.
+
+**LA MECÁNICA, y es lo único que hay que recordar: el superlativo mira ATRÁS, el claim mira ADELANTE.** Los dos tiempos conviven en la misma frase y cada uno hace su trabajo:
+
+```
+❌ Con 13 años, lo último que me esperaba ERA REESCRIBIR el mundo de las ventas
+   (superlativo en pasado + claim en pasado = ya pasó, no hay nada que esperar)
+
+✅ Con 13 años ni de broma ME IMAGINABA las reglas que VAMOS A REESCRIBIR en ventas
+   (superlativo en imperfecto + claim en futuro = sigue pendiente, y por eso pica)
+```
+
+**Y el verbo recupera su objeto directo** (`brand-voice §3c`): `las reglas que vamos a reescribir` en vez de `reescribir en ventas`, que dejaba al oído esperando el complemento. **De regalo, el objeto se convierte en un segundo bucle**: el lector quiere saber QUÉ reglas.
+
+**⛔ Y LA COMA DEL CIRCUNSTANCIAL ANTEPUESTO, FUERA.** *"La coma esa después de trece años parece inteligencia artificial"* (Iker). `Con 13 años, lo último…` es correctísima en español y justo por eso delata: **en el habla no se hace esa pausa**, y es la misma familia que la coma del vocativo de `brand-voice §3b`. Se quita, y si la frase pide respirar ahí, se reordena. Es un ctrl+F más antes de entregar: **coma detrás de un arranque de tiempo o de lugar (`Con 13 años,`, `En ventas,`, `Aquel verano,`) → fuera.**
+
 ### 2.4 · Claim universal dentro del sector
 El claim (el shock, la tensión, el reframe) debe aterrizar para CUALQUIERA cerca del B2B comercial: SDRs, AEs, sales managers, RevOps, founders B2B. Test: ¿un sales manager pararía el scroll con esto? ¿un founder B2B? Si solo lo pilla el SDR ultra-técnico, es un hook del 1% — amplía.
 
