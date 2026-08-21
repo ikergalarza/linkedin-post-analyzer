@@ -73,6 +73,43 @@ El hook es la línea más importante. Si no funciona, no se lee el cuerpo.
 - **Regla práctica:** de la mitad del post hacia arriba, el método. De la mitad hacia abajo, se puede guiñar a la imagen.
 - Detalle por pilar en `post-workflow §4.4-CALLA`.
 
+#### ⛔⛔ 2.0c-VISUAL · "LO QUE DICE LA FOTO" NO ES SOLO SU TEXTO, ES LO QUE ENSEÑA (Mario, 2026-08-21)
+
+> **Mario, y empieza con "como siempre te digo", que es la parte que escuece:** *"tanto el texto del gancho como la foto en sí, no solo si la foto tiene texto, sino si visualmente la foto dice lo mismo que el texto del gancho, hay que cambiar el texto del gancho o la foto"*.
+
+**El fallo:** entregué el gancho *"La caída de los influencers me pilló con la placa de 100.000 seguidores en la mano"* para un post cuya **imagen era esa misma placa**. La regla llevaba escrita desde el 31/07 y aun así la rompí, porque la tenía guardada como *"el cuerpo no describe la foto"* y **este solapamiento no era de texto: era de CONTENIDO VISUAL**. La foto no llevaba ni una palabra escrita y aun así contaba exactamente lo mismo.
+
+**LA COMPROBACIÓN, y son dos gestos de un segundo cada uno:**
+1. **Tapa el gancho y mira la foto.** ¿Qué te cuenta?
+2. **Tapa la foto y lee el gancho.** ¿Qué te cuenta?
+> Si las dos respuestas se parecen, **una de las dos capas sobra**. El gancho promete y la imagen paga (`§2.0`); si el gancho ya paga, no queda remate.
+
+**Cuál de los dos se cambia:** casi siempre **el gancho**, porque es lo más barato (la foto puede estar ya hecha, ser la única que existe o ser el concepto entero del post). Solo se cambia la foto cuando la imagen ES el concepto y hay banco de dónde elegir.
+
+**Y el arreglo suele MEJORAR el gancho, no empeorarlo**, porque te obliga a buscar otro trozo de la misma escena. Aquí el objeto pasó de **la placa** (el resultado) al **trípode montado en el salón** (el esfuerzo): mismo verbo, 11 caracteres menos, más filmable y sin presumir.
+
+#### 🙅 2.0c-PRESUMIR · EL GANCHO NO PRESUME, AUNQUE LA CIFRA SEA VERDAD (Mario, 2026-08-21)
+
+> *"Has elegido de todas las iteraciones de ganchos posibles el gancho que más prepotente puedo quedar."*
+
+**Es GLOBAL, no de la cuenta de Mario.** Cualquiera puede colar su propia cifra buena en la primera línea, y el reflejo es fuerte justo cuando la cifra es real y es nuestra.
+
+**Choca con dos cosas que ya estaban medidas y que no se me conectaron:**
+- `brand-voice §1`: **la autoridad se DEMUESTRA con el contenido, nunca se anuncia.**
+- `outliers-database §3.7`: los outliers usan **un 25% MENOS** lenguaje de autoridad/prueba que los posts normales. No es tono, es dato.
+
+**El test:** ¿la primera línea lleva un logro, un premio o una cifra buena MÍA? Entonces el lector lee *"mírame"* en vez de *"sigue leyendo"*.
+
+**La salida, y es siempre la misma: busca la versión HUMILDE de la MISMA escena.** El resultado se cambia por el esfuerzo, el trofeo por la herramienta, la cifra por el sitio donde pasó. Sale más visual (`§2.2d`), más universal y más corta:
+
+| ⛔ presume | ✅ misma escena, humilde |
+|---|---|
+| `con la placa de 100.000 seguidores en la mano` | `con el trípode montado en el salón` |
+
+**Y la credencial no se pierde, se MUEVE:** al cuerpo si hace falta, o a la foto. **La foto no presume, porque no lo dice: lo enseña**, y encima así paga el bucle que abre el gancho en vez de repetirlo (`§2.0c-VISUAL`).
+
+**Mecanizado** como dos avisos de entrega en `validar-post.py` (`ENTREGA: ¿el gancho cuenta lo que ENSEÑA la foto?` y `ENTREGA: ¿el gancho PRESUME?`). El script no ve la imagen, así que no puede ser fallo duro — pero el fallo se comete **al elegir el gancho**, y para eso basta con que la pregunta salte.
+
 ### 2.1 · Ley de formato del hook (la regla más importante — leer antes de escribir la primera línea)
 LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, con "…ver más". Ese corte es el único momento para ganar el clic. El error del 90%: meter un **doble salto de línea (`\n\n`) justo después de la primera frase del hook** — eso le entrega a LinkedIn un punto de corte antes de tiempo, el lector lee la primera frase como idea cerrada y sigue scrolleando.
 

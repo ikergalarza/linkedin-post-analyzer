@@ -715,6 +715,40 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         'buzones" se leyo como el del correo electronico y paso a "a medio barrio"'
         or ''), aviso=True)
 
+    # global §2.0c — EL GANCHO NO DICE LO QUE LA FOTO YA ENSEÑA (Mario, 2026-08-21).
+    # La regla existia desde el 31/07 y aun asi la rompi: entregue "me pillo con la
+    # placa de 100.000 seguidores en la mano" para un post cuya FOTO era esa misma
+    # placa. Mario: "ya se va a ver en la foto que voy a poner, y como siempre te
+    # digo, no solo si la foto tiene texto, sino si visualmente la foto dice lo
+    # mismo, hay que cambiar el gancho o la foto". El script no ve la imagen, asi
+    # que esto solo puede ser un aviso de entrega — pero el aviso es justo lo que
+    # faltaba, porque el fallo se comete al elegir el gancho, no al escribirlo.
+    chk(False, 'ENTREGA: ¿el gancho cuenta lo que ENSEÑA la foto? (§2.0c)',
+        'Tapa el gancho y mira la imagen; luego tapa la imagen y lee el gancho. Si los '
+        'dos dicen lo MISMO, has gastado el remate antes de tenerlo: el gancho promete y '
+        'la imagen paga. Y no vale solo mirar si la foto lleva TEXTO repetido — cuenta '
+        'igual lo que la foto enseña sin una sola palabra. Se cambia uno de los dos, y '
+        'normalmente sale mas barato cambiar el gancho. Caso real (21/08, Mario): gancho '
+        'con la placa de YouTube dentro y foto de esa misma placa', aviso=True)
+
+    # ⛔ Y EL OTRO FILTRO DEL MISMO DIA: EL GANCHO NO PRESUME (Mario, 2026-08-21).
+    # "Has elegido de todas las iteraciones posibles el gancho que mas prepotente
+    # puedo quedar". Es global y no es de la cuenta de Mario: cualquiera puede
+    # colar su propia cifra buena en la primera linea. Y choca de frente con
+    # brand-voice §1 (la autoridad se DEMUESTRA, nunca se anuncia) y con
+    # outliers-database §3.7 (los outliers usan un 25% MENOS lenguaje de
+    # autoridad/prueba que los posts normales). La credencial va en el cuerpo si
+    # hace falta, o en la foto, que no presume porque no lo dice: lo enseña.
+    chk(False, 'ENTREGA: ¿el gancho PRESUME? (brand-voice §1)',
+        'Si la primera linea lleva un logro tuyo, una cifra tuya buena o un premio, el '
+        'lector lee "mirame" y no "sigue leyendo". La autoridad se demuestra con el '
+        'contenido, nunca se anuncia, y esta medido: los outliers usan un 25% MENOS '
+        'lenguaje de autoridad que los posts normales (outliers-database §3.7). Busca la '
+        'version HUMILDE de la misma escena, que casi siempre es mas visual y mas '
+        'universal. Caso real (21/08): "me pillo con la placa de 100.000 seguidores en la '
+        'mano" paso a "me pillo con el tripode montado en el salon" — misma escena, mismo '
+        'verbo, 11 caracteres menos y sin presumir', aviso=True)
+
     # brand-voice §3b — LA CITA SE PUNTUA COMO LA ESCRIBIO QUIEN LA DIJO. La coma
     # del vocativo ("Hola, soy Iker") es CORRECTA en español y por eso se cuela:
     # dentro de una cita la vara no es la gramatica, es la verosimilitud. Un crio
