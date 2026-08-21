@@ -232,6 +232,37 @@ El cuerpo debe sonar a persona afilada hablando, nunca a IA. El enemigo no es el
 - UNA o DOS pinceladas coloquiales por post es humano; diez es try-hard y suena PEOR que robótico. La mayoría de frases son español limpio y llano; el coloquialismo cae donde suma calor o punch.
 - Registro: son directores comerciales de 45-60. Coloquialismos de café profesional, **NO** slang teen/TikTok. Pasan: tocho, movida, marrón, currar, a saco, chungo, pillar. **NO pasan:** "random", "cringe", "POV", "modo bestia", "literal" de relleno — alienan al lector senior.
 
+### ⛔⛔ 3c · EL CASTELLANO HABLADO MANDA SOBRE LA ESCALERA, LA ANÁFORA Y LA TIJERA (Iker, 2026-08-21) — GLOBAL
+
+> **Iker, y es una regla de casa, no una corrección de un post:** *"es muy importante a nivel de receta global que todo lo que redactes, aunque obviamente utilizamos muchos recursos que parecen poesía, suene bien a castellano de España. A veces te pasas de darle vueltas y suena raro"*.
+
+**EL MECANISMO, y hay que entenderlo porque es culpa del propio sistema:** las reglas de forma **empujan hacia frases artificiales**. La escalera pide que cada línea mida más que la anterior, la anáfora pide que todas empiecen igual, la tijera de `§2.2c` pide quitar palabras, y el validador comprueba las tres. **Una frase puede cumplirlas todas y no haberla dicho nunca nadie en voz alta.** Cuando eso pasa, la culpa no es del castellano: es de haberle dado una vuelta de más.
+
+**El caso que lo motiva (historia de Unai, 21/08):** entregué el bloque
+```
+❌ Las hacía para nadie.
+   Las hacía por verlas funcionar.
+```
+Pasaba todo: anáfora, escalera ascendente, líneas cortas. Y **`hacer algo para nadie` no lo dice nadie**: es una construcción de poema, montada para que las dos líneas empezaran igual. Iker: *"suena muy mal, no parece que esté escrito correctamente"*. Quedó en
+```
+✅ Nadie las abría.
+   Nadie me las pedía.
+```
+que cumple lo mismo, es 16 caracteres más corto y **además es lo que diría una persona**.
+
+**LA JERARQUÍA, para cuando choquen:**
+1. **¿Lo diría alguien así, en voz alta, en un bar?** Si no, se reescribe, aunque rompa la escalera o la anáfora.
+2. Después, la forma (escalera, anáfora, longitud).
+3. **Si una frase natural no cabe en el molde, se cambia el MOLDE, no la frase**: el bloque de 2 se parte en dos sueltas, o el de 3 pasa a 2 + suelta (`§3.2` ya lo permite expresamente).
+
+**LOS DELATORES, que son los míos y siempre los mismos:**
+- **La preposición forzada para cuadrar la anáfora**: `para nadie`, `por verlas`, `en ventas` pegado detrás de un verbo que pedía objeto directo.
+- **El verbo sin su objeto natural.** `reescribir` es transitivo y pide *reescribir algo*; `reescribir en ventas` deja al oído esperando el complemento que no llega. **Se le da su objeto (`reescribir las ventas`) y el ancla de sector sale de ahí, en vez de ir pegada como un remiendo** (es el mismo vicio que `§2.3` ya avisa con `En ventas,` de prefijo, y yo lo hice por detrás).
+- **El salto de tiempos entre el marco y el claim.** `Con 13 años no me creería lo que VAMOS a reescribir` mezcla el yo de entonces con el hoy: el crío no puede creerse algo enunciado desde ahora. La correlación correcta es **`no me creería que ÍBAMOS a`**. Suena bien porque además es lo correcto.
+- **El adjetivo o el giro que solo existe para llenar la escalera.**
+
+**Y el test se hace en alto, de verdad, no leyendo por encima.** Si al decirla tropiezas o te suena a traducción, está mal aunque el validador dé 50/50. **El script mide la forma; el oído es lo único que mide el idioma.**
+
 **Test de leer en voz alta (correr en cada cuerpo antes de entregar):** léelo mentalmente en voz alta. Cualquier frase que un founder real NUNCA diría en voz alta a un colega — demasiado equilibrada, abstracta, "LinkedIn-corporate" — se reescribe como lo diría de verdad. Si te daría vergüenza decir la frase en voz alta en un bar, sigue siendo demasiado robótica.
 
 ---

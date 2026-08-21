@@ -476,6 +476,8 @@ Cuando el cuerpo lleva cifras, **cita la fuente por su nombre** (es escudo: te p
 > ⚠️ **El coste conocido, dicho en voz alta:** los ganadores SÍ usan letra para números pequeños en prosa narrativa. Navarra 7.72x abre con *"Les pasé tres números y se callaron"* y Aragón con *"cierra pedidos en 5 idiomas"*. Esta regla los convierte en `3 números` y `5 idiomas`. Se aplica igual (decisión del usuario, 2026-07-15): la consistencia dentro del post pesa más, y no está medido que la letra aporte nada. **Está en el validador** para no depender de la memoria.
 
 ### 3.5 · Cuerpo natural (anti-IA)
+⛔ **Y antes que nada, `brand-voice §3c`: el castellano hablado manda sobre la escalera, la anáfora y la tijera.** Estas tres reglas de forma empujan hacia frases que cumplen todos los checks y que no diría nadie en voz alta. Cuando choquen, se cambia el MOLDE, no la frase.
+
 Ver `brand-voice` §3 (tabla de traducción de AI-tells + palabras de registro natural + test de leer en voz alta). Es parte no-negociable del pase de validación de cada cuerpo.
 
 ---
