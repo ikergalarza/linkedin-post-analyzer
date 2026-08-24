@@ -3359,6 +3359,59 @@ async function verificarInvitacion(
   };
 }
 
+// ⛔ ¿YA TIENE EL RECURSO AUNQUE NO HAYA FILA? (Iker, 2026-08-24)
+//
+// El agujero que tapa esto: `lead_magnet_sends` era la ÚNICA fuente de verdad
+// sobre quién tiene ya el recurso, y `/reverificar` solo repasa las filas que
+// existen. A quien recibió el DM pero se quedó SIN fila no lo miraba nadie —
+// jamás—, así que el panel lo dejaba en «Para actuar» para siempre y ofrecía
+// mandarle el mismo enlace por segunda vez.
+//
+// No es teoría. Medido en el post del 12/08 de Unai: los DOS únicos accionables
+// que quedaban —Alexandra Vega Alemán y Jordi Urgell López— tienen el DM con
+// https://recursos.neety.com/vibe/ en su bandeja desde el 13/08 a las 16:38 y
+// 16:39 (Jordi hasta le puso un 👍), y no había fila 'dm' suya en NINGÚN post.
+// A los dos se les había contestado en público "te lo he mandado". Un clic más
+// y les llegaba el recurso repetido.
+//
+// La diferencia con `verificarMensaje` es qué se busca: allí el TEXTO exacto de
+// nuestro mensaje, que aquí no se conoce (no hay fila donde estuviera guardado).
+// Aquí se busca EL ENLACE DEL RECURSO dentro de un mensaje NUESTRO, que es la
+// única huella que sobrevive sin fila. `buscarMensajeEnviado` ya casa por
+// subcadena, así que el enlace entra tal cual como firma.
+//
+// Sin `desde` el barrido no puede concluir en negativo (así está escrito el
+// módulo, y está bien): solo se termina por agotar el chat. Da igual, porque
+// aquí SOLO se actúa sobre el hallazgo POSITIVO — un `false` o un `null` no
+// escriben nada y la persona sigue en «Para actuar», que es donde ya estaba.
+async function buscarEntregaPorEnlace(
+  providerId: string,
+  accountId: string,
+  enlace: string
+): Promise<Verificacion> {
+  let chatIds: string[] = [];
+  try {
+    const chats = await unipileService.getChatsWithAttendee(providerId, accountId, 10);
+    chatIds = chats.map((c: any) => c?.id).filter(Boolean);
+  } catch (err: any) {
+    const msg = err?.message || String(err);
+    if (!/404|not found/i.test(msg)) {
+      return { ok: null, motivo: `no he podido comprobarlo: ${msg}` };
+    }
+  }
+  if (chatIds.length === 0) return { ok: null, motivo: 'sin conversación con esta persona' };
+
+  try {
+    const r = await buscarMensajeEnviado(
+      (id, cursor) => unipileService.getChatMessagesPage(id, { limit: 50, cursor }),
+      { chatIds, texto: enlace, desde: null }
+    );
+    return veredictoDeBusqueda(r, false);
+  } catch (err: any) {
+    return { ok: null, motivo: `no he podido comprobarlo: ${err?.message || String(err)}` };
+  }
+}
+
 // POST /api/accounts/lead-magnet/send
 // Body: { post_id, comment_id, provider_id, kind: 'dm', text, invitation_id? }
 //
@@ -3443,6 +3496,7 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
       }
     }
 
+    let persistError: string | null = null;
     // Record the attempt either way, keyed by PERSON (post + provider + kind),
     // not by comment: someone with two keyword-carrying comments must still
     // only ever be one row, or nothing stops us sending them the resource
@@ -3464,10 +3518,22 @@ router.post('/lead-magnet/send', async (req: Request, res: Response) => {
          followup_text || null, sector || null, provider_name || null]
       );
     } catch (storeErr: any) {
-      console.warn('[accounts/lead-magnet/send] persist failed:', storeErr?.message);
+      // ⛔ UN GUARDADO QUE FALLA EN SILENCIO ES UN MENSAJE QUE LA APP OLVIDA
+      // (Iker, 2026-08-24). Esto era un `console.warn` y ya está: el DM salía,
+      // la fila no se escribía, el panel devolvía un ✓ limpio y esa persona se
+      // quedaba en «Para actuar» para siempre, con el botón de mandarle el mismo
+      // enlace otra vez. Es el estado en el que aparecieron Alexandra y Jordi.
+      // Ahora se DICE, en el mismo sitio donde se dice todo lo demás: el mensaje
+      // ya salió (eso no se toca), pero la respuesta avisa de que no ha quedado
+      // constancia, para que se marque a mano en vez de reenviarlo.
+      persistError = storeErr?.message || String(storeErr);
+      console.error('[accounts/lead-magnet/send] persist failed:', persistError);
     }
 
-    res.json({ ok: status === 'sent', kind, status, error, verificado, result });
+    res.json({
+      ok: status === 'sent', kind, status, error, verificado, result,
+      ...(persistError ? { persist_error: persistError } : {}),
+    });
   } catch (err: any) {
     console.error('[accounts/lead-magnet/send]', err);
     res.status(500).json({ error: err.message });
@@ -3566,13 +3632,21 @@ router.post('/lead-magnet/marcar-manual', async (req: Request, res: Response) =>
 });
 
 // POST /api/accounts/lead-magnet/reverificar
-// Body: { post_id }
+// Body: { post_id, link? }
 //
 // Relee en LinkedIn TODOS los envíos que este post tiene guardados —los 'sent'
 // Y los 'failed'— y corrige lo que esté al revés, en las dos direcciones:
 //
 //   · un 'sent' cuyo mensaje no aparece → cae a 'failed' (los del baneo del 13/08)
 //   · un 'failed' cuyo mensaje SÍ está en el chat → vuelve a 'sent'
+//
+// Y DESDE EL 2026-08-24, una tercera dirección que antes no existía: los
+// comentaristas SIN NINGUNA FILA a los que ya se les mandó el recurso. Ver
+// `buscarEntregaPorEnlace`: este repaso solo miraba filas, así que un envío que
+// salió y no se guardó era invisible para siempre y esa persona se quedaba en
+// «Para actuar» ofreciendo mandarle el enlace por segunda vez. Ahora se barren
+// también los que no tienen fila, y el que ya tenga el enlace nuestro en su
+// bandeja se guarda como entregado (`recuperados_sin_fila`).
 //
 // ⛔ ESTO DECÍA "NUNCA RESUCITA UN FALLIDO" Y ESA REGLA ERA EL BUG (Iker,
 // 2026-08-14, dos veces en el mismo día). Se escribió cuando el único origen de
@@ -3589,29 +3663,38 @@ router.post('/lead-magnet/marcar-manual', async (req: Request, res: Response) =>
 // (null) deja el 'failed' como está — no se blanquea un fallo con una duda.
 router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
   try {
-    const postId = (req.body || {}).post_id;
+    const { post_id: postId, link: linkBody } = req.body || {};
     if (!postId) return res.status(400).json({ error: 'post_id required' });
 
-    const { rows } = await pool.query(
-      `SELECT s.provider_id, s.kind, s.text, s.status, s.verificado, s.created_at, c.unipile_account_id
-         FROM lead_magnet_sends s
-         JOIN posts p ON p.id = s.post_id
+    // El post se pide SIEMPRE, no solo cuando hay filas: el barrido de abajo
+    // necesita sus comentaristas, y un post con CERO filas y DMs entregados es
+    // exactamente el agujero que estamos tapando.
+    const postQ = await pool.query(
+      `SELECT p.id, p.linkedin_post_id, p.creator_id,
+              c.linkedin_id AS creator_linkedin_id, c.unipile_account_id
+         FROM posts p
          JOIN creators c ON c.id = p.creator_id
-        WHERE s.post_id = $1
-        ORDER BY s.created_at DESC`,
+        WHERE p.id = $1`,
       [postId]
     );
-    const accountId = rows[0]?.unipile_account_id;
-    if (rows.length === 0) {
-      return res.json({ revisados: 0, caidos: 0, recuperados: 0, sin_comprobar: 0, omitidos: 0, detalle: [] });
-    }
+    if (postQ.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
+    const post = postQ.rows[0];
+    const accountId = post.unipile_account_id;
     if (!accountId) return res.status(400).json({ error: 'Creator has no Unipile account_id' });
+
+    const { rows } = await pool.query(
+      `SELECT provider_id, comment_social_id, kind, text, status, verificado, created_at
+         FROM lead_magnet_sends
+        WHERE post_id = $1
+        ORDER BY created_at DESC`,
+      [postId]
+    );
 
     // Tope de 40, igual que /check-accepted: cada fila son 1-3 llamadas a
     // Unipile y pasarse de ahí es tocar el rate limit de la cuenta.
     const detalle: {
       provider_id: string; kind: string; ok: boolean | null;
-      motivo: string | null; recuperado?: boolean;
+      motivo: string | null; recuperado?: boolean; sin_fila?: boolean;
     }[] = [];
     for (const r of rows.slice(0, 40)) {
       // Sin esperas: estas filas llevan horas o días, LinkedIn ya las tiene
@@ -3648,13 +3731,106 @@ router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
       );
     }
 
+    // ── EL BARRIDO DE LOS QUE NO TIENEN FILA (Iker, 2026-08-24) ──
+    //
+    // Todo lo de arriba corrige filas. Esto busca a los que FALTAN: gente a la
+    // que el panel le seguiría ofreciendo el recurso y que ya lo tiene en su
+    // bandeja. Ver `buscarEntregaPorEnlace` para el caso real que lo motiva.
+    //
+    // El enlace lo manda el panel (sabe cuál es el recurso de este post). Si no
+    // viene, se saca del texto de los envíos ya guardados, que lo llevan dentro:
+    // así el endpoint se vale solo y un cliente viejo no pierde el barrido.
+    const CAP_BARRIDO = 25;
+    // Filas repasadas, sellado ANTES del barrido: lo que este añade a `detalle`
+    // no son filas revisadas, son filas que no existían.
+    const revisados = detalle.length;
+    let recuperadosSinFila = 0;
+    let barridos = 0;
+    let sinBarrer = 0;
+
+    const enlaceDe = (t: string | null): string | null =>
+      (t || '').match(/https?:\/\/[^\s)"'<]+/i)?.[0]?.replace(/[.,;]+$/, '') ?? null;
+    const enlace =
+      (typeof linkBody === 'string' && enlaceDe(linkBody)) ||
+      (() => {
+        // El más repetido entre los textos guardados: es el recurso de este post.
+        const cuenta = new Map<string, number>();
+        for (const r of rows) {
+          const l = enlaceDe(r.text);
+          if (l) cuenta.set(l, (cuenta.get(l) ?? 0) + 1);
+        }
+        return [...cuenta.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+      })();
+
+    if (enlace && post.linkedin_post_id) {
+      // Quién NO cuenta como entregado, con el MISMO criterio que el panel: el
+      // DM/InMail que salió, y la invitación cuya nota llevaba el enlace dentro.
+      // Se cruza por persona Y por comentario, porque el provider_id cambia
+      // cuando alguien pasa a 1er grado (el bug del 06/08).
+      const llevaEnlace = (t: string | null) =>
+        !!t && /recursos\.neety\.com|lnkd\.in|https?:\/\//i.test(t);
+      const entregados = new Set<string>();
+      for (const r of rows) {
+        const cuenta =
+          ((r.kind === 'dm' || r.kind === 'inmail') && r.status === 'sent') ||
+          (r.kind === 'invite' && r.status === 'sent' && llevaEnlace(r.text));
+        if (!cuenta) continue;
+        if (r.provider_id) entregados.add(r.provider_id);
+        if (r.comment_social_id) entregados.add(r.comment_social_id);
+      }
+
+      try {
+        const { threads } = await buildThreadsForPost(post);
+        const candidatos = threads.filter(
+          (t) => !t.author.is_company && t.author.profile_id &&
+            !entregados.has(t.author.profile_id) && !entregados.has(t.id)
+        );
+        sinBarrer = Math.max(0, candidatos.length - CAP_BARRIDO);
+        for (const t of candidatos.slice(0, CAP_BARRIDO)) {
+          barridos++;
+          const v = await buscarEntregaPorEnlace(t.author.profile_id!, accountId, enlace);
+          // ⛔ SOLO EL HALLAZGO POSITIVO ESCRIBE. Un `false` o un `null` no dicen
+          // "no lo tiene": dicen "no lo he encontrado", y esa persona ya está
+          // donde tiene que estar (en «Para actuar»). Convertir esa duda en una
+          // fila sería la versión con el signo cambiado del bug del 13/08.
+          if (v.ok !== true) continue;
+          recuperadosSinFila++;
+          // `recuperado` NO: eso es "estaba en rojo y sí había llegado", otra
+          // cosa. Aquí no había ni fila. Se cuenta aparte para que el mensaje
+          // del panel no mezcle dos arreglos distintos.
+          detalle.push({
+            provider_id: t.author.profile_id!, kind: 'dm', ok: true,
+            motivo: 'ya lo tenía en su bandeja y no había fila', sin_fila: true,
+          });
+          await pool.query(
+            `INSERT INTO lead_magnet_sends (post_id, comment_social_id, provider_id, kind, status, text, error, verificado, provider_name)
+             VALUES ($1, $2, $3, 'dm', 'sent', $4, $5, TRUE, $6)
+             ON CONFLICT (post_id, provider_id, kind)
+             DO UPDATE SET status = 'sent', verificado = TRUE, error = EXCLUDED.error,
+                           comment_social_id = EXCLUDED.comment_social_id,
+                           provider_name = COALESCE(EXCLUDED.provider_name, lead_magnet_sends.provider_name)`,
+            [postId, t.id, t.author.profile_id, enlace,
+             'no había fila de este envío: el repaso encontró el enlace del recurso en un mensaje nuestro de su chat',
+             t.author.name || null]
+          );
+        }
+      } catch (err: any) {
+        // Sin comentarios no hay barrido, pero el repaso de filas de arriba YA
+        // está hecho y guardado: se devuelve lo que sí ha salido.
+        console.warn('[reverificar] barrido sin fila:', err?.message);
+      }
+    }
+
     res.json({
-      revisados: detalle.length,
+      revisados,
       caidos: detalle.filter((d) => d.ok === false).length,
       // Estaban en 'failed' y el mensaje ha aparecido en el chat: llegaron.
       recuperados: detalle.filter((d) => d.recuperado).length,
       sin_comprobar: detalle.filter((d) => d.ok === null).length,
-      omitidos: Math.max(0, rows.length - detalle.length),
+      omitidos: Math.max(0, rows.length - Math.min(rows.length, 40)),
+      barridos,
+      recuperados_sin_fila: recuperadosSinFila,
+      sin_barrer: sinBarrer,
       detalle,
     });
   } catch (err: any) {

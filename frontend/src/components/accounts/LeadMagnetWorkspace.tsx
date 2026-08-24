@@ -124,14 +124,28 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
       const r = await apiPost<{
         revisados: number; caidos: number; recuperados: number;
         sin_comprobar: number; omitidos: number;
-      }>('/api/accounts/lead-magnet/reverificar', { post_id: post.id });
+        barridos?: number; recuperados_sin_fila?: number; sin_barrer?: number;
+      }>('/api/accounts/lead-magnet/reverificar', {
+        post_id: post.id,
+        // El enlace del recurso de ESTE post. Es lo que el backend busca en el
+        // chat de los comentaristas que no tienen fila, para no volver a
+        // ofrecerle el recurso a quien ya lo tiene (ver `buscarEntregaPorEnlace`).
+        ...(recurso?.link ? { link: recurso.link } : {}),
+      });
       // El mensaje se compone por partes: un repaso puede a la vez tumbar unos
       // y recuperar otros, y quedarse con una sola frase esconde la otra mitad.
       const partes: string[] = [];
       if (r.caidos > 0) partes.push(`✗ ${r.caidos} NO llegaron: marcados como fallidos, hay que volver a escribirles`);
       if (r.recuperados > 0) partes.push(`↩ ${r.recuperados} que estaban en rojo SÍ habían llegado: recuperados`);
+      // Los que ya tenían el recurso y no constaban en ninguna parte. Se dice
+      // aparte de los recuperados: aquellos tenían fila y estaba mal, estos no
+      // tenían fila y por eso seguían saliendo «para actuar».
+      if (r.recuperados_sin_fila) {
+        partes.push(`👤 ${r.recuperados_sin_fila} ya tenían el recurso en su bandeja sin constar: salen de «Para actuar»`);
+      }
       if (r.sin_comprobar > 0) partes.push(`${r.sin_comprobar} sin poder comprobar`);
       if (r.omitidos > 0) partes.push(`quedan ${r.omitidos} sin revisar, vuelve a darle`);
+      if (r.sin_barrer) partes.push(`quedan ${r.sin_barrer} sin barrer, vuelve a darle`);
       setRevisionMsg(
         partes.length === 0
           ? `✓ ${r.revisados} envíos comprobados, todos llegaron.`
@@ -577,14 +591,17 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
               <span className="text-text-muted">· {sentCount} ya recibieron el recurso</span>
             )}
             {/* Revisar envíos: el botón que desmiente a la propia herramienta.
-                Relee LinkedIn uno por uno y marca en rojo los que se guardaron
-                como enviados sin haber salido. */}
-            {sentCount > 0 && (
+                Relee LinkedIn uno por uno, marca en rojo los que se guardaron
+                como enviados sin haber salido, y desde el 24/08 también busca a
+                los que YA tienen el recurso y no constan en ninguna fila.
+                Por eso ya no basta con `sentCount`: el caso peor de ese agujero
+                es justo el post donde no consta ningún envío. */}
+            {(sentCount > 0 || cuentaAccionables > 0) && (
               <button
                 onClick={revisarEnvios}
                 disabled={revisando}
                 className="text-[11px] px-2 py-0.5 rounded border border-border hover:border-accent/40 text-text-muted hover:text-accent disabled:opacity-50 transition-colors"
-                title="Relee LinkedIn y comprueba que cada envío llegó de verdad"
+                title="Relee LinkedIn: comprueba que cada envío llegó de verdad, y saca de «Para actuar» a quien ya tenga el recurso en su bandeja aunque no conste"
               >
                 {revisando ? 'Revisando…' : '↻ Revisar envíos'}
               </button>
@@ -1174,7 +1191,10 @@ function CommenterCard({
     if (!message.trim() || !thread.author.profile_id) return;
     setMsgSending(true);
     try {
-      const res = await apiPost<{ status: 'sent' | 'failed'; error: string | null; verificado: boolean | null }>(
+      const res = await apiPost<{
+        status: 'sent' | 'failed'; error: string | null; verificado: boolean | null;
+        persist_error?: string;
+      }>(
         `/api/accounts/lead-magnet/send`,
         {
           post_id: postId,
@@ -1194,7 +1214,16 @@ function CommenterCard({
           ...(thread.author.name ? { provider_name: thread.author.name } : {}),
         }
       );
-      setMsgResult({ status: res.status, error: res.error, verificado: res.verificado });
+      // El mensaje SALIÓ pero no ha quedado constancia. Se dice con todas las
+      // letras y se manda al botón de marcarlo a mano: reenviarlo sería
+      // escribirle dos veces (ver `persist_error` en el backend).
+      setMsgResult({
+        status: res.status,
+        error: res.persist_error
+          ? `salió, pero no he podido guardar el registro (${res.persist_error}). Márcalo con «Ya se lo mandé a mano» o te lo volverá a pedir.`
+          : res.error,
+        verificado: res.verificado,
+      });
       onSent();
     } catch (e: any) {
       setMsgResult({ status: 'failed', error: e.message, verificado: false });
