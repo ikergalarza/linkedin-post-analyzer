@@ -104,6 +104,35 @@ FRASE_RABIA = r'(y para de contar|y poco m[aá]s|y poco que rascar|y gracias|par
 # digas es dar con el que decide". Un cierre repetido hace que la publicacion
 # nueva no se note nueva, que es justo lo contrario de para lo que existe.
 # Al publicar, mete aqui la frase que hayas usado. La lista solo crece.
+# global 4.4b-MUNICION - LAS DOS PROMESAS VETADAS DEL NINJA, con su tamano medido
+# en el informe de demos del 2026-08-24 (258 citas, 63 empresas, 87 reuniones).
+# No son reglas de estilo: cada una es una objecion que dicen 5 empresas.
+#
+# 1) AUTOMATISMO. "vimos tantos de estos mensajes que directamente los ignoramos,
+#    se detecta claramente cuando esta automatizado" (Innobide, 20 jul). El que
+#    lee nuestro post recibe esos mensajes A DIARIO: prometerle eso nos mete en
+#    el monton que ya ignora. Es ademas lo que aboutme 1b prohibe desde siempre
+#    ("nunca sin esfuerzo / lo hace por ti / tu solo cierras"), sin mecanizar.
+#    FALLO DURO: son formulas de oferta, no hay lectura buena.
+PROMESA_AUTOMATISMO = (r'(lo hacemos por ti|lo hace por ti|escribe por ti|escribimos por ti'
+                       r'|contactamos por ti|prospectamos por ti|vendemos por ti'
+                       r'|sin mover un dedo|sin que muevas un dedo|sin esfuerzo'
+                       r'|t[uú] solo cierras|solo tienes que cerrar|solo tienes que firmar'
+                       r'|(lo |los |el mensaje |los mensajes )?(lo )?escribe la ia'
+                       r'|en piloto autom[aá]tico|se (contactan|escriben|mandan) solos?'
+                       r'|nos encargamos de escribir)')
+#
+# 2) VOLUMEN. Es la queja literal contra Waalaxy y Apollo: "campanas demasiado
+#    masivas, con unos ratios de conversion muy bajos, mas de volumen" (i+Med,
+#    27 jul). Prometer cantidad nos mete en su caja gratis.
+#    AVISO, no fallo: el ninja PUEDE nombrar el volumen como ENEMIGO ("mandar
+#    500 mensajes lo hace cualquiera, dar con el que firma no"), que es un buen
+#    ninja. Lo que hay que mirar es de que lado de la frase esta el numero, y eso
+#    es criterio.
+PROMESA_VOLUMEN = (r'(cientos de (leads|contactos|empresas|clientes)'
+                   r'|miles de (leads|contactos|correos|mensajes)'
+                   r'|m[aá]s (leads|contactos)\b|\bx\s?[2-9]\b|de volumen|a volumen)')
+
 SPAM_QUEMADO = {
     'dar con el que decide': 'meme Unai 29/07, historia Iker 29/07, mapa Asturias 31/07',
     'son meses a mano': 'lo mismo, en los tres',
@@ -1508,6 +1537,26 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                      'Referencias que si funcionaron: 30 y 48 caracteres en la linea del '
                      'enlace' % ', '.join('%d con %d car' % x for x in _largas))
                     if _largas else '%s car' % ' / '.join(str(len(_sin_url(l))) for l in b))
+                # 2b) QUE NO PROMETE (global 4.4b-MUNICION, informe del 2026-08-24).
+                #     Las dos objeciones de 5 empresas cada una. Van aqui y no en
+                #     el post entero a proposito: en el CUERPO se puede hablar del
+                #     mensaje automatizado como enemigo; lo que no se puede es
+                #     PROMETERLO pegado al enlace.
+                _blo2 = ' '.join(b).lower()
+                _auto = re.search(PROMESA_AUTOMATISMO, _blo2)
+                chk(not _auto, 'Spam ninja: no promete AUTOMATISMO (§4.4b-MUNICION)',
+                    ('"%s". Es objecion en 5 empresas del informe: "vimos tantos de estos '
+                     'mensajes que directamente los ignoramos, se detecta claramente cuando '
+                     'esta automatizado" (Innobide). El que lee el post recibe esos mensajes '
+                     'a diario. Lo que si se promete: dejar de buscar para poder contactar, '
+                     'el listado que acierta, el interlocutor' % _auto.group(0)) if _auto else '')
+                _vol = re.search(PROMESA_VOLUMEN, _blo2)
+                chk(not _vol, 'Spam ninja: no vende VOLUMEN, vende acierto (§4.4b-MUNICION)',
+                    ('"%s". Prometer cantidad es la queja literal contra Waalaxy y Apollo en 5 '
+                     'empresas ("campanas demasiado masivas, ratios muy bajos, mas de volumen"). '
+                     'Si el numero esta del lado del ENEMIGO ("mandar 500 lo hace cualquiera, '
+                     'dar con el que firma no") el ninja es bueno: ignora este aviso'
+                     % _vol.group(0)) if _vol else '', aviso=True)
                 # 3) QUE PROMETE. El dolor validado por los clientes en reunion es
                 #    ENCONTRAR AL CLIENTE IDEAL, empresa y persona. No el momento.
                 #    El ninja de 0,415% dice "te marcamos quien va a comprar y
@@ -1716,6 +1765,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         #    primera suena a persona, la segunda a formulario. Por eso la URL que se
         #    ESCRIBE es /correo/ aunque la canonica sea /newsletter/ (alias 301).
         _mkt = re.search(r'suscr[ií]b\w*|newsletter|bolet[ií]n', _su(_cj), re.I)
+        # 4.4e punto 3 - EL BLOQUE 2 TIENE OTRO DOLOR, NO OTRAS REGLAS. Que sea la
+        # puerta barata no lo hace la puerta impune: hereda los vetos de 4.4b-MUNICION.
+        _auto_c = re.search(PROMESA_AUTOMATISMO, _cj.lower())
+        chk(not _auto_c, 'Doble ninja: el bloque del correo tampoco promete AUTOMATISMO (§4.4e)',
+            ('"%s". Mismo veto que el bloque 1 (§4.4b-MUNICION): objecion en 5 empresas'
+             % _auto_c.group(0)) if _auto_c else '')
+        chk(not re.search(PROMESA_VOLUMEN, _cj.lower()),
+            'Doble ninja: el bloque del correo tampoco vende VOLUMEN (§4.4e)',
+            'prometer cantidad nos mete en la caja de Waalaxy y Apollo', aviso=True)
         chk(not _mkt, 'Doble ninja: ni "suscribete" ni "newsletter" en el texto (§4.4e)',
             '"%s" suena a formulario. Se dice "esto lo mando por correo antes que aqui"'
             % _mkt.group(0) if _mkt else '')

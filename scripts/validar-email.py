@@ -37,6 +37,24 @@ SPAM_ASUNTO = r'(gratis|oferta|descuento|[uú]ltima oportunidad|urgente|no te lo
 # email-marketing §4 — CTA floja prohibida (apuntes de expertos)
 CTA_FLOJA = r'(ya me dices|ya me cuentas|qu[eé]date atento|estamos en contacto)'
 
+# email-marketing §7 / global §4.4b-MUNICIÓN — LAS DOS PROMESAS VETADAS.
+# Misma lista literal que validar-post.py, y aquí pesan MÁS: el lector nos lee
+# dentro de la misma bandeja donde recibe los mensajes automatizados que ya
+# ignora. Cada una es una objeción de 5 empresas en el informe del 2026-08-24.
+#   AUTOMATISMO → fallo duro (son fórmulas de oferta, no hay lectura buena).
+#   VOLUMEN     → aviso (el correo PUEDE nombrar el volumen como enemigo, que es
+#                 justo el pilar 3 de §5: "más leads no era tu problema").
+PROMESA_AUTOMATISMO = (r'(lo hacemos por ti|lo hace por ti|escribe por ti|escribimos por ti'
+                       r'|contactamos por ti|prospectamos por ti|vendemos por ti'
+                       r'|sin mover un dedo|sin que muevas un dedo|sin esfuerzo'
+                       r'|t[uú] solo cierras|solo tienes que cerrar|solo tienes que firmar'
+                       r'|(lo |los |el mensaje |los mensajes )?(lo )?escribe la ia'
+                       r'|en piloto autom[aá]tico|se (contactan|escriben|mandan) solos?'
+                       r'|nos encargamos de escribir)')
+PROMESA_VOLUMEN = (r'(cientos de (leads|contactos|empresas|clientes)'
+                   r'|miles de (leads|contactos|correos|mensajes)'
+                   r'|m[aá]s (leads|contactos)\b|\bx\s?[2-9]\b|de volumen|a volumen)')
+
 # global §3.6 — cifras en dígito, nunca en letra
 NUMERO_EN_LETRA = (r'\b(dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince'
                    r'|diecis[eé]is|diecisiete|dieciocho|diecinueve|veinte|treinta|cuarenta|cincuenta'
@@ -211,6 +229,23 @@ def main():
         checks.append(fallo(f'CTA floja: "{m.group(0)}"'))
     else:
         checks.append(ok('Sin CTA floja ("ya me dices"…)'))
+
+    # --- promesas vetadas (email-marketing §7) ---
+    m = re.search(PROMESA_AUTOMATISMO, cuerpo_low)
+    if m:
+        checks.append(fallo(f'Promete AUTOMATISMO: "{m.group(0)}" — objeción en 5 empresas '
+                            f'del informe de demos (§7). Lo que sí se promete: la '
+                            f'identificación, dejar de buscar para poder contactar'))
+    else:
+        checks.append(ok('Sin promesa de automatismo ("lo hace por ti"…)'))
+
+    m = re.search(PROMESA_VOLUMEN, cuerpo_low)
+    if m:
+        checks.append(aviso(f'Suena a VOLUMEN: "{m.group(0)}" — es la queja contra Waalaxy y '
+                            f'Apollo en 5 empresas. Si el volumen está del lado del ENEMIGO '
+                            f'(pilar 3: "más leads no era tu problema"), ignora este aviso'))
+    else:
+        checks.append(ok('No vende volumen'))
 
     # --- cifras en letra ---
     m = re.search(NUMERO_EN_LETRA, cuerpo_low)

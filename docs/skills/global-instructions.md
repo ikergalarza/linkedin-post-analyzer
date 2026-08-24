@@ -1236,7 +1236,8 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 
 > ### 🥇 4.4b-FUENTES · QUIÉN MANDA CUANDO DOS DOCUMENTOS NUESTROS SE CONTRADICEN (Iker, 2026-07-29)
 > **Jerarquía, y no es negociable:**
-> 1. **EL INFORME DE DEMOS manda sobre todo lo demás.** Son 167 citas literales de 42 empresas que **ya se reunieron con nosotros**. Es el único documento que dice **por qué nos llamaron de verdad**.
+> 1. **EL INFORME DE DEMOS manda sobre todo lo demás.** Desde el **2026-08-24** son **258 citas literales de 63 empresas en 87 reuniones** (1 jul - 20 ago), y el 64% de las citas viene de una cuenta que encaja con el ICP. Es el único documento que dice **por qué nos llamaron de verdad**. **La versión de 167 citas queda retirada: el informe nuevo la contiene entera**, así que no se citan las dos (`aboutme §1b`).
+>    - ⚠️ **Y esto no es "el documento nuevo" del que habla el párrafo de abajo.** El de abajo se refiere a un deck, una charla o un one-pager **nuestros**, que se contrastan contra el informe. Aquí lo que ha crecido es **el propio informe**, y un informe más grande no se contrasta: **sustituye**.
 > 2. **El PDF de propuesta de valor y la charla BIND van por debajo.** Son lo que **creemos nosotros** que nos diferencia. Valen como material y como argumentario de demo, pero **no deciden el gancho ni el spam ninja**.
 >
 > **El porqué, que es lo importante y no es una preferencia de estilo:** *"el cliente manda"* (Iker). **Lo que escribes SELECCIONA a quién te llama.** Si el post repite el dolor que hizo descolgar el teléfono a los que ya compraron, atraes a más gente con ese mismo dolor. Si el post repite lo que a nosotros nos parece brillante, atraes a quien le parece brillante lo mismo que a nosotros, que no es quien paga. **Es un mecanismo de autoselección, no una cuestión de tono.**
@@ -1264,6 +1265,46 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 > - **⚠️ El "hasta" no se borra.** `hasta el 45%` es un techo, no un típico. Si se publica, va con el "hasta" o no va: quitarlo lo convierte en un dato inflado y eso es justo lo que prohíbe la regla de las cifras creíbles de arriba.
 > - **Betsaide: llegar directamente al decisor**, sin pasar por la investigación manual. Encaja exacto con el eje de identificación.
 > - **⚠️ En los apuntes pone "Caso Beside" y está MAL ESCRITO.** El nombre real, verificado en LinkedIn el 2026-07-29, es **BETSAIDE SAL**. Nunca escribas "Beside" en un post: es un cliente real y equivocarle el nombre es peor que no nombrarlo.
+
+> ### 💣💣 4.4b-MUNICIÓN · QUÉ PUEDE DECIR EL NINJA Y QUÉ NO, CON EL TAMAÑO DE CADA COSA (informe del 2026-08-24, 258 citas / 63 empresas)
+>
+> **Por qué esta sección existe:** `§4.4b` ya decía cómo se ESCRIBE el ninja (dos líneas, ≤55, la palabra del gancho) y `§4.4b-ORDEN` decía cuál es el EJE (la identificación). Lo que faltaba era el **inventario**: con qué palabras se dice ese eje y cuáles nos meten en la caja del competidor. Todo lo de aquí sale del informe de demos, **ninguna frase es una deducción mía** (`working-preferences §0c`).
+>
+> **⛔ LA REGLA DE ENTRADA: una frase solo entra en el ninja si el informe la respalda con 3 empresas o más.** Un tema con 1 o 2 empresas es hipótesis: vale para probar un post y anotarlo, no para convertirse en el molde de la semana. Es la misma vara con la que el informe llama "patrón" a un tema.
+>
+> #### ✅ LO QUE EL NINJA SÍ PUEDE PROMETER (ordenado por cuántas empresas lo piden)
+>
+> | Qué se promete | Empresas | Con qué palabras suyas |
+> |---|---|---|
+> | **Dejar de buscar para poder contactar** | **15** (9 ICP) | *"eliminar un tiempo de trabajo en prospección y dedicarlo a contactar, que es donde realmente se genera"* (bigD). El contraste es **buscar contra contactar**, no "ahorrar tiempo" |
+> | **El listado que acierta** | **5** (4 ICP) | *"la lista que nos pasasteis… acertó bastante bien"* (bigD). Acertar, no abarcar |
+> | **Lo mismo que ya haces, hecho entero** | **3** | *"lo que llevamos haciendo nosotros de forma manual, pero mucho más completo y más rápido"* (Vi4crane) |
+> | **El interlocutor, no la empresa** | **2** (2 ICP) · nuevo el 19/08 | *"no te da el interlocutor en la empresa, lo que te da es ese posible listado de empresas"* (Gaitek). Hipótesis todavía por tamaño, **pero es el eje que más nos separa de una base de datos** |
+>
+> **⭐ Y LA UNIDAD DE MEDIDA SIGUE SIENDO "MESES"** (`aboutme §1b`), porque es la palabra que usan ellos. Un ninja que dice "en 5 minutos" está comprando la promesa de la herramienta que ellos ya han dejado de usar.
+>
+> #### ⛔ LO QUE EL NINJA NO PUEDE PROMETER (y aquí el tamaño mide el DAÑO, no la demanda)
+>
+> | Lo que NO se dice | Empresas que lo objetan | Por qué mata |
+> |---|---|---|
+> | **Que lo escribe la IA / que va solo** | **5** | *"vimos tantos de estos mensajes que directamente los ignoramos… se detecta claramente cuando está automatizado"* (Innobide). **El que lee nuestro post recibe esos mensajes a diario**: prometerle eso es ponernos en el montón que ya ignora |
+> | **Volumen, cantidad, "x3 contactos"** | **5** | Es literalmente la queja contra Waalaxy y Apollo (*"campañas demasiado masivas, ratios muy bajos, más de volumen"*, i+Med). Prometer cantidad nos mete en su caja gratis |
+> | **Descubrir un mercado que no conocen** | **4** | *"es un círculo muy muy cerrado… sabe quiénes son los compradores"* (Cluster Papel). En nicho pequeño esa promesa suena a que no entendemos su negocio |
+> | **La SEÑAL como argumento** | **12** (9 ICP) | La objeción más repetida del informe. Ver `§4.4b-ORDEN`: la señal cierra, no abre |
+> | **Cualquier cosa que suene a datos de terceros** | **3** lo preguntan en la propia demo | *"¿Tú de dónde has sacado el correo?"* (Binary Soul). Si en una reunión pagada ya lo preguntan, en un post abierto pesa el doble → `brand-voice §2c-DATOS` |
+>
+> **⛔ Las dos primeras filas están MECANIZADAS** en `validar-post.py` (`Spam ninja: no promete AUTOMATISMO` como fallo duro, `no vende VOLUMEN` como aviso). Las otras tres son criterio y van en el pase de `global §8`.
+>
+> #### ⚔️ EL ENEMIGO CON NOMBRE: SALES NAVIGATOR (5 empresas, 4 del ICP)
+>
+> **Es el único competidor que el ICP nombra solo, y siempre por lo mismo: es caro y no le sacan fruto.** *"nos puede interesar si eso quiere decir que no nos hace falta contratar el [Sales] Navigator de LinkedIn, que es muy caro"* (Noergia · 16 jul) · *"tuve la licencia de Sales Navigator, realmente no le sacamos demasiado fruto"* (Scoutic · 7 jul).
+>
+> - **Para qué sirve en el ninja:** un enemigo concreto da una línea de dolor **que no se puede escribir en abstracto**, y por eso no cae en la frase de catálogo que `§4.4b` prohíbe. *"La licencia la pagas igual. El nombre de dentro no te lo da"* es un ninja; *"la prospección manual cuesta mucho"* no.
+> - **⛔ Pero se nombra por lo que HACE, no por la marca.** Meter `Sales Navigator` con todas sus letras en un post nuestro es publicidad comparativa y encima nombra a LinkedIn dentro de LinkedIn. Se dice **`la licencia que pagas y no abres`**, que es lo que ellos describen.
+>
+> #### 🔴 EL AVISO QUE VA CON ESTA SECCIÓN, dicho antes de usarla
+>
+> **Un inventario de frases validadas es exactamente lo que `§4.4b` lleva desde el 31/07 diciendo que NO se haga**: *"la mejor variante es la que cuelga de la BROMA DEL GANCHO, no una frase de catálogo"*. **Esto es el banco de DOLORES, no el banco de FRASES.** Se usa para decidir **de qué habla** el ninja; la frase sigue saliendo del gancho de ese post, y sigue pasando el test de los cinco segundos (tapa el post, lee las dos líneas: si valdrían pegadas a cualquier otra publicación nuestra, están mal). **Si algún día ves dos ninjas con la misma frase de esta sección, la sección se ha usado mal.**
 
 > **🚨 UN `🔗 0` EN UN POST CON ENLACE NO SIGNIFICA "NADIE PINCHA": a veces LinkedIn no mide ese enlace (Iker, 2026-07-24).**
 > **Cómo distinguirlo:** en la página de analíticas del post, cuando LinkedIn SÍ está midiendo, junto a "Visits to links from this post" aparece **la URL de destino registrada**. Cuando no mide, no aparece **ninguna URL**, solo un 0 pelado. La herramienta guarda esa URL en `link_url`: **enlace en el cuerpo + `link_url` vacío + 0 clics = LinkedIn no lo está midiendo**, y ese 0 no es un dato de interés real.
@@ -1424,9 +1465,11 @@ Si la respuesta es que no, da igual lo bien que suene: **es publicidad engañosa
 
 | destino | qué puede prometer | qué NO |
 |---|---|---|
-| `/agendar/` | la identificación: a quién vender, quién firma dentro (`§4.4b-ORDEN`) | resultados garantizados, que escriba la IA |
+| `/agendar/` | la identificación: a quién vender, quién firma dentro (`§4.4b-ORDEN`) · dejar de buscar para poder contactar · el listado que acierta (`§4.4b-MUNICIÓN`) | resultados garantizados · que escriba la IA · volumen · descubrirle su mercado · la señal |
 | `/correo/` | cómo encontrar clientes y vender más, antes que nadie | noticias, polémicas, actualidad, salseo |
 | gate de un recurso | exactamente el entregable que hay dentro | "todo lo demás" |
+
+**⭐ Y la columna de la derecha del `/agendar/` no es estilística: cada entrada es una objeción medida en el informe de demos**, con su tamaño en `§4.4b-MUNICIÓN`. Prometer volumen no es "poco elegante": es la queja literal contra Waalaxy y Apollo en 5 empresas.
 
 **⭐ Y CUANDO EL TEMA DEL POST NO ES EL DEL DESTINO, NO SE MIENTE: SE TIENDE UN PUENTE.** Es lo que resuelve el caso, y la forma del puente es siempre la misma: **la primera línea dice lo que el tema del post SÍ te da y lo que NO**, y la segunda dice que de lo que no, va el enlace. Es la forma `eso lo hace cualquiera, lo otro no` de `§4.4b`, aplicada al TEMA en vez de a la broma.
 ```
@@ -1485,6 +1528,11 @@ La palabra del gancho sigue dentro (`caída`), el chiste sigue girado, **y la pr
 **3. El DOLOR es OTRO, y esto es lo que más se va a equivocar.** El de agendar es **la identificación** (a quién vender, quién firma dentro). El del correo es **enterarte el último**: la IA está cambiando cómo se vende y tú lo lees en LinkedIn seis meses tarde. Los primeros en saber lo que viene son los que lo reciben, no los que lo ven pasar por el feed.
 - ⚠️ **Por eso al bloque 2 NO se le exige el check de "promete IDENTIFICAR".** Ese es el dolor del bloque 1.
 - **Y sigue siendo corto y punchy.** Lo que compra el lector es que le resuelvas su punto de dolor en una línea, no que le expliques qué es una newsletter.
+- **⭐ DE DÓNDE SALE "LO QUE VIENE", para que no sea un enterarte-el-último genérico (informe del 2026-08-24).** El bloque del correo promete llegar antes a algo, y ese **algo** tiene que ser un dolor que el correo cubra de verdad (`§4.4b-PROMESA`). Los que el informe respalda y la newsletter sí trata:
+  - **Lo que ya no funciona.** *"vimos tantos de estos mensajes que directamente los ignoramos… se detecta claramente cuando está automatizado"* (Innobide, y es objeción en 5 empresas). El correo cuenta qué se ha dejado de responder **antes de que se te caiga la campaña**.
+  - **Lo que estás pagando y no usas.** Sales Navigator, en 5 empresas (4 del ICP): *"tuve la licencia, realmente no le sacamos demasiado fruto"*. Es dolor de bolsillo y de calendario a la vez.
+  - **Lo que a otro le ha pasado ya.** 63 empresas contándonos su proceso comercial es exactamente el material del que no se enteran los demás.
+- **⛔ Y hereda la lista de vetos entera de `§4.4b-MUNICIÓN`.** El bloque 2 tiene otro DOLOR, no otras reglas: tampoco promete automatismo, ni volumen, ni la señal. Que sea la puerta barata no lo hace la puerta impune.
 
 **4. ⛔ PROHIBIDAS LAS PALABRAS `suscríbete` Y `newsletter` DENTRO DEL BLOQUE.** Nuestro ICP es un director comercial industrial de 50 y pico. A esa persona se le dice *"esto lo mando por correo antes que aquí"*, no *"suscríbete a nuestra newsletter"*. La primera suena a persona, la segunda a formulario. **Mecanizado como fallo duro.**
 
