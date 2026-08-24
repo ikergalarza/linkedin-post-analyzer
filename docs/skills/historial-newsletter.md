@@ -333,3 +333,47 @@ corporativos**, que es justo donde el sondeo funciona bien. Gmail y Hotmail lo b
 otros 3.
 
 Cota superior realista: de 9% a ~3%. No baja a cero.
+
+
+---
+
+## 🔌 Sondeo SMTP: la tercera capa, y la única que llega (2026-08-24)
+
+**Audiencia → 🔌 Comprobar buzones.** Le pregunta al servidor de correo de cada empresa si el
+buzón existe (`RCPT TO`) y corta antes de enviar. Es lo que hace un validador de pago.
+
+Las tres capas, y qué caza cada una:
+
+| capa | mira | cazó de los 9 rebotes de la tanda 3 |
+|---|---|---|
+| `audience_clean` | el TEXTO de la dirección | **0** (las 9 eran correctas) |
+| `mx.js` | el DOMINIO | **0** (los 9 dominios existen) |
+| `smtp_probe.js` | el **BUZÓN** | **hasta 6** (los corporativos) |
+
+### Las 4 medidas para que esto no nos perjudique
+
+1. **`MAIL FROM:<>`, remitente nulo.** No mete `neety.com` en la transacción, y el dominio es lo
+   único de reputación que se comparte con Brevo. Las IP de envío son de Brevo y no se tocan.
+2. **Nunca se manda `DATA`.** No sale ningún correo → no puede generar una queja de spam.
+3. **Gmail, Outlook, Yahoo, iCloud y demás ni se sondean.** Ni contestan la verdad ni conviene
+   darles motivos.
+4. Una conexión por dominio, con pausa.
+
+### Las 3 que impiden un falso "está muerto"
+
+1. **Control de catch-all.** Se pregunta primero por una dirección inventada del mismo dominio.
+   Si la acepta → el servidor dice que sí a todo → **nada de ese dominio se juzga**. Si la
+   rechaza → valida usuario a usuario → su "no existe" vale.
+2. **Solo un 5xx cuenta.** Un 4xx es greylisting.
+3. **Cualquier fallo de red es "no se sabe".** Nunca muerto.
+
+### ⚠️ Puede no funcionar, y lo dirá
+
+**Railway puede tener bloqueado el puerto 25 de salida**, como casi todo el cloud. Si TODAS las
+conexiones fallan, la pantalla lo dice con esas palabras en vez de devolver "no se sabe" 200 veces
+y dejarte creyendo que la lista está comprobada. **Es lo primero que hay que mirar al usarlo.**
+
+### Lo que se espera, con honestidad
+
+**De 9% a ~3%.** No baja a cero: los 3 rebotes de Gmail y Hotmail de la tanda 3 quedan fuera por
+diseño, y siempre habrá buzones que aceptan y rebotan después.
