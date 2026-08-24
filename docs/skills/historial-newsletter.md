@@ -11,13 +11,13 @@
 | | Tanda 1 | Tanda 2 | Tanda 3 |
 |---|---|---|---|
 | Destinatarios | **25** | **50** | **100** |
-| Fecha | 2026-08-20, **18:40** | 2026-08-21, **09:05** | 2026-08-24, **09:05** (en cola) |
-| Entregados | 23 de 25 | 42 de 50 | — |
-| **Rebotes duros** | **2 · 8,0%** | **3 · 6,0%** | — |
-| Rebotes blandos | 0 | 4 (+1 diferido) | — |
-| Aperturas reales | 7 (+1 de Apple) | 10 (+1 de Apple) | — |
-| Clics al enlace de reserva | **0** | **0** | — |
-| Bajas | 0 | 1 | — |
+| Fecha | 2026-08-20, **18:40** | 2026-08-21, **09:05** | 2026-08-24, **09:05** |
+| Entregados | 23 de 25 | 42 de 50 | 88 de 100 |
+| **Rebotes duros** | **2 · 8,0%** | **3 · 6,0%** | **9 · 9,0%** 🔴 |
+| Rebotes blandos | 0 | 4 (+1 diferido) | 3 |
+| Aperturas reales | 7 · 30,4% | 10 · 23,8% | **31 · 35,2%** ⭐ |
+| Clics al enlace de reserva | **0** | **0** | **0** |
+| Bajas | 0 | 1 | 2 |
 | Lista Brevo (id) | `Tanda 1` (5) | `Tanda 2` (6) | `Tanda 3` (7) |
 | Campaña Brevo (id) | 2 | 3 | **4** |
 | `utm_campaign` | `kaixito-01-tanda-1` | `kaixito-01-tanda-2` | `kaixito-01-tanda-3` |
@@ -242,3 +242,94 @@ lista es Gmail. Sirve para cazar dominios inventados, que es de donde sale el re
 de formulario. Se compara la palabra **entera**, nunca como subcadena: `serrano` lleva "ano" y
 `paniculosa` lleva "culo". Hay un test con 30 direcciones reales de la tanda 3 que falla si
 alguien mete en la lista una palabra que además es un apellido.
+
+
+---
+
+## 🔴 TANDA 3 (2026-08-24): el asunto es el mejor de los tres y los rebotes también
+
+**Lo bueno, y es bueno de verdad: 35,2% de aperturas reales.** 31 personas de 88, descontadas las
+3 precargas de Apple. Es el mejor dato de las tres tandas y está muy por encima de la media B2B.
+El asunto `¿no te acuerdas de mí?` con el preheader `Normal, es la primera vez que te escribo.`
+funciona, y ya no es casualidad: tres envíos seguidos.
+
+**Lo malo:**
+
+| | Tanda 1 | Tanda 2 | **Tanda 3** |
+|---|---|---|---|
+| Rebotes duros | 8,0% | 6,0% | **9,0%** |
+
+**Acumulado en Brevo: 14 rebotes duros de 175 envíos = 8,0%.** Cuatro veces el umbral del 2%, y
+la última tanda es la PEOR de las tres. Esta es la curva por la que MailerLite cerró la cuenta.
+
+### ⚠️ El CTOR del dashboard está inflado: cuenta el enlace de BAJA
+
+La tanda 3 marca 3 clics únicos y 3 *clickers*, con 2 bajas. Pero `linksStats` del enlace de
+reserva está a **0**. Los clics son del pie, no del CTA.
+
+**Total real: 0 reservas de 279 correos entregados.** El dashboard enseña un CTOR de 9,7% que
+parece sano y no lo es. → **PENDIENTE: descontar los clics de baja del CTOR.**
+
+### ⚠️ Brevo reescribió el `utm_source` a `sendinblue`
+
+En la tanda 3 el `linksStats` devuelve `utm_source=sendinblue`, no el `brevo` que iba en el HTML.
+Las tandas 1 y 2 (duplicadas desde la interfaz) sí conservan `brevo`. **La diferencia es que la 3
+se creó por API.** Tercera variante de `utm_source` en GA4: `newsletter`, `brevo` y ahora
+`sendinblue`.
+
+---
+
+## 🔬 QUÉ REBOTÓ DE VERDAD, y por qué todas mis hipótesis del viernes eran falsas
+
+Se pudo comprobar cruzando `GET /contacts/lists/7/contacts` con la hora del envío: un contacto
+que sale `emailBlacklisted: true` a las 09:05:36-43 es un rebote duro; a las 09:49 y 10:07, una
+baja. Cuadra exacto con los 9 rebotes y las 2 bajas que da la campaña. **Es la forma de saber
+QUIÉN rebotó, que la API de campañas no da.**
+
+### Los 9 que rebotaron
+
+| dirección | tipo |
+|---|---|
+| `jvieare@canariaseducacion.com` | corporativo |
+| `mjosealonso@cepaim.org` | corporativo |
+| `laia.roig@omc.com` | corporativo |
+| `vicentebordes@provesa.com` | corporativo |
+| `victoria.francia@arbentia.com` | corporativo |
+| `ventas@alvarozubiaga.com` | corporativo (buzón de rol) |
+| `konntacgdl@gmail.com` | libre |
+| `fehaby@hotmail.com` | libre |
+| `treserlerzerm@gmail.com` | libre |
+
+**6 de 9 son direcciones impecables de empresas reales.** `laia.roig@omc.com`,
+`victoria.francia@arbentia.com`: nombre, apellido, empresa que existe. **Son personas que
+cambiaron de trabajo.** No hay nada en el texto de esas direcciones que las delate.
+
+### El marcador de mis predicciones del viernes: 1 de 4
+
+| sospechoso | ¿rebotó? |
+|---|---|
+| `treserlerzerm@gmail.com` | ✅ sí |
+| `mongol@gmail.com` | ❌ **no** |
+| `dafasasfa@gfdhe.com` | ❌ **no** |
+| `fuewatclauidia@cfuwomdtradigi.com` | ❌ **no** |
+
+**Tres falsos positivos de cuatro.** Si se hubieran quitado, se habrían borrado 3 contactos vivos
+sin tocar el problema.
+
+Y hay una consecuencia peor: `gfdhe.com` y `cfuwomdtradigi.com` **aceptaron el correo**. Existen y
+tienen buzón. **La comprobación de MX que se construyó el 2026-08-21 los habría dado por buenos, y
+habría cazado 0 de los 9 rebotes.** El MX sigue valiendo para lo que dice que vale (dominios que
+no existen), pero en esta lista no hay ninguno: el problema es otro.
+
+### 🔴 La conclusión, y manda sobre cualquier intuición futura
+
+**Lo que rebota en esta lista son BUZONES muertos en dominios VIVOS.** No formato, no dominios
+inventados, no direcciones raras. Nada que se pueda ver mirando el texto de la dirección, y nada
+que el DNS pueda contestar.
+
+Solo hay una comprobación gratuita que llega ahí: **sondear el servidor SMTP con `RCPT TO`** sin
+llegar a enviar. Y los datos dicen que aquí encajaría: **6 de los 9 rebotes son de dominios
+corporativos**, que es justo donde el sondeo funciona bien. Gmail y Hotmail lo bloquean, y son los
+otros 3.
+
+Cota superior realista: de 9% a ~3%. No baja a cero.
