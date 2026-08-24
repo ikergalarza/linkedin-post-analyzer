@@ -1569,6 +1569,27 @@ La palabra del gancho sigue dentro (`caída`), el chiste sigue girado, **y la pr
 
 **5. Rota igual que el otro.** Lista de quemadas propia, `SPAM_QUEMADO_CORREO` en `validar-post.py`. Al publicar se mete ahí la frase usada. Sin esto, en un mes los tres perfiles dicen lo mismo, que es exactamente lo que `§4.4b` lleva escrito desde el 31/07.
 
+##### 🔁🔁 4.4e-ROTA · LO QUE SE CONSERVA ES `correo de ventas`. LO QUE ROTA ES EL ARRANQUE (Iker, 2026-08-24)
+
+> **Iker, sobre el segundo bloque de correo del post de Asier:** *"espero que no hayas hardcodeado que la frase número dos siempre sea va en el correo de ventas. Quise que fueses tan explícito con lo de correo de ventas porque la publicación era en el perfil de Mario de marketing. Mantener la frase de correo de ventas me parece bien, pero en vez de va en el correo, poner otra cosa o cada vez variar un poco, sin hacerlo muy largo"*.
+
+**El punto 5 de arriba ya decía "rota igual que el otro" y aun así iba a repetir la frase de Mario tal cual. La causa no es que faltara la regla: es que `§4.4b-PROMESA` y `§4.4e-QUIÉN` dan la MISMA frase de ejemplo tres veces entre las dos skills, y un ejemplo repetido tres veces deja de leerse como ejemplo y pasa a leerse como la plantilla.** Es exactamente el banco de frases que `§4.4b-MUNICIÓN` avisa de no montar, cometido en nuestra propia documentación.
+
+**QUÉ SE QUEDA Y QUÉ SE MUEVE, y son dos piezas distintas de la misma línea:**
+
+| pieza | qué hace | ¿rota? |
+|---|---|---|
+| **`correo de ventas`** | dice **de quién es** (plural institucional) y **de qué va**, sin nombrar la marca (`§4.4e-QUIÉN`) | ⛔ **NO.** Es el ancla del bloque |
+| **el arranque que la precede** | solo empuja hacia el enlace | ✅ **SÍ, en cada post** |
+
+**Y por qué rota la línea 2 y no la 1:** la línea 1 **ya rota sola**, porque cuelga de la broma o del verbo punchy de un gancho distinto cada vez (`§4.4b-FORMA`). La línea 2 no cuelga de nada, así que si nadie la mueve se queda fija para siempre. Es la única del bloque que necesita que la roten a mano.
+
+**Cómo se hace, en una línea:** el arranque **sale del final de la línea 1**, recogiéndolo con un demostrativo o un pronombre, no de un banco. Caso del 24/08: línea 1 *"Aquí cabe la anécdota, la clase entera no."* → línea 2 **`Esa la damos en el correo de ventas:`** (`esa` = la clase, y `dar una clase` es la colocación que el idioma ya tiene hecha, `brand-voice §3c-COLOCACIÓN`).
+
+- **Sigue siendo la más corta de las dos y ≤55 sin la URL.** Variar no es alargar: `Va en…` (26) pasó a `Esa la damos en…` (36) y la de arriba mide 42.
+- **⛔ Y no se convierte esto en otro banco.** Si algún día ves dos bloques de correo con el mismo arranque, la regla se ha usado mal, igual que avisa `§4.4b-MUNICIÓN`.
+- **Mecanizado:** las frases publicadas entran en `SPAM_QUEMADO_CORREO` de `validar-post.py`, que ya era fallo duro. Ahí faltaba la de Mario del 21/08, que es justo la que iba a repetir.
+
 #### 🔴 LOS TRES AVISOS, DICHOS ANTES DE EMPEZAR (no después)
 
 1. **Dos puertas reparten el clic.** Toda la doctrina del ninja está construida sobre UNA. La auditoría del 12/08 mide que cuando la puerta está peor puesta el post gusta más y se pincha menos (eng/1k x4, clics de 142 a 4). **El que puede perder es `agendar`, que es el caro.**

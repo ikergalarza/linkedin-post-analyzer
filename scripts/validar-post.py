@@ -169,6 +169,14 @@ PAIS_QUEMADO = {
 SPAM_QUEMADO_CORREO = {
     'lo cuento en el correo antes que aqui': 'meme de Iker 19/08, el PRIMER bloque de correo publicado',
     'lo cuento en el correo antes que aquí': 'meme de Iker 19/08, el PRIMER bloque de correo publicado',
+    # 4.4e-ROTA (Iker, 2026-08-24). Faltaba la de Mario del 21/08 y era justo la
+    # que yo iba a repetir en el post de Asier. Lo que se conserva del bloque es
+    # `correo de ventas` (dice de quien es y de que va); lo que ROTA en cada post
+    # es el ARRANQUE que la precede, y sale del final de la linea 1, no de un
+    # banco de frases. La linea 1 ya rota sola porque cuelga del gancho; la 2 no
+    # cuelga de nada, asi que si nadie la mueve se queda fija para siempre.
+    'va en el correo de ventas': 'post de Mario 21/08 (la caida de los influencers)',
+    'de eso va nuestro correo de ventas': 'post de Mario 21/08, la forma larga',
 }
 
 CONCEPTO_QUEMADO = {
