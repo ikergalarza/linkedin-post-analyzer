@@ -3695,8 +3695,45 @@ router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
     const detalle: {
       provider_id: string; kind: string; ok: boolean | null;
       motivo: string | null; recuperado?: boolean; sin_fila?: boolean;
+      ask_restaurada?: boolean;
     }[] = [];
+    let asksRestauradas = 0;
     for (const r of rows.slice(0, 40)) {
+      // ⛔ UN 'ask' NO SE COMPRUEBA, PORQUE NO MANDA NADA (Iker, 2026-08-24).
+      //
+      // Su `text` es la RESPUESTA PÚBLICA al comentario ("mándame solicitud y te
+      // lo paso"), no un privado. Aquí se le pasaba igualmente a
+      // `verificarMensaje`, que lo buscaba dentro del chat de esa persona: no
+      // está ni puede estar, así que en cuanto existía una conversación con ella
+      // el veredicto salía `false` y la fila caía a 'failed'.
+      //
+      // Y una 'ask' en 'failed' desaparece de la herramienta: /pendientes-solicitud
+      // exige status='sent' y `gestionadosArriba` también, así que esa persona se
+      // caía de «Solicitudes pedidas» y volvía a «Para actuar». Medido hoy en el
+      // post del 12/08 de Unai: las SEIS filas 'ask' del post estaban así.
+      //
+      // Como /lead-magnet/ask solo escribe 'sent' y es el único sitio que crea
+      // estas filas, NO EXISTE una 'ask' fallida legítima: la que esté en rojo la
+      // rompió este repaso, y este repaso la devuelve a su sitio.
+      if (r.kind === 'ask') {
+        if (r.status === 'failed') {
+          await pool.query(
+            `UPDATE lead_magnet_sends
+                SET status = 'sent', verificado = NULL, error = NULL
+              WHERE post_id = $1 AND provider_id = $2 AND kind = 'ask'`,
+            [postId, r.provider_id]
+          );
+          // Contador propio: ni `caidos` ni `recuperados` ni `sin_comprobar`.
+          // No es un veredicto sobre LinkedIn, es un destrozo nuestro deshecho.
+          asksRestauradas++;
+          detalle.push({
+            provider_id: r.provider_id, kind: 'ask', ok: true,
+            motivo: 'la solicitud pedida no se comprueba en el chat: fila devuelta a «Solicitudes pedidas»',
+            ask_restaurada: true,
+          });
+        }
+        continue;
+      }
       // Sin esperas: estas filas llevan horas o días, LinkedIn ya las tiene
       // decididas, y encadenar 40 backoffs se comería el timeout.
       const v = r.kind === 'invite'
@@ -3831,6 +3868,7 @@ router.post('/lead-magnet/reverificar', async (req: Request, res: Response) => {
       barridos,
       recuperados_sin_fila: recuperadosSinFila,
       sin_barrer: sinBarrer,
+      asks_restauradas: asksRestauradas,
       detalle,
     });
   } catch (err: any) {

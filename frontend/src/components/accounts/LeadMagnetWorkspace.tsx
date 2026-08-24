@@ -125,6 +125,7 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
         revisados: number; caidos: number; recuperados: number;
         sin_comprobar: number; omitidos: number;
         barridos?: number; recuperados_sin_fila?: number; sin_barrer?: number;
+        asks_restauradas?: number;
       }>('/api/accounts/lead-magnet/reverificar', {
         post_id: post.id,
         // El enlace del recurso de ESTE post. Es lo que el backend busca en el
@@ -142,6 +143,12 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
       // tenían fila y por eso seguían saliendo «para actuar».
       if (r.recuperados_sin_fila) {
         partes.push(`👤 ${r.recuperados_sin_fila} ya tenían el recurso en su bandeja sin constar: salen de «Para actuar»`);
+      }
+      // Filas de «solicitud pedida» que este mismo repaso había tumbado por
+      // buscar una respuesta PÚBLICA dentro del chat privado. No es un veredicto
+      // de LinkedIn, es un destrozo nuestro deshecho, y por eso va aparte.
+      if (r.asks_restauradas) {
+        partes.push(`🔧 ${r.asks_restauradas} solicitudes pedidas estaban en rojo por error: devueltas a «Solicitudes pedidas»`);
       }
       if (r.sin_comprobar > 0) partes.push(`${r.sin_comprobar} sin poder comprobar`);
       if (r.omitidos > 0) partes.push(`quedan ${r.omitidos} sin revisar, vuelve a darle`);
