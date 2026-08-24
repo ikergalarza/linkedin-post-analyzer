@@ -641,7 +641,7 @@ def validar_tarjeta(texto, card=None):
 # validador existe para evitar.
 # EL PROCEDIMIENTO: grep "if pilar" y decidir SI o NO para cada uno, por escrito.
 
-def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False, card=None, solo_correo=False):
+def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fuera=False, remix=False, sin_menciones=False, card=None, solo_correo=False, historico=False):
     texto = norm(texto)
     if pilar == 'entregable':
         return validar_entregable(texto)
@@ -1387,7 +1387,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # Un lead magnet en el hueco del ninja cambia lo primero por lo segundo sin
         # que nadie lo haya decidido. El MAPA es la unica excepcion y ya la valida
         # su propio check: va a la pagina del mapa, que lleva su CTA a agendar.
-        if pilar in ('los10', 'meme'):
+        # ⛔ BUG ARREGLADO EL 2026-08-24 (lo caza test-validador.py, que es para lo
+        # que existe): este check corria AUNQUE NO HUBIERA NINGUN ENLACE, y entonces
+        # soltaba "hay enlace pero no es el de agendar", que es literalmente falso.
+        # Cuando falta el ninja entero ya lo dice el check de arriba; este mide OTRA
+        # cosa, el DESTINO, y sin enlace no hay destino que medir. Encadenaba 6
+        # fallos duplicados en los 6 posts historicos sin ninja.
+        if pilar in ('los10', 'meme') and tiene_link:
             _dest_ok = 'recursos.neety.com/agendar' in cuerpo
             chk(_dest_ok, 'El spam ninja apunta a /agendar/, no a un lead magnet (§4.4b)',
                 'hay enlace pero no es el de agendar. Prioridad 1 = agendar (demo y venta), '
@@ -1809,7 +1815,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
 
         # 8) Y ROTA, como el otro. Sin lista de quemadas, en un mes los tres perfiles
         #    dicen lo mismo (4.4b lo lleva escrito desde el 31/07).
-        _qc = sorted(f for f in SPAM_QUEMADO_CORREO if f in _cj.lower())
+        _qc = [] if historico else sorted(f for f in SPAM_QUEMADO_CORREO if f in _cj.lower())
         chk(not _qc, 'Doble ninja: la frase del correo no esta quemada (§4.4e)',
             ' · '.join('"%s" ya salio en %s' % (f, SPAM_QUEMADO_CORREO[f]) for f in _qc))
 
@@ -1906,20 +1912,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'falta el "más que [PAÍS] entero". Un país CONCRETO y verificado, nunca '
             '"medio mundo" ni "países enteros" en vago: la comparacion es el dato que '
             'hace que se comparta')
-        _pais = sorted(p for p in PAIS_QUEMADO if p in hook_txt.lower())
+        # --historico apaga los checks de REINCIDENCIA (ver el flag en main): un
+        # post ya publicado es QUIEN lleno estas listas, asi que compite contra si
+        # mismo y falla siempre. No es un bug del validador ni del post.
+        _pais = [] if historico else sorted(p for p in PAIS_QUEMADO if p in hook_txt.lower())
         chk(not _pais, 'GANCHO: el país de la comparación no está usado (§4.2 Paso 2)',
             ' · '.join(f'"{p}" fue {PAIS_QUEMADO[p]}' for p in _pais) +
             '. La comparacion es lo que se comparte, asi que repetir pais se nota mas '
             'que ninguna otra cosa. Busca otro con >=15% de margen y fuente oficial')
-        _conc = sorted(c for c in CONCEPTO_QUEMADO if c in hook_txt.lower())
+        _conc = [] if historico else sorted(c for c in CONCEPTO_QUEMADO if c in hook_txt.lower())
         chk(not _conc, 'GANCHO: el concepto no está usado (§4.2 Paso 1)',
             ' · '.join(f'"{c}" fue {CONCEPTO_QUEMADO[c]}' for c in _conc) +
             '. El concepto se inventa nuevo por region, derivado de su GEOGRAFIA')
-        _rabia = sorted(f for f in FRASE_RABIA_USADA if f in hook_txt.lower())
+        _rabia = [] if historico else sorted(f for f in FRASE_RABIA_USADA if f in hook_txt.lower())
         chk(not _rabia, 'GANCHO: la frase-rabia no está usada (§4.2 Paso 1)',
             ' · '.join(f'"{f}" fue {FRASE_RABIA_USADA[f]}' for f in _rabia) +
             '. El beat se mantiene siempre, las palabras cambian siempre')
-        _quemados = sorted(v for v in VERBO_PREJUICIO_QUEMADO
+        _quemados = [] if historico else sorted(v for v in VERBO_PREJUICIO_QUEMADO
                            if re.search(r'\b' + v + r'\b', texto, re.I))
         chk(not _quemados,
             'GANCHO: el verbo del prejuicio no está quemado (§4.2 Paso 1)',
@@ -1949,7 +1958,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # que el enlace va AHI: se lee como recurso y no como venta, y captura igual
     # porque esa pagina lleva su propio CTA a agendar. Mecanizado el 2026-07-31
     # tras entregarlo mal aun teniendolo escrito desde el 23/07.
-    _spam = sorted(f for f in SPAM_QUEMADO if f in texto.lower())
+    _spam = [] if historico else sorted(f for f in SPAM_QUEMADO if f in texto.lower())
     chk(not _spam, 'SPAM NINJA: la frase no está quemada (§4.4b)',
         ' · '.join(f'"{f}" ya salió en {SPAM_QUEMADO[f]}' for f in _spam) +
         '. El dolor es el mismo siempre (dar con el cliente ideal, empresa Y persona) pero la '
@@ -2215,7 +2224,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # las TRES cuentas y los DOS formatos: en Cataluña habia 83 ya usadas
         # entre el mapa de Iker y el "Los 10" de Unai. El objetivo es traer
         # clientes NUEVOS, no repetir a los de siempre.
-        _mm = leer_menciones_usadas()
+        _mm = {} if historico else leer_menciones_usadas()
         if _mm:
             _rep = []
             for l in _flechas:
@@ -2252,8 +2261,25 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # §4.3 Paso 3b — el unico numero del pilar es el logro. El 4.81x del Pais
         # Vasco no llevaba NI UNA cifra regional: descentra el post de las
         # personas y canibaliza el mapa.
-        _fuera = [l for l in cuerpo.splitlines()
-                  if l.strip() and not re.match(r'^\s*→\s', l) and re.search(r'\d', l)
+        # ⛔ BUG ARREGLADO EL 2026-08-24. Esto marcaba CUALQUIER linea con un digito,
+        # y la regla no dice eso: dice "ninguna CIFRA REGIONAL", con el ejemplo
+        # "exporta mas que Bolivia entera". La prueba de que estaba mal es que
+        # tumbaba los TRES "Los 10" que existen, incluido el 4.81x del Pais Vasco
+        # que el propio Paso 3b cita como el que NO lleva ni una. Lo que cazaba era
+        # el "10" del nombre del pilar ("Las 10 personas que..."), el ano del gancho
+        # y frases del cuerpo como "600 kilometros para una reunion de 40 minutos",
+        # que no descentran nada ni canibalizan el mapa. Un check que falla a los
+        # tres, al bueno y a los malos, no separa nada y por tanto no mide nada.
+        # Ahora pide CIFRA + MARCADOR REGIONAL (dinero, %, PIB, exportacion, censo
+        # de empresas, empleo, toneladas) o la comparacion-pais del mapa, y no mira
+        # el gancho, que es donde vive el "10" del pilar.
+        _REGIONAL = (r'(\d[\d.,]*\s*(%|por ciento|millones?|millardos|mil millones|euros?|€'
+                     r'|empresas|habitantes|empleos|puestos de trabajo|toneladas|km2|km²)'
+                     r'|(pib|factura|facturaci[oó]n|exporta|exportaci[oó]n)\D{0,25}\d'
+                     r'|m[aá]s que \w+ enter[oa])')
+        _fuera = [l for l in cuerpo.splitlines()[1:]
+                  if l.strip() and not re.match(r'^\s*→\s', l)
+                  and re.search(_REGIONAL, l, re.I)
                   and 'recursos.neety.com' not in l]
         chk(not _fuera, 'Sin cifras regionales fuera de las fichas (§4.3 Paso 3b)',
             f'{len(_fuera)}: "{_fuera[0][:52]}"' if _fuera else '')
@@ -2599,13 +2625,20 @@ def main():
                     help='Este post calca una referencia ajena aunque NO sea un meme (lead magnet, '
                          'mapa, historia...). Activa el check de credito al autor, que si no solo '
                          'corre en --pilar meme. Remixar es universal (global §2.2b).')
+    ap.add_argument('--historico', action='store_true',
+                    help='SOLO PARA test-validador.py. Apaga los checks de REINCIDENCIA (pais, '
+                         'concepto, frase-rabia y verbo quemados, menciones ya usadas y frase del '
+                         'ninja quemada) porque un post YA PUBLICADO es quien lleno esas listas: '
+                         'compite contra si mismo y falla siempre, y eso no es un bug ni del '
+                         'validador ni del post. NUNCA lo pases para validar un borrador: ahi la '
+                         'reincidencia es exactamente lo que hay que cazar.')
     ap.add_argument('--generico', action='store_true',
                     help='Lead magnet modelo GENÉRICO (Martín Arosa/Guillermo): una palabra igual para '
                          'todos + recurso genérico + landing que captura. Salta el check del 2º dato.')
     a = ap.parse_args()
     texto = io.open(a.fichero, encoding='utf-8').read()
     card = io.open(a.tarjeta, encoding='utf-8').read() if a.tarjeta else None
-    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones, card, a.solo_correo)
+    res = validar(texto, a.pilar, a.cuenta, a.generico, a.meme_sobrio, a.ref_fuera, a.remix, a.sin_menciones, card, a.solo_correo, a.historico)
     # Los avisos se imprimen pero NO cuentan: son sospechas, no infracciones.
     # Mezclarlos vaciaría de significado el marcador, y el marcador es lo único
     # que se pega en la entrega.

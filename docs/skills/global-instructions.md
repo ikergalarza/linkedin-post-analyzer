@@ -1293,14 +1293,45 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 > | **La SEÑAL como argumento** | **12** (9 ICP) | La objeción más repetida del informe. Ver `§4.4b-ORDEN`: la señal cierra, no abre |
 > | **Cualquier cosa que suene a datos de terceros** | **3** lo preguntan en la propia demo | *"¿Tú de dónde has sacado el correo?"* (Binary Soul). Si en una reunión pagada ya lo preguntan, en un post abierto pesa el doble → `brand-voice §2c-DATOS` |
 >
-> **⛔ Las dos primeras filas están MECANIZADAS** en `validar-post.py` (`Spam ninja: no promete AUTOMATISMO` como fallo duro, `no vende VOLUMEN` como aviso). Las otras tres son criterio y van en el pase de `global §8`.
+> **⛔ Las dos primeras filas están MECANIZADAS** en `validar-post.py` y en `validar-email.py` (`no promete AUTOMATISMO` como fallo duro, `no vende VOLUMEN` como aviso). Las otras tres son criterio y van en el pase de `global §8`.
 >
-> #### ⚔️ EL ENEMIGO CON NOMBRE: SALES NAVIGATOR (5 empresas, 4 del ICP)
+> **⭐ Y EL VETO DEL AUTOMATISMO YA NO SE APOYA SOLO EN EL INFORME: TENEMOS UN POST NUESTRO (encontrado el 2026-08-24).** El único ninja de la casa que hizo esa promesa es el `"Los 10"` de Cataluña de Unai — *"te sentamos delante a tus clientes ideales **y tú solo cierras**"* — y es **el peor post del pilar: 0,5x**, y además el que recibió la petición de retirada de un trabajador mencionado. **El check nuevo lo caza** (probado contra el post real).
+> - ⚠️ **Cautela, dicha entera: n=1 y confundido.** Ese post tenía a la vez otro fallo grave y documentado (la empresa tapando a la persona, `post-workflow §4.3`), así que **no se puede atribuir el 0,5x a esta frase**. Vale como coincidencia que apoya al informe, no como prueba. Lo que sí es prueba son las 5 empresas.
+> - **Por qué se anota igual:** era la única vez que lo habíamos escrito, y si algún día alguien propone relajar el veto, este es el sitio donde mirar primero.
 >
-> **Es el único competidor que el ICP nombra solo, y siempre por lo mismo: es caro y no le sacan fruto.** *"nos puede interesar si eso quiere decir que no nos hace falta contratar el [Sales] Navigator de LinkedIn, que es muy caro"* (Noergia · 16 jul) · *"tuve la licencia de Sales Navigator, realmente no le sacamos demasiado fruto"* (Scoutic · 7 jul).
+> #### ⚔️ 4.4b-LICENCIA · EL ENEMIGO CON NOMBRE: LA LICENCIA (5 empresas) — Y CÓMO SE DICE SIN MENTIR
 >
-> - **Para qué sirve en el ninja:** un enemigo concreto da una línea de dolor **que no se puede escribir en abstracto**, y por eso no cae en la frase de catálogo que `§4.4b` prohíbe. *"La licencia la pagas igual. El nombre de dentro no te lo da"* es un ninja; *"la prospección manual cuesta mucho"* no.
-> - **⛔ Pero se nombra por lo que HACE, no por la marca.** Meter `Sales Navigator` con todas sus letras en un post nuestro es publicidad comparativa y encima nombra a LinkedIn dentro de LinkedIn. Se dice **`la licencia que pagas y no abres`**, que es lo que ellos describen.
+> > 🔴 **AQUÍ PONÍA "5 empresas, 4 del ICP · el único competidor que el ICP nombra solo", Y ERA MÍO Y ERA ENGAÑOSO (corregido el 2026-08-24 al desglosarlo).** Cogí el "4 de 5 son ICP" que da el informe sin mirar QUÉ encaje. Desglosado empresa por empresa: **H2SITE (ICP B) · Scoutic (C) · bigD (C) · Composites Martiartu (C) · Noergia (fuera)**. O sea: **ninguna es ICP A**, y 3 de las 4 "ICP" son categoría **C, "encaja con dudas"**. Decir que lo nombra el ICP era falso: lo nombran consultorías y encajes dudosos. Es exactamente el error que `§4.4b-MUNICIÓN` avisa de no cometer, contar empresas sin mirar cuáles.
+>
+> **⛔ Y HAY UNA CITA EN CONTRA, de un ICP A, que es la que manda leer antes de usar esto:** *"Este primer paso yo lo puedo hacer gratis, en Sales Navigator o en LinkedIn… ¿cómo nos podemos brincar esa tragazón de créditos en ese primer paso?"* (Alexandra Petrinec · **Fagor Automation, ICP A** · 5 ago). **Para el ICP nuclear, la licencia no es el enemigo: es la alternativa barata a NOSOTROS.** Un ninja que ataque la licencia le está diciendo a Fagor *"deja lo que te funciona gratis"*, y Fagor contesta lo que ya contestó.
+>
+> #### ⛔ POR ESO EL ÁNGULO NO ES EL PRECIO. ES QUE LA LICENCIA NO TE DA EL NOMBRE
+>
+> **Desglosadas, las 5 citas no dicen lo mismo, y esto es lo que decide la línea:**
+>
+> | Quién | Qué dice de verdad | ¿Paga la licencia? |
+> |---|---|---|
+> | Scoutic (C) | *"tuve la licencia, realmente no le sacamos demasiado fruto"* | La tuvo |
+> | H2SITE (B) | *"nos habían dado unas cuantas licencias… el feedback no es muy para tirar cohetes"* | Sí |
+> | Noergia (fuera) | *"si eso quiere decir que no nos hace falta contratar[la], que es muy caro"* | **No** |
+> | bigD (C) | *"no lo utilizamos, no lo pagamos"* | **No** |
+> | Composites Martiartu (C) | *"LinkedIn ya lo hace, cada vez lo están capando más"* | Otra queja distinta |
+>
+> **`la licencia que pagas y no abres` solo lo sostienen 2 de 5.** Las otras tres ni la pagan, así que ese dolor de bolsillo no les toca — y por la regla de entrada de `§4.4b-MUNICIÓN` (3 empresas o más), **2 es hipótesis, no patrón**. Escribir el ninja sobre el precio es apoyarlo en la pata más floja que hay en toda la sección.
+>
+> **⭐ LO QUE SÍ COMPARTEN LAS 5, Y ADEMÁS ENCAJA CON FAGOR: la tengas o no la tengas, sigues sin el nombre de dentro.** Fagor lo dice sin querer — el primer paso (la empresa) lo hace gratis, y lo que pide **justo después** es el teléfono del decision maker. Es literalmente el tema nuevo del 19/08 (`aboutme §1b`: el cuello de botella es la persona, no la empresa).
+>
+> **Y esto sube el ángulo de categoría en vez de bajarlo:** deja de ser un ataque a un competidor que sostienen 5 empresas de encaje dudoso, y pasa a ser **una forma concreta de decir el dolor nº1**, que lo sostienen 15 + 12 empresas. La licencia deja de ser el enemigo y pasa a ser **el atrezzo** que hace tangible el dolor de siempre.
+>
+> ```
+> ✅ La licencia te da la lista. El nombre de dentro no.
+> ✅ Pagar la licencia es lo fácil. Saber a quién llamar dentro, no.
+> ❌ Deja de pagar la licencia         (promesa que el destino no cumple, ver abajo)
+> ❌ Te ahorras el Sales Navigator     (nombra la marca, y encima es mentira)
+> ```
+>
+> - **⛔ LA MARCA NO ENTRA, y por dos motivos, no uno.** (a) Es publicidad comparativa y nombra a LinkedIn dentro de LinkedIn. (b) **Y el importante: no la sustituimos.** Si el ninja insinúa que dejas de pagarla, falla el test de `§4.4b-PROMESA` — *"si alguien pincha el enlace ahora mismo, ¿se encuentra lo que estas dos líneas le han dicho?"*. En `/agendar/` se encuentra un buscador de clientes ideales, no un reemplazo de Sales Navigator. **Prometerlo es publicidad engañosa y quema el enlace.** Se dice `la licencia` a secas, que es como la nombran ellos.
+> - **Y rota como todo** (`§4.4b`, el dolor no cambia y la frase sí): `la licencia` · `lo que pagas cada mes por buscar` · `el buscador que ya tienes`. **La palabra sigue saliendo del gancho de ESE post**; esto solo decide de qué habla.
 >
 > #### 🔴 EL AVISO QUE VA CON ESTA SECCIÓN, dicho antes de usarla
 >

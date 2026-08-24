@@ -55,7 +55,7 @@ Neety construye **sistemas de outbound operativo con IA** para **empresas indust
 **⭐ Y AHORA HAY UN SEGUNDO ELOGIO CON FRASE APROVECHABLE, en 3 empresas:** *"es un poco lo que llevamos haciendo nosotros de forma manual, pero mucho más completo y más rápido"* (Oscar Oteiza · Vi4crane · 22 jul). **La promesa que sí se puede hacer es esa: lo mismo que ya haces, hecho entero.** No es magia, no es automático, y por eso se cree.
 
 **⚔️ CONTRA QUÉ nos comparan, con nombre propio** (útil para el ninja: un enemigo concreto vende más que "la prospección manual"):
-- **Sales Navigator — 5 empresas (4 del ICP): caro y lo evitan.** *"sobre todo nos puede interesar si eso quiere decir que no nos hace falta contratar el [Sales] Navigator de LinkedIn, que es muy caro"* (Noergia · 16 jul). **Sustituirlo es palanca de venta**, y es el único competidor que el ICP nombra solo.
+- **La licencia (Sales Navigator) — 5 empresas, pero NINGUNA es ICP A.** *"nos puede interesar si eso quiere decir que no nos hace falta contratar el [Sales] Navigator de LinkedIn, que es muy caro"* (Noergia · 16 jul). ⚠️ **Y el ICP nuclear dice lo contrario:** *"Este primer paso yo lo puedo hacer gratis, en Sales Navigator o en LinkedIn"* (Fagor Automation · 5 ago). **El ángulo NO es el precio: es que la licencia te da la lista y no el nombre de dentro.** Desglose completo y las líneas que sí valen: `global §4.4b-LICENCIA`.
 - **Waalaxy y Apollo — 5 empresas: volumen sin calidad.** *"campañas demasiado masivas, con unos ratios de conversión muy bajos, más de volumen"* (i+Med · 27 jul). **Un ninja que promete cantidad nos mete en su caja.**
 
 **Qué NO prometer en un post (objeciones reales, con su tamaño):**

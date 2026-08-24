@@ -21,6 +21,15 @@ como esperados, con su motivo. Si un post empieza a fallar algo que no está en 
 lista, el test se queja: o es un bug nuevo, o es una regla nueva que hay que
 decidir conscientemente y documentar aquí.
 
+⛔ TODOS LOS CASOS SE VALIDAN CON --historico (añadido el 2026-08-24, arreglando 5
+fallos que llevaban meses en rojo). Los checks de REINCIDENCIA —país, concepto,
+frase-rabia y verbo del prejuicio quemados, menciones ya usadas, frase del ninja
+quemada— comparan contra listas que ESTOS MISMOS POSTS llenaron. Sin el flag, el
+mapa de Navarra falla por usar "Bolivia" y "patio trasero"… que están en la lista
+con el valor 'Navarra'. Un post no puede competir contra sí mismo, y declararlo
+caso a caso habría sido tapar con "esperado" cinco casillas que el día que se
+rompan de verdad ya no avisarían. NUNCA pases --historico a un borrador.
+
 USO:  python scripts/test-validador.py
 """
 import base64
@@ -41,6 +50,12 @@ CREADORES = {
 CASOS = [
     ('pasa factura', 'meme', 'Iker', {
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
+        'Sin anglicismos': (
+            'ESPERADO, y es un dato incómodo que se queda escrito: nuestro 2º mejor post usa '
+            '"pipeline" Y "forecast". brand-voice §2b es posterior. No se tapa porque, si '
+            'algún día hay que revisar §2b, este es el contraejemplo que hay que mirar.'
+        ),
+        'Tras el gancho, LINEA INDIVIDUAL': 'formateado anterior a §3.2',
     }, ['--referencia-fuera']),  # referencia extranjera: su autor no comparte audiencia
     ('cold calling no ha muerto', 'meme', 'Iker', {
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
@@ -50,6 +65,7 @@ CASOS = [
             '§2.3 veta "cold email" en el hook. O la lista se queda corta, o la regla '
             'se contradice con nuestro mejor post. Sin resolver: no lo tapes.'
         ),
+        'Tras el gancho, LINEA INDIVIDUAL': 'formateado anterior a §3.2',
     }, ['--referencia-fuera']),  # referencia extranjera: su autor no comparte audiencia
     ('caja de herramientas engorda', 'meme', 'Unai', {
         'muletilla "En ventas,"': (
@@ -60,6 +76,14 @@ CASOS = [
         'Spam ninja presente': 'el spam ninja se adoptó después de este post',
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Línea individual tras cada bloque': 'formateado anterior a §3.2',
+        'Sin anglicismos': 'usa "insights". brand-voice §2b es posterior a este post',
+        'RITMO: al menos un bloque de TRES': 'regla §3.2 afinada después; su ritmo es 1-1-1-1-2-1-1',
+        'MEME: cuerpo corto': (
+            'ESPERADO Y NO SE TAPA: 1.084 caracteres y hace 12.15x. §4.4-CORTO (450/700) se '
+            'adoptó en agosto con las medianas por tramo delante, y este post es el '
+            'contraejemplo vivo. La regla se queda —la mediana de <=450 es 11.602 impresiones '
+            'contra 4.745 de >700— pero conviene saber que un 12x cabe fuera de ella.'
+        ),
     }, ['--meme-sobrio', '--referencia-fuera']),  # <- sobrio POR DISENO, y por eso es el meme que SI encaja en Unai: sin
        # ridiculo personal, sin nada que nadie pueda creerse literal. Es la vara de lo permitido ahi.
     # --- "Los 10": los 3 que existen. Se metieron el 2026-07-17, cuando el 3º se comió
@@ -77,6 +101,14 @@ CASOS = [
         ),
         'Cifras en dígito': 'regla §3.6, adoptada el 2026-07-16 a sabiendas de que toca el molde',
         'Reveal de región sin el comodín': '"Sí, hablo del País Vasco" — prohibido DESPUÉS, por repetirse 4/4',
+        'Tras el gancho, LINEA INDIVIDUAL': 'formateado anterior a §3.2',
+        'Sin el AÑO en el post': (
+            'ESPERADO: la regla del año (brand-voice) es del 2026-08 y este post es de julio. '
+            'PENDIENTE DE DECIDIR, no lo tapes: este pilar es un RANKING y su gancho pide el '
+            'año por naturaleza ("las 10 personas que más han hecho vender… este año"). O el '
+            'pilar se exceptúa por escrito, o los "Los 10" futuros dicen "este año" sin '
+            'la cifra, que es lo que hace el 4.92x y por eso él sí lo pasa.'
+        ),
         'Concede que es trabajo en equipo': (
             'ESPERADO: regla §4.3 Paso 3e, adoptada el 2026-07-17. Ninguno de los 3 la '
             'cumple, y por eso los 3 se comieron el "gracias, PERO esto es trabajo en '
@@ -93,6 +125,8 @@ CASOS = [
             'roto y no queda nada vigilando lo único que la evidencia soporta.'
         ),
         'Spam ninja presente': 'mismo artefacto del lnkd.in que el de Asturias, ver abajo',
+        'El enlace apunta a recursos.neety.com': 'el mismo artefacto del lnkd.in: la URL cruda sí era nuestra',
+        'El primer bloque multiple es de DOS': 'regla §3.2 afinada después; aquí el primer múltiple es de 3',
         'Concede que es trabajo en equipo': 'regla §4.3 Paso 3e, adoptada el 2026-07-17; ninguno de los 3 la cumple',
         'Bloques de 2-3 en escalera': 'regla §3.2 afinada después',
     }),
@@ -103,10 +137,24 @@ CASOS = [
             'que valida el script de verdad llevan la URL cruda, así que en uso real no pasa. '
             'No "arregles" el validador por esto.'
         ),
+        'El enlace apunta a recursos.neety.com': 'el mismo artefacto del lnkd.in de aquí arriba',
+        'Tras el gancho, LINEA INDIVIDUAL': 'formateado anterior a §3.2',
+        'Sin el AÑO en el post': 'misma casilla que el 4.92x de arriba: regla posterior + la duda del pilar-ranking',
         'Concede que es trabajo en equipo': 'regla §4.3 Paso 3e, adoptada el 2026-07-17; ninguno de los 3 la cumple',
     }),
     ('patio trasero de los Pirineos', 'mapa', 'Iker', {
         'Spam ninja presente': 'este mapa llevaba link de PamPam, no el de agendar',
+        'El enlace apunta a recursos.neety.com': (
+            'ESPERADO: mismo motivo que el de arriba y la misma decisión. Este mapa '
+            'enlazaba a pampam.city, que es web AJENA: 230 clics que no llegaron a nuestra '
+            'web (§4.4b, la tabla del 2026-07-20). Desde julio el enlace es siempre nuestro. '
+            'El post es un ganador; la regla es posterior y se adoptó sabiendo lo que costaba.'
+        ),
+        'MAPA: el CTA enlaza a /mapas/{region}/': (
+            'ESPERADO: el ULTRA NINJA con la página propia del mapa se adoptó el 2026-07-31, '
+            'después de este post. Entonces el CTA iba a PamPam. Es la otra cara del check '
+            'de aquí arriba, no un fallo distinto.'
+        ),
         'Cifras en dígito': '"Les pasé tres números" — §3.6, coste conocido y documentado',
         'Reveal de región sin el comodín': '"Sí, hablo de Navarra" — prohibido DESPUÉS, por repetirse 4/4',
         'Frase de entrada a la lista sin comodín': 'mismo caso, prohibido después',
@@ -142,7 +190,7 @@ def main() -> int:
         io.open(tmp, 'w', encoding='utf-8', newline='').write(post['content_text'])
         salida = subprocess.run(
             [sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'validar-post.py'),
-             tmp, '--pilar', pilar, '--cuenta', cuenta] + extra,
+             tmp, '--pilar', pilar, '--cuenta', cuenta, '--historico'] + extra,
             capture_output=True, text=True, encoding='utf-8').stdout
         fallos = [l.strip().replace('FALLA', '').strip() for l in salida.split('\n') if 'FALLA' in l]
         print(f"\n{cuenta} · {post.get('outlier_ratio')}x · {frag}")
