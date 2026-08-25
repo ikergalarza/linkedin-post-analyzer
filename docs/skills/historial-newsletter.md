@@ -377,3 +377,25 @@ y dejarte creyendo que la lista está comprobada. **Es lo primero que hay que mi
 
 **De 9% a ~3%.** No baja a cero: los 3 rebotes de Gmail y Hotmail de la tanda 3 quedan fuera por
 diseño, y siempre habrá buzones que aceptan y rebotan después.
+
+
+---
+
+## Tanda 4: verificada con Bouncer, programada (2026-08-25)
+
+Primer envío con verificación de pago. Del CSV combinado de tandas 4+5+6 (981 direcciones):
+
+| veredicto Bouncer | cuántas | acción |
+|---|---|---|
+| `undeliverable` | **70** | **dadas de baja en CRM y Brevo** (Iker, 2026-08-25, en un solo paso) |
+| `risky` — `low_deliverability` (catch-all, 32/34 con `acceptAll=yes`) | 34 | se quedan: ningún validador puede saber más sobre un dominio catch-all |
+| `risky` — `low_quality` (score 10, casi todo Gmail) | 26 | se quedan: es una señal de reputación, no de rebote |
+| `unknown` | 11 | se quedan |
+
+**Tanda 4 (200→191 tras las bajas) programada: jueves 2026-08-26, 09:05.** Campaña id 5, lista Brevo id 8,
+`utm_campaign=kaixito-01-tanda-4`. Mismo cuerpo que la 3 (PPD ya en 30 minutos).
+
+**Tandas 5 (400) y 6 (380) NO se programan todavía.** Decisión de Iker, no mía, y coincide con lo que ya
+decía este mismo fichero (§ arriba): un servicio de verificación de pago baja el riesgo, no lo anula, y
+la única prueba real es un envío real. Se mira el rebote de la tanda 4 mañana y con ESE dato — no con
+el de Bouncer — se decide si la 5 sale el viernes.
