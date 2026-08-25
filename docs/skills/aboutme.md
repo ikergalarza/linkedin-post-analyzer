@@ -136,7 +136,19 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 **Yo había puesto que se mira el HEADLINE del autor. No basta**, y el caso lo demuestra: propuse el meme del botón de IA de Alex Vacca, cuyo autor es founder de una empresa de outbound —headline impecable— **y cuyo gancho no lleva una sola palabra de ventas**. Iker: *"esto no es una broma de ventas, es una publicación que podría subir cualquiera"*.
 
-**LA COMPROBACIÓN, y son diez segundos:** coge **la primera línea del original** y busca dentro una palabra explícita del oficio — *sales, sell, prospect, cold call, SDR, AE, deal, quota, pipeline, client, buyer, ventas, comercial, cliente, cuota*. **Si no está, la referencia se descarta**, por buen chiste que sea y por bien que encaje su autor.
+**LA COMPROBACIÓN, y son diez segundos:** coge **la primera línea del original** y busca dentro una palabra del oficio. **Si no está, la referencia se descarta**, por buen chiste que sea y por bien que encaje su autor.
+
+**⛔ Y "PALABRA DE VENTAS" NO ES SOLO LA PALABRA `SALES`: SE BUSCA FUERA DE LA CAJA, IGUAL QUE EN NUESTROS GANCHOS (Iker, 2026-08-25).** *"Está muy bien que busques la palabra sales, pero tienes que buscar más palabras. ¿Qué puede estar relacionado con ventas en inglés aparte de la palabra en sí? Pues por ejemplo comercial, cliente, ya que si tienes un cliente es que algo estás vendiendo"*. Es la misma lógica de `global §2.3`: nosotros anclamos por el rol, el oficio, el verbo, la acción o el comprador, no repitiendo "ventas".
+
+| Familia | En inglés | En español |
+|---|---|---|
+| **El oficio y el rol** | sales, salesperson, sales rep, seller, SDR, BDR, AE, account executive, account manager, VP of sales, CRO | ventas, comercial, vendedor, jefe de ventas, director comercial |
+| **El verbo** | sell, selling, sold, pitch, close, closing, negotiate, upsell | vender, vendes, cerrar, cierre, negociar |
+| **El otro lado** | client, customer, buyer, prospect, lead, account, decision maker | cliente, comprador, prospecto, el que decide |
+| **La acción del día** | cold call, cold email, outreach, follow up, demo, meeting, discovery, proposal, objection, discount | llamada, puerta fría, correo, seguimiento, reunión, propuesta, objeción, descuento |
+| **El marcador** | quota, target, commission, revenue, pipeline, deal, contract, renewal, churn, CRM | cuota, comisión, factura, pedido, cartera, contrato, presupuesto |
+
+**El test de por qué vale `client`, que es el que da Iker:** *si alguien tiene un cliente, es que algo está vendiendo*. Cualquier palabra que **solo exista porque hay una venta detrás** cuenta como ancla, aunque no diga "ventas".
 
 **⚠️ Y SÍ, ESTO CONTRADICE A LOS EXPERTOS, QUE DICEN QUE HAY QUE ADAPTAR OUTLIERS DE OTROS SECTORES. Lo decimos en voz alta porque es nuestra experiencia la que manda** (Iker): *"eso hacía que muchas veces memes que pensábamos que iban a ir bien iban fatal de rendimiento, ya que como la referencia no estaba adaptada a ventas, esa broma tenía sentido y la gente lo pillaba en otro sector, pero en ventas no tenía el mismo impacto ni la misma gracia"*. **La gracia no viaja entre sectores; el formato sí.** Respaldo medido en `post-workflow §4.4-FUENTE-VENTAS`: mediana de 95.913 impresiones con referencia de ventas contra 1.405 sin ella.
 

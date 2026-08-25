@@ -699,8 +699,17 @@ referencias quemadas seguidas, dos entregas enteras a la basura y el retraso enc
 - **⚠️ n=2, y se dice en la entrega.** El mes es criterio de Iker; los 98 días son lo
   único medido. Cuando haya un tercer caso entre 30 y 98 días, se anota aquí y se ajusta
   la vara con él.
-- **El espaciado se cuenta desde la fecha de PUBLICACIÓN del primero**, no desde que se
-  escribió, y se mira en `historial-publicaciones.md`.
+- **⛔ EL ESPACIADO SE CUENTA DESDE QUE LA COPIAMOS NOSOTROS, NO DESDE LA FECHA DE LA
+  REFERENCIA (Iker, 2026-08-25).** Es el error que cometí al ofrecerle el meme del
+  descafeinado: miré que el original de Segantini era del 16/07 y me pareció lejano, cuando
+  **lo que cuenta es que NUESTRA copia salió el 14/08**, o sea 11 días. Iker: *"cuando me
+  refiero a espaciar la referencia no es viendo la fecha en la que se ha publicado la
+  referencia, sino viendo la fecha en nuestras cuentas de cuándo ya hemos copiado esa
+  referencia"*.
+  - **Dónde se mira: `historial-publicaciones.md`, la fila de NUESTRO post**, que es donde
+    está anotada la referencia de cada meme. La fecha del original no pinta nada aquí.
+  - **La referencia puede ser de hace un año y estar quemadísima**, porque lo que el lector
+    ha visto es lo nuestro, no lo suyo.
 
 **Mecanizado** como aviso de entrega en `validar-post.py` (`ENTREGA: si la referencia ya
 la uso otra cuenta`), que imprime las tres puertas con su vara. El script no ve la
@@ -711,6 +720,17 @@ siempre, que es donde se falla.
 la referencia, así que se busca por el CONCEPTO de la imagen — `calv|pelo`,
 `tiburón`, `tatuaje`— sobre los `content_text` de las 3 cuentas, y se cruza con
 `historial-publicaciones.md`, que sí anota la referencia de cada meme.
+
+### 🔄🔄 4.4-PASO-0-REFRESH · LA PRIMERA PUBLICACIÓN DE CADA SEMANA EMPIEZA REFRESCANDO EL CORPUS (Iker, 2026-08-25) — GLOBAL
+
+> **Iker:** *"cada vez que tú detectes que es lunes o que es una nueva semana, y estamos haciendo la primera publicación de la semana, tienes que irte a la sección dashboard y pulsar el botón refresh all, porque así podremos encontrar memes nuevos de la gente que tenemos trackeada"*.
+
+**Cuándo: al detectar que arranca semana nueva** (lunes, o el primer post que se escribe esa semana), **antes de buscar ninguna referencia**. No espera a que lo pidan.
+
+**Cómo, sin salir de aquí:** `neety_refrescar` con `ambito: competencia` y `limite: 500`, que es el equivalente del botón **refresh all** del dashboard. Vuelve en el acto y sigue en segundo plano unos 10 minutos con los ~150 creadores; el progreso se mira con `neety_refrescar_estado`, **nunca relanzando el refresco**. Mientras corre se puede ir trabajando en la receta.
+
+**Por qué importa y no es burocracia:** el corpus está agotado por arriba (`§4.4-PASO-0b`), así que **lo que salva la semana es lo que se ha publicado en los últimos días**. Sin refrescar, se buscan referencias sobre una foto de hace semanas y salen siempre las mismas, que es exactamente por lo que se acaban repitiendo.
+- **⚠️ Y lo que el refresco NO arregla, dicho por Iker:** *"seguramente hay gente en el sector que no tenemos trackeada que también hace buenas publicaciones"*. El refresco actualiza a los que YA seguimos; para los que no, sigue haciendo falta la búsqueda por keyword de `§4.4-PASO-0b`. **Las dos vías, no una.**
 
 ### ⛔ 4.4-PASO-0b · LAS REFERENCIAS SE BUSCAN EN LINKEDIN, NO SOLO EN LA BD
 
