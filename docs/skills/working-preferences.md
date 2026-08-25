@@ -409,16 +409,18 @@ Esto es la vista que pidió el 2026-07-22, tras rechazar dos intentos: uno "supe
 **DÓNDE VA: la última sección del mensaje, después de todo lo demás.** Se titula **`🔮 PREDICCIÓN DE VIRALIDAD`**.
 
 **LA FORMA, y es lo que la hace útil (si se alarga, deja de leerse):**
-- **Bullets, y cada uno de DOS LÍNEAS COMO MÁXIMO.** Si solo hay una cosa que decir, **un único bullet de dos líneas** y ya.
+- **⛔ TRES BULLETS. Cinco es el techo absoluto y con cinco ya sobra.** Iker, viendo la primera versión de ocho: *"me parece excesiva… máximo cinco, aún así me parecería mucho, máximo tres"*.
+- **Cada bullet, DOS LÍNEAS COMO MÁXIMO.** Si solo hay una cosa que decir, un único bullet de dos líneas y ya.
+- **⛔ SE CONDENSAN VARIAS IDEAS EN UN BULLET. Nunca un bullet por idea**, que es lo que hizo que la primera versión se fuera a ocho: *"condensa varias ideas en un solo bullet point"*. Un bullet = una de las tres preguntas de abajo, entera, no un trozo.
 - **Sin tablas, sin sub-bullets y sin bloques cercados.** Es lo contrario del resto de la entrega: aquí se resume, no se documenta.
 - **Cada bullet lleva su número dentro.** Un bullet sin cifra es una opinión, y de opiniones ya va lleno el resto del mensaje.
 
-**LAS TRES PREGUNTAS QUE CONTESTA, en este orden:**
-1. **Por qué ESA referencia** y no otra: qué la separa de las que descarté, con su métrica (risas absolutas, reposts, encaje de carril).
-2. **Cómo la he copiado y en qué la he mejorado**: qué vehículo me llevo intacto y qué le he cambiado a favor.
-3. **Qué está VALIDADO en datos** de que esto reparte: las reglas que cumple con su número medido, no las que cumple "porque lo dice la receta".
+**LAS TRES PREGUNTAS QUE CONTESTA, y son exactamente los tres bullets, en este orden:**
+1. **Por qué ESA referencia** y no otra, **con las descartadas dentro del mismo bullet**: qué la separa, con su métrica (risas absolutas, reposts, encaje de carril).
+2. **Qué me llevo intacto y en qué lo he mejorado**, las dos cosas en el mismo bullet.
+3. **Qué está VALIDADO en datos** de que reparte —las reglas que cumple con su número medido, no las que cumple "porque lo dice la receta"— **y, pegada al final, la razón para que NO funcione.**
 
-**⚠️ Y si hay una razón para que NO funcione, va también, en su bullet.** La sección se llama predicción, no argumentario: una predicción que solo dice cosas buenas no sirve para detectar que me he equivocado, que es justo para lo que la pidió.
+**⚠️ La razón en contra NO ocupa bullet propio: va rematando el tercero.** La sección se llama predicción, no argumentario: una que solo diga cosas buenas no sirve para detectar que me he equivocado, que es justo para lo que la pidió. Pero tampoco se lleva un bullet de los tres.
 
 **⛔ ÁMBITO: TODOS LOS PILARES, SIN EXCEPCIÓN (Iker, 2026-08-25, ampliado el mismo día).** Nació pedida para el meme y él la subió a receta global en cuanto la vio: *"quiero que este output se incluya, a partir de ahora, en todo, o sea, que sea parte de la receta global, y no solo para el pilar de meme"*. Mapa, "Los 10", despiece, lead magnet, historia, evento, tarjeta, vídeo y lo que venga.
 - **En los pilares SIN referencia externa** (mapa, "Los 10", despiece), la pregunta 1 cambia de objeto pero no desaparece: **por qué ESTA región, ESTE sector o ESTE ángulo** y no otro, con su dato — cobertura de la cuenta, cifra shock verificada, empresas que salen.

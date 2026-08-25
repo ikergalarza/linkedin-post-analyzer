@@ -1424,16 +1424,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # te has equivocado o no". El validador mira la mecanica; esto ensena la
     # decision.
     chk(False, 'ENTREGA: cierra con la PREDICCION DE VIRALIDAD',
-        'ultima seccion del mensaje, titulada 🔮 PREDICCION DE VIRALIDAD. Bullets de DOS '
-        'LINEAS COMO MAXIMO cada uno, o uno solo de dos lineas si no hay mas que decir. '
-        'Sin tablas, sin sub-bullets y sin bloques cercados. Contesta tres cosas en este '
-        'orden: (1) por que ESA referencia y no otra, con su metrica (risas absolutas, '
-        'reposts, encaje de carril); en los pilares sin referencia, por que ESTA region, '
-        'sector o angulo; (2) que vehiculo me llevo intacto y en que lo he mejorado; '
-        '(3) que esta VALIDADO en datos de que reparte, con el numero medido. Cada bullet '
-        'lleva su cifra dentro: uno sin cifra es una opinion. ⛔ Y si hay una razon para '
-        'que NO funcione, va tambien en su bullet: es una prediccion, no un argumentario '
-        '(working-preferences §1e-PREDICCION)', aviso=True)
+        'ultima seccion del mensaje, titulada 🔮 PREDICCION DE VIRALIDAD. ⛔ TRES BULLETS, '
+        'cinco es el techo absoluto, y cada uno de DOS LINEAS COMO MAXIMO. ⛔ Se condensan '
+        'varias ideas en cada bullet: NUNCA un bullet por idea. Sin tablas, sin sub-bullets '
+        'y sin bloques cercados. Los tres bullets son las tres preguntas, en este orden: '
+        '(1) por que ESA referencia y no otra, con las descartadas dentro del mismo bullet '
+        'y su metrica (risas absolutas, reposts, encaje de carril); en los pilares sin '
+        'referencia, por que ESTA region, sector o angulo; (2) que me llevo intacto y en '
+        'que lo he mejorado, las dos cosas juntas; (3) que esta VALIDADO en datos de que '
+        'reparte, con el numero medido, y pegada al final la razon para que NO funcione, '
+        'que no ocupa bullet propio. Cada bullet lleva su cifra dentro: uno sin cifra es '
+        'una opinion (working-preferences §1e-PREDICCION)', aviso=True)
 
     chk(False, 'ENTREGA: DOS comparativas (referencia + nuestro mejor del pilar)',
         'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '
