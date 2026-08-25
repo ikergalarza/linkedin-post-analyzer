@@ -2528,6 +2528,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                  % (_n, ' sin el bloque de correo' if _blc else '')) if _n > 450 else '',
                 aviso=True)
 
+    # post-workflow §4.4-REPETIR - REPETIR EN OTRA CUENTA UNA REFERENCIA YA USADA
+    # (Iker, 2026-08-24). En la MISMA cuenta no se repite nunca; en otra si, pero
+    # con tres puertas. Los dos casos medidos: la escalera de calvicie a 98 dias
+    # (138.828 -> 89.320, funciono) y el tatuaje a 2 dias (93.744 -> 5.427, un
+    # 5,8%). El script no ve la referencia, asi que esto es un aviso de entrega:
+    # lo que puede hacer es que la pregunta salte SIEMPRE, que es donde se falla.
+    if pilar in ('meme', 'lead_magnet', 'leadmagnet', 'historia') or remix:
+        chk(False, 'ENTREGA: si la referencia ya la uso otra cuenta',
+            'En la MISMA cuenta no se repite nunca. En otra si, pero pasando las TRES '
+            'puertas: (1) ESPACIADO minimo 1 mes desde que se publico la primera, y el '
+            'unico caso medido que funciono llevaba 98 dias; (2) la primera vez VOLO, '
+            'con la vara en >=3x o >=50.000 impresiones, porque la mediana del meme es '
+            '6.905 y "no fue mal" no vale; (3) se repite CON el filo, que si hay que '
+            'suavizarla para que quepa en la cuenta nueva no se repite. Medido: la '
+            'escalera de calvicie a 98 dias hizo 138.828 y luego 89.320; el tatuaje a 2 '
+            'dias hizo 93.744 y luego 5.427, un 5,8%. Si falla una puerta, se busca otra '
+            'referencia (§4.4-REPETIR)', aviso=True)
+
     # aboutme §2-CARRIL - CADA CUENTA ES VENTAS + SU OFICIO (Iker, 2026-08-19).
     # Las cinco cuentas anclan a ventas siempre; lo que cambia es el segundo
     # carril, que es de donde sale la REFERENCIA. El 19/08 le lleve al tercer

@@ -658,10 +658,56 @@ referencias quemadas seguidas, dos entregas enteras a la basura y el retraso enc
 **La comprobación, en este orden:**
 1. **En la cuenta que va a publicar.** Si esa cuenta ya la usó, se descarta y se
    busca otra. No hay excepción.
-2. **En las otras cuentas.** Si la usó otra, **no se descarta**: la audiencia se
-   solapa poco y el runbook ya lo contempla (*"el formato se repite, el ángulo se
-   itera"*). Pero **se dice en la entrega con su resultado**, para que la decisión de
-   repetir sea de Iker y con el dato delante.
+2. **En las otras cuentas.** Si la usó otra, **no se descarta automáticamente**, pero
+   **tiene que pasar las TRES puertas de `§4.4-REPETIR`**. Y en cualquier caso **se dice
+   en la entrega con su resultado**, para que la decisión sea de Iker y con el dato
+   delante.
+
+#### ⛔⛔ 4.4-REPETIR · UNA REFERENCIA DE OTRA CUENTA SE PUEDE REPETIR, PERO CON ESPACIADO Y SOLO SI LA PRIMERA VOLÓ (Iker, 2026-08-24)
+
+> **Iker, y es lo que faltaba escrito:** *"la regla era que no se podía repetir el mismo
+> meme en la misma cuenta, pero en otras sí. Lo que pasa que creo que es demasiado pronto
+> para repetir esta referencia, y además no sé si fue muy bien. En el caso de repetir un
+> meme de otra cuenta sí que se puede, pero siempre y cuando haya un buen espaciado, de
+> mínimo un mes, y sobre todo solo en el caso de que en la primera cuenta haya ido muy
+> bien"*.
+>
+> **⚠️ ÁMBITO: vale para CUALQUIER pilar que parta de una referencia** (meme, lead
+> magnet, historia, remix de lo que sea), no solo para el meme. Vive aquí porque los dos
+> casos medidos son memes. Misma lógica que `§4.4-DOBLE` y `global §2.2b`.
+
+**LAS TRES PUERTAS, y se pasan LAS TRES o se busca otra referencia:**
+
+| # | Puerta | Vara |
+|---|---|---|
+| **1** | **ESPACIADO desde la publicación anterior** | **mínimo 1 mes**, y el único caso que funcionó llevaba **98 días** |
+| **2** | **La primera vez VOLÓ** | outlier de verdad: **≥3x o ≥50.000 impresiones**. La mediana del meme es 6.905, así que "no fue mal" NO vale |
+| **3** | **Se repite CON el filo** (`§4.4-DOBLE`) | si el motor era la polémica o el registro bruto y hay que suavizarlo para que quepa en la cuenta nueva, **no se repite** |
+
+**LOS DOS CASOS MEDIDOS, que son los que fijan la vara:**
+
+| Caso | Espaciado | La 1ª vez | La 2ª vez |
+|---|---|---|---|
+| ✅ **La escalera de calvicie** · Iker 06/05 → Asier 12/08 | **98 días** | 13.92x · **138.828** | 6.04x · **89.320**, el mejor post de Asier |
+| ⛔ **El tatuaje** · Unai 29/07 → Iker 31/07 | **2 días** | 6.88x · **93.744** | 0.53x · **5.427**, un **5,8%** del original |
+
+- **El espaciado es lo que separa los dos casos, no la calidad de la referencia:** las dos
+  partían de un post que había volado (138.828 y 93.744) y las dos se remixaron bien. La
+  que se repitió a los 2 días se estrelló.
+- **⛔ Y ESTO RETIRA EL "LO ANTES POSIBLE" DE `§4.4-DOBLE`.** Aquella regla decía que un
+  ganador se dobla en otra cuenta **cuanto antes**, y es exactamente lo que produjo el
+  5,8%. El double down sigue existiendo como jugada, pero **con el mes de espaciado por
+  delante**; si la idea no aguanta un mes, es que era del momento y no se dobla.
+- **⚠️ n=2, y se dice en la entrega.** El mes es criterio de Iker; los 98 días son lo
+  único medido. Cuando haya un tercer caso entre 30 y 98 días, se anota aquí y se ajusta
+  la vara con él.
+- **El espaciado se cuenta desde la fecha de PUBLICACIÓN del primero**, no desde que se
+  escribió, y se mira en `historial-publicaciones.md`.
+
+**Mecanizado** como aviso de entrega en `validar-post.py` (`ENTREGA: si la referencia ya
+la uso otra cuenta`), que imprime las tres puertas con su vara. El script no ve la
+referencia, así que no puede ser fallo duro: lo que puede hacer es que la pregunta salte
+siempre, que es donde se falla.
 
 **Cómo se comprueba, que a ojo no vale:** el texto del post nuestro casi nunca nombra
 la referencia, así que se busca por el CONCEPTO de la imagen — `calv|pelo`,
@@ -804,7 +850,10 @@ sorprende, que es de lo que vive este pilar.
 
 > ### 🔁 4.4-DOBLE · DOUBLE DOWN: SE REPITE EL ESQUELETO, SOLO ROTA EL INTENSIFICADOR (Iker, 2026-07-31)
 > **⚠️ NO ES DEL MEME: vale para CUALQUIER pilar.** Se puede doblar un mapa, un lead magnet o una historia que acabe de petar. Está escrita aquí porque el primer caso fue un meme, pero al leerla sustituye "meme" por el pilar que toque.
-> **Qué es.** Repetir en otra cuenta, **lo antes posible**, una idea que se acaba de hacer viral en la nuestra. No es un pilar y no lleva receta propia: es una jugada sobre un pilar que ya existe. Se hizo el 31/07 con el tatuaje (Unai, miércoles, ~100.000 impresiones → Iker, viernes).
+> **Qué es.** Repetir en otra cuenta una idea que se acaba de hacer viral en la nuestra.
+> **⛔ AQUÍ PONÍA "lo antes posible" Y SE RETIRÓ EL 2026-08-24:** eso es justo lo que
+> produjo el 5,8% de abajo. Ahora manda el espaciado de **mínimo 1 mes** de
+> `§4.4-REPETIR`, con sus otras dos puertas. No es un pilar y no lleva receta propia: es una jugada sobre un pilar que ya existe. Se hizo el 31/07 con el tatuaje (Unai, miércoles, ~100.000 impresiones → Iker, viernes).
 > - **El cuerpo se copia casi entero.** Ya está adaptado a ventas y ya capturó la esencia. Tocarlo es rehacer trabajo que funcionó.
 > - **El gancho MANTIENE el esqueleto validado y solo cambia la palabra de intensidad.** La escalera real de este caso: Félix puso `no, señor` → nosotros lo mejoramos con `Jamás` → el double down usa `Nunca`. **Tres palabras, misma frase.** Inventar un gancho nuevo es tirar lo único que ya sabes que funciona.
 > - **La escalada va en la IMAGEN, no en el texto.** El brazo pasó a la cara. Ahí es donde se sube lo absurdo sin tocar lo que ya rinde.
