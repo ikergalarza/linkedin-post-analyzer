@@ -1910,10 +1910,16 @@ Acceso libre.
 
 #### ⭐⭐ 4.6 · Runbook HISTORIA PERSONAL / ANÉCDOTA (Iker, 2026-07-24)
 
-> ### 📬 4.6-CORREO · ESTE PILAR LLEVA LOS DOS BLOQUES, Y ES EL CANARIO (2026-08-18)
-> La historia lleva el spam ninja de `agendar` donde siempre **y**, más abajo, el **segundo bloque de correo** (`global §4.4e`). Encaja mejor que en ningún otro pilar: si el objetivo es cercanía, *"esto lo mando por correo antes que aquí"* es la continuación natural de la anécdota.
+> ### 📬 4.6-CORREO · ESTE PILAR LLEVA UNA SOLA PUERTA, Y ES `AGENDAR` (Iker, 2026-08-24)
+> **🔴 AQUÍ PONÍA LO CONTRARIO Y ERA EL PEOR SITIO POSIBLE PARA LA SEGUNDA PUERTA.** Del 18/08 al 24/08 este runbook decía que la historia llevaba los dos bloques y que era *"el canario"*. Iker lo cierra: **una puerta por post, y en historia es la de `agendar`.** Razonamiento entero y el criterio por pilar, en `global §4.4e-PUERTA`.
 >
-> **🔴 Y POR ESO MISMO ES EL PRIMERO QUE HAY QUE MIRAR CUANDO SE MIDA.** Este pilar tiene el **mejor CTR medido de la casa a `/agendar/`** (0,41% el 13/08, `§4.6-MEDIDO`), o sea que es donde más hay que perder si dos puertas reparten el clic. **Al publicar, los clics a `/agendar/` de la historia se anotan aparte** en `historial-publicaciones`, y si caen por debajo de 0,29% (el suelo del 29/07) el bloque de correo sale de este pilar antes que de ningún otro.
+> **Los dos motivos, y el primero manda sobre el segundo:**
+> 1. **Coherencia.** Una historia se construye **entera** sobre el dolor que resuelve la herramienta, así que el enlace de agendar cae solo. El de correo habría que importarlo, y un dolor importado produce la frase de catálogo que `global §4.4b` prohíbe.
+> 2. **Dato.** Este pilar tiene el **mejor CTR de la casa a `/agendar/`** (0,41% · 0,364% · 0,276%, `§4.6-MEDIDO`) contra el 0,022% del meme de más alcance del mes. Es poco alcance y mucha intención: **bajar ahí la puerta es cambiar una reunión por un suscriptor.**
+>
+> **Y encaja con la regla del UNO** (`global §4.5`), que lleva meses en la casa y que el lead magnet cumple sin discutir: ahí no va enlace **precisamente** para no partir su motor.
+>
+> **Lo que sí se sigue anotando al publicar:** los clics a `/agendar/` de cada historia, en `historial-publicaciones`. Es la serie que sostiene este pilar hacia dentro.
 
 > ### 🎯 4.6-OBJETIVO · ESTE PILAR NO VA DE VIRALIDAD (Iker, 2026-07-29)
 > **Léelo antes de escribir uno y antes de juzgar el resultado de uno.** Los demás pilares buscan alcance. **Este busca cercanía y naturalidad con la audiencia**, y son cosas distintas. Medir una historia por el multiplicador es medirla con la regla de otro pilar y concluir siempre que va mal.

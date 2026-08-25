@@ -1444,7 +1444,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 | Pilar | Bloque 1 | Bloque 2 (correo) | Por qué |
 |---|---|---|---|
-| **HISTORIA** | agendar | ✅ | Donde mejor encaja: el pilar busca cercanía, y el correo es la continuación natural de "te sigo contando". **🔴 Y es EL CANARIO:** tiene el mejor CTR medido de la casa a `/agendar/` (0,41%), o sea que es donde más hay que perder. Se mide el primero (`post-workflow §4.6-CORREO`). |
+| **HISTORIA** | agendar | ⛔ **NO (Iker, 2026-08-24)** | 🔴 **CORREGIDO: aquí ponía ✅ y era el peor sitio para meter la segunda puerta.** Este pilar tiene el **mejor CTR de la casa a `/agendar/`** (0,41%) y su dolor **ES** el de agendar, así que la segunda puerta solo puede quitarle clics a la cara para dárselos a la barata. Razonamiento entero en `§4.4e-PUERTA`. |
 | **DESPIECE** | agendar | ✅ | Cuerpo largo, sitio de sobra. |
 | **INSIGHT / otros con cuerpo** | agendar | ✅ | — |
 | **EVENTO** | Luma | ✅ | **Máximo 2 enlaces.** El de Luma **ocupa el hueco del de agendar** (ya es un CTA de conversión). Nunca tres puertas en un post. |
@@ -1467,6 +1467,41 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 **Y el ritmo se cuida a propósito:** entre los dos bloques van **líneas individuales de cuerpo**, no solo las 2 que exige `§4.4e`. Dos bloques de dos con la misma forma, cerca, se leen como un patrón; una suelta en medio lo rompe (`§3.2`: el ritmo no puede ser predecible).
 
 **Mecanizado** en `validar-post.py`: el check duro pasa a ser `Doble ninja en MEME: sin el bloque de correo, <=450 car`, y el aviso de `§4.4-CORTO` también descuenta el bloque.
+
+#### 🚪🚪 4.4e-PUERTA · UNA PUERTA POR POST, Y LA ELIGE EL DOLOR DEL PILAR (Iker, 2026-08-24) — CANÓNICO
+
+> **Iker, y cierra el experimento del doble bloque:** *"en nuestros apuntes siempre teníamos que no hay que hacer doble CTA. Por eso, por ejemplo, en el pilar de lead magnet solo ponemos lo de comenta y no ponemos ningún enlace. Como este tipo de pilar de historia está totalmente basado en el punto de dolor que soluciona nuestra herramienta, lo más coherente es el spam de agendar. Y obviamente, si la empresa vende más, le va a convenir más que tener más suscriptores en la newsletter y no vender más"*.
+
+**LO QUE SE CIERRA:** el doble bloque de `§4.4e` **deja de ser el default en historia**. Un post, una puerta.
+
+**Y esto no es una regla nueva, es la de siempre aplicada donde no la aplicamos:** `§4.5` (la regla del UNO) lleva meses diciendo que no se apilan cierres, y el **lead magnet** es el precedente vivo —no lleva enlace **precisamente** para no partir su motor—. El bloque de correo se montó como excepción a una regla que no admitía excepciones, y los tres avisos de `§4.4e` ya decían en voz alta que *"dos puertas reparten el clic"* y que *"el que puede perder es agendar, que es el caro"*.
+
+**EL EJE QUE DECIDE, y es lo que faltaba escrito: el ALCANCE y la TEMPERATURA de ese pilar, no la fricción de la puerta.**
+
+| el pilar trae… | qué puerta | por qué |
+|---|---|---|
+| **poco alcance y mucha intención** (historia) | **agendar** | Convierte al que alcanza mejor que ningún otro pilar. Bajar ahí la puerta es **cambiar una reunión por un suscriptor**, y el negocio quiere reuniones |
+| **mucho alcance frío** (meme) | correo | A gente que no nos conoce de nada, pedir una reunión es caro y el CTR a agendar se hunde (0,004-0,029% en agosto) |
+
+**El dato que sostiene la mitad de historia** (`post-workflow §4.6-MEDIDO`): 0,41% · 0,364% · 0,276% de CTR a `/agendar/`, contra el 0,022% del meme de más alcance del mes. **Historia no es el pilar que más gente alcanza, es el que mejor convierte al que alcanza.**
+
+**Y la coherencia temática, que es el argumento de Iker y va antes que el dato:** una historia se construye **entera** sobre el dolor que resuelve la herramienta, así que el enlace de agendar cae solo. El de correo habría que **importarlo**, y un dolor importado produce la frase de catálogo que `§4.4b` prohíbe.
+
+**LA PUERTA ÚNICA, POR PILAR:**
+
+| pilar | puerta | estado |
+|---|---|---|
+| MAPA | ultra ninja a `/mapas/{region}/` | ya estaba |
+| "LOS 10" · DESPIECE | agendar | ya estaba |
+| **HISTORIA** | **agendar** | ⭐ decidido el 24/08 |
+| EVENTO | Luma | ya estaba |
+| LEAD MAGNET | ninguna en el post | ya estaba |
+| MEME | ⚠️ correo | **hipótesis MÍA, sin aprobar** (`working-preferences §0c`) |
+| INSIGHT y post suelto | la decide el TEMA, ver `§4.4e-SOLO` | |
+
+- ⚠️ **La fila del MEME es una deducción mía y va marcada como tal.** Los tres memes con doble bloque tienen el `link_url` **vacío** en la BD, o sea que **no medimos nada** ni a favor ni en contra. Lo único medido es que el meme convierte fatal en CTR y muy bien por interacción, y de ahí a decir "en meme va el correo" hay un salto que todavía no está dado. **Se prueba en un meme y se anota.**
+- **`§4.4e-SOLO` no cambia y ahora encaja mejor:** si el TEMA del post no toca vender, agendar se cae y el correo queda de única puerta. Es la misma pregunta —¿de qué habla este post?— resuelta al revés, y sigue siendo una puerta.
+- **Lo que NO se retira:** el bloque de correo entero. Sigue existiendo, con sus reglas de forma y su lista de quemadas; lo que cambia es **dónde** va, y que nunca va acompañado.
 
 #### ⛔⛔ 4.4e-SOLO · SI EL TEMA DEL POST NO TOCA VENDER, EL DE AGENDAR NO ENTRA Y EL CORREO VA SOLO (Iker, 2026-08-21)
 
