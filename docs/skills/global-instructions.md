@@ -166,8 +166,22 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 | **Cierre** (Spoiler, Plot twist, P.D.) | `CIERRE_QUEMADO` |
 | **Reveal** (`Sí, hablo de X`) | `REVEAL_QUEMADO` |
 | **Eje del cuerpo** (el "callado/en silencio" en mapas) | `§4.2 Paso 3`, prohibido |
+| **⭐ Arranque de la ANÁFORA de los bloques de 2 y de 3** | `ARRANQUE_QUEMADO`, por pilar |
 | **Emoji del gancho** | criterio: no siempre `👇` |
 | **Ángulo del ancla de ventas** | `§2.3`, rota respecto al post anterior |
+
+#### ⛔⛔ 2.0b-ARRANQUE · EL ARRANQUE DE LA ANÁFORA ROTA EN TODOS LOS PILARES, NO SOLO EN PELOTEO (Iker, 2026-08-25)
+
+> **Iker, y la parte que importa es la segunda mitad:** *"aunque sea el pilar historia o sea el pilar que sea, siempre, de cara al espectador, tenemos que mantener el mismo formateado, pero como receta global deberías haber tenido, y no solo en peloteo regional de mapa —que ahí siempre te confundías y siempre repetías el mismo tipo de inicios en los bloques—, siempre tiene que haber variedad y sorprender"*.
+
+**Lo que faltaba, y estaba a medias en dos sitios:** `working-preferences §4` ya pedía variar el arranque de los bloques, y `§3.2` ya pedía **anáfora DENTRO del bloque y variedad ENTRE bloques**… pero **solo dentro del mismo post**. Nadie decía que el arranque también rota **entre posts**, y por eso no estaba en el inventario de aquí arriba.
+
+**El fallo que lo motiva, y es de libro:** entregué `La web… / La centralita… / La persona…` **una semana después** de que la historia de Iker del 18/08 publicara `La eché… / La eché… / La eché…`. Mismo pilar, mismo arranque, tres líneas seguidas que el lector ve como un bloque.
+
+- **⛔ Y da igual que sea OTRA CUENTA.** Iker: *"aunque sea otra cuenta, me da igual, hay que seguir sorprendiendo"*. Las tres cuentas de founder comparten red (`post-workflow`, visión de futuro), así que el mismo lector ve las dos.
+- **CÓMO SE ROTA, y es la lista de `working-preferences §4`:** si el bloque anterior de ese pilar empezaba por **artículo** (`La`, `El`), el siguiente empieza por **VERBO** (`Sabe`, `Marca`), o por **nombre**, o por **lugar**, o por **número**. Caso del 25/08: `La web…` pasó a **`Sabe el nombre de la empresa. / Sabe el número de la centralita. / Sabe todo menos quién compra dentro.`**
+- **Lo que NO cambia es el formateado.** Sigue habiendo anáfora, escalera y bloque de 2. **Lo que rota es la palabra con la que arranca, no la estructura**, exactamente igual que el mapa repite su fórmula y cambia el concepto.
+- **Mecanizado** como aviso en `validar-post.py` (`RITMO: el arranque de la anafora no esta quemado`), que **imprime los arranques del post** aunque no haya ninguno repetido — porque el trabajo no es que el script decida, es que yo los VEA antes de entregar. Aviso y no fallo duro: `La`, `No` o `Me` son demasiado comunes para vetarlas a ciegas.
 
 **LAS TRES REGLAS DE MANTENIMIENTO:**
 1. **Al publicar, la frase usada entra en su lista.** Las listas solo crecen. Esto no es opcional y no espera a que nadie lo pida.

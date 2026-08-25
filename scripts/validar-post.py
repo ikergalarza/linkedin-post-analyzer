@@ -179,6 +179,31 @@ SPAM_QUEMADO_CORREO = {
     'de eso va nuestro correo de ventas': 'post de Mario 21/08, la forma larga',
 }
 
+# §2.0b — ARRANQUES DE BLOQUE YA PUBLICADOS, POR PILAR (Iker, 2026-08-25).
+# La ley de variedad listaba concepto, verbo del prejuicio, frase-rabia, spam,
+# opener, cierre y reveal... y NO listaba el ARRANQUE DE LA ANAFORA de los
+# bloques de 2 y de 3, que es lo que el lector ve tres veces seguidas. Resultado:
+# entregue `La web / La centralita / La persona` una semana despues de que la
+# historia de Iker del 18/08 publicara `La eche / La eche / La eche`. Mismo
+# pilar, mismo arranque, cuenta distinta — y a Iker le da igual la cuenta:
+# "aunque sea otra cuenta, me da igual, hay que seguir sorprendiendo".
+# Al publicar se mete aqui el arranque usado. Va de AVISO y no de fallo duro
+# porque `No`, `La` o `Me` son palabras demasiado comunes para vetarlas a ciegas:
+# lo que hace falta es VERLAS al entregar, que es justo lo que faltaba.
+ARRANQUE_QUEMADO = {
+    'historia': {
+        'la': 'historia de Iker 18/08 ("La eche donde el coche...")',
+        'ni': 'historia de Iker 13/08 ("Ni una pregunta por el precio")',
+    },
+    'mapa': {
+        'no': 'mapa de Navarra ("No paga las nominas San Fermin")',
+        'se': 'mapa de Asturias ("Se sabe el producto...")',
+    },
+    'los10': {
+        'no': '"Los 10" del Pais Vasco ("No publica. No da charlas.")',
+    },
+}
+
 CONCEPTO_QUEMADO = {
     'sitio de comer': 'Euskadi',
     'desierto': 'Murcia',
@@ -1270,6 +1295,31 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         chk(_sueltas >= 0.55, 'RITMO: la linea suelta domina, +55% de los bloques (§3.2)',
             f'ritmo {_ritmo} — solo {_sueltas:.0%} son lineas sueltas. La suelta es la base y '
             'los bloques son la variedad, no al reves')
+
+        # §2.0b — EL ARRANQUE DE LA ANAFORA TAMBIEN ROTA, Y NO SOLO EN PELOTEO
+        # (Iker, 2026-08-25). La ley de variedad no lo listaba y por eso se colo
+        # `La web / La centralita / La persona` una semana despues del
+        # `La eche / La eche / La eche` de la historia del 18/08. Iker: "siempre
+        # tiene que haber variedad y sorprender... aunque sea otra cuenta, me da
+        # igual". Aviso y no fallo duro: `La`, `No` o `Me` son demasiado comunes
+        # para vetarlas a ciegas, lo que hacia falta era VERLAS antes de entregar.
+        _anaf = []
+        for _b in bloques(texto)[1:]:
+            if len(_b) < 2 or es_lista(_b):
+                continue
+            _pr = [normalizar_entidad(l.strip().split()[0]) for l in _b if l.strip()]
+            if len(set(_pr)) == 1:
+                _anaf.append(_pr[0])
+        _qa = ARRANQUE_QUEMADO.get(pilar, {})
+        _rep = [] if historico else sorted({a for a in _anaf if a in _qa})
+        chk(not _rep, 'RITMO: el arranque de la anafora no esta quemado (§2.0b)',
+            ('arranques de este post: %s. Repetido: %s. Rota el arranque: si el '
+             'anterior empezaba por articulo, este que empiece por VERBO, por '
+             'nombre, por lugar o por numero (working-preferences §4)'
+             % (', '.join('"%s"' % a for a in _anaf) or 'ninguno',
+                ' · '.join('"%s" ya salio en %s' % (a, _qa[a]) for a in _rep)))
+            if _rep else ('arranques: %s' % (', '.join('"%s"' % a for a in _anaf) or 'sin anafora')),
+            aviso=True)
 
     # ⚠️ RECORDATORIO DE ENTREGA, en TODOS los pilares (Iker, 2026-08-06). El
     # validador solo ve el texto, asi que la forma de la ENTREGA no la puede
