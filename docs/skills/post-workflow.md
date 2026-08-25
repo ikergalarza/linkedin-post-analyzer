@@ -893,6 +893,19 @@ sorprende, que es de lo que vive este pilar.
 > - **Se comprueba en el HEADLINE del autor**, no en si el chiste se puede llevar a ventas.
 > - **El caso que lo motiva:** el meme de la búsqueda de Google de Asier (20/08) hizo **3.010 imp · 0.32x** con una referencia que era meme pero no de ventas.
 >
+> **📊 Y LA REGLA NO ES SOLO CRITERIO, ESTÁ EN NUESTROS PROPIOS NÚMEROS (medido el 2026-08-25).** Clasificados a mano los memes de las 3 cuentas con referencia anotada en el historial:
+>
+> | La referencia era… | n | Mediana de impresiones | Los casos |
+> |---|---|---|---|
+> | **DE VENTAS** | 9 | **95.913** | 168.926 · 165.526 · 138.828 · 121.706 · 95.913 · 93.744 · 24.806 · 12.805 · 1.784 |
+> | **NO de ventas** | 7 | **1.405** | 21.761 · 16.769 · 3.010 · 1.405 · 550 · 345 · 196 |
+>
+> **68 veces más mediana.** Y los **seis** memes de la casa por encima de 90.000 impresiones salen los seis de una referencia de ventas.
+> - ⚠️ **Lo que no prueba:** que baste con que sea de ventas. El diccionario (brendan short, GTM) era de ventas y se quedó en **1.784**. Ser de ventas es **condición necesaria, no suficiente**.
+> - ⚠️ **Y la clasificación la he hecho yo a mano** leyendo la referencia anotada en `historial-publicaciones`, así que se puede discutir caso por caso. Lo que no se discute con esa distancia es la dirección.
+>
+> **🔎 LO QUE CUESTA ENCONTRARLA, dicho para que nadie repita el barrido a ciegas (2026-08-25).** Barridos **58 creadores de ventas del corpus, 494 posts con imagen en la BD y 236 más frescos traídos de Unipile**, midiendo el % de risa uno a uno: **solo 7 pasan el filtro de meme de verdad (≥25% de risa)**, y de los **250 posts de ventas que hablan del JEFE, cero**. La cantera del rincón de dirección está vacía de memes: lo que hay son posts de consejo con foto. **Si algún día hace falta uno de ese rincón y no aparece, no es que se haya buscado mal.**
+>
 > **LA REGLA, por orden de preferencia:**
 > 1. **Lo primero: referencias que YA funcionaron EN VENTAS.** Si el chiste nació en nuestro sector, el puente no hay que construirlo, ya está hecho. Ese es el coste oculto que casi nadie ve: **un meme que hay que "adaptar a ventas" durante siete iteraciones es un meme que va a llegar forzado.**
 > 2. **Y dentro de esas, mejor en INGLÉS que en español.** Dos motivos: la copia se nota menos (nuestro público no vio el original) y el autor tiene menos probabilidad de cruzarse con nosotros. Con un original español pasó lo que pasó: Félix Fernández bloqueó a Unai en menos de una hora.
