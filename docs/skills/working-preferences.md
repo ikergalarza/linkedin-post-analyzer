@@ -90,7 +90,7 @@ Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y d
 
 ## 🛑🛑 0d · DESPUES DE CADA EDICION POR SCRIPT, BUSCAR BYTES 0x08. YA VAN TRES
 
-**El fallo, siempre igual:** edito un fichero con un script, la edicion mete un `` de regex, y por el camino se convierte en un **byte de control 0x08**. No da error, no rompe el build, no lo ve el `git diff` a simple vista. **La regex simplemente no casa NUNCA y el check sale OK en falso.**
+**El fallo, siempre igual:** edito un fichero con un script, la edicion mete un `\b` de regex, y por el camino se convierte en un **byte de control 0x08**. No da error, no rompe el build, no lo ve el `git diff` a simple vista. **La regex simplemente no casa NUNCA y el check sale OK en falso.**
 
 **Las tres veces:**
 1. **06/08** — 12 regex de `validar-post.py`. AI-tells, menciones y agenda llevaban **semanas** dando OK sin comprobar nada.
@@ -101,7 +101,7 @@ Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y d
 ```
 python -c "import io,glob;[print(p,f.count(chr(8))) for p in glob.glob('**/*.ts',recursive=True)+glob.glob('scripts/*.py') for f in [io.open(p,encoding='utf-8').read()] if chr(8) in f]"
 ```
-Si sale algo, se sustituye por `` y se vuelve a comprobar.
+Si sale algo, se sustituye por `\b` y se vuelve a comprobar.
 
 **⚠️ Y LO QUE ENSEÑA DE FONDO: un check que no casa nunca es PEOR que no tener el check.** Da la señal de que algo esta vigilado cuando no lo esta, y por eso se tarda semanas en descubrirlo. Cuando un check "siempre pasa", la primera sospecha no es que el codigo este bien: es que el check este muerto.
 
