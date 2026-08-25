@@ -2319,6 +2319,52 @@ router.get('/posts/:postId/comments', async (req: Request, res: Response) => {
   }
 });
 
+// ⛔⛔ GEMELO DE `cerradoSinPedirlo` DEL PANEL (Iker, 2026-08-25).
+//
+// ⚠️ ESTA REGLA VIVE EN DOS SITIOS y tienen que decir LO MISMO: aqui, que pinta
+// la chapa «N para actuar» de la fila plegada, y `cerradoSinPedirlo` en
+// `frontend/src/components/accounts/leadMagnetCopy.ts`, que decide qué tarjetas
+// se ven debajo. Si cambias una y no la otra, la chapa dice 1 y debajo no
+// aparece nadie — que es exactamente lo que pasó el 21/08 con otra regla de este
+// mismo panel. **El porqué de cada condición está escrito allí, entero.**
+//
+// Resumen: alguien que NO pidió el recurso y a quien YA has contestado no es
+// trabajo pendiente. El caso que lo motiva es Josu Yuguero, que comentó para
+// corregir un dato de plantilla en el post de la lista y se quedó de único
+// «1 para actuar» del post porque, siendo de 1er grado, la única salida de esa
+// lista era tener una fila de envío.
+//
+// La palabra sale del TEXTO DEL POST, igual que `extractKeyword` en el panel.
+// El panel además puede tener una semilla en localStorage, que aquí no se ve;
+// si divergieran, el backend contaría uno de más, que es infinitamente menos
+// grave que esconder un lead.
+const CTA_KEYWORD_POST = /comenta\w*\s+["“«']([^"”»']{2,30})["”»']/gi;
+
+function palabraDelPost(postText: string | null | undefined): string {
+  if (!postText) return '';
+  let last = '';
+  for (const m of postText.matchAll(CTA_KEYWORD_POST)) last = m[1];
+  return last.trim();
+}
+
+// Palabra ENTERA y sin tildes, para que "buen listado" no cuente como pedir
+// "lista". Los límites van a mano y no con \b porque \b es solo ASCII en JS y
+// se rompe con una ñ o un acento.
+function comentarioPideLaPalabra(text: string, keyword: string): boolean {
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const k = norm(keyword).trim();
+  if (!k) return false;
+  const t = norm(text || '');
+  const esLetra = (c: string | undefined) => !!c && /[a-z0-9]/.test(c);
+  let from = 0;
+  for (;;) {
+    const i = t.indexOf(k, from);
+    if (i === -1) return false;
+    if (!esLetra(t[i - 1]) && !esLetra(t[i + k.length])) return true;
+    from = i + 1;
+  }
+}
+
 // GET /api/accounts/comments/pending — the unified inbox: every UNANSWERED
 // top-level comment across recent posts, grouped by post, for ALL managed
 // accounts. The frontend fetches this ONCE and filters by account
@@ -2509,6 +2555,8 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
               const enSeguimiento = seguimientoPorPost.get(post.id) ?? new Set<string>();
               const invitaciones = invitacionesPorCuenta.get(post.creator_id) ?? new Set<string>();
               const vistos = new Set<string>();
+              // La palabra del post, una vez por post y no por comentario.
+              const palabra = palabraDelPost(post.content_text);
               for (const t of threads) {
                 const pid = t.author?.profile_id;
                 if (!pid || t.author?.is_company || vistos.has(pid)) continue;
@@ -2535,6 +2583,17 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
                 // LinkedIn a mano, o antes de que existiera ese registro—.
                 const puedeDm = t.author?.network_distance === 1 || invitaciones.has(pid);
                 if (!puedeDm && t.answered_by_author) { esperando_su_paso++; continue; }
+
+                // ⛔ NO PIDIO NADA Y YA ESTA CONTESTADO (Iker, 2026-08-25).
+                // Gemelo de `cerradoSinPedirlo` del panel: las tres condiciones
+                // van juntas y el porque de cada una esta escrito alli. Ojo con
+                // la primera — si el post no lleva palabra (los nuevos la llevan
+                // en la FOTO), no se cierra a nadie, porque ahi no hay señal y
+                // excluir seria esconder leads en silencio.
+                // NO cuenta como `esperando_su_paso`: no esperamos nada de esta
+                // persona, es que no hay nada que hacer con ella.
+                if (palabra && t.answered_by_author
+                    && !comentarioPideLaPalabra(t.text || '', palabra)) continue;
 
                 accionables++;
               }

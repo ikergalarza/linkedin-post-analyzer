@@ -235,6 +235,62 @@ export function extractKeyword(postText: string | null | undefined): string {
   return last.trim();
 }
 
+// ⛔⛔ ¿ESTE COMENTARIO ESTA CERRADO SIN HABER PEDIDO NADA? (Iker, 2026-08-25)
+//
+// Devuelve true cuando la persona **no pidio el recurso** y **ya le has
+// contestado**: ahi no queda trabajo pendiente y no tiene que salir en «Para
+// actuar».
+//
+// EL CASO QUE LO MOTIVA. En el post de la lista del 22/07, Josu Yuguero comenta
+// para CORREGIR un dato de plantilla de DANOBAT. No pide nada, no escribe la
+// palabra, y Unai ya le contesto — y aun asi el panel lo pintaba como el unico
+// «1 para actuar» del post, con la maquinaria de entrega montada.
+//
+// ⚠️ Y LA SOSPECHA ERA OTRA, ASI QUE CONVIENE DEJARLO ESCRITO: parecia que
+// alguna palabra del comentario, o la mencion a varias empresas, disparaba un
+// trigger. **No hay tal trigger: `accionable` no lee el texto del comentario ni
+// una vez.** Para alguien de 1er grado la regla era solo "¿tiene fila de envio?
+// no -> hay trabajo", y Josu era el unico de los 18 sin fila porque a los otros
+// 17 ya se les habia mandado algo. Por eso salia solo el, y solo en ese post.
+//
+// LAS TRES CONDICIONES SON A LA VEZ, Y CADA UNA TAPA UNA FORMA DE PERDER UN LEAD:
+//
+//  1. **El post TIENE palabra.** Desde el 05/08 el `Comenta "X"` vive en la FOTO
+//     (`post-workflow §4.5.0-CTA-IMAGEN`), asi que los posts nuevos no la llevan
+//     en el texto y `extractKeyword` devuelve ''. Sin esta condicion, la regla
+//     cerraria a TODO el que este contestado en esos posts. **Eso es perder
+//     leads en silencio, que es el peor modo de fallo: no da error, simplemente
+//     no aparece.**
+//  2. **No la escribio.** Palabra entera y sin tildes (`matchesKeyword`), asi que
+//     "buen listado" no cuenta como pedir "lista".
+//  3. **Ya esta contestado.** Es lo que lo hace seguro: hay gente que pide sin
+//     escribir la palabra ("me interesa"), y mientras no le hayas contestado
+//     sigue saliendo para que la mires. Solo se cierra cuando ya decidiste que
+//     hacer con ella. Es el mismo criterio que ya usaba la regla del 3er grado
+//     (`!puedeDm && answered_by_author`), extendido: la respuesta publica cierra
+//     el caso tambien cuando la persona no pidio nada.
+//
+// MEDIDO SOBRE 4 LEAD MAGNETS REALES antes de escribirla: quita **7 falsos
+// positivos de 16 accionables** y **no tumba ni una peticion de verdad**. Los
+// que salen son todos opiniones ("Es muy complicado tener un perfil perfecto",
+// "El museo de los horrores deberia ser obligatorio"); los que quedan son todos
+// peticiones limpias ("Clientes marzo", "destripa ventas", "Clientes junio 🤩").
+//
+// ⚠️⚠️ ESTA REGLA VIVE EN DOS SITIOS y tienen que decir lo mismo: aqui, y en
+// `/comments/pending` del backend (`backend/src/routes/accounts.ts`), que es
+// quien pinta la chapa «N para actuar» de la fila plegada. Si cambias una y no
+// la otra, la chapa dice 1 y debajo no aparece nadie — que es exactamente lo que
+// paso el 21/08 con otra regla de este mismo panel.
+export function cerradoSinPedirlo(
+  text: string,
+  keyword: string,
+  answeredByAuthor: boolean
+): boolean {
+  if (!keyword.trim()) return false;
+  if (!answeredByAuthor) return false;
+  return !matchesKeyword(text || '', keyword);
+}
+
 // ────────────── el RECURSO se saca del post, sin palabra de por medio ──────────────
 //
 // Sustituye al campo "Palabra clave" del panel (Iker, 2026-08-11): *"ya no

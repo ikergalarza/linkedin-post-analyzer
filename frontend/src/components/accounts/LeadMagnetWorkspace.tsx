@@ -16,7 +16,8 @@ import { Avatar, EmojiPicker, ErrorBoundary, ReactionBar, fmtRelative } from './
 import type { Thread } from './shared';
 import {
   buildAskReply, buildDm, buildListaDm, buildReply,
-  commentDepth, detectarRecurso, extractKeyword, extractSector, matchesKeyword, resolverRecurso, voiceFor,
+  cerradoSinPedirlo, commentDepth, detectarRecurso, extractKeyword, extractSector, matchesKeyword,
+  resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 import { loadConfig } from './lmConfigLocal';
@@ -332,8 +333,16 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
     const puedeDm = (t.author.network_distance ?? null) === 1
       || (t.author.profile_id ? solicitudesPendientes.has(t.author.profile_id) : false);
     if (!puedeDm && t.answered_by_author) return false;
+    // 5. NO PIDIO NADA Y YA ESTA CONTESTADO (Iker, 2026-08-25).
+    //    El hueco que dejaba a Josu Yuguero como el unico «1 para actuar» del
+    //    post de la lista: corrigio un dato de plantilla, no pidio el recurso, ya
+    //    se le habia contestado, y como es de 1er grado la regla 4 no le llegaba.
+    //    Para un 1er grado la unica salida de esta lista era tener fila de envio,
+    //    asi que quien solo comenta se quedaba aqui para siempre.
+    //    Las tres condiciones y el porque de cada una, en `cerradoSinPedirlo`.
+    if (cerradoSinPedirlo(t.text || '', cfg.keyword, !!t.answered_by_author)) return false;
     return true;
-  }, [sendsByPerson, sendsByComment, gestionadosArriba, solicitudesPendientes]);
+  }, [sendsByPerson, sendsByComment, gestionadosArriba, solicitudesPendientes, cfg.keyword]);
 
   const filtrados = useMemo(
     () => (gradoFiltro === 'accionables' ? matches.filter(accionable)
