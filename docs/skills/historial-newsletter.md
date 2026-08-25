@@ -403,31 +403,29 @@ el de Bouncer — se decide si la 5 sale el viernes.
 
 ---
 
-## 🔴 PENDIENTE (Iker, 2026-08-25): plan de tandas 5 y 6, con un choque de fechas sin resolver
+## 🔴 PENDIENTE (Iker, 2026-08-25): plan de tandas 5 y 6
 
 **Iker no está la semana del 2026-08-31 al 2026-09-04.** Por eso quiere las tandas 5 y 6 fuera antes de esa
 semana, no dentro.
 
-**Lo que dijo:** tanda 5 el jueves, tanda 6 el viernes, y programar las dos el viernes (una vez vistos
-TODOS los rebotes de la tanda 4). Confirmó explícitamente, al preguntárselo, que el jueves/viernes es
-**esta semana**: jueves 2026-08-26 y viernes 2026-08-27.
+**⚠️ Corrección del 2026-08-25, entrada anterior de este fichero: el "choque" que se apuntó aquí era un
+error mío, no un problema real.** Etiqueté el 26/08 como jueves y es MIÉRCOLES — 2026-08-25 es martes,
+verificado a mano dos veces tras el aviso de Iker. Con la semana bien puesta, no hay ningún choque:
 
-**⚠️ El choque, sin resolver todavía:** la tanda 4 YA está programada para el jueves 26/08 a las 09:05
-(campaña Brevo id 5). Tanda 5 no puede salir ESE MISMO jueves sin:
-- pisar el hueco de 24-48h entre tandas que se viene respetando desde el 2026-08-10, y
-- lo más importante: **sin haber visto ni un solo rebote real de la tanda 4 antes de comprometer la 5**,
-  que es justo lo que Iker decidió el 2026-08-25 tras la primera verificación con Bouncer ("mañana ver
-  los rebotes y proceder, no confiar solo en el informe pagado").
+| fecha | día | qué va |
+|---|---|---|
+| 2026-08-26 | miércoles | **tanda 4** — ya programada, campaña Brevo id 5, sin tocar |
+| 2026-08-27 | jueves | tanda 5 — pendiente de decidir el propio 27/08 |
+| 2026-08-28 | viernes | tanda 6 — pendiente de decidir el propio 27/08 |
 
-No se ha tocado nada de esto todavía. **Se resuelve el viernes 27/08**, cuando Iker mire los rebotes
-reales de la tanda 4 (mandada el jueves) y decida con ese dato. Las opciones más probables en ese
-momento: (a) tanda 5 sale ese mismo viernes en vez del jueves, con la 6 quedando para la semana
-siguiente pese a su ausencia (alguien más la programa, o se deja en cola desde antes), o (b) confirma
-que quiere las dos fuera esta semana igualmente y asume el riesgo de no esperar a ver la 4.
+**Se decide y se programa el viernes 27/08**, una vez vistos TODOS los rebotes reales de la tanda 4
+(mandada el miércoles 26). Con 24h de margen desde el envío es de sobra para ese momento.
 
-**Y otra regla que choca igual:** la tanda 6, si sale en viernes, sería la ÚLTIMA tanda en viernes — la
-regla de Mario documentada arriba en este mismo fichero dice explícitamente que la última tanda NO se
-manda en viernes (se la come el fin de semana). Sin resolver.
+**Lo único que sigue sin resolver, y esto NO era un error mío:** la tanda 6 en viernes 28 sería la
+ÚLTIMA tanda en viernes — la regla de Mario documentada arriba en este mismo fichero dice explícitamente
+que la última tanda no se manda en viernes (se la come el fin de semana). Se decide el 27/08 junto con
+el resto: o se asume el riesgo a sabiendas (Iker está fuera la semana siguiente y quiere todo fuera
+antes), o la 6 se deja para cuando vuelva.
 
 ## 🔴 PENDIENTE: dos correos NUEVOS, sin reutilizar el texto de Kaixito 01
 
