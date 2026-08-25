@@ -524,3 +524,34 @@ estas son las dos personas".
 
 Regla: si la misma decision se calcula en dos sitios, cada uno lleva un aviso
 cruzado nombrando al otro. Sin eso, el siguiente cambio rompe el par otra vez.
+
+## Aprendizaje 2026-08-25 — al QUITAR un filtro, busca quien vivia de el
+
+Tercer caso de la misma familia que los dos de arriba, y el mas dificil de ver
+porque aqui **el cambio que rompio las cosas era correcto**.
+
+`extractSector` nacio el 22/07 con una precondicion implicita: la lista de
+comentarios estaba FILTRADA por la palabra clave, asi que todo lo que le llegaba
+era una peticion del recurso, y "quitale la palabra y el relleno, lo que quede
+es el sector" funcionaba. El 11/08 se quito ese filtro **con razon** (con el
+gate muerto nadie escribe la palabra y filtrar dejaba la lista vacia con 400
+comentarios debajo). Nadie miro quien dependia de la garantia que acababa de
+desaparecer, y desde ese dia a quien NO pedia nada se le extraia el comentario
+entero como "sector".
+
+**La regla: cuando quites un filtro, un guard o una validacion de entrada,
+busca a los consumidores de lo que ese filtro GARANTIZABA.** Un `grep` de la
+funcion que se alimentaba de ahi basta. El diff del cambio no lo enseña: lo que
+se rompe no es lo que tocas, es lo que confiaba en ello.
+
+- **El sintoma tipico es un valor absurdo, no un error.** No peta, no da 500, no
+  sale en el typecheck: devuelve basura con la forma correcta. Aqui, un `string`
+  perfectamente valido que era medio comentario.
+- **Y se dimensiona antes de arreglar, con datos reales.** En el post de la
+  lista del 22/07: 15 de 18 comentarios llevaban la palabra y daban un sector de
+  verdad; los 3 que no la llevaban eran EXACTAMENTE los tres que no pedian nada.
+  Un corte de 15/3 limpio es lo que convierte una corazonada en una regla.
+- **Y se mira si el bug dejo datos sucios**, no solo si la pantalla ya se ve
+  bien: aqui se comprobo que ninguna fila de `lead_magnet_sends` tenia sector
+  guardado, o sea que el daño no habia pasado de la UI. Si los hubiera tenido,
+  el arreglo incluye limpiarlos.
