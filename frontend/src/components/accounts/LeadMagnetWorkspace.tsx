@@ -16,7 +16,7 @@ import { Avatar, EmojiPicker, ErrorBoundary, ReactionBar, fmtRelative } from './
 import type { Thread } from './shared';
 import {
   buildAskReply, buildDm, buildListaDm, buildReply,
-  commentDepth, detectarRecurso, extractKeyword, extractSector, resolverRecurso, voiceFor,
+  commentDepth, detectarRecurso, extractKeyword, extractSector, matchesKeyword, resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
 import { loadConfig } from './lmConfigLocal';
@@ -946,10 +946,25 @@ function CommenterCard({
     setMessage(buildDm({ name: thread.author.name, location, topic: recurso.topic, link: recurso.link, voice }));
   }, [location, cfg.keyword, cfg.kind, canal, msgTouched, alreadySent, ownsDm, voice, thread.author.name]);
 
+  // ¿Este comentario PIDE el recurso, o solo comenta el post?
+  //
+  // Es la pregunta que el panel dejó de hacerse el 11/08, cuando se quitó el
+  // filtro por palabra de `matches` (y se quitó bien: con el gate muerto nadie
+  // la escribe y filtrar dejaba la lista vacía). Pero una cosa es que TODOS
+  // entren en la lista y otra que a todos se les trate como peticiones: quien
+  // corrige un dato o te felicita no ha pedido nada, y la tarjeta tiene que
+  // decirlo antes de que le mandes un recurso que no espera.
+  //
+  // Medido en el post de la lista del 22/07: 15 de 18 llevan la palabra, y los
+  // 3 que no la llevan son justo los tres que no piden (la corrección de Josu
+  // Yuguero y dos apoyos de los jefes). El corte es limpio.
+  const pidioElRecurso = matchesKeyword(thread.text || '', cfg.keyword);
+
   // ── lista state (solo tipo 'lista') ──
   // El sector se prerrellena con lo que la persona escribió tras la palabra
   // clave ("lista automoción" → "automoción"); si solo comentó la palabra, sale
-  // vacío y se escribe a mano.
+  // vacío y se escribe a mano. Y si NO comentó la palabra, sale vacío también:
+  // sin petición no hay sector que extraer (`extractSector`).
   const [sector, setSector] = useState<string>(() => extractSector(thread.text || '', cfg.keyword));
   const [listaLoading, setListaLoading] = useState(false);
   const [listaMsg, setListaMsg] = useState<string | null>(null);
@@ -1490,6 +1505,25 @@ function CommenterCard({
               <span className="text-[11px] font-medium text-text-secondary">
                 {cfg.kind === 'lista' ? 'Lista de empresas por privado' : 'Mensaje privado con el recurso'}
               </span>
+              {/* ⛔ ESTA PERSONA NO HA PEDIDO NADA, Y HAY QUE DECIRLO (Iker, 2026-08-25).
+                  Desde el 11/08 entran TODOS los comentarios de personas, y es lo
+                  correcto: con el gate muerto nadie escribe la palabra y filtrar
+                  dejaba la lista vacía. Lo que faltaba es la otra mitad — que la
+                  tarjeta distinga al que PIDE del que solo COMENTA. Sin esta chapa,
+                  a quien corrige un dato o te felicita se le monta el mismo bloque
+                  de entrega que al que pidió el recurso, con el botón listo.
+                  NO bloquea el envío a propósito: el criterio es tuyo, tarjeta por
+                  tarjeta (`§4.5.-3`). Solo avisa de que aquí no hay petición. */}
+              {!pidioElRecurso && (
+                <span
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                  title={cfg.keyword.trim()
+                    ? `No ha escrito "${cfg.keyword.trim()}" en su comentario, así que no consta que haya pedido el recurso. Míralo antes de mandarle nada.`
+                    : 'Este post no tiene palabra clave configurada, así que no hay forma de saber quién pide el recurso y quién solo comenta.'}
+                >
+                  no lo ha pedido
+                </span>
+              )}
               {/* Por qué este canal y no otro. Sin esto no se entiende que a uno
                   le vaya un mensaje normal y al de al lado se le pida el paso. */}
               {canal === 'dm-solicitud' && (
@@ -1514,7 +1548,10 @@ function CommenterCard({
                     value={sector}
                     onChange={(e) => setSector(e.target.value)}
                     disabled={listaLoading}
-                    placeholder="automoción, logística…"
+                    // Vacío por no haber pedido nada y vacío por haber comentado
+                    // solo la palabra son dos cosas distintas, y el placeholder es
+                    // el único sitio donde se pueden distinguir sin abrir el hilo.
+                    placeholder={pidioElRecurso ? 'automoción, logística…' : 'no ha pedido la lista · escríbelo tú si toca'}
                     className="w-full text-sm bg-bg-primary border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:border-accent disabled:opacity-50"
                   />
                 </div>

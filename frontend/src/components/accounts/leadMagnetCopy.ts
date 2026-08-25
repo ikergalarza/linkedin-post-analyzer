@@ -616,6 +616,36 @@ export function extractSector(text: string, keyword: string): string {
   const k = normalize(keyword).trim();
   const raw = (text || '').trim();
   if (!raw) return '';
+  // ⛔ SIN LA PALABRA CLAVE NO HAY SECTOR, Y ESTO ES LA PRECONDICION QUE SE
+  // ROMPIO SOLA (Iker, 2026-08-25).
+  //
+  // Esta funcion nacio el 22/07, cuando la lista de comentarios estaba FILTRADA
+  // por la palabra: todo lo que le llegaba era, por construccion, una peticion
+  // del recurso, asi que "quitale la palabra y el relleno, lo que quede es el
+  // sector" era correcto. El 11/08 se quito ese filtro a proposito (05d2ea0,
+  // "se acabo la palabra clave") porque con el gate muerto nadie la escribe y
+  // filtrar dejaba la lista vacia con 400 comentarios debajo. **La precondicion
+  // desaparecio y esto se quedo asumiendola.**
+  //
+  // Desde entonces, a quien NO pide nada se le extraia el comentario ENTERO
+  // como sector. Caso real del post de la lista del 22/07: Josu Yuguero corrige
+  // un dato de plantilla de DANOBAT y acaba con el sector "Unai muchas ayudar
+  // tantas personas. pequeno apunte. DANOBATGROUP formada SORALUCE Milling…",
+  // y con el boton de "Generar lista" activo para mandarle una lista que no
+  // habia pedido. Medido en ese post: 15 de 18 comentarios llevan la palabra y
+  // dan un sector de verdad; los 3 que no la llevan son EXACTAMENTE los tres
+  // que no piden nada (la correccion de Josu y dos apoyos de los jefes).
+  //
+  // Vacio es la respuesta honesta, y ademas desactiva solo el boton de generar
+  // (`disabled={!sector.trim()}`). El campo es editable: si alguien pide la
+  // lista sin escribir la palabra, se teclea a mano — que es infinitamente
+  // mejor que mandarle a Unipile media frase como si fuera un sector.
+  //
+  // `matchesKeyword` es el mismo comparador que usa el resto del panel (palabra
+  // entera, sin tildes) y ya devuelve false con la clave vacia, que es el otro
+  // caso sin señal: en un post nuevo `cfg.keyword` es '' y ahi no se puede
+  // saber si el comentario pide algo.
+  if (!matchesKeyword(raw, keyword)) return '';
   const kept = raw.split(/\s+/).filter((w) => {
     const n = normalize(w).replace(/[^\p{L}\p{N}]/gu, '');
     if (!n) return false;
