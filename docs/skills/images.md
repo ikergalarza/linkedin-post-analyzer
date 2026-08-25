@@ -232,6 +232,32 @@ La interfaz que imitamos **está en español entera**, incluidas las palabras de
 - WhatsApp: `online` → **`en línea`** · `typing…` → **`escribiendo…`**
 - LinkedIn: `Connect` → **`Conectar`** · `followers` → **`seguidores`**
 
+### 🌍 0a-septima-LOCAL · EN UN PANTALLAZO SE LOCALIZA TODO, NO SOLO EL IDIOMA — SALVO QUE SEA UN DATO REAL DE UN TERCERO (Iker, 2026-08-25)
+
+> **Iker, viendo el pantallazo del buscador de empleo con Seúl y Nueva York dentro:** *"aparte del idioma hay que adaptar las ubicaciones… nos convendría mejor ciudades de España, ¿no? Esto es como cuando te digo que cambies las horas y que las adaptes"*.
+
+**Tiene razón y es la misma familia que ya estaba escrita para las FECHAS** (`global §2.2b-CAPAS`: un día de la semana es un dato y se verifica contra la realidad, no contra la referencia) **y para las HORAS** (`§2.5b`: la hora de una escena la elegimos nosotros). Faltaba el resto de lo que SITÚA al lector, y va todo:
+
+| Se localiza | De | A |
+|---|---|---|
+| **Ciudades y países** | Nueva York, Seúl | Madrid, Bilbao, Donostia |
+| **Moneda** | `$1,200` | `1.200 €` |
+| **Formato de hora** | `2:17 PM` | `14:17` |
+| **Formato de fecha** | `08/25` | `25/08` |
+| **Prefijo de teléfono** | `+1 415…` | `+34 6…` |
+| **Nombres de persona** | Brad, Ashley | los de `§0a-septima-NOMBRES` |
+
+**Por qué importa: un pantallazo se cree o no se cree, y no hay término medio.** El registro entero vive de que el lector piense un segundo que eso es una captura de verdad (`§0a-sexta-bis`). Una ciudad americana en la pantalla de un director comercial de Gipuzkoa lo delata igual que una palabra en inglés.
+
+#### ⛔ LA EXCEPCIÓN, Y MANDA SOBRE LO DE ARRIBA: SI LA UBICACIÓN ES UN DATO REAL DE UNA EMPRESA O PERSONA QUE SALE NOMBRADA, NO SE TOCA
+
+**El caso del 25/08:** el meme lleva una captura del buscador de empleo con ofertas **de Anthropic**, y Anthropic no tiene oficina en Madrid. Cambiar `San Francisco` por `Madrid` no es localizar, es **inventarse una oficina de una empresa real**, comprobable por cualquiera en cinco segundos, y cae de lleno en el innegociable de `aboutme` (nunca un dato inventado). **Ahí manda la verdad sobre la cercanía.**
+
+**EL TEST, y es de un segundo:** *¿esa ubicación es ATREZO o es un dato de ALGUIEN?*
+- **Atrezo** (la ciudad de un remitente inventado, el sitio de una escena nuestra) → **se españoliza**.
+- **Dato de un tercero identificable** (la sede de una empresa nombrada, el destino de un vuelo real, el precio real de un producto) → **se queda como es**. Y si esa ubicación molesta al chiste, se **reencuadra** —se recorta esa columna o se quita la línea— pero **no se falsea**.
+- **Y el chiste casi nunca depende de la ciudad:** antes de pelearse con esto, comprueba si el detalle carga el chiste (`global §2.3c`). Si no lo carga, lo que sobra es el detalle, no la verdad.
+
 ### 0a-septima-quinquies · EL TEXTO DENTRO DE UN PANTALLAZO (Iker, 2026-07-29)
 
 Tres defectos que salieron en la segunda pasada del meme del tatuaje y que **tenian que haber ido ya en el primer prompt**. Van los tres, siempre, desde la version uno:
