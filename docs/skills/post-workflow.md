@@ -885,6 +885,14 @@ sorprende, que es de lo que vive este pilar.
 >
 > **El contraejemplo es el del tatuaje:** ya estaba adaptado a ventas ✅ y era psicológico ✅, **pero en español** ❌. Resultado: nos pillaron la copia en menos de una hora, Félix bloqueó a Unai, y **la polémica nos dio alcance**. Iker, y esto es lo importante: ***"tampoco me conviene que se nos haga viral por polémica de copia"***. **El alcance por polémica de copia no es una estrategia, es una factura aplazada.**
 >
+> ### ⛔⛔ 4.4-FUENTE-VENTAS · YA NO ES UNA PREFERENCIA: LA REFERENCIA ES **SIEMPRE** DE VENTAS (Iker, 2026-08-24)
+>
+> **La lista de abajo estaba ordenada por preferencia y el punto 3 abría la puerta a memes de otro sector. Esa puerta se cierra en los tres jefes.** Iker: *"siempre las referencias tienen que ser ya las originales, aunque estén en otro idioma, siempre de ventas"*. Solo **Mario** (marketing) y **Helena** (atención al cliente) son excepción, cada uno con su mundo.
+> - **Lo que se conserva del punto 3:** que el dolor sea **psicológico y universal** sigue siendo el criterio para elegir **dentro** de la cantera de ventas, no un permiso para salir de ella.
+> - **Y el rincón de ventas lo decide la cuenta** (`aboutme §2-CARRIL`): Unai desde el que manda, Iker de calle, Asier con lo técnico al lado sin pasarse de específico.
+> - **Se comprueba en el HEADLINE del autor**, no en si el chiste se puede llevar a ventas.
+> - **El caso que lo motiva:** el meme de la búsqueda de Google de Asier (20/08) hizo **3.010 imp · 0.32x** con una referencia que era meme pero no de ventas.
+>
 > **LA REGLA, por orden de preferencia:**
 > 1. **Lo primero: referencias que YA funcionaron EN VENTAS.** Si el chiste nació en nuestro sector, el puente no hay que construirlo, ya está hecho. Ese es el coste oculto que casi nadie ve: **un meme que hay que "adaptar a ventas" durante siete iteraciones es un meme que va a llegar forzado.**
 > 2. **Y dentro de esas, mejor en INGLÉS que en español.** Dos motivos: la copia se nota menos (nuestro público no vio el original) y el autor tiene menos probabilidad de cruzarse con nosotros. Con un original español pasó lo que pasó: Félix Fernández bloqueó a Unai en menos de una hora.

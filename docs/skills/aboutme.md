@@ -112,13 +112,37 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 **La regla: las cinco cuentas anclan a VENTAS, siempre y sin excepción. Lo que cambia es el SEGUNDO carril, que es el oficio de esa persona, y es de donde sale la REFERENCIA del meme.**
 
-| Cuenta | Carril | De dónde sale la referencia |
+### ⛔⛔⛔ LA REFERENCIA ES SIEMPRE DE VENTAS EN LOS TRES JEFES. EL CARRIL SOLO DECIDE **QUÉ RINCÓN** DE LAS VENTAS (Iker, 2026-08-24) — CANÓNICO, MANDA SOBRE TODO LO DE ABAJO
+
+> **Iker, literal:** *"solo tienes que coger referencias de marketing en el caso de que trabajemos con el perfil de Mario, que es una excepción. Al igual que solo tienes que coger referencias de atención al cliente o customer support si trabajamos con Helena. Si no, siempre las referencias tienen que ser ya las originales, aunque estén en otro idioma, siempre de ventas"*.
+
+**Lo que estaba mal escrito y me costó dos referencias en un día:** esta tabla decía que la referencia sale del **OFICIO** de la cuenta, y de ahí deduje que para Unai valía una referencia del mundo del founder aunque no fuera de ventas (propuse una de un CMO de marketing). **No vale.** En los tres jefes la referencia **nace dentro de ventas**; lo que cambia con la cuenta es **de qué parte de ventas**.
+
+| Cuenta | La referencia sale de | Qué NO vale |
 |---|---|---|
-| **Unai** (1er jefe, CEO) | ventas **+ dirección**: levantar dinero, fundadores, inversores, la imagen seria de la empresa y de la marca | El mundo del founder y del que dirige. Sobrio, cero infantil |
-| **Iker** (2º jefe, comercial) | ventas **+ el comercial de calle**: llamar por teléfono, la puerta fría, el cliente que no coge, el viaje a ver al cliente | Memes de comercial puro. Es la única cuenta que aguanta el registro bruto (`post-workflow §4.4-STOP`) |
-| **Asier** (3er jefe, técnico) | ventas **+ programación y producto**: el que construye lo que el comercial vende | Memes del mundo del desarrollo, **con el gancho anclado a ventas**. Sobrio, cero infantil |
-| **Mario** (marketing) | ventas **+ marketing y contenido** | Ya validado: su meme del 12/08 es de marketing con gancho de ventas |
-| **Helena** (customer success) | ventas **+ atención al cliente y partnerships** | Ya validado: su meme del 18/08 sale de la cantera de Customer Success Collective |
+| **Unai** (1er jefe, CEO) | ventas **desde el que manda**: el jefe de ventas, el director comercial, el CEO que pide números, el forecast, la reunión de pipeline | Founder o inversión sin ventas dentro |
+| **Iker** (2º jefe, comercial) | ventas **de calle**: llamar, puerta fría, el cliente que no coge, el viaje a ver al cliente. Única cuenta que aguanta el registro bruto (`post-workflow §4.4-STOP`) | — |
+| **Asier** (3er jefe, técnico) | ventas **con lo técnico al lado**: la herramienta, el dato, el producto que el comercial vende. **Y sin pasarse de específico: manda el alcance** (`§2.4`) | Un chiste de programación puro, que ni es de ventas ni lo entiende nuestro lector |
+| **Mario** (marketing) | 🟢 **EXCEPCIÓN: marketing y contenido** | — |
+| **Helena** (customer success) | 🟢 **EXCEPCIÓN: atención al cliente y partnerships** | — |
+
+**El caso que lo prueba, y es nuestro:** el meme de Asier del 20/08 (la captura de una búsqueda de Google) hizo **3.010 impresiones · 0.32x**. Iker, al revisarlo: *"originalmente sí era referencia de meme pero NO de ventas, cuando siempre lo tiene que ser"*.
+
+**⚠️ Y esto AFINA `post-workflow §4.4-FUENTE`, que decía que un meme de OTRO sector con dolor psicológico universal era "la excepción que da los mejores outliers".** Ya no se sale a buscar fuera: **se busca dentro de ventas y ahí se elige el que tenga el dolor más universal**. Lo de "que sea psicológico y universal" sigue mandando **como criterio de elección DENTRO de la cantera de ventas**, no como permiso para salir de ella.
+
+**Cómo se comprueba de verdad, que es donde fallé:** no basta con que el CHISTE se pueda llevar a ventas. **Se mira el HEADLINE del autor y de qué va su cuenta.** Si su perfil no dice ventas, comercial, SDR, AE, GTM, prospección o revenue, la referencia no es de ventas por mucho que el chiste encaje.
+
+---
+
+**El detalle del segundo carril (el oficio), que sigue valiendo para el TONO y para el ángulo:**
+
+| Cuenta | Carril | Registro |
+|---|---|---|
+| **Unai** (1er jefe, CEO) | ventas **+ dirección**: levantar dinero, fundadores, inversores, la imagen seria de la empresa y de la marca | Sobrio, cero infantil |
+| **Iker** (2º jefe, comercial) | ventas **+ el comercial de calle** | La única que aguanta el registro bruto |
+| **Asier** (3er jefe, técnico) | ventas **+ programación y producto** | Sobrio, cero infantil |
+| **Mario** (marketing) | ventas **+ marketing y contenido** | Ya validado: su meme del 12/08 |
+| **Helena** (customer success) | ventas **+ atención al cliente y partnerships** | Ya validado: su meme del 18/08, de la cantera de Customer Success Collective |
 
 **LAS DOS COSAS SE CUMPLEN A LA VEZ, y ese es todo el criterio:** la referencia viene del **oficio** de esa cuenta y el **gancho ancla a VENTAS** (`global §2.3`, el test del ancla). Con solo una de las dos, el post es de otro. Iker: *"todas las cuentas siempre tienen que tener la vinculación a ventas, al igual que hoy Helena ha sido un meme de ventas más atención al cliente, y el otro día con Mario fue de ventas y de marketing"*.
 

@@ -2554,20 +2554,29 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # era buena y la cuenta estaba mal elegida, y eso se decide ANTES de escribir.
     # Es criterio, asi que va de aviso: el script no sabe de que mundo sale un
     # chiste, pero si puede poner el carril delante para que no se olvide.
+    # Iker, 2026-08-24: la REFERENCIA es SIEMPRE de ventas en los tres jefes, y el
+    # carril solo decide QUE RINCON de las ventas. Mario y Helena son la excepcion.
+    # Lo que lo motiva: el meme de la busqueda de Google de Asier (20/08) hizo 3.010
+    # imp / 0.32x y su referencia era un meme, pero NO de ventas.
     _CARRIL = {
-        'unai': 'ventas + DIRECCION (levantar dinero, fundadores, inversores, la imagen seria de marca). Sobrio, cero infantil',
-        'iker': 'ventas + EL COMERCIAL DE CALLE (llamar, puerta fria, el cliente que no coge). La unica que aguanta el registro bruto',
-        'asier': 'ventas + PROGRAMACION Y PRODUCTO (el que construye lo que el comercial vende). Sobrio, cero infantil',
-        'mario': 'ventas + MARKETING Y CONTENIDO',
-        'helena': 'ventas + ATENCION AL CLIENTE Y PARTNERSHIPS',
+        'unai': 'ventas DESDE EL QUE MANDA (jefe de ventas, director comercial, el CEO que pide numeros, el forecast, la reunion de pipeline). Sobrio, cero infantil',
+        'iker': 'ventas DE CALLE (llamar, puerta fria, el cliente que no coge, el viaje a ver al cliente). La unica que aguanta el registro bruto',
+        'asier': 'ventas CON LO TECNICO AL LADO (la herramienta, el dato, el producto que el comercial vende), y sin pasarse de especifico: manda el alcance. NO vale un chiste de programacion puro',
+        'mario': 'EXCEPCION: aqui la referencia SI puede ser de MARKETING Y CONTENIDO',
+        'helena': 'EXCEPCION: aqui la referencia SI puede ser de ATENCION AL CLIENTE Y PARTNERSHIPS',
     }
     _c = (cuenta or '').strip().lower()
     if _c in _CARRIL:
-        chk(False, 'ENTREGA: el carril de esta cuenta',
-            '%s = %s. La REFERENCIA sale de ese oficio y el GANCHO ancla a ventas, las dos '
-            'cosas a la vez. Si la referencia no es de su carril, se le da a la cuenta que si '
-            'lo tiene y para esta se busca otra: cambiar de cuenta es gratis, forzar el encaje '
-            'no (aboutme §2-CARRIL)' % (_c, _CARRIL[_c]), aviso=True)
+        _exc = _c in ('mario', 'helena')
+        chk(False, 'ENTREGA: la REFERENCIA es de VENTAS, y de que rincon',
+            ('%s = %s. %s Se comprueba en el HEADLINE DEL AUTOR de la referencia, no en si el '
+             'chiste se puede llevar a ventas: si su perfil no dice ventas, comercial, SDR, AE, '
+             'GTM, prospeccion o revenue, no es una referencia de ventas. Y si la referencia no '
+             'es del rincon de esta cuenta, se le da a la cuenta que si lo tiene y para esta se '
+             'busca otra: cambiar de cuenta es gratis, forzar el encaje no (aboutme §2-CARRIL)')
+            % (_c, _CARRIL[_c],
+               '' if _exc else 'En los TRES JEFES la referencia nace SIEMPRE dentro de ventas, en cualquier idioma; lo que cambia con la cuenta es de que parte de ventas.'),
+            aviso=True)
 
     if pilar == 'meme' and (cuenta or '').strip().lower() == 'unai':
         chk(meme_sobrio,
