@@ -130,7 +130,17 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 **⚠️ Y esto AFINA `post-workflow §4.4-FUENTE`, que decía que un meme de OTRO sector con dolor psicológico universal era "la excepción que da los mejores outliers".** Ya no se sale a buscar fuera: **se busca dentro de ventas y ahí se elige el que tenga el dolor más universal**. Lo de "que sea psicológico y universal" sigue mandando **como criterio de elección DENTRO de la cantera de ventas**, no como permiso para salir de ella.
 
-**Cómo se comprueba de verdad, que es donde fallé:** no basta con que el CHISTE se pueda llevar a ventas. **Se mira el HEADLINE del autor y de qué va su cuenta.** Si su perfil no dice ventas, comercial, SDR, AE, GTM, prospección o revenue, la referencia no es de ventas por mucho que el chiste encaje.
+#### ⛔⛔⛔ CÓMO SE COMPRUEBA: **EL GANCHO DEL ORIGINAL LLEVA UNA PALABRA DE VENTAS. NI EL CUERPO NI EL HEADLINE** (Iker, 2026-08-25)
+
+> **Iker, y corrige lo que yo había escrito el día antes:** *"para poder saber realmente si es de ventas o no, no te tienes que fijar en el cuerpo de la publicación. Lo más importante tiene que ser que su gancho original del texto de la referencia ya esté vinculado a ventas, explícitamente con alguna palabra"*.
+
+**Yo había puesto que se mira el HEADLINE del autor. No basta**, y el caso lo demuestra: propuse el meme del botón de IA de Alex Vacca, cuyo autor es founder de una empresa de outbound —headline impecable— **y cuyo gancho no lleva una sola palabra de ventas**. Iker: *"esto no es una broma de ventas, es una publicación que podría subir cualquiera"*.
+
+**LA COMPROBACIÓN, y son diez segundos:** coge **la primera línea del original** y busca dentro una palabra explícita del oficio — *sales, sell, prospect, cold call, SDR, AE, deal, quota, pipeline, client, buyer, ventas, comercial, cliente, cuota*. **Si no está, la referencia se descarta**, por buen chiste que sea y por bien que encaje su autor.
+
+**⚠️ Y SÍ, ESTO CONTRADICE A LOS EXPERTOS, QUE DICEN QUE HAY QUE ADAPTAR OUTLIERS DE OTROS SECTORES. Lo decimos en voz alta porque es nuestra experiencia la que manda** (Iker): *"eso hacía que muchas veces memes que pensábamos que iban a ir bien iban fatal de rendimiento, ya que como la referencia no estaba adaptada a ventas, esa broma tenía sentido y la gente lo pillaba en otro sector, pero en ventas no tenía el mismo impacto ni la misma gracia"*. **La gracia no viaja entre sectores; el formato sí.** Respaldo medido en `post-workflow §4.4-FUENTE-VENTAS`: mediana de 95.913 impresiones con referencia de ventas contra 1.405 sin ella.
+
+**⛔ Y LA SEGUNDA MITAD, QUE ES LA QUE ROMPÍ EN EL MISMO POST: NUESTRO GANCHO TIENE QUE RECORDAR AL SUYO.** Iker: *"nuestro gancho adaptado a ventas no tiene absolutamente nada que me recuerde al gancho original; no es que lo hayas adaptado a ventas, sino que lo has cambiado por completo"*. Ya estaba escrito en `post-workflow §4.4` Paso 2 (*"mismo o mejor, nunca distinto"*) y por eso ahora lleva su test: **pon los dos ganchos uno al lado del otro y pregúntate si se nota el parentesco.** Si un tercero no diría que uno sale del otro, no es un remix, es otro post.
 
 ---
 

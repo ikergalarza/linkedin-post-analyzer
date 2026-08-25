@@ -2641,11 +2641,16 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     if _c in _CARRIL:
         _exc = _c in ('mario', 'helena')
         chk(False, 'ENTREGA: la REFERENCIA es de VENTAS, y de que rincon',
-            ('%s = %s. %s Se comprueba en el HEADLINE DEL AUTOR de la referencia, no en si el '
-             'chiste se puede llevar a ventas: si su perfil no dice ventas, comercial, SDR, AE, '
-             'GTM, prospeccion o revenue, no es una referencia de ventas. Y si la referencia no '
-             'es del rincon de esta cuenta, se le da a la cuenta que si lo tiene y para esta se '
-             'busca otra: cambiar de cuenta es gratis, forzar el encaje no (aboutme §2-CARRIL)')
+            ('%s = %s. %s ⛔ SE COMPRUEBA EN EL GANCHO DEL ORIGINAL, no en el cuerpo ni en el '
+             'headline del autor: la PRIMERA LINEA de la referencia tiene que llevar una palabra '
+             'explicita del oficio (sales, sell, prospect, cold call, SDR, AE, deal, quota, '
+             'pipeline, client, buyer, ventas, comercial, cliente, cuota). Si no esta, se '
+             'descarta por buen chiste que sea: la gracia no viaja entre sectores, el formato si. '
+             '⛔ Y NUESTRO GANCHO TIENE QUE RECORDAR AL SUYO: pon los dos uno al lado del otro y '
+             'mira si se nota el parentesco; si no, no es un remix, es otro post. Y si la '
+             'referencia no es del rincon de esta cuenta, se le da a la cuenta que si lo tiene y '
+             'para esta se busca otra: cambiar de cuenta es gratis, forzar el encaje no '
+             '(aboutme §2-CARRIL)')
             % (_c, _CARRIL[_c],
                '' if _exc else 'En los TRES JEFES la referencia nace SIEMPRE dentro de ventas, en cualquier idioma; lo que cambia con la cuenta es de que parte de ventas.'),
             aviso=True)
