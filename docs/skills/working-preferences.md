@@ -400,6 +400,31 @@ La columna izquierda y la derecha comparten CADA fila. Si entregas dos ```bloque
 Esto es la vista que pidió el 2026-07-22, tras rechazar dos intentos: uno "super feo" y otro en bloques apilados. Lo quiere en columnas lado a lado, monoespaciado, ni tabla ni apilado. **Reincidí el 2026-07-23 (dos bloques): por eso el esqueleto de arriba.**
 
 
+## 🔮🔮 1e-PREDICCION · TODA ENTREGA CIERRA CON "PREDICCIÓN DE VIRALIDAD" (Iker, 2026-08-25)
+
+> **Iker, y dice para qué la quiere, que es lo que decide cómo se escribe:** *"quiero que al final del todo me añadas un bloque con bullet points muy sencillos… que me expliques por qué has decidido elegir esta referencia y cómo has decidido copiarla y mejorarla, y qué tienes validado en datos de que vaya a ser viral. Con tu decisión sabré si te has equivocado o no"*.
+
+**Para qué existe: para que Iker pueda auditar mi CRITERIO sin releerse la entrega entera.** El validador comprueba la mecánica y la comparativa enseña el texto; esto enseña **la decisión**. Si la predicción no se sostiene, el post está mal aunque el script dé 49/49.
+
+**DÓNDE VA: la última sección del mensaje, después de todo lo demás.** Se titula **`🔮 PREDICCIÓN DE VIRALIDAD`**.
+
+**LA FORMA, y es lo que la hace útil (si se alarga, deja de leerse):**
+- **Bullets, y cada uno de DOS LÍNEAS COMO MÁXIMO.** Si solo hay una cosa que decir, **un único bullet de dos líneas** y ya.
+- **Sin tablas, sin sub-bullets y sin bloques cercados.** Es lo contrario del resto de la entrega: aquí se resume, no se documenta.
+- **Cada bullet lleva su número dentro.** Un bullet sin cifra es una opinión, y de opiniones ya va lleno el resto del mensaje.
+
+**LAS TRES PREGUNTAS QUE CONTESTA, en este orden:**
+1. **Por qué ESA referencia** y no otra: qué la separa de las que descarté, con su métrica (risas absolutas, reposts, encaje de carril).
+2. **Cómo la he copiado y en qué la he mejorado**: qué vehículo me llevo intacto y qué le he cambiado a favor.
+3. **Qué está VALIDADO en datos** de que esto reparte: las reglas que cumple con su número medido, no las que cumple "porque lo dice la receta".
+
+**⚠️ Y si hay una razón para que NO funcione, va también, en su bullet.** La sección se llama predicción, no argumentario: una predicción que solo dice cosas buenas no sirve para detectar que me he equivocado, que es justo para lo que la pidió.
+
+**⛔ ÁMBITO: TODOS LOS PILARES, SIN EXCEPCIÓN (Iker, 2026-08-25, ampliado el mismo día).** Nació pedida para el meme y él la subió a receta global en cuanto la vio: *"quiero que este output se incluya, a partir de ahora, en todo, o sea, que sea parte de la receta global, y no solo para el pilar de meme"*. Mapa, "Los 10", despiece, lead magnet, historia, evento, tarjeta, vídeo y lo que venga.
+- **En los pilares SIN referencia externa** (mapa, "Los 10", despiece), la pregunta 1 cambia de objeto pero no desaparece: **por qué ESTA región, ESTE sector o ESTE ángulo** y no otro, con su dato — cobertura de la cuenta, cifra shock verificada, empresas que salen.
+- **En EMAIL vale igual** (`email-marketing`), cambiando "viral" por lo que mide ese canal: aperturas y clics.
+- **Es un caso de libro de `§0c-BIS`:** una regla de ENTREGA no vive en el runbook de un pilar. Por eso está aquí y no en `post-workflow §4.4`.
+
 ## 2 · Valida de forma proactiva (no esperes a que pregunte)
 
 - Antes de entregar cualquier borrador, corre en silencio el **pase de validación** contra toda la stack de reglas (`global-instructions`, `brand-voice`, mecánicas, RECENT_DIAGNOSIS, datos de la cuenta).

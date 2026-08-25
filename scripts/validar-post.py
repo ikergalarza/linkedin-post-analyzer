@@ -1418,6 +1418,23 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'pulsable NO son alternativas, el markdown hace las dos cosas a la vez '
             '(working-preferences §1d-ter y §1d-QUATER)', aviso=True)
 
+    # working-preferences §1e-PREDICCION (Iker, 2026-08-25, global el mismo dia).
+    # La ultima seccion de TODA entrega, en TODOS los pilares. Existe para que
+    # Iker audite el CRITERIO sin releerse la entrega: "con tu decision sabre si
+    # te has equivocado o no". El validador mira la mecanica; esto ensena la
+    # decision.
+    chk(False, 'ENTREGA: cierra con la PREDICCION DE VIRALIDAD',
+        'ultima seccion del mensaje, titulada 🔮 PREDICCION DE VIRALIDAD. Bullets de DOS '
+        'LINEAS COMO MAXIMO cada uno, o uno solo de dos lineas si no hay mas que decir. '
+        'Sin tablas, sin sub-bullets y sin bloques cercados. Contesta tres cosas en este '
+        'orden: (1) por que ESA referencia y no otra, con su metrica (risas absolutas, '
+        'reposts, encaje de carril); en los pilares sin referencia, por que ESTA region, '
+        'sector o angulo; (2) que vehiculo me llevo intacto y en que lo he mejorado; '
+        '(3) que esta VALIDADO en datos de que reparte, con el numero medido. Cada bullet '
+        'lleva su cifra dentro: uno sin cifra es una opinion. ⛔ Y si hay una razon para '
+        'que NO funcione, va tambien en su bullet: es una prediccion, no un argumentario '
+        '(working-preferences §1e-PREDICCION)', aviso=True)
+
     chk(False, 'ENTREGA: DOS comparativas (referencia + nuestro mejor del pilar)',
         'los dos textos ENTEROS y verbatim, izquierda el original y derecha el mio, '
         'separados por una linea discontinua vertical. Sin etiquetas de gancho ni cuerpo '
