@@ -2030,6 +2030,20 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
 >   - ⚠️ **Con una excepción declarada: cuando la foto ES el concepto.** La historia pendiente de Unai con su foto de pequeño va al revés a propósito, y por eso se declara la divergencia al entregar.
 > - **Y esta señal es para el HUMANO, no para el clasificador.** El código no distingue un selfie de un wojak: los dos entran en la base como `text_image` y no hay visión por ordenador en el backend. Al clasificador lo separa el **tiempo verbal** (`services/pillar.ts`: una historia narra en pretérito, un meme describe en presente). Si alguna vez dudas mirando la parrilla, la foto te lo dice a ti en medio segundo; al script hay que seguir diciéndoselo por el texto.
 
+> ### 👥👥 4.6-FOTO-GRUPO · SI UNA CUENTA NO TIENE SELFIES, LA HISTORIA NO SE BLOQUEA: VA FOTO DE GRUPO (Iker, 2026-08-25)
+> **El caso, y no es un capricho:** Asier lleva **un mes** sin pasar una sola foto suya y dice que no se las hace. `§4.6-FOTO` pide selfie con el movil en la mano, y con esa regla su cuenta se quedaba fuera del pilar para siempre. Iker: *"la unica alternativa que se me ha ocurrido son fotos grupales en las que el esta incluido"*.
+>
+> **LA REGLA: cuando el dueño de la cuenta no tenga selfies, se usa una FOTO DE GRUPO donde el sea identificable, y en la entrega se dice quien es y donde esta.** El selfie sigue siendo el default del pilar; esto es la salida cuando no existe, no una alternativa a elegir.
+>
+> **LOS TRES FILTROS PARA ELEGIR ENTRE FOTOS DE GRUPO, por orden:**
+> 1. **⛔ La cara que domina el encuadre tiene que ser la SUYA.** El post lo firma el: si el primer plano es de otro y el sale pequeño y de lado, la foto se cae por buena que sea. *(Asi se descarto `oficina grupal`: es un selfie de otra persona con Asier al fondo a la izquierda.)*
+> 2. **⛔ Nitidez antes que resolucion.** Una foto movida se descarta aunque tenga el triple de pixeles. Es el mismo criterio con el que se descarto la de Unai que parecia frame de video. *(Asi se descarto `cena 2 grupal`, 2048px pero blanda, y encima con varios desconocidos reconocibles de fondo.)*
+> 3. **⭐ VERTICAL gana a HORIZONTAL, y es puro calculo: el cuadrado de una foto vertical no se lleva a NADIE por delante.** Solo recorta arriba y abajo, asi que la unica decision es el desplazamiento vertical. En una horizontal el cuadrado se come un cuarto del ancho, que es justo donde esta la gente.
+>
+> **Y el coste se dice:** la elegida el 25/08 mide **684px de ancho** de origen, asi que el cuadrado sale **escalado** y se vera blando en pantalla retina. Se acepta porque no hay alternativa, no porque de igual.
+>
+> **🧪 LA HIPOTESIS DE IKER, SIN MEDIR Y ANOTADA COMO TAL** *(la propone el, nadie la ha comprobado)*: la restriccion puede acabar siendo una ventaja, igual que paso con la sobriedad de Unai en memes, que empezo siendo una limitacion y resulto rendir mejor. *"A lo mejor nos estan ayudando a hacer A/B testing y descubrimos que en este pilar las fotos grupales dan mejor imagen de marca, y a lo mejor incluso gustan mas"*. **Se mide contra las historias con selfie de Iker (0,41% · 0,364% · 0,276% de CTR) y el resultado se anota aqui.**
+
 **Referentes (de nuestra BD, `/api/ideas/inspiration`):** **Josh Braun** (39x *"My mom died yesterday"*, 29x *"When I was younger in sales, I'd get on a plane…"*), **Daniel Disney** (16 outliers: *"I hired the smartest person in the room once"*, *"I had a manager who would scream at the sales floor"*). **Se eligen por `hook_type` story/confesión + LIKES ≫ comentarios** (si comentarios > likes, es un lead magnet disfrazado de historia, no una historia).
 
 > ### 🎯🎯 4.6-PROMESA · LA SEGUNDA FORMA DE GANCHO DEL PILAR: NO LA ESCENA, LA PROMESA (Iker, 2026-08-21)
