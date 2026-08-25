@@ -183,6 +183,25 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 - **Lo que NO cambia es el formateado.** Sigue habiendo anáfora, escalera y bloque de 2. **Lo que rota es la palabra con la que arranca, no la estructura**, exactamente igual que el mapa repite su fórmula y cambia el concepto.
 - **Mecanizado** como aviso en `validar-post.py` (`RITMO: el arranque de la anafora no esta quemado`), que **imprime los arranques del post** aunque no haya ninguno repetido — porque el trabajo no es que el script decida, es que yo los VEA antes de entregar. Aviso y no fallo duro: `La`, `No` o `Me` son demasiado comunes para vetarlas a ciegas.
 
+##### 🧹 LA CONSOLIDACIÓN (auditoría del 2026-08-25, la pidió Iker)
+
+**🔴 Y AQUÍ ESTÁ LA PARTE FEA, QUE ES LA RESPUESTA A "¿POR QUÉ HAS COMETIDO ESTE ERROR?": la regla NO era nueva. Estaba escrita desde el 2026-07-28, tres veces, y las tres dentro de un runbook de pilar. Ninguna en global.** `post-workflow §4.2` punto 6 (mapa), `post-workflow §4.3` (tres viñetas de "Los 10") y `post-workflow §4.5` Paso 4 (lead magnet). Al escribir una **historia** no aplicaba ninguna, y por eso no saltó. Es el caso de libro de `working-preferences §0c-BIS`: **escribir en un runbook algo universal garantiza que se rompa en los otros cinco pilares.** Las tres se han vaciado aquí y en su sitio queda un puntero.
+
+**LO QUE SE TRAE DE ELLAS, y sigue valiendo entero:**
+
+**1 · La anáfora va DENTRO del bloque; la variedad va ENTRE publicaciones** (Iker, 2026-07-28). En un bloque de 2 o de 3, **todas las líneas arrancan con la MISMA palabra**: eso es lo que da el golpe. Lo que cambia de un post a otro es **cuál** es esa palabra.
+> ⛔ **El error a evitar, y es el que se comete al corregir:** al arreglar una repetición entre posts, romper la anáfora dentro del bloque y poner tres arranques distintos. **Eso mata el ritmo y no arregla nada.** Se cambia la palabra, no la estructura.
+
+**2 · Cuándo anáfora y cuándo NO** (Iker, 2026-07-29). No es obligación fija en todos los bloques, que se notaría el molde:
+- **Misma palabra** cuando las tres líneas son **el mismo sujeto haciendo tres cosas** (Asturias 2.69x: `Se sabe… / Se sabe… / Se hace…`). Ahí el eco martillea.
+- **Arranques distintos** cuando son **tres ángulos diferentes**, porque forzar la anáfora obliga a retorcer la frase (y enlaza con `brand-voice §3c`: el castellano hablado manda sobre la anáfora).
+
+**3 · Con qué se rota** (`working-preferences §4`): si el anterior abría por **artículo**, el siguiente abre por **verbo**, por **nombre**, por **lugar** o por **número**.
+
+**4 · Que se note que es un post NUEVO.** Se mantiene la **esencia** del formato —mismos bloques de 2/3, misma estructura, mismas ideas— y se cambian **las expresiones y sobre todo cómo ABRES los bloques**. Mismo pilar, palabras distintas cada vez.
+
+**Los arranques ya gastados viven en `ARRANQUE_QUEMADO`, por pilar**, y ahí es donde sí toca la distinción de pilar: la **anáfora de negación** (`No paga… / No las pagan…`) es del **mapa** y no se calca en otro sitio.
+
 **LAS TRES REGLAS DE MANTENIMIENTO:**
 1. **Al publicar, la frase usada entra en su lista.** Las listas solo crecen. Esto no es opcional y no espera a que nadie lo pida.
 2. **Si un elemento repetible NO tiene lista, es un hueco**: se crea. Así aparecieron `CONCEPTO_QUEMADO` y `FRASE_RABIA_USADA`, que llevaban meses con un "no repitas" en la receta y **nada detrás con qué comprobarlo**.

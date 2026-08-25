@@ -191,16 +191,20 @@ SPAM_QUEMADO_CORREO = {
 # porque `No`, `La` o `Me` son palabras demasiado comunes para vetarlas a ciegas:
 # lo que hace falta es VERLAS al entregar, que es justo lo que faltaba.
 ARRANQUE_QUEMADO = {
+    # Verificados leyendo el texto publicado.
     'historia': {
         'la': 'historia de Iker 18/08 ("La eche donde el coche...")',
         'ni': 'historia de Iker 13/08 ("Ni una pregunta por el precio")',
     },
     'mapa': {
-        'no': 'mapa de Navarra ("No paga las nominas San Fermin")',
-        'se': 'mapa de Asturias ("Se sabe el producto...")',
+        'no': 'mapa de Navarra ("No paga las nominas San Fermin", swipe-file)',
     },
+    # Estos dos salen de nuestro propio runbook (post-workflow 4.3), no de haber
+    # releido el post: si algun dia se comprueban, se anota aqui.
     'los10': {
-        'no': '"Los 10" del Pais Vasco ("No publica. No da charlas.")',
+        'no': '"Los 10" del Pais Vasco ("No publica. No da charlas.", swipe-file)',
+        'se': 'Asturias ("Se sabe... / Se sabe... / Se hace..."), via runbook',
+        'su': 'Andalucia ("Su / Su / Su"), via runbook',
     },
 }
 

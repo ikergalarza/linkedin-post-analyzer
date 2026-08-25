@@ -131,6 +131,7 @@ Se marca en rojo: datos que no se han podido verificar, riesgos de publicar algo
 | Vehículo vs contenido | `post-workflow §4.4` (meme) | Se rompió **cuatro veces el mismo día** en un lead magnet |
 | Medir la anatomía de la referencia | `post-workflow §4.4` (meme) | Iker: *"espero que no lo hayas aplicado solo a la receta de meme"*. A `global §2.2b-MEDIR` |
 | Ritmo de bloques | Solo en el validador, y a medias | Prohibía el `1-2-1-2` y le colé un `1-3-1-2-1-3-1-2` |
+| **Variedad del ARRANQUE de los bloques** | `post-workflow §4.2`, `§4.3` y `§4.5`, **tres veces y las tres en un runbook** | Escrita desde el **28/07** y aun así entregué `La web / La centralita / La persona` el 25/08, una semana después del `La eché…` de la historia del 18/08. **Al escribir una historia no aplicaba ninguna de las tres.** A `global §2.0b-ARRANQUE` |
 
 **Y si es global, se dice en la entrega.** Una línea: *"esto lo he metido en `global` porque afecta a todos los pilares"*. Así Iker puede corregir la decisión antes de que envejezca dentro del sitio equivocado.
 
