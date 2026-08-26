@@ -1540,6 +1540,22 @@ Una tabla de **recurso · comentarios del origen · días desde el último uso e
 | prompt para el diseñador de la OG | **yo genero la OG y la coloco**, salvo que la que hay ya sirva |
 | «pendiente: que lo monte el programador» | **pendiente: que Iker lo mire en producción** |
 
+**🔴🔴 Y LA PIEZA QUE FALTABA EN EL OUTPUT: DAR DE ALTA EL RECURSO EN EL CATÁLOGO (Iker, 2026-08-26).** *"La próxima vez que preparemos un lead magnet, en el output tienes que incluir que tú actualices el catálogo en caso de que falte ese recurso, sea nuevo o uno reutilizado que nunca se metió."*
+
+**Es BLOQUEANTE y casi se publica sin ello.** El catálogo es `CATALOGO` en `frontend/src/components/accounts/leadMagnetCopy.ts`, y es lo que hace que el panel sepa **qué enlace mandar** y **qué palabra están comentando**. `/errores/` llevaba desde abril sin estar dado de alta: `detectarRecurso` habría devuelto `null`, `resolverRecurso` también, y **con `recurso` en null el botón de enviar el DM se bloquea** — el panel pidiendo el enlace a mano con los comentarios entrando.
+
+**Cada entrada lleva cuatro cosas:**
+- **`link`** — la URL del recurso.
+- **`topic`** — rellena *"te dejo el recurso sobre {topic}"* en el DM, así que se lee como parte de una frase.
+- **`claves`** — la palabra que la gente comenta, o sea **la del banner de la foto**. Si es una reedición, van las dos: la nueva y la de los posts viejos que siguen en la herramienta.
+- **`pistas`** — frases del texto del post, **sin tildes y en minúsculas**, que es como se reconoce un post nuevo (la palabra ya no está en el texto).
+
+**⛔ Y LAS PISTAS SE COMPRUEBAN, NO SE ELIGEN A OJO. Dos cosas, las dos medidas contra el texto real del post:**
+1. **Que las pistas aparezcan de verdad** en el post.
+2. **Que ninguna pista de los OTROS recursos case con él.** Si hay empate, `detectarRecurso` devuelve `null` a propósito, y estás en el mismo escenario de arriba. La entrada de `/criba/` ya avisa de esto porque casi le pasa.
+
+**Y si la palabra vive en la foto** —que es el caso normal desde el 05/08— **`claveDelPost` la saca de la `clave` del recurso detectado**. Sin eso, `cfg.keyword` queda vacía y se apaga todo lo que cuelga de ella: el aviso de *"no lo ha pedido"* salta en todas las tarjetas, `cerradoSinPedirlo` no cierra a nadie y el sector del tipo lista sale siempre vacío.
+
 **⛔ LO QUE NO CAMBIA, Y ES LO QUE EVITA QUE ESTO SALGA MAL:**
 1. **Se espera el OK de Iker antes de tocar el repo.** El post se aprueba primero; el recurso se adapta después. *"si yo te doy el ok"*.
 2. **`lead-magnet-web §4c` manda igual: MEDIR, NO ESTIMAR.** Se levanta el estático (`python -m http.server 8899 --bind 127.0.0.1`, en background y **sin pipe**) y se miden las **líneas renderizadas** a **1440 y a 360**, no los caracteres. Los recursos ya publicados son la especificación.
