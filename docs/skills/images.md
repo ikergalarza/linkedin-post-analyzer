@@ -594,6 +594,22 @@ Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que 
 - **Lo que NO se toca aunque te pique:** la mecánica cómica, el sujeto, el layout, el estilo de dibujo. Eso es el motor.
 - **La pregunta:** ¿esto es lo que hizo volar al post, o es un defecto que nadie ha mirado? Lo primero se calca. Lo segundo se mejora. **Estos detalles de diseño marcan la diferencia entre un remix y una copia peor que el original.**
 
+### ⛔⛔ 0d-PROPORCION · EL TAMAÑO RELATIVO DE LOS PANELES ES CALCO, NO DECORADO. Y UNA "MEJORA" QUE NO ESTÁ EN LA LISTA DE ARRIBA ES UNA HIPÓTESIS MÍA (Iker, 2026-08-26)
+
+> **Iker, sobre la 2ª pasada del meme de la katana:** *"al igualar las dos cajas el peso visual ya no es el mismo, y sobre todo las manos de la caja de abajo las has estirado y deformado mucho hacia arriba, queda feo. Este prompt de edición no era una mejora. De hecho, la referencia original tiene esa gran diferencia de que la caja primera es más grande que la segunda. Me había quedado con la versión anterior. Igual que ha pasado antes con otra publicación"*.
+
+**`post-workflow §4.4` Paso 6a punto 1 ya obliga a calcar el NÚMERO de paneles y dice que "no es orientativo". Faltaba la otra mitad: su PROPORCIÓN.** Y en un meme de dos tiempos la proporción **es** el ritmo del chiste: **panel grande y con aire arriba** (la pausa, el arma envainada, la palabra corta) y **franja estrecha abajo** (el remate, que llega rápido). Igualarlos aplana el gag: convierte una pausa y un golpe en dos cosas del mismo peso.
+
+**Y el daño mecánico, que es el que hay que anticipar antes de escribir el prompt:** pedirle a un generador **más alto para una caja** es pedirle implícitamente que **deforme lo que hay dentro**. Aquí estiró las manos hacia arriba hasta que quedaron raras. La coletilla de contención dice *"ni deformes"* y **mi propia orden la contradecía tres frases antes**: cuando el prompt pide agrandar una caja, la contención no puede salvarlo.
+
+**LAS DOS REGLAS:**
+1. **La proporción entre paneles se calca**, como el número, el layout y el sujeto. Entra en la columna de *"lo que NO se toca aunque te pique"*.
+2. **⛔ Solo se "mejora" lo que está en la lista corta de `§0d`** (encuadre a 1:1, textos descentrados, paleta y tipografía). **Cualquier otra mejora que se me ocurra mirando la imagen es una deducción mía** (`working-preferences §0c`) y **va propuesta en el chat, nunca metida dentro de un prompt de edición**. Un prompt de edición ejecuta; no es el sitio donde se prueban ideas.
+
+**EL TEST, antes de mandar cualquier prompt de edición:** *¿este cambio arregla un FALLO concreto (una falta de ortografía, un texto ilegible, una franja blanca) o es una idea mía sobre cómo quedaría mejor?* Si es lo segundo, se pregunta antes.
+
+**Y el coste real, para que se note por qué esto importa:** la 1ª versión solo tenía un fallo, una tilde. La 2ª arregló la tilde **y rompió el peso visual y las manos**, así que hubo que volver a la 1ª y hacer la tilde otra vez. **Dos rondas de diseñador por una idea mía sin medir.**
+
 ## 0e · 🏷️ NOMBRES DENTRO DE UNA IMAGEN (orla de "Los 10"): NO son la @ del post
 > **El fallo (2026-07-15):** metí `OUAZZANI TOUHAMI ASMA` tal cual en la orla porque así lo tiene en LinkedIn, y salió gritando en mayúsculas al lado de 9 nombres en Title Case.
 
