@@ -174,19 +174,28 @@ El de automoción ya está hecho (Asier, 07/08). El siguiente **no repite sector
 
 ---
 
-## 🚫 CAPADO DEL 26/08 · LA HISTORIA DE UNAI (incidente abierto)
+## ✅ EL "CAPADO" DEL 26/08 · RESUELTO: NO ERA UN CAPADO, ERA UN RETRASO DE 20 MINUTOS
 
-**Qué pasó:** publicada sobre las 10:00. **A los 10 minutos no aparecía en Principal desde otra cuenta**, y a los 15 seguía sin aparecer. **45 impresiones a los 14 minutos = 3,2 imp/min**, más cerca del patrón bloqueado que medimos el 18/08 (2,0-2,9) que del sano (5,6). **Iker lo da por bloqueado desde el minuto uno**, con su línea base: *"en el primer minuto SIEMPRE me salen en el feed"*.
+**LAS TRES SUBIDAS DEL MISMO POST, en poco más de una hora:**
 
-**Decisión de Iker: resubir cambiando `teléfono` → `número` en el gancho y en el ninja.** Su teoría: `teléfono` roza la familia de **datos y privacidad**, la misma que capó el meme del 19/08 con `La transcribo`.
+| # | qué llevaba | qué hicimos | resultado |
+|---|---|---|---|
+| **v1** | `marcar un teléfono` + UTM | **borrada a los ~15 min** por no aparecer en el feed | 45 imp a los 14 min |
+| **v2** | `marcar un número` + UTM | **borrada** por lo mismo | ~10 imp a los 4 min |
+| **v3** | `pedir una reunión` + UTM | 🟢 **NO se borró** | **aparece en el feed a los ~20 min · 136 impresiones a los 27 y subiendo** |
 
-**🔴 Mi objeción, que perdió, y por qué perdió bien:** defendí `teléfono` con 12 posts nuestros que la llevan y ninguno por debajo de 500 impresiones. **Iker: el corpus caduca para las preguntas de moderación**, y tiene la prueba de nuestro lado — `comenta "X"` funcionó meses y murió el 05/08 sin que la palabra cambiara. **De ahí sale `global §9.2`**, que parte la consulta al corpus en dos preguntas (rendimiento sí caduca / moderación no vale) y obliga a poner la FECHA del precedente delante del número.
+**🔴 LA CONCLUSIÓN, Y ES INCÓMODA: las dos primeras probablemente estaban sanas y las matamos nosotros.** Las borramos **antes del minuto 20**, que es justo cuando la tercera despertó. **Nunca les dimos la oportunidad de desbloquearse**, así que el experimento no puede atribuirle nada a `teléfono` ni a `número`.
 
-**⚠️ CÓMO SE LEE EL RESULTADO, y esto hay que respetarlo cuando se sepa** (`global §9.5`): que la resubida funcione **no demuestra** que `teléfono` estuviera capada. Sigue en pie un precedente de **hace 25 horas**: la historia de Asier del 25/08 lleva `teléfono` **en el gancho** e hizo 9.187 impresiones, el mayor alcance del pilar. **Para meter la palabra en la lista negra hacen falta DOS casos**, porque el falso positivo cuesta el gancho de *"quemando el teléfono"* (49.426) y los cuerpos de 168.926 y 192.303.
+**LO QUE SÍ QUEDA PROBADO:**
+- ✅ **Los UTM no bloquean.** La que repartió los llevaba puestos. Era el único elemento sin precedente en 267 posts y queda descartado.
+- ✅ **Existe un retraso de ~20 minutos que NO es un bloqueo.** Es el **primer dato** de la cola de revisión que Iker sospechaba desde el 18/08, y solo lo tenemos porque por una vez no borró.
 
-**Y la variable que queda sin probar:** este post es **el primero de 267 con parámetros UTM**. La resubida los mantiene, así que si vuelve a caer, ahí está la respuesta.
+**LO QUE NO QUEDA PROBADO:**
+- ⛔ **`teléfono` y `número` NO entran en ninguna lista negra.** Además del sesgo de arriba, hay un precedente de **25 horas antes**: la historia de Asier del 25/08 lleva `teléfono` **en el gancho** e hizo 9.187 impresiones.
 
-**📏 Datos a anotar cuando se resuelva:** minutos hasta aparecer en Principal (la resubida), impresiones a los 60 min, y si apareció de golpe o subiendo.
+**LO QUE CAMBIA EN LA RECETA** (`global §9.0`): **el umbral de 10 minutos deja de ser un veredicto y pasa a ser un aviso**, y **no se borra nada antes de los 60 minutos**, que es el único umbral con datos detrás (< 100 impresiones a la hora).
+
+**📏 Y el texto que quedó publicado es el de la v3**, con `pedir una reunión`, `Salió con 3 reuniones sin haber pedido ninguna` y `Yo iba de copiloto y esperaba verle pelear cada puerta`. **Ese es el que hay que dar por bueno en el swipe, no el de `teléfono`.**
 
 ## 🧪 LOS A/B ABIERTOS DEL PILAR HISTORIA (método en `post-workflow §9b`)
 

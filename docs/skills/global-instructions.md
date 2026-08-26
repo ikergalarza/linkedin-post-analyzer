@@ -1876,14 +1876,32 @@ Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/
 
 > **Por qué esto vive aquí y no en el runbook del lead magnet, que es donde estaba.** Iker: *"ya nos han baneado varias veces publicaciones de lead magnets, el otro día un meme y hoy un pilar historia. O sea, que esto es general"*. **Tres pilares distintos en tres semanas.** Es el caso de libro de `working-preferences §0c-BIS`: escrito dentro de un runbook, garantizaba que se rompiera en los otros cinco. El detalle operativo sigue en `post-workflow §4.5.0-*`; **lo que manda está aquí.**
 
-### 9.1 · El diagnóstico es el FEED, y se lee en 10 MINUTOS
+### 🔴🔴 9.0 · CORRECCIÓN DEL 26/08, LA MISMA TARDE: EL UMBRAL DE 10 MINUTOS ERA FALSO Y NOS COSTÓ DOS POSTS
+
+> **Lo que pasó, y hay que leerlo entero antes que nada de lo de abajo.** Se publicó la historia de Unai, a los 10 minutos no aparecía en el feed, se dio por bloqueada y **se borró**. Se resubió cambiando `teléfono` → `número`, otra vez sin aparecer a los 10 minutos, **y se borró otra vez**. La tercera se subió y **por una vez NO se borró**: **a los 20 minutos apareció en el feed de varias cuentas y a los 27 llevaba 136 impresiones subiendo solas.**
+
+**⛔ EL SESGO QUE NOS COMIMOS ENTEROS, y es el error de método más caro del día: matamos a las dos primeras ANTES del minuto 20, que es justo cuando la tercera despertó.** Nunca les dimos la oportunidad de desbloquearse. Y luego íbamos a concluir que las salvó el cambio de palabra. **Si borras siempre antes del tiempo de recuperación, cualquier cosa que cambies después parecerá la causa.**
+
+**LA REGLA NUEVA, y sustituye al umbral de 10 minutos:**
+
+| momento | qué significa |
+|---|---|
+| **no aparece a los 10 min** | ⚠️ **aviso, NO veredicto.** Medido: un post sano puede tardar **20 minutos** en aparecer |
+| **no aparece a los 30 min** | 🟠 sospecha seria, se mira la banda del Explorer |
+| **< 100 impresiones a los 60 min** | 🔴 capado. **Y este sigue siendo el ÚNICO umbral para borrar** |
+
+**⛔ NO SE BORRA NADA ANTES DE LOS 60 MINUTOS. Sin excepción.** El coste de esperar es cero; el de borrar es el post entero, y encima **borrar y resubir tres veces en una hora es en sí mismo un patrón sospechoso** *(hipótesis mía, sin medir)*.
+
+**⭐ Y por fin hay un dato para la cola de revisión de Iker** (`post-workflow §4.5.0-REVISION`), que llevaba desde el 18/08 en n=0 **precisamente porque siempre borrábamos antes de comprobarla**: **26/08, aparece a los ~20 min y reparte con normalidad.** No era un bloqueo, era un retraso.
+
+### 9.1 · El FEED es el primer diagnóstico, pero NO es el veredicto
 
 **Iker, y es su instrumento y su línea base:** *"en el primer minuto SIEMPRE las publicaciones me salen en el feed. No puede ser que en 15 no me haya salido. Esto no está en revisión, esto está bloqueado desde el minuto uno, y el bloqueo se nota muy rápido"*.
 
-| señal | veredicto |
+| señal | lectura |
 |---|---|
 | aparece en Principal desde otra cuenta **en el primer minuto** | ✅ normal, es la línea base |
-| **no aparece a los 10 minutos** | 🔴 **bloqueada.** No es una cola de revisión, no es lentitud |
+| **no aparece a los 10 minutos** | ⚠️ **aviso.** 🔴 **CORREGIDO EL 26/08: esto NO es un veredicto de bloqueo.** Un post sano tardó 20 minutos y luego repartió |
 
 - **Solo cuenta "Primero los más relevantes".** En "Reciente" sale hasta un post capado.
 - **Este diagnóstico va POR DELANTE del de impresiones**, porque no hay que esperar a que se acumulen. El semáforo de impresiones y la banda del Explorer se quedan como confirmación, no como primer paso.
@@ -1903,6 +1921,16 @@ Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/
 | **¿esta palabra PASA EL FILTRO?** | ⛔ **NO.** Solo cuenta el precedente **RECIENTE**, de las últimas 2-3 semanas, y a poder ser de una cuenta nuestra |
 
 **Corolario operativo:** al defender una palabra contra la sospecha de capado, **la fecha del precedente va SIEMPRE delante del número**. *"168.926 impresiones"* sin fecha es un argumento inválido; *"9.187 impresiones ayer"* sí es un argumento.
+
+### 9.2b · LO QUE EL 26/08 DEJA PROBADO Y LO QUE NO
+
+| conclusión | estado |
+|---|---|
+| **Los UTM en el enlace NO bloquean** | ✅ **PROBADO.** La versión que repartió llevaba los cuatro parámetros puestos. Era el único elemento sin precedente en 267 posts y queda descartado |
+| **Existe un retraso de ~20 min que no es un bloqueo** | ✅ **PROBADO**, y es el primer dato de la cola de revisión |
+| **`teléfono` y `número` bloquean** | ⛔ **NO PROBADO, y no entran en ninguna lista negra.** Las dos versiones que las llevaban **se borraron antes del minuto 20**, así que el experimento no puede decir nada. Y en contra hay un precedente de **25 horas antes**: la historia de Asier del 25/08 lleva `teléfono` **en el gancho** e hizo 9.187 impresiones, el mayor alcance del pilar |
+
+**⚠️ Esto no invalida la teoría de las FRASES de riesgo de Iker** (`§9.3`): sigue habiendo dos capados reales y documentados, con sus fechas y sus números. Lo que dice es que **lo de hoy no fue uno de ellos**, y que meter `teléfono` en la lista negra por este caso habría sido un falso positivo caro: nos costaba el gancho de *"quemando el teléfono"* (49.426) y los cuerpos de 168.926 y 192.303.
 
 ### 9.3 · Qué dispara el capado, según nuestros propios casos
 
