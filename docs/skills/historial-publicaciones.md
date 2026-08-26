@@ -186,6 +186,19 @@ El de automoción ya está hecho (Asier, 07/08). El siguiente **no repite sector
 
 **🔴 LA CONCLUSIÓN, Y ES INCÓMODA: las dos primeras probablemente estaban sanas y las matamos nosotros.** Las borramos **antes del minuto 20**, que es justo cuando la tercera despertó. **Nunca les dimos la oportunidad de desbloquearse**, así que el experimento no puede atribuirle nada a `teléfono` ni a `número`.
 
+**📈 LA CURVA DE LA v3, que es la primera línea base documentada de un RETRASO** (Unipile, contadores públicos):
+
+| minuto | ♥ | 💬 | 🔁 | impresiones |
+|---|---|---|---|---|
+| 6 | 0 | 0 | 0 | — |
+| 9 | 0 | 0 | 0 | — |
+| 18 | 2 | 0 | 0 | — |
+| 20 | — | — | — | **aparece en el feed de varias cuentas** |
+| 27 | — | — | — | **136** |
+| **30** | **5** | **2** | **2** | — |
+
+**Plana los primeros 15 minutos y despega a partir del 18. Es lo CONTRARIO de un capado:** los tres de agosto **desaceleraban** (2,9 → 2,7 → 2,0 imp/min medido el 18/08); este acelera, y los 2 reposts a los 30 minutos son gente de fuera compartiendo. **Guarda esta curva: es la vara para no volver a confundir un arranque plano con un bloqueo.**
+
 **LO QUE SÍ QUEDA PROBADO:**
 - ✅ **Los UTM no bloquean.** La que repartió los llevaba puestos. Era el único elemento sin precedente en 267 posts y queda descartado.
 - ✅ **Existe un retraso de ~20 minutos que NO es un bloqueo.** Es el **primer dato** de la cola de revisión que Iker sospechaba desde el 18/08, y solo lo tenemos porque por una vez no borró.
