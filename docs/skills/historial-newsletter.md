@@ -533,3 +533,29 @@ Cierra el pendiente que este fichero abrió el 25/08 (*"dos correos NUEVOS, sin 
 ## Micro-aperturas fijas por remitente
 - **Iker: `Te cuento.`** (fijada el 2026-08-26, `email-marketing §5-HISTORIA`)
 - Unai, Asier y Kaixito: `[PENDIENTE]`
+
+
+---
+
+## 🔁 CORRECCIÓN DEL PLAN (Iker, 2026-08-26, mismo día): EL CORREO 3 SE DESCARTA
+
+**Iker, sobre el plan de arriba:** *"el tres lo descartaría, porque dos semanas seguidas repetiré el mismo pilar de historia, no creo que sea lo ideal, y repetiré el mismo remitente tampoco. La semana del correo tres volvería a la mascota y así utilizamos otra de las animaciones que tenemos"*.
+
+**Y esto TUMBA lo que yo había escrito arriba**, que proponía dos historias seguidas de Iker para tener dos puntos de serie. **Manda él, y además es coherente con la ley de variedad** (`global §2.0b`): el pilar también rota, no solo la frase.
+
+| | semana 31/08 – 04/09 | semana 07/09 – 11/09 |
+|---|---|---|
+| Remitente | **Iker** | **Kaixito** |
+| Pilar | historia personal (`§5-HISTORIA`) | `[PENDIENTE · por decidir]`, con GIF |
+| GIF | ninguno, texto puro | **sí, y uno que NO sea el de estrés** (el del correo 0) |
+| Estado | escrito, validado 31/31 | sin escribir |
+
+- **Las dos reglas nuevas que salen de aquí, y son de planificación, no de este correo:**
+  1. **No se repite pilar dos semanas seguidas.**
+  2. **No se repite remitente dos semanas seguidas.**
+- **⛔ Y hay una restricción de personas que hay que respetar y no es de contenido.** Iker, literal: *"ya que así, como estaré de vacaciones, si pasa algo raro el segundo jefe no me dirá nada, y no quiero usar de remitente ni al primero ni al tercero hasta que empecemos a mejorar"*. **Unai y Asier NO remiten hasta que los números mejoren.** Los remitentes disponibles hoy son **Iker y Kaixito**, y ya está.
+- **El GIF del correo de Kaixito sale de la biblioteca ya subida a Brevo** (`corpus-correos-enviados`, las 5 URLs verificadas). **La emoción la decide el TEXTO, no el turno**, y el de **estrés ya se gastó** en el correo 0. Libres: alegría, enfado, curiosidad, aburrimiento.
+- **`aburrimiento` es el candidato natural**: su descripción en la receta es literalmente *"el trabajo manual repetitivo (tema central nuestro)"*.
+
+## 🗑️ Lo que se cae del apartado de ángulos usados
+El **correo 3 (la centralita, dolor del interlocutor)** queda **escrito pero NO usado**. No se apunta como quemado: está disponible para cuando vuelva a tocar historia con remitente Iker. El texto validado está en el chat del 26/08.

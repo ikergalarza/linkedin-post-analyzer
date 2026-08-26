@@ -338,6 +338,56 @@ No son las señales. No es el momento. **Es la identificación.** Los clientes i
 
 **⚠️ Y la regla de entrada es la misma que en el ninja:** un dolor entra en un email cuando el informe lo respalda con **3 empresas o más**. Con 1 o 2 es hipótesis, se prueba en un correo y se anota el resultado en `historial-newsletter.md`.
 
+### ⛔⛔ 5-NINJA · EL SPAM NINJA EN EL CORREO: BLOQUE DE DOS, Y CUELGA DEL ASUNTO (Iker, 2026-08-26) — CANÓNICO EN EMAIL
+
+> **Iker, viendo el correo 2 con el enlace en una línea suelta:** *"has puesto el enlace en una línea individual separada, entonces yo creo que en cuanto lo vea una persona que lo reciba detectará que le estamos intentando vender algo, entonces no lo pulsará, generará rechazo y fricción. Es mejor que copies e inyectes en tu receta el bloque de dos de las publicaciones. Solo que en este caso de correos la primera línea del bloque, en vez de seguir la broma del gancho de la publicación, aquí seguirá la broma o el verbo punchy del ASUNTO del correo, que es el equivalente"*.
+
+**🔴 EL FALLO QUE LO MOTIVA ES MÍO Y ES DE LIBRO:** subí el enlace desde la PPD hasta el cuerpo (bien) y lo dejé **en una línea suelta con un blanco encima**, que es exactamente lo que `global §4.4b-FORMA` lleva desde el 12/08 marcando como ❌ MAL. **La forma del ninja no es de un pilar ni de un canal: es global.** La tenía leída y la rompí al cambiar de canal.
+
+#### La forma, calcada de `global §4.4b-FORMA` sin tocar una coma
+```
+[la BROMA o el VERBO PUNCHY DEL ASUNTO, girado contra el dolor]
+[UNA oración: quién lo resuelve] + ":" + enlace     ← más corta que la de arriba
+```
+- **Las DOS líneas pegadas**, un solo salto entre ellas, **sin blanco en medio**.
+- **Tope de 55 caracteres cada una, sin contar la URL.** Pasando de ahí la línea se parte en el móvil y el bloque de dos se lee como cuatro, que es justo lo que el bloque existe para evitar.
+- **La de abajo es la más corta** (escalera invertida). Es la excepción a la escalera del cuerpo, y encima es lo que hace el corpus de newsletters entero (`§8d`).
+- **La línea del enlace es UNA sola oración acabada en `:` con el enlace pegado detrás.** Ni dos oraciones, ni el enlace despegado.
+- **Nunca la última línea:** detrás van la firma y las postdatas.
+
+**El dato que lo sostiene** (auditoría de clics reales de las 3 cuentas, 12/08): bloque de dos pegadas **0,205% de CTR mediano** contra **0,069%** de la línea suelta. Y el par sin ruido posible, dos memes casi idénticos en alcance: el del 29/07 con bloque de dos hizo **142 clics** en 93.744 impresiones; el del 06/08 con línea suelta hizo **4 clics** en 95.913. **35 veces menos.**
+
+#### ⭐ LO ÚNICO QUE CAMBIA EN CORREO: **EL ASUNTO OCUPA EL SITIO DEL GANCHO**
+En LinkedIn la primera línea del bloque cuelga de la broma del gancho, y su **palabra tiene que aparecer literal** dentro del ninja (`§4.4b-FORMA`, fallo duro). **En el correo el gancho ES el asunto**, así que la palabra que se repite sale de ahí.
+- Asunto `me traje 200 tarjetas y no llamé a ninguna` → objeto punchy **`tarjetas`**, verbo punchy **`traje`**.
+- Ninja: `200 tarjetas te las trae cualquier feria. Ordenadas no.` → la palabra está, y el chiste se gira: **lo que la feria sí te da contra lo que no**.
+- **Si el asunto no tiene broma, se sigue lo más punchy: su OBJETO y su VERBO** (`§4.4b`, la subsección del ninja sin broma). Media parrilla de correos no va a tener chiste.
+- **Y repetir la palabra es el SUELO, no el techo.** Encima hay que girar la broma contra el dolor, normalmente en la forma *"eso lo hace cualquiera, lo otro no"*. Citar la palabra sin girar nada es peor que no citarla.
+
+#### ⛔ LO QUE **NO** SE TRAE DE LINKEDIN, y se dice para no arrastrarlo por inercia
+| regla de LinkedIn | ¿vale en correo? |
+|---|---|
+| **El enlace cae antes del carácter 650** (`§4.4b-CLICS`) | ❌ **NO.** Ese número mide el scroll de un feed y el corte del "ver más". En el correo **el 100% del corpus pone el enlace al final del cuerpo** (RunnerPro lo pone en el 1.900). Aquí el suelo lo pone el sentido: **después de que el cuerpo haya pagado la promesa**, nunca antes |
+| **Dos puertas (agendar + correo)** (`§4.4e`) | ❌ **NO, jamás.** Pedirle a un suscriptor que se suscriba al correo que está leyendo no tiene sentido. **Una puerta y es `/agendar/`** |
+| **UTM en el enlace** (`§4.4b-UTM`) | ❌ **No se escribe a mano.** Brevo los inyecta él en el envío. La URL del cuerpo va limpia, y lo que hay que vigilar es el `utm_campaign` de la campaña (`§9b` punto 12) |
+| **No nombrar a Neety** (`§4.4b` regla 2) | ✅ **SÍ, y no por el mismo motivo.** En LinkedIn es porque nombrar la marca lo delata como publicidad ante el clasificador. En el correo no hay clasificador de alcance, pero **el bloque sigue leyendo mejor en plural sin marca**, y la firma de abajo ya dice quiénes somos |
+| **Lista de frases quemadas** | ✅ **SÍ, y es la MISMA lista.** El dolor no cambia y la frase sí. Un ninja repetido entre canales se quema el doble de rápido, porque media lista viene de LinkedIn |
+
+#### 💣 QUÉ PUEDE PROMETER EL NINJA DEL CORREO, Y NO ES OPINABLE (Iker, 2026-08-26)
+> **Iker:** *"también tienes que copiar de la skill de LinkedIn que ahora tenemos nuevo feedback de los clientes, para mejorar también el spam ninja de los correos sabiendo cómo solucionar mejor su punto de dolor y cuál es"*.
+
+**⛔ EL INVENTARIO NO SE COPIA AQUÍ. Vive en `global §4.4b-MUNICIÓN` y en `aboutme §1b`, y se lee de ahí** (informe del 2026-08-24: **258 citas, 63 empresas, 87 reuniones**). Dos copias del mismo banco de dolores se desincronizan en tres semanas y entonces el post y el correo empiezan a vender cosas distintas. **Lo que sí es de aquí es qué pesa distinto en la bandeja de entrada:**
+
+1. **Los vetos pesan MÁS en correo, no menos.** Prometer que lo escribe la IA es objeción en **5 empresas** (*"vimos tantos de estos mensajes que directamente los ignoramos"*, Innobide), y aquí el lector lo está leyendo **dentro de la misma bandeja donde recibe esos mensajes**. Prometer volumen es la queja literal contra Waalaxy y Apollo, otras 5.
+2. **La SEÑAL sigue sin poder abrir.** Es la objeción nº1 del informe (**12 empresas, 9 del ICP**) y `§4.4b-ORDEN` no cambia por ser correo: **la identificación abre, la señal cierra**.
+3. **La unidad de medida son los MESES**, porque es la palabra que usan ellos (*"puede ser un trabajo de meses"*, Composites Martiartu). Un ninja que dice "en 5 minutos" está comprando la promesa de la herramienta que ya han dejado de usar.
+4. **Y hay un dolor que en correo cotiza más alto que en un post: el interlocutor.** *"No te da el interlocutor en la empresa, lo que te da es ese posible listado de empresas"* (Gaitek, 19/08). En un post la palabra `nombre` compite con el chiste; **en dos líneas de correo cabe entera y es lo que más nos separa de una base de datos**.
+5. **La regla de entrada es la misma:** un dolor entra en el ninja cuando el informe lo respalda con **3 empresas o más**. Con 1 o 2 es hipótesis: se prueba en un correo y se anota en `historial-newsletter.md`.
+
+**El test de los 5 segundos, idéntico al de los posts:** tapa el correo entero y lee solo las dos líneas. **Si valdrían pegadas a cualquier otro correo nuestro, están mal**, aunque lleven la palabra del asunto dentro.
+
+**Mecanizado en `validar-email.py`** con 7 checks nuevos: dos líneas pegadas · las dos ≤55 sin la URL · escalera invertida · una oración + `:` + enlace pegado · **repite una palabra del ASUNTO** (raíz de 5 letras, sin tildes) · sin frases quemadas · el enlace no es la última línea. **Probado contra la versión mala del correo 2**, que cae con 3 fallos.
+
 ### ⭐⭐ 5-HISTORIA · EL PILAR HISTORIA PERSONAL, TRASLADADO DE LINKEDIN AL CORREO (Iker, 2026-08-26) — PRIMERA VERSIÓN, SIN VALIDAR
 
 > **Iker, pidiéndolo:** *"no tenemos aún pilares de contenido para correos definidos… el que quiero medio copiar, porque realmente la idea la saqué de los correos y la apliqué a LinkedIn, es el pilar historia personal, que ahora ya tenemos nuevo feedback de los clientes y su punto de dolor real. Trasladarlo igual a los correos. Y el gancho de las publicaciones de LinkedIn se puede más o menos transferir a los correos al asunto"*.
@@ -375,11 +425,11 @@ El corpus español entero abre con una orden de 1-3 palabras, con punto y línea
 - **La nuestra no puede ser la suya** (`working-preferences §1e-COPIA`: se roba el mecanismo, no las palabras). **`Te cuento.` es la de Iker**, y encaja con el pilar mejor que ninguna de las de arriba porque **anuncia literalmente que viene una historia**.
 - Va **fija en todos sus correos**. Los otros 3 remitentes necesitan la suya cuando les toque. `[PENDIENTE · decisión de marca]`
 
-#### ⭐ LA FRASE DE ESTADO ANTES DEL ENLACE, y va en escalera INVERTIDA
-`§8d` lo mide: la última línea antes del enlace **no lleva verbo imperativo**, describe que la cosa ya existe (*"Tu plan te está esperando"*), y el bloque final **va de larga a corta**, con la más corta pegada al enlace.
-- **Nuestro molde:** `Eso es lo que miramos en una reunión de 30 minutos.` (51) → `Tus empresas, no un ejemplo.` (28) → enlace.
-- **La segunda línea rota con el dolor del correo**, la primera se queda fija. Es el equivalente email de la frase-puente de RunnerPro.
-- ⚠️ **30 minutos, nunca 20.** El correo 0 prometía 20 y la página pide 30 (`corpus-correos-enviados`).
+#### ⭐ EL CIERRE ES EL SPAM NINJA, Y TIENE SU PROPIA SECCIÓN
+> 🔴 **AQUÍ PONÍA QUE EL ENLACE IBA EN UNA LÍNEA SUELTA CON SU FRASE DE ESTADO DELANTE, Y ERA UN FALLO MÍO** (corregido el 26/08 por Iker). El enlace suelto con un blanco encima se lee como un banner y tiene **0,069% de CTR contra 0,205%** del bloque de dos.
+
+**El cierre de una historia por correo es un spam ninja normal: bloque de DOS líneas pegadas, la primera colgando del ASUNTO. Receta entera en `§5-NINJA`.**
+- ⚠️ **30 minutos, nunca 20.** El correo 0 prometía 20 y la página pide 30 (`corpus-correos-enviados`). Si no cabe en las dos líneas, **no se mete a la fuerza**: la página ya lo dice.
 
 #### ⭐ LA PD Y LA PPD SE REPARTEN EL TRABAJO, y ninguna de las dos vende
 Es la forma medida de RunnerPro y de Timepack (`§4b`, `§8d`), y resuelve el conflicto con la regla del UNO: **el único CTA es el enlace**, así que las postdatas no pueden pedir otra cosa.

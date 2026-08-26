@@ -216,6 +216,98 @@ def main():
     else:
         checks.append(fallo(f'{len(links)} enlaces compitiendo (máx 1 principal)'))
 
+    # --- SPAM NINJA EN EL CORREO (email-marketing §5-NINJA, Iker 2026-08-26) ---
+    # La forma del ninja NO es de un pilar ni de un canal: es global (global §4.4b-FORMA).
+    # Iker, viendo el correo 2 con el enlace en linea suelta: "en cuanto lo vea una
+    # persona detectara que le estamos intentando vender algo, no lo pulsara, generara
+    # rechazo y friccion". Es literalmente lo que mide la auditoria de clics del 12/08:
+    #   bloque de 2 pegadas  n=4  CTR mediano 0,205%
+    #   linea suelta         n=8  CTR mediano 0,069%
+    # Y el par sin ruido: meme del 29/07 con bloque de dos, 93.744 imp y 142 clics;
+    # meme del 06/08 con linea suelta, 95.913 imp y 4 clics. Treinta y cinco veces menos.
+    #
+    # LO QUE CAMBIA EN CORREO: la linea 1 no cuelga de la broma del GANCHO del post,
+    # cuelga de la broma o del verbo punchy del ASUNTO, que es su equivalente.
+    if links:
+        bloque_ninja = next((b.splitlines() for b in bloques if 'http' in b), [])
+        bl = [l for l in bloque_ninja if l.strip()]
+        sin_url = lambda x: re.sub(r'https?://\S+', '', x).strip()
+
+        if len(bl) == 2:
+            checks.append(ok('Ninja: DOS líneas pegadas, dolor arriba y enlace abajo'))
+        else:
+            checks.append(fallo(
+                f'Ninja: {len(bl)} línea(s) en el bloque del enlace, tienen que ser 2. '
+                f'Con el enlace suelto se lee como un banner y el CTR se hunde '
+                f'(0,069% contra 0,205%)'))
+
+        largas = [(i + 1, len(sin_url(l))) for i, l in enumerate(bl) if len(sin_url(l)) > 55]
+        if largas:
+            checks.append(fallo(
+                'Ninja: LAS DOS líneas cortas, ≤55 sin la URL. Línea(s) '
+                + ', '.join(f'{i} con {n} car' for i, n in largas)))
+        else:
+            checks.append(ok('Ninja: las dos líneas ≤55 sin la URL ('
+                             + ' / '.join(str(len(sin_url(l))) for l in bl) + ' car)'))
+
+        if len(bl) == 2:
+            arriba, abajo = len(sin_url(bl[0])), len(sin_url(bl[1]))
+            if abajo <= arriba:
+                checks.append(ok(f'Ninja: escalera invertida ({arriba} → {abajo})'))
+            else:
+                checks.append(aviso(f'Ninja: la línea del enlace es MÁS LARGA que la de '
+                                    f'arriba ({arriba} → {abajo}). En el cierre del enlace '
+                                    f'la escalera va al revés que en el cuerpo'))
+
+        # La linea del enlace: UNA sola oracion + ":" + enlace, todo pegado
+        # (global §4.4b, Iker 2026-08-07). Dos oraciones o el enlace despegado del
+        # texto lo convierten otra vez en banner.
+        lenl = next((l for l in bl if 'http' in l), '')
+        texto_enl = sin_url(lenl)
+        if texto_enl.endswith(':') and texto_enl.count('.') == 0:
+            checks.append(ok('Ninja: la línea del enlace es UNA oración + ":" + enlace pegado'))
+        else:
+            checks.append(fallo('Ninja: la línea del enlace tiene que ser UNA sola oración '
+                                'acabada en ":" con el enlace pegado detrás'))
+
+        # ⛔ LA PALABRA DEL ASUNTO SE REPITE LITERAL DENTRO DEL BLOQUE.
+        # En LinkedIn es la del gancho (global §4.4b-FORMA, fallo duro); en correo el
+        # gancho ES el asunto. Sin ella el bloque aparece con vocabulario nuevo a
+        # mitad de texto y el ojo lo trata como banner; con ella se lee como el
+        # remate. Se compara por raiz de 5 letras y sin tildes, igual que en posts.
+        def _raices(txt):
+            t = (txt.lower().replace('á', 'a').replace('é', 'e').replace('í', 'i')
+                 .replace('ó', 'o').replace('ú', 'u').replace('ñ', 'n'))
+            return {w[:5] for w in re.findall(r'[a-z]{4,}', t)}
+        VACIAS = {'para', 'como', 'esta', 'este', 'esto', 'todo', 'toda', 'cuand',
+                  'porqu', 'pero', 'nunca', 'siemp', 'tambi', 'desde', 'sobre'}
+        r_asunto = _raices(asunto) - VACIAS
+        r_ninja = _raices(' '.join(sin_url(l) for l in bl))
+        comunes = r_asunto & r_ninja
+        if comunes:
+            checks.append(ok(f'Ninja: repite una palabra del ASUNTO ({", ".join(sorted(comunes))})'))
+        else:
+            checks.append(fallo(
+                'Ninja: no repite ninguna palabra del ASUNTO. El asunto habla de: '
+                + ', '.join(sorted(r_asunto)) + '. En correo el asunto ES el gancho, '
+                'así que su objeto o su verbo punchy tienen que aparecer literales '
+                'dentro del bloque'))
+
+        # Quemadas: mismo banco que los posts. El dolor no cambia, la frase si.
+        QUEMADAS = ('dar con el que decide', 'son meses a mano', 'te lo damos hecho',
+                    'te lo damos resuelto', 'te lo marcamos', 'acertar con quien no')
+        q = next((x for x in QUEMADAS if x in cuerpo_low), None)
+        if q:
+            checks.append(fallo(f'Ninja: frase QUEMADA "{q}" (§4.4b, el dolor no cambia y la frase sí)'))
+        else:
+            checks.append(ok('Ninja: sin frases quemadas'))
+
+        # Nunca la ultima linea: detras van la firma y las postdatas.
+        if cuerpo_lineas and 'http' in '\n'.join(cuerpo_lineas[-2:]):
+            checks.append(fallo('Ninja: el enlace es la última línea del correo (§4.4b)'))
+        else:
+            checks.append(ok('Ninja: el enlace no es la última línea'))
+
     # --- AI-tells ---
     m = re.search(AI_TELLS, cuerpo_low)
     if m:
