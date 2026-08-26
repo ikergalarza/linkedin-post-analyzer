@@ -2218,6 +2218,14 @@ Acceso libre.
 > - **Orgullo regional:** mediana del mapa **24.152** y de "Los 10" **18.140**, contra 3.072 del post suelto.
 > **Conclusión operativa: las horas van en el orgullo (clichés, territorios, el oficio de cada sitio), no en conseguir una mención más.**
 >
+> #### 🛑🛑 Y LA VARIANTE REGIONAL ES PUNTUAL, NO EL NUEVO DEFAULT (Iker, 2026-08-26)
+> **Iker, en cuanto vio la receta escrita:** *"es muy importante que a partir de ahora no me hagas todas las publicaciones del pilar historia de peloteo regional. Esto tiene que ser algo puntual, cuando sea coherente, sobre todo relacionado con el spam ninja. A menos que con esto descubramos que las historias regionales funcionan aún mejor, y entonces ya las adaptaremos todas"*.
+>
+> **EL DISPARADOR, y es uno: la COHERENCIA con la puerta.** La variante regional entra cuando **el destino del enlace es regional** (hoy, un evento presencial en Donostia) o cuando **el dolor de la historia es de esa región**. Fuera de eso, el default del pilar es **sin región**.
+> - **Por qué no vale como default:** el orgullo regional **estrecha el alcance a propósito** (`global §2.3b`), y eso solo se paga cuando lo que hay al otro lado del enlace también es regional. En una historia que lleva a `/agendar/`, que vende a toda España, el peaje no compra nada.
+> - **Y si se abusa, se quema:** el peloteo funciona porque el local se siente reconocido. Un local reconocido cada semana deja de sentirse reconocido y empieza a ver el molde, que es exactamente lo que previene la ley de variedad de `global §2.0b`.
+> - **La condición para cambiar la norma está escrita y es la de siempre:** si la serie de historias regionales bate a la serie sin región **con la vara del pilar** (clics y conversación, no impresiones), se revisa esto. Hasta entonces, puntual.
+
 > #### CÓMO SE HACE UNA HISTORIA REGIONAL, sin que se convierta en un mapa
 > 1. **La escena manda.** Sigue habiendo un protagonista, un sitio y unos pretéritos (`§4.6` 1c). Si al quitar los clichés no queda una escena, es un mapa mal hecho.
 > 2. **Los clichés van EN EL CUERPO, nunca en el gancho** (`global §2.3b-ESCENARIO`): arriba el genérico que entiende cualquiera, abajo el específico.
@@ -2761,6 +2769,28 @@ El sistema no termina al entregar el post. Para que mejore con el tiempo:
 2. **Destilar el aprendizaje:** si un post **rompe** (muy por encima) o **flopea** (muy por debajo) de lo esperado, saca UNA frase de aprendizaje y proponla para la skill que toque (`outliers-database §4` si es un ratio/patrón, `swipe-file` si es un molde de texto, `global-instructions` si es una regla nueva). No lo dejes solo en la memoria de la conversación.
 3. **Persistir:** el aprendizaje solo cuenta si se guarda en el archivo y se **commitea**. Memoria ≠ archivo (ver README, flujo de actualización).
 4. **Refrescar los ratios:** cada 1-2 meses, reexporta "Top posts" y el Explorer y actualiza §4 y §3 — los ratios decaen y las mecánicas se queman.
+
+### 🧪🧪 9b · CÓMO SE HACE UN A/B DE VERDAD AQUÍ (Iker, 2026-08-26)
+
+> **Iker, y es la forma en que piensa todo lo de esta semana:** *"al final lo que estamos haciendo es A/B testing. Es como ayer, hemos reconvertido una limitación —que el tercer jefe no me pasa una foto suya individual— y hemos subido una foto de grupo. Así descubrimos, pero necesitamos más pruebas de qué pasa. Eso lo comprobaremos cuando en la misma cuenta hagamos la misma prueba dos veces"*.
+
+**Y tiene razón en la parte que más nos cuesta: para leer un A/B, la prueba se repite en la MISMA cuenta.** Entre cuentas no se puede comparar, porque la baseline es distinta y el ratio se calcula contra ella (`outliers-database §3.15`).
+
+**LAS CUATRO CONDICIONES, y sin las cuatro no es un A/B, es una anécdota:**
+1. **UNA variable por vez.** Si un post cambia la rama, el vehículo, la región y la foto a la vez —como el del 26/08— **no se puede atribuir nada a nada**. Se dice al entregar y se acepta a propósito, pero no se lee después como si fuera una prueba.
+2. **Misma cuenta y mismo pilar.** La baseline manda.
+3. **La etiqueta se apunta EN EL MOMENTO, en la ficha del historial.** Una condición que no se anota el día que se publica no existe dentro de un mes. Es la misma razón por la que se anota qué foto se subió (`§4.6-FOTO`).
+4. **No se lee con n=1 por brazo.** Con 5.000-9.000 impresiones el ruido se come cualquier diferencia pequeña. **La vara práctica: 3 o 4 posts por condición** antes de sacar una conclusión, y si el corte no es limpio (como el 15/3 de `working-preferences`), no hay regla.
+
+**⛔ Y EL ERROR QUE HAY QUE EVITAR ES EL DE SIEMPRE: confundir la variable con el PILAR** (`global §4.4b`). Antes de comparar dos condiciones, comprueba que las dos tienen el mismo reparto de pilares detrás.
+
+**A/B ABIERTOS AHORA MISMO** (estado vivo, el detalle en `historial-publicaciones`):
+| prueba | brazo A | brazo B | estado |
+|---|---|---|---|
+| **Foto de la historia** | selfie individual | foto de grupo | A: 4 posts · B: 1 (Asier 25/08, 9.187 imp y subiendo). **Falta repetir B en la misma cuenta** |
+| **Registro de la foto** | oficina | casa, informal | 21/08 Unai en oficina (5.651 imp · 43 clics) contra 26/08 Unai en casa. **Mismo pilar y misma cuenta: es el A/B más limpio que tenemos**, aunque el resto del post cambie |
+| **Rama del pilar** | historia propia | historia de otro | A: 4 · B: 1 (26/08) |
+| **Variante regional** | sin región | con región | A: 4 · B: 1 (26/08), **confundida con la rama** |
 
 ---
 
