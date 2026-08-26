@@ -841,6 +841,23 @@ sorprende, que es de lo que vive este pilar.
 >
 > **El test antes de entregar:** pon las dos listas al lado de tu version. **Cada elemento de la lista tiene que tener su equivalente reconocible en el remix.** Si falta uno, no es un remix, es otro post.
 >
+> ### ⛔⛔ 4.4-ESENCIA-MITAD · CUANDO EL TEXTO Y LA IMAGEN DEL ORIGINAL CUENTAN CHISTES DISTINTOS, LA ESENCIA ES LA DE LA PIEZA QUE ESTAMOS ROBANDO (Iker, 2026-08-26) — GLOBAL
+>
+> > **Iker, sobre la v1 del meme de Asier:** *"como primera versión está bien, pero no sé si hemos perdido la esencia del meme, creo que sí. Recuerda que hay que calcar la esencia tanto del texto como de la foto"*. Y la había perdido entera.
+>
+> **El caso, y es el que hay que reconocer porque se repite:** la referencia de Pietro Acerbis son **DOS piezas que no cuentan el mismo chiste**. Su TEXTO es un listículo serio sobre los cinco problemas del CRM. Su IMAGEN es un meme de katana donde `YES` resulta ser el principio de `YESTERDAY I HAD A DREAM ABOUT IT`. **El 32% de risa lo produce la imagen, no el listículo.**
+>
+> **Lo que hice mal, y las tres cosas salen del mismo error:** cogí el ángulo del **TEXTO** (el CRM está lleno de datos inútiles) y escribí un cuerpo que inventariaba el papeleo. Resultado:
+> 1. **Mi gancho no calcaba su mecánica.** La de la imagen es una **pregunta acusadora en estilo directo** que deja la respuesta colgando; yo narré el desenlace desde fuera (*"y no le mentí ni una vez"*), que es contar el chiste en vez de montarlo.
+> 2. **El motor no aparecía en el texto por ningún lado.** El motor es **la palabra cortada** — que la sílaba visible sea el principio literal de la frase entera —, y mi cuerpo hablaba de bolígrafos. Es el fallo de Lauren Vilips del 11/08 al revés: allí la foto tenía un médico que ningún texto recogía; aquí la foto parte una palabra y el texto no la nombraba.
+> 3. **Y el remix pasaba el validador a 49/49.** Esto el script no lo ve nunca.
+>
+> **LA REGLA, en una línea:** *antes de extraer la esencia, di en voz alta **QUÉ PIEZA** de la referencia estamos robando, y saca la esencia SOLO de esa.* Si robamos la imagen, el gancho calca la mecánica **del texto que hay DENTRO de la imagen**, no la del post que la envuelve.
+>
+> **EL CHEQUEO, y es de diez segundos:** escribe en literal **cuál es el mecanismo del gag en una frase**, y después busca esa frase dentro de tu texto. Aquí: *"la respuesta corta que suena a un sí es en realidad el principio de una frase que dice que no"*. Si esa frase no está recogida en el cuerpo ni en el gancho, **el motor se ha quedado solo en la foto y el texto es de otro post**.
+>
+> **⚠️ Y esto NO choca con `§4.4-CALLA`** (el cuerpo no explica la imagen). Recoger el MECANISMO no es describir la foto: el cierre *"El sí entero nunca cabe en la ficha"* no cuenta que hay una katana, pero sostiene el mismo motor. **Se recoge el mecanismo en abstracto; lo que no se hace es narrar lo que se ve.**
+>
 > ### 📏 4.4-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
 > **🔒 ESTA REGLA ES UNIVERSAL Y VIVE EN `global §2.2b-MEDIR`.** Vale para CUALQUIER pilar que parta de una referencia, no solo el meme. Aqui queda el detalle porque el primer caso fue un meme; si algun dia choca con lo de alla, manda `global`.
 > **`python scripts/anatomia-referencia.py original.txt mio.txt` antes de entregar.** Copié el tema y el motor del meme de Daniel Disney y no medí nada, y salió esto:

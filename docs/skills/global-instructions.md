@@ -343,6 +343,28 @@ Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cade
 
 > **Esta lista es CANÓNICA para el hook y gana a cualquier otra.** `brand-voice §2` tenía una lista de "términos naturalizados" (SDR, AE, CRM, B2B, GTM, ICP, outbound…) que decía lo contrario: esa lista es **solo del cuerpo**. El desempate lo da el ICP de `aboutme`: el lector lleva vendiendo **desde antes de que existiera Salesforce**. **CRM y forecast entran en la lista negra el 2026-07-14**: en un hook de meme se coló "Tu CRM…" y el usuario lo tumbó con la razón exacta ("un viejo no va a saber lo que es un CRM"). Alternativas llanas: informe de ventas · parte de visitas · el Excel · la previsión.
 
+> #### ⛔ 2.3-CRM · LA TRADUCCIÓN LLANA DE `CRM` ES **LA FICHA DEL CLIENTE**, NO EL PARTE (Iker, 2026-08-26)
+>
+> **Iker, y es una pega buena:** *"no sé si es exactamente lo mismo o podríamos traducir CRM para que lo entienda cualquiera de otra manera, porque CRM es más bien como una herramienta de gestionar clientes, ¿no?"*.
+>
+> **Tiene razón y las cuatro alternativas de arriba estaban mal elegidas para este caso.** No son sinónimos, son cosas distintas, y usar la que no toca rompe el chiste sin que salte ningún check:
+>
+> | llano | qué es de verdad | cuándo se usa |
+> |---|---|---|
+> | **la ficha del cliente** · el fichero de clientes | **lo que sabes de CADA cliente**: con quién hablaste, qué te dijo, en qué punto está | ⭐ **es la traducción de `CRM`** |
+> | el parte de visitas · el informe de ventas | lo que TÚ hiciste esta semana, para entregárselo al jefe | actividad, no cliente |
+> | el Excel | el soporte, no el contenido | cuando el chiste va del formato |
+> | la previsión | `forecast`, lo que crees que vas a cerrar | cuando el chiste va del número |
+>
+> **Y la ficha gana por tres sitios más, no solo por ser exacta:**
+> 1. **`cliente` es ancla de ventas**, así que la traducción trae el ancla puesta (⚠️ ambigua, no fuerte: `§2.3` la comparte compras y logística, así que el gancho necesita además `ventas`, `vender` o `comercial`).
+> 2. **Se puede rodar** (`§2.2d`): una ficha se ve, un CRM no. Un acrónimo nunca pasa el test de la creadora de vídeos.
+> 3. **Un director comercial de 55 que no tiene CRM sí tiene fichas.** El concepto le existe aunque la herramienta no.
+>
+> **⚠️ Y `ficha` NO cae en `§2.2d-DOBLE`** pese a parecerlo: `fichar` (entrar a trabajar) y `la ficha` de un jugador son otros usos, pero `la ficha del cliente` cierra el sentido con el complemento. Si el gancho la deja sola, se le pone el complemento o se cambia.
+>
+> **⛔ Y el ámbito es TODO el texto, no solo el gancho.** El veto de `CRM` es de audiencia (`brand-voice §2b`), y ese vale igual en el cuerpo, en el spam ninja, en las respuestas a comentarios y **dentro de la imagen** (`images §0h-FILTROS`). Lo único que cambia es que en el cuerpo `CRM` sí está permitido por `brand-voice §2b` porque no tiene traducción llana… **y desde hoy sí la tiene, así que ahí también gana la ficha.**
+
 **⚠️ ANCLAR NO ES PONER "En ventas," DELANTE (2026-07-17).** Se convirtió en muletilla: 3 hooks seguidos empezando igual. **Y la muletilla la creó el propio validador**: la forma más barata de aprobar el check del ancla es pegar la palabra delante, y en cuanto sale verde se deja de pensar. Es el riesgo de todo check mecánico: optimizas para la comprobación, no para el lector.
 - **Los datos:** solo **1 de nuestros 11 ganadores** empieza por "En ventas" (el 16.55x). Los otros 10 anclan por otro sitio. **Está en el validador.**
 - **LOS ÁNGULOS PARA ANCLAR (rota, no repitas el del post anterior):**
