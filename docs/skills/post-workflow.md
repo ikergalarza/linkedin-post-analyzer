@@ -1874,6 +1874,32 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 - **⚠️ Ojo: "Reciente" no vale**, es cronológico y ahí sale hasta un post capado. **Solo cuenta "Primero los más relevantes"** (`§4.5.0-CAPADO-RAPIDO`).
 - **📏 Y a partir de ahora se ANOTA el dato:** en cada publicación, **cuántos minutos tarda en aparecer en Principal desde otra cuenta**. Con 5-6 posts hay línea base y la hipótesis de la "cola de revisión" pasa de intuición a número.
 
+##### 🔕🔕 4.5.0-SIN-AVISO · LINKEDIN NO AVISA, ASÍ QUE LA AUSENCIA DE AVISO NO ES INFORMACIÓN (Iker, 2026-08-26)
+
+> **Iker, con un post recién subido y sin aparecer en el feed:** *"me he ido a las analíticas desde la cuenta del primer jefe y no hay ningún tipo de aviso, y nunca veo avisos en LinkedIn. En otras plataformas como TikTok, si subes algo y te lo banean, sale el aviso"*.
+
+**Es un detalle operativo pequeño y ahorra media hora de búsqueda inútil:** en TikTok un contenido restringido te lo dice; **en LinkedIn no hay ninguna pantalla que te avise de que un post no se está repartiendo.** Ni en las analíticas del post, ni en notificaciones, ni en el perfil.
+
+**LAS DOS CONSECUENCIAS, y las dos se fallan:**
+1. **No pierdas tiempo buscando el aviso.** No existe. Lo único que hay es el comportamiento: feed, banda típica y pendiente (`§4.5.0-FEED`, `§4.5.0-CAPADO-RAPIDO`).
+2. **⛔ Y "no hay ningún aviso" NO significa que esté todo bien.** Los tres posts capados de agosto tampoco tuvieron aviso. **La ausencia de aviso es el estado normal en las dos situaciones**, así que no es evidencia ni a favor ni en contra: es ruido.
+
+##### ⏳ 4.5.0-REVISION · LA HIPÓTESIS DE LA COLA DE REVISIÓN (Iker) — ⚠️ n=0, SIN UN SOLO DATO ANOTADO
+
+**La hipótesis, en sus palabras:** un post puede tardar un rato largo en aparecer en Principal y **luego aparecer de golpe y repartirse con normalidad**, como si LinkedIn lo hubiera tenido en una cola de revisión. *"El otro día me asusté igual y pasados no sé cuántos minutos de repente ya me salió"*.
+
+**Está escrita desde el 18/08 y el instrumento también, y aun así no tenemos NI UN número apuntado.** Ese es el fallo: la hipótesis no avanza porque el dato se toma en caliente, cuando nadie está para apuntar.
+
+**LO QUE HAY QUE APUNTAR, en la ficha del historial de CADA post:**
+- **minutos hasta aparecer en Principal** desde una cuenta que no sigue a la que publica,
+- si **apareció de golpe** o fue subiendo,
+- y **qué llevaba de nuevo** ese post (imagen distinta, enlace distinto, parámetros, formato nuevo).
+
+**Con 5-6 posts se sabe si la mediana es de 2 minutos o de 20, y solo entonces un retraso significa algo.** Hoy, sin línea base, **un post que tarda 15 minutos no se puede distinguir de uno normal**, y por eso el susto se repite cada vez.
+
+**🔍 EL CANDIDATO DEL 26/08, dicho como lo que es — una sospecha con una coincidencia detrás:** ese post es **el primero de los 267 del histórico que lleva parámetros UTM en el enlace** (comprobado en el corpus). No hay ninguna evidencia de que eso active una revisión, y a favor de que sea inocuo está que **LinkedIn mete UTMs en sus propios enlaces de compartir** (`utm_source=social_share_send`). **Pero es la única variable nueva, así que si el retraso se repite en los siguientes posts con UTM y no en los que no lo llevan, ahí está la respuesta.**
+- ⛔ **Lo que NO se hace: quitar los UTM en caliente.** Sin línea base no habría contra qué comparar, y encima perderíamos la única forma de atribución que tenemos. **Se miden los siguientes.**
+
 #### 🚨🚨 4.5.0-CTA · EL "COMENTA LA PALABRA" DEJÓ DE FUNCIONAR EL 5 DE AGOSTO DE 2026
 
 > **Esto es lo que estuvo capando nuestros lead magnets toda la semana del 03/08, y no era ninguna palabra.** Cuatro publicaciones borradas y resubidas cambiando gancho, cuerpo entero, imagen, y quitando `prompt`, `ÚLTIMA HORA`, `destapa`, `firma`, `regalo` y hasta la foto. **El problema nunca estuvo en el texto: estaba en el MECANISMO.**
