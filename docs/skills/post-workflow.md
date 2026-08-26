@@ -1094,6 +1094,22 @@ sorprende, que es de lo que vive este pilar.
 > Did you update the CRM?        →  ¿Has actualizado la ficha del cliente?   ✅ significa lo mismo
 > Did you update the CRM?        →  Me pidieron cuentas                      ⛔ es OTRA frase
 > ```
+>
+> #### ⛔⛔ 4.4-PASO-1-VERBO · EL VERBO DEL ORIGINAL ES EL SUELO DE LA ESCALERA, NO EL PUNTO DE PARTIDA LIBRE (Iker, 2026-08-26)
+>
+> > **Iker, sobre la v3:** *"el texto original dice ¿actualizaste el CRM? Entonces, ¿por qué me pones el verbo preguntar? Si tiene que ser actualizar. Preguntar lo entendería si fuese un verbo más punchy que actualizar, pero es que preguntar es un verbo muy blando"*.
+>
+> **La regla, y encaja las dos que parecían chocar** (`§4.4-ESENCIA`, copia palabra por palabra · `§2.9`, mejora el verbo): **el verbo del original SE MANTIENE por defecto. Solo se cambia SUBIENDO la escalera, nunca bajándola.** Si el recambio es más blando, es que estaba parafraseando, no mejorando.
+>
+> ```
+> update  →  actualizar   ✅ el suyo, calcado
+> update  →  rellenar     ✅ si algún día se demuestra más punchy
+> update  →  preguntar    ⛔ más blando Y encima es otro verbo, el de la pregunta y no el de la acción
+> ```
+>
+> **⛔ Y NO ES SOLO EL VERBO: vale para CUALQUIER palabra literal del original, y ahí estaba el segundo caso del mismo post.** El original responde `YES` y yo escribí `media respuesta`, que es **mi descripción de su `YES`**, no su `YES`. La palabra que dice el original se dice, y el matiz nuestro se añade **al lado**, nunca en su lugar: `solté un sí` conserva la palabra y mete el verbo punchy encima.
+>
+> **EL CHEQUEO, que se hace en tabla y por escrito junto a la traducción del `§4.4-PASO-1-LITERAL`:** una fila por palabra cargada del original —el verbo, el objeto, la respuesta, el remate— con su traducción y con lo que puse yo. **Cualquier fila donde la tercera columna no contenga la segunda es una paráfrasis**, y hay que justificar por qué sube la escalera o volver a la palabra del original. En la v3 fallaban tres filas de seis; en la v4, cero.
 
 **Paso 2 — HOOK: ⭐ CALCA LA MECÁNICA DEL GANCHO ORIGINAL, igual que calcas la foto.**
 - **El gancho se roba con la misma fidelidad que la imagen.** Si calcas el layout de la foto pero te inventas un gancho nuevo, has tirado la mitad del outlier: el gancho original es parte del motor que lo hizo volar, no un envoltorio.
