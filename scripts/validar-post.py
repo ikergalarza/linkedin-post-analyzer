@@ -2557,6 +2557,21 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'PRETERITO para los hechos ("la cerre", "la eche", "pago")'
             if len(_pret) < 4 else f'{len(_pret)}: {", ".join(_pret)}')
 
+        # §4.6-RAMAS (Iker, 2026-08-26) — SIN VALIDAR. El pilar se abrio en dos
+        # ramas por protagonista (propia / de otro) mas una variante regional que
+        # cruza las dos. Si cada entrega no DECLARA cual usa, dentro de un mes
+        # habra ocho historias y ninguna forma de saber que rama funciono. Por eso
+        # es un aviso fijo: no comprueba nada, obliga a escribirlo.
+        chk(False, 'ENTREGA: declara la RAMA y si es REGIONAL (§4.6-RAMAS)',
+            'dos cosas, en una linea de la entrega y en la ficha del historial: '
+            '(1) RAMA A = historia PROPIA (protagonista el dueno de la cuenta, 1a persona, '
+            'el default) o RAMA B = historia DE OTRO (protagonista un tercero sin nombre y '
+            'el dueno de testigo, §4.6-TESTIGO); (2) si lleva PELOTEO REGIONAL dentro '
+            '(cliches y orgullo de una region, sin salir del pilar: sin lista de empresas, '
+            'sin CSV y con menos de 6 menciones). ⚠️ Que sea real o inventada NO es la rama, '
+            'es otro eje y lo gobierna §4.6-INVENTAR. Las dos ramas son n=1 a dia de hoy: '
+            'se apuntan para poder medirlas, no porque esten validadas', aviso=True)
+
         chk(False, 'ENTREGA: ¿es una ETAPA compartida o solo tu anecdota? (§4.6-NOSTALGIA)',
             'El nivel que mas rinde no es "me paso esto y a ti tambien", es "aquella '
             'epoca la vivimos varios a la vez": el lector no se acuerda de si mismo, se '

@@ -2191,6 +2191,45 @@ Acceso libre.
 > - **Sigue habiendo un gate humano:** la historia se entrega diciendo **de qué dolor del informe sale**, para que Iker la contraste con una reunión real antes de publicar. Inventar la escena no es inventar el material.
 > - **⭐ Y EL ARGUMENTO PARA DEFENDERLO HACIA DENTRO, MEDIDO (2026-08-21).** Cuando un jefe pregunte si nos lo hemos inventado, la respuesta no es teórica: **los dos mejores posts del pilar son los dos que llevan escena construida.** Iker 13/08 (escena redactada a partir del dolor nº1 del informe) → **10.2k imp · 1.01x · 0,41% de CTR, el mejor del pilar**; Iker 18/08 (portal, 143 nombres y el filtro del césped, inventados) → **9.5k imp · 0.95x, el de más alcance del pilar**. **Y el matiz que cierra la conversación: no nos inventamos el DOLOR, que sale de 50 reuniones reales. Nos inventamos el decorado.**
 
+> ### 🌳🌳 4.6-RAMAS · LA TAXONOMÍA DEL PILAR HISTORIA (Iker, 2026-08-26) — ⚠️ SIN VALIDAR EN DATOS
+> **Iker, cerrando el día y pidiendo que quede escrito:** *"hemos abierto dentro del pilar historia una nueva rama: ya no es solo la historia personal nuestra, sino que podemos contar historias en tercera persona. Y no solo eso, sino adaptadas al peloteo. Algunas historias estaría bien adaptarlas por región: que no entren en la categoría peloteo regional, sino que sean pilar historia de tipo peloteo regional"*.
+>
+> **🔴 LO PRIMERO, PORQUE ES LO QUE MÁS FÁCIL SE OLVIDA: nada de esto está medido.** Se creó el 26/08 y **el único post que lo usa es el de ese día**, así que hoy es **n=1 para las dos cosas a la vez**. Va escrito porque si no se escribe se pierde, no porque haya funcionado. **La regla de `working-preferences §0c` sigue mandando: hasta que haya números, esto son hipótesis con nombre, no recetas.**
+>
+> #### LAS DOS RAMAS, y las decide QUIÉN es el protagonista
+>
+> | rama | protagonista | quién narra | dónde está el detalle |
+> |---|---|---|---|
+> | **A · HISTORIA PROPIA** | el dueño de la cuenta | él mismo, 1ª persona | el runbook de siempre (`§4.6`) |
+> | **B · HISTORIA DE OTRO** | un tercero **sin nombre**, por su oficio | el dueño de la cuenta, **de testigo** | `§4.6-TESTIGO` |
+>
+> - **Que la historia sea REAL o INVENTADA no es una rama, es otro eje** y ya está resuelto en `§4.6-INVENTAR` (la escena se puede inventar, el dolor jamás). **Las dos ramas admiten las dos cosas**, y eso lo dice Iker expresamente: *"tanto si son reales como inventadas, me da igual en ambos casos"*.
+> - **La rama B nace de una necesidad de la CUENTA, no del rendimiento** (el primer jefe no quiere autobiografía inventada), y por eso la rama A **sigue siendo el default** mientras B no tenga números: los 4 mejores ganchos del pilar van en 1ª persona del singular (`brand-voice`, la tabla de la persona del gancho).
+>
+> #### Y UNA VARIANTE QUE CRUZA LAS DOS: LA HISTORIA REGIONAL
+>
+> **No es una tercera rama: es un ACABADO que se le puede poner a cualquiera de las dos.** La historia se ambienta en una región y el cuerpo se carga de clichés y de orgullo, **sin salir del pilar historia**: no se convierte en peloteo, no lleva lista de empresas, no lleva CSV y no lleva menciones masivas.
+>
+> **POR QUÉ, y el razonamiento es de Iker:** *"nuestra prioridad número uno hoy no es alcance, sino conversión a un evento presencial en el País Vasco"*. La historia es **el pilar que peor alcanza y mejor convierte** (0,76% de CTR a Luma el 21/08 contra el 0,022% del meme de más alcance del mes), y el orgullo regional es **el motor que mejor mueve a un local**. Juntar los dos es meter el combustible del peloteo en el motor que convierte.
+>
+> **⭐ Y LA CORRECCIÓN DE FONDO QUE HAY QUE TENER CLARA, porque cambia dónde se pone el esfuerzo:** *"la clave validada ya no es el peloteo general, que es lo que yo pensaba al principio —que con mencionar a gente se haría viral—, sino el peloteo y el ORGULLO regional"*. **Y esto sí está medido:**
+> - **Mismo número de menciones, 16 veces de diferencia:** Cataluña de Iker **7.10x** y Cataluña de Unai **0.59x**, las dos con 16 menciones (`outliers-database §3.13`). Mencionar no explica nada.
+> - **Peloteo puro sin orgullo regional:** el post de evento de Unai del 11/08, con **8 marcas mencionadas**, hizo **1.955 impresiones y 0.47x**.
+> - **Orgullo regional:** mediana del mapa **24.152** y de "Los 10" **18.140**, contra 3.072 del post suelto.
+> **Conclusión operativa: las horas van en el orgullo (clichés, territorios, el oficio de cada sitio), no en conseguir una mención más.**
+>
+> #### CÓMO SE HACE UNA HISTORIA REGIONAL, sin que se convierta en un mapa
+> 1. **La escena manda.** Sigue habiendo un protagonista, un sitio y unos pretéritos (`§4.6` 1c). Si al quitar los clichés no queda una escena, es un mapa mal hecho.
+> 2. **Los clichés van EN EL CUERPO, nunca en el gancho** (`global §2.3b-ESCENARIO`): arriba el genérico que entiende cualquiera, abajo el específico.
+> 3. **El topónimo va con su OFICIO** (`global §4.1` punto 2b), y el oficio tiene que ser cierto y de dominio público.
+> 4. **Se nombran los territorios que hagan falta para que no se quede fuera ninguno.** En Euskadi son tres, y dejar uno fuera es la queja que ya nos han hecho en comentarios.
+> 5. **⛔ Menos de 6 menciones @** o el clasificador la reetiqueta como peloteo y deja de compararse contra su propio pilar (`§4.6b`).
+> 6. **Una sola puerta**, la del pilar (`global §4.4e-PUERTA`).
+>
+> #### 📏 LO QUE HAY QUE APUNTAR PARA PODER MEDIRLO ALGÚN DÍA
+> **Cada fila de historia del `historial-publicaciones` declara DOS cosas: la RAMA (propia / de otro) y si es REGIONAL.** Sin eso, dentro de un mes tendremos ocho historias y ninguna forma de saber qué rama funcionó. **Y se juzgan con la vara del pilar** (`§4.6-OBJETIVO`): conversación y clics, nunca impresiones.
+> **Mecanizado** como aviso de entrega en `validar-post.py --pilar historia`, que pregunta las dos cosas en cada validación.
+
 > ### 👁️👁️ 4.6-TESTIGO · LA HISTORIA SE PUEDE CONTAR SIN SER EL PROTAGONISTA (Iker, 2026-08-26)
 > **Iker, y el motivo es de la persona, no del pilar:** *"inventarnos cualquier tipo de historia en el segundo jefe me da igual, pero conociendo el primero, ¿hay alguna manera de contar esta historia sin perder rendimiento pero que no se hable desde una primera persona?"*.
 >
