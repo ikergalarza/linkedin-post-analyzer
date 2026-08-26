@@ -303,6 +303,26 @@ Iker: *"un gancho que no se pueda representar visualmente una creadora de vídeo
 
 **El test rápido:** di el objeto en voz alta sin contexto. **¿Lo primero que ves es una pantalla?** Cámbialo.
 
+##### ⛔⛔ 2.2d-CORPUS · LA SEGUNDA LECTURA NO SIEMPRE ES UNA PANTALLA: A VECES ES **NUESTRO PROPIO SECTOR** (Iker, 2026-08-26)
+
+> **Iker, sobre el gancho de la historia del 26/08:** *"mi único miedo es si en el gancho `número` se entiende que hablamos de un número de teléfono. Yo creo que se entiende, porque después ponemos comercial… pero es que no quiero confusiones, y el gancho es lo más importante"*.
+
+**Tenía razón y yo había dicho que se entendía. Lo que zanja la duda no es el oído, es el corpus:**
+
+| palabra | qué significa **en nuestros propios posts** |
+|---|---|
+| **`número`** | **6 de 7 veces, una CIFRA**: *"Les pasé tres números y se callaron"* (79.224) · *"me senté a mirar los números de verdad"* (64.566) · *"Tres números y se acaba la broma"* · *"Les puse 3 números encima de la mesa"* |
+| **`teléfono`** | **7 de 7 veces, el teléfono**, y en nuestros mayores éxitos: *"nadie descuelga el teléfono"* (168.926) · *"No me cogió el teléfono"* (192.303) · *"quemando el teléfono"* (49.426) |
+
+**La única vez que `número` significa teléfono lleva `marcar` pegado** (*"Marcar 500 números para que compren 3"*). O sea: la desambiguación colgaba entera del verbo, **y encima en un gancho que lleva `comercial` dentro**, que es justo el contexto donde "los números" son las cifras de ventas.
+
+**LA REGLA, y amplía `§2.2d-DOBLE`:** la segunda lectura peligrosa **no es solo la pantalla** (`buzón`, `carpeta`, `muro`). También es **la palabra que en NUESTRO sector significa otra cosa**: `número`, `cifra`, `cuenta`, `parte`, `cartera`, `operación`, `objetivo`, `caja`. En un gancho de ventas, esas se leen en clave de ventas.
+
+**EL TEST, y son 30 segundos:** antes de meter un sustantivo polisémico en un gancho, **búscalo en el corpus y mira qué significa cuando lo hemos escrito nosotros**. Si la lectura dominante en nuestros propios posts es la otra, **el lector va a leer la otra**. Se cambia por la palabra de una sola lectura, aunque cueste un carácter: aquí `número → teléfono` costó **1 carácter** (60 → 62 con el ninja ajustado) y quitó la duda entera.
+
+**⚠️ Y ojo con el reflejo de aclarar en vez de sustituir:** `marcar un número de teléfono` también quita la duda, pero mete 9 caracteres de relleno en la única línea donde no sobra ninguno (`§2.2c`). **Se cambia la palabra, no se le añade una nota al pie.**
+
+
 **⭐ AMPLIADO AL CUERPO EL 2026-08-21, y hasta hoy esto estaba escrito solo para el GANCHO.** Iker preguntó si en la historia de Unai era mejor `un taller del barrio` o `una tienda del barrio`. **Gana `taller`, y el motivo es este mismo test aplicado tres líneas más abajo del gancho:** `tienda` hoy se lee antes como *tienda online* que como el local de la esquina, así que el lector pierde la imagen del negocio de barrio justo en la frase que sostiene la escena. `taller` no tiene versión digital.
 - **La familia crece con `tienda`**, que se suma a `buzón`, `carpeta`, `archivo`, `ventana`, `nube`, `muro`, `perfil`, `agenda`, `carrito`, `libreta` y `tablón`.
 - **Por qué vale también en el cuerpo, aunque `§2.3b` diga que la especificidad va ahí:** una cosa es **estrechar el público** (eso solo cuesta en el gancho) y otra **romper la imagen mental** (eso cuesta en cualquier línea). Son dos problemas distintos y solo el primero es exclusivo del gancho.
