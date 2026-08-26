@@ -1075,6 +1075,26 @@ sorprende, que es de lo que vive este pilar.
 
 **Paso 1 — Traducir (si está en inglés, que es lo habitual):** EN→ES **fiel al original** en formato, longitud y estructura, pero con **expresiones naturales en español** donde suenen mejor (no traducción literal robótica).
 
+> ### ⛔⛔ 4.4-PASO-1-LITERAL · LA TRADUCCIÓN SE ESCRIBE, Y SE ESCRIBE ANTES DE ADAPTAR NADA. TAMBIÉN LA DEL TEXTO DE DENTRO DE LA IMAGEN (Iker, 2026-08-26)
+>
+> > **Iker, y es el orden entero de la receta dicho por él:** *"los pasos a seguir ya te los expliqué: encontramos una referencia que sea de ventas, de meme y adecuada para el tipo de jefe. Luego, lo traducimos al español tal cual. Luego aplicamos todo lo que sabemos de formateado, de verbos, de palabras, de longitudes, de ritmo y de spam. Y luego me lo devuelves, iterando todo lo posible"*.
+>
+> **Lo que hacía mal: me saltaba el paso 2 y pasaba del inglés directo a "mi versión".** Y sin la traducción delante, lo que sale no es una adaptación, es **el equivalente** — que es justo lo que `§4.4-ESENCIA` lleva prohibido desde julio y que sigo cometiendo. Iker, sobre la v2: *"¿estás seguro de que **me pidieron cuentas** significa lo mismo que **has actualizado el CRM**?"*. No lo significa, y solo se ve poniendo las dos frases una debajo de otra.
+>
+> **LAS TRES REGLAS DEL PASO:**
+> 1. **Se escribe, no se piensa.** La traducción literal va en un bloque, en la entrega, para que se pueda comparar palabra por palabra. Si no está escrita, no se ha hecho.
+> 2. **⭐ Se traduce TAMBIÉN el texto que va DENTRO de la imagen**, que es donde vive el chiste en la mitad de los memes. Aquí ponía "traducir el post" y por eso lo saltaba: el post de la referencia era un listículo y el gag estaba en la foto.
+> 3. **Y en la traducción NO se adapta nada todavía.** Ni el ancla de ventas, ni el verbo punchy, ni la longitud. Eso es el paso 3. Mezclarlos es lo que produce el equivalente.
+>
+> **El único cambio que SÍ entra en la traducción es la palabra vetada por AUDIENCIA**, y entra como traducción llana, no como concepto nuevo: `CRM` → `la ficha del cliente` (`global §2.3-CRM`), no `el parte de ventas`, que es otra cosa.
+>
+> **EL TEST, y es el que Iker aplicó:** coge la frase del original y la tuya, ponlas una debajo de otra y pregunta **si significan lo mismo**. No si suenan parecido ni si van del mismo tema: **lo mismo**.
+>
+> ```
+> Did you update the CRM?        →  ¿Has actualizado la ficha del cliente?   ✅ significa lo mismo
+> Did you update the CRM?        →  Me pidieron cuentas                      ⛔ es OTRA frase
+> ```
+
 **Paso 2 — HOOK: ⭐ CALCA LA MECÁNICA DEL GANCHO ORIGINAL, igual que calcas la foto.**
 - **El gancho se roba con la misma fidelidad que la imagen.** Si calcas el layout de la foto pero te inventas un gancho nuevo, has tirado la mitad del outlier: el gancho original es parte del motor que lo hizo volar, no un envoltorio.
 - **Método:** escribe en una frase QUÉ hace el gancho original (su mecánica), y reprodúcela. Ej. real: *"LinkedIn es mágico ✨"* = **afirmación corta, irónica, sobre la herramienta, que monta el marco sin destripar el chiste**. El remix mantiene esa mecánica (corta + irónica + sobre la herramienta) y cambia la piel a ventas: *"Tu CRM resucita clientes muertos ✨"*.
