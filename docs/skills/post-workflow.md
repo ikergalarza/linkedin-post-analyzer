@@ -1443,7 +1443,33 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 
 **⛔ LO QUE NO CAMBIA, y es criterio de marca por encima del dato:** Martín Arosa repite el mismo tema cada dos días y le sigue funcionando. **No lo copiamos.** Así que **ante dos opciones que pasen las puertas, gana siempre la que lleve más tiempo sin tocarse.** La tabla dice qué está prohibido; la preferencia de Iker decide entre lo permitido.
 
-**La cola de `§4.5.0-REUTILIZAR` se ordena por la puerta 3 (días desde el último uso), no por comentarios del post origen.** Los comentarios desempatan entre los que ya han pasado las puertas, no al revés.
+**La cola de `§4.5.0-REUTILIZAR` se ordena por la puerta 3 (días desde el último uso), no por comentarios del post origen.** Y entre los que pasan las puertas, **desempata el TECHO DEL TEMA FUERA, no lo que nos hizo a nosotros** (`§4.5.0-TECHO`).
+
+##### 🎯🎯 4.5.0-TECHO · UN TEMA SE JUZGA POR SU TECHO **FUERA**, NO POR LO QUE NOS HIZO A NOSOTROS (Iker, 2026-08-26)
+
+> **Iker, y es la corrección que abre esta sección:** *"que me estés dando a entender que una publicación que nos pilló hace meses cien comentarios es buena, yo lo veo poco. Obviamente para nuestra cuenta es buena, pero tenemos que aspirar a más, sobre todo ahora que ya hemos aprendido a esquivar los baneos"*.
+
+**El fallo:** ordené la cola de recursos por los comentarios que sacó NUESTRO post de origen. Eso mide **nuestra ejecución de entonces**, no el tema. Y con esa vara, un tema con techo de 1.710 comentarios se queda archivado como "el de 120".
+
+**EL CASO QUE LO DEMUESTRA, y es nuestro:** el post de Iker del 21/04 (*"Por qué la mayoría de los cold emails se ignoran"*, **120 comentarios**) es una **traducción casi literal** de un post que está en nuestra propia BD:
+
+| post | comentarios | ratio | fecha |
+|---|---|---|---|
+| El original en inglés (*"Why most cold emails get ignored"*) | **1.710** | **30.4x** | 10/11/2025 |
+| Su propio remix, 5 meses después, casi calcado | **1.414** | 24.9x | 02/04/2026 |
+| **Nuestra traducción** | **120** | 2.16x | 21/04/2026 |
+
+**Dos cosas que esto enseña y que no teníamos escritas:**
+1. **El techo del tema es 1.710, no 120.** Nuestro número medía el molde de abril: un ensayo traducido literal, sin disparador, sin Claude, sin lista numerada y con `Escribe "sí" en los comentarios` de CTA — el CTA implícito que `swipe-file §4.1` ya demostró que hunde el conteo (0.59x contra 8.52x). **Hoy tenemos el molde campeón y no lo teníamos entonces.**
+2. **El autor original repitió su propio post cinco meses después casi calcado y volvió a hacer 1.414.** O sea que el tema aguanta la repetición **en su propia cuenta**, cosa que a nosotros no nos pasa (`§4.5.0-ESPACIADO`). Es la asimetría de confianza de cuenta de siempre.
+
+**⚠️ Y LA CAUTELA, dicha entera:** no se puede atribuir todo el hueco a la ejecución. En abril nuestra audiencia era más pequeña, y aunque el ratio normaliza por la media del propio autor (30.4x contra 2.16x), no lo normaliza todo. **Lo que sí se sostiene: un tema con 1.710 comentarios demostrados fuera no se descarta porque nosotros lo hiciéramos a 120.**
+
+**LA REGLA:** al elegir recurso, cada candidato lleva **DOS cifras**, y mandan en este orden:
+1. **El TECHO del tema fuera** — el mejor análogo en `/api/analysis/cross-creators` con la huella de `outliers-database §3.9b`. Dice cuánto puede dar.
+2. **Nuestro resultado** — dice cómo lo ejecutamos la última vez, y **sirve para diagnosticar, no para descartar.**
+
+**Si el techo es alto y lo nuestro fue bajo, eso no es un tema muerto: es un tema mal ejecutado, y encima ya sabemos por dónde.** Ese es el mejor candidato que hay, porque el riesgo está identificado.
 
 ##### 5 · Lo que va en la entrega, siempre
 
