@@ -16,7 +16,7 @@ import { Avatar, EmojiPicker, ErrorBoundary, ReactionBar, fmtRelative } from './
 import type { Thread } from './shared';
 import {
   buildAskReply, buildDm, buildListaDm, buildReply,
-  cerradoSinPedirlo, commentDepth, detectarRecurso, extractKeyword, extractSector, matchesKeyword,
+  cerradoSinPedirlo, claveDelPost, commentDepth, detectarRecurso, extractSector, matchesKeyword,
   resolverRecurso, voiceFor,
 } from './leadMagnetCopy';
 import type { ListaCompany, Voice } from './leadMagnetCopy';
@@ -70,7 +70,11 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
     const auto = detectarRecurso(post.content_text);
     return {
       ...saved,
-      keyword: saved.keyword.trim() || extractKeyword(post.content_text),
+      // La palabra sale, en este orden: la guardada a mano, el `comenta "X"` del
+      // texto si el post es viejo, y por ultimo la CLAVE del recurso que se detecta
+      // por pistas — que es el caso de todos los posts nuevos, donde la palabra vive
+      // dentro de la foto y el texto no la nombra (`claveDelPost`).
+      keyword: saved.keyword.trim() || claveDelPost(post.content_text),
       link: auto?.link ?? saved.link,
       topic: auto?.topic ?? saved.topic,
     };

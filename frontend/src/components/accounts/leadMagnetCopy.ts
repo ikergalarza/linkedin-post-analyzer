@@ -97,6 +97,31 @@ const CATALOGO: RecursoDef[] = [
     ],
   },
   {
+    // ERRORES (Iker, 2026-08-26). Reedicion del recurso del 21/04, que paso de 8
+    // errores a 5 y estreno la seccion del prompt de Claude. Igual que `vibe` y
+    // `criba`, la palabra vive DENTRO de la imagen del post y no en el texto
+    // (`post-workflow §4.5.0-CTA-IMAGEN`), asi que a este post lo reconocen las
+    // PISTAS y no `extractKeyword`.
+    //
+    // ⛔ SIN ESTA ENTRADA EL PANEL SE QUEDA MUDO. `detectarRecurso` no habria
+    // encontrado nada, `resolverRecurso` habria devuelto null, y con `recurso`
+    // en null el boton de enviar el DM se BLOQUEA: el panel te pide el enlace a
+    // mano con los comentarios entrando. Es el escenario que ya avisa la entrada
+    // de `criba` unas lineas mas abajo, y aqui habria pasado por no dar de alta
+    // el recurso, no por un empate.
+    //
+    // Las cinco pistas se eligieron comprobando DOS cosas contra el texto real
+    // del post: que las cinco aparecen, y que ninguna pista de los otros seis
+    // recursos casa con el (cero solapes medidos), asi que no puede haber empate.
+    link: 'https://recursos.neety.com/errores/',
+    topic: 'los 5 errores que dejan tus mensajes sin respuesta',
+    claves: ['errores'],
+    pistas: [
+      'sacado los colores', 'marcados uno por uno', 'la frase de relleno',
+      'peticiones metidas', 'ninguno es de redaccion',
+    ],
+  },
+  {
     link: 'https://recursos.neety.com/subvencion-euskadi/',
     topic: 'la subvención de IA para industria vasca',
     claves: ['subvencion'],
@@ -306,6 +331,37 @@ export function cerradoSinPedirlo(
 //      probables es justo cuando NO hay que elegir por el usuario, porque el
 //      precio de acertar es cero y el de fallar es mandarle a 400 personas el
 //      enlace equivocado. El panel entonces pide el enlace a mano.
+// ⛔ LA PALABRA QUE LA GENTE COMENTA, CUANDO NO ESTA EN EL TEXTO (Iker, 2026-08-26)
+//
+// Desde el 05/08 el `Comenta "X"` vive DENTRO de la foto, asi que `extractKeyword`
+// devuelve '' en todos los posts nuevos. Pero la palabra EXISTE: es la que pide el
+// banner, y es la `clave` del recurso que `detectarRecurso` acaba de identificar
+// por pistas. Sin esto, el panel se queda sin saber que palabra estan comentando,
+// y todo lo que cuelga de `cfg.keyword` se apaga: el aviso de "no lo ha pedido"
+// salta en TODAS las tarjetas, `cerradoSinPedirlo` no cierra a nadie y el sector
+// del tipo lista sale siempre vacio.
+//
+// El orden de resolucion queda: lo que este guardado a mano, luego el `comenta "X"`
+// del texto si el post es viejo, y por ultimo la clave del recurso detectado.
+export function claveDelPost(postText: string | null | undefined): string {
+  const enElTexto = extractKeyword(postText);
+  if (enElTexto) return enElTexto;
+  if (!postText) return '';
+  const t = normalize(postText);
+  let mejor: RecursoDef | null = null;
+  let mejorN = 0;
+  let empate = false;
+  for (const r of CATALOGO) {
+    const n = r.pistas.filter((p) => t.includes(p)).length;
+    if (n === 0) continue;
+    if (n > mejorN) { mejor = r; mejorN = n; empate = false; }
+    else if (n === mejorN) empate = true;
+  }
+  // Mismo criterio que `detectarRecurso`: con empate no se adivina.
+  if (!mejor || empate) return '';
+  return mejor.claves[0] || '';
+}
+
 export function detectarRecurso(postText: string | null | undefined): Recurso | null {
   if (!postText) return null;
 
