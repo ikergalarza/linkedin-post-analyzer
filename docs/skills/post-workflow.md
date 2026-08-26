@@ -924,6 +924,29 @@ sorprende, que es de lo que vive este pilar.
 >
 > **🔎 LO QUE CUESTA ENCONTRARLA, dicho para que nadie repita el barrido a ciegas (2026-08-25).** Barridos **58 creadores de ventas del corpus, 494 posts con imagen en la BD y 236 más frescos traídos de Unipile**, midiendo el % de risa uno a uno: **solo 7 pasan el filtro de meme de verdad (≥25% de risa)**, y de los **250 posts de ventas que hablan del JEFE, cero**. La cantera del rincón de dirección está vacía de memes: lo que hay son posts de consejo con foto. **Si algún día hace falta uno de ese rincón y no aparece, no es que se haya buscado mal.**
 >
+> **📋 EL INVENTARIO COMPLETO DE LA CANTERA, CERRADO EL 2026-08-26. Léelo ANTES de barrer otra vez: el barrido cuesta una hora y esta tabla lo resume.** Vías usadas: corpus refrescado ese día (533 posts nuevos), `cross-creators` filtrado por gancho con palabra de ventas, búsqueda por keyword en Unipile (16 keywords) y el feed de ~80 creadores de ventas. Medido el % de risa uno a uno sobre **todas** las que llevan imagen y pasan de 100 reacciones.
+>
+> | referencia | risas abs | 🔁 | por qué NO está libre |
+> |---|---|---|---|
+> | brendan short 28/07 *not wrong haha* | 2.023 | 129 | usada · meme del diccionario, Unai 13/08 |
+> | brendan short 10/08 *gtm engineers be like* | 1.786 | 32 | el tuit de Alex Cohen, **ya descartado dos veces** para Asier (ángulo de apilar herramientas) · y su gancho no lleva palabra de ventas |
+> | Olga Mykhoparkina 19/08 *Claude watermark / SEO* | 1.676 | 95 | usada · **es la de la búsqueda de Google, la que salió a 3.010 · 0.32x** |
+> | Segantini 16/07 *decaf espresso* | 1.093 | 47 | nuestra copia salió el 14/08 → **12 días**, y solo hizo 2.47x: falla las puertas 1 y 2 de `§4.4-REPETIR` |
+> | Will Aitken 27/07 *emergency discount* | 1.157 | 77 | **es un VÍDEO**, no una imagen |
+> | Jan B. Mundorf 13/05 *a sales team (cold calling edition)* | 863 | 103 | **es The Office**, el primer meme de Asier (16/07) |
+> | Will Aitken 10/08 *cold call transcript* | 813 | 11 | usada · Iker 19 y 20/08 |
+> | Segantini 27/07 *where did you get my number* | 360 | 7 | descartada el 14/08: mete la objeción de privacidad en nuestros comentarios |
+> | Segantini 22/06 *rejection isn't the worst part* | 342 | 45 | **es un VÍDEO** |
+> | Segantini 06/07 *I can handle rejection* | 213 | 3 | la captura es un ligue por privado, ni es de ventas ni pasa `§4.4-STOP` |
+> | Segantini 24/07 *cold calls on Fridays* | 166 | 6 | 🟢 **libre**, pero es el rincón de Iker |
+> | Segantini 08/07 *Descartes* | 125 | 12 | descartada el 14/08: 2 de 4 en el filtro de motor |
+> | **Pietro Acerbis 01/07 *Today's CRM has FIVE structural problems*** | **40** | 5 | 🟢 **LIBRE y del rincón de Asier** (la herramienta), gancho con `CRM` |
+> | Josh Etim 24/08 *underperforming sales rep* | 26 | 9 | 20% de risa, por debajo del suelo del 25% |
+>
+> **LAS DOS CONCLUSIONES, y la segunda es la que cambia cómo se planifica:**
+> 1. **Todo lo que tiene señal de risa grande está gastado.** No es que la cantera sea pobre: es que **nos la hemos comido nosotros** en seis semanas. Lo que queda libre está uno o dos órdenes de magnitud por debajo en risas absolutas.
+> 2. **⛔ Y por eso `§4.4-REPETIR` deja de ser el plan B y pasa a ser una vía normal.** Con la cantera agotada, **el double down espaciado de un ganador nuestro compite de tú a tú con una referencia fresca floja**, y encima con la garantía de que ya voló en nuestra audiencia. Antes de aceptar una referencia de menos de 150 risas absolutas, se miran las nuestras que pasan las tres puertas.
+>
 > **LA REGLA, por orden de preferencia:**
 > 1. **Lo primero: referencias que YA funcionaron EN VENTAS.** Si el chiste nació en nuestro sector, el puente no hay que construirlo, ya está hecho. Ese es el coste oculto que casi nadie ve: **un meme que hay que "adaptar a ventas" durante siete iteraciones es un meme que va a llegar forzado.**
 > 2. **Y dentro de esas, mejor en INGLÉS que en español.** Dos motivos: la copia se nota menos (nuestro público no vio el original) y el autor tiene menos probabilidad de cruzarse con nosotros. Con un original español pasó lo que pasó: Félix Fernández bloqueó a Unai en menos de una hora.

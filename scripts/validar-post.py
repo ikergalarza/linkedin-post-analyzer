@@ -178,6 +178,7 @@ SPAM_QUEMADO_CORREO = {
     # cuelga de nada, asi que si nadie la mueve se queda fija para siempre.
     'va en el correo de ventas': 'post de Mario 21/08 (la caida de los influencers)',
     'de eso va nuestro correo de ventas': 'post de Mario 21/08, la forma larga',
+    'eso lo tienen antes los del correo': 'meme de Asier 20/08 (el de la busqueda de Google)',
 }
 
 # §2.0b — ARRANQUES DE BLOQUE YA PUBLICADOS, POR PILAR (Iker, 2026-08-25).
@@ -213,6 +214,12 @@ ARRANQUE_QUEMADO = {
         'no': '"Los 10" del Pais Vasco ("No publica. No da charlas.", swipe-file)',
         'se': 'Asturias ("Se sabe... / Se sabe... / Se hace..."), via runbook',
         'su': 'Andalucia ("Su / Su / Su"), via runbook',
+    },
+    # El pilar meme no tenia lista y es el que mas publica. Leidos los dos
+    # publicados de la semana pasada (§0f: al PUBLICAR, no al entregar).
+    'meme': {
+        'la': 'meme de Asier 20/08 ("La lista no se pule / no se hereda / se elige antes")',
+        'no': 'meme de Unai 25/08 ("No buscan quien mande mas / escriba mejor / conteste antes")',
     },
 }
 
