@@ -828,6 +828,19 @@ Corre estas puertas EN ORDEN:
 ❌ 2026-07-21: primer borrador con "las 50 empresas". Par, y encima 50 listas por sector con Unipile no salen en un dia.
 ✅ Corregido a **25**: impar, creible, y producible sin que Unipile se atragante.
 
+#### ⛔⛔ 2.5b-SUSTANTIVO · LA CIFRA NUNCA VA SOLA: SIEMPRE CON LO QUE CUENTA (Iker, 2026-08-26)
+
+> **Iker, sobre la 2ª línea del ninja del 26/08:** *"me gusta mucho porque es corta, pero aun así: `el 24 de septiembre juntamos 80 en Donostia`… ¿80 qué? ¿80 personas, 80 números? Hay que ser explícito también"*.
+
+**El vicio, y es MÍO y tiene causa conocida:** el ninja tiene un tope de **55 caracteres por línea** (`§4.4b`), y **la forma más barata de recortar es tachar el sustantivo que va detrás del número**. La frase sigue siendo gramatical, el validador la da por buena y **el lector se queda preguntando qué son 80**. Es exactamente el mismo error que `§2.2d-CORPUS` el mismo día: ahorrar una palabra en la única línea donde no se puede dudar.
+
+**LA REGLA: toda cifra lleva pegado el sustantivo de lo que cuenta.** `80 nombres`, `500 llamadas`, `12 empresas`, `3 reuniones`. Nunca `80` a secas.
+
+**⛔ Y EL TOPE DE CARACTERES NO ES UNA EXCUSA: se recorta por OTRO lado.** Si no cabe, se quita un artículo, una preposición o el complemento de sitio (`§2.9c`), **nunca la palabra que dice de qué estamos hablando**. En el caso real cupo entero: `juntamos 80 en Donostia` (44 car) pasó a `juntamos 80 nombres en Donostia` (52), y sigue por debajo del tope y por debajo de la línea de arriba.
+
+**⭐ Y el sustantivo bueno no es el genérico, es el que RECOGE la línea de arriba.** Aquí `personas` habría sido correcto y plano; **`nombres` engancha con `el nombre de dentro no` de la primera línea**, así que la cifra deja de ser un dato de aforo y pasa a ser el remate del chiste: lo que no consigues de uno en uno, ahí está 80 veces.
+
+
 ---
 
 ### 2.2b · COMO SE ROBA UN OUTLIER: VEHICULO vs CONTENIDO, Y SER EL SEGUNDO MEJOR (Iker, 2026-07-21)
