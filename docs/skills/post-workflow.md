@@ -2165,6 +2165,38 @@ Acceso libre.
 > - **Sigue habiendo un gate humano:** la historia se entrega diciendo **de qué dolor del informe sale**, para que Iker la contraste con una reunión real antes de publicar. Inventar la escena no es inventar el material.
 > - **⭐ Y EL ARGUMENTO PARA DEFENDERLO HACIA DENTRO, MEDIDO (2026-08-21).** Cuando un jefe pregunte si nos lo hemos inventado, la respuesta no es teórica: **los dos mejores posts del pilar son los dos que llevan escena construida.** Iker 13/08 (escena redactada a partir del dolor nº1 del informe) → **10.2k imp · 1.01x · 0,41% de CTR, el mejor del pilar**; Iker 18/08 (portal, 143 nombres y el filtro del césped, inventados) → **9.5k imp · 0.95x, el de más alcance del pilar**. **Y el matiz que cierra la conversación: no nos inventamos el DOLOR, que sale de 50 reuniones reales. Nos inventamos el decorado.**
 
+> ### 👁️👁️ 4.6-TESTIGO · LA HISTORIA SE PUEDE CONTAR SIN SER EL PROTAGONISTA (Iker, 2026-08-26)
+> **Iker, y el motivo es de la persona, no del pilar:** *"inventarnos cualquier tipo de historia en el segundo jefe me da igual, pero conociendo el primero, ¿hay alguna manera de contar esta historia sin perder rendimiento pero que no se hable desde una primera persona?"*.
+>
+> **LA SALIDA ES EL NARRADOR TESTIGO: el protagonista es OTRO y el dueño de la cuenta solo estaba delante.** No se toca `§4.6-INVENTAR` (la escena se puede inventar, el dolor no); lo que cambia es **de quién es la escena**.
+>
+> **Qué se GANA, y son dos cosas:**
+> 1. **Al que firma no se le atribuye ningún hecho falso.** Lo único que afirma es **haber estado delante**, que en un founder es lo más normal del mundo y nadie le puede pedir la factura en comentarios. Es justo el miedo que resuelve.
+> 2. **Nuestros datos dicen que hablar de un tercero rinde MÁS.** El mejor post de evento del histórico no habla de nosotros (*"que dos clientes subieran a un escenario a vendernos ellos no fue casualidad"*, **4.140**) y el de nuestro propio premio rindió por debajo. Y `global §2.9-REVOLUCIONAR` lo mide en otro sitio: en el corpus **no hay ni un caso** en el que alguien anuncie que ÉL va a cambiar algo y funcione; cuando funciona, **la hazaña es de otro y nosotros la contamos**.
+>
+> **Qué se PIERDE, dicho en voz alta:** la **confesión** en primera persona, que es la que más identificación produce (`brand-voice`, canónico `YO > NOSOTROS > TÚ`). **Se compensa dejando el YO de NARRADOR dentro de la escena**: la primera persona no desaparece, cambia de papel.
+>
+> **LAS CINCO REGLAS, y las cinco son obligatorias:**
+> 1. **El protagonista NO lleva nombre ni empresa.** Se le nombra por su **oficio** (*el mejor comercial que me he cruzado*). Inventar una persona con nombre sigue prohibido (`CLAUDE.md`).
+> 2. **El narrador tiene que estar DENTRO de la escena** — de copiloto, en la mesa de al lado, en la misma feria. Si no está, deja de ser una historia y pasa a ser un cuento, y se nota.
+> 3. **La LECCIÓN del cierre es del narrador**, no del protagonista. El otro pone la escena; el que firma pone lo que aprendió.
+> 4. **El gancho conserva el token personal** (`me`, `mi`, `nunca`, `aquel`) o el validador lo tumba, y sigue siendo de **una sola oración** (`§4.6` punto 1a).
+> 5. **Elogiar al protagonista es peloteo al oficio**, que es el eje emocional de "Los 10" (4.81x): el comercial que lee se siente visto. Es un plus, no un coste.
+>
+> **Cuándo se usa:** cuando el dueño de la cuenta no quiere autobiografía inventada (hoy, el primer jefe) o cuando **no hay hecho real que encaje** (`§4.6-BIO`). Con hecho real y cuenta cómoda, sigue ganando la primera persona.
+
+> ### 🔁 4.6-VEHICULO · EL DECORADO DE LA HISTORIA ROTA COMO TODO LO DEMÁS (Iker, 2026-08-26)
+> **Iker, viendo el 2º borrador:** *"lo veo muy parecido, demasiado, a la misma historia que subimos ayer. Justo después del gancho volvemos a mencionar instituto. Seguro que se pueden inventar historias de otro tipo, sin siempre tener que ser el instituto"*.
+>
+> **El agujero:** `global §2.0b` (ley de variedad) lista el concepto, el verbo, la frase-rabia, el ninja, el opener, el cierre, el reveal y el arranque de la anáfora… **y no lista el VEHÍCULO de la historia**, que es lo más visible de todo. Resultado: **4 de las 5 últimas historias transcurren en la infancia o el instituto** (Iker 13/08 y 18/08, Unai 21/08, Asier 25/08), y la quinta iba camino de lo mismo.
+>
+> **LA REGLA: el vehículo entra en la ley de variedad y no se repite en dos historias seguidas, aunque sean de cuentas distintas** (las 3 cuentas comparten red, `global §2.0b-ARRANQUE`).
+>
+> **VEHÍCULOS YA GASTADOS:** el instituto y la infancia (×4, agotado) · la primera venta de crío (Iker 18/08) · el Excel del cliente en una reunión (Iker 13/08).
+> **VEHÍCULOS LIBRES, para no empezar de cero cada vez:** el copiloto de un comercial veterano · la feria · el cliente que te dice que no y por qué · el primer día en un puesto · una comida con un proveedor · la llamada que sale mal · el compañero que te enseñó algo sin querer · la obra o la visita a fábrica · el taxi al aeropuerto · el que se fue de la empresa.
+>
+> **Mecanizado** como aviso de entrega en `validar-post.py --pilar historia` (`ENTREGA: ¿el VEHICULO de la historia esta gastado?`), que canta si el cuerpo vuelve a caer en el colegio.
+
 Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eventos, "voy a X"). Esto es una **ANÉCDOTA con una lección**: real, o **construida sobre un dolor real** (`§4.6-INVENTAR`). **Ya tenemos datos propios, pero pocos** (n=2 en Iker, `§4.6-MEDIDO`; n=2 en Unai): la vara sigue siendo mayormente de fuera, como en el lead magnet. Se valida con `--pilar historia` (+ `--cuenta Mario` para el ancla de marketing en vez de ventas).
 
 > ### 📸 4.6-FOTO · LA HISTORIA VA CON SELFIE SUJETANDO EL MÓVIL CON LA MANO (Iker, 2026-08-13)

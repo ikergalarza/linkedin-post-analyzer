@@ -2564,6 +2564,27 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'la linea 2, antes que la escena, y mete al colectivo (la cuadrilla, la '
             'clase, los del barrio) SIN quitarle el protagonismo al YO', aviso=True)
 
+        # §4.6-VEHICULO — EL DECORADO DE LA HISTORIA ROTA (Iker, 2026-08-26).
+        # 4 de las 5 ultimas historias transcurren en la infancia o el instituto
+        # (Iker 13/08 y 18/08, Unai 21/08, Asier 25/08) y la quinta iba camino de
+        # lo mismo. La ley de variedad de global 2.0b listaba el concepto, el
+        # verbo, el ninja, el opener, el cierre y el arranque de la anafora, y no
+        # listaba lo mas visible de todo: DONDE pasa la historia. Aviso y no fallo
+        # duro, porque algun dia la infancia volvera a tocar; lo que hace falta es
+        # VERLO antes de entregar.
+        _veh = sorted({w.lower() for w in re.findall(
+            r'\b(instituto|colegio|cole|escuela|clase|recreo|profesor\w*|pupitre'
+            r'|viaje de fin de curso|con \d{1,2} a[ñn]os|de cr[ií]o|de peque[ñn]o)\b',
+            cuerpo, re.I)})
+        if _veh:
+            chk(False, 'ENTREGA: ¿el VEHICULO de la historia esta gastado? (§4.6-VEHICULO)',
+                'el cuerpo vuelve al colegio: ' + ', '.join(f'"{w}"' for w in _veh) +
+                '. Ya van CUATRO historias seguidas de infancia o instituto (13/08, 18/08, '
+                '21/08 y 25/08) y las 3 cuentas comparten red, asi que el mismo lector las '
+                've todas. Libres: el copiloto de un comercial veterano, la feria, el cliente '
+                'que dice que no, el primer dia en un puesto, una comida con un proveedor, la '
+                'llamada que sale mal, el taxi al aeropuerto', aviso=True)
+
         chk(not re.search(r'comenta\s+"', cuerpo, re.I),
             'HISTORIA: sin comment-gate — no pide comentar una palabra (§4.6)',
             'pedir "comenta X" la convierte en lead magnet; la historia cierra en la lección o lleva un CTA suave')
