@@ -461,3 +461,75 @@ Acumulado en Brevo: 21 de 366 = 5,74%.
 **Tanda 6 (viernes 28/08) sigue SIN programar**, a propósito: 3,66% mejora pero no baja del 2%, y sigue
 sin resolverse la regla de Mario de no mandar la última tanda en viernes. Se decide cuando se vea el
 rebote real de la tanda 5.
+
+---
+
+## 📊 ESTADO LEÍDO DE LA API DE BREVO EL 2026-08-26 (no de memoria)
+
+`GET /emailCampaigns?statistics=globalStats`. **Aperturas reales = `uniqueViews` menos `appleMppOpens`**, que es lo que el dashboard no descuenta.
+
+| | Tanda 1 | Tanda 2 | Tanda 3 | Tanda 4 | Tanda 5 |
+|---|---|---|---|---|---|
+| Campaña Brevo (id) | 2 | 3 | 4 | 5 | **6, en cola** |
+| Lista Brevo (id) | 5 | 6 | 7 | 8 | 9 |
+| Fecha | 20/08 18:40 | 21/08 09:05 | 24/08 09:05 | **26/08 09:17** | **27/08 09:05** |
+| Enviados | 25 | 50 | 100 | 191 | 370 |
+| Entregados | 23 | 42 | 88 | **183** | — |
+| **Rebotes duros** | 8,0% | 6,0% | 9,0% | **3,66%** | — |
+| `uniqueViews` | 8 | 14 | 38 | 48 | — |
+| menos Apple MPP | 1 | 4 | 5 | 10 | — |
+| **Aperturas reales** | 7 · 30,4% | 10 · 23,8% | **33 · 37,5%** | 38 · 20,8% *(mismo día)* | — |
+| Bajas | 0 | 1 | **3** | 0 | — |
+| **Clics a `/agendar/`** | **0** | **0** | **0** | **0** | — |
+
+**Dos correcciones a lo que este mismo fichero decía:**
+- **Tanda 3: 33 aperturas reales, no 31, y 3 bajas, no 2.** Sigue subiendo dos días después. **Ninguna tanda se cierra antes de los 3-4 días.**
+- **Tanda 4 marca 20,8% el mismo día del envío.** Entre el 60 y el 70% de las aperturas caen el primer día, así que acabará en la banda de las otras. **No es comparable hasta el 29/08.**
+
+### 🔴🔴 EL DATO QUE MANDA, Y NO ES EL REBOTE: **0 CLICS DE 336 ENTREGADOS**
+
+`linksStats` del enlace de `/agendar/` está a **0 en las cuatro tandas enviadas**. Sumando: **336 personas recibieron el correo, 88 lo abrieron de verdad y ninguna pinchó.** Más **0 respuestas de 191** en MailerLite.
+
+**El correo 0 lleva dos métricas declaradas y ha fallado las dos.** Lo único que funciona es el asunto: `¿no te acuerdas de mí?` con `Normal, es la primera vez que te escribo.` abre entre el 20% y el 43% en cuatro envíos seguidos.
+
+**El diagnóstico, y decide el diseño del correo 2:** el correo 0 apila **dos CTA** (responder con una palabra + el enlace de la PPD), y encima el enlace va **al final del todo, detrás de una PD**. Es la regla del UNO rota (`global §4.5`). **El correo 2 lleva una sola puerta, el enlace, y va dentro del cuerpo con su frase de estado delante** (`email-marketing §5-HISTORIA`).
+
+### ⚠️ DOS COSAS DE LA API QUE HAY QUE VERIFICAR A OJO ANTES DEL PRÓXIMO ENVÍO
+
+1. 🔴 **El nombre del remitente cambia de forma entre tandas.** Las tandas 1 y 2 devuelven `sender.name: "Kaixito de Neety"`; **las tandas 3, 4 y 5 devuelven `sender.name: "[DEFAULT_FROM_NAME]"`**. La diferencia es que esas tres se crearon por API. El remitente id 3 se llama `Kaixito de Neety`, así que lo más probable es que resuelva al mismo nombre — **pero es una deducción, no una comprobación**. Si el valor por defecto de la cuenta fuera `Neety`, las tres últimas tandas habrían salido firmadas por la empresa en vez de por la mascota, **la broma no se entendería y el A/B de remitente quedaría contaminado**. Se comprueba en un segundo mirando el correo recibido en un buzón de prueba. Mismo principio que `feedback_avisar_verificar_envio_real`: ningún OK de la API prueba lo que ve el lector.
+2. **`utm_source` es `sendinblue` en las tandas 3 y 4**, y `brevo` en la 1 y la 2. La diferencia vuelve a ser API contra interfaz. **En GA4 la atribución está partida en TRES**: `newsletter` (MailerLite, hasta el 11/08), `brevo` y `sendinblue`.
+
+---
+
+## 📅 PLAN DE LOS CORREOS 2 Y 3 (escrito el 2026-08-26, pendiente del OK de Iker)
+
+Cierra el pendiente que este fichero abrió el 25/08 (*"dos correos NUEVOS, sin reutilizar el texto de Kaixito 01"*).
+
+| | Correo 2 | Correo 3 |
+|---|---|---|
+| Pilar | **historia personal** (`email-marketing §5-HISTORIA`) | historia personal |
+| Remitente | **Iker** | **Iker** |
+| Asunto | `me traje 200 tarjetas y no llamé a ninguna` | `llamé 9 veces y nunca supe por quién preguntar` |
+| Vehículo | la feria | la centralita |
+| Dolor (`global §4.4b-MUNICIÓN`) | dejar de buscar para poder contactar — **15 empresas, 9 ICP** | el interlocutor, no la empresa — **2 empresas, las 2 ICP, hipótesis** |
+| Semana | 31/08 – 04/09 | 07/09 – 11/09 |
+| Tandas | 2 | 2 |
+| Métrica | clics a `/agendar/` | clics a `/agendar/` |
+
+- **Se pausa la rotación de remitentes a propósito.** `email-marketing §1` dice que el remitente cambia cada semana, pero con **un solo correo de Iker no se puede comparar nada** contra las 4 tandas de Kaixito. Dos seguidos dan el primer punto de serie. **Es una decisión de Iker, no mía: se puede revertir sin tocar el texto.**
+- ⚠️ **Y no es un A/B de remitente, aunque se pidió así.** Cambian a la vez el remitente, el pilar, el asunto y el cuerpo. Lo único comparable de verdad es **el clic**, porque el correo 0 está a cero y cualquier cosa lo bate. Un A/B de remitente de verdad sería **el mismo correo partido en dos mitades de la misma lista**, y eso solo se puede hacer cuando haya un correo que ya funcione.
+- **El correo 3 prueba un dolor de 2 empresas**, que por la regla de entrada de `§4.4b-MUNICIÓN` es hipótesis y no patrón. **Entra porque `§5-ECO` lo autoriza expresamente** (probar en un correo y anotar el resultado aquí).
+
+### 🔴 LO QUE FALTA DECIDIR, Y ES DE IKER
+1. **Qué pasa con la tanda 6 de Kaixito 01** (los ~380 que quedan). Si no sale, esas personas reciben el correo 2 sin haber recibido nunca el 0. Recomendación: **sacarla el lunes 31/08**, que evita el viernes y cierra el correo 0 para toda la base.
+2. **El reparto de las 2 tandas del correo 2.** Lo más barato es reutilizar las listas que ya existen en Brevo: **tanda A = listas 5+6+7+8** (los de las tandas 1-4, ~336 vivos) y **tanda B = lista 9** (los 370 de la tanda 5). Cero listas nuevas, cero cálculo a mano.
+3. **La firma-mantra de la casa** sigue sin decidirse (`email-marketing §10`). De momento los correos cierran en plano.
+
+## Ángulos y vehículos ya usados (no repetir)
+- **Correo 0 · Kaixito:** el re-permiso disfrazado de mascota que no te encuentra en su libro.
+- **Correo 2 · Iker:** la feria y el taco de tarjetas. Dolor: buscar contra contactar.
+- **Correo 3 · Iker:** la centralita y el cargo equivocado. Dolor: el interlocutor, no la empresa.
+
+## Micro-aperturas fijas por remitente
+- **Iker: `Te cuento.`** (fijada el 2026-08-26, `email-marketing §5-HISTORIA`)
+- Unai, Asier y Kaixito: `[PENDIENTE]`

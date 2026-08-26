@@ -338,6 +338,62 @@ No son las señales. No es el momento. **Es la identificación.** Los clientes i
 
 **⚠️ Y la regla de entrada es la misma que en el ninja:** un dolor entra en un email cuando el informe lo respalda con **3 empresas o más**. Con 1 o 2 es hipótesis, se prueba en un correo y se anota el resultado en `historial-newsletter.md`.
 
+### ⭐⭐ 5-HISTORIA · EL PILAR HISTORIA PERSONAL, TRASLADADO DE LINKEDIN AL CORREO (Iker, 2026-08-26) — PRIMERA VERSIÓN, SIN VALIDAR
+
+> **Iker, pidiéndolo:** *"no tenemos aún pilares de contenido para correos definidos… el que quiero medio copiar, porque realmente la idea la saqué de los correos y la apliqué a LinkedIn, es el pilar historia personal, que ahora ya tenemos nuevo feedback de los clientes y su punto de dolor real. Trasladarlo igual a los correos. Y el gancho de las publicaciones de LinkedIn se puede más o menos transferir a los correos al asunto"*.
+
+**🔴 LO PRIMERO, PORQUE ES LO QUE MÁS FÁCIL SE OLVIDA: esto es n=0.** Se escribe el 26/08 y no ha salido ni un correo con él. **Son hipótesis con nombre, no receta** (`working-preferences §0c`) hasta que haya aperturas y clics propios.
+
+**Y el bucle se cierra:** el pilar historia de LinkedIn nació de leer newsletters. Volver a traerlo al correo no es copiar, es devolverlo a su casa **con lo que hemos aprendido de él en 5 posts medidos**.
+
+#### Por qué este pilar y no otro, en datos
+- En LinkedIn historia es **el pilar que peor alcanza y mejor convierte**: 0,41% de CTR a la web contra el 0,022% del meme de más alcance del mes (`post-workflow §4.6-MEDIDO`). **El correo no necesita alcance** (la lista ya está), así que se queda solo con la mitad buena.
+- **Es el pilar más barato de producir:** sin verificar empresas, sin CSV, sin menciones (`post-workflow §4.6-INVENTAR`). Es lo que permite sostener una cadencia semanal.
+- **Y el corpus lo respalda desde fuera:** en Timepack **el 55-60% de los correos SON una historia** y ocupa el 60-70% del cuerpo (`§8`). RunnerPro, el caso más parecido al nuestro, mandó **3 historias en 8 días** en el ZIP del 26/08 (`§8f`).
+
+#### LO QUE SE TRAE INTACTO DE `post-workflow §4.6`
+1. **1ª persona del singular.** Es el default del pilar y los 4 mejores ganchos de la casa van así (`brand-voice`, la tabla de la persona del gancho).
+2. **Se cuenta en PRETÉRITO.** Escena que ya pasó, no situación que se repite. La mezcla correcta: **imperfecto para la costumbre, pretérito para los hechos** (`§4.6-NOSTALGIA`).
+3. **El arco:** escena → momento → desenlace → reframe (antes vs ahora) → **lección corta y universal**.
+4. **La escena se puede inventar. El DOLOR, nunca** (`§4.6-INVENTAR`), y en email esa excepción ya existía desde el 27/07 (`§7`). El dolor sale de `global §4.4b-MUNICIÓN`, y la entrega dice **de qué dolor del informe sale**.
+5. **El VEHÍCULO rota** y comparte lista con LinkedIn (`§4.6-VEHICULO`), porque media lista viene de ahí. **Gastados:** el instituto y la infancia (×4), la primera venta de crío, el Excel del cliente en reunión, **la feria (correo 2, 31/08)**, **la centralita (correo 3, 07/09)**.
+6. **Una sola puerta, y es `/agendar/`** (`§4.6-CORREO`). El bloque de correo no entra: en un correo sería pedirle al lector que se suscriba a lo que ya está leyendo.
+7. **La línea que sitúa la escena dice QUIÉN y DÓNDE**, y no etiqueta al otro con una etiqueta que aún no le tocaba (`§4.6` 1b).
+
+#### LO QUE CAMBIA AL PASAR AL CORREO, y son seis cosas
+| | LinkedIn | Email |
+|---|---|---|
+| **El gancho** | primera línea, ≤210 car, 1 oración, emoji personal al final | **es el ASUNTO**: ≤62 car, 6-9 palabras, minúsculas, **cero emoji** (`§2`) |
+| **La línea 2** | sitúa la escena | va **detrás de la micro-apertura** (ver abajo), así que sitúa en la línea 3 |
+| **La foto** | selfie con el móvil en la mano, la firma visual del pilar | **no hay**. El correo va en texto plano, así que **toda la cercanía la carga el texto** |
+| **El cierre** | lección + spam ninja de 2 líneas | lección + **frase de estado + enlace** (`§8d`) + **PD y PPD** |
+| **La métrica** | conversación y clics, nunca impresiones | **clics al enlace y respuestas, nunca aperturas** |
+| **El emoji** | uno personal cerrando el gancho | ninguno, ni en asunto ni en cuerpo |
+
+#### ⭐ LA MICRO-APERTURA DE IKER: **`Te cuento.`**
+El corpus español entero abre con una orden de 1-3 palabras, con punto y línea en blanco detrás (`§8d` punto 1), y **cada remitente tiene la suya y no la mueve**: Isra `Mira.`, RunnerPro `Escúchame.` / `Oye.`, Hugo `Atiende.`.
+- **La nuestra no puede ser la suya** (`working-preferences §1e-COPIA`: se roba el mecanismo, no las palabras). **`Te cuento.` es la de Iker**, y encaja con el pilar mejor que ninguna de las de arriba porque **anuncia literalmente que viene una historia**.
+- Va **fija en todos sus correos**. Los otros 3 remitentes necesitan la suya cuando les toque. `[PENDIENTE · decisión de marca]`
+
+#### ⭐ LA FRASE DE ESTADO ANTES DEL ENLACE, y va en escalera INVERTIDA
+`§8d` lo mide: la última línea antes del enlace **no lleva verbo imperativo**, describe que la cosa ya existe (*"Tu plan te está esperando"*), y el bloque final **va de larga a corta**, con la más corta pegada al enlace.
+- **Nuestro molde:** `Eso es lo que miramos en una reunión de 30 minutos.` (51) → `Tus empresas, no un ejemplo.` (28) → enlace.
+- **La segunda línea rota con el dolor del correo**, la primera se queda fija. Es el equivalente email de la frase-puente de RunnerPro.
+- ⚠️ **30 minutos, nunca 20.** El correo 0 prometía 20 y la página pide 30 (`corpus-correos-enviados`).
+
+#### ⭐ LA PD Y LA PPD SE REPARTEN EL TRABAJO, y ninguna de las dos vende
+Es la forma medida de RunnerPro y de Timepack (`§4b`, `§8d`), y resuelve el conflicto con la regla del UNO: **el único CTA es el enlace**, así que las postdatas no pueden pedir otra cosa.
+- **PD = motor de referidos.** Pedir el reenvío al director comercial o al equipo. En B2B un reenvío interno es multithreading gratis.
+- **PPD = el remate de la historia**, no una oferta. RunnerPro la usa de pregunta de seguimiento; en un correo frío la pregunta compite con el clic, así que **nuestra PPD cierra el bucle de la escena** (*"La feria no era el problema. El problema era el lunes."*). Cuando la lista esté caliente y conteste, se prueba la pregunta.
+
+#### 🎯 CÓMO SE JUZGA UNA HISTORIA POR CORREO
+**Nunca por aperturas.** La apertura la decide el asunto; el pilar se juega el cuerpo.
+1. **Clics al enlace de agendar** (`linksStats`, no el CTOR del panel, que cuenta el enlace de baja — `historial-newsletter`).
+2. **Respuestas.**
+3. Reenvíos, si algún día se pueden ver.
+
+**La vara, y es dura:** el correo 0 lleva **0 clics de 336 entregados y 0 respuestas de 191**. Cualquier número mayor que cero es información nueva.
+
 ### 5b · Secuencia automática de bienvenida (nuevos leads)
 Día 0: entrega del lead magnet prometido · Día 1-2: quiénes somos y qué problema resolvemos (SIN pitch duro) · Día 3-5: una idea útil · Día 6-8: caso de uso · Día 9-11: error común que Neety evita · Día 12-14: invitación a diagnóstico. Valor, no presión: el lead tiene que entender solo por qué la demo tiene sentido.
 - **Sin doble flujo:** mientras un lead está DENTRO de la bienvenida (días 0-14) NO recibe la newsletter normal. Al terminar la secuencia pasa al nurture semanal. Nunca los dos a la vez.
@@ -580,6 +636,40 @@ Sus propios asuntos: *"Welcome to our newsletter! 🎉 Here's what you need to k
 Isra Bravo es **99% líneas individuales**. Nosotros mantenemos **líneas sueltas como base pero con bloques de 2 y de 3** (`§3`), porque dan retención y son firma de marca. El corpus dice qué hace el sector; nuestra experiencia dice qué nos funciona a nosotros. **El formateado no se toca.**
 
 ---
+
+### 8f · ⭐ TERCERA SEMANA DE LOS MISMOS REMITENTES (18-26 ago 2026, 29 correos)
+
+Tercer ZIP consecutivo con los mismos remitentes, así que ya se puede separar el sistema del capricho con **tres** muestras. Remitentes: **Isra Bravo (7)**, **SINGULARU (7)**, **RunnerPro (4)**, **Juan Domínguez (3)**, BOGA/EDEM (2), Kieran Flanagan, Content Playbook, Sonia Ferrent, MailerLite.
+
+#### Lo que queda confirmado por tercera vez, y ya es ley
+- **Las horas, clavadas al minuto otra vez:** Isra Bravo **23:29** (21 de 21 en tres semanas) · SINGULARU **09:30** entre semana y **08:30** los domingos · Juan Domínguez **14:01-14:02** (3 de 3) · RunnerPro **13:01-13:06** · Sonia Ferrent 06:01. **La constancia del minuto es el patrón más fuerte de todo el corpus**, y respalda nuestras 09:05.
+- **Las micro-aperturas, idénticas:** Isra `Mira.` ×4 y `Una cosa.` · RunnerPro `Oye.` y `Esto es importante.`. **Son fórmulas fijas, no variaciones.** De aquí sale `§5-HISTORIA` (la micro-apertura de Iker).
+- **La firma-mantra:** RunnerPro `Ánimo Runner, nos vemos dentro de la App.` los 4 días · Juan `Un abrazo, Juan. El simplificador.` · Isra `Pd: Arriba.`
+- **PD sí, P.S. no:** cero `P.S.` en los 29.
+- **Un producto, ángulos infinitos:** Isra vende **el mismo evento del día 30** los 7 días entrando por un caso distinto (membresías, precio alto, comerciales que no venden como el fundador, captación). Es literalmente el modelo de `§5`.
+
+#### ⭐⭐ EL HALLAZGO QUE MOTIVA `§5-HISTORIA`: RUNNERPRO MANDÓ 3 HISTORIAS EN 8 DÍAS
+Y **dos de ellas son historia de CLIENTE contada por el CEO**, que es exactamente la rama B de `post-workflow §4.6-TESTIGO` aplicada al correo:
+| correo | rama | esqueleto |
+|---|---|---|
+| *"Javier no paró en agosto"* (21/08) | historia de otro, narrador dentro | micro-apertura → cliente con **nombre de pila y sin empresa** → cita literal suya → giro → *"Javier ya lo hizo. Te toca."* → frase de estado → enlace → Pd + Pd2 |
+| *"María se paró un mes"* (26/08) | historia de otro, narrador dentro | idéntico, con **dos citas** (la de ella pidiendo perdón y la de la semana siguiente) |
+| *"Domingo. El plan que empieza mañana"* (23/08) | reflexión en 1ª persona | micro-apertura → costumbre propia → lección → frase de estado → enlace |
+
+- **El nombre de pila SIN empresa es exactamente nuestra regla `§7`**, y aquí se ve funcionando en una lista real y grande. Confirma que la restricción no cuesta nada.
+- **⭐ EL MECANISMO NUEVO QUE MERECE ROBARSE: la escena se cuenta con la CITA del otro, no con el resumen del narrador.** RunnerPro no dice "me contó que iba lento", pega sus palabras: *"Pensaba que iba a ir muy lento todo el verano"*. Es `brand-voice §3b` (la cita se escribe como la escribió quien la dijo) aplicado al correo, y es lo que hace que una historia inventada aguante.
+- **Y el molde de las dos historias de cliente es el MISMO**, palabra por palabra en su esqueleto. **No lo esconden y funciona igual.** Es el argumento contra reinventar el formato cada semana.
+
+#### ⭐ LO NUEVO QUE MERECE ROBARSE, de los otros remitentes
+1. **La escena cotidiana como espejo de un error de negocio.** Juan Domínguez abre con el camarero que pregunta *"¿todo bien?"* mientras masticas, y a mitad de correo gira: *"y he visto gente que en sus negocios hace lo mismo"*. **Es la frase-bisagra de `§3` en su versión más limpia**, y el vehículo (un restaurante) no tiene nada que ver con el producto, que es justo lo que evita que huela a promoción.
+2. **⛔ La broma que se desactiva a mitad de correo, y viene con su factura.** BOGA abrió con *"He borrado BOGA"* y un texto escrito por IA a propósito, para luego decir *"vale, es medio broma"*. **Engancha, y es exactamente el mecanismo del correo 0 de Kaixito.** ⚠️ Pero el fingimiento tiene un límite que ya nos costó una cuenta (`§0b`): **la broma puede ser sobre nosotros, nunca sobre el origen de la lista.**
+3. **El contador serial del Pd2.** RunnerPro sigue con *"¿Cuántas llevas ya?"* del reto de agosto. Tres semanas seguidas con el mismo contador convierten la newsletter en un programa con progreso.
+4. **La rebaja de expectativa como CTA.** *"No te pido épica. Te pido 3 salidas cortas a la semana. Feas, lentas, con calor."* Bajar la petición hasta que parezca imposible decir que no es más fuerte que subir el beneficio.
+5. **El miedo competitivo con fecha, sin FOMO.** *"Piénsalo dentro de 2 meses. En octubre habrá 2 tipos de corredor…"* Proyectar el futuro y poner al lector a elegir hoy. Para B2B industrial es directamente trasladable.
+6. **⛔ Y lo que NO se copia de Isra Bravo, aunque sea el mejor:** la escatología y las erratas sin corregir. A un director comercial de 55 le rompe la confianza lo primero y le hace dudar de la seriedad lo segundo (`§8` NO copiar).
+
+#### El contraste que sigue siendo útil: SINGULARU
+7 de 29 correos, todos con emoji en el asunto, todos de oferta (`Por menos de 15€ 🔥`, `Tobilleras por menos 9,99€ 🔥`). **Es el único remitente del corpus que no firma una persona**, y es ecommerce puro. Sirve de recordatorio de qué pasa cuando el correo deja de tener autor.
 
 ## 9 · Entrega y validación (cada email, sin excepción)
 
