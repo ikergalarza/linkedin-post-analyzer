@@ -594,7 +594,7 @@ Sirve para todo lo espacial: separar del borde, llenar un hueco, subir algo que 
 - **Lo que NO se toca aunque te pique:** la mecánica cómica, el sujeto, el layout, el estilo de dibujo. Eso es el motor.
 - **La pregunta:** ¿esto es lo que hizo volar al post, o es un defecto que nadie ha mirado? Lo primero se calca. Lo segundo se mejora. **Estos detalles de diseño marcan la diferencia entre un remix y una copia peor que el original.**
 
-### ⛔⛔ 0d-PROPORCION · EL TAMAÑO RELATIVO DE LOS PANELES ES CALCO, NO DECORADO. Y UNA "MEJORA" QUE NO ESTÁ EN LA LISTA DE ARRIBA ES UNA HIPÓTESIS MÍA (Iker, 2026-08-26)
+### ⛔⛔ 0d-PROPORCION · EL TAMAÑO RELATIVO DE LOS PANELES ES CALCO, NO DECORADO. Y UNA "MEJORA" QUE NO ESTÁ EN LA LISTA DE ARRIBA ES UNA HIPÓTESIS MÍA (Mario, 2026-08-26)
 
 > **Iker, sobre la 2ª pasada del meme de la katana:** *"al igualar las dos cajas el peso visual ya no es el mismo, y sobre todo las manos de la caja de abajo las has estirado y deformado mucho hacia arriba, queda feo. Este prompt de edición no era una mejora. De hecho, la referencia original tiene esa gran diferencia de que la caja primera es más grande que la segunda. Me había quedado con la versión anterior. Igual que ha pasado antes con otra publicación"*.
 

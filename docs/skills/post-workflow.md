@@ -700,7 +700,7 @@ referencias quemadas seguidas, dos entregas enteras a la basura y el retraso enc
   único medido. Cuando haya un tercer caso entre 30 y 98 días, se anota aquí y se ajusta
   la vara con él.
 - **⛔ EL ESPACIADO SE CUENTA DESDE QUE LA COPIAMOS NOSOTROS, NO DESDE LA FECHA DE LA
-  REFERENCIA (Iker, 2026-08-26).** Es el error que cometí al ofrecerle el meme del
+  REFERENCIA (Mario, 2026-08-26).** Es el error que cometí al ofrecerle el meme del
   descafeinado: miré que el original de Segantini era del 16/07 y me pareció lejano, cuando
   **lo que cuenta es que NUESTRA copia salió el 14/08**, o sea 11 días. Iker: *"cuando me
   refiero a espaciar la referencia no es viendo la fecha en la que se ha publicado la
@@ -721,9 +721,9 @@ la referencia, así que se busca por el CONCEPTO de la imagen — `calv|pelo`,
 `tiburón`, `tatuaje`— sobre los `content_text` de las 3 cuentas, y se cruza con
 `historial-publicaciones.md`, que sí anota la referencia de cada meme.
 
-### 🔄🔄 4.4-PASO-0-REFRESH · LA PRIMERA PUBLICACIÓN DE CADA SEMANA EMPIEZA REFRESCANDO EL CORPUS (Iker, 2026-08-26) — GLOBAL
+### 🔄🔄 4.4-PASO-0-REFRESH · LA PRIMERA PUBLICACIÓN DE CADA SEMANA EMPIEZA REFRESCANDO EL CORPUS (Mario, 2026-08-26) — GLOBAL
 
-> **Iker:** *"cada vez que tú detectes que es lunes o que es una nueva semana, y estamos haciendo la primera publicación de la semana, tienes que irte a la sección dashboard y pulsar el botón refresh all, porque así podremos encontrar memes nuevos de la gente que tenemos trackeada"*.
+> **Mario:** *"cada vez que tú detectes que es lunes o que es una nueva semana, y estamos haciendo la primera publicación de la semana, tienes que irte a la sección dashboard y pulsar el botón refresh all, porque así podremos encontrar memes nuevos de la gente que tenemos trackeada"*.
 
 **Cuándo: al detectar que arranca semana nueva** (lunes, o el primer post que se escribe esa semana), **antes de buscar ninguna referencia**. No espera a que lo pidan.
 
@@ -841,7 +841,7 @@ sorprende, que es de lo que vive este pilar.
 >
 > **El test antes de entregar:** pon las dos listas al lado de tu version. **Cada elemento de la lista tiene que tener su equivalente reconocible en el remix.** Si falta uno, no es un remix, es otro post.
 >
-> ### ⛔⛔ 4.4-ESENCIA-MITAD · CUANDO EL TEXTO Y LA IMAGEN DEL ORIGINAL CUENTAN CHISTES DISTINTOS, LA ESENCIA ES LA DE LA PIEZA QUE ESTAMOS ROBANDO (Iker, 2026-08-26) — GLOBAL
+> ### ⛔⛔ 4.4-ESENCIA-MITAD · CUANDO EL TEXTO Y LA IMAGEN DEL ORIGINAL CUENTAN CHISTES DISTINTOS, LA ESENCIA ES LA DE LA PIEZA QUE ESTAMOS ROBANDO (Mario, 2026-08-26) — GLOBAL
 >
 > > **Iker, sobre la v1 del meme de Asier:** *"como primera versión está bien, pero no sé si hemos perdido la esencia del meme, creo que sí. Recuerda que hay que calcar la esencia tanto del texto como de la foto"*. Y la había perdido entera.
 >
@@ -1075,7 +1075,7 @@ sorprende, que es de lo que vive este pilar.
 
 **Paso 1 — Traducir (si está en inglés, que es lo habitual):** EN→ES **fiel al original** en formato, longitud y estructura, pero con **expresiones naturales en español** donde suenen mejor (no traducción literal robótica).
 
-> ### ⛔⛔ 4.4-PASO-1-LITERAL · LA TRADUCCIÓN SE ESCRIBE, Y SE ESCRIBE ANTES DE ADAPTAR NADA. TAMBIÉN LA DEL TEXTO DE DENTRO DE LA IMAGEN (Iker, 2026-08-26)
+> ### ⛔⛔ 4.4-PASO-1-LITERAL · LA TRADUCCIÓN SE ESCRIBE, Y SE ESCRIBE ANTES DE ADAPTAR NADA. TAMBIÉN LA DEL TEXTO DE DENTRO DE LA IMAGEN (Mario, 2026-08-26)
 >
 > > **Iker, y es el orden entero de la receta dicho por él:** *"los pasos a seguir ya te los expliqué: encontramos una referencia que sea de ventas, de meme y adecuada para el tipo de jefe. Luego, lo traducimos al español tal cual. Luego aplicamos todo lo que sabemos de formateado, de verbos, de palabras, de longitudes, de ritmo y de spam. Y luego me lo devuelves, iterando todo lo posible"*.
 >
@@ -1095,7 +1095,7 @@ sorprende, que es de lo que vive este pilar.
 > Did you update the CRM?        →  Me pidieron cuentas                      ⛔ es OTRA frase
 > ```
 >
-> #### ⛔⛔ 4.4-PASO-1-VERBO · EL VERBO DEL ORIGINAL ES EL SUELO DE LA ESCALERA, NO EL PUNTO DE PARTIDA LIBRE (Iker, 2026-08-26)
+> #### ⛔⛔ 4.4-PASO-1-VERBO · EL VERBO DEL ORIGINAL ES EL SUELO DE LA ESCALERA, NO EL PUNTO DE PARTIDA LIBRE (Mario, 2026-08-26)
 >
 > > **Iker, sobre la v3:** *"el texto original dice ¿actualizaste el CRM? Entonces, ¿por qué me pones el verbo preguntar? Si tiene que ser actualizar. Preguntar lo entendería si fuese un verbo más punchy que actualizar, pero es que preguntar es un verbo muy blando"*.
 >
@@ -1415,7 +1415,7 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **⚠️ Y EL AVISO QUE ACOMPAÑA A ESTO: el tema es de él, así que el ÁNGULO tiene que ser NUESTRO.** Su promesa siempre es **volumen** (*"entre 50 y 200 prospectos cualificados en 15 minutos"*). La nuestra, por el informe de 50 demos, es lo contrario: **la criba y la prueba** (`aboutme §1b` pilar 1). Ahí es donde se le gana (`global §2.2b`, ser el segundo mejor), y no copiándole el número.
 
-#### 🔎🔎 4.5.0-COMPETENCIA · PASO 0 OBLIGATORIO: LA INVESTIGACIÓN DE REFERENTES, ANTES DE ELEGIR TEMA (Iker, 2026-08-26)
+#### 🔎🔎 4.5.0-COMPETENCIA · PASO 0 OBLIGATORIO: LA INVESTIGACIÓN DE REFERENTES, ANTES DE ELEGIR TEMA (Mario, 2026-08-26)
 
 > **Iker, y es una regla de casa:** *"cada vez que yo te pida una publicación del pilar lead magnet, sea para el jefe que sea, me hagas una investigación primero de nuestros principales competidores, qué patrones hay entre las temáticas entre cuentas de ventas"*.
 
@@ -1457,7 +1457,7 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 
 ##### 4 · ⛔ EL ESPACIADO SE MIDE ENTRE NOSOTROS, NO CONTRA ELLOS (y la puerta dura es la MISMA cuenta)
 
-> **Iker:** *"tienes que espaciar no entre las fechas de publicación de otras cuentas, sino entre nosotros mismos"*. Y sobre Martín Arosa, que repite tema cada dos días: *"que por poder se puede… pero yo quiero sorprender a la audiencia"*.
+> **Mario:** *"tienes que espaciar no entre las fechas de publicación de otras cuentas, sino entre nosotros mismos"*. Y sobre Martín Arosa, que repite tema cada dos días: *"que por poder se puede… pero yo quiero sorprender a la audiencia"*.
 
 **Que un referente repita un tema NO nos da permiso para repetirlo.** Es la misma asimetría de `§4.5.0-CTA-CERO`: se les mira para detectar hacia dónde se mueve el nicho, no para copiarles los permisos.
 
@@ -1498,7 +1498,7 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 
 **La cola de `§4.5.0-REUTILIZAR` se ordena por la puerta 3 (días desde el último uso), no por comentarios del post origen.** Y entre los que pasan las puertas, **desempata el TECHO DEL TEMA FUERA, no lo que nos hizo a nosotros** (`§4.5.0-TECHO`).
 
-##### 🎯🎯 4.5.0-TECHO · UN TEMA SE JUZGA POR SU TECHO **FUERA**, NO POR LO QUE NOS HIZO A NOSOTROS (Iker, 2026-08-26)
+##### 🎯🎯 4.5.0-TECHO · UN TEMA SE JUZGA POR SU TECHO **FUERA**, NO POR LO QUE NOS HIZO A NOSOTROS (Mario, 2026-08-26)
 
 > **Iker, y es la corrección que abre esta sección:** *"que me estés dando a entender que una publicación que nos pilló hace meses cien comentarios es buena, yo lo veo poco. Obviamente para nuestra cuenta es buena, pero tenemos que aspirar a más, sobre todo ahora que ya hemos aprendido a esquivar los baneos"*.
 
@@ -1528,9 +1528,9 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 
 Una tabla de **recurso · comentarios del origen · días desde el último uso en la casa · quién lo publicó**, y el patrón de temática de los referentes con sus cifras. **Sin eso, la elección del tema es una opinión mía.**
 
-#### 🛠️🛠️ 4.5.0-YO-LO-HAGO · EL RECURSO YA NO SE PIDE POR PROMPT: LO ADAPTO YO (Iker, 2026-08-26)
+#### 🛠️🛠️ 4.5.0-YO-LO-HAGO · EL RECURSO YA NO SE PIDE POR PROMPT: LO ADAPTO YO (Mario, 2026-08-26)
 
-> **Iker:** *"tú ahora mismo tienes acceso también al repositorio de recursos, así que cuando ejecutes lead magnet, si yo te doy el ok, no hace falta que me des el prompt que le pasaríamos al programador, sino que tú mismo te conviertes en el programador y me adaptas ya el recurso. El error que yo hacía antes es que solo te conectaba el repositorio de publicaciones"*. Y lo mismo para **la imagen OG** del recurso: *"ya vas a poder hacerlo tú todo, tienes la plantilla, tienes los conocimientos para meter el logo y para meter la foto en la web"*.
+> **Mario:** *"tú ahora mismo tienes acceso también al repositorio de recursos, así que cuando ejecutes lead magnet, si yo te doy el ok, no hace falta que me des el prompt que le pasaríamos al programador, sino que tú mismo te conviertes en el programador y me adaptas ya el recurso. El error que yo hacía antes es que solo te conectaba el repositorio de publicaciones"*. Y lo mismo para **la imagen OG** del recurso: *"ya vas a poder hacerlo tú todo, tienes la plantilla, tienes los conocimientos para meter el logo y para meter la foto en la web"*.
 
 **QUÉ CAMBIA EN LA ENTREGA.** `lead-magnet-web §5` describe un **prompt para el programador**; eso queda para cuando NO haya acceso al repo. Con los dos repos conectados, el entregable ya no es el prompt: **es el cambio hecho, medido y commiteado**.
 
@@ -1540,7 +1540,7 @@ Una tabla de **recurso · comentarios del origen · días desde el último uso e
 | prompt para el diseñador de la OG | **yo genero la OG y la coloco**, salvo que la que hay ya sirva |
 | «pendiente: que lo monte el programador» | **pendiente: que Iker lo mire en producción** |
 
-**🔴🔴 Y LA PIEZA QUE FALTABA EN EL OUTPUT: DAR DE ALTA EL RECURSO EN EL CATÁLOGO (Iker, 2026-08-26).** *"La próxima vez que preparemos un lead magnet, en el output tienes que incluir que tú actualices el catálogo en caso de que falte ese recurso, sea nuevo o uno reutilizado que nunca se metió."*
+**🔴🔴 Y LA PIEZA QUE FALTABA EN EL OUTPUT: DAR DE ALTA EL RECURSO EN EL CATÁLOGO (Mario, 2026-08-26).** *"La próxima vez que preparemos un lead magnet, en el output tienes que incluir que tú actualices el catálogo en caso de que falte ese recurso, sea nuevo o uno reutilizado que nunca se metió."*
 
 **Es BLOQUEANTE y casi se publica sin ello.** El catálogo es `CATALOGO` en `frontend/src/components/accounts/leadMagnetCopy.ts`, y es lo que hace que el panel sepa **qué enlace mandar** y **qué palabra están comentando**. `/errores/` llevaba desde abril sin estar dado de alta: `detectarRecurso` habría devuelto `null`, `resolverRecurso` también, y **con `recurso` en null el botón de enviar el DM se bloquea** — el panel pidiendo el enlace a mano con los comentarios entrando.
 
@@ -1556,9 +1556,24 @@ Una tabla de **recurso · comentarios del origen · días desde el último uso e
 
 **Y si la palabra vive en la foto** —que es el caso normal desde el 05/08— **`claveDelPost` la saca de la `clave` del recurso detectado**. Sin eso, `cfg.keyword` queda vacía y se apaga todo lo que cuelga de ella: el aviso de *"no lo ha pedido"* salta en todas las tarjetas, `cerradoSinPedirlo` no cierra a nadie y el sector del tipo lista sale siempre vacío.
 
+**🔴🔴 Y ADAPTAR EL RECURSO NO ES ADAPTAR EL GATE: EL RECURSO TIENE QUE SER EL ESPEJO DEL POST (Mario, 2026-08-26).** *"Acabo de comprobar que efectivamente has adaptado el gate del recurso al nuevo texto de la publicación, pero espero que también hayas actualizado el recurso en sí, ¿no? Ya que ahora ha entrado al recurso y hay por lo menos nueve secciones, cuando creo que como mucho debería haber cinco. Revísalo, y no vuelves a fallar esto en el futuro."*
+
+**Lo que pasó, para que no se repita.** El post de `/errores/` prometía **5 errores, cada uno con su arreglo al lado**. Yo cambié el post de 8 trucos a 5 y adapté el gate, di el recurso por hecho y **no abrí la guía**. Dentro seguía la versión vieja: **9 secciones numeradas por CANAL** (LinkedIn, cold email, ICP, estrategia, automatización, copy, cadencia, benchmarks, prompt), con los 5 errores escondidos dentro de la sección 06. El lector entraba buscando cinco cosas y se encontraba nueve, ninguna de ellas llamada como lo que le prometimos. **Y el recurso ya estaba en producción con gente entrando.**
+
+**LA REGLA. La promesa del post es el índice del recurso.** Si el post dice *5 errores*, la guía tiene **5 secciones numeradas, ni una más**, tituladas con los 5 errores, **en el mismo orden y con las mismas palabras**. Lo demás —tablas, prompts, material de consulta— va **sin numerar** detrás, para que no compita con la promesa.
+
+**Y lo que había dentro NO se tira: se reparte.** Los datos con fuente son lo que sostiene el recurso. En `/errores/` los 23 `data-row` con sus 23 fuentes se repartieron entre los 5 errores por **lo que prueba cada dato**, no por el canal del que venían. Cero datos inventados, cero datos perdidos: se cuentan antes y después.
+
+**Se comprueba con un script, no a ojo:**
+```
+python scripts/validar-recurso.py <ruta/al/index.html> --promete 5
+```
+Cuenta las secciones numeradas, los datos y las fuentes, y avisa de tildes comidas y de inglés suelto (los dos fallos que salieron ese día al reescribir párrafos a mano). **Su resultado va en la entrega, igual que el del validador del post.**
+
 **⛔ LO QUE NO CAMBIA, Y ES LO QUE EVITA QUE ESTO SALGA MAL:**
 1. **Se espera el OK de Iker antes de tocar el repo.** El post se aprueba primero; el recurso se adapta después. *"si yo te doy el ok"*.
-2. **`lead-magnet-web §4c` manda igual: MEDIR, NO ESTIMAR.** Se levanta el estático (`python -m http.server 8899 --bind 127.0.0.1`, en background y **sin pipe**) y se miden las **líneas renderizadas** a **1440 y a 360**, no los caracteres. Los recursos ya publicados son la especificación.
+2. **Antes de dar el recurso por adaptado, SE ABRE Y SE LEE ENTERO.** No basta con el gate ni con el `<h1>`. El fallo del 26/08 fue exactamente eso: dar por bueno lo que no se había mirado.
+3. **`lead-magnet-web §4c` manda igual: MEDIR, NO ESTIMAR.** Se levanta el estático (`python -m http.server 8899 --bind 127.0.0.1`, en background y **sin pipe**) y se miden las **líneas renderizadas** a **1440 y a 360**, no los caracteres. Los recursos ya publicados son la especificación.
 3. **Los invariantes se miden contra el catálogo**, no se recuerdan (`§4.5.0-REUTILIZAR`): H1 de 39-55 caracteres en 2 líneas, lede de 155-190 en 3 líneas a 1440 y 4 a 360, `h3` de card 30-42, `p` de card 85-109.
 4. **Los comportamientos comunes se HEREDAN y se nombran uno a uno**: header sticky, scroll suavizado, animaciones de entrada, y el `prompt-box` con su botón de copiar. Se copian de un recurso publicado, con los mismos tokens. **Un recurso que se comporta distinto al resto canta aunque el copy sea perfecto.**
 5. **Los tres registros del slug, el `robots.txt` y el `noindex` se comprueban aunque no se toquen.** Si falta uno, se rompe en silencio.
@@ -1824,7 +1839,7 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 #### 🏃🏃 4.5.0-RITMO · EL LECTOR VIENE A POR EL BLOQUE NUMÉRICO: SE LLEGA EN 3 LÍNEAS (Iker, 2026-08-18)
 
-> **Iker:** *"igual que en el mapa la gente quiere llegar rápido al bloque numérico para validar la región, en el lead magnet quiere llegar rápido para saber qué incluye. Priorizaría uno de dos antes que uno de tres"*.
+> **Mario:** *"igual que en el mapa la gente quiere llegar rápido al bloque numérico para validar la región, en el lead magnet quiere llegar rápido para saber qué incluye. Priorizaría uno de dos antes que uno de tres"*.
 
 **LA REGLA: entre el gancho y la lista numerada caben COMO MUCHO 3 líneas**, y esas 3 son o líneas individuales o **un bloque de DOS**. Nunca un bloque de tres, por buena que sea su anáfora.
 
@@ -1953,7 +1968,7 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 - **⚠️ Ojo: "Reciente" no vale**, es cronológico y ahí sale hasta un post capado. **Solo cuenta "Primero los más relevantes"** (`§4.5.0-CAPADO-RAPIDO`).
 - **📏 Y a partir de ahora se ANOTA el dato:** en cada publicación, **cuántos minutos tarda en aparecer en Principal desde otra cuenta**. Con 5-6 posts hay línea base y la hipótesis de la "cola de revisión" pasa de intuición a número.
 
-##### 🔕🔕 4.5.0-SIN-AVISO · LINKEDIN NO AVISA, ASÍ QUE LA AUSENCIA DE AVISO NO ES INFORMACIÓN (Iker, 2026-08-26)
+##### 🔕🔕 4.5.0-SIN-AVISO · LINKEDIN NO AVISA, ASÍ QUE LA AUSENCIA DE AVISO NO ES INFORMACIÓN (Mario, 2026-08-26)
 
 > **Iker, con un post recién subido y sin aparecer en el feed:** *"me he ido a las analíticas desde la cuenta del primer jefe y no hay ningún tipo de aviso, y nunca veo avisos en LinkedIn. En otras plataformas como TikTok, si subes algo y te lo banean, sale el aviso"*.
 
@@ -2318,7 +2333,7 @@ Acceso libre.
 > - **Sigue habiendo un gate humano:** la historia se entrega diciendo **de qué dolor del informe sale**, para que Iker la contraste con una reunión real antes de publicar. Inventar la escena no es inventar el material.
 > - **⭐ Y EL ARGUMENTO PARA DEFENDERLO HACIA DENTRO, MEDIDO (2026-08-21).** Cuando un jefe pregunte si nos lo hemos inventado, la respuesta no es teórica: **los dos mejores posts del pilar son los dos que llevan escena construida.** Iker 13/08 (escena redactada a partir del dolor nº1 del informe) → **10.2k imp · 1.01x · 0,41% de CTR, el mejor del pilar**; Iker 18/08 (portal, 143 nombres y el filtro del césped, inventados) → **9.5k imp · 0.95x, el de más alcance del pilar**. **Y el matiz que cierra la conversación: no nos inventamos el DOLOR, que sale de 50 reuniones reales. Nos inventamos el decorado.**
 
-> ### 🌳🌳 4.6-RAMAS · LA TAXONOMÍA DEL PILAR HISTORIA (Iker, 2026-08-26) — ⚠️ SIN VALIDAR EN DATOS
+> ### 🌳🌳 4.6-RAMAS · LA TAXONOMÍA DEL PILAR HISTORIA (Mario, 2026-08-26) — ⚠️ SIN VALIDAR EN DATOS
 > **Iker, cerrando el día y pidiendo que quede escrito:** *"hemos abierto dentro del pilar historia una nueva rama: ya no es solo la historia personal nuestra, sino que podemos contar historias en tercera persona. Y no solo eso, sino adaptadas al peloteo. Algunas historias estaría bien adaptarlas por región: que no entren en la categoría peloteo regional, sino que sean pilar historia de tipo peloteo regional"*.
 >
 > **🔴 LO PRIMERO, PORQUE ES LO QUE MÁS FÁCIL SE OLVIDA: nada de esto está medido.** Se creó el 26/08 y **el único post que lo usa es el de ese día**, así que hoy es **n=1 para las dos cosas a la vez**. Va escrito porque si no se escribe se pierde, no porque haya funcionado. **La regla de `working-preferences §0c` sigue mandando: hasta que haya números, esto son hipótesis con nombre, no recetas.**
@@ -2345,7 +2360,7 @@ Acceso libre.
 > - **Orgullo regional:** mediana del mapa **24.152** y de "Los 10" **18.140**, contra 3.072 del post suelto.
 > **Conclusión operativa: las horas van en el orgullo (clichés, territorios, el oficio de cada sitio), no en conseguir una mención más.**
 >
-> #### 🛑🛑 Y LA VARIANTE REGIONAL ES PUNTUAL, NO EL NUEVO DEFAULT (Iker, 2026-08-26)
+> #### 🛑🛑 Y LA VARIANTE REGIONAL ES PUNTUAL, NO EL NUEVO DEFAULT (Mario, 2026-08-26)
 > **Iker, en cuanto vio la receta escrita:** *"es muy importante que a partir de ahora no me hagas todas las publicaciones del pilar historia de peloteo regional. Esto tiene que ser algo puntual, cuando sea coherente, sobre todo relacionado con el spam ninja. A menos que con esto descubramos que las historias regionales funcionan aún mejor, y entonces ya las adaptaremos todas"*.
 >
 > **EL DISPARADOR, y es uno: la COHERENCIA con la puerta.** La variante regional entra cuando **el destino del enlace es regional** (hoy, un evento presencial en Donostia) o cuando **el dolor de la historia es de esa región**. Fuera de eso, el default del pilar es **sin región**.
@@ -2365,7 +2380,7 @@ Acceso libre.
 > **Cada fila de historia del `historial-publicaciones` declara DOS cosas: la RAMA (propia / de otro) y si es REGIONAL.** Sin eso, dentro de un mes tendremos ocho historias y ninguna forma de saber qué rama funcionó. **Y se juzgan con la vara del pilar** (`§4.6-OBJETIVO`): conversación y clics, nunca impresiones.
 > **Mecanizado** como aviso de entrega en `validar-post.py --pilar historia`, que pregunta las dos cosas en cada validación.
 
-> ### 👁️👁️ 4.6-TESTIGO · LA HISTORIA SE PUEDE CONTAR SIN SER EL PROTAGONISTA (Iker, 2026-08-26)
+> ### 👁️👁️ 4.6-TESTIGO · LA HISTORIA SE PUEDE CONTAR SIN SER EL PROTAGONISTA (Mario, 2026-08-26)
 > **Iker, y el motivo es de la persona, no del pilar:** *"inventarnos cualquier tipo de historia en el segundo jefe me da igual, pero conociendo el primero, ¿hay alguna manera de contar esta historia sin perder rendimiento pero que no se hable desde una primera persona?"*.
 >
 > **LA SALIDA ES EL NARRADOR TESTIGO: el protagonista es OTRO y el dueño de la cuenta solo estaba delante.** No se toca `§4.6-INVENTAR` (la escena se puede inventar, el dolor no); lo que cambia es **de quién es la escena**.
@@ -2385,7 +2400,7 @@ Acceso libre.
 >
 > **Cuándo se usa:** cuando el dueño de la cuenta no quiere autobiografía inventada (hoy, el primer jefe) o cuando **no hay hecho real que encaje** (`§4.6-BIO`). Con hecho real y cuenta cómoda, sigue ganando la primera persona.
 
-> ### 🔁 4.6-VEHICULO · EL DECORADO DE LA HISTORIA ROTA COMO TODO LO DEMÁS (Iker, 2026-08-26)
+> ### 🔁 4.6-VEHICULO · EL DECORADO DE LA HISTORIA ROTA COMO TODO LO DEMÁS (Mario, 2026-08-26)
 > **Iker, viendo el 2º borrador:** *"lo veo muy parecido, demasiado, a la misma historia que subimos ayer. Justo después del gancho volvemos a mencionar instituto. Seguro que se pueden inventar historias de otro tipo, sin siempre tener que ser el instituto"*.
 >
 > **El agujero:** `global §2.0b` (ley de variedad) lista el concepto, el verbo, la frase-rabia, el ninja, el opener, el cierre, el reveal y el arranque de la anáfora… **y no lista el VEHÍCULO de la historia**, que es lo más visible de todo. Resultado: **4 de las 5 últimas historias transcurren en la infancia o el instituto** (Iker 13/08 y 18/08, Unai 21/08, Asier 25/08), y la quinta iba camino de lo mismo.
@@ -2410,7 +2425,7 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
 >   - ⚠️ **Con una excepción declarada: cuando la foto ES el concepto.** La historia pendiente de Unai con su foto de pequeño va al revés a propósito, y por eso se declara la divergencia al entregar.
 > - **Y esta señal es para el HUMANO, no para el clasificador.** El código no distingue un selfie de un wojak: los dos entran en la base como `text_image` y no hay visión por ordenador en el backend. Al clasificador lo separa el **tiempo verbal** (`services/pillar.ts`: una historia narra en pretérito, un meme describe en presente). Si alguna vez dudas mirando la parrilla, la foto te lo dice a ti en medio segundo; al script hay que seguir diciéndoselo por el texto.
 
-> ### 👥👥 4.6-FOTO-GRUPO · SI UNA CUENTA NO TIENE SELFIES, LA HISTORIA NO SE BLOQUEA: VA FOTO DE GRUPO (Iker, 2026-08-26)
+> ### 👥👥 4.6-FOTO-GRUPO · SI UNA CUENTA NO TIENE SELFIES, LA HISTORIA NO SE BLOQUEA: VA FOTO DE GRUPO (Mario, 2026-08-26)
 > **El caso, y no es un capricho:** Asier lleva **un mes** sin pasar una sola foto suya y dice que no se las hace. `§4.6-FOTO` pide selfie con el movil en la mano, y con esa regla su cuenta se quedaba fuera del pilar para siempre. Iker: *"la unica alternativa que se me ha ocurrido son fotos grupales en las que el esta incluido"*.
 >
 > **LA REGLA: cuando el dueño de la cuenta no tenga selfies, se usa una FOTO DE GRUPO donde el sea identificable, y en la entrega se dice quien es y donde esta.** El selfie sigue siendo el default del pilar; esto es la salida cuando no existe, no una alternativa a elegir.
@@ -2897,7 +2912,7 @@ El sistema no termina al entregar el post. Para que mejore con el tiempo:
 3. **Persistir:** el aprendizaje solo cuenta si se guarda en el archivo y se **commitea**. Memoria ≠ archivo (ver README, flujo de actualización).
 4. **Refrescar los ratios:** cada 1-2 meses, reexporta "Top posts" y el Explorer y actualiza §4 y §3 — los ratios decaen y las mecánicas se queman.
 
-### 🧪🧪 9b · CÓMO SE HACE UN A/B DE VERDAD AQUÍ (Iker, 2026-08-26)
+### 🧪🧪 9b · CÓMO SE HACE UN A/B DE VERDAD AQUÍ (Mario, 2026-08-26)
 
 > **Iker, y es la forma en que piensa todo lo de esta semana:** *"al final lo que estamos haciendo es A/B testing. Es como ayer, hemos reconvertido una limitación —que el tercer jefe no me pasa una foto suya individual— y hemos subido una foto de grupo. Así descubrimos, pero necesitamos más pruebas de qué pasa. Eso lo comprobaremos cuando en la misma cuenta hagamos la misma prueba dos veces"*.
 

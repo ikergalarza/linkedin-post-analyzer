@@ -267,7 +267,7 @@ Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tr
 
 **Y ya está medido en `§2.10`:** la mediana de nuestros ganchos ganadores es **75 car** con una oración, no 110 ni 210. El tope técnico no es el objetivo.
 
-**⭐ Y ES PRIORIDAD, NO UN REPASO FINAL (Iker, 2026-08-26):** *"has podido condensar lo mismo mucho más corto, cosa que siempre debe ser tu prioridad como receta global en cualquier pilar"*. **El caso entero, en tres rondas sobre el mismo gancho y sin perder una sola idea:**
+**⭐ Y ES PRIORIDAD, NO UN REPASO FINAL (Mario, 2026-08-26):** *"has podido condensar lo mismo mucho más corto, cosa que siempre debe ser tu prioridad como receta global en cualquier pilar"*. **El caso entero, en tres rondas sobre el mismo gancho y sin perder una sola idea:**
 ```
 89 car  Aquel invierno vendí calendarios por los polígonos de Euskadi y nunca pasé de la garita
 79 car  El mejor comercial que me he cruzado en Euskadi no marcó un número en su vida
@@ -303,7 +303,7 @@ Iker: *"un gancho que no se pueda representar visualmente una creadora de vídeo
 
 **El test rápido:** di el objeto en voz alta sin contexto. **¿Lo primero que ves es una pantalla?** Cámbialo.
 
-##### ⛔⛔ 2.2d-CORPUS · LA SEGUNDA LECTURA NO SIEMPRE ES UNA PANTALLA: A VECES ES **NUESTRO PROPIO SECTOR** (Iker, 2026-08-26)
+##### ⛔⛔ 2.2d-CORPUS · LA SEGUNDA LECTURA NO SIEMPRE ES UNA PANTALLA: A VECES ES **NUESTRO PROPIO SECTOR** (Mario, 2026-08-26)
 
 > **Iker, sobre el gancho de la historia del 26/08:** *"mi único miedo es si en el gancho `número` se entiende que hablamos de un número de teléfono. Yo creo que se entiende, porque después ponemos comercial… pero es que no quiero confusiones, y el gancho es lo más importante"*.
 
@@ -343,7 +343,7 @@ Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cade
 
 > **Esta lista es CANÓNICA para el hook y gana a cualquier otra.** `brand-voice §2` tenía una lista de "términos naturalizados" (SDR, AE, CRM, B2B, GTM, ICP, outbound…) que decía lo contrario: esa lista es **solo del cuerpo**. El desempate lo da el ICP de `aboutme`: el lector lleva vendiendo **desde antes de que existiera Salesforce**. **CRM y forecast entran en la lista negra el 2026-07-14**: en un hook de meme se coló "Tu CRM…" y el usuario lo tumbó con la razón exacta ("un viejo no va a saber lo que es un CRM"). Alternativas llanas: informe de ventas · parte de visitas · el Excel · la previsión.
 
-> #### ⛔ 2.3-CRM · LA TRADUCCIÓN LLANA DE `CRM` ES **LA FICHA DEL CLIENTE**, NO EL PARTE (Iker, 2026-08-26)
+> #### ⛔ 2.3-CRM · LA TRADUCCIÓN LLANA DE `CRM` ES **LA FICHA DEL CLIENTE**, NO EL PARTE (Mario, 2026-08-26)
 >
 > **Iker, y es una pega buena:** *"no sé si es exactamente lo mismo o podríamos traducir CRM para que lo entienda cualquiera de otra manera, porque CRM es más bien como una herramienta de gestionar clientes, ¿no?"*.
 >
@@ -390,7 +390,7 @@ Lee el post e imagina que lo sube una consultora, una agencia o una constructora
 
 ### 🔥🔥 2.3d · EL INTENSIFICADOR: CADA PILAR TIENE SU "Y POCO MÁS" (Iker, 2026-08-21) — UNIVERSAL
 
-> **Iker:** *"para enfatizar, como hacemos en los ganchos de los peloteos de mapa regional, añadimos una cosa que da más rabia, diciendo cosas como y poco más. El objetivo de esta publicación es disparar ese bucle abierto y la emoción de la curiosidad al máximo"*. Y el recordatorio de por qué importa: **`§1` obliga a llevar UNO de los tres pilares al extremo, y ese extremo se dispara EN EL GANCHO**, no en el cuerpo. Un gancho tibio no lo arregla un cuerpo bueno.
+> **Mario:** *"para enfatizar, como hacemos en los ganchos de los peloteos de mapa regional, añadimos una cosa que da más rabia, diciendo cosas como y poco más. El objetivo de esta publicación es disparar ese bucle abierto y la emoción de la curiosidad al máximo"*. Y el recordatorio de por qué importa: **`§1` obliga a llevar UNO de los tres pilares al extremo, y ese extremo se dispara EN EL GANCHO**, no en el cuerpo. Un gancho tibio no lo arregla un cuerpo bueno.
 
 **LO QUE FALTABA ESCRITO:** la frase-rabia del mapa (`y poco más`) no es una pieza del mapa, es **el intensificador de SU emoción**. Todo gancho lleva uno; lo que cambia es cuál, según qué pilar emocional dispare. Sin él, el gancho enuncia y no aprieta.
 
@@ -514,7 +514,7 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 
 **Y el corolario que más me cuesta:** ⚠️ **el techo de registro de la casa está por debajo de `romper` incluso en la cuenta de IKER**, que es la más cercana de las cinco. `reventar` y compañía siguen valiendo **con objeto concreto**; sobre un abstracto, no los quiere en ninguna cuenta. **`punchy` no es un valor absoluto: se mide contra el objeto que lleva al lado** (`§2.9-OBJETO`, y esto es su segunda mitad).
 
-#### ⚡ 2.9-SIN-VERBO · CUANDO EL VERBO NO SE PUEDE SUBIR, EL PUNCH LO CARGAN LOS INTENSIFICADORES (Iker, 2026-08-26)
+#### ⚡ 2.9-SIN-VERBO · CUANDO EL VERBO NO SE PUEDE SUBIR, EL PUNCH LO CARGAN LOS INTENSIFICADORES (Mario, 2026-08-26)
 
 > **Iker, sobre el gancho de la historia del 26/08, y lo dice él antes que yo:** *"me falta un verbo más punchy que marcar, pero creo que si encontramos alguno va a perder la esencia y no se va a entender que nos referimos a marcar un número de teléfono. Aunque no tengamos verbo punchy, sí que estamos maximizando esa curiosidad con `nunca` y `el mejor`, son como potenciadores"*.
 
@@ -850,7 +850,7 @@ Corre estas puertas EN ORDEN:
 ❌ 2026-07-21: primer borrador con "las 50 empresas". Par, y encima 50 listas por sector con Unipile no salen en un dia.
 ✅ Corregido a **25**: impar, creible, y producible sin que Unipile se atragante.
 
-#### ⛔⛔ 2.5b-SUSTANTIVO · LA CIFRA NUNCA VA SOLA: SIEMPRE CON LO QUE CUENTA (Iker, 2026-08-26)
+#### ⛔⛔ 2.5b-SUSTANTIVO · LA CIFRA NUNCA VA SOLA: SIEMPRE CON LO QUE CUENTA (Mario, 2026-08-26)
 
 > **Iker, sobre la 2ª línea del ninja del 26/08:** *"me gusta mucho porque es corta, pero aun así: `el 24 de septiembre juntamos 80 en Donostia`… ¿80 qué? ¿80 personas, 80 números? Hay que ser explícito también"*.
 
@@ -953,7 +953,7 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 
 **Regla operativa:** despues de escribir el hook, coge cada adjetivo y pregunta *"¿esto deja fuera a alguien sin ganar nada?"*. Si la respuesta es si, fuera. La especificidad de sector, de region y de nicho **va en el cuerpo**, donde ya no cuesta alcance porque el lector ya ha entrado.
 
-#### ⛔⛔ 2.3b-ESCENARIO · NO ES SOLO EL ADJETIVO: EL DECORADO DEL GANCHO TAMBIÉN ESTRECHA (Iker, 2026-08-26) — GLOBAL
+#### ⛔⛔ 2.3b-ESCENARIO · NO ES SOLO EL ADJETIVO: EL DECORADO DEL GANCHO TAMBIÉN ESTRECHA (Mario, 2026-08-26) — GLOBAL
 
 > **Iker, y lo sube él mismo a receta global:** *"está muy bien que nuestro público objetivo sean la mayoría industriales, por eso supongo que has puesto polígonos, pero eso está muy bien que lo mencionemos en el cuerpo. Al igual que en el peloteo regional, los clichés que se ponen en el gancho son los que maximizan el alcance, y luego los clichés superespecíficos de esa región ya se desarrollan en el cuerpo. Esto debería ser receta global, no solo para historia"*.
 
@@ -1140,7 +1140,7 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
-#### 🔗🔗 4.4b-UTM · TODO ENLACE QUE METAMOS EN UNA PUBLICACIÓN LLEVA UTM (Iker, 2026-08-26) — GLOBAL
+#### 🔗🔗 4.4b-UTM · TODO ENLACE QUE METAMOS EN UNA PUBLICACIÓN LLEVA UTM (Mario, 2026-08-26) — GLOBAL
 
 > **Iker, y lo pide como receta global:** *"todas las veces que metamos un enlace en una publicación, ya sea la web de la newsletter, la web de agendar o la del evento, añade siempre un UTM muy sencillo que indique de qué publicación de LinkedIn viene"*.
 
@@ -1895,7 +1895,7 @@ Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/
 
 ---
 
-## 🚫🚫 9 · CAPADO Y MODERACIÓN — CANÓNICO Y GLOBAL (Iker, 2026-08-26)
+## 🚫🚫 9 · CAPADO Y MODERACIÓN — CANÓNICO Y GLOBAL (Mario, 2026-08-26)
 
 > **Por qué esto vive aquí y no en el runbook del lead magnet, que es donde estaba.** Iker: *"ya nos han baneado varias veces publicaciones de lead magnets, el otro día un meme y hoy un pilar historia. O sea, que esto es general"*. **Tres pilares distintos en tres semanas.** Es el caso de libro de `working-preferences §0c-BIS`: escrito dentro de un runbook, garantizaba que se rompiera en los otros cinco. El detalle operativo sigue en `post-workflow §4.5.0-*`; **lo que manda está aquí.**
 
@@ -1917,7 +1917,7 @@ Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/
 
 **🔴 EL NÚMERO ES 30 Y NO 20, Y NO ES POR PRUDENCIA: es que nuestro único caso de recuperación tardó 20.** Un corte en 20 borraría justo el siguiente que tarde 22. **El umbral va por encima del retraso más largo observado, con margen**, y sube si algún día uno se recupera más tarde.
 
-**⚠️ Y EL NÚMERO ES 30 Y NO 60 PORQUE ESPERAR CUESTA (Iker, 2026-08-26):** *"hoy la primera versión se subió a las once y pico, que aún es buena hora, y nos la han aceptado casi a la una de la tarde, y aún me tocaba subir una o dos más"*. **Yo había escrito que el coste de esperar era cero y es falso**: se come la franja buena (10:00 rinde 0,80x contra 0,43x de las 14:00) y empuja al resto de publicaciones del día. **La regla tiene que caber dentro de una mañana de trabajo.**
+**⚠️ Y EL NÚMERO ES 30 Y NO 60 PORQUE ESPERAR CUESTA (Mario, 2026-08-26):** *"hoy la primera versión se subió a las once y pico, que aún es buena hora, y nos la han aceptado casi a la una de la tarde, y aún me tocaba subir una o dos más"*. **Yo había escrito que el coste de esperar era cero y es falso**: se come la franja buena (10:00 rinde 0,80x contra 0,43x de las 14:00) y empuja al resto de publicaciones del día. **La regla tiene que caber dentro de una mañana de trabajo.**
 
 **⛔ Y MIENTRAS ESTÁ EN EL LIMBO, NO SE ESPERA DE BRAZOS CRUZADOS: se publican las OTRAS cuentas.** Son independientes y su franja también se agota. Lo que no se hace es resubir en la misma cuenta.
 
