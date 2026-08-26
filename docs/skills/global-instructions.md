@@ -1886,11 +1886,19 @@ Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/
 
 | momento | qué significa |
 |---|---|
-| **no aparece a los 10 min** | ⚠️ **aviso, NO veredicto.** Medido: un post sano puede tardar **20 minutos** en aparecer |
-| **no aparece a los 30 min** | 🟠 sospecha seria, se mira la banda del Explorer |
-| **< 100 impresiones a los 60 min** | 🔴 capado. **Y este sigue siendo el ÚNICO umbral para borrar** |
+| **no aparece en el primer minuto** | ⚠️ **anómalo, pero NO es veredicto.** La línea base de Iker es que aparece en el minuto 1 |
+| **no aparece a los 10 min** | 🟠 sospecha, se mira la banda del Explorer. **No se borra** |
+| **no aparece a los 30 min** | 🔴 **ahí sí. Se borra o se deja según convenga, pero ya no se espera más** |
 
-**⛔ NO SE BORRA NADA ANTES DE LOS 60 MINUTOS. Sin excepción.** El coste de esperar es cero; el de borrar es el post entero, y encima **borrar y resubir tres veces en una hora es en sí mismo un patrón sospechoso** *(hipótesis mía, sin medir)*.
+**⛔ NO SE BORRA NADA ANTES DE LOS 30 MINUTOS.**
+
+**🔴 EL NÚMERO ES 30 Y NO 20, Y NO ES POR PRUDENCIA: es que nuestro único caso de recuperación tardó 20.** Un corte en 20 borraría justo el siguiente que tarde 22. **El umbral va por encima del retraso más largo observado, con margen**, y sube si algún día uno se recupera más tarde.
+
+**⚠️ Y EL NÚMERO ES 30 Y NO 60 PORQUE ESPERAR CUESTA (Iker, 2026-08-26):** *"hoy la primera versión se subió a las once y pico, que aún es buena hora, y nos la han aceptado casi a la una de la tarde, y aún me tocaba subir una o dos más"*. **Yo había escrito que el coste de esperar era cero y es falso**: se come la franja buena (10:00 rinde 0,80x contra 0,43x de las 14:00) y empuja al resto de publicaciones del día. **La regla tiene que caber dentro de una mañana de trabajo.**
+
+**⛔ Y MIENTRAS ESTÁ EN EL LIMBO, NO SE ESPERA DE BRAZOS CRUZADOS: se publican las OTRAS cuentas.** Son independientes y su franja también se agota. Lo que no se hace es resubir en la misma cuenta.
+
+**Y borrar y resubir tres veces en una hora es en sí mismo un patrón sospechoso** *(hipótesis mía, sin medir)*.
 
 **⭐ Y por fin hay un dato para la cola de revisión de Iker** (`post-workflow §4.5.0-REVISION`), que llevaba desde el 18/08 en n=0 **precisamente porque siempre borrábamos antes de comprobarla**: **26/08, aparece a los ~20 min y reparte con normalidad.** No era un bloqueo, era un retraso.
 
