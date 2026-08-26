@@ -1553,17 +1553,35 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # acorta el enlace a lnkd.in al publicar, asi que el lector no ve la cola.
         # Formato: utm_source=linkedin & utm_medium=post & utm_campaign={pilar}-{tema}-{ddmes}
         # & utm_content={cuenta}. Ej: historia-euskadi-26ago.
-        _urls = re.findall(r'https?://(?:recursos\.neety\.com|luma\.com)\S*', cuerpo)
+        _urls = re.findall(r'https?://(?:recursos\.neety\.com|luma\.com|forward\.neety\.com)\S*', cuerpo)
         _sin_utm = [u for u in _urls if 'utm_campaign=' not in u]
         chk(not _sin_utm, 'Todo enlace nuestro lleva utm_campaign (§4.4b-UTM)',
             ('sin UTM: %s → pega ?utm_source=linkedin&utm_medium=post&utm_campaign='
              '{pilar}-{tema}-{ddmes}&utm_content={cuenta}, p.ej. historia-euskadi-26ago. '
              'Sin esto, GA4 mete el trafico de todos los posts en la misma fila y no se '
              'sabe cual convierte' % _sin_utm[0][:60]) if _sin_utm else '')
-        _mal_source = [u for u in _urls if 'utm_campaign=' in u and 'utm_source=linkedin' not in u]
-        chk(not _mal_source, 'El UTM lleva utm_source=linkedin (§4.4b-UTM)',
+        # ⛔ LA EXCEPCION DE LUMA (comprobado en su documentacion el 2026-08-26):
+        # Luma solo lee `utm_source` ("Luma supports the utm_source parameter") y es
+        # lo unico que desglosa en Insights > Top Sources. Un utm_campaign ahi no lo
+        # ve NADIE, asi que en los enlaces de Luma la IDENTIDAD del post viaja en el
+        # source. En nuestras webs es al reves: source=linkedin y la identidad en
+        # campaign, que es lo que GA4 espera.
+        _luma = [u for u in _urls if 'luma.com' in u or 'forward.neety.com' in u]
+        _propias = [u for u in _urls if u not in _luma]
+        _mal_source = [u for u in _propias if 'utm_campaign=' in u and 'utm_source=linkedin' not in u]
+        chk(not _mal_source, 'El UTM de NUESTRA web lleva utm_source=linkedin (§4.4b-UTM)',
             'con utm_campaign pero sin utm_source, GA4 lo cuenta como referral y no como '
             'campaña, asi que la fila del post no aparece donde se mira' if _mal_source else '')
+        _luma_generico = [u for u in _luma
+                          if re.search(r'utm_source=(linkedin|post|social)(&|$)', u)
+                          or 'utm_source=' not in u]
+        chk(not _luma_generico, 'En LUMA la identidad va en utm_source (§4.4b-UTM)',
+            'Luma SOLO lee utm_source y es lo unico que sale en Insights > Top Sources: '
+            'un utm_source=linkedin le dice que vino de LinkedIn y nada mas, que es lo que '
+            'ya sabemos. La identidad del post tiene que ir ahi: '
+            'utm_source={pilar}-{tema}-{ddmes}-{cuenta}, p.ej. historia-euskadi-26ago-unai. '
+            'El resto de parametros se dejan puestos por si algun dia se activa el '
+            'Measurement ID de GA4 en Luma (necesita Luma Plus)' if _luma_generico else '')
         chk('Neety' not in cuerpo.split(_dom)[0].split('\n')[-1],
             'Spam ninja NO nombra a Neety (§4.4b)', 'nombrar la marca = publicidad encubierta')
         lineas = [l for l in cuerpo.split('\n') if l.strip()]
@@ -2237,6 +2255,32 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         chk(alarma, 'Hook: alarma 🚨/⚰️ o EXPERIMENTO en 1a persona (§4.5.0)',
             'los 2 mejores lead magnets abren con "🚨 ÚLTIMA HORA:" / "⚰️ D.E.P."; '
             'sin el disparador el post arranca frío' if not alarma else '')
+        # ⛔ LA LONGITUD DE UNA LISTA NUMERADA ES UNA CIFRA ELEGIDA, Y VA IMPAR
+        # (Iker, 2026-08-26). La regla existia desde el 2026-08-05 en
+        # `post-workflow §4.5.0a punto 4` ("5 y 7 rinden mas que 4 y 6 en lista
+        # numerada") y aun asi entregue una lista de OCHO, calcando el numero de
+        # secciones del recurso. Iker: "tu sabes perfectamente en la receta global
+        # que siempre que se vayan a mencionar numeros, o en este caso en
+        # numeraciones, tambien tiene que ser impar; creo que esa casuistica no la
+        # tenias en cuenta". No la tenia: `§2.5b` habla de cifras DENTRO del texto
+        # y nadie contaba los items.
+        #
+        # Y no es solo estetica, hay dos motivos de negocio encima:
+        #   · el recurso lo construimos nosotros, asi que cada punto de mas es
+        #     una seccion mas que desarrollar, y
+        #   · un recurso que se lee larguisimo se pide menos. Iker: "si ven que es
+        #     un recurso larguisimo, a nivel psicologico creo que no nos lo van a
+        #     pedir".
+        # Por eso 5 gana a 7, y 7 gana a 9: a igualdad de valor, la lista corta.
+        _items = re.findall(r'^\s*(\d+)[.)]\s', cuerpo, re.M)
+        if len(_items) >= 3:
+            chk(len(_items) % 2 == 1,
+                'La lista numerada tiene un numero IMPAR de items (§4.5.0a p.4)',
+                f'{len(_items)} items, y es PAR. 5 y 7 rinden mas que 4, 6 y 8. '
+                'Quita uno o añade otro, y con el recurso delante: cada item es una '
+                'seccion que hay que escribir, y una lista larga se pide menos'
+                if len(_items) % 2 == 0 else '')
+
         if generico:
             # La vara de medir de este pilar es Martín Arosa y Guillermo Flor (los
             # que MÁS comentarios sacan del sector), NO nuestro historial de flops

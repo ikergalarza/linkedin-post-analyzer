@@ -1101,7 +1101,30 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 
 **⚠️ NO CUESTA ALCANCE NI ESTÉTICA, y por eso no hay que negociarlo:** **LinkedIn reescribe el enlace a `lnkd.in/xxxxx` al publicar** (comprobado en nuestros propios posts en la BD), así que el lector nunca ve la cola de parámetros. Y el tope de 55 caracteres del ninja **se mide sin la URL** (`§4.4b`), o sea que la cola no roba ni un carácter de la línea.
 
-**Dónde aplica:** los tres destinos de un post — `/agendar/`, `/correo/` (y `/newsletter/`) y **la página del mapa** —, y también **Luma**. ⚠️ **En nuestras webs el dato es seguro** (GA4 propio). **En Luma depende de que su panel guarde el UTM de la inscripción: hay que comprobarlo la primera vez en el panel del evento.** Si no lo guardara, el enlace sigue funcionando igual y no se pierde nada.
+**Dónde aplica:** los tres destinos de un post — `/agendar/`, `/correo/` (y `/newsletter/`) y **la página del mapa** —, y también **Luma**, que tiene su propia excepción aquí abajo.
+
+##### ⛔⛔ LA EXCEPCIÓN DE LUMA: SOLO LEE `utm_source` (comprobado en su documentación el 2026-08-26)
+
+**El fallo que casi cometemos:** la convención de arriba mete la identidad del post en `utm_campaign`… **y Luma no lee `utm_campaign`.** Su documentación es literal: *"Luma supports the `utm_source` parameter"*, y en **Insights → Top Sources** dice *"here you can define custom tracking links with a `utm_source`"*. Con `utm_source=linkedin`, el panel de Luma nos habría dicho "vino de LinkedIn", que es exactamente lo que ya sabíamos.
+
+**LA REGLA, y son dos convenciones distintas según el destino:**
+
+| destino | qué lee | cómo se escribe |
+|---|---|---|
+| **Nuestras webs** (`/agendar/`, `/correo/`, `/mapas/`) | GA4 nuestro | `utm_source=linkedin` + la identidad en **`utm_campaign`** |
+| **Luma** | solo `utm_source` | **la identidad EN `utm_source`**: `utm_source={pilar}-{tema}-{ddmes}-{cuenta}` |
+
+```
+Nuestra web: ?utm_source=linkedin&utm_medium=post&utm_campaign=historia-euskadi-26ago&utm_content=unai
+Luma:        ?utm_source=historia-euskadi-26ago-unai&utm_medium=post&utm_campaign=historia-euskadi-26ago&utm_content=unai
+```
+**En el de Luma se dejan los demás parámetros puestos aunque hoy no los lea nadie**, porque no cuestan nada y sirven el día que se active el Measurement ID (abajo).
+
+**🔗 Y `forward.neety.com` NO nos da tracking, pero tampoco lo rompe (comprobado el 2026-08-26).** Es un **302 en Cloudflare** que redirige a `luma.com/ujffj66o` y **conserva la query string entera** (probado con los cuatro parámetros: llegan intactos a Luma). Lo que hay que tener claro: **un 302 de borde no carga HTML, así que GA4 nunca dispara ahí** — el subdominio da marca y la posibilidad de cambiar el destino sin tocar posts ya publicados, **no datos**. Para que diera datos tendría que servir una página de verdad, que es la fricción que Iker vetó el 05/08.
+
+**💰 Y LA OPCIÓN QUE SÍ CIERRA LA ATRIBUCIÓN, si algún día se paga: `Luma Plus` permite meter NUESTRO Measurement ID de GA4** en `Calendar > Settings > Options`. Con eso Luma manda a nuestro GA4 las page views **y un evento `purchase` en cada inscripción**, con id de la orden y valor. Es la única forma de ver la inscripción dentro de nuestro embudo. **Acepta `G-`, `GT-` y `UA-`, pero NO contenedores de GTM.** Decisión de negocio, no de copy.
+
+**Mecanizado en tres checks** (`Todo enlace nuestro lleva utm_campaign`, `El UTM de NUESTRA web lleva utm_source=linkedin`, `En LUMA la identidad va en utm_source`), y el de Luma cubre también `forward.neety.com`.
 
 **Mecanizado** en `validar-post.py` como **dos fallos duros** (`Todo enlace nuestro lleva utm_campaign` y `El UTM lleva utm_source=linkedin`), que miran cualquier URL de `recursos.neety.com` o `luma.com` del cuerpo.
 
