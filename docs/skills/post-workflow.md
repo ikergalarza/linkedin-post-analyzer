@@ -1475,6 +1475,28 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 
 Una tabla de **recurso · comentarios del origen · días desde el último uso en la casa · quién lo publicó**, y el patrón de temática de los referentes con sus cifras. **Sin eso, la elección del tema es una opinión mía.**
 
+#### 🛠️🛠️ 4.5.0-YO-LO-HAGO · EL RECURSO YA NO SE PIDE POR PROMPT: LO ADAPTO YO (Iker, 2026-08-26)
+
+> **Iker:** *"tú ahora mismo tienes acceso también al repositorio de recursos, así que cuando ejecutes lead magnet, si yo te doy el ok, no hace falta que me des el prompt que le pasaríamos al programador, sino que tú mismo te conviertes en el programador y me adaptas ya el recurso. El error que yo hacía antes es que solo te conectaba el repositorio de publicaciones"*. Y lo mismo para **la imagen OG** del recurso: *"ya vas a poder hacerlo tú todo, tienes la plantilla, tienes los conocimientos para meter el logo y para meter la foto en la web"*.
+
+**QUÉ CAMBIA EN LA ENTREGA.** `lead-magnet-web §5` describe un **prompt para el programador**; eso queda para cuando NO haya acceso al repo. Con los dos repos conectados, el entregable ya no es el prompt: **es el cambio hecho, medido y commiteado**.
+
+| antes | ahora |
+|---|---|
+| prompt para el programador | **yo edito `neety-resources` y commiteo** |
+| prompt para el diseñador de la OG | **yo genero la OG y la coloco**, salvo que la que hay ya sirva |
+| «pendiente: que lo monte el programador» | **pendiente: que Iker lo mire en producción** |
+
+**⛔ LO QUE NO CAMBIA, Y ES LO QUE EVITA QUE ESTO SALGA MAL:**
+1. **Se espera el OK de Iker antes de tocar el repo.** El post se aprueba primero; el recurso se adapta después. *"si yo te doy el ok"*.
+2. **`lead-magnet-web §4c` manda igual: MEDIR, NO ESTIMAR.** Se levanta el estático (`python -m http.server 8899 --bind 127.0.0.1`, en background y **sin pipe**) y se miden las **líneas renderizadas** a **1440 y a 360**, no los caracteres. Los recursos ya publicados son la especificación.
+3. **Los invariantes se miden contra el catálogo**, no se recuerdan (`§4.5.0-REUTILIZAR`): H1 de 39-55 caracteres en 2 líneas, lede de 155-190 en 3 líneas a 1440 y 4 a 360, `h3` de card 30-42, `p` de card 85-109.
+4. **Los comportamientos comunes se HEREDAN y se nombran uno a uno**: header sticky, scroll suavizado, animaciones de entrada, y el `prompt-box` con su botón de copiar. Se copian de un recurso publicado, con los mismos tokens. **Un recurso que se comporta distinto al resto canta aunque el copy sea perfecto.**
+5. **Los tres registros del slug, el `robots.txt` y el `noindex` se comprueban aunque no se toquen.** Si falta uno, se rompe en silencio.
+6. **Y la OG solo se rehace si hace falta.** La de `/errores/` dice *"El error no es el canal · Es el mensaje"* y **no lleva ningún número dentro**, así que pasar de 8 a 5 errores no la invalida. Rehacer trabajo bueno es el error de `§4.5.0-RESUBIDA`.
+
+**⭐ Y SE MEJORA LO QUE SE COPIA, que es la regla de la casa aplicada al código.** Al traer el `prompt-box` de `/firma/` apareció un bug latente: el `.then(done)` del portapapeles **no tenía `.catch`**, así que si `writeText` rechaza —documento sin foco, permiso denegado, iframe— el botón se quedaba mudo y el fallback de `execCommand` no llegaba a ejecutarse nunca. Se vio **midiendo, no leyendo**: en local `writeText` rechaza con *"Document is not focused"*. Arreglado en `/errores/`. **`/firma/` y los demás lo siguen teniendo: arreglarlo ahí es trabajo aparte y hay que decirlo, no colarlo.**
+
 #### 🔁🔁 4.5.0-REUTILIZAR · EL RECURSO NO SE CREA DE CERO: SE REUSA EL DE UN TEMA YA VALIDADO (Iker, 2026-08-18)
 
 > **Iker, textual:** *"ya que tenemos once, adaptar la mayoría. Primero repetir y double down en los que nos fueron ya hace meses, porque el otro día ya vimos que repitiendo el primero más viral se volvió a ir viral. No hay que perder el tiempo creando recursos de cero si ya tenemos ideas validadas que, con lo que sabemos hoy, podemos mejorarlas. Encima la gente se creerá que son recursos nuevos."*
