@@ -700,7 +700,7 @@ referencias quemadas seguidas, dos entregas enteras a la basura y el retraso enc
   único medido. Cuando haya un tercer caso entre 30 y 98 días, se anota aquí y se ajusta
   la vara con él.
 - **⛔ EL ESPACIADO SE CUENTA DESDE QUE LA COPIAMOS NOSOTROS, NO DESDE LA FECHA DE LA
-  REFERENCIA (Iker, 2026-08-25).** Es el error que cometí al ofrecerle el meme del
+  REFERENCIA (Iker, 2026-08-26).** Es el error que cometí al ofrecerle el meme del
   descafeinado: miré que el original de Segantini era del 16/07 y me pareció lejano, cuando
   **lo que cuenta es que NUESTRA copia salió el 14/08**, o sea 11 días. Iker: *"cuando me
   refiero a espaciar la referencia no es viendo la fecha en la que se ha publicado la
@@ -721,7 +721,7 @@ la referencia, así que se busca por el CONCEPTO de la imagen — `calv|pelo`,
 `tiburón`, `tatuaje`— sobre los `content_text` de las 3 cuentas, y se cruza con
 `historial-publicaciones.md`, que sí anota la referencia de cada meme.
 
-### 🔄🔄 4.4-PASO-0-REFRESH · LA PRIMERA PUBLICACIÓN DE CADA SEMANA EMPIEZA REFRESCANDO EL CORPUS (Iker, 2026-08-25) — GLOBAL
+### 🔄🔄 4.4-PASO-0-REFRESH · LA PRIMERA PUBLICACIÓN DE CADA SEMANA EMPIEZA REFRESCANDO EL CORPUS (Iker, 2026-08-26) — GLOBAL
 
 > **Iker:** *"cada vez que tú detectes que es lunes o que es una nueva semana, y estamos haciendo la primera publicación de la semana, tienes que irte a la sección dashboard y pulsar el botón refresh all, porque así podremos encontrar memes nuevos de la gente que tenemos trackeada"*.
 
@@ -1339,11 +1339,11 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **⚠️ Y EL AVISO QUE ACOMPAÑA A ESTO: el tema es de él, así que el ÁNGULO tiene que ser NUESTRO.** Su promesa siempre es **volumen** (*"entre 50 y 200 prospectos cualificados en 15 minutos"*). La nuestra, por el informe de 50 demos, es lo contrario: **la criba y la prueba** (`aboutme §1b` pilar 1). Ahí es donde se le gana (`global §2.2b`, ser el segundo mejor), y no copiándole el número.
 
-#### 🔎🔎 4.5.0-COMPETENCIA · PASO 0 OBLIGATORIO: LA INVESTIGACIÓN DE REFERENTES, ANTES DE ELEGIR TEMA (Iker, 2026-08-25)
+#### 🔎🔎 4.5.0-COMPETENCIA · PASO 0 OBLIGATORIO: LA INVESTIGACIÓN DE REFERENTES, ANTES DE ELEGIR TEMA (Iker, 2026-08-26)
 
 > **Iker, y es una regla de casa:** *"cada vez que yo te pida una publicación del pilar lead magnet, sea para el jefe que sea, me hagas una investigación primero de nuestros principales competidores, qué patrones hay entre las temáticas entre cuentas de ventas"*.
 
-**El fallo que lo motiva, y es mío:** el 25/08 le propuse reutilizar `/vibe/` para Iker con el argumento de que en SU cuenta era virgen. Y era verdad, pero **Unai lo había publicado 13 días antes**. El espaciado que yo miré era el de la cuenta; el que importa es el de la **temática en toda la casa**, porque las tres cuentas comparten público (`§8.2`). Iker: *"yo quiero sorprender a la audiencia y no quemarles, ni con temática ni con tipo de contenido"*.
+**El fallo que lo motiva, y es mío:** el 26/08 le propuse reutilizar `/vibe/` para Iker con el argumento de que en SU cuenta era virgen. Y era verdad, pero **Unai lo había publicado 13 días antes**. El espaciado que yo miré era el de la cuenta; el que importa es el de la **temática en toda la casa**, porque las tres cuentas comparten público (`§8.2`). Iker: *"yo quiero sorprender a la audiencia y no quemarles, ni con temática ni con tipo de contenido"*.
 
 **ESTE PASO VA ANTES DE ELEGIR EL RECURSO, no después. Son dos consultas y salen en cinco minutos.**
 
@@ -1352,7 +1352,7 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 ```
 GET {UNIPILE_BASE_URL}/api/v1/users/{pid}/posts?account_id={id}&limit=30
 ```
-| referente | pid | estado a 2026-08-25 |
+| referente | pid | estado a 2026-08-26 |
 |---|---|---|
 | **Martín Arosa** | `ACoAADZxEhwBY2fsFAEmdrvJato1IwHiB8W0NgQ` | ✅ **a tope**: 15 de sus 23 últimos son lead magnets, mediana 200 comentarios, pico **1.467** |
 | **Luna Chen** | `ACoAACZ9ZkcBl_c6lvWcyXAVnyI2ukNM7u7sYjY` | ✅ **la más cercana a nosotros, y es de VENTAS pura**: 27 de 30 son lead magnets, pico **1.381** |
@@ -1368,16 +1368,16 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 2. **+ palabra-puerta en el texto** (`comenta "X"`, `comment "X"`, `escribe "X"`, `drop … below`).
 3. **+ filtro de nicho** (`vender|comercial|prospec|outbound|cold|cliente|sales|SDR|GTM…`) para quedarse con los de VENTAS.
 
-**Medido el 25/08:** de los 500 top outliers salen **72 lead magnets confirmados**, y **48 son de ventas**. Eso es cantera de sobra sin depender de tres cuentas.
+**Medido el 26/08:** de los 500 top outliers salen **72 lead magnets confirmados**, y **48 son de ventas**. Eso es cantera de sobra sin depender de tres cuentas.
 
 ##### 3 · Qué se saca de ahí, y es lo único que importa: EL PATRÓN DE TEMÁTICA
 
-**Medido el 25/08 sobre los ganchos de esos 48:** `cold` **(11)** · `claude` (10) · `linkedin` (9) · `sales` (6) · `email` (4) · `calling` (4). **La palabra nº1 del pilar en nuestro nicho es `cold`** — cold email y cold calling —, por delante incluso de Claude.
+**Medido el 26/08 sobre los ganchos de esos 48:** `cold` **(11)** · `claude` (10) · `linkedin` (9) · `sales` (6) · `email` (4) · `calling` (4). **La palabra nº1 del pilar en nuestro nicho es `cold`** — cold email y cold calling —, por delante incluso de Claude.
 
 **Y hacia dónde se ha movido la pareja viva, que es el dato fresco:**
 - **Luna Chen → `Claude AGENTS / SKILLS para ventas`**: *"20 Best Claude Agents For Your Entire Sales Operation"* (1.381c) · *"25 Best AI Skills For LinkedIn Outreach"* (249c) · *"My Full Claude Sales System, 337+ skills"* (180c). **No es prospección: es el CATÁLOGO de agentes para todo el ciclo comercial.**
 - **Martín Arosa → `n8n + agentes que gestionan LinkedIn`**: n8n (1.467c y 503c), la biblioteca de recursos (1.427c), el agente que analiza antes de escribir (489c). **Ya no habla de prospección.**
-- **Y los dos se han copiado el formato de NOTICIA DE ÚLTIMA HORA.** ⛔ Ese no nos conviene y no se copia (Iker, 25/08): nuestro alcance no viene de dar noticias, y ya está escrito que los posts de lanzamiento de modelo nos flopean (`working-preferences §3`).
+- **Y los dos se han copiado el formato de NOTICIA DE ÚLTIMA HORA.** ⛔ Ese no nos conviene y no se copia (Iker, 26/08): nuestro alcance no viene de dar noticias, y ya está escrito que los posts de lanzamiento de modelo nos flopean (`working-preferences §3`).
 
 ##### 4 · ⛔ EL ESPACIADO SE MIDE ENTRE NOSOTROS, NO CONTRA ELLOS
 
@@ -1389,7 +1389,7 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 
 | puerta | qué mide | vara |
 |---|---|---|
-| **1 · La temática, en TODA la casa** | ¿cuántos días desde que CUALQUIERA de las cuentas publicó este tema? | **el público es el mismo en las tres** (`§8.2`), así que 13 días es "hace nada" |
+| **1 · La temática, en TODA la casa** | ¿cuántos días desde que CUALQUIERA de las cuentas publicó este tema? | **el público es el mismo en las tres** (`§8.2`), así que 14 días es "hace nada" |
 | **2 · El recurso, en TODA la casa** | ¿cuándo se usó por última vez este slug, lo publicara quien lo publicara? | ídem |
 | **3 · La cuenta** | ¿de qué habló ESTE jefe en sus últimos lead magnets? | lo más estricto: si el mismo jefe tocó el tema hace poco, no se repite aunque el recurso esté libre |
 
@@ -1410,23 +1410,23 @@ Una tabla de **recurso · comentarios del origen · días desde el último uso e
 2. **El que lo pidió hace meses tiene la cookie `neety_gate` y entra directo** — así que ve la guía nueva sin pagar peaje otra vez. No captura, pero recupera a un lead frío.
 3. **El que no lo vio en su día no distingue un recurso nuevo de uno reeditado.** El feed no tiene memoria; nuestra base de datos sí.
 
-**🔴 CORREGIDO EL 2026-08-25: LA COLA SE ORDENA POR DÍAS SIN USARSE, Y LOS COMENTARIOS DESEMPATAN.** Aquí ponía que *"el orden lo manda el post que generó el recurso"*, o sea por comentarios, y **con esa lectura le propuse a Iker reutilizar `/vibe/` (632c, el nº1) trece días después de que lo publicara Unai**. Los comentarios dicen si un tema PICA; los días dicen si está QUEMADO, y lo segundo se comprueba primero (`§4.5.0-COMPETENCIA` punto 4). El orden bueno: **pasar las tres puertas de espaciado → y entre los que quedan, el de más comentarios.**
+**🔴 CORREGIDO EL 2026-08-26: LA COLA SE ORDENA POR DÍAS SIN USARSE, Y LOS COMENTARIOS DESEMPATAN.** Aquí ponía que *"el orden lo manda el post que generó el recurso"*, o sea por comentarios, y **con esa lectura le propuse a Iker reutilizar `/vibe/` (632c, el nº1) trece días después de que lo publicara Unai**. Los comentarios dicen si un tema PICA; los días dicen si está QUEMADO, y lo segundo se comprueba primero (`§4.5.0-COMPETENCIA` punto 4). El orden bueno: **pasar las tres puertas de espaciado → y entre los que quedan, el de más comentarios.**
 
-**Estado a 2026-08-25, ordenado por días sin usarse en TODA la casa:**
+**Estado a 2026-08-26, ordenado por días sin usarse en TODA la casa:**
 
 | slug | com. origen | días | quién lo usó la última vez |
 |---|---|---|---|
-| **`/errores/`** | **120** | **126** | 21/04 Iker · **NUNCA repetido** ← el que toca |
-| `/senales/` | 23 | 119 | 28/04 Unai · flojo de origen |
-| `/mensajes/` | 129 | 68 | 18/06 Unai, y ahí flopeó (18c) |
-| `/propuesta/` | 20 | 41 | 15/07 Asier · flojo |
-| `/perfil/` | **483** | 39 | 17/07 Iker, con el ángulo de auditoría web → 0.32x |
-| `/subvencion-euskadi/` | 46 | 32 | 24/07 Iker |
-| `/prospeccion-manual/` | 31 | 28 | 28/07 Iker |
-| `/firma/` | 19 | 14 | 11/08 Iker ⛔ |
-| `/vibe/` | **632** | 13 | 12/08 Unai ⛔ |
-| `/criba/` | 16 | 11 | 14/08 Asier ⛔ |
-| `/llaves/` | 285 | 7 | 18/08 Unai ⛔ |
+| **`/errores/`** | **120** | **127** | 21/04 Iker · **NUNCA repetido** ← el que toca |
+| `/senales/` | 23 | 120 | 28/04 Unai · flojo de origen |
+| `/mensajes/` | 129 | 69 | 18/06 Unai, y ahí flopeó (18c) |
+| `/propuesta/` | 20 | 42 | 15/07 Asier · flojo |
+| `/perfil/` | **483** | 40 | 17/07 Iker, con el ángulo de auditoría web → 0.32x |
+| `/subvencion-euskadi/` | 46 | 33 | 24/07 Iker |
+| `/prospeccion-manual/` | 31 | 29 | 28/07 Iker |
+| `/firma/` | 19 | 15 | 11/08 Iker ⛔ |
+| `/vibe/` | **632** | 14 | 12/08 Unai ⛔ |
+| `/criba/` | 16 | 12 | 14/08 Asier ⛔ |
+| `/llaves/` | 285 | 8 | 18/08 Unai ⛔ |
 
 **Fíjate en lo que enseña la tabla: los tres recursos con más comentarios de origen (632, 483, 285) son los TRES más recientes.** Justamente porque funcionan, se han vuelto a usar antes. Ordenar por comentarios es ordenar por "lo que acabamos de quemar".
 
@@ -2128,7 +2128,7 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
 >   - ⚠️ **Con una excepción declarada: cuando la foto ES el concepto.** La historia pendiente de Unai con su foto de pequeño va al revés a propósito, y por eso se declara la divergencia al entregar.
 > - **Y esta señal es para el HUMANO, no para el clasificador.** El código no distingue un selfie de un wojak: los dos entran en la base como `text_image` y no hay visión por ordenador en el backend. Al clasificador lo separa el **tiempo verbal** (`services/pillar.ts`: una historia narra en pretérito, un meme describe en presente). Si alguna vez dudas mirando la parrilla, la foto te lo dice a ti en medio segundo; al script hay que seguir diciéndoselo por el texto.
 
-> ### 👥👥 4.6-FOTO-GRUPO · SI UNA CUENTA NO TIENE SELFIES, LA HISTORIA NO SE BLOQUEA: VA FOTO DE GRUPO (Iker, 2026-08-25)
+> ### 👥👥 4.6-FOTO-GRUPO · SI UNA CUENTA NO TIENE SELFIES, LA HISTORIA NO SE BLOQUEA: VA FOTO DE GRUPO (Iker, 2026-08-26)
 > **El caso, y no es un capricho:** Asier lleva **un mes** sin pasar una sola foto suya y dice que no se las hace. `§4.6-FOTO` pide selfie con el movil en la mano, y con esa regla su cuenta se quedaba fuera del pilar para siempre. Iker: *"la unica alternativa que se me ha ocurrido son fotos grupales en las que el esta incluido"*.
 >
 > **LA REGLA: cuando el dueño de la cuenta no tenga selfies, se usa una FOTO DE GRUPO donde el sea identificable, y en la entrega se dice quien es y donde esta.** El selfie sigue siendo el default del pilar; esto es la salida cuando no existe, no una alternativa a elegir.
