@@ -1042,6 +1042,29 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 ### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
 
+#### 🔗🔗 4.4b-UTM · TODO ENLACE QUE METAMOS EN UNA PUBLICACIÓN LLEVA UTM (Iker, 2026-08-26) — GLOBAL
+
+> **Iker, y lo pide como receta global:** *"todas las veces que metamos un enlace en una publicación, ya sea la web de la newsletter, la web de agendar o la del evento, añade siempre un UTM muy sencillo que indique de qué publicación de LinkedIn viene"*.
+
+**El problema que resuelve, y llevaba meses abierto:** las tres webs a las que mandamos tráfico tienen analítica detrás, pero **sin UTM todo lo que llega de LinkedIn cae en la misma fila** y no se sabe qué publicación lo trajo. La herramienta guarda **un solo `link_url` por post** y LinkedIn no desglosa (`§4.4e`, aviso 3), así que el UTM es **la única forma que tenemos de atribuir un clic a un post concreto**.
+
+**EL FORMATO, y es el mismo siempre:**
+```
+?utm_source=linkedin&utm_medium=post&utm_campaign={pilar}-{tema}-{ddmes}&utm_content={cuenta}
+```
+- **`utm_campaign` es el que importa** y se lee solo: `historia-euskadi-26ago` · `peloteo-malaga-12sep` · `meme-comerciales-03sep` · `leadmagnet-prospeccion-09sep`. **Pilar + tema en una palabra + día y mes abreviado**, todo en minúsculas, sin tildes y con guiones.
+- **`utm_source=linkedin` no es opcional:** sin `source`, GA4 cuenta la visita como *referral* y la campaña no aparece donde se mira. Es la diferencia entre tener el dato y creer que lo tienes.
+- **`utm_content` = la cuenta** (`unai`, `iker`, `asier`, `mario`, `helena`). Es lo que permite ver qué cuenta trae los clics cuando el mismo concepto sale en varias.
+
+**⚠️ NO CUESTA ALCANCE NI ESTÉTICA, y por eso no hay que negociarlo:** **LinkedIn reescribe el enlace a `lnkd.in/xxxxx` al publicar** (comprobado en nuestros propios posts en la BD), así que el lector nunca ve la cola de parámetros. Y el tope de 55 caracteres del ninja **se mide sin la URL** (`§4.4b`), o sea que la cola no roba ni un carácter de la línea.
+
+**Dónde aplica:** los tres destinos de un post — `/agendar/`, `/correo/` (y `/newsletter/`) y **la página del mapa** —, y también **Luma**. ⚠️ **En nuestras webs el dato es seguro** (GA4 propio). **En Luma depende de que su panel guarde el UTM de la inscripción: hay que comprobarlo la primera vez en el panel del evento.** Si no lo guardara, el enlace sigue funcionando igual y no se pierde nada.
+
+**Mecanizado** en `validar-post.py` como **dos fallos duros** (`Todo enlace nuestro lleva utm_campaign` y `El UTM lleva utm_source=linkedin`), que miran cualquier URL de `recursos.neety.com` o `luma.com` del cuerpo.
+
+- **⛔ Lo que NO cambia:** el enlace sigue llevando `https://` delante (`§4.4b` regla 8) y **la URL base no se toca** — el UTM va detrás, con `?`. Si la URL ya llevara parámetros, se encadena con `&`.
+- **📌 PENDIENTE (mío):** el mismo UTM en los enlaces del **DM del lead magnet** y en los **correos** (`email-marketing`), que hoy salen pelados. Es la misma regla en otra superficie, con `utm_medium=dm` y `utm_medium=email`.
+
 #### ⛔⛔ 4.4b-FORMA · DOS LÍNEAS PEGADAS Y SIGUIENDO LA BROMA DEL GANCHO. SIEMPRE, EN TODOS LOS PILARES (Iker, 2026-08-12)
 
 **La forma del ninja no es de un pilar. Es global**, y se rompió en dos pilares distintos la misma semana. Iker: *"si el gancho de ayer era de los calvos, deberíamos seguir la broma de eso en el spam ninja"*.

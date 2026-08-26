@@ -139,6 +139,7 @@ SPAM_QUEMADO = {
     'te lo damos hecho': 'lo mismo, en los tres',
     'te lo damos resuelto': 'historia de Iker 18/08 (era la variante de "te lo damos hecho")',
     'te lo marcamos': 'meme de Iker 19/08 (el de la transcripcion de la llamada)',
+    'acertar con quien no': 'historia de Unai 21/08 (la del evento en el ninja)',
 }
 
 # §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
@@ -195,6 +196,13 @@ ARRANQUE_QUEMADO = {
     'historia': {
         'la': 'historia de Iker 18/08 ("La eche donde el coche...")',
         'ni': 'historia de Iker 13/08 ("Ni una pregunta por el precio")',
+        # Publicados y leidos, no deducidos (§0f: la lista se toca al PUBLICAR).
+        'nadie': 'historia de Unai 21/08 ("Nadie las abria / Nadie me las pedia")',
+        'no': 'historia de Unai 21/08 ("No era la mas bonita / difícil / mejor")',
+        'hoy': 'historia de Unai 21/08 ("Hoy no toco el codigo / Hoy levanto dinero")',
+        'aquel': 'historia de Asier 25/08 ("Aquel numero era de la casa entera")',
+        'me': 'historia de Asier 25/08 ("Me pregunto quien era yo / de que conocia")',
+        'sabe': 'historia de Asier 25/08 ("Sabe el nombre / Sabe el numero / Sabe todo")',
     },
     'mapa': {
         'no': 'mapa de Navarra ("No paga las nominas San Fermin", swipe-file)',
@@ -279,7 +287,7 @@ def normalizar_kw(k):
 # ("Claude ha reducido toda mi prospección a una sola frase") fallaba el ancla
 # porque la regex solo aceptaba el infinitivo. Prospección, prospecta y
 # prospectando son ancla de ventas igual de fuertes.
-ANCLA_FUERTE = (r'\b(vend[eio]\w*|venta|ventas'
+ANCLA_FUERTE = (r'\b(vend[eioí]\w*|vendi|venta|ventas'
                 r'|comercial|comerciales|cuota|comisi[oó]n|prospec\w+|deal|deals|propuesta comercial)\b')
 # AMBIGUA = las comparte media empresa. "pedido" lo dicen logística, compras,
 # almacén y producción; "cartera" la dice finanzas; "cliente" y "precio" los dice
@@ -1505,6 +1513,25 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _bare_link = re.search(r'(?<!https://)' + re.escape(_dom), cuerpo)
         chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
             f'falta https:// delante de {_dom}' if _bare_link else '')
+        # ⭐ TODO ENLACE NUESTRO LLEVA UTM (Iker, 2026-08-26) — GLOBAL, §4.4b-UTM.
+        # Las tres webs a las que mandamos trafico (agendar, correo/newsletter y
+        # Luma) tienen analitica detras, pero sin UTM todo el trafico de LinkedIn
+        # entra en el mismo saco y no se sabe QUE publicacion lo trajo. Con el
+        # utm_campaign puesto, cada post es una fila. No cuesta nada: LinkedIn
+        # acorta el enlace a lnkd.in al publicar, asi que el lector no ve la cola.
+        # Formato: utm_source=linkedin & utm_medium=post & utm_campaign={pilar}-{tema}-{ddmes}
+        # & utm_content={cuenta}. Ej: historia-euskadi-26ago.
+        _urls = re.findall(r'https?://(?:recursos\.neety\.com|luma\.com)\S*', cuerpo)
+        _sin_utm = [u for u in _urls if 'utm_campaign=' not in u]
+        chk(not _sin_utm, 'Todo enlace nuestro lleva utm_campaign (§4.4b-UTM)',
+            ('sin UTM: %s → pega ?utm_source=linkedin&utm_medium=post&utm_campaign='
+             '{pilar}-{tema}-{ddmes}&utm_content={cuenta}, p.ej. historia-euskadi-26ago. '
+             'Sin esto, GA4 mete el trafico de todos los posts en la misma fila y no se '
+             'sabe cual convierte' % _sin_utm[0][:60]) if _sin_utm else '')
+        _mal_source = [u for u in _urls if 'utm_campaign=' in u and 'utm_source=linkedin' not in u]
+        chk(not _mal_source, 'El UTM lleva utm_source=linkedin (§4.4b-UTM)',
+            'con utm_campaign pero sin utm_source, GA4 lo cuenta como referral y no como '
+            'campaña, asi que la fila del post no aparece donde se mira' if _mal_source else '')
         chk('Neety' not in cuerpo.split(_dom)[0].split('\n')[-1],
             'Spam ninja NO nombra a Neety (§4.4b)', 'nombrar la marca = publicidad encubierta')
         lineas = [l for l in cuerpo.split('\n') if l.strip()]
