@@ -323,8 +323,29 @@ export default function LeadMagnetWorkspace({ post, creatorId, compacto = false 
     //    el enlace dentro: esa gente recibio el recurso sin que exista fila 'dm'.
     const llevaEnlace = (x: string | null) =>
       !!x && /recursos\.neety\.com|lnkd\.in|https?:\/\//i.test(x);
-    if (ss.some((x) => (x.kind === 'dm' || x.kind === 'inmail') && x.status === 'sent')) return false;
-    if (ss.some((x) => x.kind === 'invite' && x.status === 'sent' && llevaEnlace(x.text))) return false;
+    // ⛔ ENTREGAR EL RECURSO Y CONTESTAR EN PUBLICO SON DOS TRABAJOS (Iker,
+    //    2026-08-26, con el post de /errores/ ya publicado y en vivo).
+    //
+    //    Esto devolvia false en cuanto salia el DM, asi que la tarjeta DESAPARECIA
+    //    de la herramienta en el momento de mandar el recurso — y como el orden
+    //    natural es mandar primero y contestar despues (`recursoSinEntregar`
+    //    bloquea la respuesta hasta que el recurso sale), el comentario se perdia
+    //    justo antes del paso que faltaba. Iker: "ahora ya no lo he podido ni
+    //    interactuar ni responder al mensaje publico".
+    //
+    //    Y la respuesta publica NO es opcional: es donde se le pide la solicitud
+    //    al que no es contacto (`§4.5.0-CTA-CERO` p.2, sin ella ese lead se queda
+    //    sin recurso) y es lo que alimenta el unico motor que tiene el pilar, que
+    //    es el volumen de comentarios (`outliers §4.48`).
+    //
+    //    Asi que entregado ya no cierra por si solo: cierra entregado Y
+    //    respondido. Es seguro para el doble envio, que lo impide otra cosa: con
+    //    un envio 'sent' la tarjeta no pinta la caja de mensaje (`msgResult` nace
+    //    de `priorSend`), solo la seccion de respuesta.
+    const entregado =
+      ss.some((x) => (x.kind === 'dm' || x.kind === 'inmail') && x.status === 'sent')
+      || ss.some((x) => x.kind === 'invite' && x.status === 'sent' && llevaEnlace(x.text));
+    if (entregado) return !t.answered_by_author;
     // 2. Salio y no llego: hay que volver a escribirle.
     if (ss.some((x) => x.kind === 'dm' && x.status === 'failed')) return true;
     // 3. Su entrega la gobierna un bloque de arriba (Solicitudes pedidas o

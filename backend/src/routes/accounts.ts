@@ -2565,7 +2565,16 @@ router.get('/comments/pending', async (req: Request, res: Response) => {
                 // pregunta por los dos: el provider cambia, el comentario no.
                 const suyo = (m: Set<string>) => m.has(pid) || m.has(t.id);
 
-                if (suyo(entregado)) continue;                              // ya lo tiene
+                // ⛔ ENTREGADO NO ES LO MISMO QUE TERMINADO (Iker, 2026-08-26).
+                // Gemelo del cambio en `accionable` del panel: entregar el recurso
+                // y contestar en publico son DOS trabajos, y esto cerraba con el
+                // primero. Con el post de /errores/ en vivo, el comentario
+                // desaparecia de la herramienta al mandar el DM y ya no se podia
+                // responder. La respuesta publica no es opcional: es donde se pide
+                // la solicitud al que no es contacto y es el motor del pilar.
+                // ⚠️ Si tocas esto, toca tambien `cerradoSinPedirlo` y `accionable`
+                // en frontend/src/components/accounts/, que calculan lo mismo.
+                if (suyo(entregado) && t.answered_by_author) continue;      // ya lo tiene Y ya le contestamos
                 if (suyo(fallado)) { fallidos++; continue; }                // hay que reintentar
                 if (suyo(enSeguimiento)) { seguimientos_pendientes++; continue; }
                 // ⛔ EL CONTADOR CUENTA LO QUE VAS A VER EN LA LISTA DEL POST
