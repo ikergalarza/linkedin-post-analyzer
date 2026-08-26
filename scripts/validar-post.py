@@ -315,7 +315,13 @@ MARKETING_ANCLA = (r'\b(marketing|contenido|redes|crecer|crecimiento|alcance|imp
                    # marketing que existe: esta en la misma familia que "viral" y
                    # "audiencia", que ya estaban. Mismo caso para los oficios del mundo
                    # del contenido, que es el carril de esa cuenta (aboutme §2-CARRIL).
-                   r'|influencers?|creador(?:es)? de contenido|youtubers?|streamers?)\b')
+                   r'|influencers?|creador(?:es)? de contenido|youtubers?|streamers?'
+                   # 2026-08-26 — el meme del de marketing esperando (Mario). Un gancho
+                   # con "campañas" dentro fallaba el ancla, y campaña es la palabra que
+                   # la propia referencia lleva DENTRO de la imagen (MARKETER WITH A
+                   # CAMPAIGN IDEA). Misma familia que "contenido" y "alcance", que ya
+                   # estaban: es el ENTREGABLE del oficio, no una deduccion mia.
+                   r'|campa[ñn]as?|anuncios?|newsletter)\b')
 # §2.3 — estrechan el alcance, FUERA del hook. Lista canónica: gana a la de
 # "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
 # aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
@@ -2728,17 +2734,37 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # 2026-08-19). El presupuesto de 450 es del CHISTE; la puerta nueva no se lo
         # come. El tope duro de 700 sigue siendo sobre el total, porque lo que mide
         # es si el ninja de agendar cabe antes del caracter 650.
-        _blc = next((b for b in bloques(cuerpo)
-                     if 'recursos.neety.com/correo' in ' '.join(b)
-                     or 'recursos.neety.com/newsletter' in ' '.join(b)), None)
-        _n = len(cuerpo) - (len('\n'.join(_blc)) + 2 if _blc else 0)
-        chk(len(cuerpo) <= 700, 'MEME: cuerpo corto, la longitud del original NO se calca (§4.4-CORTO)',
+        #
+        # ⭐⭐ Y SE MIDE SOBRE EL TEXTO PUBLICADO, NO SOBRE EL BORRADOR (2026-08-26).
+        # LinkedIn reescribe cualquier enlace a `lnkd.in/xxxxxxx` al publicar, cosa
+        # que §4.4b-UTM ya da por sabida cuando dice que la cola de UTM "no roba ni
+        # un caracter" de la linea del ninja. Desde que los enlaces llevan UTM
+        # (regla del mismo dia), una URL de agendar ocupa ~120 caracteres en el
+        # borrador y 24 en el feed: contar el borrador se comia 100 caracteres del
+        # presupuesto del CHISTE y marcaba en rojo memes que el lector ve cortos.
+        # Los 450 y los 700 salen de posts YA PUBLICADOS, o sea que la vara estaba
+        # medida con lnkd.in y aqui se comparaba contra otra cosa.
+        _pub = re.sub(r'https?://\S+', 'https://lnkd.in/eXXXXXXX', cuerpo)
+        _blc = next((b for b in bloques(_pub)
+                     if 'lnkd.in' in ' '.join(b) and (
+                         'correo' in ' '.join(b).lower()
+                         or 'newsletter' in ' '.join(b).lower())), None)
+        if _blc is None:
+            _blc = next((b for b in bloques(cuerpo)
+                         if 'recursos.neety.com/correo' in ' '.join(b)
+                         or 'recursos.neety.com/newsletter' in ' '.join(b)), None)
+            if _blc is not None:
+                _blc = re.sub(r'https?://\S+', 'https://lnkd.in/eXXXXXXX',
+                              '\n'.join(_blc)).split('\n')
+        cuerpo_pub = _pub
+        _n = len(cuerpo_pub) - (len('\n'.join(_blc)) + 2 if _blc else 0)
+        chk(len(cuerpo_pub) <= 700, 'MEME: cuerpo corto, la longitud del original NO se calca (§4.4-CORTO)',
             ('%d caracteres. Pasando de 700 el spam ninja ya no cabe antes del 650 y el CTR '
              'se hunde. Mediana de impresiones por tramo: <=450 -> 11.602 · 451-700 -> 3.760 · '
-             '>700 -> 4.745' % len(cuerpo)) if len(cuerpo) > 700 else
-            ('%d caracteres' % len(cuerpo)) if not _blc else
-            '%d car sin el bloque de correo · %d en total' % (_n, len(cuerpo)))
-        if len(cuerpo) <= 700:
+             '>700 -> 4.745' % len(cuerpo_pub)) if len(cuerpo_pub) > 700 else
+            ('%d caracteres publicados' % len(cuerpo_pub)) if not _blc else
+            '%d car sin el bloque de correo · %d publicados en total' % (_n, len(cuerpo_pub)))
+        if len(cuerpo_pub) <= 700:
             chk(_n <= 450, 'MEME: en la zona corta, <=450 caracteres (§4.4-CORTO)',
                 ('%d caracteres%s. No bloquea, pero los 18 memes de <=450 tienen mediana de '
                  '11.602 impresiones contra 3.760 de los de 451-700, y los siete mas vistos '
