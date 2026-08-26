@@ -1591,7 +1591,7 @@ Una tabla de **recurso · comentarios del origen · días desde el último uso e
 
 | slug | com. origen | días | quién lo usó la última vez |
 |---|---|---|---|
-| **`/errores/`** | **120** | **127** | 21/04 Iker · **NUNCA repetido** ← el que toca |
+| `/errores/` | 120 | **0** | **26/08 Iker · reeditado hoy** (era el que llevaba 127 dias) |
 | `/senales/` | 23 | 120 | 28/04 Unai · flojo de origen |
 | `/mensajes/` | 129 | 69 | 18/06 Unai, y ahí flopeó (18c) |
 | `/propuesta/` | 20 | 42 | 15/07 Asier · flojo |

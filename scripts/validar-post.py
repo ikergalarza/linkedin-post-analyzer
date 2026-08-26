@@ -221,6 +221,10 @@ ARRANQUE_QUEMADO = {
         'la': 'meme de Asier 20/08 ("La lista no se pule / no se hereda / se elige antes")',
         'no': 'meme de Unai 25/08 ("No buscan quien mande mas / escriba mejor / conteste antes")',
     },
+    # El pilar lead magnet tampoco tenia lista. Anotado al PUBLICAR (§0f).
+    'leadmagnet': {
+        'ninguno': 'lead magnet de Iker 26/08 ("Ninguno es de redaccion / de personalizacion / se arregla escribiendo mejor")',
+    },
 }
 
 CONCEPTO_QUEMADO = {
