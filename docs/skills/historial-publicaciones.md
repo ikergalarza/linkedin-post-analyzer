@@ -174,6 +174,20 @@ El de automoción ya está hecho (Asier, 07/08). El siguiente **no repite sector
 
 ---
 
+## 🚫 CAPADO DEL 26/08 · LA HISTORIA DE UNAI (incidente abierto)
+
+**Qué pasó:** publicada sobre las 10:00. **A los 10 minutos no aparecía en Principal desde otra cuenta**, y a los 15 seguía sin aparecer. **45 impresiones a los 14 minutos = 3,2 imp/min**, más cerca del patrón bloqueado que medimos el 18/08 (2,0-2,9) que del sano (5,6). **Iker lo da por bloqueado desde el minuto uno**, con su línea base: *"en el primer minuto SIEMPRE me salen en el feed"*.
+
+**Decisión de Iker: resubir cambiando `teléfono` → `número` en el gancho y en el ninja.** Su teoría: `teléfono` roza la familia de **datos y privacidad**, la misma que capó el meme del 19/08 con `La transcribo`.
+
+**🔴 Mi objeción, que perdió, y por qué perdió bien:** defendí `teléfono` con 12 posts nuestros que la llevan y ninguno por debajo de 500 impresiones. **Iker: el corpus caduca para las preguntas de moderación**, y tiene la prueba de nuestro lado — `comenta "X"` funcionó meses y murió el 05/08 sin que la palabra cambiara. **De ahí sale `global §9.2`**, que parte la consulta al corpus en dos preguntas (rendimiento sí caduca / moderación no vale) y obliga a poner la FECHA del precedente delante del número.
+
+**⚠️ CÓMO SE LEE EL RESULTADO, y esto hay que respetarlo cuando se sepa** (`global §9.5`): que la resubida funcione **no demuestra** que `teléfono` estuviera capada. Sigue en pie un precedente de **hace 25 horas**: la historia de Asier del 25/08 lleva `teléfono` **en el gancho** e hizo 9.187 impresiones, el mayor alcance del pilar. **Para meter la palabra en la lista negra hacen falta DOS casos**, porque el falso positivo cuesta el gancho de *"quemando el teléfono"* (49.426) y los cuerpos de 168.926 y 192.303.
+
+**Y la variable que queda sin probar:** este post es **el primero de 267 con parámetros UTM**. La resubida los mantiene, así que si vuelve a caer, ahí está la respuesta.
+
+**📏 Datos a anotar cuando se resuelva:** minutos hasta aparecer en Principal (la resubida), impresiones a los 60 min, y si apareció de golpe o subiendo.
+
 ## 🧪 LOS A/B ABIERTOS DEL PILAR HISTORIA (método en `post-workflow §9b`)
 
 > **Se lee cuando haya 3-4 posts por condición, no antes.** Con 5.000-9.000 impresiones el ruido se come cualquier diferencia pequeña, y entre cuentas no se compara (la baseline manda, `outliers-database §3.15`).

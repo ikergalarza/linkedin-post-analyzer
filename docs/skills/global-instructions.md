@@ -1869,3 +1869,62 @@ Antes de enviar cualquier borrador (post/idea/hook/imagen/guion), valida contra 
 8b. **⭐ EL TEXTO DE LA IMAGEN PASA LOS MISMOS FILTROS QUE EL CUERPO (`images §0h-FILTROS`).** Familias de riesgo, anglicismos, puntuación, concordancia con cómo el post llama a las cosas, y el tachón de `§2.2c`. **Se falla por calcar el literal de la referencia:** es el suelo, no la entrega.
 8. **Puntuación delatora (`brand-voice §3`):** busca `—` y busca `, y` / `, e` en TODO lo que entregas (post, spam ninja, CSV, descripciones). Cero guiones largos, cero comas antes de "y". Es un ctrl+F, no una impresión.
 Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/tipografía; vídeo = 3 piezas + 6 spoken hooks) · RECENT_DIAGNOSIS (región underdog, filtro de meme, fatiga de lead magnet) · ¿el borrador repite un patrón que ya flopeó en la cuenta? Ver `working-preferences` §2 para las dos salidas (fix silencioso vs aviso de riesgo) y la trampa de la edición parcial.
+
+---
+
+## 🚫🚫 9 · CAPADO Y MODERACIÓN — CANÓNICO Y GLOBAL (Iker, 2026-08-26)
+
+> **Por qué esto vive aquí y no en el runbook del lead magnet, que es donde estaba.** Iker: *"ya nos han baneado varias veces publicaciones de lead magnets, el otro día un meme y hoy un pilar historia. O sea, que esto es general"*. **Tres pilares distintos en tres semanas.** Es el caso de libro de `working-preferences §0c-BIS`: escrito dentro de un runbook, garantizaba que se rompiera en los otros cinco. El detalle operativo sigue en `post-workflow §4.5.0-*`; **lo que manda está aquí.**
+
+### 9.1 · El diagnóstico es el FEED, y se lee en 10 MINUTOS
+
+**Iker, y es su instrumento y su línea base:** *"en el primer minuto SIEMPRE las publicaciones me salen en el feed. No puede ser que en 15 no me haya salido. Esto no está en revisión, esto está bloqueado desde el minuto uno, y el bloqueo se nota muy rápido"*.
+
+| señal | veredicto |
+|---|---|
+| aparece en Principal desde otra cuenta **en el primer minuto** | ✅ normal, es la línea base |
+| **no aparece a los 10 minutos** | 🔴 **bloqueada.** No es una cola de revisión, no es lentitud |
+
+- **Solo cuenta "Primero los más relevantes".** En "Reciente" sale hasta un post capado.
+- **Este diagnóstico va POR DELANTE del de impresiones**, porque no hay que esperar a que se acumulen. El semáforo de impresiones y la banda del Explorer se quedan como confirmación, no como primer paso.
+- ⚠️ **Y matiza el aviso viejo de "no leas el semáforo a los 7 minutos"** (`post-workflow §4.5.0-CAPADO-RAPIDO`): eso vale para las IMPRESIONES, que a los 7 minutos no dicen nada. **El FEED sí dice, y dice enseguida.**
+
+### 9.2 · ⛔ EL CORPUS CADUCA: un post de hace meses NO prueba que una palabra pase el filtro HOY
+
+**Este es el error que cometí el 26/08 y es el más caro de todos, porque parece rigor.** Defendí `teléfono` con 12 posts nuestros que la llevan, dos de ellos con 168.926 y 192.303 impresiones. Iker: *"hace meses es correcto que los lead magnets podían llevar `comenta` y nunca nos bloqueaba, pero LinkedIn se está poniendo muy restrictivo. Esa hipótesis no es válida, porque una publicación de hace meses está demostrado que se subió cuando LinkedIn era menos restrictivo"*.
+
+**Y tiene la prueba de nuestro propio lado:** `comenta "X"` funcionó durante meses y **dejó de funcionar el 5 de agosto** (`post-workflow §4.5.0-CTA`). La palabra no cambió; cambió el filtro.
+
+**LA REGLA, y parte la consulta al corpus en dos preguntas distintas:**
+
+| pregunta | ¿vale el histórico? |
+|---|---|
+| **¿esta palabra RINDE?** (¿frena el scroll, gusta, convierte?) | ✅ **SÍ.** El rendimiento no caduca: un gancho que funcionó sigue enseñando cómo se escribe |
+| **¿esta palabra PASA EL FILTRO?** | ⛔ **NO.** Solo cuenta el precedente **RECIENTE**, de las últimas 2-3 semanas, y a poder ser de una cuenta nuestra |
+
+**Corolario operativo:** al defender una palabra contra la sospecha de capado, **la fecha del precedente va SIEMPRE delante del número**. *"168.926 impresiones"* sin fecha es un argumento inválido; *"9.187 impresiones ayer"* sí es un argumento.
+
+### 9.3 · Qué dispara el capado, según nuestros propios casos
+
+**Tres capados documentados y los tres caen en dos familias:**
+
+| caso | qué llevaba | familia |
+|---|---|---|
+| lead magnets, agosto (3 subidas) | `Comenta "X"` en el TEXTO | **forzar el algoritmo** |
+| lead magnet 18/08 | `conecta conmigo` | **forzar el algoritmo** |
+| meme 19/08 (133 imp) | `La transcribo` en primera persona | **datos de terceros** |
+
+**Iker, y es la lectura que hay que retener:** *"siempre se nos prohíbe cuando forzamos para explotar el algoritmo con cosas como `comenta` o `conecta conmigo`, o cuando el algoritmo saca indicios de que lo que hemos subido puede poner en peligro los datos o la privacidad de los usuarios"*.
+
+**Y el contexto que lo agrava: LinkedIn es cada vez más restrictivo**, y ha añadido un **botón para reportar publicaciones** a mano. Lo que pasaba hace tres meses no es la vara de hoy, y la vara se sigue moviendo.
+
+### 9.4 · Lo que NO informa
+
+- **⛔ La ausencia de aviso.** LinkedIn **no avisa nunca** — ni en analíticas, ni en notificaciones (a diferencia de TikTok). Los tres capados tampoco tuvieron aviso. **Buscarlo es tiempo perdido y su ausencia no prueba nada** (`post-workflow §4.5.0-SIN-AVISO`).
+- **⛔ La foto.** Probado dos veces en agosto: se resubió con imagen distinta y volvió a caer. **El baneo es del TEXTO.**
+
+### 9.5 · La resubida: UNA variable, y con el coste sabido
+
+- **Borrar tiene coste medido:** el 06 y 07/08 resubimos tres veces y cada una fue **peor** que la anterior (67 → 19 → 163 impresiones). Un borrado no devuelve el post al punto de partida.
+- **Se cambia UNA sola cosa** (`post-workflow §9b`). Si se cambian dos, la resubida no enseña nada aunque funcione.
+- **⛔ Y se interpreta con cuidado: que la resubida funcione NO demuestra que la palabra cambiada fuera la culpable.** Puede haber cambiado la hora, la cola, o simplemente el sorteo. **Una sola resubida es n=1**, y para meter una palabra en la lista negra hacen falta dos casos, porque el precio de un falso positivo es perder una palabra que funciona.

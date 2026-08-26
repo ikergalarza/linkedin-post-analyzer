@@ -1872,6 +1872,8 @@ Y se cruza `date` + `comment_counter` + presencia de la palabra sospechosa en `t
 
 #### 🕵️ 4.5.0-FEED · EL DIAGNÓSTICO DE PRIMER NIVEL ES EL FEED, Y ES DE IKER (2026-08-18)
 
+> 🔝 **LO CANÓNICO DE CAPADO VIVE AHORA EN `global-instructions §9` (2026-08-26).** Nos han capado un lead magnet, un meme y una historia, así que es de todos los pilares y no de este runbook. Aquí se queda el detalle operativo; **si algo choca, manda global §9**, que además fija el umbral en **10 minutos** y dice que **el corpus histórico NO vale para preguntas de moderación**.
+
 **Por delante del semáforo de impresiones y de la banda del Explorer, va este, porque es el más rápido: recién subido el post, se abre el feed Principal desde otra cuenta y se mira si aparece.**
 
 - **Aparece en pocos minutos** → comportamiento normal, el algoritmo lo está distribuyendo.
