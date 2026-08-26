@@ -267,6 +267,14 @@ Un hook que viaja hace TRES cosas a la vez. Si la idea cruda no puede con las tr
 
 **Y ya está medido en `§2.10`:** la mediana de nuestros ganchos ganadores es **75 car** con una oración, no 110 ni 210. El tope técnico no es el objetivo.
 
+**⭐ Y ES PRIORIDAD, NO UN REPASO FINAL (Iker, 2026-08-26):** *"has podido condensar lo mismo mucho más corto, cosa que siempre debe ser tu prioridad como receta global en cualquier pilar"*. **El caso entero, en tres rondas sobre el mismo gancho y sin perder una sola idea:**
+```
+89 car  Aquel invierno vendí calendarios por los polígonos de Euskadi y nunca pasé de la garita
+79 car  El mejor comercial que me he cruzado en Euskadi no marcó un número en su vida
+60 car  Nunca le vi marcar un número al mejor comercial de Euskadi
+```
+De la 1ª a la 2ª se fue **el escenario** (`§2.3b-ESCENARIO`); de la 2ª a la 3ª se fueron **`que me he cruzado`** (lo dice ya el `vi`) y **`en su vida`** (lo dice ya el `Nunca`). **29 caracteres, tres tijeras, cero conceptos perdidos.** La pregunta que las encuentra es siempre la misma: *¿esta palabra dice algo que otra palabra de la frase no diga ya?*
+
 **Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: ¿este gancho se puede decir más corto?`), que imprime la longitud y obliga a pasar el tachón palabra a palabra. Es criterio, así que no puede ser fallo duro: un script no sabe qué palabra carga un matiz.
 
 ### 🎬 2.2d · EL TEST DE LA CREADORA DE VÍDEOS: SI NO SE PUEDE RODAR, EL GANCHO SE DESCARTA (universal — Iker, 2026-08-17)
@@ -464,6 +472,20 @@ Ruptura de patrón · Rompe creencias · Dato impactante · Intriga (curiosity g
 
 **Y el corolario que más me cuesta:** ⚠️ **el techo de registro de la casa está por debajo de `romper` incluso en la cuenta de IKER**, que es la más cercana de las cinco. `reventar` y compañía siguen valiendo **con objeto concreto**; sobre un abstracto, no los quiere en ninguna cuenta. **`punchy` no es un valor absoluto: se mide contra el objeto que lleva al lado** (`§2.9-OBJETO`, y esto es su segunda mitad).
 
+#### ⚡ 2.9-SIN-VERBO · CUANDO EL VERBO NO SE PUEDE SUBIR, EL PUNCH LO CARGAN LOS INTENSIFICADORES (Iker, 2026-08-26)
+
+> **Iker, sobre el gancho de la historia del 26/08, y lo dice él antes que yo:** *"me falta un verbo más punchy que marcar, pero creo que si encontramos alguno va a perder la esencia y no se va a entender que nos referimos a marcar un número de teléfono. Aunque no tengamos verbo punchy, sí que estamos maximizando esa curiosidad con `nunca` y `el mejor`, son como potenciadores"*.
+
+**El hueco que tapa:** `§2.9` dice que el verbo del gancho tiene que frenar el scroll, y **no decía qué hacer cuando el verbo es INSUSTITUIBLE**. Hay acciones que solo tienen una palabra exacta —`marcar` un número, `firmar` un pedido, `descolgar` el teléfono— y **cualquier sinónimo más fuerte rompe la comprensión**, que es un precio mucho peor que un verbo tibio. Es la misma lógica de `§2.9-ABSTRACTO`: el punch no es un valor absoluto.
+
+**LA REGLA: si el verbo no se puede subir sin perder la precisión, se deja neutro y el punch se traslada a los INTENSIFICADORES** (`§2.3d`), que son los que aprietan la emoción:
+- **La negación absoluta**: `nunca`, `jamás`, `en la vida`, `ni una vez`.
+- **El superlativo**: `el mejor`, `el único`, `el peor`, `lo último que me esperaba`.
+
+**El caso, y son dos potenciadores en 60 caracteres:** `Nunca le vi marcar un número al mejor comercial de Euskadi`. El verbo (`marcar`) es neutro a propósito; el freno lo ponen `Nunca` y `el mejor`.
+
+**⛔ Y no es una barra libre para dejar de iterar el verbo.** El orden no cambia: **primero se sube la escalera del verbo** (`§2.9`), y solo cuando el peldaño de arriba te cuesta la comprensión o el registro (`§2.9-TECHOS`), se baja y se compensa con el intensificador. **Un gancho sin verbo punchy Y sin intensificador es un gancho tibio**, no una excepción.
+
 #### ⛔ 2.9-TECHOS · LA ESCALERA TIENE DOS TECHOS, NO UNO: EL DE INTENSIDAD Y EL DE REGISTRO (Iker, 2026-08-17)
 
 **Aquí solo estaba escrito el primero** (`desmontar` → `destripar` se pasa por gore) y por eso el segundo se cuela: **un verbo puede tener la intensidad perfecta y aun así estar fuera porque pertenece a otra generación.**
@@ -630,6 +652,7 @@ Solo un puñado de mecánicas produce outliers de forma fiable. Elige la que la 
 2b. **⭐ NOMBRA CIUDADES Y PUEBLOS, Y NO SOLO LOS OBVIOS.** Es lo que multiplica el orgullo: el de la capital ya se da por aludido, el de Tineo no se lo espera nunca. **Es una queja REAL que nos han hecho en comentarios**: que solo nombramos las ciudades conocidas, o que nos centramos en una sola cuando la región tiene mucho más. Nombra la capital **y** los sitios pequeños, en la misma frase, para que nadie se sienta fuera.
    - **Validado en los mapas:** Navarra → *"De Pamplona a la Ribera"* + Landaben · Galicia → *"A Coruña, Pontevedra, Lugo y Ourense remando juntas"* · Aragón → Sabiñánigo, Figueruelas, Teruel, un polígono de Zaragoza. Fíjate en que **el sitio pequeño casi siempre va con lo que se hace ahí** (Landaben = los Volkswagen; Figueruelas = los eléctricos; Sabiñánigo = el aluminio de tu pastilla). El topónimo pelado suma menos que el topónimo con su oficio.
    - **De dónde salen sin inventar nada:** de las **empresas que ya has verificado**. Sus sedes SON los pueblos. En "Los 10" de Asturias las 10 fichas dieron Tineo, Llanera, Castropol, el puerto de Avilés, Gijón y Oviedo, todos reales y comprobables. Cero riesgo de que un local te corrija.
+   - **⭐ Y ESTO NO ES DEL MAPA: vale en CUALQUIER pilar que meta clichés regionales (2026-08-26).** Una historia, un meme o un despiece que peloteen a una región juegan con las mismas reglas, porque el mecanismo es el mismo: **el topónimo pelado suma menos que el topónimo con su oficio**. En la historia de Unai del 26/08 el bloque de tres pasó de `En Elgoibar / En Llodio / En la margen izquierda` a **`En Elgoibar lo conocían en cada taller de máquinas / En Vitoria le abrían la puerta los de las furgonetas / En la margen izquierda le guardaban sitio en la barra`**: mismos caracteres por línea, y ahora cada territorio trae **lo que se hace allí**, que es lo que hace que el local se dé por aludido. ⚠️ **Con el freno de siempre: el oficio tiene que ser CIERTO y de dominio público** (Elgoibar y la máquina herramienta, las furgonetas de Vitoria). Un oficio mal atribuido lo corrige un local en el primer comentario y se lleva el post por delante, igual que una cifra mal.
    - **Colocación: DESPUÉS del reveal** (`§4.1`/`post-workflow §4.3`), nunca antes: nombrar "Gijón" o "Avilés" destripa la región y te quedas sin reveal. En el mapa el reveal va antes de la lista, en "Los 10" después: en los dos casos, los topónimos van justo detrás.
 3. **Spam ninja + cierre (NO son lo mismo):** el **link de agendar** va **justo después de las menciones** (posición fija en este pilar), **nunca como última línea**, y NO es el link de pampam. **Reglas completas: §4.4b** (máx 2 líneas cortas · nunca nombrar a Neety · chiste que gira el concepto del hook · verbo punchy con techo · diferenciador aterrizado). El **cierre del post** es una **frase punchy/bold statement**, sin pedir comentarios ni preguntar. (Runbook: `post-workflow §4.2`, pasos 5-6.)
 4. **Menciones @:** solo personas que **hayan COMENTADO en el post de OTRO en los últimos 3 meses** (Iker, 2026-07-24). No basta con publicar o compartir en su propio perfil: el que solo emite y nunca comenta a nadie casi nunca nos comenta, y la mención es alcance tirado. Se comprueba con `GET {BASE}/api/v1/users/{provider_id}/comments?account_id=…`. Ordena por recencia del último comentario. Descartar a quien no comente aunque sea el CEO — un mando que comenta bate a un CEO que solo se autopublica. Además, para el CSV, se saca el **logo de LinkedIn** de cada empresa vía Unipile (no favicons).
