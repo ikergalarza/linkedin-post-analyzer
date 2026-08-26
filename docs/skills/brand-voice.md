@@ -497,6 +497,44 @@ salvas`, titular y etiqueta hablan en dos voces distintas dentro de la misma fot
 3. **El CTA puede ir en segunda** (*"¿quieres los 5 mensajes?"*): es una oferta, no
    un juicio. Lo que no vale en segunda es **afirmar algo sobre el lector**.
 
+### 👥 LA TERCERA PERSONA: SINGULAR SÍ, PLURAL SOLO PARA DOS PAPELES (medido el 2026-08-26)
+
+> **Iker, y la pregunta es buena porque el canónico de arriba no la contestaba:** *"¿por qué crees que la tercera persona del singular es mejor que la tercera del plural? Que hablar en segunda persona es un error ya lo tenemos comprobado, pero de la tercera tengo mis dudas"*.
+
+**LO PRIMERO, LA TRAMPA DEL DATO CRUDO.** Medidos los **267 posts** de las 3 cuentas con más de 500 impresiones, clasificando el gancho por persona, sale esto:
+
+| persona del gancho | n | mediana imp |
+|---|---|---|
+| 3ª PLURAL | 30 | 5.712 |
+| 1ª singular | 48 | 4.941 |
+| 2ª (tú) | 26 | 4.174 |
+| 1ª plural (nosotros) | 37 | 3.282 |
+| 3ª SINGULAR | 110 | 2.760 |
+
+**Leído así, el plural gana y el singular es el peor. Es FALSO, y es el mismo error que `global §4.4b` documenta:** la variable está **confundida con el pilar**. De los 30 plurales, **8 son peloteo** (mediana 25.525 en mapa y 27.999 en "Los 10"); de los 110 singulares, **52 son post suelto** (mediana 1.674). El corte no mide la persona, mide qué pilar la usa.
+
+**LO QUE SÍ DICEN LOS DATOS, mirando post a post:**
+
+1. **Los 4 mejores posts de la casa llevan el gancho en 3ª SINGULAR:** *"la caja de herramientas engorda pero el comercial cierra menos"* (165.526) · *"Subir en ventas siempre pasa factura"* (138.828) · *"Cada ascenso en ventas cuesta pelo"* (121.706) · *"Esta es la vida del comercial"* (86.815).
+2. **El plural, cuando vuela, NUNCA es el protagonista.** Tiene exactamente **dos papeles** y los dos están ya escritos: **(a) el sujeto ajeno que desprecia** en el peloteo (*"La ven como el patio trasero"* 7.88x · *"Todos ven esta tierra como playa y paella"* 6.94x) y **(b) el colectivo al que pertenece el lector**, en un meme de verdad general (*"A los comerciales no les dan tregua"* · *"El humo de la IA va a reemplazar a los comerciales"* 4.48x).
+3. **Y en HISTORIA la tercera persona es n=0.** De las 19 historias del histórico, **ninguna** está contada en tercera; los 4 mejores son 1ª singular y **la 1ª PLURAL es la que peor va del pilar** (6.554 · 6.271 · 3.628 · 2.926 · 1.321), que es exactamente lo que predice el canónico de arriba.
+
+**POR QUÉ EL SINGULAR GANA CUANDO HAY UNA ESCENA, y es la razón de fondo:**
+- **Una escena necesita UN actor.** Es el test de la creadora de vídeos (`global §2.2d`): se puede grabar *"un comercial que se mete en un bar"*; **no se puede grabar *"los comerciales"***. El plural no es un personaje, es una categoría.
+- **Un protagonista plural convierte la historia en una afirmación sobre un gremio**, y de ahí a *"los de compras"* o *"los SDR"* como bloque hay un paso — que es justo lo que prohíbe el canónico de aquí arriba.
+- **Y el clasificador lo nota:** sin un actor concreto no hay pretéritos, y `post-workflow §4.6` 1c lo etiqueta como meme.
+
+**LA REGLA:**
+| persona | para qué |
+|---|---|
+| **1ª singular** | la confesión y la escena propia. **El default del pilar historia** |
+| **3ª SINGULAR** | el protagonista ajeno de una escena, sin nombre y por su oficio (`post-workflow §4.6-TESTIGO`) |
+| **3ª plural** | **solo** el que desprecia (peloteo) o el colectivo del lector (meme). Nunca el protagonista de una escena |
+| 1ª plural | solo el spam ninja, donde el sujeto es la empresa ofreciendo |
+| 2ª | solo el CTA, nunca para afirmar algo sobre el lector |
+
+**⭐ Y EL MATIZ QUE RESUELVE LA DUDA DE VERDAD: el narrador testigo NO renuncia a la primera persona, la MUEVE.** *"Nunca le vi marcar un número al mejor comercial de Euskadi"* tiene **las dos**: el `vi` es primera persona del singular y el protagonista es tercera. Se conserva la voz que produce identificación y se le quita al que firma el peso de una autobiografía inventada. **No es un post en tercera persona: es un post en primera persona sobre otro.**
+
 **Referencia externa que lo respalda (Iker):** el creador de TikTok que sigue habla
 siempre en primera persona; sus vídeos no van de *"a ti te pasa"*, van de *"a mí me
 pasó"*, y el que mira lo traduce solo.
