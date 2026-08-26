@@ -1495,7 +1495,15 @@ Una tabla de **recurso · comentarios del origen · días desde el último uso e
 5. **Los tres registros del slug, el `robots.txt` y el `noindex` se comprueban aunque no se toquen.** Si falta uno, se rompe en silencio.
 6. **Y la OG solo se rehace si hace falta.** La de `/errores/` dice *"El error no es el canal · Es el mensaje"* y **no lleva ningún número dentro**, así que pasar de 8 a 5 errores no la invalida. Rehacer trabajo bueno es el error de `§4.5.0-RESUBIDA`.
 
-**⭐ Y SE MEJORA LO QUE SE COPIA, que es la regla de la casa aplicada al código.** Al traer el `prompt-box` de `/firma/` apareció un bug latente: el `.then(done)` del portapapeles **no tenía `.catch`**, así que si `writeText` rechaza —documento sin foco, permiso denegado, iframe— el botón se quedaba mudo y el fallback de `execCommand` no llegaba a ejecutarse nunca. Se vio **midiendo, no leyendo**: en local `writeText` rechaza con *"Document is not focused"*. Arreglado en `/errores/`. **`/firma/` y los demás lo siguen teniendo: arreglarlo ahí es trabajo aparte y hay que decirlo, no colarlo.**
+**🔴🔴 7. EL COMPORTAMIENTO HEREDADO SE COPIA LITERAL DEL FICHERO. NO SE REESCRIBE DE MEMORIA.**
+
+**Y esto lo escribo porque me lo salté y me costó un bug que además diagnostiqué mal.** Al traer el `prompt-box` de `/firma/` a `/errores/` **reescribí el JS a mano** en vez de copiarlo tal cual, y en esa reescritura el `.then(done)` se quedó **sin `.catch`**: si `writeText` rechaza —documento sin foco, permiso denegado, iframe— el botón se queda mudo y el fallback de `execCommand` no llega a correr nunca.
+
+**Lo cacé midiendo, no leyendo** (en local `writeText` rechaza con *"Document is not focused"*), lo arreglé, y **entonces me equivoqué en el diagnóstico**: lo di por "bug heredado de `/firma/`" y avisé de que los demás recursos lo tenían. **Falso.** Comprobados uno a uno después: `/firma/`, `/llaves/`, `/criba/` y `/mensajes/` **ya tenían su `.catch` con fallback**. El bug era mío y solo mío, nacido de reescribir en vez de copiar.
+
+**Dos reglas, y la segunda duele más que la primera:**
+- **Copiar literal.** Si el bloque se hereda, se saca del fichero fuente y se pega. Reescribirlo "igual pero mejor" es exactamente por donde entra el defecto.
+- **Antes de decir que un bug es HEREDADO, se comprueba en el fuente.** Un `grep` de 10 segundos habría bastado. Acusar al código de otro de un fallo propio manda a alguien a arreglar lo que no está roto, y encima ensucia la receta con una regla falsa.
 
 #### 🔁🔁 4.5.0-REUTILIZAR · EL RECURSO NO SE CREA DE CERO: SE REUSA EL DE UN TEMA YA VALIDADO (Iker, 2026-08-18)
 
