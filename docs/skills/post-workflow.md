@@ -1339,6 +1339,66 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 
 **⚠️ Y EL AVISO QUE ACOMPAÑA A ESTO: el tema es de él, así que el ÁNGULO tiene que ser NUESTRO.** Su promesa siempre es **volumen** (*"entre 50 y 200 prospectos cualificados en 15 minutos"*). La nuestra, por el informe de 50 demos, es lo contrario: **la criba y la prueba** (`aboutme §1b` pilar 1). Ahí es donde se le gana (`global §2.2b`, ser el segundo mejor), y no copiándole el número.
 
+#### 🔎🔎 4.5.0-COMPETENCIA · PASO 0 OBLIGATORIO: LA INVESTIGACIÓN DE REFERENTES, ANTES DE ELEGIR TEMA (Iker, 2026-08-25)
+
+> **Iker, y es una regla de casa:** *"cada vez que yo te pida una publicación del pilar lead magnet, sea para el jefe que sea, me hagas una investigación primero de nuestros principales competidores, qué patrones hay entre las temáticas entre cuentas de ventas"*.
+
+**El fallo que lo motiva, y es mío:** el 25/08 le propuse reutilizar `/vibe/` para Iker con el argumento de que en SU cuenta era virgen. Y era verdad, pero **Unai lo había publicado 13 días antes**. El espaciado que yo miré era el de la cuenta; el que importa es el de la **temática en toda la casa**, porque las tres cuentas comparten público (`§8.2`). Iker: *"yo quiero sorprender a la audiencia y no quemarles, ni con temática ni con tipo de contenido"*.
+
+**ESTE PASO VA ANTES DE ELEGIR EL RECURSO, no después. Son dos consultas y salen en cinco minutos.**
+
+##### 1 · Los tres referentes, por Unipile
+
+```
+GET {UNIPILE_BASE_URL}/api/v1/users/{pid}/posts?account_id={id}&limit=30
+```
+| referente | pid | estado a 2026-08-25 |
+|---|---|---|
+| **Martín Arosa** | `ACoAADZxEhwBY2fsFAEmdrvJato1IwHiB8W0NgQ` | ✅ **a tope**: 15 de sus 23 últimos son lead magnets, mediana 200 comentarios, pico **1.467** |
+| **Luna Chen** | `ACoAACZ9ZkcBl_c6lvWcyXAVnyI2ukNM7u7sYjY` | ✅ **la más cercana a nosotros, y es de VENTAS pura**: 27 de 30 son lead magnets, pico **1.381** |
+| **Guillermo Flor** | `ACoAABBit2ABCYNySanEgukvlFBH-HcIKGlWHu8` | ⛔ **ABANDONÓ el pilar**: 1 de 29. Hoy es un noticiero de IA en inglés (`BREAKING…`), mucha reacción y pocos comentarios |
+
+**Un referente sin posts del pilar no es evidencia de nada**, ni a favor ni en contra: se dice y se pasa al siguiente (ya estaba en `§4.5.0-REFERENTES-PRIMERO`). Guillermo Flor está en ese caso desde agosto, así que **la pareja viva es Martín Arosa + Luna Chen**.
+
+##### 2 · Y si con eso no basta, se sacan referentes NUEVOS de nuestra propia BD
+
+No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está medida en `outliers-database §3.9b` y se aplica sobre `/api/analysis/cross-creators`:
+
+1. **`comentarios >= likes`** — un post normal tiene muchos más likes que comentarios; un lead magnet invierte la proporción porque el comentario es el peaje.
+2. **+ palabra-puerta en el texto** (`comenta "X"`, `comment "X"`, `escribe "X"`, `drop … below`).
+3. **+ filtro de nicho** (`vender|comercial|prospec|outbound|cold|cliente|sales|SDR|GTM…`) para quedarse con los de VENTAS.
+
+**Medido el 25/08:** de los 500 top outliers salen **72 lead magnets confirmados**, y **48 son de ventas**. Eso es cantera de sobra sin depender de tres cuentas.
+
+##### 3 · Qué se saca de ahí, y es lo único que importa: EL PATRÓN DE TEMÁTICA
+
+**Medido el 25/08 sobre los ganchos de esos 48:** `cold` **(11)** · `claude` (10) · `linkedin` (9) · `sales` (6) · `email` (4) · `calling` (4). **La palabra nº1 del pilar en nuestro nicho es `cold`** — cold email y cold calling —, por delante incluso de Claude.
+
+**Y hacia dónde se ha movido la pareja viva, que es el dato fresco:**
+- **Luna Chen → `Claude AGENTS / SKILLS para ventas`**: *"20 Best Claude Agents For Your Entire Sales Operation"* (1.381c) · *"25 Best AI Skills For LinkedIn Outreach"* (249c) · *"My Full Claude Sales System, 337+ skills"* (180c). **No es prospección: es el CATÁLOGO de agentes para todo el ciclo comercial.**
+- **Martín Arosa → `n8n + agentes que gestionan LinkedIn`**: n8n (1.467c y 503c), la biblioteca de recursos (1.427c), el agente que analiza antes de escribir (489c). **Ya no habla de prospección.**
+- **Y los dos se han copiado el formato de NOTICIA DE ÚLTIMA HORA.** ⛔ Ese no nos conviene y no se copia (Iker, 25/08): nuestro alcance no viene de dar noticias, y ya está escrito que los posts de lanzamiento de modelo nos flopean (`working-preferences §3`).
+
+##### 4 · ⛔ EL ESPACIADO SE MIDE ENTRE NOSOTROS, NO CONTRA ELLOS
+
+> **Iker:** *"tienes que espaciar no entre las fechas de publicación de otras cuentas, sino entre nosotros mismos"*. Y sobre Martín Arosa, que repite tema cada dos días: *"que por poder se puede… pero yo quiero sorprender a la audiencia"*.
+
+**Que un referente repita un tema NO nos da permiso para repetirlo.** Es la misma asimetría de `§4.5.0-CTA-CERO`: se les mira para detectar hacia dónde se mueve el nicho, no para copiarles los permisos.
+
+**Las tres puertas del espaciado, y se pasan LAS TRES:**
+
+| puerta | qué mide | vara |
+|---|---|---|
+| **1 · La temática, en TODA la casa** | ¿cuántos días desde que CUALQUIERA de las cuentas publicó este tema? | **el público es el mismo en las tres** (`§8.2`), así que 13 días es "hace nada" |
+| **2 · El recurso, en TODA la casa** | ¿cuándo se usó por última vez este slug, lo publicara quien lo publicara? | ídem |
+| **3 · La cuenta** | ¿de qué habló ESTE jefe en sus últimos lead magnets? | lo más estricto: si el mismo jefe tocó el tema hace poco, no se repite aunque el recurso esté libre |
+
+**La tabla de la cola de `§4.5.0-REUTILIZAR` se ordena por la puerta 2 (días desde el último uso), no por comentarios del post origen.** Los comentarios deciden entre los que ya han pasado las puertas, no al revés.
+
+##### 5 · Lo que va en la entrega, siempre
+
+Una tabla de **recurso · comentarios del origen · días desde el último uso en la casa · quién lo publicó**, y el patrón de temática de los referentes con sus cifras. **Sin eso, la elección del tema es una opinión mía.**
+
 #### 🔁🔁 4.5.0-REUTILIZAR · EL RECURSO NO SE CREA DE CERO: SE REUSA EL DE UN TEMA YA VALIDADO (Iker, 2026-08-18)
 
 > **Iker, textual:** *"ya que tenemos once, adaptar la mayoría. Primero repetir y double down en los que nos fueron ya hace meses, porque el otro día ya vimos que repitiendo el primero más viral se volvió a ir viral. No hay que perder el tiempo creando recursos de cero si ya tenemos ideas validadas que, con lo que sabemos hoy, podemos mejorarlas. Encima la gente se creerá que son recursos nuevos."*
@@ -1350,7 +1410,27 @@ CLAUDE (nombrado en el gancho)  +  un RESULTADO DE VENTAS  +  una variante de PR
 2. **El que lo pidió hace meses tiene la cookie `neety_gate` y entra directo** — así que ve la guía nueva sin pagar peaje otra vez. No captura, pero recupera a un lead frío.
 3. **El que no lo vio en su día no distingue un recurso nuevo de uno reeditado.** El feed no tiene memoria; nuestra base de datos sí.
 
-**EL ORDEN DE LA COLA LO MANDA EL POST QUE GENERÓ EL RECURSO, NO LA FECHA DEL RECURSO.** Se ordena por comentarios (`outliers §4.48`: en este pilar el comentario ES la conversión) y se baja por la lista:
+**🔴 CORREGIDO EL 2026-08-25: LA COLA SE ORDENA POR DÍAS SIN USARSE, Y LOS COMENTARIOS DESEMPATAN.** Aquí ponía que *"el orden lo manda el post que generó el recurso"*, o sea por comentarios, y **con esa lectura le propuse a Iker reutilizar `/vibe/` (632c, el nº1) trece días después de que lo publicara Unai**. Los comentarios dicen si un tema PICA; los días dicen si está QUEMADO, y lo segundo se comprueba primero (`§4.5.0-COMPETENCIA` punto 4). El orden bueno: **pasar las tres puertas de espaciado → y entre los que quedan, el de más comentarios.**
+
+**Estado a 2026-08-25, ordenado por días sin usarse en TODA la casa:**
+
+| slug | com. origen | días | quién lo usó la última vez |
+|---|---|---|---|
+| **`/errores/`** | **120** | **126** | 21/04 Iker · **NUNCA repetido** ← el que toca |
+| `/senales/` | 23 | 119 | 28/04 Unai · flojo de origen |
+| `/mensajes/` | 129 | 68 | 18/06 Unai, y ahí flopeó (18c) |
+| `/propuesta/` | 20 | 41 | 15/07 Asier · flojo |
+| `/perfil/` | **483** | 39 | 17/07 Iker, con el ángulo de auditoría web → 0.32x |
+| `/subvencion-euskadi/` | 46 | 32 | 24/07 Iker |
+| `/prospeccion-manual/` | 31 | 28 | 28/07 Iker |
+| `/firma/` | 19 | 14 | 11/08 Iker ⛔ |
+| `/vibe/` | **632** | 13 | 12/08 Unai ⛔ |
+| `/criba/` | 16 | 11 | 14/08 Asier ⛔ |
+| `/llaves/` | 285 | 7 | 18/08 Unai ⛔ |
+
+**Fíjate en lo que enseña la tabla: los tres recursos con más comentarios de origen (632, 483, 285) son los TRES más recientes.** Justamente porque funcionan, se han vuelto a usar antes. Ordenar por comentarios es ordenar por "lo que acabamos de quemar".
+
+**La lista de abajo se conserva por el detalle de cada recurso**, pero el orden que manda es el de arriba:
 
 | slug | recurso | post origen | com | ratio | estado |
 |---|---|---|---|---|---|

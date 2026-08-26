@@ -440,3 +440,24 @@ CLAUDE.md para cualquier email, y aquí aplica el doble por ser contenido nuevo,
 Kaixito 01. El asunto y el preheader de Kaixito 01 (`¿no te acuerdas de mí?` / `Normal, es la primera
 vez que te escribo.`) han abierto 30-43% en las 4 tandas — cualquier concepto nuevo se mide contra esa
 vara, no se parte de cero.
+
+
+---
+
+## Tanda 4: resultado real, y tanda 5 programada (2026-08-26)
+
+**Tanda 4, rebote duro: 7 de 191 = 3,66%.** El mejor de las cuatro tandas con Brevo, y la primera por
+debajo del 6% — mejora real tras Bouncer, aunque sigue por encima del 2% sano.
+
+| | Tanda 1 | Tanda 2 | Tanda 3 | Tanda 4 |
+|---|---|---|---|---|
+| Rebotes duros | 8,0% | 6,0% | 9,0% | **3,66%** |
+
+Acumulado en Brevo: 21 de 366 = 5,74%.
+
+**Tanda 5 programada: jueves 2026-08-27, 09:05.** Campaña id 6, lista Brevo id 9 (370 miembros),
+`utm_campaign=kaixito-01-tanda-5`. Decisión de Iker tras ver el dato de la 4.
+
+**Tanda 6 (viernes 28/08) sigue SIN programar**, a propósito: 3,66% mejora pero no baja del 2%, y sigue
+sin resolverse la regla de Mario de no mandar la última tanda en viernes. Se decide cuando se vea el
+rebote real de la tanda 5.
