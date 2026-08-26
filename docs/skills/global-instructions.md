@@ -1834,7 +1834,8 @@ El detalle de imágenes y de vídeo vive ahora en **skills dedicadas**, no en es
 - **`video`** — el vídeo es OTRO artefacto: 3 piezas separadas (caption / texto en pantalla / spoken hook), los 6 patrones de gancho hablado B2B y el playbook estructural de 36 puntos. Las reglas de hook de texto de §2 NO aplican al vídeo.
 
 Recordatorios rápidos que siguen viviendo aquí porque afectan a la elección del post:
-- **Paleta (siempre):** Alabastro `#f9f3ef` · Dark Blue `#0c202e` · Persian Orange `#ee9363` (a cuentagotas). Tipografía: Bricolage Grotesque (títulos) + Switzer (cuerpo).
+- **Paleta (siempre) — Brandbook 2026, y la fuente única es `images §0a-ter`:** fondo **Mint claro `#ebfff6`** · títulos y texto **Berenjena `#431b44`** · **LA** palabra destacada **Naranja `#fe8238`** (una sola por imagen) · acentos suaves Azul bebé `#a7c5f9`. Tipografía: Bricolage Grotesque (títulos) + Switzer (cuerpo).
+  > 🔴 **CORREGIDO EL 2026-08-26, y costó una ronda de diseño.** Aquí ponía la paleta ANTERIOR (`Alabastro #f9f3ef · Dark Blue #0c202e · Persian Orange #ee9363`) y de aquí la saqué para el prompt de la imagen del lead magnet de `/errores/`: salió entera con el crema y el azul marino viejos. **El alabastro ya no se usa y el oscuro dejó de ser azul marino.** Si esta línea vuelve a discrepar de `images §0a-ter`, manda `images`.
 - **Registro por tipo:** meme → dibujo/calcar referencia · deseo/números → screenshot documental real · personal/founder/lead-magnet → foto real.
 - **Infografías van 0-de-3** — avisa y ofrece screenshot documental o meme en su lugar.
 
