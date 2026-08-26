@@ -1402,21 +1402,48 @@ No hace falta un filtro de pilar: la huella dactilar del lead magnet ya está me
 - **Martín Arosa → `n8n + agentes que gestionan LinkedIn`**: n8n (1.467c y 503c), la biblioteca de recursos (1.427c), el agente que analiza antes de escribir (489c). **Ya no habla de prospección.**
 - **Y los dos se han copiado el formato de NOTICIA DE ÚLTIMA HORA.** ⛔ Ese no nos conviene y no se copia (Iker, 26/08): nuestro alcance no viene de dar noticias, y ya está escrito que los posts de lanzamiento de modelo nos flopean (`working-preferences §3`).
 
-##### 4 · ⛔ EL ESPACIADO SE MIDE ENTRE NOSOTROS, NO CONTRA ELLOS
+##### 4 · ⛔ EL ESPACIADO SE MIDE ENTRE NOSOTROS, NO CONTRA ELLOS (y la puerta dura es la MISMA cuenta)
 
 > **Iker:** *"tienes que espaciar no entre las fechas de publicación de otras cuentas, sino entre nosotros mismos"*. Y sobre Martín Arosa, que repite tema cada dos días: *"que por poder se puede… pero yo quiero sorprender a la audiencia"*.
 
 **Que un referente repita un tema NO nos da permiso para repetirlo.** Es la misma asimetría de `§4.5.0-CTA-CERO`: se les mira para detectar hacia dónde se mueve el nicho, no para copiarles los permisos.
 
-**Las tres puertas del espaciado, y se pasan LAS TRES:**
+###### 🔴🔴 LA PUERTA DURA ES **LA MISMA CUENTA**. ENTRE CUENTAS ES UN AVISO, NO UN VETO (medido el 2026-08-26)
+
+> **🔴 AQUÍ PONÍA TRES PUERTAS DURAS Y ERA DEMASIADO ESTRICTO.** Lo escribí el mismo día tras equivocarme con `/vibe/`, y **sobrecorregí**: puse el mismo veto para las tres cuentas juntas que para una sola. Iker lo dudó en voz alta —*"creo que está siendo demasiado estricto, el espaciado sobre todo tiene que ser con la cuenta concreta, ¿no?"*— **y al medirlo tenía razón**. Caso de libro de `working-preferences §0c`: una deducción mía disfrazada de regla, y encima contra nuestros propios datos.
+
+**REPETIR TEMA EN LA MISMA CUENTA: HUNDE SIEMPRE. n=3 y unánimes.**
+
+| distancia | tema | resultado |
+|---|---|---|
+| +15d | vibe (Unai) | 632c → **167c** · −74% |
+| +23d | llaves (Unai) | 285c → **33c** · −88% |
+| **+89d** | vibe (Unai) | 167c → **96c** · −43% · **a TRES MESES sigue cayendo** |
+
+**REPETIR TEMA EN OTRA CUENTA: no hay patrón, y el mejor caso SUBE.**
+
+| distancia | tema | resultado |
+|---|---|---|
+| **+7d** | llaves · Iker → Unai | 232c → **285c** · ✅ **sube**, y son el nº3 y el nº4 del histórico |
+| +13d | llaves · Unai → Iker | 33c → 62c · ↗ recupera |
+| +14d | perfil · Iker → Unai | 483c → 9c ⛔ **pero confundido**: el 2º uso fue `destripo`, el verbo pasado de rosca que `global §2.9` ya explica solo (8.52x contra 0.21x) |
+| +2d | prospección manual · Unai → Asier | 96c → 16c ⛔ |
+
+**El caso de las llaves es el que decide: mismo recurso, mismo concepto, SIETE días y dos cuentas — y el segundo hizo MÁS comentarios que el primero.** Mi regla de ayer lo habría prohibido, y son dos de nuestros cuatro mejores lead magnets.
+
+**LAS PUERTAS, CORREGIDAS:**
 
 | puerta | qué mide | vara |
 |---|---|---|
-| **1 · La temática, en TODA la casa** | ¿cuántos días desde que CUALQUIERA de las cuentas publicó este tema? | **el público es el mismo en las tres** (`§8.2`), así que 14 días es "hace nada" |
-| **2 · El recurso, en TODA la casa** | ¿cuándo se usó por última vez este slug, lo publicara quien lo publicara? | ídem |
-| **3 · La cuenta** | ¿de qué habló ESTE jefe en sus últimos lead magnets? | lo más estricto: si el mismo jefe tocó el tema hace poco, no se repite aunque el recurso esté libre |
+| **1 · MISMA CUENTA · DURA** | ¿de qué habló ESTE jefe en sus lead magnets? | **mínimo ~90 días Y ángulo nuevo**, sabiendo que aun así cae: a 89 días vibe perdió un 43% |
+| **2 · OTRA CUENTA · AVISO** | ¿cuántos días desde que otra cuenta lo publicó? | **no veta.** Se dice en la entrega con el número y **decide Iker**. Por debajo de ~1 semana, avisar fuerte |
+| **3 · El recurso** | ¿qué slug lleva más tiempo sin usarse? | **ordena la cola** de `§4.5.0-REUTILIZAR`; no veta |
 
-**La tabla de la cola de `§4.5.0-REUTILIZAR` se ordena por la puerta 2 (días desde el último uso), no por comentarios del post origen.** Los comentarios deciden entre los que ya han pasado las puertas, no al revés.
+**⚠️ POR QUÉ EL LEAD MAGNET NO SE QUEMA ENTRE CUENTAS Y EL PELOTEO SÍ** *(deducción mía, `working-preferences §0c`, sin medir — se anota porque explica los dos conjuntos de datos a la vez)*: el **peloteo** depende de TERCEROS que son **los mismos** entre cuentas — si Iker menciona 20 empresas de una región y tres días después lo hace Unai, es la misma gente recibiendo la misma notificación, y por eso `§8.2` mide una quema colectiva real (4 peloteos en 10 días hundieron el pilar). El **lead magnet** depende de que gente nueva vea el post en SU feed y comente, y los feeds de las tres cuentas solo se solapan en parte. **Motores distintos, así que no tienen por qué compartir la regla de espaciado.**
+
+**⛔ LO QUE NO CAMBIA, y es criterio de marca por encima del dato:** Martín Arosa repite el mismo tema cada dos días y le sigue funcionando. **No lo copiamos.** Así que **ante dos opciones que pasen las puertas, gana siempre la que lleve más tiempo sin tocarse.** La tabla dice qué está prohibido; la preferencia de Iker decide entre lo permitido.
+
+**La cola de `§4.5.0-REUTILIZAR` se ordena por la puerta 3 (días desde el último uso), no por comentarios del post origen.** Los comentarios desempatan entre los que ya han pasado las puertas, no al revés.
 
 ##### 5 · Lo que va en la entrega, siempre
 
