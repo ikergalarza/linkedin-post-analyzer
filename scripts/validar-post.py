@@ -796,6 +796,31 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         'buzones" se leyo como el del correo electronico y paso a "a medio barrio"'
         or ''), aviso=True)
 
+    # §2.3b-ESCENARIO — EL DECORADO DEL GANCHO TAMBIEN ESTRECHA (Iker, 2026-08-26).
+    # §2.3b vigilaba el ADJETIVO de sector ("50 empresas INDUSTRIALES") y la JERGA
+    # (pipeline, SDR, B2B). Faltaba la tercera via: el SUSTANTIVO DE ESCENARIO, el
+    # sitio donde pasa la escena. Caso del 26/08 (historia de Unai): "vendi
+    # calendarios por los POLIGONOS de Euskadi" dejaba fuera al que no se imagina
+    # vendiendo en un poligono y no ganaba nada, porque la escena del poligono se
+    # cuenta igual tres lineas despues. Quedo en "por Euskadi": 17 caracteres menos
+    # y el doble de gente que se ve dentro. Es la misma mecanica del mapa: el
+    # cliche GENERICO va en el gancho y los especificos se desarrollan en el cuerpo.
+    # ⚠️ AVISO y no fallo duro: hay ganchos donde el escenario ES el concepto y
+    # quitarlo mata el post. El script solo obliga a MIRARLO.
+    _esc = sorted({w for w in re.findall(
+        r'\b(pol[ií]gonos?|naves?|f[aá]bricas?|talleres?|taller|almacenes?|almac[eé]n'
+        r'|plantas?|obra|astilleros?|fundici[oó]n|cadena de montaje|comit[eé]s?'
+        r'|centralitas?|showrooms?|feria de \w+)\b', hook_txt, re.I)})
+    if _esc:
+        chk(False, 'ENTREGA: ¿el gancho lleva un ESCENARIO que estrecha? (§2.3b-ESCENARIO)',
+            'el gancho dice ' + ', '.join(f'"{w}"' for w in _esc) + '. Pregunta sobre CADA '
+            'sustantivo, no solo sobre los adjetivos: ¿esto deja fuera a alguien sin ganar '
+            'nada? Si el cuerpo ya cuenta ese sitio tres lineas despues, la respuesta es SI '
+            'y sale del gancho. El cliche GENERICO arriba, el especifico en el cuerpo, igual '
+            'que el mapa dice "toro, txistorra y poco mas" en el gancho y "Landaben" en el '
+            'cuerpo. ⛔ Lo que NO se toca al recortar es el verbo de ventas: se va el '
+            'decorado, nunca el ancla', aviso=True)
+
     # global §2.0c — EL GANCHO NO DICE LO QUE LA FOTO YA ENSEÑA (Mario, 2026-08-21).
     # La regla existia desde el 31/07 y aun asi la rompi: entregue "me pillo con la
     # placa de 100.000 seguidores en la mano" para un post cuya FOTO era esa misma

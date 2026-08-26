@@ -875,6 +875,26 @@ Iker: *"todo lo queremos validar en datos. En las referencias igual: analiza su 
 
 **Regla operativa:** despues de escribir el hook, coge cada adjetivo y pregunta *"¿esto deja fuera a alguien sin ganar nada?"*. Si la respuesta es si, fuera. La especificidad de sector, de region y de nicho **va en el cuerpo**, donde ya no cuesta alcance porque el lector ya ha entrado.
 
+#### ⛔⛔ 2.3b-ESCENARIO · NO ES SOLO EL ADJETIVO: EL DECORADO DEL GANCHO TAMBIÉN ESTRECHA (Iker, 2026-08-26) — GLOBAL
+
+> **Iker, y lo sube él mismo a receta global:** *"está muy bien que nuestro público objetivo sean la mayoría industriales, por eso supongo que has puesto polígonos, pero eso está muy bien que lo mencionemos en el cuerpo. Al igual que en el peloteo regional, los clichés que se ponen en el gancho son los que maximizan el alcance, y luego los clichés superespecíficos de esa región ya se desarrollan en el cuerpo. Esto debería ser receta global, no solo para historia"*.
+
+**Lo que faltaba, y por eso se coló:** `§2.3b` estaba escrita contra el **ADJETIVO** (*"50 empresas INDUSTRIALES"*) y contra la **JERGA** (*pipeline, SDR, B2B*). Nada decía del **SUSTANTIVO DE ESCENARIO** — el sitio donde pasa la escena —, que es la tercera vía por la que un gancho encoge sin que salte ningún check. **El caso (26/08, historia de Unai):** `vendí calendarios por los polígonos de Euskadi` dejaba fuera a todo el que no se imagina vendiendo en un polígono, y **no ganaba nada**: la escena del polígono se cuenta igual tres líneas después. Quedó en `vendí calendarios por Euskadi`, **17 caracteres menos, mismo concepto y el doble de gente que se ve dentro**.
+
+**LA REGLA, y es la misma mecánica que ya usa el mapa:** el gancho lleva **el cliché GENÉRICO** que reconoce cualquiera; los específicos **se desarrollan en el cuerpo**. En un mapa el gancho dice *toro, txistorra y poco más* y el cuerpo dice *Landaben, la Ribera, las palas de los molinos*. **En cualquier otro pilar, igual:** el escenario amplio arriba, el polígono, la nave, el taller, la centralita o el comité, abajo.
+
+| ⛔ en el gancho | ✅ en el gancho | dónde vive el específico |
+|---|---|---|
+| `por los polígonos de Euskadi` | `por Euskadi` | el polígono, en la línea 3 |
+| `en una nave de Gipuzkoa` | `en Gipuzkoa` | la nave, en el cuerpo |
+| `en el comité de compras` | `en la reunión` | el comité, en el cuerpo |
+
+**Y el gancho NO pierde el ancla al hacer esto**, que es la trampa: se recorta el DECORADO, nunca el verbo de ventas. `vendí` se queda siempre; lo que se va es dónde lo vendí.
+
+**LA PREGUNTA, una y en voz alta, sobre CADA sustantivo del gancho** (antes solo se hacía con los adjetivos): *¿esto deja fuera a alguien sin ganar nada?* Si el cuerpo ya lo cuenta tres líneas después, la respuesta es sí y sale.
+
+**Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: ¿el gancho lleva un ESCENARIO que estrecha?`), que imprime la palabra encontrada. **Va de aviso y no de fallo duro a propósito:** hay ganchos donde el escenario ES el concepto y quitarlo mata el post, así que esto es criterio y el script solo obliga a mirarlo.
+
 ---
 
 ### 2.9b · LA CONJUGACION TAMBIEN SE ITERA, NO SOLO EL VERBO (Iker, 2026-07-20)
