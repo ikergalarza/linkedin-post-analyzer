@@ -447,11 +447,45 @@ En LinkedIn la primera línea del bloque cuelga de la broma del gancho, y su **p
 #### ⛔ LO QUE **NO** SE TRAE DE LINKEDIN, y se dice para no arrastrarlo por inercia
 | regla de LinkedIn | ¿vale en correo? |
 |---|---|
-| **El enlace cae antes del carácter 650** (`§4.4b-CLICS`) | ❌ **NO.** Ese número mide el scroll de un feed y el corte del "ver más". En el correo **el 100% del corpus pone el enlace al final del cuerpo** (RunnerPro lo pone en el 1.900). Aquí el suelo lo pone el sentido: **después de que el cuerpo haya pagado la promesa**, nunca antes |
+| **El enlace cae antes del carácter 650** (`§4.4b-CLICS`) | ⚠️ **El número no, pero el PRINCIPIO sí.** Ver `§5-NINJA-POSICION` justo debajo: aquí ponía que el enlace va al final del cuerpo y **nuestro propio dato lo desmintió** |
 | **Dos puertas (agendar + correo)** (`§4.4e`) | ❌ **NO, jamás.** Pedirle a un suscriptor que se suscriba al correo que está leyendo no tiene sentido. **Una puerta y es `/agendar/`** |
 | **UTM en el enlace** (`§4.4b-UTM`) | ❌ **No se escribe a mano.** Brevo los inyecta él en el envío. La URL del cuerpo va limpia, y lo que hay que vigilar es el `utm_campaign` de la campaña (`§9b` punto 12) |
 | **No nombrar a Neety** (`§4.4b` regla 2) | ✅ **SÍ, y no por el mismo motivo.** En LinkedIn es porque nombrar la marca lo delata como publicidad ante el clasificador. En el correo no hay clasificador de alcance, pero **el bloque sigue leyendo mejor en plural sin marca**, y la firma de abajo ya dice quiénes somos |
 | **Lista de frases quemadas** | ✅ **SÍ, y es la MISMA lista.** El dolor no cambia y la frase sí. Un ninja repetido entre canales se quema el doble de rápido, porque media lista viene de LinkedIn |
+
+#### 🔴🔴 5-NINJA-POSICION · EL ENLACE NO VA AL FINAL DEL CUERPO. NUESTRO DATO GANA AL CORPUS (Iker, 2026-08-27)
+
+> 🔴 **AQUÍ PONÍA QUE EL ENLACE VA AL FINAL DEL CUERPO, Y ERA UN ERROR MÍO DE JERARQUÍA DE FUENTES.**
+> Me apoyé en que *"el 100% del corpus lo pone al final"* (Timepack, RunnerPro) para defender la
+> posición… teniendo delante nuestro propio dato, que dice lo contrario.
+
+**EL DATO NUESTRO, y es demoledor: 0 CLICS DE 336 ENTREGADOS** en las 4 primeras tandas de Kaixito 01,
+con aperturas del 20-37%. Iker: *"están teniendo muchísimas aperturas, pero nadie pulsa el enlace.
+¿Por qué? Porque está al final del todo… no tiene sentido currarnos tan buenos correos para eso"*.
+
+**POR QUÉ EL CORPUS NO APLICA, que es la parte que me salté:** Timepack y RunnerPro son
+**infoproducto B2C con lista caliente y correo diario**. Su lector abre 5 correos por semana del mismo
+remitente y llega al final porque ya tiene el hábito. **Nuestro lector es un director comercial de 55
+años que recibe un correo nuestro cada 15 días.** No hay hábito que le lleve hasta abajo.
+
+**Y ESTO ES LITERALMENTE LA JERARQUÍA DE FUENTES DE LA CASA** (`CLAUDE.md`, `outliers-database §4`):
+**el histórico real de nuestras cuentas manda sobre el corpus prestado.** Tenía las dos fuentes y elegí
+la de fuera.
+
+**LA REGLA NUEVA:**
+- **El ninja va donde la historia toca fondo**, no en el cierre. En el correo 2 eso es justo después de
+  que las tarjetas acaben en el cajón: el lector siente el problema y ahí encuentra la salida.
+- **Nunca pegado a la firma.** Iker: *"a nivel psicológico me genera rechazo tenerlo tan cerca de la
+  firma"*. Detrás del ninja tiene que quedar **cuerpo de verdad**, no solo firma y postdatas.
+- **Referencia medida del correo 2:** el enlace pasó del **carácter 625 al 442**, con **5 bloques**
+  por detrás. El cuerpo entero son ~900 caracteres.
+- **⛔ Lo que NO cambia:** la forma del bloque de dos (`§5-NINJA`), el tope de 55, la escalera
+  invertida y la palabra del asunto dentro. Se mueve el SITIO, no el molde.
+
+**📏 QUÉ MEDIR, porque esto es una hipótesis con dato en contra del corpus, no una certeza:** los clics
+del correo 2 (2026-09-02) contra los **0 de 336** del correo 0. Cualquier número mayor que cero
+confirma la dirección; si vuelve a salir 0, el problema no era la posición y hay que buscarlo en el
+cuerpo.
 
 #### 💣 QUÉ PUEDE PROMETER EL NINJA DEL CORREO, Y NO ES OPINABLE (Iker, 2026-08-26)
 > **Iker:** *"también tienes que copiar de la skill de LinkedIn que ahora tenemos nuevo feedback de los clientes, para mejorar también el spam ninja de los correos sabiendo cómo solucionar mejor su punto de dolor y cuál es"*.
