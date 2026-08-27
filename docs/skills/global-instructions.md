@@ -222,6 +222,17 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 
 **CÓMO SE ELIGE UNA, en dos preguntas:**
 1. **¿La ha vivido nuestro ICP?** Si el director comercial de 55 años no se ha enterado, no hay tendencia: hay una burbuja de nuestro sector.
+   > **⛔⛔ Y NO BASTA CON QUE LA CONOZCA: TIENE QUE HABER BANDO (Iker, 2026-08-27).** *"Yo quitaría por completo lo de aura. Dudo que los de LinkedIn sepan lo que es, y no es algo tan polémico o que les pueda interesar tanto como la caída de los influencers, que sobre todo la gente mayor, hay mucha gente que quería que eso ocurra"*.
+   > **La comparación es la que enseña, porque las dos son tendencias del mismo mes y una sirve y la otra no:**
+   >
+   > | tendencia | ¿la conoce el ICP? | ¿tiene bando? | veredicto |
+   > |---|---|---|---|
+   > | **la caída de los influencers** | sí | **sí, y fuerte**: mucha gente mayor QUERÍA que pasara | ✅ usada, post de Mario del 21/08 |
+   > | **las batallas de aura** | no, es de 14-20 años | **no**: nadie tiene opinión sobre esto | ⛔ descartada tras 4 vueltas |
+   >
+   > **Por qué el bando es la pregunta y no la notoriedad:** lo que hace que una tendencia sea motor es que trae **Controversy y Social Currency ya montadas** (`outliers §3.1`, los dos motores dominantes del corpus). Sin bando no trae ninguna de las dos. **Una tendencia sin bando en NUESTRA audiencia no es un motor: es una palabra rara que cuesta comprensión y no compra nada a cambio.**
+   > **El test, en una frase:** *¿hay alguien en mi feed que tenga una OPINIÓN sobre esto?* Si la respuesta es que les daría igual, no es tendencia para nosotros por muy viral que sea fuera.
+
 2. **¿Tenemos algo que NADIE más puede decir de esto?** Es el test win/lose de `§0` aplicado a la actualidad. Si nuestra postura la podría firmar cualquier cuenta, el tema está de moda pero el post es huérfano. La tendencia da el ALCANCE; la autoridad propia es lo que lo convierte en nuestro.
 
 #### ⛔⛔ 2.1b-DÓNDE · UNA TENDENCIA DE NICHO GENERACIONAL VA EN EL CUERPO, NUNCA EN EL GANCHO NI EN LA IMAGEN (Iker, 2026-08-26)
