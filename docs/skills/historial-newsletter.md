@@ -559,3 +559,41 @@ Cierra el pendiente que este fichero abrió el 25/08 (*"dos correos NUEVOS, sin 
 
 ## 🗑️ Lo que se cae del apartado de ángulos usados
 El **correo 3 (la centralita, dolor del interlocutor)** queda **escrito pero NO usado**. No se apunta como quemado: está disponible para cuando vuelva a tocar historia con remitente Iker. El texto validado está en el chat del 26/08.
+
+
+---
+
+## Tanda 6 programada: excepción de viernes asumida a propósito (2026-08-27)
+
+**Kaixito 01 · Tanda 6, campaña id 7, lista Brevo id 10 (349 miembros), viernes 2026-08-28, 09:05.**
+`utm_campaign=kaixito-01-tanda-6`. Cuerpo con el enlace ya en bloque de dos (`§5-NINJA`), posicionado tras
+"Pero cuál de todas, ni idea." (no pegado al GIF), y la PPD reescrita sin vender. Validador 31/31.
+
+**Tres excepciones asumidas a propósito en este correo, ninguna por descuido:**
+1. **Doble CTA** (reply + `/agendar/`), contra `email-marketing §4` ("un solo CTA por email"). Iker: el
+   que más interesa va primero por posición, y no se repite en los correos que vengan.
+2. **Última tanda en viernes**, contra la regla de Mario de más arriba en este fichero. Asumido porque
+   Iker no está la semana del 31/08 al 04/09 y quiere esta campaña de calentamiento fuera antes de irse.
+3. **Sin A/B de la interrogación inicial del asunto.** Se propuso probarla en esta tanda grande (380) y se
+   descartó: *"esta primera campaña, estamos haciendo muchas excepciones… es un cambio mínimo"*. El asunto
+   se queda `¿no te acuerdas de mí?`, con la `¿` (medido en `email-marketing §2`: quitarla no es registro,
+   es ortografía, y el 97% del corpus la lleva).
+
+### 🔴 PENDIENTE: la regla de "tandas" puede dejar de aplicar, y hay que decidirlo cuando toque
+
+**Iker, 2026-08-27:** *"esa regla incluso te diría de quitarla… lo suyo a partir de ahora no es mandar un
+correo durante nueve días cada día a un poco de gente, sino que ya el mismo día mandaremos a todo el
+mundo, y lo intentaremos mandar los lunes, a lo mejor, o los martes, no lo sé, ya veremos."*
+
+**Esto es el fin del sistema de tandas del calentamiento, no solo una excepción de esta vez.** Con el
+envío de golpe a toda la lista, el concepto de "última tanda" desaparece: ya no hay una secuencia de días
+cuyo último tramo se pueda comer el fin de semana. **Pero ojo, esto NO decide solo si el viernes vale para
+la ÚLTIMA tanda: decide si el viernes vale para CUALQUIER envío único.** La razón original de Mario
+("si no lo abren ese día, el fin de semana se lo come") podría seguir aplicando a un envío de golpe en
+viernes igual que aplicaba a la última tanda — son preguntas distintas y no se ha medido ninguna de las
+dos con Brevo todavía.
+
+**No se toca la regla canónica de arriba en este fichero mientras esto siga en "ya veremos".** Cuando Iker
+decida el día fijo del envío único (¿lunes? ¿martes?), se revisa `email-marketing §5` con el dato nuevo:
+si de verdad ya no hay tandas, la sección entera de cadencia de calentamiento pasa a ser histórica y hace
+falta una regla de cadencia distinta para el envío semanal de régimen.
