@@ -1851,6 +1851,29 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                         'contrato de OTRO destino (4.4b-PROMESA)'
                         if not _sala else 'promesa de sala: "%s"' % _sala.group(0))
                     _iden = True
+                # 4.4b-EXPLICITO (Iker, 2026-08-27) - LA LINEA DEL ENLACE SE LEE SOLA.
+                # El vicio: el tope de 55 caracteres empuja a tachar el complemento
+                # del sustantivo, la frase sigue siendo gramatical y el lector se
+                # queda sin saber de que le hablas. "El nombre lo ponemos nosotros":
+                # el nombre de QUE. Es la misma familia que 2.5b-SUSTANTIVO, que se
+                # escribio solo para las CIFRAS y por eso no cazaba los sustantivos.
+                # AVISO y no fallo duro: que un sustantivo pida complemento es
+                # criterio, y una lista cerrada tumbaria ninjas buenos.
+                _enl = next((l for l in b if 'http' in l), b[-1])
+                _hueros = [w for w in ('el nombre', 'ese nombre', 'esa parte',
+                                       'esa lista', 'esos datos', 'ese trabajo',
+                                       'esa gente')
+                           if re.search(r'\b%s\b(?!\s+(de|del|que|con))' % w,
+                                        _enl, re.I)]
+                chk(False, 'ENTREGA: la linea del enlace se lee SOLA (§4.4b-EXPLICITO)',
+                    'tapa el post y lee solo esa linea: si un sustantivo pide un '
+                    'complemento para entenderse, se lo pones. "El nombre" -> "el '
+                    'nombre del que compra dentro". Un director comercial de 55 no '
+                    'reconstruye el referente, se va. Y si no cabe en los 55, se '
+                    'recorta por OTRO lado (un articulo, una preposicion, el '
+                    'complemento de sitio), NUNCA la palabra que dice de que hablamos'
+                    + (' — aqui: %s' % ', '.join('"%s"' % w for w in _hueros)
+                       if _hueros else ''), aviso=True)
                 chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
                     'el bloque no nombra a quien vas a encontrar. El momento es el '
                     'dolor secundario: los clientes compran la identificacion de la '

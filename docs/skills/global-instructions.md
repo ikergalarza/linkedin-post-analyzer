@@ -1364,6 +1364,35 @@ Luma:        ?utm_source=historia-euskadi-26ago-unai&utm_medium=post&utm_campaig
 - **⛔ Lo que NO cambia:** el enlace sigue llevando `https://` delante (`§4.4b` regla 8) y **la URL base no se toca** — el UTM va detrás, con `?`. Si la URL ya llevara parámetros, se encadena con `&`.
 - **📌 PENDIENTE (mío):** el mismo UTM en los enlaces del **DM del lead magnet** y en los **correos** (`email-marketing`), que hoy salen pelados. Es la misma regla en otra superficie, con `utm_medium=dm` y `utm_medium=email`.
 
+#### 🗣️🗣️ 4.4b-EXPLICITO · LA LÍNEA DEL ENLACE SE LEE SOLA, SIN EL POST DELANTE (Iker, 2026-08-27) — CANÓNICO
+
+> **Iker, y lo sube a receta global:** *"siempre que haces el spam ninja, y no sé si en general en las recetas globales, a veces pecas de no ser explícito. El nombre lo ponemos nosotros, el nombre de qué. Un viejo no sabe de lo que estamos hablando, y para mejorar la conversión hay que especificar de quién le damos el nombre, o sea, de qué le ayudamos"*.
+
+**LA REGLA:** **tapa el post entero y lee solo la línea del enlace.** Si un sustantivo pide un complemento para entenderse (`el nombre` → *¿de quién?*), **se lo pones**. El lector que va a hacer clic no reconstruye el referente: se va.
+
+**⚠️ Y ES UN TEST DISTINTO DEL DE LOS CINCO SEGUNDOS de `§4.4b`, que caza el fallo CONTRARIO.** Los dos se corren, y son dos preguntas opuestas:
+
+| test | qué caza | ejemplo de fallo |
+|---|---|---|
+| **de los 5 segundos** (`§4.4b`) | que el ninja sea **demasiado genérico**: valdría pegado a cualquier post nuestro | `De montar esa lista nos encargamos nosotros` (0,017%) |
+| ⭐ **de leerlo solo** (este) | que el ninja sea **demasiado elíptico**: necesita el post para entenderse | `El nombre lo ponemos nosotros` |
+
+**⛔ LA CAUSA, Y ESTÁ EN NUESTRA PROPIA RECETA: el tope de 55 caracteres de `§4.4b` empuja a tachar el complemento**, porque es lo más barato de quitar. La frase sigue siendo gramatical, el validador la da por buena y el lector se queda sin saber de qué le hablas. **Si no cabe en los 55, se recorta por OTRO lado** — un artículo, una preposición (`§2.9c`), el complemento de sitio —, **nunca la palabra que dice de qué estamos hablando.**
+
+**🔴 Y ESTO NO ES UNA REGLA NUEVA, ES `§2.5b-SUSTANTIVO` MAL ACOTADA.** El 26/08 Iker cazó exactamente esto con una CIFRA (*"el 24 de septiembre juntamos 80 en Donostia… ¿80 qué?"*) y la regla se escribió **solo para las cifras**. Por eso el 27/08 volví a cometerlo con un sustantivo, en el post siguiente. **`§2.5b-SUSTANTIVO` pasa a ser el caso particular de esta**, no al revés.
+
+**LA AUDITORÍA DE LA RECETA (27/08), porque el vicio estaba dentro:**
+
+| dónde | qué decía | estado |
+|---|---|---|
+| `§4.4b-FORMA` paso 3 | *"Ese nombre lo ponemos nosotros"* | 🔴 **corregido**: la receta enseñaba la elipsis |
+| `§4.4b` el molde de espacio justo | *"Esa parte ya la tenemos hecha"* (tatuaje, 0,151%) | ✅ **se queda**: su línea 1 dice *"lo caro es saber de quién tiene que ser el logo"*, o sea que **el bloque entero sí es explícito**. La elipsis solo es fallo cuando NINGUNA de las dos líneas dice de qué va |
+| `§4.4b-LICENCIA` | *"La licencia te da la lista. El nombre de dentro no."* | ✅ explícito, `de dentro` es el complemento |
+
+**⭐ Y EL DATO QUE LO RESPALDA, que son nuestros dos extremos medidos:** el ninja de **0,415%** dice *"Te marcamos **quién va a comprar** y cuándo"* — nombra a la persona. El de **0,017%** dice *"De montar **esa lista** nos encargamos nosotros"* — no nombra nada. **Es el mismo eje que `§4.4b-CLICS` punto 3 medido en clics, dicho ahora como regla de redacción.**
+
+**Mecanizado** en `validar-post.py` como aviso de entrega (`ENTREGA: la linea del enlace se lee SOLA`), que canta los sustantivos huecos que encuentre (`el nombre`, `esa parte`, `esa lista`, `ese trabajo`…) sin complemento detrás. **Va de aviso y no de fallo duro** porque saber qué sustantivo pide complemento es criterio, y una lista cerrada tumbaría ninjas buenos.
+
 #### ⛔⛔ 4.4b-FORMA · DOS LÍNEAS PEGADAS Y SIGUIENDO LA BROMA DEL GANCHO. SIEMPRE, EN TODOS LOS PILARES (Iker, 2026-08-12)
 
 **La forma del ninja no es de un pilar. Es global**, y se rompió en dos pilares distintos la misma semana. Iker: *"si el gancho de ayer era de los calvos, deberíamos seguir la broma de eso en el spam ninja"*.
@@ -1428,7 +1457,7 @@ Luma:        ?utm_source=historia-euskadi-26ago-unai&utm_medium=post&utm_campaig
 
 1. **Subraya el objeto y el verbo del gancho.** *"Le pregunté a qué empresas quería vender y me **plantó** el **portátil** delante"* → objeto `portátil`, verbo `plantar`.
 2. **La línea de dolor los reutiliza girados contra el lector**, normalmente en la forma *"eso lo hace cualquiera, lo otro no"*: *"Un **portátil** lleno de filas lo **planta** cualquiera, el nombre de dentro no."*
-3. **La línea del enlace resuelve exactamente lo que la de arriba dice que falta**, y ahí ya se habla de identificación: *"Ese nombre lo ponemos nosotros, con su teléfono: {link}"*.
+3. **La línea del enlace resuelve exactamente lo que la de arriba dice que falta**, y ahí ya se habla de identificación, **con el complemento puesto** (`§4.4b-EXPLICITO`): *"Te damos el nombre del que compra dentro, con su teléfono: {link}"*. 🔴 **Aquí ponía `"Ese nombre lo ponemos nosotros"` y era exactamente el fallo que `§4.4b-EXPLICITO` prohíbe**: la receta enseñaba la elipsis en su propio ejemplo.
 
 **Por qué esto no es adorno:** el gancho es lo único que el lector ha leído seguro (`§2.0`, el corte del "ver más"). Si el ninja usa su objeto y su verbo, el lector reconoce de dónde viene y lo lee como el remate del post. Si usa vocabulario nuevo, el ninja aparece como un cuerpo extraño a mitad del texto, que es cuando el ojo lo trata como banner.
 
