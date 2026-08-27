@@ -1196,6 +1196,24 @@ Luma:        ?utm_source=historia-euskadi-26ago-unai&utm_medium=post&utm_campaig
 ```
 **En el de Luma se dejan los demás parámetros puestos aunque hoy no los lea nadie**, porque no cuestan nada y sirven el día que se active el Measurement ID (abajo).
 
+##### 🌐 LA TERCERA SUPERFICIE: LOS BOTONES DE LUMA QUE VIVEN EN NUESTRA WEB (Iker, 2026-08-27)
+
+**El agujero que tapa:** el UTM de arriba solo cubre el clic que sale de un post. Pero el evento también se pide desde **botones dentro de `recursos.neety.com`** (la banda de evento de los 12 mapas y las dos de `/agendar/`), y esos salían pelados: en el panel de Luma todos caían juntos como *directo* y no se sabía **qué página** había convencido al que se inscribe.
+
+**Misma excepción de Luma, distinta identidad:** aquí la pieza no es el post, es **la PÁGINA**, y va igual en `utm_source` porque es lo único que Luma lee.
+
+```
+?utm_source=recursos-{pagina}&utm_medium=web&utm_campaign=recursos-{pagina}&utm_content={ubicacion}
+```
+- **`utm_source` = `recursos-{pagina}`** — `recursos-mapa-bizkaia`, `recursos-agendar`, `recursos-agendar-exito`. El prefijo `recursos-` es lo que separa de un golpe, en Top Sources, el tráfico de la web del tráfico de los posts (que llegan como `{pilar}-{tema}-{ddmes}-{cuenta}`).
+- **`utm_medium=web`** — el equivalente de `post`. Es lo que distingue superficie: `post` · `web` · `dm` · `email`.
+- **`utm_campaign` = la misma identidad que el source**, igual que en la fila de Luma de arriba: hoy no lo lee nadie, pero el día que se pague el Measurement ID el dato ya está puesto.
+- **`utm_content` = la UBICACIÓN del botón dentro de la página** (`banda-mapa`, `banda-agendar`, `exito-solicitud`), porque una misma página puede tener dos botones al mismo evento con intención muy distinta. En `/agendar/` los dos NO son lo mismo: uno es el que no reserva llamada y el otro el que ya dejó su solicitud, así que **también llevan `utm_source` distinto** (`recursos-agendar` y `recursos-agendar-exito`), que es lo único que Luma desglosa.
+
+**Aplicado el 2026-08-27 a los 14 enlaces que había** (12 mapas + las 2 bandas de `/agendar/`), en el repo `neety-resources`.
+
+**⚠️ La trampa del bloque replicado:** la banda de evento de los mapas se edita en uno y se copia a los otros 11, y el `utm_source` lleva el slug de la región. **Copiar la banda sin tocar el slug atribuye Álava a Bizkaia y no lo nota nadie**, porque el enlace funciona igual. Va avisado en el comentario HTML de las 12 páginas.
+
 **🔗 Y `forward.neety.com` NO nos da tracking, pero tampoco lo rompe (comprobado el 2026-08-26).** Es un **302 en Cloudflare** que redirige a `luma.com/ujffj66o` y **conserva la query string entera** (probado con los cuatro parámetros: llegan intactos a Luma). Lo que hay que tener claro: **un 302 de borde no carga HTML, así que GA4 nunca dispara ahí** — el subdominio da marca y la posibilidad de cambiar el destino sin tocar posts ya publicados, **no datos**. Para que diera datos tendría que servir una página de verdad, que es la fricción que Iker vetó el 05/08.
 
 **💰 Y LA OPCIÓN QUE SÍ CIERRA LA ATRIBUCIÓN, si algún día se paga: `Luma Plus` permite meter NUESTRO Measurement ID de GA4** en `Calendar > Settings > Options`. Con eso Luma manda a nuestro GA4 las page views **y un evento `purchase` en cada inscripción**, con id de la orden y valor. Es la única forma de ver la inscripción dentro de nuestro embudo. **Acepta `G-`, `GT-` y `UA-`, pero NO contenedores de GTM.** Decisión de negocio, no de copy.
