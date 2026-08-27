@@ -331,6 +331,20 @@ De la 1ª a la 2ª se fue **el escenario** (`§2.3b-ESCENARIO`); de la 2ª a la 
 
 **Mecanizado** como aviso de entrega en `validar-post.py` (`AVISO ENTREGA: ¿este gancho se puede decir más corto?`), que imprime la longitud y obliga a pasar el tachón palabra a palabra. Es criterio, así que no puede ser fallo duro: un script no sabe qué palabra carga un matiz.
 
+**⛔⛔ Y LA EXCEPCIÓN QUE HAY QUE LEER PEGADA A ESTA REGLA, PORQUE LA TIJERA VA SIEMPRE A POR ELLA: EL INTENSIFICADOR NO SE RECORTA (Iker, 2026-08-27).**
+
+> **Iker, cuando lo hice:** *"me parece muy mala decisión la que acabas de tomar, ya que `a ninguno` era necesario, y si lo quitas el gancho no tiene sentido, y sobre todo era un intensificador"*.
+
+**El caso, y es el modo de fallo de esta sección entera:** el gancho de Helena decía `no le he visto la cara a ninguno` y había que meterle `en persona` (era falso tal cual: hace videollamadas a diario). Para no alargarlo, quité `a ninguno`. **Salió un carácter más corto y un gancho peor**: `a ninguno` no era relleno, era el absoluto que hace que la frase apriete, exactamente el *superlativo de incredulidad* de `§2.3d`.
+
+**LA REGLA, en una línea:** *la tijera de `§2.2c` quita lo REDUNDANTE; el intensificador no es redundante aunque se pueda borrar sin romper la gramática.* Y esto ya estaba escrito en `§2.3d` (*"la prueba es la de siempre: quítalo y mira si el gancho sigue apretando igual"*); lo que faltaba era decirlo **aquí**, que es donde se coge la tijera.
+
+**EL ORDEN CORRECTO, y son dos pasos, no uno:**
+1. **Primero se comprueba que el intensificador está.** Si no está, el gancho no está terminado.
+2. **Después se recorta lo demás**, y si al final no cabe, **el gancho se queda largo**: 78 caracteres con la emoción puesta baten a 68 sin ella. El tope técnico es 210 y la zona de outliers llega a 110.
+
+**Mecanizado** en `validar-post.py` como aviso de entrega **colocado ANTES del de la tijera** (`ENTREGA: ¿el gancho tiene INTENSIFICADOR, y sigue ahí?`), que lo canta cuando lo encuentra y avisa de que no se toca, o pide el de su emoción cuando no hay ninguno.
+
 ### 🎬 2.2d · EL TEST DE LA CREADORA DE VÍDEOS: SI NO SE PUEDE RODAR, EL GANCHO SE DESCARTA (universal — Iker, 2026-08-17)
 
 **El test, y se corre en un segundo:** dale el gancho a una persona que hace vídeos. **¿Sabe qué grabar?** Si sí, el gancho vale. **Si no se le ocurre ningún plano, el gancho no es lo bastante bueno y se descarta**, por bien escrito que esté.

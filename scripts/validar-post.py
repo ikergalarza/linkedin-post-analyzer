@@ -786,6 +786,26 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # que es donde esta el trabajo. Caso: entregue el gancho de la historia del
     # 18/08 con "del barrio" cuando la linea 2 ya decia "mi calle" — 73 car que
     # eran 62 sin perder nada.
+    # ⛔ 2.3d + 2.2c — LA TIJERA NO TOCA EL INTENSIFICADOR (Iker, 2026-08-27).
+    # El aviso de aqui abajo empuja a acortar, y la palabra mas barata de quitar
+    # es SIEMPRE el intensificador, que es justo la que hace el trabajo. Paso el
+    # 27/08: para meter "en persona" en el gancho de Helena sin alargarlo, quite
+    # "a ninguno". Iker: "a ninguno era necesario, y sobre todo era un
+    # intensificador". El gancho perdio la emocion y gano un carcter. Este aviso
+    # va DELANTE del de la tijera a proposito: primero se mira que el
+    # intensificador esta, y solo despues se recorta lo que sobra.
+    _INTENS = (r'\bningun[oa]?\b|\bni un[oa]?\b|\bnunca\b|\bjam[aá]s\b|\bs[oó]lo\b|\bsolo\b'
+               r'|en la vida|ni de broma|y poco m[aá]s|y para de contar|y a otra cosa'
+               r'|lo [uú]ltimo que|en la vida habr[ií]a|todav[ií]a no|ya ha empezado'
+               r'|sin tocar|en una tarde')
+    _int = re.search(_INTENS, hook_txt, re.I)
+    chk(False, 'ENTREGA: ¿el gancho tiene INTENSIFICADOR, y sigue ahi? (§2.3d)',
+        ('intensificador: "%s" - NO se recorta para acortar, aunque sea la palabra mas '
+         'barata de quitar' % _int.group(0) if _int else
+         'no encuentro ninguna marca de intensificador en el gancho. Todo gancho lleva el de '
+         'SU emocion: rabia -> "y poco mas"; curiosidad -> "lo ultimo que me esperaba"; miedo '
+         '-> "y ya ha empezado"; deseo -> "sin tocar una tecla". Sin el, el gancho enuncia y '
+         'no aprieta') , aviso=True)
     chk(False, 'ENTREGA: ¿este gancho se puede decir mas corto? (§2.2c)',
         f'{len(hook_txt)} car (la mediana de nuestros ganadores de 1 oracion son 75). '
         'Tacha una palabra y relee: si la frase sigue diciendo LO MISMO, sobraba y no '
