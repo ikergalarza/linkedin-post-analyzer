@@ -491,9 +491,13 @@ Lee el post e imagina que lo sube una consultora, una agencia o una constructora
 
 ```
 ⛔ Son 80 plazas y se piden una a una:        (35)
-✅ Son solo 80 plazas y se piden una a una:   (39)
+🟡 Son solo 80 plazas y se piden una a una:   (39)
+✅ Solo hay 80 plazas y se piden una a una:   (40)
 ```
-**Cuatro caracteres, y el aforo pasa de ser un dato a ser una barrera.**
+**Cinco caracteres, y el aforo pasa de ser un dato a ser una barrera.**
+
+**⭐ Y DÓNDE SE COLOCA EL INTENSIFICADOR LO DECIDE EL OÍDO, NO LA GRAMÁTICA (Iker, 2026-08-27).** Las dos versiones con `solo` dicen exactamente lo mismo y él eligió la segunda: *"a nivel ya personal y de lengua castellana, en vez de «son solo 80 plazas» suena muchísimo mejor «solo hay 80 plazas»"*. **El intensificador manda más al principio de la frase que enganchado al verbo**, y en castellano hablado `solo hay` es la forma natural de anunciar escasez.
+- **⚠️ Y esto se salta el veto de `§2.0a` a `hay` como verbo de relleno, a propósito.** Ese veto es **del GANCHO**, donde el verbo tiene que frenar el scroll. En el ninja el trabajo lo hace el `solo`, no el verbo, y ahí manda `brand-voice §3c`: **el castellano hablado gana a la escalera, a la anáfora y a la tijera.**
 
 **⛔⛔ Y LA REGLA QUE VA PEGADA, PORQUE AQUÍ ES MUY FÁCIL PASARSE: EL INTENSIFICADOR DE AFORO DICE EL TOPE, NUNCA LO QUE QUEDA.**
 
