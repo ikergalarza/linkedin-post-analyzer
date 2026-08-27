@@ -1544,6 +1544,35 @@ En esta/eso sí [lo mismo] y [la escasez]:      <- la excepción, cosida con dem
 ```
 **Y las tres palabras que la delatan cuando está bien hecha:** un **`no`** en la línea 1, un **`sí`** en la 2, y un **demostrativo** que las cose. Si falta el `sí`, la línea 2 informa en vez de resolver — que es exactamente el fallo del 27/08 (`A esa sala solo entran 80 personas`: recogía la sala pero no daba la vuelta).
 
+
+##### ⛔⛔ 4.4b-ANTECEDENTE · EL DEMOSTRATIVO DE LA BISAGRA NO PUEDE TENER DOS ANTECEDENTES POSIBLES (Mario, 2026-08-27)
+
+> **Mario, y la duda es la regla:** *"en la segunda frase, ¿realmente es «en esta» femenino o «en este»? Esta se refiere a la publicación, que es femenino, pero un post es masculino… o lo has puesto en femenino porque nos referimos a la sala"*.
+
+**LA GRAMÁTICA ESTABA BIEN Y AUN ASÍ ERA UN FALLO.** El bloque era:
+
+```
+Un post no te sienta en la sala con los que compran.   <- DOS sustantivos: post (m) y sala (f)
+En esta sí lo hacemos y tan solo hay 80 plazas:        <- apunta al SEGUNDO, no al primero
+```
+
+`esta` = la sala, y es correcto: con `este` diría *"en este post sí te sentamos en la sala"*, que es lo que la línea 1 acaba de negar. **Pero el que escribe dudó, así que el lector también.**
+
+**⭐ Y ESE ES EL TEST, porque es gratis y no falla: si al releer el bloque dudas del GÉNERO o del NÚMERO del demostrativo, el lector ya ha tropezado.** La duda no es un problema de gramática: es el síntoma de que hay **dos antecedentes compitiendo**, y ese medio segundo se paga **justo en la línea donde pides el clic**.
+
+**LA REGLA: si la línea 1 tiene más de un sustantivo, el demostrativo va ACOMPAÑADO del suyo.**
+
+```
+⛔ En esta sí lo hacemos…            <- ¿esta qué? post o sala
+✅ En esta SALA sí lo hacemos…       <- cero duda, y sigue siendo bisagra
+```
+
+- **No rompe nada del molde:** repetir un **sustantivo** es bisagra legítima (`§4.4b-MOLDE`); lo que no se repite es el **verbo**.
+- **Y casi siempre CABE**, porque el sustantivo suele ser corto. Aquí costó 5 caracteres y se compensó subiendo la norma de la línea 1 (`no te sienta` → `nunca te sienta`), que además la refuerza, que es lo que `§4.4b-EXCEPCIÓN` pide.
+- **Es la misma familia que `§4.4b-EXPLICITO`** (la línea del enlace se lee sola) y `§2.5b-SUSTANTIVO` (la cifra nunca va sola): **por ahorrar una palabra se deja al lector reconstruyendo.**
+
+**El chequeo, antes de entregar:** cuenta los sustantivos de la línea 1. **Si hay dos o más, el demostrativo de la 2 lleva el suyo pegado.** Con uno solo, el demostrativo va suelto y no hay duda posible (`Esa parte ya la tenemos hecha`, el tatuaje a 0,151%: su línea 1 solo tiene `el logo` de candidato real).
+
 #### 🗣️🗣️ 4.4b-EXPLICITO · LA LÍNEA DEL ENLACE SE LEE SOLA, SIN EL POST DELANTE (Iker, 2026-08-27) — CANÓNICO
 
 > **Iker, y lo sube a receta global:** *"siempre que haces el spam ninja, y no sé si en general en las recetas globales, a veces pecas de no ser explícito. El nombre lo ponemos nosotros, el nombre de qué. Un viejo no sabe de lo que estamos hablando, y para mejorar la conversión hay que especificar de quién le damos el nombre, o sea, de qué le ayudamos"*.
