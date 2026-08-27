@@ -1570,6 +1570,43 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
              '{pilar}-{tema}-{ddmes}&utm_content={cuenta}, p.ej. historia-euskadi-26ago. '
              'Sin esto, GA4 mete el trafico de todos los posts en la misma fila y no se '
              'sabe cual convierte' % _sin_utm[0][:60]) if _sin_utm else '')
+        # ⛔⛔ LA FECHA DEL UTM ES LA DE HOY, Y SE COMPRUEBA CONTRA EL RELOJ
+        # (Iker, 2026-08-27). El 27/08 entregue un post con `meme-aura-26ago`
+        # porque arrastre el "26" del historial que estaba leyendo, sin mirar la
+        # fecha real. Iker: "hoy es 27 de agosto, tienes que revisar muy bien y no
+        # hardcodear la fecha del UTM de ayer, sino del dia real en el que estamos
+        # hablando". Un dia de mas o de menos rompe la unica cosa para la que existe
+        # el UTM: poder cruzar los clics de GA4 con la fila del historial. Y es un
+        # DATO, asi que va en la misma familia que cualquier otra cifra del post: se
+        # comprueba, no se deduce del contexto (CLAUDE.md, lo que no se negocia).
+        #
+        # Aviso y no fallo duro a proposito: un post se puede escribir hoy para
+        # subirlo manana (§1h manda esperar a la franja de las 10), y ahi la fecha
+        # correcta es la de PUBLICACION, que el script no puede saber. Lo que el
+        # script si puede hacer es cantar la de hoy y la que hay puesta, que es
+        # justo el gesto que no hice.
+        _MESES_UTM = ('ene', 'feb', 'mar', 'abr', 'may', 'jun',
+                      'jul', 'ago', 'sep', 'oct', 'nov', 'dic')
+        _hoy = datetime.date.today()
+        _hoy_utm = '%d%s' % (_hoy.day, _MESES_UTM[_hoy.month - 1])
+        _hoy_utm0 = '%02d%s' % (_hoy.day, _MESES_UTM[_hoy.month - 1])
+        _fechas = set()
+        for _u in _urls:
+            _m = re.search(r'utm_campaign=([^&\s]+)', _u)
+            if not _m:
+                continue
+            for _f in re.findall(r'(\d{1,2})(%s)' % '|'.join(_MESES_UTM), _m.group(1), re.I):
+                _fechas.add((_f[0] + _f[1]).lower())
+        _desfasadas = sorted(f for f in _fechas
+                             if f not in (_hoy_utm, _hoy_utm0))
+        chk(not _desfasadas, 'La fecha del utm_campaign es la de HOY (§4.4b-UTM)',
+            ('el UTM lleva %s y hoy es %s (%s). Si el post se sube HOY, corrigelo; si '
+             'se sube otro dia, pon la fecha de PUBLICACION y digalo en la entrega. '
+             'La fecha se mira en el reloj, no se arrastra del historial que estabas '
+             'leyendo, que es exactamente como se colo un 26ago un dia 27'
+             % (', '.join(_desfasadas), _hoy_utm, _hoy.isoformat())) if _desfasadas else
+            'hoy es %s' % _hoy_utm,
+            aviso=True)
         # ⛔ LA EXCEPCION DE LUMA (comprobado en su documentacion el 2026-08-26):
         # Luma solo lee `utm_source` ("Luma supports the utm_source parameter") y es
         # lo unico que desglosa en Insights > Top Sources. Un utm_campaign ahi no lo

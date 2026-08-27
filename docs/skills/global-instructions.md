@@ -1179,6 +1179,21 @@ el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 
 **Dónde aplica:** los tres destinos de un post — `/agendar/`, `/correo/` (y `/newsletter/`) y **la página del mapa** —, y también **Luma**, que tiene su propia excepción aquí abajo.
 
+##### ⛔⛔ 4.4b-UTM-FECHA · LA FECHA DEL UTM SALE DEL RELOJ, NUNCA DEL CONTEXTO QUE ESTABA LEYENDO (Iker, 2026-08-27) — GLOBAL
+
+> **Iker:** *"me parece muy bien que en el enlace hayas metido los UTM, pero hoy es 27 de agosto: tienes que revisar muy bien y no hardcodear la fecha del UTM de ayer, sino la del día real en el que estamos hablando"*.
+
+**Qué pasó:** entregué un post el **27** con `utm_campaign=meme-aura-26ago`. No lo inventé de la nada — **arrastré el `26` del `historial-publicaciones.md` que estaba leyendo**, donde los posts de esa semana son del 26. Y es el peor modo de fallo posible porque **el UTM no se ve en el feed**: LinkedIn lo acorta a `lnkd.in`, así que nadie lo revisa nunca más y el dato queda torcido para siempre.
+
+**Por qué importa y no es un detalle de forma:** el UTM existe **para una sola cosa**, cruzar los clics de GA4 con la fila del historial. Con la fecha cambiada, ese cruce falla justo cuando alguien va a mirar si el post convirtió. **Un UTM con fecha mala es peor que sin UTM**, porque el sin-UTM se nota y el torcido no.
+
+**LA REGLA, y son tres gestos:**
+1. **La fecha se MIRA, no se deduce.** Antes de escribir el enlace, se comprueba el día real (`date` en la terminal). **Da igual qué fecha aparezca en el historial, en el chat o en el post anterior.**
+2. **Es la fecha de PUBLICACIÓN, no la de redacción.** Si el post se escribe hoy para subirlo mañana en la franja de las 10 (`working-preferences §1h`), la fecha del UTM es la de mañana **y se dice en la entrega**, para que sea decisión y no descuido.
+3. **Es un DATO y se trata como cualquier otra cifra del post** (`CLAUDE.md`, lo que no se negocia): se verifica contra la fuente. Aquí la fuente es el reloj.
+
+**Mecanizado** en `validar-post.py` como **aviso** (`La fecha del utm_campaign es la de HOY`), que lee la fecha del sistema, saca la del `utm_campaign` de cada enlace y **canta las dos**. Va de aviso y no de fallo duro **porque el caso 2 es legítimo** y el script no puede saber qué día se sube; lo que sí puede es que la comparación salte siempre, que es justo el gesto que no hice.
+
 ##### ⛔⛔ LA EXCEPCIÓN DE LUMA: SOLO LEE `utm_source` (comprobado en su documentación el 2026-08-26)
 
 **El fallo que casi cometemos:** la convención de arriba mete la identidad del post en `utm_campaign`… **y Luma no lee `utm_campaign`.** Su documentación es literal: *"Luma supports the `utm_source` parameter"*, y en **Insights → Top Sources** dice *"here you can define custom tracking links with a `utm_source`"*. Con `utm_source=linkedin`, el panel de Luma nos habría dicho "vino de LinkedIn", que es exactamente lo que ya sabíamos.
