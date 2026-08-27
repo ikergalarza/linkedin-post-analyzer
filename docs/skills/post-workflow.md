@@ -2536,9 +2536,14 @@ Pilar NUEVO, distinto de **autoridad** ("mira qué importante soy": premios, eve
 > > **Iker, sobre mi recorte del 27/08:** *"has centrado según el logo de arriba, pero lo más interesante es centrar en base a las personas. Hay muchísimo más espacio entre la cabeza de Asier y la izquierda que entre la cabeza de Iker y la derecha"*.
 >
 > **El fallo, y es el reflejo de cualquiera:** al cuadrar una horizontal se coge el centro geométrico del original. Eso centra **el fondo** (el rótulo, el photocall, la pared), no a la gente — y la gente casi nunca está centrada en la foto que hizo alguien con el móvil. Resultado: un lado con medio metro de pared y el del extremo contrario cortado por el hombro.
-> - **EL TEST, y son dos medidas:** la distancia de **la cabeza más a la izquierda** al borde izquierdo tiene que parecerse a la de **la cabeza más a la derecha** al borde derecho. Si no se parecen, se desplaza la caja hasta que se parezcan.
-> - **Y las señales de que está bien hecho son de composición, no de píxeles:** lo que el grupo sostenga delante (un cartel, un trofeo, una placa) queda **centrado**, y el rótulo del fondo deja de estarlo. Si el logo del fondo sale perfectamente centrado, casi seguro que la gente no lo está.
-> - **El caso:** `IMG_0290.HEIC` (4032×3024). Centrado por encuadre salía `(504,0,3528,3024)` — 789px de aire a la izquierda de Asier contra 429 a la derecha de Iker, y el cartel escorado. Corregido a **`(904,0,3928,3024)`**, que deja los dos aires parejos, el cartel centrado y solo 104px de margen sin usar a la derecha.
+> **⛔ Y LA CAJA SE CALCULA CON NÚMEROS, NO A OJO. Me pasé DOS veces seguidas el mismo día**, primero corto y luego largo, porque estaba estimando posiciones mirando miniaturas. **El método, y son 3 minutos:**
+> 1. **Se pinta una rejilla de coordenadas sobre el original** reescalado (una línea vertical cada 250px con su número encima) y se **leen** los centros de cabeza. Aquí: Asier **1315**, Unai **2100**, Iker **3015**.
+> 2. **El centro del grupo es el punto medio entre las cabezas de los EXTREMOS**, no el de la foto: `(1315+3015)/2 = 2165`. (La media de las tres da 2143, o sea lo mismo: si sale muy distinto, es que uno está descolgado y hay que mirar la foto.)
+> 3. **`x0 = centro − lado/2`** → `2165 − 1512 = 653`, redondeado a **650**.
+> 4. **Se comprueba con los dos aires:** izquierda `1315−650 = 665`, derecha `(650+3024)−3015 = 659`. **6px de diferencia: eso es centrado.**
+> - **Y así se ve el error de tamaño que se comete a ojo:** el primer intento dejaba 789 contra 429 y el segundo se pasó al revés. **El ojo no distingue 200px de descuadre en una miniatura; la resta sí.**
+> - **Las señales de composición, para confirmar sin medir:** lo que el grupo sostenga delante (un cartel, un trofeo, una placa) queda **centrado**, y el rótulo del fondo deja de estarlo. Si el logo del fondo sale perfectamente centrado, casi seguro que la gente no lo está.
+> - **El caso completo:** `IMG_0290.HEIC` (4032×3024). Por encuadre salía `(504,0,3528,3024)`, corregido de más a `(904,0,3928,3024)` y cerrado en **`(650,0,3674,3024)`**.
 > - **Vale para cualquier foto de grupo futura**, y también cuando la foto es vertical: allí la decisión es la misma en el eje de arriba a abajo (se centra en las caras, no en el techo).
 
 > **Y el coste se dice:** la elegida el 25/08 mide **684px de ancho** de origen, asi que el cuadrado sale **escalado** y se vera blando en pantalla retina. Se acepta porque no hay alternativa, no porque de igual.
