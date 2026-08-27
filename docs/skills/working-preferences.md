@@ -48,6 +48,27 @@ Vale para todo lo que se copia y pega: un prompt de diseñador, el texto de un p
 
 Vale para todo lo que se copia y se pega: prompts de diseñador, de animador y de programador, textos de post, comandos y briefings.
 
+## 📏📏 0g · NADA SE ESTIMA. LO QUE SE PUEDE MEDIR, SE MIDE (Iker, 2026-08-27) — GLOBAL, Y ES DE LAS GORDAS
+
+> **Iker, y no está hablando de un recorte:** *"estoy flipando con que me has admitido que es que lo estabas estimando. Nunca tienes que dejar nada a la estimación, y menos en imágenes, todo lo tienes que medir en base a píxeles. Y lo segundo: nuestra estrategia entera de LinkedIn, desde que hemos empezado y por lo que nos está yendo bien, es porque no dejamos nada a la suerte ni a la estimación, todo lo que se puede medir lo medimos. Por favor, que no vuelva a pasar"*.
+
+**QUÉ PASÓ, y por eso está escrito aquí y no en un runbook.** Al cuadrar una foto de grupo calculé el desplazamiento **mirando miniaturas**. Fallé, corregí **a ojo otra vez** y me pasé al lado contrario. Dos entregas malas seguidas por el mismo motivo, y ninguna de las dos la cazó ningún check: **lo estimado pasa todos los controles, porque no hay control que mire una estimación.**
+
+**LA REGLA: si una cosa tiene número, se saca el número ANTES de decidir. No después, y nunca en su lugar.**
+
+| ⛔ lo que hacía | ✅ lo que se hace |
+|---|---|
+| *"parece que hay más aire a la izquierda"* | rejilla de coordenadas, leer los centros, **restar** los dos aires |
+| *"el gancho se ve corto"* | `len()` del gancho contra la mediana medida de los ganadores |
+| *"esta región parece virgen"* | consultar la cobertura por cuenta en el historial |
+| *"esa referencia funcionó bien"* | reacciones, comentarios, reposts y % de risa de la BD |
+| *"el enlace cae más o menos por la mitad"* | posición exacta del carácter contra el tope de 650 |
+
+- **Y el orden importa: se mide PRIMERO y se decide DESPUÉS.** Medir para justificar lo que ya elegiste no es medir.
+- **⛔ Si algo no se puede medir, se dice que es criterio y se etiqueta como tal** (`§0c`), no se disfraza de conclusión. Lo prohibido no es tener criterio: es presentar una estimación como si fuera un dato.
+- **El coste de medir es de minutos y el de estimar es una entrega devuelta.** La rejilla de coordenadas que resolvió el recorte tardó 3 minutos; las dos versiones malas costaron dos turnos suyos.
+- **⭐ Y EL PORQUÉ DE FONDO, que es lo que hay que retener:** esto no es una manía de precisión, **es la estrategia entera de la casa**. Todo el sistema —los pilares, los ganchos, las horas, los verbos, las puertas, los vehículos— existe porque se midió, no porque se intuyó. **Una estimación mía metida en medio de eso rompe la única cosa que hace que funcione.**
+
 ## 🛑🛑 1b · TODO PROMPT PARA UN EJECUTOR VA EN **UN SOLO BLOQUE, UN SOLO PÁRRAFO Y SIN SÍMBOLOS RAROS** (Iker, 2026-08-18) — GLOBAL
 
 **Esto ya estaba escrito, pero SOLO en `images §0i-3` como si fuera del prompt del diseñador.** No lo es: vale para **cualquier** prompt que yo le dé a alguien que ejecuta — diseñador, animador, **programador** — y por tenerlo guardado en el sitio equivocado lo incumplí el 18/08 entregándole **cuatro bloques** para un solo encargo. Iker: *"¿por qué me pasas cuatro prompts cuando te he dicho que me pases solo uno, definitivo, con todo, en un solo párrafo, sin símbolos raros? Eso ya lo deberías saber de hace mucho tiempo"*. Es el caso de libro de `§0c-BIS`: **una regla universal escrita dentro de un runbook garantiza que se rompa en los demás.**
