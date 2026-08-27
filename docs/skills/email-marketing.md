@@ -174,8 +174,11 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 **El `abTesting` nativo de Brevo solo parte el ASUNTO** (`subjectA`/`subjectB`), no el remitente — así
 que para testar remitente no vale ese mecanismo, hace falta montarlo a mano:
 
-1. Leer los contactos VIVOS (no bloqueados) de la audiencia por API directa de Brevo, no del contador
-   cacheado de ningún sitio (el CRM propio incluido: su `member_count` no descuenta las bajas).
+1. Leer los contactos VIVOS (no bloqueados) **por API directa de Brevo**, que es quien manda sobre
+   quién recibe. ⚠️ **No vale el `member_count` del CRM, y NO porque esté desincronizado** (se comprobó
+   el 27/08 y está perfecto, ver `historial-newsletter.md`), sino porque **mide otra cosa**: la
+   pertenencia a la audiencia, con las bajas dentro. Para un A/B hace falta quién RECIBE, no quién
+   pertenece.
 2. Partir la lista al 50% **al azar, con semilla fija** (para poder auditar el reparto si algo sale
    raro), y crear DOS listas nuevas en Brevo con esos contactos ya existentes (`POST /contacts/lists`
    + `POST /contacts/lists/{id}/contacts/add`, mucho más rápido que re-subir contacto a contacto).

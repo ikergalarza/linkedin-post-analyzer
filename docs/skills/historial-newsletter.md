@@ -719,8 +719,20 @@ conceptos distintos aunque los dos "repartan" la audiencia.
    consiguió sesión en el CRM propio (`salescrmuser`/`salescrmpass` → login normal de la app, no
    `DATABASE_URL`), pero al final no hizo falta: con la API key de Brevo directa bastó.
 3. **Universo del test: los contactos VIVOS de las 6 tandas de Kaixito 01** (listas Brevo 5-10),
-   leídos en directo (no del `member_count` cacheado del CRM, que está desactualizado tras las bajas de
-   Bouncer). **1.035 contactos vivos** (no bloqueados) de 1.325 originales.
+   leídos en directo de Brevo. **1.035 contactos vivos** (no bloqueados) de 1.325 originales.
+
+   ⚠️ **CORREGIDO EL MISMO DÍA — aquí escribí que el `member_count` del CRM "está desactualizado" y es
+   FALSO.** Iker se alarmó con razón y al comprobarlo con datos reales resultó que no hay ninguna
+   desincronización: `/api/marketing/estado-sincronizacion` devuelve `bajasPendientesEnBrevo: 0` y
+   `errores: []`, el webhook Brevo→CRM está vivo, y los workers corren solos (bajas cada 5 min,
+   audiencias cada 60 min). Cruzando la tanda 6 contacto a contacto: 380 en el CRM, 349 en Brevo, **31
+   solo en el CRM y CERO vivos indebidamente fuera de la lista**. Esos 31 están de baja, y el sync no
+   los sube a propósito. **Son dos métricas distintas, no un número viejo:** el `member_count` del CRM
+   cuenta la PERTENENCIA a la audiencia (histórico, bajas incluidas) y la lista de Brevo cuenta QUIÉN
+   RECIBE. La diferencia entre las 6 tandas suma exactamente 70, que son las 70 direcciones dadas de
+   baja tras Bouncer. **La lección, y vale para cualquier número futuro: dos contadores distintos no son
+   una desincronización hasta que se cruzan los datos** (`working-preferences`, no llamar bug a algo sin
+   comprobarlo).
 4. **Partido al 50% al azar** (semilla fija `20260827` por si hay que auditar el reparto): **517 en la
    lista A, 518 en la B.** Dos listas nuevas creadas por API: `Correo 2 · A/B remitente · A (Iker de
    Neety)` (id 11) y `· B (Iker Galarza de Neety)` (id 12).
