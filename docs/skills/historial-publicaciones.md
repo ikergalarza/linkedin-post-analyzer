@@ -45,6 +45,20 @@
 
 ---
 
+## 🗑️ EL MEME DE LA FICHA · BORRADO POR ASIER EL 26/08 Y MOVIDO A IKER EL 27/08
+
+**Qué pasó, y no es un capado.** El meme de la katana (referencia [Pietro Acerbis 01/07](https://www.linkedin.com/posts/pietroacerbis-prospeiq_todays-crm-has-five-structural-problems-activity-7478009600475103232-rldk), 127♥ · 32% de risa) se publicó en Asier el 26/08 y **lo borró el propio Asier porque no le gustaba**, no por rendimiento ni por moderación.
+
+**El número que decide qué se puede hacer con él: 12 impresiones, 1♥, 0💬, 0.04x.** Se borró antes de repartir nada.
+
+**Consecuencia, y es la regla que faltaba escrita:** `post-workflow §4.4-REPETIR` pide 1 mes de espaciado antes de repetir una referencia en otra cuenta, **y esa regla existe por el SOLAPE DE AUDIENCIA** (el tatuaje se estrelló a 5.427 tras 93.744 impresiones previas). **Un post borrado con 12 impresiones no ha generado solape**, así que las tres puertas no aplican: lo que se mide es la exposición real, no el hecho de haberlo subido.
+- **El disparador para reutilizar es la EXPOSICIÓN, no la fecha.** Vara propuesta: por debajo de ~500 impresiones la referencia sigue libre; por encima, corren las tres puertas de `§4.4-REPETIR`.
+- ⚠️ **Es criterio mío, n=1 y sin medir** (`working-preferences §0c`): entra marcado como hipótesis hasta que el post de Iker dé un número.
+
+**Y la segunda lección, que es de elección de cuenta:** el borrado no fue por el chiste, fue por gusto personal del dueño de la cuenta. **`aboutme §2-CARRIL` decide el carril, pero no cubre el veto personal.** Asier es la cuenta que menos tolerancia ha demostrado a un chiste que le implica; Iker es la que aguanta el registro bruto (`post-workflow §4.4-STOP`). Un meme cuyo protagonista queda mal parado va a Iker por defecto, aunque el carril de la referencia apunte a otro sitio.
+
+---
+
 ## 🌴🌴 ESTRATEGIA DE LAS 2 SEMANAS QUE QUEDAN DE AGOSTO (17/08 y 24/08) — Iker, 2026-08-14
 
 **Cambio de estrategia, decidido por Iker. La receta completa está en `post-workflow §8.0-AGOSTO`; esto es el estado.**
