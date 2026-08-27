@@ -597,3 +597,18 @@ dos con Brevo todavía.
 decida el día fijo del envío único (¿lunes? ¿martes?), se revisa `email-marketing §5` con el dato nuevo:
 si de verdad ya no hay tandas, la sección entera de cadencia de calentamiento pasa a ser histórica y hace
 falta una regla de cadencia distinta para el envío semanal de régimen.
+
+
+---
+
+## 🔴 Bug corregido: preheader duplicado en Gmail, presente desde la tanda 3 (2026-08-27)
+
+**Causa:** cada campaña se creó pasando a la vez `previewText` (mecanismo nativo de Brevo) y un `<div style="display:none">` manual con el mismo texto, heredado de la técnica de MailerLite (donde sí hacía falta). Brevo ya resuelve `previewText` solo; el div era redundante. Gmail concatenó los dos y mostró *"Normal, es la primera vez que te escribo."* dos veces en la bandeja.
+
+**Alcance real: tandas 3, 4 y 5, ya enviadas, con el defecto.** No hay nada retroactivo que hacer con esas.
+
+**Tanda 6 recreada limpia (id 8, `status: draft`, sin `scheduledAt`), sin el div.** Ver `email-marketing §3b` para la regla corregida.
+
+**Y sale una regla de proceso nueva de aquí (Iker, 2026-08-27):** ninguna campaña se deja programada de primeras nunca más, ni aunque él lo pida explícitamente — se queda en borrador hasta que confirme que se ha mandado un test a sí mismo y está todo bien. Detalle completo en `email-marketing §9a-BIS`.
+
+**Pendiente de Iker:** mandarse el test de la campaña id 8, revisar que el preheader ya no sale duplicado, y confirmar para que se programe el viernes 09:05.
