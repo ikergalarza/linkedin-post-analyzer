@@ -445,6 +445,32 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 
 
 
+
+## ⛔⛔ 0i-3-HERRAMIENTA · EL PROMPT NUNCA NOMBRA EL PROGRAMA. SE PIDE EL RESULTADO, NO EL CÓMO (Mario, 2026-08-27)
+
+> **Mario:** *"el primer prompt me lo habías dado fatal, porque ya se lo estamos dando directamente al generador. No le tienes que decir en qué programa lo tiene que hacer, porque le has confundido y por eso lo había hecho mal: le habías dicho que use Photoshop o Canva cuando él mismo ya es su propio programa"*.
+
+**El caso.** Mi prompt abría con *"montándolo por encima de la propia imagen en Photoshop o Canva en vez de generarla con IA"*. Se lo estábamos dando **a un generador**, así que le pedí que hiciera algo que no puede hacer, y salió una primera versión rota.
+
+**LA CAUSA, y es de las que hay que anotar porque explica el patrón:** arrastré la vía del **overlay manual** del meme del Aquaman… **que `§0i-2b` DEGRADÓ el 2026-08-13.** Desde que se genera con la opción instantánea, una película o un famoso **ya no se manda a montaje a mano**. Le di una instrucción de dos semanas atrás.
+
+- **LA REGLA: el prompt describe QUÉ tiene que quedar, nunca CON QUÉ hacerlo.** Ni Photoshop, ni Canva, ni "genera", ni "monta por encima". Quien lo recibe —generador o diseñador— elige su herramienta.
+- **Lo único que sí se dice del acabado es el ENTREGABLE:** formato 1:1, y JPG a calidad baja y 500×500 (`§5-B` punto 5), porque eso es resultado, no procedimiento.
+- **⚠️ Y al retirar una vía de trabajo (como el overlay del Aquaman), hay que mirar qué PROMPTS la nombran**, no solo la sección que la describía. Es `feedback_regla_nueva_revisar_codigo` aplicado a las recetas: una regla degradada sigue viva en las plantillas que la citan.
+
+## 🔡🔡 0a-sexta-quater · LA TIPOGRAFÍA DE UNA PLANTILLA DE MEME ES EL FORMATO RECONOCIBLE, Y SE CALCA COMO EN UN PANTALLAZO (Mario, 2026-08-27)
+
+> **Mario, y la intuición es suya:** *"¿tú crees que la fuente mejor dejar esta y no aplicarle la nuestra de la empresa, porque si no pierde la gracia del meme? A veces en memes es mejor que quede cutre, ¿no?"*.
+
+**Sí, y ya teníamos la lógica escrita para OTRO caso: `§0a-sexta-bis` y `§0a-sexta-ter` sacan a los PANTALLAZOS DOCUMENTALES de la paleta y la tipografía de marca**, porque *"lo que hace el chiste es reconocer el formato en el primer segundo"*. **Una plantilla de meme es exactamente el mismo caso y faltaba declararlo**, así que `§4` (*"ninguna otra fuente bajo ningún concepto"*) se leía como si aplicara también aquí.
+
+**LA REGLA: en un meme montado sobre una plantilla conocida, la tipografía es la de la plantilla** — Impact blanco en mayúsculas con borde negro —, **no Bricolage ni Switzer.**
+
+- **Por qué, y no es pereza:** el Impact con borde **dice "esto es un meme" antes de que leas una palabra**. En Bricolage dice *"esto es una marca haciendo un meme"*, que es literalmente lo que `§5-B` punto 5 avisa que rinde peor: un meme pulido se lee a anuncio corporativo.
+- **Precedente nuestro:** el Aquaman se montó así (`§0i-2b`), con Impact y la palabra clave en naranja.
+- **LO ÚNICO DE MARCA QUE ENTRA ES LA PALABRA NARANJA** (`§4`, `#fe8238`), y entra porque no compite con el formato: es un color sobre la misma fuente. **Nuestra marca no entra en la imagen** (`§0a-bis`); esa palabra es el máximo que un meme admite.
+- **⛔ La frontera, para no usarlo de coartada:** esto vale cuando la imagen **ES una plantilla reconocible** (meme conocido, pantallazo, documento). En un meme ILUSTRADO desde cero (`§6`) no hay formato que reconocer y **manda `§4` entera**: Bricolage, Switzer y paleta.
+
 ## ⛔⛔⛔ 0b-TEXTO-REF-MOMENTO · EL MOMENTO QUE RETRATA LA ESCENA ES ESENCIA, Y SE CALCA COMO EL RESTO (Iker, 2026-08-27)
 
 > **Iker, y es la corrección más cara de la sesión porque llegó con la imagen ya montada:** *"veo un claro error en que no has sabido captar bien la esencia del meme de la foto, que al final en la foto es el meme viral. ¿Has cambiado textos, aparte de traducirlos al español, que no tienen nada que ver? Si la broma del original literalmente pone «persona que trabaja marketing con una idea de campaña», ¿por qué tú lo has traducido a «el de marketing después de publicarlo todo»?"*.
