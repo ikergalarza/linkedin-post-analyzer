@@ -561,6 +561,10 @@ Iker pidió aplicar a este correo lo aprendido con Kaixito 01 · Tanda 6 antes d
 
 **Pendiente de Iker:** dar el OK al texto y decidir el remitente/pilar/GIF del correo del 07/09 (la cuenta de arriba solo cierra la semana del 31/08).
 
+### 🔴 Bloqueo real: `Iker de Neety` no existe como remitente en Brevo (2026-08-27)
+
+`GET /senders` solo devuelve dos: `Neety` (`management@neety.com`) y `Kaixito de Neety` (`hola@neety.com`, el único usado hasta ahora). **Ningún founder tiene remitente verificado.** Convención fijada en `email-marketing §1` (nombre corto + `de Neety`, nunca el apellido, por la misma razón que el asunto en móvil). **Pendiente de Iker antes de poder crear la campaña del correo 2:** dar de alta `Iker de Neety` en Configuración → Remitentes de Brevo, con el email desde el que va a salir (¿`hola@neety.com` también, u otro?).
+
 - **Las dos reglas nuevas que salen de aquí, y son de planificación, no de este correo:**
   1. **No se repite pilar dos semanas seguidas.**
   2. **No se repite remitente dos semanas seguidas.**

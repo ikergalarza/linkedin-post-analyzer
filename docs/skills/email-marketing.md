@@ -130,6 +130,14 @@ El estado vivo, en orden, está en `historial-newsletter.md`.
 - **Se mide, no se discute:** en las primeras 2-3 tandas, opens/respuestas/bajas de Kaixito contra los founders, por segmento. Si abre más, gana papel; si el segmento industrial senior responde mal, se le acota la lista (p. ej. solo clientes, como los VIP de Runner Pro).
 - Firma humana al final: nombre + rol real ("Iker, cofundador de Neety"). Kaixito firma como "Kaixito, la mascota de Neety".
 
+### ⭐ EL NOMBRE DEL REMITENTE (campo "From" de Brevo) NO ES LA FIRMA DEL CUERPO (Iker, 2026-08-27)
+
+**Son dos campos distintos y se confunden fácil.** La firma de arriba (`§1`, última línea) es texto DENTRO del correo. El remitente es el `sender.name` que Brevo pone en la bandeja de entrada, al lado del asunto, ANTES de que se abra el correo — y ahí un nombre suelto sin marca puede leerse como spam o como un desconocido.
+
+**La convención, y ya la teníamos puesta sin saberlo: `NOMBRE de Neety`.** Es exactamente el patrón de Kaixito (`"Kaixito de Neety"`, nunca `"Kaixito"` a secas, `§5c-0`), y se extiende igual a los 3 founders: **`Iker de Neety`** · **`Unai de Neety`** · **`Asier de Neety`**.
+- **⛔ Nunca el nombre completo con apellido** (`"Iker Galarza de Neety"`). Confirmado con la práctica del sector (Brevo, Bento, MarketingProfs, 2026-08-27): nombre + empresa es el patrón dominante en B2B ("First Name at/from Company"), pero **nombre completo + empresa se corta en la vista de bandeja de la mayoría de clientes de correo** — el mismo problema del asunto en móvil (`§2`), aplicado al remitente. Se usa el nombre corto, igual que ya hacíamos con Kaixito.
+- **🔴 Y HAY UN BLOQUEO REAL, NO SOLO DE NOMBRE: en Brevo solo existen DOS remitentes verificados hoy** (`GET /senders`, 2026-08-27): `Neety` (`management@neety.com`, id 1) y `Kaixito de Neety` (`hola@neety.com`, id 3). **Ningún founder tiene remitente propio dado de alta.** Antes de poder enviar el correo 2 (o cualquier correo firmado por un founder), Iker tiene que dar de alta `Iker de Neety` en el panel de Brevo (Configuración → Remitentes), verificando el email que vaya a usar. Sin eso, la API rechaza la campaña o la crea con el remitente equivocado.
+
 ---
 
 ## 2 · El ASUNTO (es el hook del email: corto, punchy, curiosidad)
