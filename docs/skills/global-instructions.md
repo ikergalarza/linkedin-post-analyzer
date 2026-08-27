@@ -397,6 +397,30 @@ Demasiado nicho para el hook (mándalo al CUERPO): "pipeline", "outbound", "cade
 >
 > **⛔ Y el ámbito es TODO el texto, no solo el gancho.** El veto de `CRM` es de audiencia (`brand-voice §2b`), y ese vale igual en el cuerpo, en el spam ninja, en las respuestas a comentarios y **dentro de la imagen** (`images §0h-FILTROS`). Lo único que cambia es que en el cuerpo `CRM` sí está permitido por `brand-voice §2b` porque no tiene traducción llana… **y desde hoy sí la tiene, así que ahí también gana la ficha.**
 
+> #### ⛔⛔ 2.3-CRM-BIS · LA TRADUCCION LLANA LA DECIDE LO QUE EL LECTOR TIENE, Y LA IMAGEN MANDA SOBRE EL DICCIONARIO (Iker, 2026-08-27)
+>
+> > **Iker, y la pega es correcta:** *"realmente CRM es ficha del cliente o mas bien es el programa para gestionar clientes, la herramienta. Lo que tu veas, que vaya a entender la mayoria de la gente y que vaya a maximizar el alcance"*.
+>
+> **Tiene razon en lo literal: un CRM es el PROGRAMA, y la ficha es lo que hay DENTRO.** Y aun asi gana `la ficha del cliente`, por dos motivos que no son de diccionario:
+>
+> 1. **ALCANCE (`§2.3b`): se traduce por lo que el lector TIENE, no por lo que la palabra ES.** El director comercial de 55 **puede no tener programa; fichas tiene siempre**. `el programa de gestion de clientes` deja fuera a todo el que no lo usa y no gana nada a cambio, que es exactamente el test de `§2.3b`.
+> 2. **COHERENCIA CON LA IMAGEN, y este es el que decide.** Si el rotulo de la foto ya dice `la ficha del cliente`, el texto **no puede llamarlo de otra manera**: son dos nombres para la misma cosa en el mismo post, y el lector paga el peaje de traducir. **Cuando la imagen ya esta montada, la imagen fija el vocabulario del texto**, no al reves (`§8` check 8b: concordancia con como el post llama a las cosas).
+>
+> **LA REGLA GENERAL, y vale para cualquier palabra vetada por audiencia** (`brand-voice §2b`): entre dos traducciones llanas correctas, gana **la que existe en la vida del lector aunque no tenga la herramienta**, y a igualdad, **la que ya este escrita en la foto**.
+
+### ⛔⛔ 2.2b-NEGATIVO · SI EL ORIGINAL DICE `PROBLEMAS`, NOSOTROS DECIMOS `PROBLEMAS` (Iker, 2026-08-27) — GLOBAL
+
+> **Iker, corrigiendome un gancho donde yo habia cambiado `problemas` por `datos`:** *"siempre te recalco que hay que copiar y mejorar, pero no pasa nada en ciertos aspectos de ser descarado con la copia. Si la referencia dice problemas, pues eso tiene connotaciones mas negativas que ya sabemos que a la sociedad le encanta el sesgo de la negatividad"*.
+
+**El vicio, y es mio: suavizar el sustantivo del original al adaptarlo.** El gancho de Pietro Acerbis dice `FIVE structural problems` y yo escribi `3 datos`. **`datos` es neutro y `problemas` es negativo**, y lo negativo es justo lo que frena el scroll — es el mismo motor que `outliers-database §3.1` mide como **Controversy (254 posts)**, el dominante del corpus.
+
+**LA REGLA: el sustantivo CARGADO del original se calca tal cual.** Es `§4.4-ESENCIA` aplicada a la palabra, no solo al chiste: *"la esencia se copia PALABRA POR PALABRA"*. Si el original dice `problemas`, `agujeros`, `errores` o `mentiras`, esa palabra se queda; suavizarla a `datos`, `campos` o `puntos` es la misma familia de fallo que buscar el equivalente en vez de copiar.
+
+**⛔ Y EL NUMERO SE CALCA TAMBIEN… HASTA DONDE EL PILAR PUEDA PAGARLO** (`§2.5b`, la cifra es una promesa cumplible):
+- El original prometia **5** y los desarrollaba en 5 parrafos. **En un meme eso no cabe:** `post-workflow §4.4-CORTO` topa el cuerpo en **450 caracteres** (mediana 11.602 impresiones contra 3.760 de los de 451-700), y cinco problemas solo entran como lista numerada — que es justo lo que convierte un meme en un lead magnet, el segundo motivo del propio hardcode.
+- **Se baja al impar mas alto que el pilar pueda ENSEÑAR entero**, que en meme es **3** (cabe en el bloque de tres con anafora y escalera, que es el ritmo nativo del pilar).
+- **Bajar el numero NO es suavizar la palabra.** Se recorta lo que no cabe, nunca la carga negativa.
+
 **⚠️ ANCLAR NO ES PONER "En ventas," DELANTE (2026-07-17).** Se convirtió en muletilla: 3 hooks seguidos empezando igual. **Y la muletilla la creó el propio validador**: la forma más barata de aprobar el check del ancla es pegar la palabra delante, y en cuanto sale verde se deja de pensar. Es el riesgo de todo check mecánico: optimizas para la comprobación, no para el lector.
 - **Los datos:** solo **1 de nuestros 11 ganadores** empieza por "En ventas" (el 16.55x). Los otros 10 anclan por otro sitio. **Está en el validador.**
 - **LOS ÁNGULOS PARA ANCLAR (rota, no repitas el del post anterior):**
