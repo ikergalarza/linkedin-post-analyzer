@@ -348,7 +348,20 @@ CS_ANCLA = (r'\b(cliente|clientes|soporte|atenci[oó]n al cliente|ticket|tickets
 # "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
 # aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
 # CRM y forecast añadidos el 2026-07-14 (se coló "Tu CRM…" en un hook de meme).
-DEMASIADO_NICHO = r'\b(b2b|outbound|inbound|pipeline|cadencia|reply rate|touchpoints?|sdr|aes?|cold email|discovery|gtm|icp|crm|forecast|saas|leads?|follow-?up)\b'
+# ⭐ `post` entra aqui y NO en ANGLICISMOS (Iker, 2026-08-27), y la distincion
+# es la que yo habia mezclado. Son DOS listas con dos criterios distintos:
+#   ANGLICISMOS (brand-voice 2b) = el lector NO lo entiende -> fuera de TODO
+#     el texto (pipeline, funnel, forecast...).
+#   DEMASIADO_NICHO (2.3)        = el lector SI lo entiende pero ESTRECHA ->
+#     fuera del GANCHO, y en el cuerpo vale.
+# Iker: "esto es para el gancho, que ahi es donde hay que maximizar el alcance
+# y reducir al maximo la barrera de entrada; en el spam ninja puedes dejar post
+# tranquilamente porque eso ya forma parte del cuerpo".
+# ⭐ Y LA SALIDA EN EL GANCHO ES EL VERBO, NO EL SUSTANTIVO, esto esta MEDIDO:
+# `una publicacion` deja la linea 1 del ninja en 60 car y revienta el tope de
+# 55; `publicar` la deja en 53 y en el gancho cuesta UN solo caracter mas que
+# `post`. Ademas el verbo es mas punchy (2.9).
+DEMASIADO_NICHO = r'\b(b2b|outbound|inbound|pipeline|cadencia|reply rate|touchpoints?|sdr|aes?|cold email|discovery|gtm|icp|crm|forecast|saas|leads?|follow-?up|posts?|postear)\b'
 # §2.9 — delatores de verbo flojo: describen en vez de frenar el scroll
 # Ojo con "pasa": "pasa factura" es un MODISMO punchy, no un verbo flojo, y es el
 # gancho de "Subir en ventas siempre pasa factura" (13.61x). El check lo tumbaba.
@@ -1278,7 +1291,13 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         'insight': 'el hallazgo', 'insights': 'los hallazgos',
         'pitch': 'el discurso', 'closing': 'el cierre',
     }
-    _ang = [w for w in ANGLICISMOS if re.search(r'\b' + w + r'\b', cuerpo, re.I)]
+    # Se mira el texto SIN las URLs: la cola de UTM lleva `utm_medium=post`
+    # (4.4b-UTM) y `post` es ahora anglicismo, asi que el check se disparaba
+    # contra un parametro que el lector NO VE: LinkedIn acorta el enlace a
+    # lnkd.in al publicar. Misma logica por la que los 450 del meme se miden
+    # con el enlace ya acortado (4.4-CORTO).
+    _sin_urls = re.sub(r'https?://\S+', ' ', cuerpo)
+    _ang = [w for w in ANGLICISMOS if re.search(r'\b' + w + r'\b', _sin_urls, re.I)]
     chk(not _ang, 'Sin anglicismos que tengan traduccion llana (brand-voice §2b)',
         ' · '.join(f'"{w}" → {ANGLICISMOS[w]}' for w in _ang) if _ang else '')
 

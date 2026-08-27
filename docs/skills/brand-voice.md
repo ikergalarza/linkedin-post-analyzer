@@ -101,6 +101,36 @@ Escribe como un founder-operador se lo diría **a un director comercial de 55 a�
 
 ---
 
+
+### ⛔⛔ 2b-DOS-LISTAS · NO ES UNA LISTA DE PALABRAS PROHIBIDAS, SON DOS, Y CON CRITERIOS DISTINTOS (Iker, 2026-08-27)
+
+**Yo las tenía mezcladas, y al meter `post` en la lista equivocada lo convertí en fallo duro en todo el texto.** Iker: *"esto es para el gancho, que ahí es donde hay que maximizar el alcance y reducir al máximo la barrera de entrada; en el spam ninja puedes dejar post tranquilamente, porque eso ya forma parte del cuerpo de la publicación"*.
+
+| lista | criterio | dónde prohíbe | ejemplos |
+|---|---|---|---|
+| **§2b · ANGLICISMOS** | el lector **NO lo entiende** | **TODO el texto**, respuestas incluidas | pipeline · funnel · forecast · workflow · insight · pitch · closing · prompt |
+| **`global §2.3` · JERGA QUE ESTRECHA** | el lector **SÍ lo entiende**, pero **encoge la audiencia** | **solo el GANCHO** | CRM · B2B · SDR · outbound · GTM · ICP · webinar · **post** |
+
+**La pregunta que las separa, y es una sola:** *¿el problema es que no me entiende, o que me entiende y aun así no es para él?*
+- **No me entiende** → fuera de todo. Un director de 55 que vende maquinaria no sabe qué es un `funnel`.
+- **Me entiende pero encoge** → fuera solo del gancho. Ese mismo director sabe perfectamente qué es un `post`; lo que pasa es que en la primera línea **cada palabra de oficio le resta lectores al resto del mundo**, y la primera línea es lo único que ve el 100% del feed.
+
+**⭐ Y LA SALIDA EN EL GANCHO NO ES EL SINÓNIMO LARGO: ES EL VERBO. Esto está MEDIDO, no es preferencia:**
+
+| en el gancho | en la línea 1 del ninja (tope duro 55) |
+|---|---|
+| `un post` — 79 car | **52** ✅ |
+| `una publicación` — 87 car | **60** ⛔ **no cabe** |
+| ⭐ **`publicar`** — **80 car** | **53** ✅ |
+
+**El sustantivo traducido cuesta 8 caracteres y revienta el tope; el verbo cuesta UNO y cabe.** Y encima el verbo es más punchy (`§2.9`), que es lo que el gancho necesita.
+
+**LA REGLA, en una línea:** *si una palabra de oficio no cabe traducida, no busques un sinónimo más largo — cámbiala de categoría y ponla en verbo.*
+
+**Mecanizado:** `post|posts|postear` entran en `DEMASIADO_NICHO` (fallo duro **solo en el hook**), **no** en `ANGLICISMOS`. Y el check de anglicismos ahora **ignora las URLs**, porque la cola de UTM lleva `utm_medium=post` y el lector nunca la ve (LinkedIn acorta a `lnkd.in`).
+
+**⚠️ Y LA EXCEPCIÓN QUE NO SE TOCA: el nombre del PROPIO PUESTO.** `growth` se queda en `Trabajo en growth y marketing` porque **es su cargo real**, igual que Helena es *Customer Success Manager*. Un cargo es un nombre propio de función: traducirlo es inventarse otro puesto. La regla ataca la jerga que **describe**, no la que **identifica a quien firma**.
+
 ## 🚨 2c · LENGUAJE DE RIESGO: LO QUE PUEDE HACER QUE LINKEDIN NOS CAPE (Iker, 2026-08-07)
 
 > **⚠️ GLOBAL. Vale para CUALQUIER pilar y para el post entero**, aunque el gancho es donde más pesa porque es lo primero que lee el clasificador. Nace de dos publicaciones capadas el mismo día.
