@@ -979,3 +979,44 @@ El correo llegó a **bandeja Principal de un Gmail externo**, ni Promociones ni 
       - **Pendiente: pedirle a Iker un acceso reducido a Cloudflare** (rol o token limitado a Email Routing) para que esto deje de bloquear cada vez que toca tocarlo.
 - [ ] **Kaixito:** confirmar cómo se presenta (¿remite desde kaixito@neety.com?).
 - [x] ~~**Export del Google Chat de feedback de producto**~~ **RESUELTO EL 2026-08-24, y por otra vía.** No hizo falta el Takeout: llegó el informe de feedback ya destilado (`FEEDBACK CLIENTES 24 AGO.html`, 258 citas / 63 empresas / 87 reuniones). **Y NO se ha creado `dolores-clientes.md`**: el inventario vive en `global §4.4b-MUNICIÓN` (el banco de dolores del spam ninja) y en `aboutme §1b`, que es donde ya lo leen las dos recetas. **Un fichero más habría sido una tercera copia que desincronizar** — cómo se usa desde aquí está en `§5-ECO`.
+
+#### ⛔⛔ 5-NINJA-PRONOMBRE · EL VALIDADOR MIDE LA FORMA, NO A QUÉ APUNTA EL PRONOMBRE (Iker, 2026-08-27)
+
+**El fallo, y pasó los 31 checks:** el ninja del correo 2 decía
+
+```
+⛔ 200 tarjetas te las da cualquier feria.
+   Buscarlas ya las buscamos nosotros: {link}
+```
+
+`Buscarlas` recoge el sustantivo más cercano, que es **tarjetas**. O sea que la línea prometía que
+buscamos tarjetas, que es lo único que no hacemos. Encima repetía `buscar` dos veces en 55
+caracteres. **El validador dio 31/31**: la forma era impecable y el significado estaba del revés.
+
+Iker: *"si me confundo yo, imagínate el espectador. No puede haber dudas de lo que nos referimos,
+teniendo en cuenta que nuestro público es viejo y que tendrán poco tiempo para leer los correos"*.
+
+**LA COMPROBACIÓN, antes de entregar cualquier ninja:** lee las dos líneas **solas**, sin el correo
+delante, y por cada pronombre (`la`, `lo`, `las`, `los`, `-las`, `-lo`) pregúntate **a qué sustantivo
+de la línea de arriba se refiere**. Si el que recoge no es el que querías, la línea dice otra cosa.
+
+- **El arreglo casi nunca es cambiar el pronombre: es quitarlo.** Un sustantivo explícito no se puede
+  malinterpretar, y en un lector de 55 años con prisa eso vale más que la elegancia.
+  ```
+  ✅ Una feria te da tarjetas, no clientes.
+     El nombre de quien decide, nosotros: {link}
+  ```
+- **No es mecanizable** (haría falta resolver anáforas), así que vive en el pase de criterio de
+  `global §8`, no en el script.
+
+#### ✅ 5-NINJA-AB · POR QUÉ EL A/B DE REMITENTE NO USA LA FUNCIÓN NATIVA DE BREVO (verificado 2026-08-27)
+
+**El A/B nativo de Brevo solo testa el ASUNTO o el CONTENIDO** ([documentación de
+Brevo](https://help.brevo.com/hc/en-us/articles/4523165348626-Create-an-A-B-test-campaign)); en la API
+son `subjectA`/`subjectB`. **El nombre del remitente no es una variable testeable.** Para testarlo hay
+que montar dos campañas gemelas a mano (`§2`, A/B de remitente).
+
+**Lo que se pierde, dicho entero para no volver a preguntarlo:** el nativo declara ganador solo y
+manda el ganador al resto de la lista. En un A/B de remitente sobre la lista entera **ninguna de las
+dos aplica** (no hay "resto"), y comparar dos campañas deja ver además los **clics**, no solo las
+aperturas que es lo único que el nativo mira.

@@ -757,3 +757,118 @@ se corrige retroactivamente la tanda 6, pero el correo 2 ya sale bien.
 **Pendiente de Iker:** mandarse un correo de prueba de las DOS campañas (13 y 14), revisar que el texto
 esté bien y confirmar antes de programar. Cuando decida qué gana, la métrica es igual que en el resto:
 aperturas primero (es lo que mide el A/B), pero sin perder de vista clics y respuestas.
+
+---
+
+## 🔁 Correo 2, versión final: ninja reescrito y día elegido (2026-08-27, tarde)
+
+### El ninja se reescribió porque decía otra cosa de la que creíamos
+
+Iker, leyendo su propio correo de prueba: *"en vez de buscarlas refiriéndote a buscar esas tarjetas…
+no puede haber dudas de lo que nos referimos, teniendo en cuenta que nuestro público es viejo y que
+tendrán poco tiempo para leer los correos"*.
+
+```
+⛔ 200 tarjetas te las da cualquier feria.
+   Buscarlas ya las buscamos nosotros: {link}
+
+✅ Una feria te da tarjetas, no clientes.
+   El nombre de quien decide, nosotros: {link}
+```
+
+**Tres fallos en dos líneas, y ninguno lo cazó el validador** (pasaba 31/31 con la versión mala):
+1. **`Buscarlas` se refiere a las TARJETAS.** Nosotros no buscamos tarjetas. El pronombre recoge el
+   sustantivo más cercano y ahí decía justo lo que no queríamos decir.
+2. **Repite `buscar` dos veces** en una línea de 55 caracteres.
+3. **Ataca el dolor viejo.** "Dejar de buscar" es el dolor nº1 (15 empresas) pero formulado así se
+   queda en la mitad barata.
+
+**El ángulo bueno, y NO es la hipótesis de 2 empresas:** `global §4.4b-MUNICIÓN` lo dice literal —
+*"la tengas o no la tengas, sigues sin **el nombre de dentro**"*— y ahí deja de ser el tema nuevo del
+19/08 (2 empresas) para convertirse en **la forma concreta del dolor nº1, que sostienen 15 + 12
+empresas**. Fagor Automation (ICP A) lo dice sin querer: el primer paso lo hace gratis en LinkedIn, y
+lo que pide justo después es el teléfono del que decide. La fórmula exacta (`el nombre de quien
+decide`) viene sancionada de `brand-voice §2c-DATOS` como recambio seguro.
+
+**⭐ Y LA LECCIÓN QUE VALE PARA CUALQUIER NINJA FUTURO: el validador comprueba la FORMA, no a qué
+apunta el pronombre.** Antes de entregar hay que leer las dos líneas solas y preguntarse *¿a qué
+sustantivo se refiere cada `la`, `lo`, `las`?* Un pronombre que recoge el sustantivo equivocado pasa
+los 31 checks y dice otra cosa.
+
+### El A/B nativo de Brevo NO sirve aquí, y está verificado
+
+Iker preguntó si no habría que usar la función de A/B testing que Brevo trae incorporada. **No, y no
+es por no tener la API:** el A/B nativo de Brevo solo testa **el asunto** o **el contenido del email**
+([su documentación](https://help.brevo.com/hc/en-us/articles/4523165348626-Create-an-A-B-test-campaign)),
+y en la API los parámetros son `subjectA`/`subjectB`. **El nombre del remitente no es una variable
+testeable**, que es justo lo que medimos. Dos campañas gemelas es la única forma.
+
+**Lo que se pierde por no usarlo, dicho entero:** el A/B nativo declara ganador solo y manda el
+ganador al resto de la lista. Aquí **ninguna de las dos aplica**: no hay "resto" (la lista entera se
+parte al 50% y todos reciben) y el ganador se mira comparando las dos campañas, que además con
+`utm_campaign` separado deja ver **clics**, no solo aperturas.
+
+**Comprobado campo a campo antes de dar el A/B por válido:** asunto, preview, pie, `replyTo` y cuerpo
+idénticos; lo único distinto es el remitente y el `utm_campaign`. Quitando los UTM, **el HTML es igual
+carácter a carácter**.
+
+🔴 **Y la condición que hace válido el test: las dos campañas salen a la MISMA hora y minuto.** Con
+una a las 09:05 y otra a las 09:20 dejaríamos de medir el remitente para medir la hora encima del
+remitente.
+
+### El día: MIÉRCOLES 2 DE SEPTIEMBRE, 09:05
+
+Iker lo dejó a mi criterio. Los datos propios, leídos de Brevo el 27/08:
+
+| tanda | día | entregados | aperturas reales |
+|---|---|---|---|
+| 1 | jueves 20/08 18:39 | 23 | 30,4% |
+| 2 | viernes 21/08 | 42 | 23,8% |
+| 3 | **lunes 24/08** | 88 | **37,5%** |
+| 4 | miércoles 26/08 | 183 | 21,9% |
+| 5 | jueves 27/08 | 345 | 32,8% *(sin cerrar)* |
+
+**⛔ ESTE DATO NO PUEDE ELEGIR EL DÍA, y el motivo no es el que parece.** No es solo que los tamaños
+sean distintos: **las tandas NO repartieron la lista al azar.** La 1 se llevó los 25 primeros
+contactos y la 6 los últimos 380, así que cada tanda tiene un trozo distinto de la base con calidad
+distinta. Eso confunde el día con la audiencia y no hay forma de separarlos a posteriori. Súmale que
+la 4 y la 5 no están cerradas (`§` de arriba: ninguna cierra antes de 3-4 días).
+
+**Manda el corpus, que ya respondió esto con 353 correos y 490 días** (`email-marketing §5`): los
+cinco laborables rinden igual (Timepack, 19,8-20,1%). Por eso el día se elige por **criterio
+operativo**.
+
+| día | veredicto |
+|---|---|
+| lunes 31/08 | ⛔ **sigue siendo agosto.** Buena parte del ICP industrial no ha vuelto |
+| martes 1/09 | ⚠️ **el día de la vuelta**: bandeja llena de todo agosto |
+| **miércoles 2/09** | ✅ **elegido.** Ya están dentro, la purga del primer día ha pasado, quedan 3 días de semana |
+
+**El argumento que decide, y es de RIESGO, no de aperturas** *(deducción mía, `working-preferences
+§0c`, no medida)*: nuestro peligro mayor no es abrir poco, **es la queja de spam** — por eso nos
+cerraron MailerLite. El día de la vuelta de vacaciones es justo cuando la gente hace limpieza masiva
+de bandeja y se da de baja en bloque. Llegar el miércoles esquiva esa purga.
+
+**La hora, 09:05, y no se mueve.** Brevo no deja las 09:01 de Mario, y las 09:05 siguen cumpliendo el
+mecanismo: se sale DESPUÉS de la oleada de los que programan a la hora en punto, así que en una
+bandeja ordenada por lo más reciente quedamos encima.
+
+🔴 **AVISO, IKER: el 2/09 cae dentro de tu semana de vacaciones (31/08 - 04/09).** El CTA es una
+reserva de calendario, así que se gestiona sola, **pero las respuestas al correo caen en `hola@` que
+reenvía a ti y a Mario**. Si alguien contesta esa semana, hay que saber quién lo coge.
+
+### Estado de las campañas en Brevo
+
+| id | qué es | estado |
+|---|---|---|
+| ~~13, 14~~ | primera versión del A/B, con el ninja malo | **borradas por mí** |
+| **15** | A/B variante A · `Iker de Neety` · lista 11 (517) | borrador |
+| **16** | A/B variante B · `Iker Galarza de Neety` · lista 12 (518) | borrador |
+| **17** | `Correo 2 · prueba interna` · lista Testers (5) | enviada a mano el 27/08 |
+
+**⭐ Y AHORA SÍ SE PUEDEN BORRAR CAMPAÑAS.** Con la `BREVO_API_KEY` en el entorno, `DELETE
+/emailCampaigns/{id}` responde 204. El conector MCP no expone esa operación, pero la API sí: **ya no
+hay que pedirle a Iker que limpie borradores a mano.**
+
+**La prueba interna lleva su propio `utm_campaign`** (`iker-02-feria-prueba-interna`): con el de la
+variante B, los clics internos habrían ensuciado las métricas del A/B de verdad.
