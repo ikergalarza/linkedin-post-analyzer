@@ -1283,6 +1283,25 @@ Luma:        ?utm_source=historia-euskadi-26ago-unai&utm_medium=post&utm_campaig
 
 **⚠️ La trampa del bloque replicado:** la banda de evento de los mapas se edita en uno y se copia a los otros 11, y el `utm_source` lleva el slug de la región. **Copiar la banda sin tocar el slug atribuye Álava a Bizkaia y no lo nota nadie**, porque el enlace funciona igual. Va avisado en el comentario HTML de las 12 páginas.
 
+##### ⛔⛔ Y LA REGLA QUE LO CIERRA TODO: **UTM SOLO EN LO QUE SALE DE NUESTRO DOMINIO** (Iker, 2026-08-27)
+
+> Iker, y la cazó él antes de que yo tocara nada: *"siempre y cuando esto no vaya a borrar los UTMs de publicaciones de LinkedIn que van a nuestra web … si no se borran y somos nosotros mismos que al haber hecho este cambio se van a borrar, entonces deshazlo"*.
+
+**El siguiente paso parecía obvio y era el error:** si el botón de Luma lleva UTM, ¿por qué no los ~130 botones internos que llevan a `/agendar/` y a `/correo/`? Porque **GA4 reescribe la atribución de la sesión en cuanto ve `utm_*` nuevos en una URL de nuestro propio dominio.** El visitante llega del post de Asier, pincha un botón interno etiquetado, y a partir de ese clic **todos sus eventos quedan atribuidos al botón, no al post**. No abre sesión nueva: sobrescribe la que había.
+
+| enlace | ¿UTM? | por qué |
+|---|---|---|
+| **Sale a otro dominio** (Luma, y lo que venga) | ✅ **Sí** | no se carga ninguna página nuestra, no hay nada que sobrescribir |
+| **Se queda dentro de `recursos.neety.com`** | ⛔ **NUNCA** | pisa el post que trajo la visita |
+
+**Lo que SÍ se usa para medir qué página empuja a agendar o a la newsletter:** un evento al `dataLayer` con el origen, que no toca la URL. Vive en `assets/attr.js` como `cta_click` (`cta_destino` · `cta_origen` · `cta_texto`), y `/agendar/` conserva los suyos propios, más ricos (`cta_reunion`, `cta_evento`).
+
+**🔧 Y de tirar de este hilo salió un agujero que llevaba meses abierto y no se veía:** `captureAttribution` — lo que decide qué `utm_source` se guarda con cada lead — **vivía solo dentro de `/agendar/`**, así que leía los `utm_*` de ESA URL. Quien llegaba de un post al mapa de Bizkaia y luego pinchaba *"Reservar 30 min"* aterrizaba en `/agendar/` con la URL pelada, y **su lead se guardaba como `directo`**. El post que lo trajo no aparecía en el panel. Arreglado el 27/08 sacando la captura a `assets/attr.js` y cargándola en las **38 páginas**: el primer contacto se captura donde de verdad se aterriza y `/agendar/` lo respeta, porque su `if (existing) return` ya estaba escrito.
+
+**Comprobado en el navegador, no de oídas:** aterrizando en `/mapas/bizkaia/?utm_source=linkedin&utm_campaign=mapa-bizkaia-02sep&utm_content=asier` y navegando después a `/agendar/` con la URL limpia, la atribución llega intacta.
+
+**📌 Para el próximo que añada un botón a la web:** antes de pegarle un UTM, la única pregunta es **¿este enlace sale de recursos.neety.com?** Si la respuesta es no, no lleva UTM y se mide con un evento.
+
 **🔗 Y `forward.neety.com` NO nos da tracking, pero tampoco lo rompe (comprobado el 2026-08-26).** Es un **302 en Cloudflare** que redirige a `luma.com/ujffj66o` y **conserva la query string entera** (probado con los cuatro parámetros: llegan intactos a Luma). Lo que hay que tener claro: **un 302 de borde no carga HTML, así que GA4 nunca dispara ahí** — el subdominio da marca y la posibilidad de cambiar el destino sin tocar posts ya publicados, **no datos**. Para que diera datos tendría que servir una página de verdad, que es la fricción que Iker vetó el 05/08.
 
 **💰 Y LA OPCIÓN QUE SÍ CIERRA LA ATRIBUCIÓN, si algún día se paga: `Luma Plus` permite meter NUESTRO Measurement ID de GA4** en `Calendar > Settings > Options`. Con eso Luma manda a nuestro GA4 las page views **y un evento `purchase` en cada inscripción**, con id de la orden y valor. Es la única forma de ver la inscripción dentro de nuestro embudo. **Acepta `G-`, `GT-` y `UA-`, pero NO contenedores de GTM.** Decisión de negocio, no de copy.
