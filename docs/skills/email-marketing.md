@@ -152,6 +152,16 @@ El estado vivo, en orden, está en `historial-newsletter.md`.
   **EL TOPE PRÁCTICO SON ~20 CARACTERES, y se apunta a 16 o menos.** El nombre corto + `de Neety`
   cabe siempre; en cuanto entra un apellido, se cae la marca.
 
+  **⭐ Y EL APELLIDO NO DESAPARECE: SE MUEVE A LA FIRMA (Iker, 2026-08-27).** *"Donde pone si es
+  fundador o cofundador, ahí sí quiero poner el apellido, al final del cuerpo"*. El corte solo existe
+  en la **lista de la bandeja**; dentro del correo abierto no hay límite de ancho. Así que el nombre
+  completo se gana donde sí cabe y donde además pesa —la firma— y se ahorra donde rompe la marca.
+
+  | dónde | qué va |
+  |---|---|
+  | remitente (`sender.name`) | `Iker de Neety` · `Unai de Neety` · `Kaixito de Neety` |
+  | **firma del cuerpo** | **`Iker Galarza, cofundador de Neety`** · `Unai Arambarri, CEO de Neety` |
+
   **⛔ Y DE AQUÍ SALE UNA REGLA DE MÉTODO, que es la que más vale:** el A/B de remitente
   con-apellido contra sin-apellido **se canceló sin llegar a enviarse**. No hacía falta medirlo
   porque el defecto **se ve a simple vista**, y gastar la única tirada de A/B en algo observable
