@@ -41,7 +41,7 @@ Carga `docs/skills/email-marketing.md` **más** `aboutme.md`, `brand-voice.md` y
 **LO QUE NO SE NEGOCIA:**
 - NUNCA inventes una empresa, una persona ni un dato. Lo que no puedas verificar va como `[PENDIENTE · no verificado]`. Un nombre inventado tira un mapa de 6x a 0.5x.
 - Verifica TODA cifra contra fuente real antes de escribirla. En el cuerpo cita el NOMBRE de la fuente y **NUNCA su año** (`global §3.5b`); los años van en la entrega interna, para responder en comentarios.
-- Menciones: solo personas con actividad real en LinkedIn en los últimos 3 meses, con el **nombre exacto** que devuelve Unipile. Un mando intermedio activo bate a un CEO dormido.
+- **Menciones: DOS filtros duros, y el primero es el cargo (Iker, 2026-08-26).** (1) **Poder de decisión y, a poder ser, de ventas**: CEO / director general / gerente / fundador, director comercial / de exportación / de desarrollo de negocio, director de marketing. **Un becario, un técnico, un responsable de IT, de calidad, de RRHH o de compras NO se menciona nunca**, aunque sea el único activo: no decide y no vende. (2) **Actividad en LinkedIn de cualquier tipo** (publicar, comentar o compartir) en el último mes, y hasta 3 si no hay nadie. Nombre **exacto** el que devuelve Unipile. Detalle en `post-workflow §4.2 Paso 4`; el filtro corre solo en `scripts/menciones.py`.
 - **Antes de CADA entrega de un post, corre el VALIDADOR MECÁNICO y pega su resultado:**
   `python scripts/validar-post.py <fichero.txt> --pilar mapa|los10|meme|leadmagnet|tarjeta [--cuenta X]`
   (pilar `tarjeta`: ademas `--tarjeta <fichero>` con el texto que va DENTRO de la imagen)

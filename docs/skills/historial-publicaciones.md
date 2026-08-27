@@ -111,6 +111,25 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 
 ---
 
+## ✅ SEMANA DEL 31/08 — LOS 3 PELOTEOS, ENTREGADOS EL 2026-08-26
+
+| Día | Cuenta | Formato | Región | Estado | Validador |
+|---|---|---|---|---|---|
+| Mar 01/09 | **Asier** | Mapa | **Cantabria** (virgen para las 3 cuentas) | entregado | ✅ 69/69 |
+| Mié 02/09 | **Unai** | Despiece · **alimentación** (sector nuevo) | **Comunitat Valenciana** | entregado | ✅ 73/73 |
+| Jue 03/09 | **Iker** | "Los 10" | **Navarra** | entregado | ✅ 61/61 |
+
+**🔧 CAMBIO DE PLAN, decidido por Iker el 26/08: el despiece de MÁQUINA HERRAMIENTA de Iker se mueve a la semana del 07/09.** Barrido en Unipile sobre Cataluña, Comunitat Valenciana y Castilla y León: **fuera de Euskadi no salen las 12 empresas del sector** que pide `post-workflow §4.7`, y Euskadi está gastada para un despiece de Iker (el coche, 30/07). **Su región sigue sin decidir** y es lo primero que hay que resolver de la semana del 07/09.
+
+**Lo que queda ANTES de publicar, y bloquea:**
+- **Mapa de Cantabria:** el CSV de PamPam y dar de alta `recursos.neety.com/mapas/cantabria/`, que hoy no existe y es a donde apunta el CTA.
+- **Despiece de Valencia:** **plantilla nueva de 12 huecos** para alimentación. Propuesta: **un plato redondo**, no la espátula ni el gorro de cocinero, porque `montar-llanta.py` ordena los huecos **por ángulo** y eso pide una silueta circular.
+- **"Los 10" de Navarra:** las 10 fotos en orden de mención y la orla.
+
+**Regiones que esto quema (tabla de cobertura actualizada arriba):** Cantabria → Asier · Comunitat Valenciana (despiece) → Unai · Navarra ("Los 10") → Iker.
+
+---
+
 ## 🔴🔴 AVISOS ABIERTOS PARA LA SEMANA DEL 10/08 (leer antes de planificar nada)
 
 ### 1 · EL LEAD MAGNET DE IKER SE CAPÓ TRES VECES. LA HIPÓTESIS VIVA ES **CLAUDE**.
@@ -144,11 +163,11 @@ El de automoción ya está hecho (Asier, 07/08). El siguiente **no repite sector
 
 | Cuenta | MAPAS usados (no repetir en esa cuenta) | "LOS 10" usados | Conceptos gastados por esa cuenta |
 |---|---|---|---|
-| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra · Murcia · **Castilla y León** | País Vasco · **Asturias** | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" · "el tejado de la Península" |
+| **Iker** | Gipuzkoa · Cataluña · Andalucía · Valencia · Galicia · Navarra · Murcia · **Castilla y León** | País Vasco · **Asturias** · **Navarra** (03/09) | "pueblo de 7.000 hab" · "esquina del Atlántico" · "patio trasero de los Pirineos" · "playa y paella" · "8,7 millones" · "el tejado de la Península" |
 | **Unai** | País Vasco · Bizkaia · Álava · **Cataluña** | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "última parada antes de Francia" |
-| **Asier** | Aragón | — | "secarral que peina el cierzo" · "el felpudo del Pirineo" |
+| **Asier** | Aragón · **Cantabria** (01/09) | — | "secarral que peina el cierzo" · "el felpudo del Pirineo" · "el tendedero del Cantábrico" |
 
-**DESPIECES ya hechos** (cuenta · región · objeto/sector): **Iker** — Euskadi, el coche (automoción, 30/07) · **Asier** — Navarra, el coche (automoción, 07/08). El despiece **no quema la región para mapa ni para "Los 10"** (`post-workflow §4.7` Paso 1), pero **repetir región Y formato en la misma cuenta sí es repetir**: Euskadi ya está gastada para un despiece de Iker.
+**DESPIECES ya hechos** (cuenta · región · objeto/sector): **Iker** — Euskadi, el coche (automoción, 30/07) · **Asier** — Navarra, el coche (automoción, 07/08) · **Unai** — Comunitat Valenciana, el plato (alimentación, 02/09). El despiece **no quema la región para mapa ni para "Los 10"** (`post-workflow §4.7` Paso 1), pero **repetir región Y formato en la misma cuenta sí es repetir**: Euskadi ya está gastada para un despiece de Iker.
 > 🔧 **Corregido el 2026-08-14: esta tabla estaba desactualizada y era una bomba de relojería.** Le faltaban **Castilla y León** (mapa de Iker, 04/08) y **Navarra** (despiece de Asier, 07/08), y Castilla y León seguía listada como libre para Iker. Planificar septiembre con ella sin actualizar habría repetido región en la misma cuenta. **Cada vez que se publique un peloteo, esta tabla se toca en el mismo commit que la fila del registro.**
 
 **"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.
