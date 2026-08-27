@@ -916,6 +916,25 @@ Corre estas puertas EN ORDEN:
 
 **⛔ Y EL TOPE DE CARACTERES NO ES UNA EXCUSA: se recorta por OTRO lado.** Si no cabe, se quita un artículo, una preposición o el complemento de sitio (`§2.9c`), **nunca la palabra que dice de qué estamos hablando**. En el caso real cupo entero: `juntamos 80 en Donostia` (44 car) pasó a `juntamos 80 nombres en Donostia` (52), y sigue por debajo del tope y por debajo de la línea de arriba.
 
+##### ⛔⛔ 2.5b-EXPLÍCITO · Y NO ES SOLO LA CIFRA: ES CUALQUIER PALABRA QUE QUITA UNA DUDA (Iker, 2026-08-27)
+
+> **Iker:** *"falta explícitamente tal cual poner que vamos a hacer un evento, y encima presencial. Elena pone que el 1 de abril van a hacer una sesión live. Hay que ser más explícito, y últimamente te está costando, y no hay que dejar la duda ni confusiones, porque nuestro público es mayor y se pueden confundir"*.
+
+**La regla de aquí arriba era del SUSTANTIVO DE UNA CIFRA. El vicio es más ancho y es siempre el mismo: por caber en el tope de caracteres, tacho la palabra que quitaba la duda.** El validador la da por buena porque la frase sigue siendo gramatical, y el lector se queda adivinando.
+
+**El caso:** el ninja decía `El 24 de septiembre abrimos 80 plazas`. **No dice que sea un evento, ni que sea presencial.** Un director de 55 lee eso y no sabe si es un webinar, una lista de espera o una promoción. La referencia sí lo dice — *"we are doing a **live session**"* — y nosotros nos lo habíamos comido.
+
+**LO QUE NUNCA SE TACHA, por familias:**
+| se tacha | NUNCA se tacha |
+|---|---|
+| artículos, preposiciones, complementos de sitio que el cuerpo ya sitúa (`§2.9c`) | **el sustantivo de una cifra** (`80 plazas`, no `80`) |
+| adjetivos de sector que encogen alcance (`§2.3b`) | **qué COSA es** (`un evento`, no `abrimos`) |
+| la aclaración de lo que ya se entiende | **el FORMATO cuando cambia la decisión** (`presencial`, `en directo`) |
+
+**⛔ Y el tope de caracteres no es la excusa, es la CAUSA.** Si no cabe en el ninja, **la palabra que quita la duda no se recorta: se sube al CUERPO**, que es donde tiene sitio. Es lo que hace la referencia — Elena dedica un párrafo entero a explicar el evento y deja el enlace para el final —, y es lo que se hizo aquí: `El 24 de septiembre montamos un evento presencial en Donostia.` va como línea de cuerpo, y el ninja remata con la fricción.
+
+**El test antes de entregar:** dale el post a alguien que no sabe nada de esto. **¿Puede quedarse con una pregunta?** Si sí, esa pregunta es la palabra que has tachado.
+
 **⭐ Y el sustantivo bueno no es el genérico, es el que RECOGE la línea de arriba.** Aquí `personas` habría sido correcto y plano; **`nombres` engancha con `el nombre de dentro no` de la primera línea**, así que la cifra deja de ser un dato de aforo y pasa a ser el remate del chiste: lo que no consigues de uno en uno, ahí está 80 veces.
 
 

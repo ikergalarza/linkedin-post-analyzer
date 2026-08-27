@@ -497,6 +497,26 @@ salvas`, titular y etiqueta hablan en dos voces distintas dentro de la misma fot
 3. **El CTA puede ir en segunda** (*"¿quieres los 5 mensajes?"*): es una oferta, no
    un juicio. Lo que no vale en segunda es **afirmar algo sobre el lector**.
 
+#### ⛔⛔ EXCEPCIÓN 4 · EN MARIO Y HELENA, EL CUERPO VA EN NOSOTROS. EL GANCHO SIGUE EN YO (Iker, 2026-08-27)
+
+> **Iker, y la razón no es de rendimiento, es de cómo queda él:** *"noto bastante que el hecho de que en el gancho hable en primera persona me parece bien, pero que todo el cuerpo se hable en primera persona del singular me da la sensación de que quedo como de chulo o de prepotente, y yo soy una persona totalmente lo contrario: siempre priorizo más a los demás que a mí, soy muy humilde, muy cercano, muy colaborativo. En vez de decir «me escriben ellos», podemos decir «nos escriben ellos»"*.
+
+**El reparto, y no rompe nada de lo medido arriba porque toca otra pieza:**
+
+| pieza | persona | por qué |
+|---|---|---|
+| **GANCHO** | **1ª SINGULAR**, como hasta ahora | es donde está la evidencia (los 4 mejores de la casa) y donde una sola línea en primera no suena a chulería, suena a confesión |
+| **CUERPO** | **1ª PLURAL** cuando el mérito o el trabajo son de la casa | el logro es de la empresa, no suyo |
+| **NINJA y EVENTO** | 1ª plural, ya estaba (excepción 1) | el sujeto es la empresa ofreciendo |
+
+**⭐ Y NO ES UNA CONCESIÓN DE ESTILO: EL PLURAL AHÍ ES MÁS VERDAD.** El contenido de Mario trae demos **a Neety**, no a Mario; el evento es **de la empresa**, no suyo. Un cuerpo entero en `yo` no solo suena prepotente: **atribuye a una persona un resultado que es de la casa**, que es la misma familia de fallo que inventarse un dato.
+
+**⭐⭐ Y LA REGLA GENERAL QUE SE DESTAPA, porque esto ya lo teníamos a medias:** `global §2.0c-PRESUMIR` dice que **el gancho** no presume porque el lector lee *"mírame"*. **Faltaba la otra mitad: una cadena de `yo` seguidos en el CUERPO produce exactamente el mismo efecto**, aunque ninguna frase suelta presuma. El test es de contar: **si el cuerpo encadena tres o más frases con `yo` de sujeto y el mérito no es personal, pasa a `nosotros`.**
+
+**Dónde NO aplica:** en las 3 cuentas de founder y en el pilar **historia** de cualquiera. Ahí manda la tabla de abajo: la historia es una escena propia, el `yo` es el pilar entero y **la 1ª plural es la que peor va** (6.554 · 6.271 · 3.628 · 2.926 · 1.321).
+
+**El caso:** el meme de Mario del 27/08 iba `Aquí no llamo a nadie / Me escriben ellos / ¿El que me lee?`. Quedó en `Aquí no llamamos a nadie / Nos escriben ellos / ¿El que nos lee?`, **con el gancho intacto en `Trabajo en growth y marketing`**. Y de regalo, el salto al evento deja de chirriar: el que monta el evento ya es el mismo `nosotros` que venía hablando.
+
 ### 👥 LA TERCERA PERSONA: SINGULAR SÍ, PLURAL SOLO PARA DOS PAPELES (medido el 2026-08-26)
 
 > **Iker, y la pregunta es buena porque el canónico de arriba no la contestaba:** *"¿por qué crees que la tercera persona del singular es mejor que la tercera del plural? Que hablar en segunda persona es un error ya lo tenemos comprobado, pero de la tercera tengo mis dudas"*.
