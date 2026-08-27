@@ -1641,6 +1641,19 @@ La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: apar
 >
 > **El motor es LA SALA.** No el programa, no los ponentes, no la agenda. Cuenta **quién está dentro y por qué se ha elegido a mano**. Es de otro sector (eventos de IA y VC), así que no copiamos a nadie de ventas y no hace falta acreditar (`--referencia-fuera`).
 >
+> **🔴🔴 CORRECCIÓN DEL MISMO DÍA, Y ES A ESTA REGLA DE AQUÍ ABAJO: "DESPUÉS EL AFORO" NO SIGNIFICA QUE LA LÍNEA 2 SEA EL AFORO.** Escribí esto por la mañana y por la tarde me llevó a entregar `Un post no te sienta en la sala con los que compran. / Solo hay 80 plazas y las elegimos una a una:`. Iker: *"esa segunda línea tiene que seguir la narrativa y solucionar el punto de dolor de la primera"*.
+> - **El fallo de fondo: hay DOS moldes y apliqué solo uno.** El del EVENTO (`§4.4b`, Grace Gong: sala + aforo + fricción) dice **qué información va**; el del NINJA (`§4.4b-BLOQUE`: la 1 nombra la carencia, la 2 la cubre) dice **qué papel hace cada línea**. Al venir el enlace de Luma me fui entero al primero y me salté el segundo.
+> - **La línea 2 nunca es "el dato que falta": es LA COBERTURA de lo que la 1 dice que falta.** El aforo cabe dentro de ella, pero **formulado como cobertura**, no como ficha:
+> ```
+> ⛔ Un post no te sienta en la sala con los que compran.    <- la carencia, bien
+>    Solo hay 80 plazas y las elegimos una a una:           <- ficha del evento, no cubre nada
+>
+> ✅ Un post no te sienta en la sala con los que compran.    <- la carencia, bien
+>    A esa sala solo entran 80 personas y las elegimos:     <- la CUBRE, y lleva el aforo dentro
+> ```
+> - **La bisagra es el demostrativo**, igual que en el molde medido del tatuaje (`Esa parte ya la tenemos hecha`, 0,151%): **`A esa sala`** engancha con `la sala` de arriba y convierte el aforo en la respuesta. Sin él, las dos frases son correctas por separado y el bloque no significa nada junto.
+> - **El test de los 5 segundos lo caza:** ¿la línea 2 valdría pegada a cualquier otro post nuestro? `Solo hay 80 plazas` sí ⛔. `A esa sala solo entran 80 personas` no ✅.
+>
 > **⛔⛔ Y EN EL NINJA DE DOS LÍNEAS EL ORDEN ES: PRIMERO QUIÉN ESTÁ DENTRO, DESPUÉS EL AFORO (Iker, 2026-08-27).** Las 4 piezas de abajo son para un POST de evento entero. Cuando el evento viaja dentro de otro pilar (`§4.4b`, el enlace de Luma ocupa el hueco del ninja), hay que meterlas en **dos líneas**, y ahí es donde se pierde el valor.
 > - **El fallo:** entregué `Un post nunca nos sienta en la misma sala. / Solo hay 80 plazas y se piden una a una:`. Iker: *"no creo que estemos explicando bien el valor que va a tener para la gente asistir al evento"*. **Las dos líneas vendían la PUERTA y ninguna la HABITACIÓN.**
 > - **La escasez sin valor es una puerta cerrada sin nada detrás.** `80 plazas` solo aprieta si antes sabes qué hay dentro; si no, es un número.
