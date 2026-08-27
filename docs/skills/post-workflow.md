@@ -868,6 +868,33 @@ sorprende, que es de lo que vive este pilar.
 >
 > **⚠️ Y esto NO choca con `§4.4-CALLA`** (el cuerpo no explica la imagen). Recoger el MECANISMO no es describir la foto: el cierre *"El sí entero nunca cabe en la ficha"* no cuenta que hay una katana, pero sostiene el mismo motor. **Se recoge el mecanismo en abstracto; lo que no se hace es narrar lo que se ve.**
 >
+> ### 🔴🔴 4.4-ESENCIA-MITAD-BIS · CORRECCION DEL 27/08: EL GANCHO CALCA EL GANCHO DEL POST, NUNCA EL TEXTO DE DENTRO DE LA FOTO (Iker, 2026-08-27)
+>
+> > **Iker, sobre el meme de la ficha ya publicado:** *"como me acabas de recordar la referencia, el gancho original no tenia absolutamente nada que ver con el nuestro. De hecho, nuestro gancho repetia la broma de la foto, cosa que siempre tenemos que hacer ganchos complementarios"*.
+>
+> **⛔ LO QUE HABIA ESCRITO JUSTO AQUI ARRIBA ERA MIO Y ESTABA MAL** (`working-preferences §0c`): puse que *"si robamos la imagen, el gancho calca la mecanica del texto que hay DENTRO de la imagen"*. **De ahi salio un gancho que contaba la misma broma que la foto**, y eso choca de frente con `global §2.0c-VISUAL`, que lleva desde el 21/08 diciendo que si el gancho y la foto cuentan lo mismo, una de las dos capas sobra.
+>
+> **LA REGLA BUENA, y la prueba es la propia referencia:** el post de Pietro Acerbis es un **listiculo serio sobre la ficha del cliente** y su foto es **un gag de katana**. Las dos piezas no cuentan el mismo chiste **a proposito**: el texto argumenta y la foto remata. **Ese reparto ES la referencia, y es lo que se calca.**
+>
+> | capa | de donde sale |
+> |---|---|
+> | **nuestro GANCHO y nuestro CUERPO** | del **gancho y el cuerpo del post original** |
+> | **el texto de DENTRO de nuestra foto** | del **texto de dentro de su foto** (`images §0b-TEXTO-REF`) |
+>
+> **Lo que SI se conserva de `§4.4-ESENCIA-MITAD`:** que el **mecanismo del gag** se recoja en abstracto en alguna linea de la mitad de abajo, sin narrar la foto (`§4.4-CALLA`). Lo que se retira es que el GANCHO lo haga.
+>
+> **EL TEST, y son dos gestos:** tapa la foto y lee el gancho; tapa el gancho y mira la foto. **Si las dos respuestas se parecen, el gancho esta mal**, aunque calque algo de la referencia.
+>
+> ### ⛔⛔ 4.4-ROL · EL GANCHO NO LE PUEDE ATRIBUIR AL QUE PUBLICA UN ROL QUE NO TIENE (Iker, 2026-08-27) — GLOBAL
+>
+> > **Iker, sobre el mismo meme movido a su cuenta:** *"el segundo jefe es el que se encarga de las ventas de la parte comercial, entonces el no tiene un jefe de ventas, ya que el es su propio jefe de ventas"*.
+>
+> **Es la misma familia que el dato biografico inventado de `aboutme §2`** (el `llevo años publicando` de Mario): **la voz generica del meme no es permiso para colgarle al dueno de la cuenta un puesto, un jefe o una antiguedad que no son suyos.** El lector que le conoce lo pilla en un segundo y el post pasa de chiste a incoherencia.
+>
+> **EL CHEQUEO, antes de dar el gancho por bueno:** lee el gancho poniendo delante el **headline real** de esa cuenta. *Co-Founder @ Neety, parte comercial* + *"mi jefe de ventas me mando..."* no se sostiene.
+>
+> **⭐ Y LA FOTO NO CAE EN ESTO SI VA EN GENERICO, que es lo que salvo este caso.** El rotulo dice **`Jefe:`** a secas, no `Jefe de ventas:`, y **por encima de un cofundador comercial si hay un CEO**. Iker: *"con eso nos salvamos"*. **Corolario que vale para cualquier prompt de imagen: el rotulo de un rol va siempre en la version mas generica que aguante el chiste** (`Jefe`, `El cliente`, `Compras`), porque asi la imagen sirve para las cinco cuentas y no hay que re-editarla al moverla.
+
 > ### 📏 4.4-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
 > **🔒 ESTA REGLA ES UNIVERSAL Y VIVE EN `global §2.2b-MEDIR`.** Vale para CUALQUIER pilar que parta de una referencia, no solo el meme. Aqui queda el detalle porque el primer caso fue un meme; si algun dia choca con lo de alla, manda `global`.
 > **`python scripts/anatomia-referencia.py original.txt mio.txt` antes de entregar.** Copié el tema y el motor del meme de Daniel Disney y no medí nada, y salió esto:
