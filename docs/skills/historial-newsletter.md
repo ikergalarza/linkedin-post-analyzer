@@ -637,3 +637,43 @@ borrado disponible por API.
 
 **Pendiente de Iker:** mandarse un nuevo test de la campaña 10, comprobar que el relleno del preheader
 funciona de verdad en Gmail, borrar las campañas 7/8/9 sobrantes, y confirmar para programar el viernes.
+
+---
+
+## ✅ Tanda 6 programada de verdad: campaña id 11 (2026-08-27, mismo día)
+
+**Test confirmado por Iker: el relleno del preheader funciona.** En la bandeja solo se ve *"Normal, es
+la primera vez que te escribo."* junto al asunto, sin que se cuele la primera frase del cuerpo, y el
+correo se lee entero sin problema al abrirlo. Los dos bugs de esta tanda (preheader duplicado y
+preheader corto) quedan cerrados y verificados con un test real, no solo con la API.
+
+**Campañas 8 y 9 borradas por Iker a mano en el panel** (confirmado: "te acabo de borrar yo
+manualmente las dos campañas borrador").
+
+**No hay `update` ni `delete` para campañas en el conector MCP de Brevo de esta sesión** — solo
+`create`, `get` y `list`, comprobado dos veces con búsquedas distintas. Los únicos `update_campaign` /
+`delete_campaign` / `schedule_campaign` / `cancel_campaign` que existen pertenecen al conector de
+MailerLite (muerto, prohibido). Iker confirmó que en otro ordenador su conector de Brevo sí tiene más
+funciones — mismo Brevo, misma API key, pero un conector MCP distinto con más superficie montada. Aquí
+no la hay: **para "editar" una campaña ya creada, el único camino es crear una nueva con el contenido
+correcto (con `scheduledAt` si toca) y pedir que se borre la vieja a mano** — es el mismo patrón que ya
+se usaba para corregir contenido, ahora también vale para programar.
+
+**Campaña id 11 creada y programada: viernes 2026-08-28, 09:05**, mismo contenido exacto que la 10
+(confirmado leyendo el HTML de la 10 por API antes de duplicarlo, no de memoria). `sender` pasado esta
+vez como `{id:3, name:"Kaixito de Neety"}` en vez de solo el id — confirmado por API que el nombre sale
+bien (`"Kaixito de Neety"`, no `[DEFAULT_FROM_NAME]`): el fix del bug de remitente también evita el
+placeholder en la creación, no solo lo corrige al leer.
+
+**Pendiente de Iker:** borrar la campaña id 10 (borrador ya redundante, superado por la 11) — sigue sin
+haber forma de hacerlo por API.
+
+### 🟡 Sigue sin resolver: ¿se puede borrar la campaña "Gifs mascota"?
+
+Iker preguntó si la campaña borrador usada para subir las 5 GIFs de Kaixito a la biblioteca de
+contenido de Brevo se puede borrar ya, dado que las 5 URLs (`.../content_library/...`) ya están
+documentadas y en uso. **Sigue sin verificarse.** La ruta `content_library` en la URL sugiere que es un
+almacén a nivel de cuenta, independiente de la campaña que lo usó de puerta de entrada — pero
+`corpus-correos-enviados.md` avisa explícitamente de lo contrario ("si desaparece, se van las cinco
+URLs"), y no hay forma segura de comprobarlo sin arriesgar las 5 GIFs de todos los correos de Kaixito,
+pasados y futuros. Recomendado: no borrarla, renombrarla como "NO BORRAR" en el panel en su lugar.
