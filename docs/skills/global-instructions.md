@@ -1320,6 +1320,13 @@ Es `working-preferences §0c-BIS` otra vez: **una regla universal guardada dentr
 | **Luma (evento)** | **la sala: quién está dentro y cómo se entra** (`§4.4b`, Grace Gong 11.6x/14.4x) | **una línea de contexto ENCIMA** (`§4.4b-EVENTO-CONTEXTO`) · la identidad va en `utm_source` (`§4.4b-UTM`) |
 | página del mapa | el mapa que el post lleva nombrando desde el gancho | el ultra ninja, y ahí el 650 no aplica |
 
+
+**⛔⛔ LA TABLA DE ARRIBA ES ABIERTA, Y ESO ES PARTE DE LA REGLA (Iker, 2026-08-27).** *"Sea el enlace que sea, siempre se va a tener que meter con una manera de narrar igual: bloque de dos y siguiendo la narrativa del gancho. Obviamente tú luego tendrás que saber cada enlace para venderlo bien. La del evento es una casuística nueva que solo va a durar un mes, pero puede que en el futuro tengamos otro evento u otra cosa"*.
+
+- **Un destino nuevo NO estrena molde.** Entra en la tabla con una fila que dice **qué cubre su línea 2**, y las 6 reglas de forma le aplican enteras desde el primer día. **Si algún día hace falta escribir un molde nuevo para un enlace, es que el molde está mal.**
+- **⛔ Y aquí no se hardcodea ninguna URL, a propósito.** La tabla nombra **destinos**, no direcciones: el enlace base de agendar lleva meses sin cambiar, pero **el UTM cambia en cada publicación** (`§4.4b-UTM`, y su fecha sale del reloj: `§4.4b-UTM-FECHA`). Meter una URL completa aquí la convertiría en la de un post concreto y se copiaría con el UTM de otro día, que es justo el fallo que ya cometí el 27/08.
+- **⏳ Y las filas caducan.** La del evento muere el 24/09 con su sección (`§4.4b-EVENTO-CONTEXTO`); la tabla se queda.
+
 **⛔ Y EL ERROR QUE ESTA TABLA EXISTE PARA IMPEDIR:** que la información propia del destino ocupe el PAPEL de la línea 2. El aforo del evento es información del destino; **la línea 2 sigue siendo la cobertura**, y el aforo va dentro de ella formulado como respuesta:
 
 ```
@@ -1458,6 +1465,52 @@ La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: apar
 **🔴 Y LO QUE FALLABA EN LA RECETA, que es lo que Iker pedía auditar:** esto **ya estaba escrito**, en `§4.4b-FORMA` paso 3 (*"la línea del enlace resuelve exactamente lo que la de arriba dice que falta"*)… **pero solo dentro del sub-bloque de "¿y si el post no tiene broma?"**, así que no se leía como una ley de todos los ninjas. Es el caso de libro de `working-preferences §0c-BIS` otra vez: una regla universal guardada dentro de un caso particular se rompe en todos los demás. **Sube aquí, y el paso 3 queda como su detalle.**
 
 **Mecanizado** en `validar-post.py` como aviso de entrega (`ENTREGA: la linea 1 del ninja nombra la CARENCIA`), que imprime la línea 1 y avisa si no encuentra ninguna marca de carencia (`no`, `ni`, `nadie`, `ninguno`, `cualquiera`, `es fácil`, `lo caro`). **Aviso y no fallo duro** porque que una frase nombre una carencia es criterio; lo que el script puede hacer es obligar a mirarla, que es donde se falla. **Probado contra el bloque roto de arriba: lo caza.**
+
+#### 🧠🧠 4.4b-EXCEPCIÓN · LA PSICOLOGÍA DEL BLOQUE DE DOS: SE CONFIRMA LA NORMA Y NOSOTROS SOMOS LA EXCEPCIÓN (Iker, 2026-08-27) — CANÓNICO
+
+> **Iker, y la pregunta es suya:** *"en la primera línea estás diciendo que de normal una publicación no te sienta en la sala con los que compran, pues es tan fácil como que en la segunda digas: pues en nuestro evento sí, y solo entran 80 personas. No sé qué psicología tiene detrás, si estoy atacando una creencia universal y luego dándole la vuelta, o si estoy generando contradicción"*.
+
+**LA RESPUESTA, y el matiz es lo importante: NO se ataca la creencia. Se CONFIRMA.** El bloque no dice *"lo que crees está mal"*, dice *"tienes razón, y hay un sitio donde no pasa"*. Son cosas opuestas y solo una convierte.
+
+**LOS CUATRO MECANISMOS, y actúan en este orden dentro de dos líneas:**
+
+| # | qué pasa en la cabeza del lector | qué línea lo hace |
+|---|---|---|
+| **1. Asentimiento** | reconoce la norma como verdad suya y dice que sí por dentro | la 1 |
+| **2. Marco de comparación** | la oferta deja de juzgarse en abstracto: se juzga **contra esa norma** que él acaba de aceptar | la 1 |
+| **3. Tensión y cierre** | la norma abre un hueco (*falta algo*) y la excepción lo cierra | la 1 → la 2 |
+| **4. Escasez derivada** | si la norma es que NO pasa, lo que sí lo hace es raro **por definición** | la 2 |
+
+**⭐ Y EL PUNTO 4 ES EL QUE MÁS SE MALENTIENDE: la escasez NO la crea la cifra, la crea la negación de arriba.** `Solo hay 80 plazas` a secas es un dato de aforo. Detrás de *"un post no te sienta en la sala con los que compran"*, esas mismas 80 plazas son **las 80 únicas del mundo donde eso sí pasa**. Misma cifra, dos valores distintos, y la diferencia la pone la línea 1.
+
+**⛔ POR QUÉ CONFIRMAR Y NO CONTRADECIR, que es la parte que Iker intuía:** si la línea 1 ataca lo que el lector cree, **él se defiende** y llega a la línea 2 discutiendo. Si la confirma, **se pone de tu lado** y la excepción entra sin resistencia. El lector no tiene que cambiar de opinión para hacer clic: solo tiene que aceptar que hay una salida a algo que ya daba por perdido.
+
+**⚠️ Y OJO, PORQUE EN EL GANCHO HACEMOS LO CONTRARIO Y ES A PROPÓSITO.** `§2.0a` manda **invertir el refrán** (*"En ventas ya no la consigue el que la sigue"*): ahí sí se contradice al lector, porque el trabajo del gancho es **frenar el scroll**, y una contradicción frena. El trabajo del ninja es **el clic**, y para eso hace falta acuerdo, no fricción. **Mismo post, dos mecanismos opuestos, y colocarlos al revés rompe los dos.**
+
+| pieza | qué hace con la creencia | por qué |
+|---|---|---|
+| **GANCHO** (`§2.0a`) | la **contradice** (refrán invertido) | frenar el scroll: el lector se para a discutir |
+| **NINJA** (esta sección) | la **confirma** y se coloca de excepción | conseguir el clic: el lector ya está de acuerdo |
+
+**EL DATO, y son nuestros dos extremos medidos:**
+
+```
+✅ 0,151% (el mejor CTR del año, tatuaje)
+   Tatuarse es lo fácil. Lo caro es saber de quién tiene que ser el logo.   <- la norma, confirmada
+   Esa parte ya la tenemos hecha:                                          <- la excepción
+
+⛔ 0,017% (el peor con alcance real)
+   De montar esa lista nos encargamos nosotros:                            <- excepción sin norma delante
+```
+
+**El de 0,017% no tiene línea 1 que monte la norma, así que la oferta llega sin nada contra lo que compararse.** Es la misma lectura que `§4.4b-CLICS` punto 3, dicha ahora desde la psicología en vez de desde los clics.
+
+**LA PLANTILLA, para copiar:**
+```
+[Lo normal] no [lo que el lector quiere].      <- confirma la norma
+En esta/eso sí [lo mismo] y [la escasez]:      <- la excepción, cosida con demostrativo
+```
+**Y las tres palabras que la delatan cuando está bien hecha:** un **`no`** en la línea 1, un **`sí`** en la 2, y un **demostrativo** que las cose. Si falta el `sí`, la línea 2 informa en vez de resolver — que es exactamente el fallo del 27/08 (`A esa sala solo entran 80 personas`: recogía la sala pero no daba la vuelta).
 
 #### 🗣️🗣️ 4.4b-EXPLICITO · LA LÍNEA DEL ENLACE SE LEE SOLA, SIN EL POST DELANTE (Iker, 2026-08-27) — CANÓNICO
 

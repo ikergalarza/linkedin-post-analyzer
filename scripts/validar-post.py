@@ -2026,7 +2026,11 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 _ix = next((k for k, l in enumerate(b) if 'http' in l), len(b) - 1)
                 _l1 = b[_ix - 1] if _ix > 0 else ''
                 _l2 = b[_ix]
-                _dem = re.search(r'\b(es[ae]|es[ao]s|eso|ah[ií]|all[ií]|aqu[ií])\b', _l2, re.I)
+                # La serie 'est-' (esta, este, esto) faltaba y era un hueco de verdad:
+                # 'En ESTA si te sentamos' es una bisagra perfecta y el check la
+                # daba por rota. Van las dos series, la de lejos (esa/ese) y la de
+                # cerca (esta/este), mas los adverbios de lugar.
+                _dem = re.search(r'\b(es[ae]|es[ao]s|eso|est[aeo]s?|ah[ií]|all[ií]|aqu[ií])\b', _l2, re.I)
                 _pal1 = {w.lower() for w in re.findall(r'\b[a-zA-ZáéíóúñÁÉÍÓÚÑ]{5,}\b', _l1)}
                 _pal2 = {w.lower() for w in re.findall(r'\b[a-zA-ZáéíóúñÁÉÍÓÚÑ]{5,}\b', _l2)}
                 _eco12 = sorted(_pal1 & _pal2)
