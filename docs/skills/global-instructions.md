@@ -510,6 +510,17 @@ Lee el post e imagina que lo sube una consultora, una agencia o una constructora
 ```
 **Cinco caracteres, y el aforo pasa de ser un dato a ser una barrera.**
 
+
+**⭐ Y HAY ESCALERA DENTRO DEL PROPIO INTENSIFICADOR: `tan solo` aprieta más que `solo` (Iker, 2026-08-27).** *"O mejor aún: «en esta sí lo hacemos y TAN SOLO hay 80 plazas». Esa palabra tan intensifica"*.
+
+| peldaño | ejemplo | cuándo |
+|---|---|---|
+| nada | `hay 80 plazas` | ⛔ nunca en la línea del enlace |
+| **medio** | `solo hay 80 plazas` | el default |
+| **alto** | **`tan solo hay 80 plazas`** | cuando la línea 2 tenga los 4 caracteres de margen |
+
+**Cuestan 4 caracteres y son los mejor invertidos del post** (`§2.2c` no aplica aquí: no es grasa, es lo que hace el trabajo). **El límite es el de siempre:** un intensificador por línea, nunca dos apilados (`§2.3d`).
+
 **⭐ Y DÓNDE SE COLOCA EL INTENSIFICADOR LO DECIDE EL OÍDO, NO LA GRAMÁTICA (Iker, 2026-08-27).** Las dos versiones con `solo` dicen exactamente lo mismo y él eligió la segunda: *"a nivel ya personal y de lengua castellana, en vez de «son solo 80 plazas» suena muchísimo mejor «solo hay 80 plazas»"*. **El intensificador manda más al principio de la frase que enganchado al verbo**, y en castellano hablado `solo hay` es la forma natural de anunciar escasez.
 - **⚠️ Y esto se salta el veto de `§2.0a` a `hay` como verbo de relleno, a propósito.** Ese veto es **del GANCHO**, donde el verbo tiene que frenar el scroll. En el ninja el trabajo lo hace el `solo`, no el verbo, y ahí manda `brand-voice §3c`: **el castellano hablado gana a la escalera, a la anáfora y a la tijera.**
 
@@ -1484,6 +1495,27 @@ La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: apar
 **⭐ Y EL PUNTO 4 ES EL QUE MÁS SE MALENTIENDE: la escasez NO la crea la cifra, la crea la negación de arriba.** `Solo hay 80 plazas` a secas es un dato de aforo. Detrás de *"un post no te sienta en la sala con los que compran"*, esas mismas 80 plazas son **las 80 únicas del mundo donde eso sí pasa**. Misma cifra, dos valores distintos, y la diferencia la pone la línea 1.
 
 **⛔ POR QUÉ CONFIRMAR Y NO CONTRADECIR, que es la parte que Iker intuía:** si la línea 1 ataca lo que el lector cree, **él se defiende** y llega a la línea 2 discutiendo. Si la confirma, **se pone de tu lado** y la excepción entra sin resistencia. El lector no tiene que cambiar de opinión para hacer clic: solo tiene que aceptar que hay una salida a algo que ya daba por perdido.
+
+
+**⛔⛔ Y LA LEY DE VARIEDAD (`§2.0b`) TAMBIÉN CORRE DENTRO DEL BLOQUE: EL VERBO DE LA 1 NO SE REPITE EN LA 2 (Iker, 2026-08-27).**
+
+> *"Cámbiame el verbo sentar, no me lo repitas otra vez: con que lo hayas repetido en el primero es suficiente. Pon «en esta sí lo hacemos»"*.
+
+**Y esto CORRIGE lo que yo había escrito el mismo día**, presentando `no te sienta` → `sí te sentamos` **como virtud** (*"repite el verbo de la línea 1"*). No lo es: es redundancia dentro de un bloque de dos líneas, donde el lector tiene las dos a la vez y el eco canta.
+
+- **La bisagra la hace el DEMOSTRATIVO, no el verbo.** `En **esta** sí…` ya cose las dos líneas; el verbo repetido no añade cohesión, solo ocupa caracteres.
+- **Y el `sí` ya trae el eco de serie:** un `sí` después de un `no` **recupera el verbo entero sin escribirlo**. Por eso `En esta sí lo hacemos` se entiende perfectamente: el `lo` y el `sí` reconstruyen *"nos sienta en la sala con los que compran"*.
+- **La segunda línea gana lo que suelta:** al quitar el verbo repetido cupo `tan solo` en vez de `solo`, o sea que la redundancia se cambió por intensidad.
+
+```
+🟡 Un post no te SIENTA en la sala con los que compran.
+   En esta sí te SENTAMOS y solo hay 80 plazas:          <- eco redundante
+
+✅ Un post no te sienta en la sala con los que compran.
+   En esta sí lo hacemos y tan solo hay 80 plazas:       <- el "sí" recupera el verbo
+```
+
+**⚠️ Lo que sí puede repetirse es un SUSTANTIVO** (`sala`, `nombre`), que es una bisagra legítima cuando no hay demostrativo. **Lo que no se repite es el VERBO**, porque es la palabra que carga la acción y verla dos veces en cuatro líneas de móvil delata el molde.
 
 **⚠️ Y OJO, PORQUE EN EL GANCHO HACEMOS LO CONTRARIO Y ES A PROPÓSITO.** `§2.0a` manda **invertir el refrán** (*"En ventas ya no la consigue el que la sigue"*): ahí sí se contradice al lector, porque el trabajo del gancho es **frenar el scroll**, y una contradicción frena. El trabajo del ninja es **el clic**, y para eso hace falta acuerdo, no fricción. **Mismo post, dos mecanismos opuestos, y colocarlos al revés rompe los dos.**
 
