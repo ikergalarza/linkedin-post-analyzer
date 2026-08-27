@@ -1279,8 +1279,57 @@ secundarios.** Atacar el dolor del momento adecuado era el error viejo.
 carácter 650` · `la linea del enlace es corta` · `promete IDENTIFICAR, no solo
 el momento`), y los tres separan el mapa del 14/07 del meme del 06/08.
 
-### 4.4b · SPAM NINJA — el link de agendar (CANÓNICO: estas reglas mandan en TODOS los pilares)
+### 4.4b · SPAM NINJA — el BLOQUE DE DOS, vaya el enlace adonde vaya (CANÓNICO: estas reglas mandan en TODOS los pilares y en TODOS los destinos)
 > Fuente única de verdad del spam ninja. Los runbooks (`post-workflow §4.2/§4.3/§4.4`) apuntan aquí; si algo choca, manda esta sección.
+
+#### 🧱🧱🧱 4.4b-MOLDE · EL BLOQUE DE DOS ES **UNO SOLO** PARA TODOS LOS ENLACES. LO ÚNICO QUE CAMBIA ES EL ENLACE Y LO QUE SE DICE (Iker, 2026-08-27) — CANÓNICO, LEER ANTES QUE NADA DE AQUÍ ABAJO
+
+> **Iker, y es una auditoría de la receta, no una corrección de un post:** *"el spam ninja, ya sea para la web que sea, tiene que ser una receta global: el bloque de dos, y en todo lo que cambia es el enlace y lo que se dice"*.
+
+**POR QUÉ EXISTE ESTA SECCIÓN, Y ES LA CAUSA RAÍZ DE UN FALLO QUE SE REPITIÓ TRES VECES EN UN DÍA.** Al corregirme el bloque del evento me justifiqué diciendo *"hay dos moldes y apliqué solo uno"*. **Esa frase era el síntoma: la receta permitía creer que hay dos moldes.** Y lo permitía por cómo está escrita:
+
+| el problema | qué provocaba |
+|---|---|
+| la sección madre se titulaba **"SPAM NINJA — el link de agendar"** | con un enlace de Luma yo no me sentía dentro de ella y me iba a buscar otra receta |
+| el molde estaba repartido en **8 subsecciones** (`-FORMA`, `-BLOQUE`, `-CLICS`, `-EXPLICITO`, `-PROMESA`, `-AUTOGOL`, `-EVENTO-CONTEXTO`, `4.4e`) | ninguna se leía como "el molde"; cada una parecía un caso |
+| las reglas por DESTINO estaban mezcladas con las de FORMA | al cambiar de destino cambiaba de molde entero, en vez de solo lo que dice |
+
+Es `working-preferences §0c-BIS` otra vez: **una regla universal guardada dentro de casos particulares se rompe en todos los demás.**
+
+**EL MOLDE, Y ES ESTE SIEMPRE, VAYA EL ENLACE ADONDE VAYA:**
+
+```
+[línea 1] la CARENCIA, colgada de la broma del gancho     <= 55 car
+[línea 2] la COBERTURA de esa carencia + ":" + {enlace}   <= 55 car, y MÁS CORTA que la 1
+```
+
+**LAS SEIS REGLAS DE FORMA, que NO cambian nunca y no dependen del destino:**
+1. **Dos líneas pegadas**, un solo salto entre ellas, nunca el enlace en línea suelta (`§4.4b-FORMA`).
+2. **Las dos ≤55 caracteres** sin contar la URL, y la 2 más corta que la 1 (`§4.4b-FORMA`).
+3. **La 1 nombra la carencia; la 2 la cubre y solo eso** (`§4.4b-BLOQUE`). La bisagra es un **demostrativo que recoge la línea 1** (`Esa parte…`, `A esa sala…`).
+4. **La palabra del gancho va dentro del bloque** (`§4.4b` regla 3). Es el SUELO, no la forma: puede estar en cualquiera de las dos.
+5. **El bloque se lee solo**, sin el post delante: ningún sustantivo sin su complemento (`§4.4b-EXPLICITO`).
+6. **Un intensificador en la línea 2** (`§2.3d-ENLACE`): cuesta 4 caracteres y es la mejora más barata del post.
+
+**LO ÚNICO QUE CAMBIA POR DESTINO ES QUÉ SE DICE:**
+
+| destino | qué CUBRE la línea 2 | extras propios |
+|---|---|---|
+| `/agendar/` | la identificación: a quién vender, quién firma dentro (`§4.4b-ORDEN`, `§4.4b-MUNICIÓN`) | antes del carácter 650 (`§4.4b-CLICS`) |
+| `/correo/` | lo que se cuenta antes ahí que aquí (`§4.4e`) | va en plural y nunca de última línea (`§4.4e-QUIÉN`) |
+| **Luma (evento)** | **la sala: quién está dentro y cómo se entra** (`§4.4b`, Grace Gong 11.6x/14.4x) | **una línea de contexto ENCIMA** (`§4.4b-EVENTO-CONTEXTO`) · la identidad va en `utm_source` (`§4.4b-UTM`) |
+| página del mapa | el mapa que el post lleva nombrando desde el gancho | el ultra ninja, y ahí el 650 no aplica |
+
+**⛔ Y EL ERROR QUE ESTA TABLA EXISTE PARA IMPEDIR:** que la información propia del destino ocupe el PAPEL de la línea 2. El aforo del evento es información del destino; **la línea 2 sigue siendo la cobertura**, y el aforo va dentro de ella formulado como respuesta:
+
+```
+⛔ Solo hay 80 plazas y las elegimos una a una:      <- ficha del destino
+✅ A esa sala solo entran 80 personas y las elegimos: <- cobertura, con la ficha dentro
+```
+
+**EL TEST QUE LOS CAZA TODOS, y son diez segundos:** tapa el post, lee las dos líneas solas y hazte las tres preguntas. *(1) ¿La 1 dice qué falta? (2) ¿La 2 cubre eso y solo eso? (3) ¿La 2 valdría pegada a cualquier otro post nuestro?* Si la 3 es que sí, el bloque está roto aunque las otras dos pasen.
+
+**Mecanizado** en `validar-post.py` (`Spam ninja: la linea 2 RECOGE la 1 (bisagra)`), que busca el demostrativo o la repetición de un sustantivo de la línea 1. Es la única pieza del molde que se puede comprobar sola, y es justo la que faltaba.
 
 #### 🔗🔗 4.4b-UTM · TODO ENLACE QUE METAMOS EN UNA PUBLICACIÓN LLEVA UTM (Mario, 2026-08-26) — GLOBAL
 

@@ -2008,6 +2008,39 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                     % (_l1.strip(), '' if _carencia else
                        ' — ⚠️ no encuentro ninguna marca de carencia (no, ni, nadie, '
                        'cualquiera, es facil, lo caro) en ella'), aviso=True)
+                # 4.4b-MOLDE (Iker, 2026-08-27) - LA BISAGRA: LA LINEA 2 RECOGE LA 1.
+                # El bloque de dos es UNA unidad: la 1 nombra la carencia y la 2 la
+                # cubre (4.4b-BLOQUE). Lo que las cose es un DEMOSTRATIVO que apunta a
+                # la linea de arriba ("Esa parte ya la tenemos hecha", tatuaje 0,151%)
+                # o la repeticion de un sustantivo suyo. Sin bisagra, las dos frases
+                # son correctas por separado y el bloque no significa nada junto: es
+                # exactamente el fallo del 27/08, "Solo hay 80 plazas" colgado debajo
+                # de "no te sienta en la sala con los que compran".
+                # Se comprueba SOLO esto del molde porque es lo unico mecanizable: que
+                # la 2 CUBRA de verdad es criterio y va en el test de los 10 segundos.
+                # OJO: _enl de arriba es el BLOQUE ENTERO unido (lo usa el check de
+                # 4.4b-EXPLICITO, que mira las dos lineas juntas a proposito). Aqui
+                # hacen falta SEPARADAS, asi que se sacan del bloque: la 2 es la que
+                # lleva la URL y la 1 la de encima. Sin esto el check se comparaba
+                # consigo mismo y daba OK en falso, probado contra el bloque roto.
+                _ix = next((k for k, l in enumerate(b) if 'http' in l), len(b) - 1)
+                _l1 = b[_ix - 1] if _ix > 0 else ''
+                _l2 = b[_ix]
+                _dem = re.search(r'\b(es[ae]|es[ao]s|eso|ah[ií]|all[ií]|aqu[ií])\b', _l2, re.I)
+                _pal1 = {w.lower() for w in re.findall(r'\b[a-zA-ZáéíóúñÁÉÍÓÚÑ]{5,}\b', _l1)}
+                _pal2 = {w.lower() for w in re.findall(r'\b[a-zA-ZáéíóúñÁÉÍÓÚÑ]{5,}\b', _l2)}
+                _eco12 = sorted(_pal1 & _pal2)
+                chk(bool(_dem) or bool(_eco12),
+                    'Spam ninja: la linea 2 RECOGE la 1, es una bisagra (4.4b-MOLDE)',
+                    ('la linea 2 no apunta a la 1 con ningun demostrativo ni repite una '
+                     'palabra suya, asi que las dos frases son correctas por separado y '
+                     'el bloque no significa nada junto. Cose la 2 a la 1: "Esa parte ya '
+                     'la tenemos hecha" (tatuaje, 0,151%%), "A esa sala solo entran 80". '
+                     'L1: %s | L2: %s' % (_l1[:60], _l2[:60]))
+                    if not (_dem or _eco12) else
+                    'bisagra: %s' % (('"%s"' % _dem.group(0)) if _dem
+                                     else 'repite ' + ', '.join(_eco12[:2])),
+                    aviso=True)
                 chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
                     'el bloque no nombra a quien vas a encontrar. El momento es el '
                     'dolor secundario: los clientes compran la identificacion de la '
