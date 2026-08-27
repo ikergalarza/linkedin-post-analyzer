@@ -612,3 +612,28 @@ falta una regla de cadencia distinta para el envío semanal de régimen.
 **Y sale una regla de proceso nueva de aquí (Iker, 2026-08-27):** ninguna campaña se deja programada de primeras nunca más, ni aunque él lo pida explícitamente — se queda en borrador hasta que confirme que se ha mandado un test a sí mismo y está todo bien. Detalle completo en `email-marketing §9a-BIS`.
 
 **Pendiente de Iker:** mandarse el test de la campaña id 8, revisar que el preheader ya no sale duplicado, y confirmar para que se programe el viernes 09:05.
+
+
+---
+
+## Dos correcciones más sobre el test (2026-08-27, mismo día)
+
+**1. El preheader ya no sale duplicado** (confirmado por Iker con su propio test). Pero sí se colaba
+la primera frase visible del cuerpo detrás del preheader en la vista de bandeja de Gmail, porque el
+preheader (42 caracteres) no llenaba el hueco que Gmail reserva. Se añadió un relleno invisible
+(`&zwnj;&nbsp;` repetido, sin ninguna palabra legible, para no repetir el bug de ayer) justo detrás
+del preheader. **Sin verificar todavía con un test real** — pendiente de que Iker lo compruebe.
+
+**2. El asunto pierde la interrogación inicial, como excepción consciente de este correo.** Iker,
+2026-08-27: *"este correo es una excepción... como estamos atacando por estrategia de informalidad,
+pues eso, no cambias la minúscula y quita la interrogación inicial ¿"*. Queda `no te acuerdas de
+mí?` (sin `¿` de apertura, con la `n` en minúscula a propósito, con el `?` de cierre). Esto rompe a
+sabiendas la regla medida de `§2` (97% del corpus lleva la `¿` de apertura) — no se cambia esa regla,
+se anota como excepción de esta tanda.
+
+**Campaña final: id 10, en borrador.** Las campañas id 7 (suspendida por Iker), 8 y 9 (creadas antes
+de este cambio de asunto) quedan obsoletas — Iker las borra a mano en el panel, no hay endpoint de
+borrado disponible por API.
+
+**Pendiente de Iker:** mandarse un nuevo test de la campaña 10, comprobar que el relleno del preheader
+funciona de verdad en Gmail, borrar las campañas 7/8/9 sobrantes, y confirmar para programar el viernes.
