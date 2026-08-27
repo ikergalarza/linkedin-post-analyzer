@@ -224,6 +224,27 @@ LinkedIn corta el post en el feed a ~210 caracteres o las primeras 2-3 líneas, 
 1. **¿La ha vivido nuestro ICP?** Si el director comercial de 55 años no se ha enterado, no hay tendencia: hay una burbuja de nuestro sector.
 2. **¿Tenemos algo que NADIE más puede decir de esto?** Es el test win/lose de `§0` aplicado a la actualidad. Si nuestra postura la podría firmar cualquier cuenta, el tema está de moda pero el post es huérfano. La tendencia da el ALCANCE; la autoridad propia es lo que lo convierte en nuestro.
 
+#### ⛔⛔ 2.1b-DÓNDE · UNA TENDENCIA DE NICHO GENERACIONAL VA EN EL CUERPO, NUNCA EN EL GANCHO NI EN LA IMAGEN (Iker, 2026-08-26)
+
+> **Iker, sobre el meme de las batallas de aura:** *"al final en este tipo de publicaciones de meme el motor viral no deja de ser la foto, así que espero que en la foto no hayas metido nada de aura. En el texto te lo puedo dejar pasar, pero solo si es mejor que el gancho original; si no, méteme aura solo en el cuerpo y en el gancho no. Si queremos maximizar el alcance: ¿lo va a entender cualquiera? Lo de farmeo aura no. Un viejo de marketing no lo va a entender por mucho que sea de marketing"*.
+
+**`§2.1b` decía CÓMO se elige una tendencia y CUÁNDO se publica. No decía DÓNDE se coloca dentro del post, y ese es el sitio donde se pierde el alcance.**
+
+| pieza | ¿entra la tendencia? | por qué |
+|---|---|---|
+| **GANCHO** | ⛔ **NO**, salvo que la versión con tendencia sea **mejor que el gancho de la referencia** | es lo único que ve el 100% del feed. Si depende de un contexto que la mitad no tiene, el post pierde a esa mitad antes de empezar |
+| **IMAGEN** | ⛔ **NUNCA, y esta no tiene excepción** | en meme **la foto ES el motor** (`§4.3`). Una foto que solo se entiende sabiendo la tendencia es un motor apagado para el que no la sabe |
+| **CUERPO** | ✅ **SÍ, y es su sitio** | ahí ya ha entrado el que iba a entrar; la tendencia le suma frescura y al que no la pilla no le quita nada, porque la frase se entiende igual |
+
+**LA PRUEBA, y es de un segundo: tapa la tendencia y lee.** Si el gancho y la imagen siguen contando el mismo chiste sin ella, está bien colocada. Si se caen, la has puesto donde no era.
+
+**El caso, y el fallo fue doble:** entregué `Farmeo aura en LinkedIn y el cuello de botella cae más abajo` de gancho **y la franja de la imagen decía `DESPUÉS DE GANAR LA BATALLA`** — que no lleva la palabra `aura`, pero **solo significa algo si conoces la tendencia**, así que estaba contaminada igual. Quedaron en `Trabajo en marketing y el cuello de botella cae más abajo` y `DESPUÉS DE PUBLICARLO TODO`, **los dos universales**, con `farmear aura` viviendo entero en el cuerpo y en el cierre.
+- **⚠️ El disfraz es lo peligroso.** Yo di por hecho que la imagen estaba limpia porque no aparecía la palabra. **Lo que se comprueba no es la palabra, es la DEPENDENCIA**: cualquier guiño que necesite el contexto de la tendencia cuenta como tendencia.
+
+**Y el test de audiencia que lo dispara todo, dicho por Iker:** *¿lo va a entender cualquiera?* No vale que la cuenta sea del sector — **el sector no es la edad**. Un director de marketing de 55 es marketing y no sabe qué es farmear aura.
+
+**⚠️ Y LA EXCEPCIÓN DEL GANCHO SE MIDE CONTRA LA REFERENCIA, no contra el gusto.** "Mejor que el gancho original" quiere decir mejor que el gancho del post que estamos remixando, que es el único listón que tenemos. Si empatan, gana el universal.
+
 **Y LA TENDENCIA NO EXIME DE NADA.** Sigue haciendo falta el ancla de sector (`§2.3`), el bucle abierto (`§2.0`), el verbo con techo (`§2.9`) y el pilar entero. Un post de actualidad sin pilar debajo es un post suelto, y la mediana del post suelto es **3.072 impresiones** contra las 24.152 de un mapa (`§4.4b`).
 
 **⚠️ EL AVISO QUE VA CON CADA UNA:** una tendencia trae bandos, y ahí es fácil romper el canónico de `brand-voice` (no criticamos a nadie, ni a un colectivo, ni al lector). **La postura se toma contra el fenómeno o contra el sistema, nunca contra la gente que está al otro lado**, y si la frase acusa, se reescribe para que **incluya al que publica**.
