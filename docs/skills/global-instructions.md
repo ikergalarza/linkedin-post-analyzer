@@ -481,6 +481,33 @@ Lee el post e imagina que lo sube una consultora, una agencia o una constructora
 
 **CÓMO SE ELIGE, y es una pregunta, no una lista:** *¿qué emoción quiero al máximo?* → se coge SU intensificador. Meter el de otra emoción es la dilución nº1 de `§1` (tocar los tres pilares a la vez).
 
+#### ⭐⭐ 2.3d-ENLACE · EL INTENSIFICADOR NO ES SOLO DEL GANCHO: DONDE MÁS RINDE ES VENDIENDO EL ENLACE (Iker, 2026-08-27) — GLOBAL
+
+> **Iker, sobre la 2ª línea del ninja del evento:** *"me faltaría añadir algún intensificador. En vez de «son 80 plazas», solo con añadir la palabra «solo»: «son solo 80 plazas». Y esto apúntalo en tu receta global: los intensificadores no son solo buenos para el gancho, son buenos también en general, sobre todo para vender enlaces y hacer el spam ninja"*.
+
+**Toda esta sección estaba escrita como si el intensificador fuera una pieza del GANCHO.** No lo es: es una pieza de **cualquier frase que tenga que apretar**, y la que más aprieta después del gancho es **la línea que lleva el enlace**, que es la única del post que pide una acción.
+
+**Por qué ahí rinde tanto y cuesta tan poco:** la línea del enlace tiene un tope de 55 caracteres (`§4.4b`) y **un intensificador son 4 o 5** (`solo`, `ya`, `nunca`, `ni uno`). Es la mejora con mejor relación coste-efecto de todo el post.
+
+```
+⛔ Son 80 plazas y se piden una a una:        (35)
+✅ Son solo 80 plazas y se piden una a una:   (39)
+```
+**Cuatro caracteres, y el aforo pasa de ser un dato a ser una barrera.**
+
+**⛔⛔ Y LA REGLA QUE VA PEGADA, PORQUE AQUÍ ES MUY FÁCIL PASARSE: EL INTENSIFICADOR DE AFORO DICE EL TOPE, NUNCA LO QUE QUEDA.**
+
+> **Iker, en la misma frase, y es el matiz que salva el post:** *"o mejor aún, «quedan solo menos de 80»… no sé exactamente cómo vamos de aforo, creo que hay solo 20 y pico rellenadas, o sea que tampoco nos conviene desvelar públicamente que hay pocos asistentes"*.
+
+| | qué comunica | veredicto |
+|---|---|---|
+| `Son solo 80 plazas` | **escasez de OFERTA**: la sala es pequeña a propósito | ✅ es el motor de `§4.4b` (Grace Gong, 11.6x y 14.4x) |
+| `Quedan solo 20 plazas` | **escasez de DEMANDA**: no viene nadie | ⛔ nunca |
+
+**Son la misma cifra leída al revés, y por eso se confunden.** El aforo dice *"cuesta entrar"*; lo que queda dice *"nadie ha entrado"*. **Y hay una segunda razón, más dura:** cuántas plazas quedan es **un dato vivo que no tenemos verificado**, así que escribirlo es inventarse una cifra (`CLAUDE.md`, lo que no se negocia).
+
+**La regla, en una línea: se intensifica el TAMAÑO DE LA PUERTA, nunca la cola que hay delante.**
+
 **⚠️ Y EL INTENSIFICADOR CUESTA CARACTERES, así que compite con `§2.2c` (a igualdad de sentido gana el corto).** Iker lo dijo él mismo mientras lo pedía: *"esto contradice lo que te he dicho, siempre hay que intentar corto y bueno"*. **No se contradice si el intensificador CAMBIA la emoción, que es justo lo que `§2.2c` protege**: ahí la tijera quita lo redundante, no lo que hace el trabajo. El caso del 21/08: el gancho pasó de 62 a 78 caracteres, +16, y lo que compran esos 16 es el superlativo. **La prueba es la de siempre: quítalo y mira si el gancho sigue apretando igual.** Si sigue igual, sobraba.
 
 **⛔ Y NO SE APILAN DOS.** Un superlativo y un remate de menosprecio en la misma frase se anulan, exactamente igual que tres verbos punchy (`§2.9`). Uno, y que caiga solo.
