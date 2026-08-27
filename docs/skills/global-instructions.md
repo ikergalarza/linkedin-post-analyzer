@@ -88,6 +88,28 @@ El hook es la línea más importante. Si no funciona, no se lee el cuerpo.
 
 **Y el arreglo suele MEJORAR el gancho, no empeorarlo**, porque te obliga a buscar otro trozo de la misma escena. Aquí el objeto pasó de **la placa** (el resultado) al **trípode montado en el salón** (el esfuerzo): mismo verbo, 11 caracteres menos, más filmable y sin presumir.
 
+#### ⛔⛔ 2.0c-CONTRADICE · LA TERCERA FORMA DE ROMPER LA FOTO: QUE EL CUERPO HAGA LO CONTRARIO QUE EL PERSONAJE (Iker, 2026-08-27)
+
+> **Iker, pidiendo la revision final antes de subir:** *"una ultima revision de coherencia"*. Y ahi salio, con el post ya a 50/50 y dos vueltas encima.
+
+**Teniamos escritas DOS formas de romper la relacion texto-imagen y faltaba la tercera, que es la unica que el validador no puede oler:**
+
+| # | fallo | donde esta |
+|---|---|---|
+| 1 | el cuerpo **EXPLICA** la foto | `§2.0c` / `post-workflow §4.4-CALLA` |
+| 2 | el gancho **REPITE** lo que la foto ensena | `§2.0c-VISUAL` |
+| 3 | ⭐ **el cuerpo CONTRADICE lo que el personaje de la foto hace** | aqui |
+
+**El caso:** la foto era el meme de la katana, donde el comercial **NO ha actualizado la ficha** y suelta un medio-si. Y el cuerpo que yo habia escrito decia **`Anoto cada visita desde el coche`**. O sea: en la imagen no la toca y en el texto la rellena despues de cada visita. **Las dos capas cuentan cosas incompatibles del MISMO personaje**, y el lector que mira las dos se choca.
+
+**Por que se cuela tan facil:** cada linea, por separado, esta bien. La del cuerpo es concreta, es del carril de la cuenta y pasa todos los checks. **El fallo solo existe al cruzarla con la foto**, y la foto el script no la ve nunca.
+
+**LA COMPROBACION, y es la tercera pregunta del par de `§2.0c-VISUAL`:** despues de tapar el gancho y tapar la foto, **describe en una frase QUE HACE el personaje de la imagen** y busca en el cuerpo cualquier linea que diga lo contrario. *"No ha actualizado la ficha"* contra *"anoto cada visita"* salta sola en cuanto la escribes.
+
+**Y el arreglo casi siempre MEJORA el cuerpo, igual que en `§2.0c-VISUAL`**, porque te obliga a ponerte del lado del personaje: `Anoto cada visita desde el coche` paso a **`Se en que bar desayuna cada cliente`**. Ahora el narrador sabe todo del cliente **pero lo sabe en la cabeza, no en la ficha**, que es exactamente por que el si de la foto era medio mentira. **De dos capas que se peleaban salen dos que se sostienen.**
+
+⭐ **Y de propina quita lo unico prepotente que tenia el cuerpo:** *"lo relleno todo religiosamente"* es una linea que presume de aplicado; *"me lo se de memoria"* es una confesion. `brand-voice`, canonico de la persona.
+
 #### 🙅 2.0c-PRESUMIR · EL GANCHO NO PRESUME, AUNQUE LA CIFRA SEA VERDAD (Mario, 2026-08-21)
 
 > *"Has elegido de todas las iteraciones de ganchos posibles el gancho que más prepotente puedo quedar."*
