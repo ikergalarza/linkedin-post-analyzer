@@ -895,6 +895,27 @@ sorprende, que es de lo que vive este pilar.
 >
 > **⭐ Y LA FOTO NO CAE EN ESTO SI VA EN GENERICO, que es lo que salvo este caso.** El rotulo dice **`Jefe:`** a secas, no `Jefe de ventas:`, y **por encima de un cofundador comercial si hay un CEO**. Iker: *"con eso nos salvamos"*. **Corolario que vale para cualquier prompt de imagen: el rotulo de un rol va siempre en la version mas generica que aguante el chiste** (`Jefe`, `El cliente`, `Compras`), porque asi la imagen sirve para las cinco cuentas y no hay que re-editarla al moverla.
 
+> ### 🧠🧠 4.4-ESENCIA-OFICIO · SI EL ELEMENTO DEL ORIGINAL ES DE OTRO OFICIO, SE CALCA EL MECANISMO Y NO LA COSA (Iker, 2026-08-27)
+> **⚠️ Esto AFINA `§4.4-ESENCIA`, que dice "los elementos de las dos listas se quedan". Se quedan cuando el lector los reconoce. Cuando pertenecen a un oficio que no es el de la cuenta, lo que se queda es el MECANISMO.**
+>
+> > **Iker, sobre el bloque de tres de la referencia:** *"yo tampoco entiendo de lo que ella hablaba, o sea, ¿qué significa landing page backlog, microsite, two sprints away, dashboard pronto? Tienes que mencionar cosas que encajen más con la labor que te digo yo que tengo de simplemente publicar, pero que sí que sea un cuello de botella y problemas de verdad"*.
+>
+> **El caso.** El original es de una growth de PRODUCTO con equipo de ingeniería detrás: `Landing page? Backlog. / Microsite? Two sprints away. / Dashboard? "Soon."` son cosas que ella **pide a otro equipo**. Mario no pide nada de eso a nadie: **Mario publica**. Calcarle esas tres palabras es darle un dolor prestado, y encima uno que su lector no reconoce.
+>
+> **QUÉ SE CONSERVA Y QUÉ SE TRADUCE:**
+> | | del original | en el remix |
+> |---|---|---|
+> | ✅ **el MECANISMO** | `¿[cosa que necesito]? [respuesta que me deja tirado]`, tres veces | idéntico |
+> | ✅ **la DEGRADACIÓN** | Backlog → dos sprints → "pronto" | dos que controlo → el que no |
+> | ⛔ **las COSAS** | landing page, microsite, dashboard, sprints | **el gancho, la hora de publicar, quién nos lee** |
+>
+> **LOS DOS TESTS, y los dos se corren sobre el borrador, no sobre la teoría:**
+> 1. **¿EL QUE FIRMA ENTIENDE SU PROPIO POST?** Si el dueño de la cuenta tiene que preguntar qué significa una línea, el lector ya se ha ido. **Es el test más barato que existe y no lo estaba corriendo.**
+> 2. **¿LO QUE CUENTA EL CUERPO ES UN PROBLEMA DE VERDAD, O ES LA VENTAJA DISFRAZADA?** Aquí caí en el mismo turno: puse `Aquí no llamamos a nadie / Nos escriben ellos` **como si fuera el cuello de botella, y eso es justo lo que le va BIEN**. El gancho prometía un problema y el cuerpo contaba lo bien que va: el bucle no paga y el lector se siente estafado.
+>   - **La forma correcta es que convivan:** la ventaja va de **premisa** (`Aquí no llamamos a nadie. / Nos escriben ellos.`) y el cuello de botella va **detrás** (`Pero hay un techo.` → `¿Quién nos lee? Eso ya no lo elegimos.`). Primero por qué eres bueno, después dónde se acaba.
+>
+> **Y el cuello de botella bueno es el que el DESTINO del enlace resuelve.** Aquí *no elegimos quién nos lee* lo resuelve una sala de 80 plazas elegidas a mano, que es literalmente lo que vende el evento. Si el cuello de botella que cuentas no lo arregla el enlace, has escrito dos posts pegados.
+>
 > ### 📏 4.4-MEDIR · LA ANATOMIA DE LA REFERENCIA SE MIDE, NO SE MIRA (Iker, 2026-08-06)
 > **🔒 ESTA REGLA ES UNIVERSAL Y VIVE EN `global §2.2b-MEDIR`.** Vale para CUALQUIER pilar que parta de una referencia, no solo el meme. Aqui queda el detalle porque el primer caso fue un meme; si algun dia choca con lo de alla, manda `global`.
 > **`python scripts/anatomia-referencia.py original.txt mio.txt` antes de entregar.** Copié el tema y el motor del meme de Daniel Disney y no medí nada, y salió esto:
