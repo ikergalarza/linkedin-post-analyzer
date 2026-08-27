@@ -446,6 +446,29 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 
 
 
+
+## 🔁🔁 0h-SERIE · LAS ETIQUETAS DE UNA SERIE MANTIENEN LA MISMA CATEGORÍA GRAMATICAL EN TODOS LOS PANELES (Mario, 2026-08-27)
+
+> **La duda la planteó Mario y es la que hace la regla:** *"en la de la derecha tengo dudas: ¿es mejor ESPERANDO EL LANZAMIENTO o ESPERANDO QUE SALGA?"*.
+
+**LA REGLA: si el original repite una forma en sus N paneles, el remix la repite en los N. La categoría gramatical de la etiqueta es parte del calco.**
+
+El original es `WAITING ON DESIGN / WAITING ON DEV / WAITING ON OPS`: **anáfora + tres SUSTANTIVOS**. Nuestro remix quedó `ESPERANDO EL DISEÑO / ESPERANDO EL DESARROLLO / ESPERANDO EL LANZAMIENTO` — misma anáfora, mismos tres sustantivos.
+
+**Por qué `QUE SALGA` era peor aunque signifique lo mismo, y son tres cosas a la vez:**
+
+| | `…QUE SALGA` | `…EL LANZAMIENTO` |
+|---|---|---|
+| **forma** | oración: rompe la serie **en el panel del remate**, que es donde más canta | sustantivo, como los otros dos |
+| **cronología** | vaga | calca `DESIGN → DEV → OPS`: diseñar, programar, desplegar |
+| **palabra naranja** (`§4`) | dos palabras y una es un relativo | **UNA sola**, y es la que cierra el chiste |
+
+**⭐ Y el tercer punto es el que lo decide de verdad:** `§4` pide que el naranja caiga en **LA** palabra más importante. **Una etiqueta que acaba en oración no tiene una palabra que pintar**, así que la regla del naranja te obliga a que la última etiqueta sea nominal. Las dos reglas tiran para el mismo lado y por eso no es cuestión de oído.
+
+**El chequeo, en el Paso 6a del inventario:** al listar las etiquetas del original, **anota también de qué CLASE son** (sustantivo, oración, pregunta, diálogo). Es la misma familia que `§0b-TEXTO-REF-CORTE` (se calca dónde parte la línea) y `§0b-TEXTO-REF-CUERPO` (se calca el tamaño): **la forma del texto es esencia, no envase.**
+
+**⚠️ Y si el original MEZCLA formas, se mezclan igual.** Esto no es "usa siempre sustantivos": es "usa lo que use él". Si sus tres paneles son tres preguntas, los nuestros son tres preguntas.
+
 ## ⛔⛔ 0i-3-HERRAMIENTA · EL PROMPT NUNCA NOMBRA EL PROGRAMA. SE PIDE EL RESULTADO, NO EL CÓMO (Mario, 2026-08-27)
 
 > **Mario:** *"el primer prompt me lo habías dado fatal, porque ya se lo estamos dando directamente al generador. No le tienes que decir en qué programa lo tiene que hacer, porque le has confundido y por eso lo había hecho mal: le habías dicho que use Photoshop o Canva cuando él mismo ya es su propio programa"*.
