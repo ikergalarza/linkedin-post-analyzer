@@ -1530,8 +1530,20 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # Cuando falta el ninja entero ya lo dice el check de arriba; este mide OTRA
         # cosa, el DESTINO, y sin enlace no hay destino que medir. Encadenaba 6
         # fallos duplicados en los 6 posts historicos sin ninja.
+        # ⛔⛔ ARREGLADO EL 2026-08-27: EL ENLACE DE LUMA OCUPA EL HUECO DEL DE
+        # AGENDAR, Y ESTE CHECK NO LO SABIA. La regla esta escrita en global 4.4b
+        # desde el 2026-08-21 ("si el evento viaja dentro de una historia, un meme o
+        # un mapa, el enlace que viaja es el de Luma y ocupa el hueco del de
+        # agendar... no se apilan las dos puertas de conversion en el mismo post") y
+        # ese dia se mecanizo SOLO para los checks de dominio, que estaban atados a
+        # --pilar evento. Los de meme y los10 se quedaron exigiendo /agendar/ a
+        # secas, asi que tumbaban justo el post que la receta manda hacer.
+        # Es el caso de libro de feedback_regla_nueva_revisar_codigo: al escribir una
+        # regla nueva hay que mirar QUE checks codifican la vieja, no solo el que la
+        # motivo.
+        _es_evento = ('luma.com' in cuerpo or 'forward.neety.com' in cuerpo)
         if pilar in ('los10', 'meme') and tiene_link:
-            _dest_ok = 'recursos.neety.com/agendar' in cuerpo
+            _dest_ok = ('recursos.neety.com/agendar' in cuerpo) or _es_evento
             chk(_dest_ok, 'El spam ninja apunta a /agendar/, no a un lead magnet (§4.4b)',
                 'hay enlace pero no es el de agendar. Prioridad 1 = agendar (demo y venta), '
                 'prioridad 2 = lead magnet (correo). Solo el mapa enlaza a otro sitio, y '
@@ -1821,6 +1833,24 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                     'aunque lleven la palabra del gancho dentro', aviso=True)
                 _blo = ' '.join(b).lower()
                 _iden = re.search(r'qui[eé]n|persona|empresa|nombre|decide|firma|compra', _blo)
+                # ⛔ EL NINJA DEL EVENTO PROMETE OTRA COSA, Y ES LA CORRECTA (2026-08-27).
+                # "Identificar a la persona" es el contrato de /agendar/ (4.4b-PROMESA:
+                # lo que promete el ninja lo decide el DESTINO). El destino Luma vende
+                # LA SALA -- quien esta dentro y por que se ha elegido a mano
+                # (4.4b, el formato validado de Grace Gong, 11.6x y 14.4x) --, asi que
+                # exigirle la palabra "quien compra" es pedirle que mienta sobre lo que
+                # hay al otro lado del clic. Se le pide su propia promesa: sala, plazas,
+                # sitio o fecha.
+                if _es_evento:
+                    _sala = re.search(r'sala|plaza|sitio|silla|aforo|septiembre|donostia|mesa',
+                                      _blo)
+                    chk(bool(_sala), 'Spam ninja de EVENTO: promete LA SALA, no la agenda (§4.4b)',
+                        'el enlace va a Luma, asi que la promesa es quien esta DENTRO de la sala y '
+                        'que cuesta entrar (el motor medido: 11.6x y 14.4x). No vale prometer '
+                        'ponentes ni programa, y tampoco la identificacion de /agendar/, que es el '
+                        'contrato de OTRO destino (4.4b-PROMESA)'
+                        if not _sala else 'promesa de sala: "%s"' % _sala.group(0))
+                    _iden = True
                 chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
                     'el bloque no nombra a quien vas a encontrar. El momento es el '
                     'dolor secundario: los clientes compran la identificacion de la '
