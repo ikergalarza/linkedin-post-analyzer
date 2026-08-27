@@ -1859,7 +1859,12 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 # escribio solo para las CIFRAS y por eso no cazaba los sustantivos.
                 # AVISO y no fallo duro: que un sustantivo pida complemento es
                 # criterio, y una lista cerrada tumbaria ninjas buenos.
-                _enl = next((l for l in b if 'http' in l), b[-1])
+                # Se mira el BLOQUE entero, no solo la linea del enlace: el molde
+                # ganador (tatuaje, 0,151%) pone la carencia en la linea 1 y la
+                # recoge con un demostrativo en la 2 ("Esa parte ya la tenemos
+                # hecha"). La elipsis solo es fallo cuando NINGUNA de las dos
+                # dice de que va (4.4b-EXPLICITO, la auditoria del 27/08).
+                _enl = ' '.join(b)
                 _hueros = [w for w in ('el nombre', 'ese nombre', 'esa parte',
                                        'esa lista', 'esos datos', 'ese trabajo',
                                        'esa gente')
@@ -1874,6 +1879,27 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                     'complemento de sitio), NUNCA la palabra que dice de que hablamos'
                     + (' — aqui: %s' % ', '.join('"%s"' % w for w in _hueros)
                        if _hueros else ''), aviso=True)
+                # 4.4b-BLOQUE (Iker, 2026-08-27) - LAS DOS LINEAS SON UNA UNIDAD.
+                # La 1 nombra la CARENCIA y la 2 cubre EXACTAMENTE esa carencia.
+                # Si la 1 solo afirma algo, la 2 llega de la nada y el lector se
+                # pierde. El check de "repite una palabra del gancho" empuja justo
+                # al fallo: para colar los sustantivos del gancho, la linea 1 se
+                # convierte en afirmacion en vez de setup. Aviso, no fallo duro:
+                # que una frase nombre una carencia es criterio.
+                _l1 = b[0] if len(b) > 1 else ''
+                _carencia = re.search(r'\bno\b|cualquiera|lo f[aá]cil|es f[aá]cil'
+                                      r'|lo caro|lo dif[ií]cil|ni\b|nadie|ning', _l1, re.I)
+                chk(False, 'ENTREGA: la linea 1 del ninja nombra la CARENCIA (§4.4b-BLOQUE)',
+                    'las dos lineas son UNA unidad: la 1 dice que es lo facil y QUE FALTA, '
+                    'y la 2 cubre exactamente eso. Si la 1 solo afirma algo, la 2 llega de '
+                    'la nada. El molde medido es el del tatuaje (0,151%%, el mejor CTR del '
+                    'ano): "Tatuarse es lo facil. Lo caro es saber de quien tiene que ser '
+                    'el logo." / "Esa parte ya la tenemos hecha:". Test: lee las dos solas '
+                    'y pregunta si la 2 se podria cambiar por cualquier otra oferta nuestra '
+                    'sin que se note; si se puede, la 1 no ha montado nada. Linea 1: "%s"%s'
+                    % (_l1.strip(), '' if _carencia else
+                       ' — ⚠️ no encuentro ninguna marca de carencia (no, ni, nadie, '
+                       'cualquiera, es facil, lo caro) en ella'), aviso=True)
                 chk(bool(_iden), 'Spam ninja: promete IDENTIFICAR, no solo el momento (§4.4b)',
                     'el bloque no nombra a quien vas a encontrar. El momento es el '
                     'dolor secundario: los clientes compran la identificacion de la '

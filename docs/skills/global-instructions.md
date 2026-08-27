@@ -1364,6 +1364,34 @@ Luma:        ?utm_source=historia-euskadi-26ago-unai&utm_medium=post&utm_campaig
 - **⛔ Lo que NO cambia:** el enlace sigue llevando `https://` delante (`§4.4b` regla 8) y **la URL base no se toca** — el UTM va detrás, con `?`. Si la URL ya llevara parámetros, se encadena con `&`.
 - **📌 PENDIENTE (mío):** el mismo UTM en los enlaces del **DM del lead magnet** y en los **correos** (`email-marketing`), que hoy salen pelados. Es la misma regla en otra superficie, con `utm_medium=dm` y `utm_medium=email`.
 
+#### 🧩🧩 4.4b-BLOQUE · LAS DOS LÍNEAS SON **UNA** UNIDAD: LA 1 NOMBRA LA CARENCIA, LA 2 LA CUBRE (Iker, 2026-08-27) — CANÓNICO
+
+> **Iker, sobre un ninja que pasaba 50/50:** *"pese a ser un bloque de dos, la segunda frase me deja totalmente confundido. No entiendo cómo la has relacionado con la primera. Creo que simplemente has metido el feedback de los clientes a solucionar su punto de dolor, pero tiene que estar totalmente relacionado el bloque entre sí. El bloque de dos tiene que complementarse entre sí, se tiene que entender entre sí, y como grupo tiene que complementar al gancho"*.
+
+**EL FALLO, y es el que hay que reconocer:**
+```
+⛔ Los 3 problemas los trae cualquier ficha.      ← AFIRMA algo
+   Te damos el nombre del que compra dentro:      ← OFRECE otra cosa
+```
+La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: aparece de la nada. Las dos frases son correctas por separado y el bloque no significa nada junto.
+
+**LA REGLA, en una línea:** *la 1 dice qué es lo fácil **y qué falta**; la 2 cubre **exactamente eso**.* Nada más, y en ese orden.
+
+**EL MOLDE MEDIDO ES EL DEL TATUAJE (0,151%, el mejor CTR del año):**
+```
+✅ Tatuarse es lo fácil. Lo caro es saber de quién tiene que ser el logo.   ← la carencia, con nombre
+   Esa parte ya la tenemos hecha: {link}                                    ← la cubre, y solo eso
+```
+**Fíjate en que la línea 2 no repite la carencia, la RECOGE con un demostrativo.** Ese `esa parte` no es vago: tiene su antecedente una línea más arriba, dentro del mismo bloque. Es la forma corta y es la que convierte.
+
+**EL TEST, y son cinco segundos:** lee las dos líneas solas y pregúntate **si la línea 2 se podría cambiar por cualquier otra oferta nuestra sin que se note**. Si se puede, la línea 1 no ha montado nada.
+
+**⛔⛔ Y LA CAUSA DE FONDO, PORQUE ESTÁ EN NUESTRO PROPIO VALIDADOR: el check de `Spam ninja: REPITE una palabra del gancho, literal` empuja justo a este fallo.** Para colar los sustantivos del gancho (`ficha`, `problemas`), la línea 1 se convierte en una **afirmación** que los contiene, en vez de en un **setup** que nombra la carencia. **El check es el SUELO, no la forma**: la palabra del gancho puede ir en cualquiera de las dos líneas, y lo que manda es que la 1 monte y la 2 remate.
+
+**🔴 Y LO QUE FALLABA EN LA RECETA, que es lo que Iker pedía auditar:** esto **ya estaba escrito**, en `§4.4b-FORMA` paso 3 (*"la línea del enlace resuelve exactamente lo que la de arriba dice que falta"*)… **pero solo dentro del sub-bloque de "¿y si el post no tiene broma?"**, así que no se leía como una ley de todos los ninjas. Es el caso de libro de `working-preferences §0c-BIS` otra vez: una regla universal guardada dentro de un caso particular se rompe en todos los demás. **Sube aquí, y el paso 3 queda como su detalle.**
+
+**Mecanizado** en `validar-post.py` como aviso de entrega (`ENTREGA: la linea 1 del ninja nombra la CARENCIA`), que imprime la línea 1 y avisa si no encuentra ninguna marca de carencia (`no`, `ni`, `nadie`, `ninguno`, `cualquiera`, `es fácil`, `lo caro`). **Aviso y no fallo duro** porque que una frase nombre una carencia es criterio; lo que el script puede hacer es obligar a mirarla, que es donde se falla. **Probado contra el bloque roto de arriba: lo caza.**
+
 #### 🗣️🗣️ 4.4b-EXPLICITO · LA LÍNEA DEL ENLACE SE LEE SOLA, SIN EL POST DELANTE (Iker, 2026-08-27) — CANÓNICO
 
 > **Iker, y lo sube a receta global:** *"siempre que haces el spam ninja, y no sé si en general en las recetas globales, a veces pecas de no ser explícito. El nombre lo ponemos nosotros, el nombre de qué. Un viejo no sabe de lo que estamos hablando, y para mejorar la conversión hay que especificar de quién le damos el nombre, o sea, de qué le ayudamos"*.
