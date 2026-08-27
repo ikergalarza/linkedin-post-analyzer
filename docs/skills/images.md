@@ -443,6 +443,64 @@ La paleta nueva (`§0a-ter`) manda en todo lo que **diseñamos nosotros**: infog
 - **La regla:** antes de "suavizar" para una cuenta sobria, comprueba **cuánto de bruto es el original de verdad**. Si no es bruto, no hay nada que suavizar y calcarlo literal es a la vez lo más fiel y lo más sobrio.
 - Esto **no contradice** `§4.4 PASO 0` (elegir la cuenta que aguanta el meme): sigue siendo verdad que un original bruto no se lima, se manda a Iker. Lo que se añade es que **muchos originales no son brutos y yo los estaba volviendo brutos al traducirlos**.
 
+
+
+## ⛔⛔⛔ 0b-TEXTO-REF-MOMENTO · EL MOMENTO QUE RETRATA LA ESCENA ES ESENCIA, Y SE CALCA COMO EL RESTO (Iker, 2026-08-27)
+
+> **Iker, y es la corrección más cara de la sesión porque llegó con la imagen ya montada:** *"veo un claro error en que no has sabido captar bien la esencia del meme de la foto, que al final en la foto es el meme viral. ¿Has cambiado textos, aparte de traducirlos al español, que no tienen nada que ver? Si la broma del original literalmente pone «persona que trabaja marketing con una idea de campaña», ¿por qué tú lo has traducido a «el de marketing después de publicarlo todo»?"*.
+
+**EL FALLO, y no es de traducción: cambié EL MOMENTO de la escena.**
+
+| | original | lo que entregué |
+|---|---|---|
+| franja | `MARKETER WITH A CAMPAIGN IDEA` | `EL DE MARKETING DESPUÉS DE PUBLICARLO TODO` |
+| **momento** | **tiene la idea**: no ha empezado y ya está esperando | **ya lo ha hecho todo**: está al final |
+
+**Son momentos OPUESTOS, y el del original es el que hace gracia:** ni siquiera ha arrancado y ya está sentado en el columpio. Movido al final, el meme pasa de *"esto es absurdo"* a *"esto es normal"* — y lo normal no se comparte.
+
+**LA REGLA: en el texto de dentro de una imagen, la ESCENA tiene tres capas y las tres son esencia.** `§0b-TEXTO-REF` ya obligaba a calcar las palabras y `§0b-TEXTO-REF-CORTE` el salto de línea. Faltaba la primera de todas:
+
+| capa | qué es | se calca |
+|---|---|---|
+| **1. EL MOMENTO** | en qué punto de la historia está el personaje (antes / durante / después) | ⭐ **sí, y es la que decide si hay chiste** |
+| 2. las PALABRAS | qué dice cada etiqueta | sí, palabra por palabra |
+| 3. el CORTE | dónde parte cada línea | sí |
+
+**EL TEST, y son cinco segundos:** *¿mi personaje está en el mismo punto de la historia que el suyo?* Si el suyo aún no ha empezado y el mío ya ha terminado, **no es el mismo meme**, por muy calcadas que estén las palabras.
+
+**⛔ Y ARRASTRÓ UN SEGUNDO DESTROZO: el REPARTO entre texto e imagen.** `§4.4 Paso 6a` ya dice que el texto lleva una mitad y la imagen la otra, y el original lo hace de manual:
+
+| | el original | lo que entregué |
+|---|---|---|
+| **TEXTO del post** | las COSAS que espera (`Landing page? Backlog.`) | ✅ calcado bien |
+| **IMAGEN** | **a QUIÉN espera** (`WAITING ON DESIGN / DEV / OPS`) | ⛔ **resultados** (`clic / respuesta / venta`), que no estaban en ninguna mitad |
+
+**Al mover el momento al final, las etiquetas se vinieron detrás.** Es la prueba de que la capa 1 arrastra a las otras dos: si el momento se cambia, **todo el texto de la imagen se desalinea solo**, y por eso hay que fijarlo ANTES de escribir ninguna etiqueta.
+
+**⚠️ Y CUANDO EL CALCO CHOCA CON `brand-voice`, SE DECLARA, NO SE DISIMULA.** Las tres esperas del original son **a otros equipos** (`DESIGN`, `DEV`, `OPS`), y en la cuenta de Mario eso señalaría a compañeros con nombre (canónico: el culpable nunca es una persona ni un equipo). La salida es esperar **a las COSAS** (`el diseño`, `la versión buena`, `que salga`), que es lo más cerca del original sin romper la regla — **y se dice en la entrega que se ha hecho y por qué**, para que la decisión sea de Iker.
+
+## 🔠🔠 0b-TEXTO-REF-CUERPO · SI LOS RENGLONES DEL ORIGINAL VAN AL MISMO TAMAÑO, SE DICE EN EL PROMPT (Mario, 2026-08-27)
+
+**`§0b-TEXTO-REF-CORTE` ya obliga a calcar DÓNDE parte la línea. Faltaba la otra mitad: a QUÉ TAMAÑO va cada renglón.**
+
+**El caso.** Mi prompt decía *"EL DE MARKETING en la primera línea y DESPUÉS DE PUBLICARLO TODO en la segunda, respetando ese corte de línea"*. El generador lo leyó como **título + subtítulo** y sacó el segundo renglón mucho más pequeño. En la referencia (`MARKETER WITH` / `A CAMPAIGN IDEA`) **los dos van al mismo cuerpo**.
+
+**Por qué importa y no es estética:** en un meme de dos renglones, **el segundo es el que sitúa el chiste** (el primero solo nombra al personaje). En cuerpo pequeño se lee como pie de foto y el remate se desinfla.
+
+- **LA REGLA: si en el original los renglones van iguales, el prompt lo dice con esas palabras** — *"los dos renglones exactamente al mismo tamaño de letra"* —, porque el generador asume jerarquía por defecto.
+- **Y la orden de tamaño va con la del espacio que sobra, en la misma frase** (`§0c-TAMAÑO`): *"súbelo hasta igualar al de arriba, aprovechando todo el ancho de la franja que le queda libre a los lados"*.
+- **Solo si el original SÍ tiene jerarquía se pide jerarquía.** Se mira, no se supone.
+
+## 🧱🧱 0b-ETIQUETA-PANEL · CADA ETIQUETA VIVE DENTRO DE SU PANEL Y NO CRUZA LA LÍNEA (Mario, 2026-08-27)
+
+**El fallo, y es el que mata un meme entero:** en un remix de 3 paneles, las etiquetas de los dos de abajo salieron **fundidas en una sola línea a caballo del borde** (`ESPERANDO IESPERANDO LA VENTA`). Una desapareció y la otra quedó pisada — y era la que llevaba la palabra naranja, o sea **el remate del chiste**.
+
+**Por qué pasa: al comprimir de vertical a 1:1** (`§0b`), los paneles de abajo se estrechan y el generador, en vez de partir el texto, lo desborda hacia el panel de al lado. **Con 2 o más etiquetas en la misma fila, pasa siempre si no se lo prohíbes.**
+
+- **LA REGLA, y va en el prompt DESDE EL PRIMERO cuando haya dos o más paneles en una fila:** *"cada etiqueta entera dentro de su propio recuadro, sin tocar la línea que los separa"*.
+- **Y con la salida ya dada, que si no la inventa:** *"si no cabe a ese tamaño, pártela en dos renglones antes que reducirla"* — que es `§0b-TEXTO-REF-CORTE`: **más renglones AGRANDAN la letra, no la empeoran.**
+- **⚠️ Es el mismo fallo de familia que `§0c-TAMAÑO`:** una orden de colocación sin decir de dónde sale el espacio la resuelve el generador como quiere. Aquí el espacio sale de partir la línea, y hay que decirlo.
+
 ## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
 
 > **La regla:** *"no me puedes dar una propuesta de foto sin una referencia, porque entonces me estás demostrando que te la estás inventando. Tiene que estar validado en que ese mismo formato de foto ya haya funcionado, por lo tanto me tienes que pasar el enlace."*
