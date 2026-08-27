@@ -938,6 +938,25 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'Mario es la cuenta de marketing/growth: el hook ancla en contenido/redes/marketing, '
             'no en "vender"' if not _mk else f'ancla marketing: "{_mk.group(0)}"')
     elif _es_helena:
+        # ⛔ EL CUERPO DE HELENA NO PUEDE SONAR PREPOTENTE (Iker, 2026-08-27).
+        # "Ten en cuenta que el tono de la publicacion esta escrito por una chica,
+        # ademas no puede sonar a prepotente tampoco". Es el mismo eje que la
+        # EXCEPCION 4 de brand-voice (por lo que Mario paso a hablar en plural) y
+        # que 2.0c-PRESUMIR, pero aplicado al CUERPO entero y no solo al gancho.
+        # AVISO y no fallo duro: la prepotencia es criterio y una lista cerrada
+        # tumbaria lineas buenas. Lo que el script puede hacer es cantar las
+        # marcas tipicas y obligar a releer el cuerpo con esa pregunta.
+        _chulo = re.findall(r'antes que nadie|mejor que nadie|como nadie|nadie lo hace'
+                            r'|me lo s[eé] todo|lo s[eé] todo|siempre acierto|nunca fallo'
+                            r'|religiosamente|de memoria mejor|soy la que', cuerpo, re.I)
+        chk(False, 'ENTREGA: ¿el CUERPO presume? (cuenta Helena, brand-voice EXCEPCION 4)',
+            ('marcas encontradas: %s. ' % ', '.join(sorted(set(_chulo))) if _chulo else '')
+            + 'El cuerpo va en 1ª PLURAL cuando el merito es de la casa, y una linea que '
+              'presume de lo bien que lo hacemos se lee como chuleria. La salida es siempre '
+              'la misma: la version CONFESION de la misma escena ("lo relleno todo '
+              'religiosamente" -> "me lo se de memoria"). Vale igual para saber mas que el '
+              'cliente: "vemos su problema antes de que lo cuenten" presume, "conocemos la '
+              'hora a la que es mejor no llamarles" es cercania', aviso=True)
         _cs = re.search(CS_ANCLA, hook_txt, re.I)
         chk(bool(_cs), 'Hook anclado a ATENCION AL CLIENTE (cuenta Helena, aboutme 2-CARRIL-GANCHO)',
             'Helena es la cuenta de customer success y partnerships: el hook ancla en su oficio '
@@ -1885,6 +1904,41 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                         'contrato de OTRO destino (4.4b-PROMESA)'
                         if not _sala else 'promesa de sala: "%s"' % _sala.group(0))
                     _iden = True
+                    # ⛔⛔ 4.4b-EVENTO-CONTEXTO (Iker, 2026-08-27) — LA LINEA QUE
+                    # DICE QUE HAY UN EVENTO VA JUSTO ENCIMA DEL BLOQUE. Iker:
+                    # "siempre que hacemos el spam de la web del evento falta una
+                    # linea antes de ese bloque de dos en el que explicitamente
+                    # digamos que el dia tal en Donostia vamos a hacer un evento
+                    # presencial. Los bloques de spam de los otros enlaces siempre
+                    # los haces bien, pero este fallas, porque es nuevo".
+                    # POR QUE SOLO LE PASA A ESTE ENLACE: /agendar/ y /correo/ se
+                    # explican solos (una reunion, un correo) y el mapa lleva el
+                    # nombre de la region dentro. Un evento NUEVO no lo conoce
+                    # nadie: sin fecha, sitio y la palabra presencial delante, el
+                    # bloque de dos pide un clic a un sitio que el lector no sabe
+                    # que existe. El ninja vende LA SALA; esta linea dice que la
+                    # sala existe, cuando y donde.
+                    # ⏳ CADUCA SOLA EL 24/09/2026: pasado el evento, este check no
+                    # corre. Iker: "dentro de un mes lo dejaremos de hacer, evento
+                    # ya pasado". Cuando llegue el dia, esto se borra entero.
+                    _hoy_ev = datetime.date.today()
+                    if _hoy_ev <= datetime.date(2026, 9, 24):
+                        _prev = ' '.join(bs[i - 1]).lower() if i > 0 else ''
+                        _f = re.search(r'\b24\b', _prev)
+                        _si = 'donostia' in _prev
+                        _pres = re.search(r'presencial|en persona|cara a cara|nos vemos'
+                                          r'|nos juntamos|evento', _prev)
+                        _falta = [n for n, v in (('la fecha (24)', _f), ('Donostia', _si),
+                                                 ('que es presencial', _pres)) if not v]
+                        chk(not _falta,
+                            'EVENTO: la linea de ENCIMA dice que hay evento, cuando y donde (§4.4b-EVENTO-CONTEXTO)',
+                            ('falta %s en la linea individual que va justo encima del bloque del '
+                             'enlace. El evento es NUEVO y nadie lo conoce: antes de pedir el clic '
+                             'hay que decir en una linea suelta que el 24 de septiembre hacemos un '
+                             'evento presencial en Donostia. Los otros enlaces (agendar, correo, '
+                             'mapa) se explican solos y por eso alli no hace falta. Linea de '
+                             'encima: "%s"' % (' y '.join(_falta), _prev[:90]))
+                            if _falta else 'linea de contexto puesta encima del bloque')
                 # 4.4b-EXPLICITO (Iker, 2026-08-27) - LA LINEA DEL ENLACE SE LEE SOLA.
                 # El vicio: el tope de 55 caracteres empuja a tachar el complemento
                 # del sustantivo, la frase sigue siendo gramatical y el lector se

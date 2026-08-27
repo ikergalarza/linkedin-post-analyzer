@@ -1425,6 +1425,26 @@ La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: apar
 
 **Mecanizado** en `validar-post.py` como aviso de entrega (`ENTREGA: la linea del enlace se lee SOLA`), que canta los sustantivos huecos que encuentre (`el nombre`, `esa parte`, `esa lista`, `ese trabajo`…) sin complemento detrás. **Va de aviso y no de fallo duro** porque saber qué sustantivo pide complemento es criterio, y una lista cerrada tumbaría ninjas buenos.
 
+#### 🗓️🗓️ 4.4b-EVENTO-CONTEXTO · EL NINJA DEL EVENTO LLEVA UNA LÍNEA DE CONTEXTO ENCIMA (Iker, 2026-08-27) — GLOBAL, Y CADUCA EL 24/09
+
+> **Iker, y lo sube a receta global porque lleva fallando en todos:** *"siempre que hacemos el spam de la web del evento, falta una línea antes de ese bloque de dos en el que explícitamente digamos que el día tal en Donostia vamos a hacer un evento presencial. Los bloques de spam de las otras casuísticas de otros enlaces siempre los haces bien, pero este fallas, porque es nuevo"*.
+
+**LA REGLA:** cuando el enlace del bloque sea el del evento (Luma o `forward.neety.com`), **justo encima del bloque de dos va una línea individual que dice las tres cosas: el 24 de septiembre, en Donostia y que es presencial.** Sin rodeos y sin metáfora: es la única línea del post que informa.
+
+```
+✅ El 24 de septiembre montamos un evento presencial en Donostia.     ← línea individual
+   A un cliente no le ves la cara entera por una pantalla.            ← bloque de dos, intacto
+   Esas caras se juntan en solo 80 sillas: {link}
+```
+
+**POR QUÉ SOLO LE PASA A ESTE ENLACE, que es lo que explica el fallo repetido:** `/agendar/`, `/correo/` y la página del mapa **se explican solos** — una reunión, un correo y el mapa de una región que el post lleva nombrando desde el gancho. **Un evento nuevo no lo conoce nadie.** El bloque de dos vende LA SALA (`§4.4b`, Grace Gong 11.6x y 14.4x), pero antes hay que decir **que la sala existe, cuándo y dónde**, o el lector recibe una oferta de un sitio que no sabe que hay.
+
+- **⛔ La línea NO sustituye al bloque de dos ni lo toca.** Sigue siendo `carencia / la cubre` con sus 55 caracteres y la palabra del gancho dentro (`§4.4b-BLOQUE`). Lo que se añade es la línea suelta de encima, que además rompe el pasillo de ritmo.
+- **⛔ Y no se convierte en el anuncio.** Una línea, informativa, y se acabó: si detrás va el programa o los ponentes, se cae el motor (`§4.4b`, vende la sala).
+- **⏳ CADUCA SOLA EL 24/09/2026.** Iker: *"dentro de un mes lo dejaremos de hacer, evento ya pasado"*. **El check lleva la fecha dentro y deja de correr ese día**; cuando pase, esta sección se borra entera en vez de quedarse de fósil.
+
+**Mecanizado** en `validar-post.py` como **fallo duro** (`EVENTO: la linea de ENCIMA dice que hay evento, cuando y donde`), que mira el bloque inmediatamente anterior al del enlace y canta cuál de las tres piezas falta. **Probado contra el borrador que lo incumplía: lo caza.**
+
 #### ⛔⛔ 4.4b-FORMA · DOS LÍNEAS PEGADAS Y SIGUIENDO LA BROMA DEL GANCHO. SIEMPRE, EN TODOS LOS PILARES (Iker, 2026-08-12)
 
 **La forma del ninja no es de un pilar. Es global**, y se rompió en dos pilares distintos la misma semana. Iker: *"si el gancho de ayer era de los calvos, deberíamos seguir la broma de eso en el spam ninja"*.
