@@ -513,6 +513,8 @@ salvas`, titular y etiqueta hablan en dos voces distintas dentro de la misma fot
 
 **⭐⭐ Y LA REGLA GENERAL QUE SE DESTAPA, porque esto ya lo teníamos a medias:** `global §2.0c-PRESUMIR` dice que **el gancho** no presume porque el lector lee *"mírame"*. **Faltaba la otra mitad: una cadena de `yo` seguidos en el CUERPO produce exactamente el mismo efecto**, aunque ninguna frase suelta presuma. El test es de contar: **si el cuerpo encadena tres o más frases con `yo` de sujeto y el mérito no es personal, pasa a `nosotros`.**
 
+**⛔ Y AL CAMBIAR LA PERSONA SE CAMBIA EN TODO EL CUERPO, POSESIVOS INCLUIDOS.** El 27/08 pasé el cuerpo a plural… y dejé un bloque entero en `¿El gancho? **Mío**. / ¿La hora de publicar? **Mía**.`. Iker: *"lo haces de una manera muy prepotente: hablar solo en primera persona cuando justo antes te ha dicho que primera persona singular no"*. **Los posesivos son los que se escapan**, porque el verbo ya está en plural y el oído da la frase por corregida. **Ctrl+F antes de entregar: `mío`, `mía`, `mis`, `me `, `yo`.**
+
 **Dónde NO aplica:** en las 3 cuentas de founder y en el pilar **historia** de cualquiera. Ahí manda la tabla de abajo: la historia es una escena propia, el `yo` es el pilar entero y **la 1ª plural es la que peor va** (6.554 · 6.271 · 3.628 · 2.926 · 1.321).
 
 **El caso:** el meme de Mario del 27/08 iba `Aquí no llamo a nadie / Me escriben ellos / ¿El que me lee?`. Quedó en `Aquí no llamamos a nadie / Nos escriben ellos / ¿El que nos lee?`, **con el gancho intacto en `Trabajo en growth y marketing`**. Y de regalo, el salto al evento deja de chirriar: el que monta el evento ya es el mismo `nosotros` que venía hablando.

@@ -909,6 +909,11 @@ sorprende, que es de lo que vive este pilar.
 > | ✅ **la DEGRADACIÓN** | Backlog → dos sprints → "pronto" | dos que controlo → el que no |
 > | ⛔ **las COSAS** | landing page, microsite, dashboard, sprints | **el gancho, la hora de publicar, quién nos lee** |
 >
+> **⛔⛔ Y EL ERROR CONTRARIO, QUE COMETÍ EN EL TURNO SIGUIENTE: SOBRECORREGIR Y TIRAR EL BLOQUE ENTERO (Iker, 2026-08-27).** Al saber que `microsite` y `two sprints` no eran de su mundo, descarté **las tres** cosas. Iker: *"es tan fácil como que mires la referencia: yo sí que toco landing pages también, y tenemos nuestro propio dashboard personal. Podrías copiar cosas de esas, que son problemas que yo también afronto. Lo que yo no afronto es nada relacionado con llamar a clientes o publicidad, todo lo hago orgánico"*.
+> - **De las tres cosas del original, DOS eran suyas** (`landing page`, `dashboard`) **y una no** (`microsite`, que se pide a ingeniería). Lo que sobraba era **el marco** (encargárselo a otro equipo), no las cosas.
+> - **LA REGLA: antes de descartar un elemento por "es de otro oficio", se PREGUNTA cuáles SÍ son suyos.** El que firma la cuenta lo sabe y yo no. Descartar entero es tan caro como calcar entero: en el primer intento le puse un dolor prestado, en el segundo le quité dos herramientas que usa cada día.
+> - **Y hay un motivo de ALCANCE encima del de veracidad** (Iker): *"mete más cuello de botella, más problemas con los que cualquiera se pueda sentir identificado si trabaja en marketing o en growth"*. **Las cosas del original venían ya elegidas por alguien de ese oficio**, así que las que encajan son las que más identificación traen. Tirarlas es tirar alcance.
+>
 > **LOS DOS TESTS, y los dos se corren sobre el borrador, no sobre la teoría:**
 > 1. **¿EL QUE FIRMA ENTIENDE SU PROPIO POST?** Si el dueño de la cuenta tiene que preguntar qué significa una línea, el lector ya se ha ido. **Es el test más barato que existe y no lo estaba corriendo.**
 > 2. **¿LO QUE CUENTA EL CUERPO ES UN PROBLEMA DE VERDAD, O ES LA VENTAJA DISFRAZADA?** Aquí caí en el mismo turno: puse `Aquí no llamamos a nadie / Nos escriben ellos` **como si fuera el cuello de botella, y eso es justo lo que le va BIEN**. El gancho prometía un problema y el cuerpo contaba lo bien que va: el bucle no paga y el lector se siente estafado.
