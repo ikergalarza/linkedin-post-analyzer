@@ -548,7 +548,18 @@ Cierra el pendiente que este fichero abrió el 25/08 (*"dos correos NUEVOS, sin 
 | Remitente | **Iker** | **Kaixito** |
 | Pilar | historia personal (`§5-HISTORIA`) | `[PENDIENTE · por decidir]`, con GIF |
 | GIF | ninguno, texto puro | **sí, y uno que NO sea el de estrés** (el del correo 0) |
-| Estado | escrito, validado 31/31 | sin escribir |
+| Estado | **reescrito el 2026-08-27 con los aprendizajes de la tanda 6, validado 31/31** | sin escribir |
+
+### 🔁 Correo 2 reescrito tras la tanda 6 (2026-08-27)
+
+Iker pidió aplicar a este correo lo aprendido con Kaixito 01 · Tanda 6 antes de darlo por bueno: el bloque de dos del ninja colgando del asunto (`§5-NINJA`, ya lo tenía bien planteado el borrador viejo) y, sobre todo, **acortar el asunto pensando en el corte de móvil**, que no estaba escrito en ningún sitio (`§2`, sección nueva de hoy).
+
+- **Asunto: `traje 200 tarjetas y no llamé a ninguna`, 39 caracteres** (antes `me traje 200 tarjetas y no llamé a ninguna`, 42). Se quita el `me` reflexivo: la primera persona la sigue llevando el verbo `llamé`, y se gana margen frente al corte de móvil (~30-40 car) sin tocar la palabra clave (`tarjetas`) ni el número.
+- **Ninja:** `200 tarjetas te las da cualquier feria.` / `Buscarlas ya las buscamos nosotros: {link}` — 39/35 caracteres, escalera invertida, dolor de `aboutme §1b` (buscar contra contactar, 15 empresas, 9 ICP), sin prometer automatismo ni volumen.
+- **Validador: 31/31.**
+- **Sin comparativa de columnas:** no hay una referencia externa única que se esté calcando (el molde sale de varios corpus agregados, no de un correo concreto) y es el primer email del pilar historia que se envía (n=0), así que tampoco hay "nuestro mejor de este pilar en correo" contra el que compararlo (`working-preferences §1e-DOS`).
+
+**Pendiente de Iker:** dar el OK al texto y decidir el remitente/pilar/GIF del correo del 07/09 (la cuenta de arriba solo cierra la semana del 31/08).
 
 - **Las dos reglas nuevas que salen de aquí, y son de planificación, no de este correo:**
   1. **No se repite pilar dos semanas seguidas.**
