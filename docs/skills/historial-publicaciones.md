@@ -45,6 +45,30 @@
 
 ---
 
+## ✅ PUBLICADO · JUE 27/08 · IKER · MEME DE LA FICHA DEL CLIENTE
+
+| dato | |
+|---|---|
+| **Referencia** | [Pietro Acerbis 01/07](https://www.linkedin.com/posts/pietroacerbis-prospeiq_todays-crm-has-five-structural-problems-activity-7478009600475103232-rldk) · 127♥ · 48💬 · 5🔁 · 32% de risa · inglés → `--referencia-fuera` |
+| **Gancho** | `La ficha del cliente arrastra 3 problemas y los paga el comercial 👇` (67 car, 1 oración, ancla FUERTE `comercial`, 1 cifra impar) |
+| **Ninja** | `Rellenar la ficha es fácil. Saber quién compra, no.` / `Ese nombre te lo damos nosotros:` (51/32 car) |
+| **Validador** | 50/50 · 450 car publicados · ritmo `1-1-2-1-3-1-2-1` |
+| **UTM** | `utm_campaign=meme-ficha-27ago&utm_content=iker` — **1er UTM de la cuenta de Iker** |
+| **Arranques** | `sé` → a `ARRANQUE_QUEMADO['meme']` · ninja → a `SPAM_QUEMADO` |
+
+**⏱️ Se quedó 18 minutos en la cola de revisión y salió solo** (14 imp a los 9 min · 35 a los 18 · 45 a los 19, cuando apareció en "Primero los más relevantes"). **No se borró**, y por eso tenemos el segundo caso de la cola. Doctrina en `global §9.0b`.
+
+**De este post salen CINCO reglas nuevas, y las cinco por correcciones de Iker en el mismo día:**
+1. `post-workflow §4.4-ESENCIA-MITAD-BIS` — el gancho calca **el gancho del post original**, nunca el texto de dentro de la foto. Retira lo que yo había escrito el 26/08.
+2. `post-workflow §4.4-ROL` — el gancho no le atribuye al que publica un puesto o un jefe que no tiene. Iker no tiene jefe de ventas: **él lo es**. La foto se salvó porque su rótulo dice `Jefe:` a secas.
+3. `global §2.0c-CONTRADICE` — tercera forma de romper la foto: que el cuerpo haga lo **contrario** que el personaje. El 1er borrador decía `Anoto cada visita desde el coche` y en la foto no la ha tocado.
+4. `global §2.2b-NEGATIVO` — el sustantivo cargado del original se calca (`problemas`, no `datos`). Y el número se baja solo hasta donde el pilar pueda enseñarlo entero.
+5. `global §4.4b-EXPLICITO` + `§4.4b-BLOQUE` — la línea del enlace se lee sola, y las dos líneas son **una unidad**: la 1 nombra la carencia, la 2 la cubre.
+
+**📏 QUÉ MEDIR:** impresiones y clics contra el meme de la escalera de Asier (89.320 · 22 clics) y contra la mediana del pilar (6.905). **Y el CTR contra el 0,151% del tatuaje**, porque este es el primer ninja que estrena el molde de `§4.4b-BLOQUE` escrito.
+
+---
+
 ## 🗑️ EL MEME DE LA FICHA · BORRADO POR ASIER EL 26/08 Y MOVIDO A IKER EL 27/08
 
 **Qué pasó, y no es un capado.** El meme de la katana (referencia [Pietro Acerbis 01/07](https://www.linkedin.com/posts/pietroacerbis-prospeiq_todays-crm-has-five-structural-problems-activity-7478009600475103232-rldk), 127♥ · 32% de risa) se publicó en Asier el 26/08 y **lo borró el propio Asier porque no le gustaba**, no por rendimiento ni por moderación.
