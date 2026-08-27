@@ -1641,6 +1641,16 @@ La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: apar
 >
 > **El motor es LA SALA.** No el programa, no los ponentes, no la agenda. Cuenta **quién está dentro y por qué se ha elegido a mano**. Es de otro sector (eventos de IA y VC), así que no copiamos a nadie de ventas y no hace falta acreditar (`--referencia-fuera`).
 >
+> **⛔⛔ Y EN EL NINJA DE DOS LÍNEAS EL ORDEN ES: PRIMERO QUIÉN ESTÁ DENTRO, DESPUÉS EL AFORO (Iker, 2026-08-27).** Las 4 piezas de abajo son para un POST de evento entero. Cuando el evento viaja dentro de otro pilar (`§4.4b`, el enlace de Luma ocupa el hueco del ninja), hay que meterlas en **dos líneas**, y ahí es donde se pierde el valor.
+> - **El fallo:** entregué `Un post nunca nos sienta en la misma sala. / Solo hay 80 plazas y se piden una a una:`. Iker: *"no creo que estemos explicando bien el valor que va a tener para la gente asistir al evento"*. **Las dos líneas vendían la PUERTA y ninguna la HABITACIÓN.**
+> - **La escasez sin valor es una puerta cerrada sin nada detrás.** `80 plazas` solo aprieta si antes sabes qué hay dentro; si no, es un número.
+> - **EL MOLDE:** línea 1 = **qué te llevas de la sala** (colgado de la broma del gancho); línea 2 = **cuántos caben y cómo se entra** + enlace.
+> ```
+> Un post no te mete en la sala con los que compran.   (50)  ← la habitación
+> Solo hay 80 plazas y las elegimos una a una:         (44)  ← la puerta
+> ```
+> - **⭐ Y `las elegimos una a una` hace DOS trabajos en cuatro palabras:** es la fricción de entrada **y** es el *"I curated the entire room"* de Grace Gong, que es el motor medido (11.6x y 14.4x). La versión anterior (`se piden una a una`) solo decía la fricción; en pasiva se pierde que **la sala la elegimos nosotros**, que es justo lo que la hace valiosa.
+>
 > **Las 4 piezas, en orden:**
 > 1. **Cifra de aforo + fricción de entrada** en el gancho (`80 sillas … no se compran, se piden`). La escasez va delante.
 > 2. **El camino no tomado**: *"podríamos haber montado un webinar y meter a 500. Elegimos al revés."* Esto es lo que convierte una limitación en una decisión.
