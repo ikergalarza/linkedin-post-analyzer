@@ -692,3 +692,56 @@ almacén a nivel de cuenta, independiente de la campaña que lo usó de puerta d
 `corpus-correos-enviados.md` avisa explícitamente de lo contrario ("si desaparece, se van las cinco
 URLs"), y no hay forma segura de comprobarlo sin arriesgar las 5 GIFs de todos los correos de Kaixito,
 pasados y futuros. Recomendado: no borrarla, renombrarla como "NO BORRAR" en el panel en su lugar.
+
+---
+
+## 🧪 Correo 2: primer A/B testing de la newsletter — A/B de REMITENTE (2026-08-27)
+
+**Decisión de Iker:** ya que el correo 2 estrena por primera vez un remitente de persona real (Iker) en
+vez de la mascota, y él mismo cree que la mascota generará más confianza pero quiere el dato, se monta
+el primer A/B de la casa: no de asunto (eso ya lo hicimos con `¿no te acuerdas de mí?` sin probar
+variantes), sino de **nombre del remitente** — con o sin apellido. Es la variable que más pesa en
+apertura después del asunto y el preview, y hasta ahora nunca se había medido.
+
+**⛔ NO es una tanda como las de Kaixito 01.** Iker preguntó si hacía falta volver a repartir en varias
+tandas como las 6 de la primera campaña, y la respuesta es no: aquello era calentamiento de dominio +
+gestión de riesgo de rebote en una cuenta nueva. Ese riesgo ya está resuelto (dominio caliente, Bouncer
+pagado y verificado, 6 tandas reales sin incidentes). **Este reparto es un split aleatorio 50/50 de
+la MISMA lista para aislar una sola variable (el remitente)**, no una secuencia de calentamiento — son
+conceptos distintos aunque los dos "repartan" la audiencia.
+
+### Cómo se montó (primera vez que se usa este mecanismo, documentado para la próxima)
+
+1. **Los dos remitentes**, dados de alta por Iker en el panel de Brevo: `Iker de Neety` (id 4) y
+   `Iker Galarza de Neety` (id 5), los dos con `hola@neety.com`.
+2. **Acceso conseguido a la API real de Brevo** (`BREVO_API_KEY` en el entorno), en vez de depender del
+   conector MCP limitado (que no tiene `create_list` ni forma de repartir contactos). También se
+   consiguió sesión en el CRM propio (`salescrmuser`/`salescrmpass` → login normal de la app, no
+   `DATABASE_URL`), pero al final no hizo falta: con la API key de Brevo directa bastó.
+3. **Universo del test: los contactos VIVOS de las 6 tandas de Kaixito 01** (listas Brevo 5-10),
+   leídos en directo (no del `member_count` cacheado del CRM, que está desactualizado tras las bajas de
+   Bouncer). **1.035 contactos vivos** (no bloqueados) de 1.325 originales.
+4. **Partido al 50% al azar** (semilla fija `20260827` por si hay que auditar el reparto): **517 en la
+   lista A, 518 en la B.** Dos listas nuevas creadas por API: `Correo 2 · A/B remitente · A (Iker de
+   Neety)` (id 11) y `· B (Iker Galarza de Neety)` (id 12).
+5. **Dos campañas en borrador, idénticas salvo el remitente:**
+
+| | Campaña A | Campaña B |
+|---|---|---|
+| id | **13** | **14** |
+| Remitente | `Iker de Neety` | `Iker Galarza de Neety` |
+| Lista | 11 (517) | 12 (518) |
+| `utm_campaign` | `iker-02-feria-ab-a` | `iker-02-feria-ab-b` |
+
+Mismo asunto (`me traje 200 tarjetas y no llamé a nadie`), mismo preview, mismo cuerpo, mismo enlace.
+**Las dos en `status: draft`, sin `scheduledAt`** — la norma de nunca programar de primeras sigue
+intacta, doblemente aquí porque hay dos variantes que revisar, no una.
+
+**Corregido de paso: el enlace del cuerpo va LIMPIO, sin UTM escrito a mano.** `§5-NINJA` de
+`email-marketing.md` ya decía que el UTM no se escribe en la URL (Brevo lo inyecta solo desde el campo
+`utmCampaign` de la campaña) y la tanda 6 se había hecho mal (UTM a mano Y en el campo, redundante). No
+se corrige retroactivamente la tanda 6, pero el correo 2 ya sale bien.
+
+**Pendiente de Iker:** mandarse un correo de prueba de las DOS campañas (13 y 14), revisar que el texto
+esté bien y confirmar antes de programar. Cuando decida qué gana, la métrica es igual que en el resto:
+aperturas primero (es lo que mide el A/B), pero sin perder de vista clics y respuestas.

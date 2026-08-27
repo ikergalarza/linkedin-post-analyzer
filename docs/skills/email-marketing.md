@@ -169,6 +169,26 @@ El asunto es al email lo que el gancho es al post: si no abre, no existe el cuer
 - **No se hace A/B en las tandas de calentamiento.** Con 25-50 por variante no mide nada. El A/B va en la tanda grande, cuando ya hay volumen.
 - **Sesgo de negatividad (Mario, 2026-08-06):** un asunto en negativo ("¿no te acuerdas de mí?") suele abrir más que su versión neutra, y es un efecto real y documentado. El riesgo no está en la apertura sino en que un reproche baje la respuesta. **Es exactamente el tipo de cosa que hay que testar en vez de decidir a ojo.**
 
+### ⭐ A/B DE REMITENTE, distinto del A/B de asunto (primer test de la casa, correo 2, 2026-08-27)
+
+**El `abTesting` nativo de Brevo solo parte el ASUNTO** (`subjectA`/`subjectB`), no el remitente — así
+que para testar remitente no vale ese mecanismo, hace falta montarlo a mano:
+
+1. Leer los contactos VIVOS (no bloqueados) de la audiencia por API directa de Brevo, no del contador
+   cacheado de ningún sitio (el CRM propio incluido: su `member_count` no descuenta las bajas).
+2. Partir la lista al 50% **al azar, con semilla fija** (para poder auditar el reparto si algo sale
+   raro), y crear DOS listas nuevas en Brevo con esos contactos ya existentes (`POST /contacts/lists`
+   + `POST /contacts/lists/{id}/contacts/add`, mucho más rápido que re-subir contacto a contacto).
+3. Dos campañas idénticas en todo (asunto, preview, cuerpo, enlace) salvo el campo que se está
+   testando. Las dos en borrador, nunca programadas de primeras (`§9a-BIS`).
+4. **Esto necesita la API key de Brevo en bruto**, no el conector MCP: crear listas y repartir
+   contactos existentes entre ellas no está entre las herramientas que el conector expone (solo
+   `create`/`get`/`list` de campañas). El procedimiento completo, con los números reales del primer
+   test, está en `historial-newsletter.md`.
+5. **No confundir con las tandas de calentamiento** (arriba, `§0c`): las tandas reparten para gestionar
+   riesgo de rebote en una cuenta nueva; el split del A/B reparte para aislar UNA variable. Con el
+   dominio ya caliente y verificado, un A/B no necesita ir en tandas.
+
 **Preview text: SIEMPRE manual, nunca el automático.** Completa el asunto o estira el gap; no lo repitas. Es la segunda línea del "hook" del inbox.
 
 **Taxonomía de asuntos del corpus (353 clasificados, % aprox.) — rota entre tipos, no te cases con uno:**
