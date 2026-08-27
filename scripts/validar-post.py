@@ -140,6 +140,12 @@ SPAM_QUEMADO = {
     'te lo damos resuelto': 'historia de Iker 18/08 (era la variante de "te lo damos hecho")',
     'te lo marcamos': 'meme de Iker 19/08 (el de la transcripcion de la llamada)',
     'acertar con quien no': 'historia de Unai 21/08 (la del evento en el ninja)',
+    'saber quien compra': 'meme de Iker 27/08 (el de la ficha del cliente)',
+    'saber quien compra, no': 'lo mismo, la forma con la coma',
+    # Con tilde tambien: el check compara por substring y NO pliega acentos,
+    # asi que sin esta linea la lista no cazaba el texto real publicado.
+    # Mismo patron que 'lo cuento en el correo antes que aqui/aquí'.
+    'saber quién compra': 'meme de Iker 27/08, la forma con tilde',
 }
 
 # §4.2 Paso 1 — CONCEPTOS DE GANCHO YA USADOS. La receta decia "no repitas
@@ -220,6 +226,7 @@ ARRANQUE_QUEMADO = {
     'meme': {
         'la': 'meme de Asier 20/08 ("La lista no se pule / no se hereda / se elige antes")',
         'no': 'meme de Unai 25/08 ("No buscan quien mande mas / escriba mejor / conteste antes")',
+        'se': 'meme de Iker 27/08 ("Se lo que hablamos / Se en que bar desayuna")',
     },
     # El pilar lead magnet tampoco tenia lista. Anotado al PUBLICAR (§0f).
     'leadmagnet': {
@@ -1162,7 +1169,11 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # trafico, busco inscripciones". Un evento PRESENCIAL en Euskadi ya tiene
     # bastante barrera como para meterle un salto mas. Asi que el check ni salta:
     # no es una mejora pendiente, es una decision tomada.
-    _solo_luma = bool(_fuera) and all('luma.com' in u for u in _fuera)
+    # 2026-08-27 — `forward.neety.com` cuenta como Luma. Es un 302 de Cloudflare
+    # que conserva la query entera (comprobado el 26/08, global §4.4b-UTM) y es el
+    # dominio que imprimen los carteles del evento, asi que un post puede enlazarlo
+    # en vez de luma.com. El check de UTM ya lo contemplaba y estos cinco no.
+    _solo_luma = bool(_fuera) and all(('luma.com' in u or 'forward.neety.com' in u) for u in _fuera)
     # ⭐ AMPLIADO 2026-08-21: el enlace de Luma vale en CUALQUIER pilar, no solo
     # en --pilar evento. La doctrina lo dice desde el 05/08 (global §4.4e y el
     # bloque del evento): un post informativo del evento no lo lee nadie, asi que
@@ -1510,7 +1521,8 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
 
     # ---------- POR PILAR ----------
     # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.
-    tiene_link = 'recursos.neety.com' in cuerpo or 'luma.com' in cuerpo
+    tiene_link = ('recursos.neety.com' in cuerpo or 'luma.com' in cuerpo
+                  or 'forward.neety.com' in cuerpo)
     if pilar in ('mapa', 'los10', 'meme', 'evento'):
         chk(tiene_link, 'Spam ninja presente (§4.4b)', 'falta el link de agendar' if not tiene_link else '')
         # ⛔ 2026-08-06, Iker: este check decia "falta el link de agendar" pero se
@@ -1563,7 +1575,9 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # Que dominio hace de CTA en ESTE post: en evento es luma.com, en el
         # resto recursos.neety.com. Antes estaba escrito a fuego y al meter el
         # pilar evento esto reventaba con StopIteration (Iker, 2026-08-05).
-        _dom = 'luma.com' if 'luma.com' in cuerpo else 'recursos.neety.com'
+        _dom = ('luma.com' if 'luma.com' in cuerpo
+                else 'forward.neety.com' if 'forward.neety.com' in cuerpo
+                else 'recursos.neety.com')
         _bare_link = re.search(r'(?<!https://)' + re.escape(_dom), cuerpo)
         chk(not _bare_link, 'El enlace lleva https:// delante (§4.4b regla 8)',
             f'falta https:// delante de {_dom}' if _bare_link else '')
@@ -1730,7 +1744,8 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
                 # 4.4e - se busca el enlace de AGENDAR, no el primer recursos.neety.com
                 # que aparezca: con dos bloques, si el del correo se colara antes, este
                 # check estaria midiendo el bloque equivocado.
-                _dom650 = 'luma.com' if _dom == 'luma.com' else 'recursos.neety.com/agendar'
+                _dom650 = (_dom if _dom in ('luma.com', 'forward.neety.com')
+                           else 'recursos.neety.com/agendar')
                 _pos = cuerpo.find(_dom650) if pilar in ('meme', 'historia', 'entregable') else 0
                 _pos = max(_pos, 0)
                 chk(_pos <= 650, 'Spam ninja: el enlace cae antes del caracter 650 (§4.4b)',
@@ -1933,7 +1948,9 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         _j = lambda _b: ' '.join(_b)
         _i_cor = next((i for i, b in enumerate(_bl)
                        if '/correo' in _j(b) or '/newsletter' in _j(b)), None)
-        _dom_ag = 'luma.com' if 'luma.com' in cuerpo else 'recursos.neety.com/agendar'
+        _dom_ag = ('luma.com' if 'luma.com' in cuerpo
+                   else 'forward.neety.com' if 'forward.neety.com' in cuerpo
+                   else 'recursos.neety.com/agendar')
         _i_ag = next((i for i, b in enumerate(_bl) if _dom_ag in _j(b)), None)
         _cb = _bl[_i_cor] if _i_cor is not None else []
         _cj = _j(_cb)
@@ -2271,9 +2288,11 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             'visto bueno. Una mencion en un post de evento les asocia al acto, y eso '
             'no es informacion publica como en un mapa. El 05/08 hubo que borrar un '
             'post ya publicado por saltarse esto', aviso=True)
-        chk('luma.com/ujffj66o' in texto,
+        chk('luma.com/ujffj66o' in texto or 'forward.neety.com' in texto,
             'EVENTO: lleva el enlace de inscripción (§4.4b)',
-            'falta https://luma.com/ujffj66o. Un post de evento sin el enlace no sirve de nada')
+            'falta https://luma.com/ujffj66o, o https://forward.neety.com/ que redirige '
+            'a ese mismo evento conservando la query. Un post de evento sin el enlace '
+            'no sirve de nada')
         _agenda = re.search(r'\b(agenda|programa|ponencias?|horario|charlas?)\b.{0,40}\b(ser[aá]|habr[aá]|incluye)',
                             texto, re.I)
         chk(not _agenda, 'EVENTO: vende la SALA, no el programa (§4.4b)',

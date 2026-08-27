@@ -2164,6 +2164,43 @@ Sigue:  imagen/vídeo según sus skills (`images` / `video`: registros + paleta/
 
 **⭐ Y por fin hay un dato para la cola de revisión de Iker** (`post-workflow §4.5.0-REVISION`), que llevaba desde el 18/08 en n=0 **precisamente porque siempre borrábamos antes de comprobarla**: **26/08, aparece a los ~20 min y reparte con normalidad.** No era un bloqueo, era un retraso.
 
+### ✅✅ 9.0b · SEGUNDO CASO DE LA COLA DE REVISIÓN (27/08) — Y APARECE UN PATRÓN: **EL PRIMER UTM DE CADA CUENTA**
+
+**El caso, cronometrado por Iker en directo:** meme de la ficha, cuenta de **Iker**, 27/08.
+
+| minuto | impresiones | feed |
+|---|---|---|
+| 9 | **14** | no aparece |
+| **18** | **35** | ⭐ **aparece en "Primero los más relevantes"** desde otra cuenta |
+| 19 | **45** | reparte solo, +10 en un minuto |
+
+**Con esto la cola de revisión pasa de n=1 a n=2, y los dos casos se parecen demasiado:**
+
+| caso | cuenta | qué estrenaba | apareció | estado |
+|---|---|---|---|---|
+| 26/08 · historia | Unai | **1er UTM de la casa** | ~20 min | 5.400 imp |
+| 27/08 · meme | Iker | **1er UTM de SU cuenta** | **~18 min** | repartiendo |
+
+**⭐ LA HIPÓTESIS, y la formula Iker:** *"un día más comprobamos que los UTM no bloquean, pero puede que, si es la primera vez que se hace en una cuenta, el ingrediente ponga en revisión"*. **El UTM no capa; parece pedir una revisión de ~20 minutos la primera vez que ese enlace aparece en una cuenta.**
+
+**⛔ Y EL AGUJERO DE MÉTODO, dicho entero porque invalida media conclusión: NO TENEMOS GRUPO DE CONTROL.** Antes del 26/08 **borrábamos siempre antes del minuto 20**, así que **no sabemos si un post SIN UTM también tarda 18-20 minutos**. La correlación es real y son 2 de 2, pero **no hay un solo caso medido de post sin UTM esperando hasta el minuto 30**. Es exactamente el sesgo que `§9.0` documenta al revés: *"si borras siempre antes del tiempo de recuperación, cualquier cosa que cambies después parecerá la causa"*.
+- **Cómo se cierra:** el próximo post **sin** enlace (un lead magnet, por ejemplo) se cronometra igual. Si también tarda 18-20, el UTM no pinta nada y lo que hay es una cola de revisión normal.
+
+**🔮 CONSECUENCIA OPERATIVA, y es lo único que hay que recordar hoy:** **a Asier, Mario y Helena les queda su primer UTM**. Cuando toque, **se avisa ANTES de subir** de que puede quedarse ~20 minutos en el limbo, para que nadie lo borre. Es el error que ya nos costó dos posts.
+
+### 🔕 9.1b · UN POST CAPADO SÍ SALE EN "RECIENTES" Y SÍ MANDA NOTIFICACIÓN (Iker, 2026-08-27)
+
+**Iker, y cierra el diagnóstico del feed:** *"si una publicación está bloqueada, nunca aparece en el feed de más relevantes, pero sí que aparece en el feed de recientes y sí que te llega notificación. Pero a eso no hay que hacerle caso"*.
+
+**`§9.1` ya decía que "Reciente" no vale. Faltaba la NOTIFICACIÓN**, que es el falso positivo más fácil de creerse porque llega sola al móvil y parece la confirmación de que todo va bien.
+
+| señal | ¿sirve? |
+|---|---|
+| **"Primero los más relevantes"** desde otra cuenta | ✅ **la única que vale** |
+| "Reciente" | ⛔ ahí sale hasta un post capado |
+| **la notificación en el móvil** | ⛔ **llega igual con el post capado** |
+| el contador de impresiones antes del minuto 10 | ⛔ ruido |
+
 ### 9.1 · El FEED es el primer diagnóstico, pero NO es el veredicto
 
 **Iker, y es su instrumento y su línea base:** *"en el primer minuto SIEMPRE las publicaciones me salen en el feed. No puede ser que en 15 no me haya salido. Esto no está en revisión, esto está bloqueado desde el minuto uno, y el bloqueo se nota muy rápido"*.
