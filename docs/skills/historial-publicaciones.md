@@ -174,7 +174,7 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 | Día | Cuenta | Pilar | Puerta | Estado |
 |---|---|---|---|---|
 | Mar 08/09 | **Asier** | **Historia** · rama A · foto de GRUPO · **REGIONAL** | **Luma** | ✅ escrito 27/08, 57/57 |
-| Mié 09/09 | **Unai** | Peloteo · **DESPIECE** alimentación, Comunitat Valenciana | `/correo/` | ✅ escrito, 73/73 |
+| Mié 09/09 | **Unai** | Peloteo · **DESPIECE** automoción, **Cataluña** | `/correo/` | ✅ reescrito 27/08, 65/65 |
 | Mié 09/09 | **Iker** | Meme | **Luma** | ⛔ por escribir |
 | Jue 10/09 | **Asier** | Meme | `/correo/` | ✅ escrito |
 | Vie 11/09 | **Unai** | **Historia** · rama B (testigo) | **Luma** | ✅ escrito 27/08, 57/57 |
@@ -197,12 +197,39 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 
 ---
 
+## 🔁 2026-08-27 · EL DESPIECE DE UNAI SE REESCRIBE ENTERO: DE ALIMENTACIÓN A AUTOMOCIÓN, Y DE VALENCIA A CATALUÑA
+
+**Lo pide Iker y el motivo es de calendario:** *"no tengo tiempo al final de crear una plantilla nueva para comida"*. Sin plantilla de 12 huecos no hay despiece de alimentación, y la única silueta que existe es **la llanta**, que es de automoción y `§4.7` dice que se reutiliza en toda España y en las tres cuentas cambiando solo el título.
+
+**LA REGIÓN SE ELIGIÓ MIDIENDO, NO A OJO, y el resultado es un dato que hay que guardar:**
+
+| Región | ¿12 empresas de automoción con origen local, cargo válido y actividad? | Nota |
+|---|---|---|
+| **Euskadi** | ✅ | gastada: despiece de Iker el 30/07 |
+| **Navarra** | ✅ | gastada: despiece de Asier el 07/08 |
+| Galicia | ❌ **8** | ya estaba medido el 30/07 en `§4.7` Paso 1 |
+| Comunitat Valenciana | ⚠️ ~8 | y **Ford Almussafes viene de su peor año desde 1976** (98.500 coches, -17,6%): un peloteo de automoción ahí se come el primer comentario en contra |
+| Castilla y León | ❌ **7** | y **Lingotes Especiales ya la usó Iker** en su mapa del 04/08 (`§4.0c`) |
+| **Cataluña** | ✅ **12** | ninguna repetida contra los 3 posts catalanes anteriores |
+
+**⛔ EL APRENDIZAJE, y es de receta:** con los filtros de hoy (origen local + cargo con poder de decisión + actividad ≤6 meses) **un despiece de automoción solo llega a 12 en Euskadi, Navarra y Cataluña**. No es que el pilar sea caro: es que el universo se agota. **Antes de prometer un despiece de un sector, se mide la región.**
+
+**Por qué Cataluña y no otra vez Euskadi:** repetir Euskadi habría puesto **el mismo objeto, el mismo sector, la misma región y la misma imagen** a 6 semanas del despiece de Iker. Y el único precedente malo de Cataluña —el mapa de Unai del 17/07, **0.59x**— lo explica `§8.2`: cayó dentro de los **4 peloteos en 10 días** que hundieron el pilar en julio, no la región.
+
+**Piezas y menciones:** 12 empresas de origen catalán, todas con decisor activo — DOGA, Zanini Auto Group, J.JUAN, GALFER, Neklar, Farguell Group, Sanjo Group, MMM Group, Relats, QEV Technologies, Silence y EBRO. **Ninguna sale en el mapa de Iker del 30/04 ni en los dos de Unai del 01/07 y el 17/07.**
+
+**Imagen:** la llanta de siempre, título `TU COCHE LO FIRMA / LA INDUSTRIA CATALANA`. **Sin plantilla nueva y sin trabajo de diseño.**
+
+**🚪 Y una puerta, no dos:** el validador ya mecaniza `§4.4e-UNA` como fallo duro, así que el despiece pierde el doble bloque de `§4.7`. Se queda **solo el de correo**, que es lo que fija la tabla del plan para ese hueco.
+
+---
+
 ## ✅ LOS 3 PELOTEOS, ENTREGADOS EL 2026-08-26
 
 | Cuenta | Formato | Región | Estado | Validador |
 |---|---|---|---|---|
 | **Asier** | Mapa | **Cantabria** (virgen para las 3 cuentas) | entregado | ✅ 69/69 |
-| **Unai** | Despiece · **alimentación** (sector nuevo) | **Comunitat Valenciana** | entregado | ✅ 73/73 |
+| **Unai** | Despiece · **automoción** (llanta reutilizada) | **Cataluña** | reescrito el 27/08 | ✅ 65/65 |
 | **Iker** | "Los 10" | **Navarra** | entregado | ✅ 61/61 |
 
 > 🔧 **Sus días los fija la tabla de arriba (2026-08-27): el mapa se queda en la semana 1 y los otros dos se mueven a la 2.**
@@ -217,10 +244,10 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 
 **Lo que queda ANTES de publicar, y bloquea:**
 - **Mapa de Cantabria:** el CSV de PamPam y dar de alta `recursos.neety.com/mapas/cantabria/`, que hoy no existe y es a donde apunta el CTA.
-- **Despiece de Valencia:** **plantilla nueva de 12 huecos** para alimentación. Propuesta: **un plato redondo**, no la espátula ni el gorro de cocinero, porque `montar-llanta.py` ordena los huecos **por ángulo** y eso pide una silueta circular.
+- ~~**Despiece de Valencia:** plantilla nueva de 12 huecos para alimentación.~~ 🔁 **Resuelto el 27/08 cambiando el sector: la llanta ya existe y no hay nada que diseñar.**
 - **"Los 10" de Navarra:** las 10 fotos en orden de mención y la orla.
 
-**Regiones que esto quema (tabla de cobertura actualizada arriba):** Cantabria → Asier · Comunitat Valenciana (despiece) → Unai · Navarra ("Los 10") → Iker.
+**Regiones que esto quema (tabla de cobertura actualizada arriba):** Cantabria → Asier · Cataluña (despiece) → Unai · Navarra ("Los 10") → Iker.
 
 ---
 
@@ -261,7 +288,7 @@ El de automoción ya está hecho (Asier, 07/08). El siguiente **no repite sector
 | **Unai** | País Vasco · Bizkaia · Álava · **Cataluña** | — | "pueblo de 2,2 millones" · "trastienda del norte" · "lluvia y pintxos" · "última parada antes de Francia" |
 | **Asier** | Aragón · **Cantabria** (01/09) | — | "secarral que peina el cierzo" · "el felpudo del Pirineo" · "el tendedero del Cantábrico" |
 
-**DESPIECES ya hechos** (cuenta · región · objeto/sector): **Iker** — Euskadi, el coche (automoción, 30/07) · **Asier** — Navarra, el coche (automoción, 07/08) · **Unai** — Comunitat Valenciana, el plato (alimentación, 02/09). El despiece **no quema la región para mapa ni para "Los 10"** (`post-workflow §4.7` Paso 1), pero **repetir región Y formato en la misma cuenta sí es repetir**: Euskadi ya está gastada para un despiece de Iker.
+**DESPIECES ya hechos** (cuenta · región · objeto/sector): **Iker** — Euskadi, el coche (automoción, 30/07) · **Asier** — Navarra, el coche (automoción, 07/08) · **Unai** — Cataluña, el coche (automoción, 09/09). El despiece **no quema la región para mapa ni para "Los 10"** (`post-workflow §4.7` Paso 1), pero **repetir región Y formato en la misma cuenta sí es repetir**: Euskadi ya está gastada para un despiece de Iker.
 > 🔧 **Corregido el 2026-08-14: esta tabla estaba desactualizada y era una bomba de relojería.** Le faltaban **Castilla y León** (mapa de Iker, 04/08) y **Navarra** (despiece de Asier, 07/08), y Castilla y León seguía listada como libre para Iker. Planificar septiembre con ella sin actualizar habría repetido región en la misma cuenta. **Cada vez que se publique un peloteo, esta tabla se toca en el mismo commit que la fila del registro.**
 
 **"Los 10" está casi virgen:** solo se ha hecho UNA vez (Iker, País Vasco). Unai y Asier lo tienen entero libre, y a Iker le quedan 16 comunidades. Es la mecánica de peloteo con más recorrido sin quemar.

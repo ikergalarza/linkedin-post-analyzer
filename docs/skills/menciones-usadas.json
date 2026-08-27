@@ -1,7 +1,7 @@
 {
- "generado": "2026-07-21",
- "posts_de_peloteo": 22,
- "total": 518,
+ "generado": "2026-08-27",
+ "posts_de_peloteo": 31,
+ "total": 678,
  "entidades": {
   "a embarba": {
    "original": "A. Embarba S.A.",
@@ -57,6 +57,12 @@
     "Unai 2026-07-17"
    ]
   },
+  "afm advanced manufacturing technologies": {
+   "original": "AFM Advanced Manufacturing Technologies",
+   "posts": [
+    "Unai 2026-08-11"
+   ]
+  },
   "agencia de marketing industrial": {
    "original": "Agencia de Marketing Industrial",
    "posts": [
@@ -103,6 +109,24 @@
    "original": "Aitor Ayastuy",
    "posts": [
     "Unai 2026-04-28"
+   ]
+  },
+  "aitor etxebeste": {
+   "original": "Aitor Etxebeste",
+   "posts": [
+    "Iker 2026-07-29"
+   ]
+  },
+  "aitor goiburu iparragirre": {
+   "original": "AITOR GOIBURU IPARRAGIRRE",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "aitor iguiniz": {
+   "original": "AITOR IGUIÑIZ",
+   "posts": [
+    "Asier 2026-08-07"
    ]
   },
   "aitor kintana zarate": {
@@ -195,11 +219,23 @@
     "Iker 2026-06-16"
    ]
   },
+  "alex loidi": {
+   "original": "Alex Loidi",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
   "alexander artetxe": {
    "original": "Alexander Artetxe",
    "posts": [
     "Unai 2026-06-09",
     "Unai 2026-04-28"
+   ]
+  },
+  "alfonso corbalan garcia": {
+   "original": "Alfonso Corbalan Garcia",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "alfonso sanchez miguez": {
@@ -224,6 +260,12 @@
    "original": "ALIER",
    "posts": [
     "Unai 2026-07-17"
+   ]
+  },
+  "alvaro ales ojeda": {
+   "original": "Alvaro Alés Ojeda",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "alvaro cases abadia": {
@@ -259,7 +301,8 @@
   "alvic": {
    "original": "ALVIC",
    "posts": [
-    "Iker 2026-05-13"
+    "Iker 2026-05-13",
+    "Asier 2026-07-29"
    ]
   },
   "amparo sirvent raga": {
@@ -272,6 +315,12 @@
    "original": "Ana Camacho Vera",
    "posts": [
     "Unai 2026-06-09"
+   ]
+  },
+  "ana insausti": {
+   "original": "Ana Insausti",
+   "posts": [
+    "Asier 2026-08-07"
    ]
   },
   "ana isabel portilla": {
@@ -328,10 +377,28 @@
     "Iker 2026-04-22"
    ]
   },
+  "angel garcia": {
+   "original": "Angel García",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
+  "angel madariaga alvarez": {
+   "original": "Angel Madariaga Alvarez",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "anna maresch": {
    "original": "Anna Maresch",
    "posts": [
     "Iker 2026-04-30"
+   ]
+  },
+  "antonia pilar farfan madrid": {
+   "original": "Antonia Pilar Farfán Madrid",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "antonio gomez guillamon": {
@@ -364,6 +431,13 @@
     "Iker 2026-04-14"
    ]
   },
+  "arania": {
+   "original": "Arania S.A.",
+   "posts": [
+    "Iker 2026-07-29",
+    "Unai 2026-08-11"
+   ]
+  },
   "aranow packaging machinery": {
    "original": "ARANOW Packaging Machinery",
    "posts": [
@@ -382,6 +456,12 @@
     "Unai 2026-07-07"
    ]
   },
+  "arcelormittal": {
+   "original": "ArcelorMittal",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "argenta ceramica": {
    "original": "Argenta Cerámica",
    "posts": [
@@ -392,6 +472,18 @@
    "original": "Ariadna",
    "posts": [
     "Unai 2026-06-09"
+   ]
+  },
+  "aritz otxandiano kanpo": {
+   "original": "Aritz Otxandiano Kanpo",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "arkaitz etxezarreta": {
+   "original": "Arkaitz Etxezarreta",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "arpa equipos moviles de campana": {
@@ -437,16 +529,35 @@
     "Unai 2026-07-07"
    ]
   },
+  "ayesa": {
+   "original": "Ayesa",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "azkoyen": {
    "original": "Azkoyen",
    "posts": [
     "Iker 2026-06-30"
    ]
   },
+  "babel": {
+   "original": "Babel",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "batz": {
    "original": "BATZ GROUP",
    "posts": [
     "Unai 2026-04-28"
+   ]
+  },
+  "beatriz delgado": {
+   "original": "Beatriz Delgado",
+   "posts": [
+    "Iker 2026-07-29",
+    "Unai 2026-08-11"
    ]
   },
   "benat arrizabalaga isasti": {
@@ -467,10 +578,28 @@
     "Unai 2026-07-07"
    ]
   },
+  "betsaide sal fernando pastor jimenez": {
+   "original": "BETSAIDE SAL- Fernando Pastor Jiménez",
+   "posts": [
+    "Unai 2026-08-11"
+   ]
+  },
+  "betsaide sal": {
+   "original": "BETSAIDE SAL",
+   "posts": [
+    "Iker 2026-07-29"
+   ]
+  },
   "bexen cardio": {
    "original": "Bexen Cardio",
    "posts": [
     "Unai 2026-06-09"
+   ]
+  },
+  "bidafarma": {
+   "original": "Bidafarma",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "biele": {
@@ -495,6 +624,24 @@
    "original": "BIOLAN Microbiosensors",
    "posts": [
     "Unai 2026-06-09"
+   ]
+  },
+  "bodegas barbadillo": {
+   "original": "Bodegas Barbadillo S.A.",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
+  "bodegas luzon": {
+   "original": "Bodegas Luzón",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "bodegas protos": {
+   "original": "Bodegas Protos",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "borja jareno irazola": {
@@ -534,6 +681,18 @@
     "Iker 2026-07-16"
    ]
   },
+  "campofrio": {
+   "original": "Campofrio",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
+  "capsa food": {
+   "original": "CAPSA FOOD",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "carburos metalicos": {
    "original": "Carburos Metálicos",
    "posts": [
@@ -558,6 +717,12 @@
     "Unai 2026-07-07"
    ]
   },
+  "carlos martinez fernandez": {
+   "original": "Carlos Martínez Fernández",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "carlos muriel": {
    "original": "Carlos Muriel",
    "posts": [
@@ -568,6 +733,12 @@
    "original": "Carlos Rodriguez-Sierra",
    "posts": [
     "Iker 2026-04-22"
+   ]
+  },
+  "carmen rubio rodriguez": {
+   "original": "Carmen Rubio Rodríguez",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "carmen silla": {
@@ -582,6 +753,12 @@
     "Iker 2026-06-02"
    ]
   },
+  "carole tonello": {
+   "original": "Carole Tonello",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "cartonajes barco soluciones de embalaje": {
    "original": "Cartonajes Barco | Soluciones de embalaje",
    "posts": [
@@ -592,6 +769,12 @@
    "original": "Cedric Pantaleon",
    "posts": [
     "Unai 2026-07-17"
+   ]
+  },
+  "cefusa": {
+   "original": "Cefusa",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "cegasa energia": {
@@ -654,6 +837,12 @@
     "Iker 2026-04-14"
    ]
   },
+  "coato cooperative society": {
+   "original": "COATO cooperative Society",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "codigames": {
    "original": "Codigames",
    "posts": [
@@ -696,6 +885,12 @@
     "Unai 2026-05-07"
    ]
   },
+  "conservas el raal": {
+   "original": "Conservas El Raal",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "control glass": {
    "original": "CONTROL GLASS",
    "posts": [
@@ -714,16 +909,34 @@
     "Unai 2026-04-28"
    ]
   },
+  "cosentino": {
+   "original": "COSENTINO",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "covap": {
    "original": "COVAP",
    "posts": [
     "Iker 2026-05-13"
    ]
   },
+  "coviran sca": {
+   "original": "COVIRAN SCA",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "cristina gallart saura": {
    "original": "Cristina Gallart Saura",
    "posts": [
     "Asier 2026-07-14"
+   ]
+  },
+  "cropu": {
+   "original": "CROPU",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "ctlpack": {
@@ -736,6 +949,12 @@
    "original": "Daisalux",
    "posts": [
     "Unai 2026-07-07"
+   ]
+  },
+  "dalila hebibovic": {
+   "original": "Dalila Hebibovic",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "dani mora": {
@@ -828,6 +1047,12 @@
     "Unai 2026-07-01"
    ]
   },
+  "david sanz marcos": {
+   "original": "David Sanz Marcos",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "delafruit": {
    "original": "Delafruit",
    "posts": [
@@ -838,6 +1063,12 @@
    "original": "DETEGASA",
    "posts": [
     "Iker 2026-06-16"
+   ]
+  },
+  "df duro felguera": {
+   "original": "DF-Duro Felguera",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "diego lago": {
@@ -874,6 +1105,12 @@
    "original": "DOIMAK",
    "posts": [
     "Iker 2026-04-14"
+   ]
+  },
+  "domingo a perez fdez": {
+   "original": "Domingo A. Pérez Fdez",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "donosti en nuestras oficinas": {
@@ -918,6 +1155,12 @@
     "Iker 2026-06-30"
    ]
   },
+  "eduardo escudero": {
+   "original": "Eduardo Escudero",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "eduardo melon lagos": {
    "original": "Eduardo Melon Lagos",
    "posts": [
@@ -936,10 +1179,52 @@
     "Unai 2026-07-07"
    ]
   },
+  "el acero sidenor aceros especiales": {
+   "original": "El acero: Sidenor Aceros Especiales",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "el bobinado ederfil becker": {
+   "original": "El bobinado: Ederfil-Becker",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "el caucho cikautxo": {
+   "original": "El caucho: CIKAUTXO",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "el ciruelo": {
+   "original": "El Ciruelo",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "el coche entero volkswagen navarra": {
+   "original": "El coche entero: Volkswagen Navarra",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "el dulze growers": {
+   "original": "El Dulze Growers",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "el historico de emails": {
    "original": "El histórico de emails",
    "posts": [
     "Unai 2026-06-30"
+   ]
+  },
+  "el montaje mercedes benz vitoria plant": {
+   "original": "El montaje: Mercedes-Benz Vitoria Plant",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "elena erroba": {
@@ -966,10 +1251,28 @@
     "Iker 2026-04-30"
    ]
   },
+  "elpozo alimentacion": {
+   "original": "ELPOZO ALIMENTACIÓN",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "emergency lighting": {
    "original": "Emergency Lighting",
    "posts": [
     "Unai 2026-07-07"
+   ]
+  },
+  "emilio miguel dominguez": {
+   "original": "Emilio Miguel Dominguez",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "eneritz salegi": {
+   "original": "Eneritz Salegi",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "enhol": {
@@ -1032,6 +1335,12 @@
     "Unai 2026-07-17"
    ]
   },
+  "estrella de levante": {
+   "original": "Estrella de Levante",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "esypro": {
    "original": "Esypro",
    "posts": [
@@ -1042,6 +1351,12 @@
    "original": "Etxetar",
    "posts": [
     "Iker 2026-04-14"
+   ]
+  },
+  "eugenio diaz laborda": {
+   "original": "Eugenio Díaz Laborda",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "eva azoulay": {
@@ -1086,6 +1401,12 @@
     "Iker 2026-06-02"
    ]
   },
+  "felipe espejo hidalgo": {
+   "original": "Felipe Espejo Hidalgo",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "felix guindulain busto": {
    "original": "Felix Guindulain Busto",
    "posts": [
@@ -1104,6 +1425,12 @@
     "Iker 2026-06-16"
    ]
   },
+  "fernando garrido": {
+   "original": "Fernando Garrido",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "fernando gomez": {
    "original": "Fernando Gomez",
    "posts": [
@@ -1114,6 +1441,12 @@
    "original": "Fernando Martínez",
    "posts": [
     "Iker 2026-06-25"
+   ]
+  },
+  "fernando sanz gimenez rico": {
+   "original": "Fernando Sanz Giménez-Rico",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "ferrer": {
@@ -1176,6 +1509,12 @@
     "Iker 2026-05-13"
    ]
   },
+  "francisco javier alonso garcia": {
+   "original": "Francisco Javier Alonso Garcia",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "francisco martinez": {
    "original": "Francisco Martinez",
    "posts": [
@@ -1200,6 +1539,12 @@
     "Asier 2026-07-14"
    ]
   },
+  "fripozo": {
+   "original": "Fripozo S.A.",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "gabadi": {
    "original": "Grupo Gabadi",
    "posts": [
@@ -1216,6 +1561,12 @@
    "original": "Gabriel de Lecea",
    "posts": [
     "Unai 2026-07-01"
+   ]
+  },
+  "galletas gullon": {
+   "original": "Galletas Gullón",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "gana energia": {
@@ -1247,6 +1598,12 @@
    "original": "Genebre S.A",
    "posts": [
     "Iker 2026-04-30"
+   ]
+  },
+  "gerardo de la fuente": {
+   "original": "Gerardo de la Fuente",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "gerardo duenas merino": {
@@ -1339,6 +1696,12 @@
     "Iker 2026-06-02"
    ]
   },
+  "graciela bobes": {
+   "original": "Graciela Bobes",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "grant skinner": {
    "original": "Grant Skinner",
    "posts": [
@@ -1373,6 +1736,18 @@
    "original": "Guillem Verdés",
    "posts": [
     "Iker 2026-04-30"
+   ]
+  },
+  "guillermo cortezon garcia": {
+   "original": "Guillermo Cortezón García",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
+  "guillermo elum castillo": {
+   "original": "Guillermo Elum Castillo",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "guillermo lamelas nogueira": {
@@ -1418,10 +1793,40 @@
     "Iker 2026-04-22"
    ]
   },
+  "hector vidal vilaplana": {
+   "original": "Héctor Vidal Vilaplana",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "hermasa canning technology": {
    "original": "Hermasa Canning Technology",
    "posts": [
     "Iker 2026-06-16"
+   ]
+  },
+  "hida alimentacion": {
+   "original": "HIDA ALIMENTACIÓN, S.A.",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "hidroconta": {
+   "original": "Hidroconta S.A",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "himoinsa": {
+   "original": "HIMOINSA",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "hiperbaric high pressure technologies": {
+   "original": "Hiperbaric High Pressure Technologies",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "hipra": {
@@ -1448,6 +1853,18 @@
     "Unai 2026-07-17"
    ]
   },
+  "hozono global": {
+   "original": "Hozono Global",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "huercasa 5 gama": {
+   "original": "Huercasa 5ª Gama, S.A.",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "ian": {
    "original": "Grupo IAN",
    "posts": [
@@ -1464,6 +1881,12 @@
    "original": "Ibai Hernaiz Ormaetxea",
    "posts": [
     "Iker 2026-06-30"
+   ]
+  },
+  "ibai larrabide eguren": {
+   "original": "Ibai Larrabide Eguren",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "ibarmia": {
@@ -1490,6 +1913,12 @@
     "Asier 2026-07-14"
    ]
   },
+  "idesa": {
+   "original": "IDESA",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "ignacio alvarez santidrian": {
    "original": "Ignacio Alvarez Santidrian",
    "posts": [
@@ -1502,10 +1931,22 @@
     "Asier 2026-07-14"
    ]
   },
+  "ilune saiz moreno": {
+   "original": "Ilune Saiz Moreno",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "imanol rego": {
    "original": "Imanol Rego",
    "posts": [
     "Unai 2026-04-28"
+   ]
+  },
+  "imasa": {
+   "original": "IMASA",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "imperia scm": {
@@ -1518,6 +1959,13 @@
    "original": "Importaco",
    "posts": [
     "Iker 2026-06-02"
+   ]
+  },
+  "inaki lopategui": {
+   "original": "Iñaki Lopategui",
+   "posts": [
+    "Iker 2026-07-29",
+    "Unai 2026-08-11"
    ]
   },
   "inaki madina": {
@@ -1538,10 +1986,22 @@
     "Iker 2026-06-16"
    ]
   },
+  "industrias lacteas asturianas": {
+   "original": "Industrias Lacteas Asturianas, S.A.",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "industrias laneko sal tornilleria especial": {
    "original": "Industrias LANEKO SAL . Tornillería especial",
    "posts": [
     "Iker 2026-06-30"
+   ]
+  },
+  "industrias maxi": {
+   "original": "INDUSTRIAS MAXI, S.A.",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "industrias quimicas del ebro": {
@@ -1554,6 +2014,12 @@
    "original": "INERCO",
    "posts": [
     "Iker 2026-05-13"
+   ]
+  },
+  "ingenieria y diseno europeo": {
+   "original": "Ingeniería y Diseño Europeo, S.A.",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "ingeteam": {
@@ -1598,6 +2064,13 @@
     "Asier 2026-07-14"
    ]
   },
+  "intelligent locking systems": {
+   "original": "Intelligent Locking Systems",
+   "posts": [
+    "Iker 2026-07-29",
+    "Unai 2026-08-11"
+   ]
+  },
   "internaco": {
    "original": "Internaco Group",
    "posts": [
@@ -1626,6 +2099,18 @@
    "original": "IrudiB2B",
    "posts": [
     "Unai 2026-05-07"
+   ]
+  },
+  "iruna brakes": {
+   "original": "IRUNA BRAKES",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "isastur": {
+   "original": "ISASTUR",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "ismark": {
@@ -1700,6 +2185,12 @@
     "Iker 2026-05-13"
    ]
   },
+  "javier prieto garcia": {
+   "original": "Javier Prieto García",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "javier romero boned": {
    "original": "Javier Romero Boned",
    "posts": [
@@ -1710,6 +2201,12 @@
    "original": "Javier Soto",
    "posts": [
     "Iker 2026-07-16"
+   ]
+  },
+  "javier vergara ripoll": {
+   "original": "Javier Vergara Ripoll",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "jeanologia": {
@@ -1724,6 +2221,12 @@
     "Unai 2026-07-17"
    ]
   },
+  "jesus angel perez fernandez": {
+   "original": "Jesus Angel Perez Fernandez",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "jesus llinares": {
    "original": "Jesus Llinares",
    "posts": [
@@ -1734,6 +2237,12 @@
    "original": "Jesús Navarro Cantó",
    "posts": [
     "Iker 2026-06-02"
+   ]
+  },
+  "jesus sanz alvarez": {
+   "original": "Jesus Sanz Alvarez",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "jesus ubierna": {
@@ -1802,6 +2311,12 @@
     "Iker 2026-04-30"
    ]
   },
+  "jordi noguer i palmieri": {
+   "original": "Jordi Noguer i Palmieri",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "jordi parcerisas serra": {
    "original": "Jordi Parcerisas Serra",
    "posts": [
@@ -1844,6 +2359,12 @@
     "Asier 2026-07-14"
    ]
   },
+  "jose antonio benito diaz": {
+   "original": "Jose Antonio Benito Diaz",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "jose antonio garcia sanchez": {
    "original": "Jose Antonio Garcia Sanchez",
    "posts": [
@@ -1856,16 +2377,40 @@
     "Unai 2026-04-28"
    ]
   },
+  "jose antonio ramirez diaz": {
+   "original": "Jose Antonio Ramirez Diaz",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "jose arturo gutierrez garcia": {
    "original": "José Arturo Gutiérrez García",
    "posts": [
     "Iker 2026-07-16"
    ]
   },
+  "jose carlos alvarez villanueva": {
+   "original": "José Carlos Alvarez Villanueva",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "jose contreras ruz": {
    "original": "José Contreras Ruz",
    "posts": [
     "Iker 2026-05-13"
+   ]
+  },
+  "jose gomez garcia": {
+   "original": "José Gómez García",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
+  "jose javier marmol penalver": {
+   "original": "José Javier Mármol Peñalver",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "jose luis angulo": {
@@ -1908,6 +2453,12 @@
    "original": "José Manuel Segura",
    "posts": [
     "Iker 2026-04-30"
+   ]
+  },
+  "jose maria franco morant": {
+   "original": "Jose Maria Franco Morant",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "jose maria zarandieta": {
@@ -1965,10 +2516,22 @@
     "Iker 2026-04-14"
    ]
   },
+  "josu zaldua saenz de buruaga": {
+   "original": "Josu Zaldua Saenz de Buruaga",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
   "juan antonio gonzalez real": {
    "original": "Juan Antonio González Real",
    "posts": [
     "Iker 2026-05-13"
+   ]
+  },
+  "juan antonio hoyos bermudez": {
+   "original": "Juan Antonio Hoyos Bermúdez",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "juan antonio liedo rojo phd": {
@@ -1981,6 +2544,12 @@
    "original": "Juan Arrilucea",
    "posts": [
     "Unai 2026-07-07"
+   ]
+  },
+  "juan canovas fuertes": {
+   "original": "Juan Cánovas Fuertes",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "juan carlos sanchez": {
@@ -2013,6 +2582,12 @@
     "Unai 2026-07-07"
    ]
   },
+  "juan povedano marcos": {
+   "original": "Juan Povedano Marcos",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "juan subira": {
    "original": "Juan Subira",
    "posts": [
@@ -2029,6 +2604,12 @@
    "original": "JUARISTI Boring & Milling Machines",
    "posts": [
     "Iker 2026-04-14"
+   ]
+  },
+  "julian hernandez haro": {
+   "original": "Julián Hernández Haro",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "justo sierra rey": {
@@ -2073,10 +2654,28 @@
     "Iker 2026-05-13"
    ]
   },
+  "la chapa gonvarri industries": {
+   "original": "La chapa: Gonvarri Industries",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
   "la farga": {
    "original": "La Farga",
    "posts": [
     "Unai 2026-07-17"
+   ]
+  },
+  "la forja alcorta usa inc": {
+   "original": "La forja: Alcorta USA Inc",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "la tornilleria ecenarro s coop": {
+   "original": "La tornillería: Ecenarro S. Coop.",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "lacunza": {
@@ -2103,10 +2702,34 @@
     "Iker 2026-04-30"
    ]
   },
+  "las juntas de goma norcaucho": {
+   "original": "Las juntas de goma: Norcaucho",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
   "las llamadas grabadas": {
    "original": "Las llamadas grabadas",
    "posts": [
     "Unai 2026-06-30"
+   ]
+  },
+  "las llantas mapsa s coop": {
+   "original": "Las llantas: Mapsa S. Coop.",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "las pastillas icer brakes": {
+   "original": "Las pastillas: Icer Brakes",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "las uniones erreka smart fastening": {
+   "original": "Las uniones: Erreka Smart Fastening",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "lazpiur": {
@@ -2133,6 +2756,18 @@
     "Iker 2026-06-25"
    ]
   },
+  "lin3s digital consulting": {
+   "original": "LIN3S ≡ Digital Consulting",
+   "posts": [
+    "Unai 2026-08-11"
+   ]
+  },
+  "lingotes especiales lgt": {
+   "original": "Lingotes Especiales SA (LGT)",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "litalsa": {
    "original": "LITALSA",
    "posts": [
@@ -2157,10 +2792,58 @@
     "Unai 2026-06-09"
    ]
   },
+  "los amortiguadores kyb europe": {
+   "original": "Los amortiguadores: KYB Europe",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "los conjuntos cosmos xxi": {
+   "original": "Los conjuntos: Grupo Cosmos XXI",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "los embellecedores walter pack": {
+   "original": "Los embellecedores: Walter Pack",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "los frenos frenos iruna": {
+   "original": "Los frenos: FRENOS IRUÑA",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "los moldes aurrenak s coop": {
+   "original": "Los moldes: AURRENAK, S. COOP.",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "los subconjuntos cie automotive": {
+   "original": "Los subconjuntos: CIE Automotive",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
   "los tickets que ha abierto": {
    "original": "Los tickets que ha abierto",
    "posts": [
     "Unai 2026-06-30"
+   ]
+  },
+  "los tubos ti fluid systems": {
+   "original": "Los tubos: TI Fluid Systems",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "los tubos tubos reunidos": {
+   "original": "Los tubos: Tubos Reunidos Group",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   },
   "luis ayanegui": {
@@ -2211,6 +2894,12 @@
     "Iker 2026-06-30"
    ]
   },
+  "magtel": {
+   "original": "Magtel",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
   "maier": {
    "original": "MAIER Group",
    "posts": [
@@ -2223,6 +2912,12 @@
     "Iker 2026-06-30"
    ]
   },
+  "maite perez alonso": {
+   "original": "Maite Pérez Alonso",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
   "manel montano": {
    "original": "Manel Montano",
    "posts": [
@@ -2233,6 +2928,12 @@
    "original": "Manel Xifra",
    "posts": [
     "Iker 2026-04-30"
+   ]
+  },
+  "manuel angel gonzalez rodriguez": {
+   "original": "Manuel Angel González Rodríguez",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "manuel ramos minero": {
@@ -2271,10 +2972,40 @@
     "Asier 2026-07-14"
    ]
   },
+  "marcos gabancho fernandez": {
+   "original": "Marcos Gabancho Fernández",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
+  "maria gonzalez de lena cabrero": {
+   "original": "María González de Lena Cabrero",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "maria lourdes hidalgo": {
    "original": "María Lourdes Hidalgo",
    "posts": [
     "Unai 2026-07-01"
+   ]
+  },
+  "maria villanueva madoz": {
+   "original": "María Villanueva Madoz",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "marin gimenez hnos": {
+   "original": "Marín Giménez Hnos.",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "marina roldan gomez": {
+   "original": "Marina Roldan Gomez",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "mario rovirosa escosura": {
@@ -2287,6 +3018,12 @@
    "original": "Marta Armentia",
    "posts": [
     "Unai 2026-07-07"
+   ]
+  },
+  "marta gutierrez buron": {
+   "original": "Marta Gutiérrez Burón",
+   "posts": [
+    "Iker 2026-07-29"
    ]
   },
   "marthe casel": {
@@ -2305,6 +3042,18 @@
    "original": "Mask Comunicacion",
    "posts": [
     "Unai 2026-05-07"
+   ]
+  },
+  "matarromera family wineries": {
+   "original": "Matarromera Family Wineries",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
+  "mayoral moda infantil": {
+   "original": "Mayoral Moda Infantil",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "mecacontrol": {
@@ -2328,6 +3077,7 @@
   "miguel bernar borda": {
    "original": "Miguel Bernar Borda",
    "posts": [
+    "Iker 2026-07-30",
     "Unai 2026-06-09"
    ]
   },
@@ -2361,6 +3111,12 @@
     "Unai 2026-05-07"
    ]
   },
+  "modesto alvarez rodriguez": {
+   "original": "Modesto Álvarez Rodríguez",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "mondragon assembly": {
    "original": "Mondragon Assembly Group",
    "posts": [
@@ -2389,6 +3145,12 @@
    "original": "MP Lifts",
    "posts": [
     "Iker 2026-05-13"
+   ]
+  },
+  "multiverse computing": {
+   "original": "Multiverse Computing",
+   "posts": [
+    "Unai 2026-08-11"
    ]
   },
   "nabrawind": {
@@ -2433,6 +3195,18 @@
     "Unai 2026-07-07"
    ]
   },
+  "nestor guillen lizarbe": {
+   "original": "Néstor Guillén Lizarbe",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
+  "nicolas correa": {
+   "original": "Nicolás Correa S.A.",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "nodosa": {
    "original": "Nodosa Group",
    "posts": [
@@ -2443,6 +3217,12 @@
    "original": "Normagrup Technology",
    "posts": [
     "Iker 2026-07-16"
+   ]
+  },
+  "nortemecanica": {
+   "original": "NORTEMECANICA SA",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "novargi": {
@@ -2473,6 +3253,19 @@
    "original": "Oier Elguezabal",
    "posts": [
     "Iker 2026-06-25"
+   ]
+  },
+  "ojmar": {
+   "original": "OJMAR",
+   "posts": [
+    "Iker 2026-07-29",
+    "Unai 2026-08-11"
+   ]
+  },
+  "omar alejandro sanchez villamizar": {
+   "original": "Omar Alejandro Sanchez Villamizar",
+   "posts": [
+    "Unai 2026-08-11"
    ]
   },
   "ona edm": {
@@ -2523,6 +3316,12 @@
     "Iker 2026-06-16"
    ]
   },
+  "pablo zambudio abadia": {
+   "original": "Pablo Zambudio Abadia",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "paco tormo": {
    "original": "Paco Tormo",
    "posts": [
@@ -2557,6 +3356,18 @@
    "original": "PAYPER",
    "posts": [
     "Unai 2026-07-01"
+   ]
+  },
+  "pedro alvarez": {
+   "original": "Pedro Alvarez",
+   "posts": [
+    "Iker 2026-07-30"
+   ]
+  },
+  "pedro lopez mengual": {
+   "original": "PEDRO LOPEZ MENGUAL",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "pedro maiquez": {
@@ -2607,10 +3418,22 @@
     "Unai 2026-05-07"
    ]
   },
+  "postres y dulces reina": {
+   "original": "Postres y Dulces Reina, S.L.",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "premo": {
    "original": "PREMO Group",
    "posts": [
     "Iker 2026-05-13"
+   ]
+  },
+  "primafrio": {
+   "original": "Primafrio",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "pronutec": {
@@ -2625,10 +3448,28 @@
     "Iker 2026-06-16"
    ]
   },
+  "queserias entrepinares": {
+   "original": "QUESERIAS ENTREPINARES SAU",
+   "posts": [
+    "Iker 2026-08-04"
+   ]
+  },
   "quibim": {
    "original": "Quibim",
    "posts": [
     "Iker 2026-04-22"
+   ]
+  },
+  "quim gimenez canadas": {
+   "original": "Quim Giménez Cañadas",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
+  "quimica del nalon": {
+   "original": "Química del Nalón",
+   "posts": [
+    "Unai 2026-07-31"
    ]
   },
   "rafa idigoras": {
@@ -2659,6 +3500,12 @@
    "original": "Ramón Ugarte",
    "posts": [
     "Unai 2026-07-07"
+   ]
+  },
+  "raquel gutierrez de la camara": {
+   "original": "Raquel Gutierrez De la Cámara",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "raquel iturri hidalgo": {
@@ -2733,6 +3580,12 @@
     "Iker 2026-04-30"
    ]
   },
+  "rosa estebanez vallina": {
+   "original": "Rosa Estébanez Vallina",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "rosa gres": {
    "original": "Rosa Gres",
    "posts": [
@@ -2745,10 +3598,28 @@
     "Unai 2026-07-07"
    ]
   },
+  "ruben llander guibert": {
+   "original": "Rubén Llánder Guibert",
+   "posts": [
+    "Asier 2026-08-07"
+   ]
+  },
   "russula": {
    "original": "Russula",
    "posts": [
     "Iker 2026-06-16"
+   ]
+  },
+  "sabater": {
+   "original": "Sabater",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "saes electronica submarina sme": {
+   "original": "SAES, S.A. Electrónica Submarina, SME",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "sagola": {
@@ -2799,6 +3670,12 @@
     "Iker 2026-05-13"
    ]
   },
+  "sebastian luengo mba": {
+   "original": "Sebastián Luengo, MBA",
+   "posts": [
+    "Iker 2026-07-29"
+   ]
+  },
   "semillas batlle": {
    "original": "SEMILLAS BATLLE",
    "posts": [
@@ -2811,6 +3688,12 @@
     "Unai 2026-04-28"
    ]
   },
+  "senttix ecus sleep": {
+   "original": "Senttix (Ecus Sleep S.L.)",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "seresco": {
    "original": "Seresco",
    "posts": [
@@ -2821,6 +3704,12 @@
    "original": "Sergio Martinez Alonso",
    "posts": [
     "Iker 2026-06-16"
+   ]
+  },
+  "sergio rubio pineda": {
+   "original": "Sergio Rubio Pineda",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "sesame hr": {
@@ -2851,6 +3740,12 @@
    "original": "Sidenor Aceros Especiales",
    "posts": [
     "Unai 2026-04-28"
+   ]
+  },
+  "silvia gomez delgado": {
+   "original": "Silvia Gomez Delgado",
+   "posts": [
+    "Asier 2026-07-29"
    ]
   },
   "singularu": {
@@ -2895,6 +3790,12 @@
     "Iker 2026-05-13"
    ]
   },
+  "talleres alegria": {
+   "original": "Talleres Alegría",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "talleres felipe verdes": {
    "original": "Talleres Felipe Verdés",
    "posts": [
@@ -2908,10 +3809,23 @@
     "Iker 2026-06-16"
    ]
   },
+  "telpark": {
+   "original": "Telpark",
+   "posts": [
+    "Iker 2026-07-29",
+    "Unai 2026-08-11"
+   ]
+  },
   "teltronic": {
    "original": "Teltronic",
    "posts": [
     "Asier 2026-07-14"
+   ]
+  },
+  "tempos vega sicilia": {
+   "original": "TEMPOS Vega Sicilia",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "terresis": {
@@ -2944,6 +3858,12 @@
     "Unai 2026-07-01"
    ]
   },
+  "tono bernal paez": {
+   "original": "Tono Bernal Páez",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "trak": {
    "original": "TRAK",
    "posts": [
@@ -2959,7 +3879,8 @@
   "tsk electronica y electricidad": {
    "original": "TSK Electrónica y Electricidad",
    "posts": [
-    "Iker 2026-07-16"
+    "Iker 2026-07-16",
+    "Unai 2026-07-31"
    ]
   },
   "tubacex": {
@@ -2991,6 +3912,18 @@
    "original": "Unai Patxi Urrutikoetxea Calvo",
    "posts": [
     "Unai 2026-06-09"
+   ]
+  },
+  "unica": {
+   "original": "UNICA",
+   "posts": [
+    "Asier 2026-07-29"
+   ]
+  },
+  "uptek": {
+   "original": "UPTEK",
+   "posts": [
+    "Unai 2026-08-11"
    ]
   },
   "urko de la torre alberdi": {
@@ -3030,10 +3963,28 @@
     "Unai 2026-07-01"
    ]
   },
+  "verdimed": {
+   "original": "Verdimed",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
+  "vicente antonio soto perez": {
+   "original": "Vicente Antonio Soto Pérez",
+   "posts": [
+    "Iker 2026-07-23"
+   ]
+  },
   "vicky foods": {
    "original": "Vicky Foods",
    "posts": [
     "Iker 2026-06-02"
+   ]
+  },
+  "victor sanchez antolin": {
+   "original": "Victor Sánchez Antolín",
+   "posts": [
+    "Iker 2026-08-04"
    ]
   },
   "victoria ceramics spain": {
@@ -3072,6 +4023,12 @@
     "Iker 2026-04-22"
    ]
   },
+  "windar renovables": {
+   "original": "Windar Renovables",
+   "posts": [
+    "Unai 2026-07-31"
+   ]
+  },
   "xabier alzaga": {
    "original": "Xabier Alzaga",
    "posts": [
@@ -3088,6 +4045,12 @@
    "original": "Ximo Cortés",
    "posts": [
     "Unai 2026-05-07"
+   ]
+  },
+  "yayo delgado": {
+   "original": "Yayo Delgado",
+   "posts": [
+    "Iker 2026-07-23"
    ]
   },
   "zamakona yards": {
@@ -3119,6 +4082,12 @@
    "original": "Zschimmer & Schwarz España",
    "posts": [
     "Iker 2026-06-02"
+   ]
+  },
+  "zurine garitaonandia beatove": {
+   "original": "Zuriñe Garitaonandia Beatove",
+   "posts": [
+    "Iker 2026-07-30"
    ]
   }
  }

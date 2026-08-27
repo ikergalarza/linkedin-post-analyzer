@@ -9,13 +9,13 @@ H = {'X-API-KEY': K, 'Accept': 'application/json', 'Content-Type': 'application/
 def _req(method, path, body=None):
     data = json.dumps(body).encode() if body is not None else None
     r = urllib.request.Request(B + path, data=data, headers=H, method=method)
-    for i in range(3):
+    for i in range(6):
         try:
             with urllib.request.urlopen(r, timeout=60) as resp:
                 return json.load(resp)
         except urllib.error.HTTPError as e:
-            if e.code in (429, 503) and i < 2:
-                time.sleep(3 + 3*i); continue
+            if e.code in (429, 503) and i < 5:
+                time.sleep(20 + 25*i); continue
             return {'_error': e.code, '_body': e.read()[:300].decode('utf8', 'replace')}
         except Exception as e:
             if i < 2:
