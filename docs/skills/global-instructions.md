@@ -1970,6 +1970,28 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 
 **Mecanizado** con `--solo-correo` en `validar-post.py`, que convierte el fallo de orden en un check declarado. **Se declara, no se omite:** sin el flag, el validador sigue exigiendo el bloque de agendar, que es lo que tiene que pasar el 90% de las veces.
 
+#### ⛔⛔⛔ 4.4b-AUTOGOL · EL DOLOR DEL POST NUNCA PUEDE SER LO QUE NOSOTROS VENDEMOS, CONTADO COMO QUE NOS PASA (Iker, 2026-08-27) — GLOBAL
+
+> **Iker, sobre una línea que yo había dado por buena:** *"queda muy mal que digamos que no sabemos en nuestra propia web quién nos compra, o sea, eso no, cámbialo"*.
+
+**La línea era `¿Quién compra? Eso no sale.`** Cumplía todo: calcaba el mecanismo, era un dolor real, era universal, no señalaba a nadie y remataba el bloque. **Y aun así es un autogol**, porque lo que Neety vende es exactamente **identificar quién compra** (`§4.4b-ORDEN`, `aboutme §1b`). Contarlo como carencia propia es publicar que nuestro producto no nos funciona ni a nosotros.
+
+**LA REGLA, y es un filtro que se corre sobre cada dolor antes de escribirlo:**
+> *¿Esto que estoy contando como problema mío es, palabra por palabra, lo que resuelve el enlace que voy a poner debajo?*
+> Si la respuesta es que sí, **no es empatía: es una reseña negativa nuestra**, y hay que cambiar el dolor.
+
+**⚠️ Y OJO CON LA TRAMPA, porque la frontera es fina y el post entero vive de acercarse a ella.** El dolor del cuerpo **tiene que ser vecino** del que resuelve el producto, o el enlace no pega (`§4.4b-FORMA`). Lo que no puede es **ser el mismo**:
+
+| | ejemplo | veredicto |
+|---|---|---|
+| **el mismo** que vendemos, en primera persona | `¿Quién compra? Eso no sale.` | ⛔ autogol |
+| **vecino**: la consecuencia, no la carencia | `Un post nunca nos sienta en la misma sala.` | ✅ el que se usó |
+| **vecino**: el límite del canal, no de la herramienta | `Escribir trae lectores. La sala trae clientes.` | ✅ |
+
+**El test corto: el problema del cuerpo es el que el ENLACE resuelve, no el que NUESTRO PRODUCTO resuelve.** En un post de evento eso es *no estar en la sala*; en uno de agendar es *el trabajo que cuesta llegar*. Nunca *no tenemos el dato*.
+
+**⚠️ Aplica a las 5 cuentas, pero es peor en Mario y Helena**, porque hablan del trabajo de dentro y ahí una carencia se lee como confesión de la empresa, no como escena.
+
 #### 🤥🤥 4.4b-PROMESA · EL NINJA NO PUEDE PROMETER LO QUE EL DESTINO NO DA (Mario, 2026-08-21) — GLOBAL
 
 > **Mario:** *"nuestra newsletter de ventas no va a ser sobre contar salseos o noticias polémicas como esta, sino que ataca el punto de dolor de la gente que quiere encontrar clientes y no los encuentra"*.

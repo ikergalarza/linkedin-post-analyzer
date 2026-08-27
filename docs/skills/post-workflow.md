@@ -914,6 +914,11 @@ sorprende, que es de lo que vive este pilar.
 > - **LA REGLA: antes de descartar un elemento por "es de otro oficio", se PREGUNTA cuáles SÍ son suyos.** El que firma la cuenta lo sabe y yo no. Descartar entero es tan caro como calcar entero: en el primer intento le puse un dolor prestado, en el segundo le quité dos herramientas que usa cada día.
 > - **Y hay un motivo de ALCANCE encima del de veracidad** (Iker): *"mete más cuello de botella, más problemas con los que cualquiera se pueda sentir identificado si trabaja en marketing o en growth"*. **Las cosas del original venían ya elegidas por alguien de ese oficio**, así que las que encajan son las que más identificación traen. Tirarlas es tirar alcance.
 >
+> **⛔ Y LAS RESPUESTAS DEL BLOQUE TAMBIÉN SE CALCAN, NO SOLO LAS PREGUNTAS (Iker, 2026-08-27).** *"Sé tan descarado de copiar las expresiones naturales que ella ha utilizado en inglés, como «pronto» o «two sprints away», que es como «dos pasos»"*.
+> - **El fallo:** calqué el molde de la pregunta (`¿X? Y.`) y **me inventé las respuestas** (`Llena de visitas`, `Lleno de números`). Es `§4.4-ESENCIA` otra vez: buscar el equivalente en vez de copiar.
+> - **Lo que se hizo:** `Backlog.` → **`En la cola.`** · `Two sprints away.` → **`A 2 pasos.`** · `"Soon."` → **`Pronto.`** Traducción natural al castellano, no literal, **y con la degradación intacta** (concreto → sin fecha → nada).
+> - **La regla: en un bloque calcado, lo que se traduce son las PALABRAS; lo que se cambia es solo el sustantivo al que se aplican.** Si el original responde con tres largas, tú respondes con esas tres largas.
+>
 > **LOS DOS TESTS, y los dos se corren sobre el borrador, no sobre la teoría:**
 > 1. **¿EL QUE FIRMA ENTIENDE SU PROPIO POST?** Si el dueño de la cuenta tiene que preguntar qué significa una línea, el lector ya se ha ido. **Es el test más barato que existe y no lo estaba corriendo.**
 > 2. **¿LO QUE CUENTA EL CUERPO ES UN PROBLEMA DE VERDAD, O ES LA VENTAJA DISFRAZADA?** Aquí caí en el mismo turno: puse `Aquí no llamamos a nadie / Nos escriben ellos` **como si fuera el cuello de botella, y eso es justo lo que le va BIEN**. El gancho prometía un problema y el cuerpo contaba lo bien que va: el bucle no paga y el lector se siente estafado.
