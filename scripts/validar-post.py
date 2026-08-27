@@ -2859,7 +2859,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # dan 32-46 clics; la unica que pasa de 800 (1.177 car, 29/07) da 19, la
         # MITAD. Por eso el techo es duro y el suelo es aviso: quedarse corto no
         # esta medido, pasarse si.
-        _n_hist = len(cuerpo)
+        # 🔴 Y SE MIDE CON EL ENLACE COMO LO VE EL LECTOR, NO COMO LO ESCRIBIMOS
+        # (2026-08-27). El rango 694-762 sale de `char_count` de la BD, o sea del
+        # texto YA PUBLICADO, donde LinkedIn ha reescrito la URL a `lnkd.in/xxxxxxxx`
+        # (24 car el del 26/08, 25 el luma.com pelado del 21/08). Desde que el UTM
+        # es obligatorio (§4.4b-UTM, 26/08) la URL que escribimos mide ~156 car, asi
+        # que medir el fichero en crudo comparaba contra una vara de otra unidad y
+        # tumbaba historias bien escritas: un borrador de 729 car de TEXTO salia como
+        # 861 y fallaba. Se normaliza cada URL a 25 caracteres antes de contar.
+        _n_hist = len(re.sub(r'https?://\S+', 'x' * 25, cuerpo))
         chk(_n_hist <= 800, 'HISTORIA: <=800 caracteres (§4.6-SERIE)',
             f'{_n_hist} car. La unica historia que paso de 800 hundio los clics a la mitad '
             f'(19 contra 32-46 de las cinco que estan entre 694 y 762). El rango de trabajo '
