@@ -2100,6 +2100,27 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # ninja esta construida sobre UNA puerta, y la auditoria del 12/08 mide que
     # cuando la puerta esta peor puesta el post gusta mas y se pincha menos
     # (eng/1k x4, clics de 142 a 4). El que puede perder es agendar, que es el caro.
+    # ⛔⛔ UNA SOLA PUERTA POR POST (Iker, 2026-08-27) — CANONICO, §4.4e-UNA.
+    #    El doble bloque se retira entero. MEDIDO sobre los 3 unicos posts de la
+    #    casa que lo llevaron: los TRES tienen link_url VACIO en la BD y ningun
+    #    clic (Iker 19/08 capado a 133 imp, Iker 20/08 con 13.439, Asier 20/08 con
+    #    3.225), contra 8 de 8 memes de un solo enlace que SI registran link_url y
+    #    clics (76, 28, 28, 26, 12, 7, 5, 4). Con dos enlaces perdemos la
+    #    atribucion entera: da igual si es friccion o si LinkedIn deja de medir,
+    #    el resultado es cero dato y cero clic. La pagina del MAPA no cuenta como
+    #    puerta: es el contenido que el post lleva nombrando desde el gancho.
+    _puertas = set()
+    for _u in re.findall(r'https?://[^\s]+', cuerpo):
+        if 'recursos.neety.com/agendar' in _u:
+            _puertas.add('agendar')
+        elif 'recursos.neety.com/correo' in _u or 'recursos.neety.com/newsletter' in _u:
+            _puertas.add('correo')
+        elif 'luma.com' in _u or 'forward.neety.com' in _u:
+            _puertas.add('evento')
+    chk(len(_puertas) <= 1, 'UNA sola puerta por post: nunca dos enlaces (§4.4e-UNA)',
+        ('lleva ' + ' + '.join(sorted(_puertas)) + '. Se elige UNA segun el tema y el pilar '
+         'y la otra se QUITA: 3 de 3 posts con dos enlaces se quedaron sin link_url y sin '
+         'un solo clic medido') if len(_puertas) > 1 else '')
     _correo = 'recursos.neety.com/correo' in cuerpo or 'recursos.neety.com/newsletter' in cuerpo
     if _correo:
         _bl = bloques(cuerpo)

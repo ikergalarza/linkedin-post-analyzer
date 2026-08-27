@@ -2082,7 +2082,27 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 - **⏳ CUÁNDO: cuando el evento ya haya pasado o esté a punto de pasar.** Antes no: meter a la plantilla en un post de expectación no aporta y gasta el recurso.
 - **No se abusa.** Si sale en todos los posts, deja de ser un gesto y se convierte en firma, y los compañeros dejan de interactuar.
 
-### 📬 4.4e · EL SEGUNDO SPAM NINJA — el correo (Iker, 2026-08-18)
+### 📬 4.4e · LA PUERTA DE CORREO — y por qué YA NO existe el "segundo" spam ninja (Iker, 2026-08-18 · RETIRADO EL 2026-08-27)
+
+#### ⛔⛔⛔ 4.4e-UNA · UN POST, UN ENLACE. EL DOBLE BLOQUE SE RETIRA ENTERO (Iker, 2026-08-27) — CANÓNICO, MANDA SOBRE TODO LO DE ESTA SECCIÓN
+
+> **Iker:** *"el otro día quise maximizar y en una publicación puse tanto el enlace de agendar como el otro, y creo que justamente LinkedIn no me midió, o que realmente nadie pulsó ninguno de los dos, ya que aumentamos la fricción. Solo un CTA, solo un spam ninja, es mucho más efectivo"*.
+
+**Y NO ES CRITERIO, ESTÁ MEDIDO. Son los 3 únicos posts de la casa que llevaron dos enlaces, y los tres se quedaron sin dato:**
+
+| post | impresiones | `link_url` en la BD | clics |
+|---|---|---|---|
+| Iker 19/08 (transcripción) | 133 (capado) | **vacío** | 0 |
+| Iker 20/08 (resubida) | 13.439 | **vacío** | **0** |
+| Asier 20/08 (búsqueda de Google) | 3.225 | **vacío** | 0 |
+
+**Contra 8 de 8 memes con UN solo enlace, que todos registran `link_url` y clics:** 76 · 28 · 28 · 26 · 12 · 7 · 5 · 4.
+
+- **Da igual cuál de las dos causas sea.** O el lector se reparte entre dos puertas y no pulsa ninguna, o LinkedIn deja de medir el post con dos destinos (`§4.4b`, el caso del `🔗 0` sin URL registrada). **El resultado es el mismo: cero clics y encima cero atribución**, que es lo único que teníamos para saber si un post convierte.
+- **⛔ Y NO es que agendar tenga prioridad sobre correo.** Esa jerarquía solo existía para decidir cuál de los dos se quedaba cuando iban juntos, y ahora no van juntos nunca. **La puerta la elige el TEMA del post y el PILAR**: si el post toca vender, agendar; si tiene menos que ver con vender o interesa la puerta barata, correo; y **mientras viva el evento, en el primer jefe manda Luma** (Iker, 27/08: *"su prioridad ahora mismo es el evento"*).
+- **Es la regla del UNO de `§4.5` aplicada al enlace**, y el precedente vivo es el lead magnet: no lleva enlace **precisamente** para no partir su motor, igual que cuando hacíamos el `Comenta X` nunca metíamos un enlace al lado.
+- **Mecanizado** en `validar-post.py` como **fallo duro** (`UNA sola puerta por post: nunca dos enlaces`), que cuenta destinos de conversión (agendar · correo/newsletter · evento). **La página del MAPA no cuenta como puerta**: es el contenido que el post lleva nombrando desde el gancho.
+
 > **Fuente única de verdad del BLOQUE 2.** Todo lo de `§4.4b` se hereda tal cual (dos líneas pegadas, ≤55 caracteres cada una sin la URL, la de abajo más corta, una sola oración + `:` + enlace, `https://` delante, nunca nombra a Neety). **Aquí solo está escrito lo que CAMBIA.**
 
 **Qué es:** un **segundo** spam ninja en el mismo post que enlaza a **`https://recursos.neety.com/correo/`** en vez de a `/agendar/`. Vende dejar el correo, no agendar.
@@ -2104,20 +2124,9 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 | **"LOS 10"** | agendar | ❌ **NO** | Es el **único pilar con quejas reales de CEOs**, y el diagnóstico escrito en `post-workflow §4.3` es literal: *"un homenaje que acaba en un enlace convierte a la empresa mencionada en decorado de un anuncio"*. Dos enlaces duplican eso encima de 10 personas mencionadas con nombre y apellido. |
 | **LEAD MAGNET** | ❌ | ❌ **en el POST** | Su motor entero es el conteo de comentarios y cualquier enlace lo parte (`§4.5`, la regla del UNO). **Pero el correo sí entra por dos superficies que ya existen y no compiten con nada:** el **DM privado** (que ya lleva ninja, `§4.4b`) y la **casilla OPCIONAL del gate**. ⛔ **Obligar a suscribirse dentro de un gate está prohibido** (Iker, 2026-08-18): quien entra a un gate quiere el recurso, no la newsletter, y condicionar una cosa a la otra es consentimiento agrupado, nulo por RGPD. La única página donde la casilla es obligatoria es `/correo/`, porque ahí lo que se pide **es** el correo (`lead-magnet-web §3b`). |
 
-#### 📬 4.4e-MEME · EN MEME ENTRA A VECES, Y EL PRESUPUESTO SE MIDE SIN ÉL (Iker, 2026-08-19)
+#### 🚫 4.4e-MEME · ~~EN MEME ENTRA A VECES~~ · RETIRADA EL 2026-08-27
 
-> **Corrige lo que ponía aquí el 18/08** (*"solo si el post entero cabe en 450"*), que era **demasiado restrictivo y en la práctica lo prohibía**: dos bloques ocupan ~150 caracteres con la URL, así que exigir 450 en total dejaba el chiste en 300. Iker: *"modifica lo de los 140 caracteres o así, que es demasiado restrictivo… aunque añadamos este bloque de dos y entre medias alguna línea individual para que el ritmo no sea predecible, no creo que el texto se vaya a ir demasiado largo. Si no, pues así también probamos"*.
-
-**LA REGLA, y son dos cosas:**
-1. **Es OPCIONAL y se decide post a post. NO se hardcodea que vaya siempre.** En meme el segundo bloque cuesta alcance (es el pilar donde la longitud más pesa), así que entra cuando el cuerpo lo pide y se queda fuera cuando el chiste va justo. **Un meme sin bloque de correo sigue siendo un meme bien hecho.**
-2. **Los 450 caracteres del pilar (`post-workflow §4.4-CORTO`) se miden DESCONTANDO el bloque del correo.** El presupuesto es **del chiste**: la puerta nueva no se lo come. El tope duro de **700 sobre el total** no se mueve, porque ese mide otra cosa (que el ninja de agendar siga cayendo antes del carácter 650, `§4.4b-CLICS`).
-   - ⛔ **Y el corolario:** si el meme ya no cabe en 450 **por sí solo**, lo que sobra es cuerpo, no el bloque. **Nunca se recorta el chiste para meter el segundo enlace.**
-
-**POR QUÉ SE PRUEBA AQUÍ, que es el razonamiento de Iker y conviene tenerlo escrito:** *"de inicio, alguien que no te conoce es bastante raro y genera bastante fricción que no solo pulsen en la web de agendar, sino que nos agenden"*. **Agendar es una puerta cara para un primer contacto**; dejar el correo es mucho más fácil de conceder, y a partir de ahí **convence el email marketing**, que ya está montado. El meme es, además, el pilar que **más alcance frío trae** (gente que no nos conoce de nada), así que es donde esa puerta barata tiene más sentido.
-
-**Y el ritmo se cuida a propósito:** entre los dos bloques van **líneas individuales de cuerpo**, no solo las 2 que exige `§4.4e`. Dos bloques de dos con la misma forma, cerca, se leen como un patrón; una suelta en medio lo rompe (`§3.2`: el ritmo no puede ser predecible).
-
-**Mecanizado** en `validar-post.py`: el check duro pasa a ser `Doble ninja en MEME: sin el bloque de correo, <=450 car`, y el aviso de `§4.4-CORTO` también descuenta el bloque.
+**Esta sección decía que en meme el bloque de correo era OPCIONAL y que el presupuesto de 450 caracteres se medía sin él. Ya no aplica: manda `§4.4e-UNA`, un post lleva un enlace y punto.** Lo que sobrevive de aquí es el razonamiento de por qué el correo tiene sentido en el meme —es el pilar de más alcance frío, y a quien no te conoce pedirle una reunión es caro—, pero eso ahora se usa para **elegir** la puerta, no para **sumarla**.
 
 #### 🚪🚪 4.4e-PUERTA · UNA PUERTA POR POST, Y LA ELIGE EL DOLOR DEL PILAR (Iker, 2026-08-24) — CANÓNICO
 
@@ -2147,7 +2156,7 @@ Te marcamos quién va a comprar y cuándo, y tu comercial entra solo ahí: [link
 | **HISTORIA** | **agendar** | ⭐ decidido el 24/08 |
 | EVENTO | Luma | ya estaba |
 | LEAD MAGNET | ninguna en el post | ya estaba |
-| MEME | ⚠️ correo | **hipótesis MÍA, sin aprobar** (`working-preferences §0c`) |
+| MEME | **la decide el TEMA del post** (correo si el tema no toca vender, agendar si sí) | ⭐ **aprobado el 27/08**, ya no es hipótesis mía. Y en **Unai**, mientras viva el evento, **Luma** |
 | INSIGHT y post suelto | la decide el TEMA, ver `§4.4e-SOLO` | |
 
 - ⚠️ **La fila del MEME es una deducción mía y va marcada como tal.** Los tres memes con doble bloque tienen el `link_url` **vacío** en la BD, o sea que **no medimos nada** ni a favor ni en contra. Lo único medido es que el meme convierte fatal en CTR y muy bien por interacción, y de ahí a decir "en meme va el correo" hay un salto que todavía no está dado. **Se prueba en un meme y se anota.**
