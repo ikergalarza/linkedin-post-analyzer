@@ -1600,6 +1600,15 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # En EVENTO el enlace de inscripcion hace de spam ninja: es el CTA del post.
     tiene_link = ('recursos.neety.com' in cuerpo or 'luma.com' in cuerpo
                   or 'forward.neety.com' in cuerpo)
+    # ⛔⛔ ESTA LINEA VA AQUI FUERA Y NO DENTRO DEL `if` DE ABAJO (2026-08-27).
+    # Estaba definida dentro del gate de mapa/los10/meme/evento y se LEE mas abajo,
+    # en el bloque del ninja que corre para TODOS los pilares. Resultado: en
+    # HISTORIA reventaba con UnboundLocalError en cuanto el post llevaba enlace, o
+    # sea que el pilar entero era invalidable y el fallo no salia como fallo, salia
+    # como traza de Python. Lo caza cualquier historia con Luma, que es justo lo que
+    # manda hacer §4.6-SERIE. Mismo patron que el bug del 2026-08-12 documentado
+    # aqui abajo: un bloque que se saca del `if` y se deja atras una variable suya.
+    _es_evento = ('luma.com' in cuerpo or 'forward.neety.com' in cuerpo)
     if pilar in ('mapa', 'los10', 'meme', 'evento'):
         chk(tiene_link, 'Spam ninja presente (§4.4b)', 'falta el link de agendar' if not tiene_link else '')
         # ⛔ 2026-08-06, Iker: este check decia "falta el link de agendar" pero se
@@ -1630,7 +1639,7 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # Es el caso de libro de feedback_regla_nueva_revisar_codigo: al escribir una
         # regla nueva hay que mirar QUE checks codifican la vieja, no solo el que la
         # motivo.
-        _es_evento = ('luma.com' in cuerpo or 'forward.neety.com' in cuerpo)
+        # (definido arriba, fuera del gate por pilar — ver el aviso del 2026-08-27)
         if pilar in ('los10', 'meme') and tiene_link:
             _dest_ok = ('recursos.neety.com/agendar' in cuerpo) or _es_evento
             chk(_dest_ok, 'El spam ninja apunta a /agendar/, no a un lead magnet (§4.4b)',
@@ -2843,6 +2852,35 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
         # remate con una LECCIÓN corta. En la BD se eligen por likes >> comentarios
         # (si comentarios > likes es un lead magnet disfrazado, no una historia).
         h = hook_txt.strip()
+        # ⛔ LA LONGITUD DEL PILAR, MEDIDA SOBRE LAS 6 PUBLICADAS (§4.6-SERIE, 2026-08-27).
+        # Los clics de una historia son una CONSTANTE (32-46) y no dependen de las
+        # impresiones: da igual que haga 5.393 o 13.045. Lo unico que rompe la
+        # constante es pasarse de largo. Las 5 que caen entre 694 y 762 caracteres
+        # dan 32-46 clics; la unica que pasa de 800 (1.177 car, 29/07) da 19, la
+        # MITAD. Por eso el techo es duro y el suelo es aviso: quedarse corto no
+        # esta medido, pasarse si.
+        _n_hist = len(cuerpo)
+        chk(_n_hist <= 800, 'HISTORIA: <=800 caracteres (§4.6-SERIE)',
+            f'{_n_hist} car. La unica historia que paso de 800 hundio los clics a la mitad '
+            f'(19 contra 32-46 de las cinco que estan entre 694 y 762). El rango de trabajo '
+            f'del pilar es 700-780' if _n_hist > 800 else '')
+        if _n_hist <= 800:
+            chk(700 <= _n_hist <= 780, 'HISTORIA: dentro del rango medido 700-780 car (§4.6-SERIE)',
+                f'{_n_hist} car, fuera del rango donde estan las 5 que convierten (694-762). '
+                f'No es fallo, pero mira si sobra cuerpo o falta escena' if not (700 <= _n_hist <= 780) else '',
+                aviso=True)
+        # ⛔ NO SE ABRE CON "MI PRIMERA..." (§4.6-SERIE, 2026-08-27). Los DOS peores
+        # CTR del pilar abren asi (0,276% y 0,265%); los dos mejores abren por
+        # NEGACION ("Nunca le vi") o por PROMESA ("jamas me imagine"). Una escena
+        # cerrada no deja bucle abierto y una negacion si (global §2.0). n=6, asi
+        # que va de AVISO y no de fallo duro: es el patron mas limpio del pilar,
+        # no una ley.
+        chk(not re.match(r'^\W*mi\s+primer[ao]\b', h, re.I),
+            'HISTORIA: el hook no abre con "Mi primera..." (§4.6-SERIE)',
+            'los dos peores CTR del pilar abren asi (0,276% y 0,265%). Abre por NEGACION '
+            '("Nunca...", "Jamas...") o por PROMESA, que es lo que hacen los dos mejores '
+            '(0,678% y 0,593%)' if re.match(r'^\W*mi\s+primer[ao]\b', h, re.I) else '',
+            aviso=True)
         # ⛔ EN HISTORIA, EL GANCHO VA EN UNA SOLA ORACION (Iker, 2026-08-12).
         # global §2.10 permite una o dos en cualquier pilar; aqui se aprieta a UNA
         # y solo aqui, asi que vive en el runbook (§4.6) y no en global. El motivo

@@ -2321,6 +2321,28 @@ Acceso libre.
 >
 > **Registro del 29/07 (Iker, historia + peloteo):** apostado deliberadamente por la condición 2. El dolor elegido, *que te juzguen por ser joven*, lo ha vivido media audiencia, y el peloteo a 5 clientes reales aportaba la prueba que a nosotros nos falta por no ser conocidos todavía. **Es la mejor tirada posible con las cartas que tenemos.** Anota el resultado en `historial-publicaciones` mirando conversación, no solo el multiplicador.
 
+> ### 📈📈 4.6-SERIE · LAS 6 HISTORIAS DE LA RECETA ACTUAL, CRUZADAS (BD en vivo, 2026-08-27)
+> **Sustituye a `§4.6-MEDIDO` como fuente de números del pilar** — aquello eran los dos de Iker y se queda debajo por el histórico del razonamiento. Esto es la serie entera, y sale de `link_clicks_count` de la BD, no de memoria.
+>
+> | fecha | cuenta | imp | clics | **CTR** | car | el gancho abre con | puerta |
+> |---|---|---|---|---|---|---|---|
+> | 21/08 | Unai | 6.788 | **46** | **0,678%** | 694 | PROMESA (*jamás me imaginé*) | Luma |
+> | 26/08 | Unai | 5.393 | 32 | **0,593%** | 762 | NEGACIÓN (*Nunca le vi*) | Luma |
+> | 13/08 | Iker | 10.160 | 37 | 0,364% | 696 | ESCENA (*Le pregunté… me plantó*) | agendar |
+> | 29/07 | Iker | 6.554 | **19** | 0,290% | **1.177** | negación, larga | agendar |
+> | 25/08 | Asier | 13.045 | 36 | 0,276% | 725 | *Mi primera clase…* | agendar |
+> | 18/08 | Iker | 12.472 | 33 | 0,265% | 706 | *Mi primera venta…* | agendar |
+>
+> **1 · ⭐ LOS CLICS SON UNA CONSTANTE Y LAS IMPRESIONES NO. Es el hallazgo que cambia cómo se escribe este pilar.** 32 · 33 · 36 · 37 · 46. Da igual que el post haga **5.393 o 13.045** impresiones: la historia entrega **~36 clics** siempre, y el techo medido está en 46. **O sea que aquí no se busca alcance, se busca que el que llega pulse.** Perseguir impresiones en este pilar no sube los clics, y es la confirmación cuantitativa de `§4.6-OBJETIVO`.
+>
+> **2 · ⛔ LA LONGITUD ES LO ÚNICO QUE ROMPE LA CONSTANTE, Y ES UN FALLO DURO.** El único que se sale hacia abajo (19 clics, **la mitad**) es el único que pasa de 800 caracteres: **1.177**. Los cinco que caen entre **694 y 762** dan todos 32-46. **El rango de trabajo del pilar es 700-780 caracteres**, y es estrecho a propósito.
+>
+> **3 · Los dos mejores CTR son los dos que apuntan a Luma**, con el doble de conversión que los cuatro de `/agendar/`. ⚠️ **Está confundido con la cuenta** (los dos son de Unai) y son n=2, así que no prueba nada por sí solo — **pero apunta en la misma dirección que el dato global de puertas**, que sí tiene tamaño: `luma.com` **0,692%** contra `/agendar/` **0,103%** en toda la casa. Con un evento vivo, la historia va a Luma.
+>
+> **4 · ⛔ NO SE ABRE CON "MI PRIMERA…".** Los **dos peores** CTR del pilar abren así (0,276% y 0,265%). Los dos mejores abren por **negación** (*Nunca le vi…*) o por **promesa** (*…jamás me imaginé…*). La explicación encaja con `global §2.0`: una escena cerrada no deja bucle abierto, y una negación o una promesa sí. **Con n=6 no es ley, es el patrón más limpio que tiene el pilar**, y se escribe aquí para poder tumbarlo con datos si aparecen.
+>
+> **5 · Lo que NO discrimina, dicho para que nadie lo persiga:** la **estructura** (`narrative_arc` está en el mejor y en los dos peores) y los **guardados/envíos** (3-6 y 3-7 en todos, sin señal). Las tres historias con `likes ≫ comentarios` cumplen la vara del pilar de `§8.0`.
+
 > ### 📊 4.6-MEDIDO · LOS DOS DE IKER, CON NÚMEROS REALES (2026-08-14, sacados de la BD, no de memoria)
 >
 > | Fecha | Impresiones | Ratio | Likes | Com. | Reposts | Clics enlace | **CTR** |

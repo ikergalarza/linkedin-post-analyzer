@@ -150,15 +150,66 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 
 ---
 
-## ✅ SEMANA DEL 31/08 — LOS 3 PELOTEOS, ENTREGADOS EL 2026-08-26
+## 📅📅 EL PLAN CERRADO DE LAS DOS SEMANAS (31/08 y 07/09) — decidido el 2026-08-27
 
-| Día | Cuenta | Formato | Región | Estado | Validador |
-|---|---|---|---|---|---|
-| Mar 01/09 | **Asier** | Mapa | **Cantabria** (virgen para las 3 cuentas) | entregado | ✅ 69/69 |
-| Mié 02/09 | **Unai** | Despiece · **alimentación** (sector nuevo) | **Comunitat Valenciana** | entregado | ✅ 73/73 |
-| Jue 03/09 | **Iker** | "Los 10" | **Navarra** | entregado | ✅ 61/61 |
+> **Esto es EL calendario de las dos semanas. Manda sobre cualquier reparto anterior**, incluido el de `post-workflow §8.0-SEPTIEMBRE` (que pedía 1 peloteo por cuenta y semana). Todo queda escrito, validado y programado el **viernes 28/08**: a partir de ahí **la semana 2 ya no puede reaccionar a lo que pase en la semana 1**, así que no hay seguro adaptativo y el riesgo se reparte por adelantado.
 
-**🔧 CAMBIO DE PLAN, decidido por Iker el 26/08: el despiece de MÁQUINA HERRAMIENTA de Iker se mueve a la semana del 07/09.** Barrido en Unipile sobre Cataluña, Comunitat Valenciana y Castilla y León: **fuera de Euskadi no salen las 12 empresas del sector** que pide `post-workflow §4.7`, y Euskadi está gastada para un despiece de Iker (el coche, 30/07). **Su región sigue sin decidir** y es lo primero que hay que resolver de la semana del 07/09.
+### Semana del 31/08
+
+| Día | Cuenta | Pilar | Puerta | Estado |
+|---|---|---|---|---|
+| Mar 01/09 | **Asier** | Peloteo · **MAPA** Cantabria | `recursos.neety.com/mapas/cantabria/` | ✅ escrito, 69/69 |
+| Mar 01/09 | **Iker** | Meme | `/correo/` | ✅ escrito |
+| Mié 02/09 | **Unai** | **Historia** · rama B (testigo) | **Luma** | ⛔ por escribir |
+| Jue 03/09 | **Asier** | Meme | **Luma** | ✅ escrito |
+| Vie 04/09 | **Unai** | Meme (`--meme-sobrio`) | `/correo/` | ⛔ por escribir |
+| Vie 04/09 | **Iker** | **Historia** · rama A | **Luma** | ⛔ por escribir |
+
+### Semana del 07/09
+
+| Día | Cuenta | Pilar | Puerta | Estado |
+|---|---|---|---|---|
+| Mar 08/09 | **Asier** | **Historia** · rama A · foto de GRUPO | **Luma** | ⛔ por escribir |
+| Mié 09/09 | **Unai** | Peloteo · **DESPIECE** alimentación, Comunitat Valenciana | `/correo/` | ✅ escrito, 73/73 |
+| Mié 09/09 | **Iker** | Meme | **Luma** | ⛔ por escribir |
+| Jue 10/09 | **Asier** | Meme | `/correo/` | ✅ escrito |
+| Vie 11/09 | **Unai** | **Historia** · rama B (testigo) | **Luma** | ⛔ por escribir |
+| Vie 11/09 | **Iker** | Peloteo · **"LOS 10"** Navarra | `/agendar/` | ✅ escrito, 61/61 |
+
+**LAS CINCO REGLAS QUE PRODUCEN ESTE REPARTO, para que se pueda rehacer si algo se cae:**
+1. **Los peloteos van 1 + 2, no 3 + 3.** Los tres están escritos y no se reescribe ninguno, pero **el mapa se adelanta a la semana 1 y el despiece y "Los 10" se van a la 2**. El motor del peloteo son los mencionados, y la primera semana de septiembre todavía hay gente fuera: en la semana floja va **el formato que menos depende de que contesten** (mapa: 0,378% de CTR y **105,6 clics/post**), y los dos de menos techo (despiece **0 de 2**, nunca ha pasado de 1x; "Los 10" el peor CTR de los tres en las tres cuentas) van a la semana 2, cubiertos por dos historias y dos memes.
+2. **Cero lead magnet en las dos semanas.** No es por rendimiento: desde el 17/08 el recurso **no se entrega solo** (`lead-magnet-web §0`), hace falta responder en público, esperar la solicitud y pasar el link por privado. Sin esa capa manual el post genera comentarios que se quedan colgados. Sus 6 huecos van a historia y meme.
+3. **3 posts con enlace de Luma por semana, uno por cuenta**, que es la regla del evento y aquí sale sin forzar nada.
+4. **Ninguna cuenta publica dos días seguidos, ningún día repite categoría y los dos memes de cada semana caen en días distintos** (`§8.2`).
+5. **Ritmos de día distintos entre semanas** (2·1·1·2 contra 1·2·1·2) para que la parrilla no se lea igual dos semanas seguidas.
+
+**LO QUE QUEDA POR ESCRIBIR: 4 historias + 2 memes. CERO peloteos nuevos**, y eso es lo que hace el plan ejecutable con un día de margen. El reparto anterior pedía 3 peloteos más para la semana 2, que es el pilar más caro que tenemos (12 empresas verificadas una a una, personas con actividad comprobada, CSV e imagen montada).
+
+**LAS 4 HISTORIAS, con lo que las hace distintas entre sí:** Unai ×2 (**rama B obligatoria**, `§4.6-TESTIGO`: no lleva autobiografía inventada) · Iker ×1 (rama A) · Asier ×1 (rama A, **foto de GRUPO**, `§4.6-FOTO-GRUPO`). Vehículo distinto en cada una y **ninguno puede ser la infancia, el instituto ni el comercial veterano de copiloto**, que están gastados (`§4.6-VEHICULO`). Dolor distinto en cada una, sacado de `global §4.4b-MUNICIÓN`. **Como máximo UNA lleva el acabado regional** (`§4.6-RAMAS`: la variante regional es puntual, no el default).
+
+**Los 2 memes nuevos necesitan 2 referencias nuevas**: son 5 memes en dos semanas y ninguno puede repetir referencia. Es el único cuello de botella de lo que queda por escribir. **El meme de Unai va con `--meme-sobrio`**; si alguno de los tres ya escritos tiene motor controversial, ése no puede ir a su cuenta.
+
+**⚠️ RIESGO ASUMIDO Y ANOTADO:** Unai llega a **4 historias en 4 semanas** (21/08, 26/08, 02/09, 11/09) y **las dos nuevas son rama B, que es n=1 y sin validar**. El pilar entero tiene 6 posts publicados en toda la casa, así que estamos multiplicando su volumen justo cuando nadie está mirando y con métricas que **no generan doctrina** (`post-workflow §8.0-SEPTIEMBRE`). Si la rama B no funciona, sus dos posts caen juntos y no nos vamos a enterar a tiempo.
+
+---
+
+## ✅ LOS 3 PELOTEOS, ENTREGADOS EL 2026-08-26
+
+| Cuenta | Formato | Región | Estado | Validador |
+|---|---|---|---|---|
+| **Asier** | Mapa | **Cantabria** (virgen para las 3 cuentas) | entregado | ✅ 69/69 |
+| **Unai** | Despiece · **alimentación** (sector nuevo) | **Comunitat Valenciana** | entregado | ✅ 73/73 |
+| **Iker** | "Los 10" | **Navarra** | entregado | ✅ 61/61 |
+
+> 🔧 **Sus días los fija la tabla de arriba (2026-08-27): el mapa se queda en la semana 1 y los otros dos se mueven a la 2.**
+
+**🔧 CAMBIO DE PLAN, decidido por Iker el 26/08: el despiece de MÁQUINA HERRAMIENTA de Iker se mueve a la semana del 07/09.** Barrido en Unipile sobre Cataluña, Comunitat Valenciana y Castilla y León: **fuera de Euskadi no salen las 12 empresas del sector** que pide `post-workflow §4.7`, y Euskadi está gastada para un despiece de Iker (el coche, 30/07). **Su región sigue sin decidir.**
+
+> ### 🅿️ 2026-08-27 · EL 4º PELOTEO SE CAE DEL PAQUETE DE VACACIONES, Y NO ES UN OLVIDO
+> **Ni el despiece de máquina herramienta ni el mapa nuevo de Iker entran en las dos semanas.** El 27/08 se eligió que Iker llevase mapa en la semana 2 en vez del despiece, y al cerrar el calendario de las dos semanas **deja de hacer falta un peloteo nuevo**: con 6 posts por semana y el reparto 1 + 2, los tres peloteos ya escritos cubren las dos semanas enteras.
+> - **El motivo es de calendario, no de criterio:** quedaba **un día laborable** y el peloteo es el pilar más caro de la casa. Escribir un cuarto habría salido de las horas de las 4 historias y los 2 memes, que es lo que de verdad falta.
+> - **Los dos siguen vivos para la vuelta (14/09):** el despiece de máquina herramienta con su región sin decidir y su plantilla de 12 huecos por diseñar, y el mapa de Iker con **Aragón, Castilla-La Mancha, Extremadura, La Rioja, Canarias y Baleares** libres (Cantabria queda fuera: la usa Asier el 01/09 y el concepto no se repite entre cuentas).
+> - **Y el dato que sostiene que el mapa de Iker merece esas horas cuando vuelva:** es el mayor activo de tráfico de la casa, **150,8 clics por post** contra los 28 de su "Los 10".
 
 **Lo que queda ANTES de publicar, y bloquea:**
 - **Mapa de Cantabria:** el CSV de PamPam y dar de alta `recursos.neety.com/mapas/cantabria/`, que hoy no existe y es a donde apunta el CTA.
