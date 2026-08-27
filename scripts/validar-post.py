@@ -333,6 +333,17 @@ MARKETING_ANCLA = (r'\b(marketing|contenido|redes|crecer|crecimiento|alcance|imp
                    # CAMPAIGN IDEA). Misma familia que "contenido" y "alcance", que ya
                    # estaban: es el ENTREGABLE del oficio, no una deduccion mia.
                    r'|campa[ñn]as?|anuncios?|newsletter)\b')
+# La cuenta de HELENA tampoco es de ventas: es ATENCION AL CLIENTE y partnerships
+# (aboutme 2-CARRIL-GANCHO, Iker 2026-08-26: en Mario y Helena el gancho ancla en
+# SU oficio y la vinculacion con ventas se tiene luego en el cuerpo). La excepcion
+# estaba escrita para Mario y mecanizada solo para Mario, asi que un gancho suyo de
+# soporte puro (tickets, incidencias, seguimiento) fallaba el ancla aunque la receta
+# lo mande. `cliente` ya colaba por ANCLA_AMBIGUA y por eso no habia saltado nunca:
+# el hueco estaba en todo lo demas de su oficio.
+CS_ANCLA = (r'\b(cliente|clientes|soporte|atenci[oó]n al cliente|ticket|tickets'
+            r'|incidencia|incidencias|queja|quejas|reclamaci[oó]n|posventa|postventa'
+            r'|seguimiento|renovaci[oó]n|renovaciones|cuenta|cuentas|partner|partners'
+            r'|fidelizar|acompa[ñn]ar|alta|altas|baja|bajas)\b')
 # §2.3 — estrechan el alcance, FUERA del hook. Lista canónica: gana a la de
 # "términos naturalizados" de brand-voice §2, que decía lo contrario. El ICP de
 # aboutme desempata: lleva vendiendo desde antes de que existiera Salesforce.
@@ -920,11 +931,19 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
     # cuentas (Iker/Unai/Asier) sí anclan a ventas. En el GENÉRICO no se fuerza
     # ancla (los hooks de Martín/Guillermo van de IA/tendencia, §4.5.0b).
     _es_mario = (cuenta or '').strip().lower() == 'mario'
+    _es_helena = (cuenta or '').strip().lower() == 'helena'
     if _es_mario:
         _mk = re.search(MARKETING_ANCLA, hook_txt, re.I)
         chk(bool(_mk), 'Hook anclado a MARKETING (cuenta Mario, aboutme §2)',
             'Mario es la cuenta de marketing/growth: el hook ancla en contenido/redes/marketing, '
             'no en "vender"' if not _mk else f'ancla marketing: "{_mk.group(0)}"')
+    elif _es_helena:
+        _cs = re.search(CS_ANCLA, hook_txt, re.I)
+        chk(bool(_cs), 'Hook anclado a ATENCION AL CLIENTE (cuenta Helena, aboutme 2-CARRIL-GANCHO)',
+            'Helena es la cuenta de customer success y partnerships: el hook ancla en su oficio '
+            '(cliente, cuenta, soporte, seguimiento) y la vinculacion con ventas baja al CUERPO'
+            if not _cs else f'ancla de su oficio: "{_cs.group(0)}" - y la vinculacion con VENTAS '
+            f'tiene que estar en el CUERPO (aboutme 2)')
     elif not generico:
         chk(bool(fuerte or ambigua), 'Hook anclado a VENTAS (§2.3)', detalle)
     m = re.search(VERBO_FLOJO, hook_txt, re.I)

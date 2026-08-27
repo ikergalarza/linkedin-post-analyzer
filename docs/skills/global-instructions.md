@@ -1623,6 +1623,21 @@ La línea 1 **no nombra ninguna carencia**, así que la 2 no resuelve nada: apar
 >
 > **🔗 EL ENLACE VA DIRECTO A LUMA. DECIDIDO, no lo vuelvas a proponer (Iker, 2026-08-05).** Propuse montar `recursos.neety.com/evento/` para que el clic fuera nuestro, como en los mapas, y lo descartó: **"cada clic intermedio es fricción, y aquí no busco tráfico, busco inscripciones"**. Un evento **presencial y en Euskadi** ya tiene bastante barrera de entrada como para meterle un salto más. **El razonamiento del ultra ninja NO aplica aquí**: allí la página intermedia añadía valor (el mapa embebido era el recurso prometido); en el evento no añadiría nada, solo un clic. Retirado también el aviso del validador.
 
+> ### 🪧🪧 EL CARTEL DE ASISTENTE ("I'm attending") YA ES EL ANUNCIO: EL TEXTO NO LO REPITE (2026-08-27)
+>
+> **De dónde sale:** la tarjeta de asistente de Helena para Neety Forward — foto suya, cargo, `jueves, 24 septiembre`, `Donostia-San Sebastián`, `forward.neety.com` y la fila de speakers confirmados, todo escrito **dentro de la imagen**.
+>
+> **Por qué es un caso aparte y no otro post de evento:** en un post normal la foto insinúa y el texto cuenta. **Aquí la imagen ya dice el qué, el cuándo, el dónde y el quién**, así que es el caso extremo de `§2.0c-VISUAL`: cualquier gancho que hable del evento **repite lo que el lector ya ha leído en la foto** y se queda sin remate. Y encima llega con el olor a venta puesto desde el primer segundo, que es justo lo que hunde el pilar (*"nos vamos a comer una mierda"*).
+>
+> **LAS TRES REGLAS, y valen para cualquier cartel de asistente futuro (los de speaker incluidos):**
+> 1. **El gancho ancla en el OFICIO del que publica, no en el evento.** En las cuentas de Mario y Helena eso ya lo manda `aboutme §2-CARRIL-GANCHO`; aquí además es lo único que abre bucle, porque el evento no puede abrir ninguno: ya está contado en la imagen.
+> 2. **Ni la fecha, ni la ciudad, ni la palabra evento en el gancho** (`§2.0a`: nunca se nombra lo que se anuncia). La fecha puede volver **al final**, como guiño que cierra el bucle del gancho, que es donde `§2.0c` permite mirar a la foto.
+> 3. **El evento entra SOLO por el ninja**, con su puerta única de Luma (`§4.4e-PUERTA`) y vendiendo LA SALA (`§4.4b`). El cuerpo va del oficio; la sala aparece cuando ya te han leído.
+>
+> **⚠️ Y el aviso de los mencionados pesa el doble**, aunque el texto no mencione a nadie: **los logos del cartel asocian a esas empresas con el acto igual que una `@`**. El OK previo es de ellas también.
+>
+> **🔗 El dominio del cartel manda sobre el de Luma:** si la imagen imprime `forward.neety.com`, el enlace del post es ese y no `luma.com/ujffj66o`. Es un 302 de Cloudflare que **conserva la query entera**, así que el UTM llega igual (comprobado el 26/08, `§4.4b-UTM`). **Mecanizado el 27/08:** los cinco checks que trataban el enlace del evento (`enlace fuera`, `spam ninja presente`, `https:// delante`, `carácter 650` y `EVENTO: lleva el enlace`) miraban solo `luma.com` y tumbaban un post que hacía lo correcto. Ahora los cinco aceptan los dos dominios.
+
 > **⚠️ EL DOLOR DEL EVENTO NO ES EL DE AGENDAR, Y CONFUNDIRLOS LO MATA.** El de `/agendar/` es *encontrar al cliente ideal*, y está validado. **Asistir a un evento no le resuelve eso a nadie**, así que ese ángulo aquí no pega. El dolor del evento es otro y es **FOMO puro**: aforo cerrado, hay que solicitar plaza, se anuncia la versión nueva del producto, y **la sala se llena con la gente que decide**. Lo que duele no es perderse una charla, es **enterarte después de lo que se dijo y de quién estaba**.
 >
 > **🔴 Y EL AVISO INCÓMODO, que va con cada plan:** un post informativo promocionando el evento **no lo lee nadie**. Iker, textual: *"todas las publicaciones que sean simplemente informativas de texto promocionando el evento nos vamos a comer una mierda"*. El evento **solo se vende dentro de formatos que ya son outlier** (meme, mapa, despiece, historia): el post gana el alcance por su propio motor y el evento viaja dentro. Nunca al revés.

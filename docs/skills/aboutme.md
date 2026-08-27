@@ -190,6 +190,8 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 **Mecanizado** como aviso de entrega en `validar-post.py` (`ENTREGA: el carril de esta cuenta`), que imprime el carril de la cuenta que se le pase con `--cuenta`.
 
+**⚙️ Y EL ANCLA DEL GANCHO TAMBIÉN, DESDE EL 2026-08-27: `validar-post.py` ya no exige ancla de VENTAS en el gancho de Helena, exige el de SU OFICIO** (`CS_ANCLA`: cliente, cuenta, soporte, ticket, incidencia, seguimiento, renovación, partner…), igual que hacía con Mario desde el 11/08. La excepción estaba escrita para las dos cuentas y mecanizada solo para una, así que un gancho suyo de soporte puro habría fallado el check **haciendo justo lo que manda la receta**. `cliente` colaba de rebote por `ANCLA_AMBIGUA` y por eso el hueco no se había visto nunca. **La vinculación con ventas sigue siendo obligatoria en el CUERPO** y eso lo canta el propio check.
+
 ### 👤 Iker Galarza — Cofundador (parte comercial)
 - Rol: **cofounder**, lado **comercial / ventas**.
 - LinkedIn: **https://www.linkedin.com/in/ikergalarza/**
