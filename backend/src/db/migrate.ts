@@ -1034,6 +1034,18 @@ const migration = `
 
   CREATE INDEX IF NOT EXISTS idx_posts_top_del_creador
     ON posts (creator_id, top_del_creador) WHERE top_del_creador;
+
+  -- Cuando se anuncio este post en el Google Chat del equipo. Lo escribe el
+  -- anunciador automatico (services/anuncioChat.ts) y es lo UNICO que impide
+  -- que el mismo post se anuncie dos veces: el job corre varias veces por
+  -- mañana a proposito, porque LinkedIn tarda hasta ~20 min en soltar un post
+  -- al feed y el primer pase se encontraria la cuenta vacia.
+  -- NULL = no anunciado todavia. Se marca DESPUES del envio, nunca antes: si
+  -- el webhook falla, el post sigue pendiente y el pase siguiente lo reintenta.
+  ALTER TABLE posts ADD COLUMN IF NOT EXISTS chat_announced_at TIMESTAMPTZ;
+
+  CREATE INDEX IF NOT EXISTS idx_posts_chat_pendientes
+    ON posts (creator_id, published_at) WHERE chat_announced_at IS NULL;
 `;
 
 /**

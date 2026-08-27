@@ -6,6 +6,7 @@ import { recalcCreatorOutliers } from '../services/outliers';
 import { PostModel } from '../models/post';
 import { CreatorModel } from '../models/creator';
 import { maybeTick, capturePostSnapshot } from '../services/postMonitor';
+import { anunciarPostsDeHoy, componerMensaje } from '../services/anuncioChat';
 import { buscarMensajeEnviado, veredictoDeBusqueda } from '../services/verificarEnvio';
 import { generateComments, generateSupportiveComments } from '../services/commentGenerator';
 import { CommenterProfileModel } from '../models/commenterProfile';
@@ -74,7 +75,11 @@ function parseDateRange(req: Request): { startDate: string; endDate: string; day
 // account snapshot — followers + WVMP) + 1 getPosts (incremental, stops
 // at the first known id). With one new post, that's still ~3 HTTP calls
 // instead of the 5 the old path made.
-async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number; snapshots_seeded: number }> {
+// EXPORTADA (2026-08-27) para que el anunciador automatico de Google Chat
+// (services/anuncioChat.ts) haga exactamente lo mismo que el boton "Get new
+// posts", en vez de reimplementar el scrape y quedarse desincronizado a la
+// primera que alguien toque uno de los dos.
+export async function scrapeCreatorPosts(creatorId: string): Promise<{ scraped: number; snapshots_seeded: number }> {
   const t0 = Date.now();
   const creator = await CreatorModel.findById(creatorId);
   if (!creator) return { scraped: 0, snapshots_seeded: 0 };
@@ -1449,6 +1454,43 @@ router.get('/live-posts', async (req: Request, res: Response) => {
 //
 // Accepts an optional `creator_id` in the body so the UI can scope the
 // refresh to the currently-selected creator instead of every managed account.
+// POST /api/accounts/anuncio-chat/run — dispara A MANO un pase del anunciador.
+//
+// Existe para poder PROBARLO sin esperar a las 10:05 y sin encender el
+// planificador: es la unica forma de comprobar que el webhook manda de verdad
+// antes de confiarle dos semanas de vacaciones. Un 200 de la API de Google
+// Chat no prueba que el mensaje se vea, asi que despues de llamarlo hay que
+// ABRIR el Chat y mirarlo.
+//
+// `?dry=1` compone el mensaje y lo devuelve SIN enviarlo ni marcar nada.
+router.post('/anuncio-chat/run', async (req: Request, res: Response) => {
+  try {
+    if (req.query.dry === '1') {
+      const { rows } = await pool.query(
+        `SELECT p.id, p.post_url, p.content_text, p.pillar, c.name AS creator_name
+           FROM posts p JOIN creators c ON c.id = p.creator_id
+          WHERE c.is_managed = TRUE
+            AND p.chat_announced_at IS NULL
+            AND p.deleted_from_linkedin_at IS NULL
+            AND p.published_at >= date_trunc('day', NOW() AT TIME ZONE 'Europe/Madrid') AT TIME ZONE 'Europe/Madrid'
+          ORDER BY p.published_at ASC`
+      );
+      return res.json({
+        dry_run: true,
+        pendientes: rows.length,
+        mensajes: rows.map((p: any) => componerMensaje({
+          creatorName: p.creator_name, url: p.post_url, pillar: p.pillar, comments: [],
+        })),
+      });
+    }
+    const r = await anunciarPostsDeHoy();
+    res.json(r);
+  } catch (err: any) {
+    console.error('[anuncio-chat/run]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/live-refresh', async (req: Request, res: Response) => {
   try {
     const t0 = Date.now();

@@ -27,6 +27,7 @@ import accountsRouter from './routes/accounts';
 import usageRouter from './routes/usage';
 import reactionsRouter from './routes/reactions';
 import { startPostMonitor } from './services/postMonitor';
+import { startAnuncioChat } from './services/anuncioChat';
 import { basicAuthMiddleware } from './middleware/basicAuth';
 import rastroRouter from './routes/rastro';
 import gateProxyRouter from './routes/gateProxy';
@@ -113,6 +114,10 @@ runMigrations()
       console.log(`Backend running on port ${PORT}`);
     });
     startPostMonitor();
+    // Anuncia solo en el Google Chat del equipo el post de cada mañana.
+    // Apagado salvo que AUTO_CHAT_ANNOUNCE=1: escribe al chat de toda la
+    // empresa y eso no se enciende con un despliegue.
+    startAnuncioChat();
     // Reprocesa el pilar del historico SOLO si han cambiado las reglas de
     // services/pillar.ts (guarda de version en app_state). No bloquea el
     // arranque y no corre a diario: el disparador es el cambio de reglas.
