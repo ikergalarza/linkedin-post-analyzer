@@ -616,6 +616,29 @@ El original es `WAITING ON DESIGN / WAITING ON DEV / WAITING ON OPS`: **anáfora
 - **Vale para cualquier serie apoyada en un eje, una diagonal o una guía:** la colocación se pide como **igualdad entre dos distancias que se ven**, nunca como una cantidad.
 - **Es la misma familia que `§0c-TAMAÑO`:** una orden de colocación sin decir de dónde sale el espacio la resuelve el generador como quiere. Aquí el espacio sale del hueco sobrante de arriba, y la igualdad lo dice sin tener que nombrarlo.
 
+## 🔄🔄 0i-CHAT-NUEVO · CUANDO EL GENERADOR SE ATASCA EN LA CUARTA EDICIÓN, SE ABRE CHAT NUEVO CON LA ÚLTIMA VERSIÓN BUENA (Iker, 2026-08-27)
+
+> **Iker, después de seis vueltas con el meme de la escalera del peso:** *"la clave es coger esa última versión que nos convence casi definitiva, crear un chat nuevo y ya pedírselo. Mira ahora con ese último prompt qué bien lo ha hecho"*.
+
+**El síntoma:** el generador repite el mismo movimiento tímido por tercera vez, o deshace algo que ya estaba bien. **No es que el prompt esté mal escrito: es que el hilo lleva encima cinco órdenes anteriores y las pondera todas.** El de arriba y abajo se anulan.
+
+- **LA REGLA: a partir de la tercera edición que no mejora, se descarga la última versión buena, se abre un chat NUEVO y se le pide ahí, con el prompt limpio.** Funcionó a la primera después de cinco intentos en el hilo viejo.
+- **⚠️ Y EL PEAJE, que hay que mirar SIEMPRE porque el 27/08 se nos coló a los dos:** el chat nuevo **no arrastra ninguna de las correcciones anteriores**, así que puede devolver la imagen perfecta de forma y **rota de esencia**. Aquí regeneró a los cinco muñecos gordos y **se comió la segunda mitad de la curva del peso** —en el original engorda hasta el del medio y vuelve a adelgazar—, que es justo el motor del chiste y de lo que colgaba el cuerpo del post (`Lo peor es el medio`).
+- **EL CHEQUEO al recibir la versión del chat nuevo:** poner la referencia al lado y **repasar el inventario del Paso 6a otra vez, entero**, como si fuera la primera versión. Lo que se comprueba primero es **el mecanismo del gag**, no el color ni la colocación, que son lo que veníamos mirando.
+
+## ✂️✂️ 0i-3-CONTENCION-CORTA · EL CIERRE ES LA FRASE SECA, SIN LISTA DE LO QUE SE QUEDA (Iker, 2026-08-27)
+
+> **Iker:** *"en tu último prompt yo le he dicho «deja todo lo demás intacto y no hagas nada que no te he pedido», y he quitado todos esos detalles específicos que has dado tú. Es mejor así, más sencillo"*.
+
+**Esto YA estaba escrito** en `post-workflow §4.4` Paso 6b (*"⛔ NUNCA enumeres lo que se queda igual. Es el error que más engorda el prompt: el bloque de contención del final ya lo cubre entero"*) **y lo rompí en cinco prompts seguidos**, encadenando *"deja todo lo demás igual: el fondo, el título, los colores, la flecha…"*. Cada elemento que enumeras es uno más que el generador pondera, y compite con el cambio que sí le has pedido.
+
+```
+✅ Deja todo lo demás intacto y no hagas nada que no te he pedido.
+⛔ Deja todo lo demás igual: el fondo, el título de arriba, el texto de abajo, los
+   colores, el tamaño de los muñecos y su orden, y la raya con su flecha.
+```
+**La única excepción sigue siendo la del prompt de creación**, donde la coletilla larga añade *"ni toques colores ni suavices caras ni deformes"*, que son prohibiciones, no una lista de lo que se conserva.
+
 ## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
 
 > **La regla:** *"no me puedes dar una propuesta de foto sin una referencia, porque entonces me estás demostrando que te la estás inventando. Tiene que estar validado en que ese mismo formato de foto ya haya funcionado, por lo tanto me tienes que pasar el enlace."*
