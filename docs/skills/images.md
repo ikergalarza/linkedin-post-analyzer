@@ -105,6 +105,22 @@ Fuente: `Documentos/Mario/LINKEDIN GROWTH/Brandbook Neety Nuevo.pdf`, pag. 23. *
 - La **regla de la palabra naranja se mantiene**, solo cambia el tono exacto.
 - **Tipografía sin cambios:** Bricolage Grotesque en títulos, botones y textos cortos; Switzer en texto corrido y anotaciones (pág. 19-20).
 
+## 🎨🎨 0a-ter-CALCO · DEL COLOR DE LA REFERENCIA NO SE CALCA NADA, Y LA CAJA SOLO SE QUEDA EN LAS ETIQUETAS DE ROL (Iker, 2026-08-27)
+
+> **Iker, viendo la v1 del meme de la escalera del peso:** *"no entiendo de dónde se ha sacado que la paleta de nuestra aplicación sea azul. Eso lo habrá copiado tal cual de la referencia, pero está fatal. Solo en los roles aún te compro los cuadrados, pero en los ejes de las gráficas no lo veo bien"*.
+
+**EL FALLO, y es de prompt, no del generador:** mi prompt decía *"cambia las etiquetas azules por rectángulos berenjena"* y *"pon el fondo en mint claro"*, o sea que nombré **dos** de los elementos azules del original y **el generador conservó el azul en los otros dos** — la banda del título y la del pie. Un calco fiel del layout arrastra el color salvo que se le diga elemento por elemento.
+
+**LAS TRES REGLAS, y van juntas:**
+1. **Se calca la FORMA, nunca el COLOR.** Layout, paneles, posiciones, tamaños y mecánica cómica se copian; **el color es siempre el nuestro** (`§0a-ter`). Y no vale decir *"aplica la paleta de marca"*: se recorre la referencia y **se nombra cada elemento coloreado** — banda del título, rótulos de los ejes, cajas de las etiquetas, flechas, líneas divisorias, fondo — con su color nuevo al lado.
+2. **⛔ La CAJA solo se queda donde separa una etiqueta de la ilustración: los roles.** El **título** y los **rótulos de los ejes** van en **texto suelto berenjena `#431b44` sobre el fondo**, sin recuadro. La caja ahí no aporta nada y encima mete una masa de color que compite con las figuras.
+3. **Y el motivo por el que se puede quitar, dicho por Iker:** *"como ya tenemos el fondo que no es un blanco, ya podemos aprovechar para poner arriba los textos en morado, y así no hace falta que tengan ese recuadro"*. **Sobre el mint claro, la berenjena tiene contraste de sobra**; la caja solo hace falta cuando el texto cae encima de una foto.
+
+**EL MODELO, y es nuestro:** la escalera de calvicie de Asier del 12/08 (**121.706 impresiones**). Título en berenjena con **una** palabra en naranja y sin caja · línea fina berenjena debajo · cajas berenjena con texto blanco **solo** en los seis roles · rótulo del eje en berenjena suelto · fondo mint. **Cuando el remix sea un gráfico o una infografía, ese es el acabado al que va, no el del original.**
+
+- **⚠️ Esto NO toca la excepción del pantallazo documental** (`§0a-sexta-bis` y `§0a-sexta-ter`): cuando la imagen finge ser una pantalla real, se calcan color y tipografía del original, porque lo que hace el chiste es reconocer el formato. La regla de aquí es para lo que **diseñamos nosotros**.
+- **Mecanizado** como punto 7 del aviso de entrega del prompt de imagen en `validar-post.py`.
+
 ## ⭐ 0a-sexta · EL TITULAR EN UNA LINEA SI LA LETRA SIGUE GRANDE (aprobado por Iker, 2026-07-27)
 
 **El criterio NO es el numero de lineas: es el tamano de la letra.**

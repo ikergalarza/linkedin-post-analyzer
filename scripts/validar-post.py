@@ -1512,10 +1512,17 @@ def validar(texto, pilar, cuenta=None, generico=False, meme_sobrio=False, ref_fu
             '0,43x y 2.989. Un post bueno a mala hora rinde la mitad y no se recupera. Y '
             'desde que ningun post lleva anio, esperar a manana no le cuesta nada al texto',
             aviso=True)
-        chk(False, 'ENTREGA: los 6 puntos del prompt de imagen (images §0b + §0h)',
+        chk(False, 'ENTREGA: los 7 puntos del prompt de imagen (images §0b + §0h)',
             '1) abre con SOLO HAZ LO QUE TE PIDO en mayusculas · 2) UN SOLO PARRAFO, del '
             'tiron, como se lo explicarias a un amigo · 3) paleta y tipografia de marca '
             '(Bricolage titulos, Switzer cuerpo, naranja #fe8238, berenjena #431b44) · '
+            '7) ⛔ DEL COLOR DE LA REFERENCIA NO SE CALCA NADA: se recorre la imagen y se '
+            'nombra CADA elemento coloreado con su color nuevo (banda del titulo, rotulos de '
+            'los ejes, cajas de etiqueta, flechas, lineas, fondo). Decir "aplica la paleta" no '
+            'basta: el 27/08 nombre dos de los cuatro azules y el generador dejo los otros dos. '
+            'Y la CAJA solo se queda en las etiquetas de ROL; el titulo y los rotulos de los '
+            'ejes van en texto suelto berenjena sobre el fondo, que sobre mint contrasta de '
+            'sobra. El modelo es la escalera del 12/08, 121.706 imp (images §0a-ter-CALCO) · '
             '4) "en formato cuadrado 1:1" SIEMPRE, aunque la referencia sea vertical: '
             'LinkedIn recorta la preview por arriba y por abajo, y 19 de nuestros 20 '
             'outliers son 1:1. ⛔ Y SI LA REFERENCIA ES MAS ALTA QUE ANCHA, que es lo '
