@@ -587,6 +587,8 @@ El original es `WAITING ON DESIGN / WAITING ON DEV / WAITING ON OPS`: **anáfora
 
 - **LA REGLA: la caja abraza su texto.** Se comparten la **altura** y el **margen interior**; el **ancho lo pone cada rótulo**.
 - **Y se dice en negativo, que es lo que lo caza:** *"no pueden medir todos lo mismo de ancho, cada uno se ajusta al ancho de SU propio texto, sin espacio sobrante dentro de ninguno"*. Sin esa frase lo vuelve a igualar.
+- **⛔ Y "que abrace el texto" SE PIDE JUNTO CON EL TAMAÑO, en la misma frase.** Si solo dices que se ajuste, lo lee como *"hazlo pequeño"* y te devuelve cinco carteles diminutos con media imagen vacía al lado. Va pegado: *"cada cartel del ancho de su palabra, y a la vez bastante más grandes de lo que son ahora, aprovechando el sitio libre que tienen a la derecha"*. Es `§0c-TAMAÑO` otra vez: la orden de tamaño va con la del espacio de donde sale.
+- **⚠️ Y si un desplazamiento se queda corto, no se repite la misma orden.** Se le dice que **lo anterior no bastó** y se le vuelve a dar la igualdad de los dos huecos con el hueco sobrante nombrado (`§0b-DENTRO-DEL-MARCO-BIS`). Repetir la frase tal cual produce el mismo movimiento tímido: pasó dos veces seguidas el 27/08.
 
 ## 🖼️🖼️ 0b-DENTRO-DEL-MARCO · AL COMPRIMIR DE VERTICAL A 1:1, EL ÚLTIMO DE LA DIAGONAL SE SALE DEL CUADRO (Iker, 2026-08-27)
 
