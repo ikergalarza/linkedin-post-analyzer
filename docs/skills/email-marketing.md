@@ -183,6 +183,20 @@ Luma lee     : utm_source = "unai-03-evento"
 va SIEMPRE en `utm_source`, escrita a mano.** No se vuelve a dejar en `utm_campaign`, porque Luma no lo
 lee y perdemos la atribución de los asistentes al evento.
 
+#### 🔧 `/senders` da 403 desde Python y funciona con `curl` (2026-08-28)
+
+**Cloudflare bloquea el endpoint de remitentes según la firma del cliente**, no según la clave:
+
+```
+python (urllib)  GET /senders  -> 403  error 1010 "blocked based on your browser's signature"
+curl             GET /senders  -> 200  la lista entera
+python (urllib)  GET /account  -> 200  (asi que NO es la api-key ni la cuenta)
+```
+
+**La comprobación que lo separa es `/account`:** si responde 200 y otro endpoint da 403, no es un
+problema de permisos, es el cliente. **Se reintenta con `curl` antes de decir «no puedo».** Estuve a
+punto de contarle a Iker que era imposible tocar los remitentes cuando bastaba cambiar de herramienta.
+
 #### ⚠️ EN BREVO, UN CAMPO VACÍO NO SIGNIFICA QUE ESTÉ VACÍO (2026-08-28)
 
 **Dos falsas alarmas seguidas el mismo día, comprobando las campañas ya programadas:**
