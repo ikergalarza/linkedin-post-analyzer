@@ -147,6 +147,55 @@ mismo.
 enlace de `/agendar/` y creer que está roto. **No lo está.** Moverle la identidad a `utm_source` para
 "arreglarlo" **rompería la atribución de GA4**, que es la que sí funciona.
 
+#### ✅ CÓMO SE CONTROLA EL `utm_source` EN BREVO (resuelto y verificado el 2026-08-28)
+
+**Son DOS condiciones y hacen falta las dos:**
+1. **Apagar la integración de Google Analytics** en los ajustes de esa campaña, en el panel. `§6.4b` ya
+   decía que ese interruptor no lo expone el conector.
+2. **Escribir el UTM dentro del `href`.** Y aquí está la regla que costó media tarde entenderla:
+
+> **Brevo inyecta sus UTMs cuando recibe un enlace SIN ninguno. Si el enlace ya trae `utm_source`, lo
+> respeta y no lo toca.**
+
+**Por eso el fallo se repetía sin explicación aparente:** cada vez que regeneraba el HTML desde el
+fichero de texto —donde la URL va limpia, `https://forward.neety.com/`— Brevo metía los suyos. No era
+aleatorio ni diferido: era que yo le estaba dando un enlace pelado.
+
+**⛔ Y OJO CON LO QUE ME HIZO DUDAR DOS VECES: las pruebas en ráfaga chocan con el límite de ritmo
+(429)** y entonces unas escrituras se aplican y otras no, así que el resultado parece incoherente.
+**Entre prueba y prueba, esperar.** Si sale `429`, todo lo medido en esa tanda no vale.
+
+**Cadena completa, verificada de punta a punta:**
+```
+Brevo guarda : forward.neety.com/?utm_source=unai-03-evento    (3 lecturas en 80s, aguanta)
+Cloudflare   : → luma.com/ujffj66o?utm_source=unai-03-evento   (cabecera Location)
+Luma lee     : utm_source = "unai-03-evento"
+```
+
+**⛔ REGLA (Iker, 2026-08-28): si el enlace va a LUMA o a FORWARD (que redirige a Luma), la identidad
+va SIEMPRE en `utm_source`, escrita a mano.** No se vuelve a dejar en `utm_campaign`, porque Luma no lo
+lee y perdemos la atribución de los asistentes al evento.
+
+#### 🔴🔴 NUNCA PARCHEAR EL HTML DE UNA CAMPAÑA CON UNA EXPRESIÓN REGULAR (2026-08-28)
+
+**El fallo, y lo cazó Iker en un correo de prueba:** para cambiar el enlace usé
+`re.sub(r'https://forward\.neety\.com[^"]*', NUEVA, html)`. El enlace aparece **dos veces** —dentro de
+`href="…"` y como texto visible— y en la segunda **no hay comilla detrás**, así que `[^"]*` se comió el
+`</a></p><p style=` que venía después. Resultado en el correo: el enlace se fusionó con la línea
+siguiente y el lector veía `…unai-03-evento"margin:0 0 20px;">Eso es lo que nadie cuenta…`.
+
+**LAS DOS REGLAS QUE SALEN:**
+1. **El HTML se REGENERA desde el texto validado**, no se parchea. El fichero `.txt` que pasa el
+   validador es la fuente de verdad.
+2. **Si hay que tocar el HTML ya guardado, la sustitución es QUIRÚRGICA**: solo el valor del atributo,
+   anclando el patrón a `href="` y a su comilla de cierre — nunca la URL suelta.
+   ```python
+   re.sub(r'(href=")https://forward\.neety\.com[^"]*(")', r'' + URL + r'', html)
+   ```
+3. **Y SE COMPRUEBA RENDERIZANDO A TEXTO PLANO, no leyendo el HTML.** Quitando las etiquetas, si en el
+   texto aparece `style=`, `margin:` o `</a>`, el markup se ha filtrado. **Es lo único que ve el
+   fallo como lo ve el lector.**
+
 #### 🔒 Brevo secuestra `utm_source` y NO se puede cambiar por API (probado 3 veces el 28/08)
 
 Se intentó de tres formas y las tres las pisa con `sendinblue`:
