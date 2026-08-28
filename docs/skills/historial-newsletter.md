@@ -949,3 +949,51 @@ que es exactamente lo que esa palanca activa.
 **PENDIENTE y es lo único que desbloquea el resto:** la apelación. Y después, hacer crecer el segmento
 limpio por las dos vías que no dependen de rescatar nada — **los registros del evento** (consentimiento
 fresco) y **la casilla de recursos**.
+
+---
+
+## 🔒 LA LISTA BLANCA DE CONSENTIMIENTO, EN CÓDIGO (2026-08-28, mismo día del bloqueo)
+
+**Lo que se creía roto y NO lo estaba:** Iker pensó que al apagar las tandas se había pausado también
+el alta automática de recursos. **Falso**, y se comprobó antes de tocar nada: la audiencia
+`📥 Recursos · Todos` seguía espejando y había sincronizado esa misma mañana. Un opt-in nuevo entraba
+solo.
+
+**Lo que SÍ estaba roto, y era peor:** la protección era una **lista negra** que conocía **una sola
+excepción** (`no-optin`). Las otras 23 audiencias dependían únicamente del interruptor `esp_sync`, un
+booleano que cualquiera podía encender desde la interfaz. **Encender el de `Leads General` habría
+subido 1.323 contactos sin consentimiento a Brevo** — exactamente lo que provocó la suspensión.
+
+**Ahora se niega por defecto** (`resources_leads.puedeEspejarse`). Solo pasan dos casos:
+1. **TODAS** las fuentes de la audiencia son de recursos con opt-in (su SQL lleva `WHERE consent_comms
+   = TRUE` dentro). **Todas, no alguna**: una audiencia admite varias fuentes, y con un `.some()`
+   bastaba añadirle un CSV a una audiencia buena para colar a cualquiera.
+2. La audiencia es **interna** (todos `@neety.com`). Es la excepción de `Testers`, decidida por Iker, y
+   no abre agujero porque nadie de fuera tiene un correo de la casa.
+
+**Y hay un SEGUNDO cerrojo, a nivel de persona.** `upsertAudienceMembers` conserva a los miembros
+añadidos a mano, así que alguien podía meter a una persona dentro de una audiencia que sí vale. Ahora
+solo suben los que traen `properties.source = neety_resource`, más los internos, y **los saltados se
+cuentan** (`skippedSinConsentimiento`) para que no sea un silencio.
+
+**El interruptor tampoco se puede encender ya desde la API.** Antes el sync habría fallado igual, pero
+el flag se quedaba encendido y la pantalla decía que esa audiencia se espejaba cuando no era verdad.
+
+**Probado contra producción:** tanda 6 → bloqueada · `Leads General` → bloqueada, y el mensaje **nombra
+la fuente culpable** · `Recursos · Todos` → sigue funcionando. **214/214 tests.**
+
+### 🗑️ Y la limpieza de contactos que pedía Brevo para la apelación
+
+| | antes | después |
+|---|---|---|
+| Contactos | 1.102 | **46** (40 con consentimiento + 5 testers + 1 interno) |
+| Listas | 13 | **2** |
+
+**⛔ Y lo que se hizo ANTES de borrar, porque borrar un contacto sí pierde algo irrecuperable:** de los
+1.056 borrados, **68 estaban bloqueados por baja o rebote**. Ese estado es la protección que impide
+volver a escribirles, y se pierde al borrar. Se comprobó que el CRM ya los tenía registrados en
+`mkt_unsubscribes` (`nuevas: 0, yaEstaban: 68`), así que **el registro sobrevive a Brevo**. Copia
+completa en `Escritorio/BREVO-CONTACTOS-BORRADOS` (CSV con todos + la lista de los 68).
+
+**La regla que sale de aquí:** antes de borrar en un proveedor, comprobar que **el CRM conserva lo que
+el proveedor va a olvidar**. Si no lo conserva, primero se guarda y luego se borra.
