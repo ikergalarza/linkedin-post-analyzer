@@ -148,7 +148,15 @@ Post-mortem completo en `email-marketing §0b`.
 
 **Verificadas el 2026-08-20**: las cinco responden `200 image/gif` y su tamaño coincide **byte a byte** con los ficheros de `Documents/Mario/LINKEDIN GROWTH/EMAIL MARKETING/`. Las etiquetas están confirmadas, no solo que cargan.
 
-Viven en la biblioteca de contenido de Brevo. ⚠️ **Brevo no tiene gestor de archivos**, así que Iker las subió metiéndolas todas en una campaña de prueba llamada `Gifs mascota`. **Esa campaña no se borra**: si desaparece, se van las cinco URLs.
+Viven en la biblioteca de contenido de Brevo. ⚠️ **Brevo no tiene gestor de archivos suelto**, así que Iker las subió metiéndolas en una campaña de prueba llamada `Gifs mascota`: la campaña era la PUERTA para llegar a la biblioteca, no el sitio donde se guardan.
+
+> 🔴 **AQUÍ PONÍA "esa campaña no se borra: si desaparece, se van las cinco URLs", Y ERA FALSO.** Lo escribí yo por precaución, sin comprobarlo, y luego lo defendí dos días seguidos cuando Iker preguntó si podía borrarla. **Comprobado el 2026-08-28 borrándola de verdad: las 5 URLs siguen devolviendo `200 image/gif`.** La campaña ya no existe y los GIFs siguen ahí.
+>
+> **La evidencia estaba en la propia URL y no la miré:** `img.mailinblue.com/11927007/images/content_library/original/…` — el `11927007` es el **ID de la cuenta** (el mismo que devuelve `GET /account`) y la ruta dice `content_library`. **No hay ninguna referencia a la campaña en ningún sitio.** Los archivos son de la CUENTA.
+>
+> **La lección, y vale para cualquier aviso que escriba:** una precaución inventada se lee igual que un hecho medido, y bloquea decisiones durante meses. **Un aviso sin comprobar se marca como hipótesis, o no se escribe.** Aquí la comprobación costaba una llamada HTTP.
+>
+> 💾 **Y antes de borrar se hizo una copia de los 5 GIFs** en `Escritorio/GIFS-KAIXITO-BACKUP` (332-369 KB cada uno). Eso es lo que convirtió una decisión arriesgada en una segura: con la copia, el peor caso era volver a subirlos.
 
 | Emoción | URL | Bytes |
 |---|---|---|
