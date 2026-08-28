@@ -248,7 +248,7 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 > - **Y el dato que sostiene que el mapa de Iker merece esas horas cuando vuelva:** es el mayor activo de tráfico de la casa, **150,8 clics por post** contra los 28 de su "Los 10".
 
 **Lo que queda ANTES de publicar, y bloquea:**
-- **Mapa de Cantabria:** el CSV de PamPam y dar de alta `recursos.neety.com/mapas/cantabria/`, que hoy no existe y es a donde apunta el CTA.
+- ~~**Mapa de Cantabria:** el CSV de PamPam y dar de alta `recursos.neety.com/mapas/cantabria/`.~~ ✅ **Cerrado el 27/08:** CSV entregado e importado por Iker en PamPam, y la página creada y publicada POR MÍ con el embed dentro (receta nueva, `post-workflow §4.2` Paso 9b). Solo queda la captura del post, que la hace Iker desde PamPam.
 - ~~**Despiece de Valencia:** plantilla nueva de 12 huecos para alimentación.~~ 🔁 **Resuelto el 27/08 cambiando el sector: la llanta ya existe y no hay nada que diseñar.**
 - **"Los 10" de Navarra:** las 10 fotos en orden de mención y la orla.
 
