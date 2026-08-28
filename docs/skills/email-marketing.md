@@ -130,6 +130,42 @@ El estado vivo, en orden, está en `historial-newsletter.md`.
 - **Se mide, no se discute:** en las primeras 2-3 tandas, opens/respuestas/bajas de Kaixito contra los founders, por segmento. Si abre más, gana papel; si el segmento industrial senior responde mal, se le acota la lista (p. ej. solo clientes, como los VIP de Runner Pro).
 - Firma humana al final: nombre + rol real ("Iker, cofundador de Neety"). Kaixito firma como "Kaixito, la mascota de Neety".
 
+### 🔴🔴 EL PIE SE RESETEA SOLO AL EDITAR UNA CAMPAÑA POR API (Iker, 2026-08-28)
+
+**El fallo, y lo vio Iker en una captura, no un error:** el correo 2 salió a revisión con el pie
+genérico de Brevo — *"Si desea darse de baja de nuestro boletín de noticias, haga clic aquí"* — en vez
+del nuestro, que nombra la empresa y la dirección postal. En la API el campo aparecía como
+`[DEFAULT_FOOTER]`.
+
+**Alcance real, comprobado campaña por campaña: NINGÚN correo enviado salió mal.** Las 6 tandas y la
+prueba interna conservan el pie bueno. Solo lo perdieron **las dos campañas que yo había editado con
+`PUT`** (correo 2 y correo 3).
+
+**⚠️ Y EL MECANISMO EXACTO NO ESTÁ VERIFICADO, así que va como hipótesis** (`working-preferences §0c`).
+La sospecha razonable es la misma trampa que la doc ya describía de MailerLite —*"`update_campaign` por
+API resetea los ajustes del panel"*— y que decía expresamente que **no estaba comprobada en Brevo**.
+Pero al intentar reproducirlo, **un `PUT` con solo `name` NO reseteó el pie**, así que no es "cualquier
+PUT": es alguna combinación que todavía no he aislado. El intento de aislarlo campo a campo se cortó
+porque la cuenta volvió a dar `402`.
+
+**LO QUE SÍ ES SEGURO Y BASTA PARA PROTEGERSE:**
+1. **Al arreglar un campo por `PUT`, se reenvía en la MISMA llamada** todo lo que no quieras perder.
+2. **Y después se COMPRUEBA releyendo la campaña.** Un `204` no prueba que el resto siga en pie.
+3. **⚙️ Se corre el auditor antes de dar por buena cualquier campaña:**
+   ```
+   python scripts/auditar-campanas-brevo.py
+   ```
+   Revisa todas las campañas vivas (borrador, en cola, en revisión) y canta si el pie está reseteado o
+   no es el de la casa, si falta el enlace de baja, el `utm_campaign` o la preview, si no hay lista de
+   destinatarios, o si el remitente pasa de 20 caracteres y se va a cortar en la bandeja.
+
+**El pie de la casa, literal, es este y no otro:**
+```
+¿Prefieres que no te escriba más? {Date de baja aquí} · Neety · Miramon Pasealekua 170, Donostia, España
+```
+Lleva las dos cosas que un correo comercial necesita: **el enlace de baja** y **la dirección postal**.
+El genérico de Brevo no trae la dirección.
+
 ### ⭐ EL NOMBRE DEL REMITENTE (campo "From" de Brevo) NO ES LA FIRMA DEL CUERPO (Iker, 2026-08-27)
 
 **Son dos campos distintos y se confunden fácil.** La firma de arriba (`§1`, última línea) es texto DENTRO del correo. El remitente es el `sender.name` que Brevo pone en la bandeja de entrada, al lado del asunto, ANTES de que se abra el correo — y ahí un nombre suelto sin marca puede leerse como spam o como un desconocido.
