@@ -130,6 +130,40 @@ El estado vivo, en orden, está en `historial-newsletter.md`.
 - **Se mide, no se discute:** en las primeras 2-3 tandas, opens/respuestas/bajas de Kaixito contra los founders, por segmento. Si abre más, gana papel; si el segmento industrial senior responde mal, se le acota la lista (p. ej. solo clientes, como los VIP de Runner Pro).
 - Firma humana al final: nombre + rol real ("Iker, cofundador de Neety"). Kaixito firma como "Kaixito, la mascota de Neety".
 
+### 🔗🔗 EN CORREO, EL UTM TIENE DOS CONVENCIONES OPUESTAS SEGÚN EL DESTINO (2026-08-28)
+
+**Lo que pregunta Iker, y es la pregunta correcta:** *"quiero saber exactamente qué correos son los que
+más convierten y a qué web llevan"*. **Eso lo responde `utm_campaign`, no `utm_source`.** Cada correo
+lleva el suyo y son todos distintos (`kaixito-01-tanda-3`, `iker-02-feria`, `unai-03-evento`), así que
+en GA4 se filtra por Campaña y sale la pieza exacta. `utm_source` dice el CANAL, que es siempre el
+mismo.
+
+| destino | quién lee el UTM | dónde va la identidad | ¿lo controlamos? |
+|---|---|---|---|
+| **Nuestras webs** (`/agendar/`, `/correo/`) | **nuestro GA4** | **`utm_campaign`** | ✅ **sí, y ya está bien** |
+| **Luma** (evento) | **solo `utm_source`** | **`utm_source`** | ❌ **no: Brevo lo secuestra** |
+
+**⛔ EL ERROR QUE ESTO EVITA, y lo cometimos los dos el 28/08:** ver `utm_source=sendinblue` en el
+enlace de `/agendar/` y creer que está roto. **No lo está.** Moverle la identidad a `utm_source` para
+"arreglarlo" **rompería la atribución de GA4**, que es la que sí funciona.
+
+#### 🔒 Brevo secuestra `utm_source` y NO se puede cambiar por API (probado 3 veces el 28/08)
+
+Se intentó de tres formas y las tres las pisa con `sendinblue`:
+1. Escribir el UTM entero a mano dentro del `href` → lo reescribe al guardar.
+2. Mandar `utmCampaign: ""` para que no inyecte → **400, `utmCampaign is missing`**: es obligatorio.
+3. Mandar `utmSource` en el `PUT` → acepta el 204 y **lo ignora**: el campo se queda en `brevo`.
+
+**⭐ LA ÚNICA SALIDA, y es un CLIC EN EL PANEL:** apagar la **integración de Google Analytics** en los
+ajustes de esa campaña. Con ella apagada, Brevo deja de inyectar y respeta el UTM escrito a mano.
+`§6.4b` ya decía que ese interruptor **solo existe en el panel y el conector no lo expone**.
+
+**Y solo hace falta apagarlo en las campañas que apuntan a LUMA.** En las que van a nuestra web, la
+inyección de Brevo hace justo lo que queremos.
+
+**⚠️ Cuánto duele hoy, para no exagerarlo:** mientras solo haya **un** correo apuntando a Luma, en su
+panel `sendinblue` significa inequívocamente *ese* correo. El problema aparece con el segundo.
+
 ### 🔴🔴 EL PIE SE RESETEA SOLO AL EDITAR UNA CAMPAÑA POR API (Iker, 2026-08-28)
 
 **El fallo, y lo vio Iker en una captura, no un error:** el correo 2 salió a revisión con el pie
