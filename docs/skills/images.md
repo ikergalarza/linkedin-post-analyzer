@@ -566,6 +566,29 @@ El original es `WAITING ON DESIGN / WAITING ON DEV / WAITING ON OPS`: **anáfora
 - **Y con la salida ya dada, que si no la inventa:** *"si no cabe a ese tamaño, pártela en dos renglones antes que reducirla"* — que es `§0b-TEXTO-REF-CORTE`: **más renglones AGRANDAN la letra, no la empeoran.**
 - **⚠️ Es el mismo fallo de familia que `§0c-TAMAÑO`:** una orden de colocación sin decir de dónde sale el espacio la resuelve el generador como quiere. Aquí el espacio sale de partir la línea, y hay que decirlo.
 
+## 📏📏 0b-ETIQUETA-ANCHO · SI LA ETIQUETA TIENE SITIO AL LADO, LA CAJA SE ENSANCHA. PARTIR A DOS RENGLONES ES EL ÚLTIMO RECURSO (Iker, 2026-08-27)
+
+> **Iker, sobre la v2 del meme de la escalera del peso:** *"en vez de hacer que los puestos caigan a dos líneas si son largos, que simplemente el cuadrado que tienen detrás sea más ancho hacia la derecha, pero que todos los puestos salgan en solo una línea, ya que ahora los cuadrados los veo muy altos y queda feo"*.
+
+**ACOTA `§0b-ETIQUETA-PANEL`, que decía lo contrario y lo decía bien para OTRO caso.** Allí (3 paneles en una fila, etiquetas pisándose en el borde) **no hay sitio horizontal**, así que partir el renglón es lo que permite AGRANDAR la letra. Aquí cada etiqueta tiene **medio ancho de imagen libre a su derecha**, y entonces partirla solo produce cajas altas que compiten con las figuras.
+
+**LA REGLA, y el orden importa:**
+1. **Si hay espacio libre al lado de la etiqueta → se ensancha la caja** y el rótulo va en **una sola línea**.
+2. **Solo si el espacio horizontal está ocupado** (dos o más paneles en la misma fila) → se parte en dos renglones antes que reducir la letra (`§0b-ETIQUETA-PANEL`).
+3. **En una serie, las cajas comparten altura.** Una caja de dos líneas al lado de cuatro de una sola rompe la serie tanto como cambiar la tipografía (`§0h-SERIE`: la forma de la etiqueta también se calca).
+
+**Y en el prompt se dice de dónde sale el ancho** (`§0c-TAMAÑO`, la orden de tamaño va con la del espacio que sobra): *"ensánchale el rectángulo hacia la derecha hasta que el texto entre en una fila, aprovechando el espacio libre que tiene a ese lado"*.
+
+## 🖼️🖼️ 0b-DENTRO-DEL-MARCO · AL COMPRIMIR DE VERTICAL A 1:1, EL ÚLTIMO DE LA DIAGONAL SE SALE DEL CUADRO (Iker, 2026-08-27)
+
+> **Iker, en la misma v2:** *"el quinto personaje, el que va al lado del cuadrado de CEO, sus pies están cortados y se sale de la gráfica, cosa que no es realista. Todos los personajes con sus cajas y textos deberían estar dentro de los ejes"*.
+
+**Por qué pasa siempre y por qué hay que decirlo en el PRIMER prompt:** la referencia es vertical y nosotros publicamos 1:1 (`§0b`), así que al ensanchar y recortar alto **la diagonal se queda sin sitio abajo** y el último elemento cruza el eje. El generador no lo lee como error porque nadie le ha dicho que el eje es un límite.
+
+- **LA REGLA: en cualquier imagen con marco, ejes o recuadro, se dice explícitamente que NADA los cruza** — ni una figura, ni una caja, ni un rótulo.
+- **Y se dice de dónde sale el espacio, que si no lo inventa** (`§0c-TAMAÑO`): *"reduce un poco el conjunto y súbelo, aprovechando el aire que queda entre el título y la primera figura, hasta que el último apoye los pies encima del eje"*.
+- **El síntoma a buscar al revisar:** mira **el último elemento de la diagonal**, que es donde se acumula el recorte. Si sus pies tocan o pasan el eje, la imagen vuelve.
+
 ## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
 
 > **La regla:** *"no me puedes dar una propuesta de foto sin una referencia, porque entonces me estás demostrando que te la estás inventando. Tiene que estar validado en que ese mismo formato de foto ya haya funcionado, por lo tanto me tienes que pasar el enlace."*
