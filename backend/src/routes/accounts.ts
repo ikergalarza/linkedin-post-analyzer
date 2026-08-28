@@ -1466,7 +1466,19 @@ router.get('/live-posts', async (req: Request, res: Response) => {
 router.post('/anuncio-chat/run', async (req: Request, res: Response) => {
   try {
     if (req.query.dry === '1') {
-      const { rows } = await pool.query(
+      // ?post_id=<uuid> apunta el ensayo a un post CONCRETO, saltandose la
+      // ventana de hoy. Sin esto, un dia sin publicaciones devuelve una lista
+      // vacia y no se puede ver el mensaje que se mandaria: se prueba que el
+      // endpoint responde, no que el aviso este bien escrito.
+      const unPost = typeof req.query.post_id === 'string' ? req.query.post_id : null;
+      const { rows } = unPost
+        ? await pool.query(
+            `SELECT p.id, p.post_url, p.content_text, p.pillar, c.name AS creator_name
+               FROM posts p JOIN creators c ON c.id = p.creator_id
+              WHERE p.id = $1`,
+            [unPost]
+          )
+        : await pool.query(
         `SELECT p.id, p.post_url, p.content_text, p.pillar, c.name AS creator_name
            FROM posts p JOIN creators c ON c.id = p.creator_id
           WHERE c.is_managed = TRUE
@@ -1478,8 +1490,25 @@ router.post('/anuncio-chat/run', async (req: Request, res: Response) => {
       return res.json({
         dry_run: true,
         pendientes: rows.length,
-        mensajes: rows.map((p: any) => componerMensaje({
-          creatorName: p.creator_name, url: p.post_url, pillar: p.pillar, comments: [],
+        // Con comentarios de apoyo REALES: son la mitad del mensaje y lo que
+        // hay que revisar antes de fiarse. Si el generador falla, se ve el
+        // mensaje sin ellos, que es exactamente lo que haria el job.
+        mensajes: await Promise.all(rows.map(async (p: any) => {
+          let comments: string[] = [];
+          try {
+            comments = await generateSupportiveComments(
+              {
+                postContent: p.content_text || '',
+                creatorName: p.creator_name,
+                creatorHeadline: null,
+                profile: { headline: null, voice_style: null, worldview: null, signature_moves: null, avoid: null },
+              },
+              5
+            );
+          } catch { /* mismo comportamiento que el job: se manda sin ellos */ }
+          return componerMensaje({
+            creatorName: p.creator_name, url: p.post_url, pillar: p.pillar, comments,
+          });
         })),
       });
     }
