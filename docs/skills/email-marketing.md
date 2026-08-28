@@ -217,6 +217,24 @@ ajustes de esa campaña. Con ella apagada, Brevo deja de inyectar y respeta el U
 **Y solo hace falta apagarlo en las campañas que apuntan a LUMA.** En las que van a nuestra web, la
 inyección de Brevo hace justo lo que queremos.
 
+#### ⭐ EL PROCEDIMIENTO QUE CIERRA ESTO (lo midió Iker el 2026-08-28, y manda sobre lo de arriba)
+
+Iker creó una campaña de prueba para verlo. **Dos hechos medidos, ya no hipótesis:**
+1. **Al CREAR una campaña, Google Analytics viene ENCENDIDO por defecto.**
+2. **Editar el correo NO lo toca.** Se cambiaron diseño, enlace y pie de la campaña 18 varias veces y
+   siguió apagado. El interruptor solo se mueve a mano, en el panel.
+
+**Por eso el aviso va en el momento de CREAR la campaña, y depende de a dónde apunte el spam ninja:**
+
+| A dónde lleva el enlace | Analytics | Lo que tengo que decir al entregar |
+|---|---|---|
+| `recursos.neety.com/agendar/` (nuestra web, GA4) | **ENCENDIDO** | nada: viene así de fábrica y es lo que queremos |
+| **Luma o `forward.neety.com`** | **APAGADO** | **«acuérdate de desactivar Google Analytics en esta campaña»**, y ANTES de que yo escriba el enlace |
+
+**El aviso es obligatorio y va en la entrega, no en un comentario suelto.** Si se me olvida, el enlace
+del evento sale con `utm_source=sendinblue` y los registros de Luma se quedan sin atribuir. El auditor
+lo caza después, pero el clic sigue siendo de una persona.
+
 **⛔ SE APAGA A MANO Y NO HAY MANERA DE AUTOMATIZARLO (Iker preguntó justo esto el 28/08).** Pidió que
 al crear la campaña yo mirase a dónde va el enlace y apagase Analytics solo. **No puedo:** el
 interruptor no está en el objeto de campaña —se enumeraron todos sus campos— así que ni se lee ni se
