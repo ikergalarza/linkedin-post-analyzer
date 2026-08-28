@@ -154,12 +154,19 @@ enlace de `/agendar/` y creer que está roto. **No lo está.** Moverle la identi
    decía que ese interruptor no lo expone el conector.
 2. **Escribir el UTM dentro del `href`.** Y aquí está la regla que costó media tarde entenderla:
 
-> **Brevo inyecta sus UTMs cuando recibe un enlace SIN ninguno. Si el enlace ya trae `utm_source`, lo
-> respeta y no lo toca.**
+> **Con Google Analytics APAGADO, Brevo respeta el `utm_source` que ya venga en el `href`.** Con la
+> integración encendida lo pisa con `sendinblue` haga lo que haga: probado escribiéndolo a mano en el
+> `href`, mandando `utmSource` en el `PUT` y mandando `utmCampaign` vacío. Las tres se pierden.
 
-**Por eso el fallo se repetía sin explicación aparente:** cada vez que regeneraba el HTML desde el
-fichero de texto —donde la URL va limpia, `https://forward.neety.com/`— Brevo metía los suyos. No era
-aleatorio ni diferido: era que yo le estaba dando un enlace pelado.
+**⛔ LAS TRES EXPLICACIONES QUE DI ESE DÍA ANTES DE ESTA, Y QUE ERAN FALSAS** —«se reescribe al
+guardar», «es que el enlace iba pelado», «cada `PUT` reactiva Analytics»—: **las tres las tumbó la
+siguiente medición.** El aprendizaje no es el mecanismo, es el método: aquí **no se razona, se mide**,
+porque el estado del interruptor de Analytics no se puede leer por API y sin él ninguna teoría cierra.
+
+**⭐ POR ESO EL CONTROL REAL NO ES ENTENDERLO, ES COMPROBARLO:** `scripts/auditar-campanas-brevo.py`
+mira el `href` de todo enlace a Luma o a `forward.neety.com` y **falla si el `utm_source` es
+`sendinblue`, `brevo` o no está.** Se corre SIEMPRE antes de dar una campaña por buena. Es la red que
+sí aguanta aunque la teoría de turno esté equivocada.
 
 **⛔ Y OJO CON LO QUE ME HIZO DUDAR DOS VECES: las pruebas en ráfaga chocan con el límite de ritmo
 (429)** y entonces unas escrituras se aplican y otras no, así que el resultado parece incoherente.
@@ -196,9 +203,9 @@ siguiente y el lector veía `…unai-03-evento"margin:0 0 20px;">Eso es lo que n
    texto aparece `style=`, `margin:` o `</a>`, el markup se ha filtrado. **Es lo único que ve el
    fallo como lo ve el lector.**
 
-#### 🔒 Brevo secuestra `utm_source` y NO se puede cambiar por API (probado 3 veces el 28/08)
+#### 🔒 Con Analytics ENCENDIDO, Brevo secuestra `utm_source` y no hay API que lo evite (28/08)
 
-Se intentó de tres formas y las tres las pisa con `sendinblue`:
+Se intentó de tres formas **con la integración encendida** y las tres las pisa con `sendinblue`:
 1. Escribir el UTM entero a mano dentro del `href` → lo reescribe al guardar.
 2. Mandar `utmCampaign: ""` para que no inyecte → **400, `utmCampaign is missing`**: es obligatorio.
 3. Mandar `utmSource` en el `PUT` → acepta el 204 y **lo ignora**: el campo se queda en `brevo`.
@@ -209,6 +216,13 @@ ajustes de esa campaña. Con ella apagada, Brevo deja de inyectar y respeta el U
 
 **Y solo hace falta apagarlo en las campañas que apuntan a LUMA.** En las que van a nuestra web, la
 inyección de Brevo hace justo lo que queremos.
+
+**⛔ SE APAGA A MANO Y NO HAY MANERA DE AUTOMATIZARLO (Iker preguntó justo esto el 28/08).** Pidió que
+al crear la campaña yo mirase a dónde va el enlace y apagase Analytics solo. **No puedo:** el
+interruptor no está en el objeto de campaña —se enumeraron todos sus campos— así que ni se lee ni se
+escribe. Lo que sí queda automatizado es lo otro: **el UTM se escribe dentro del `href` desde que se
+genera el HTML**, y el auditor canta si se pierde. El clic en el panel lo tiene que dar una persona,
+y va ANTES de la escritura.
 
 **⚠️ Cuánto duele hoy, para no exagerarlo:** mientras solo haya **un** correo apuntando a Luma, en su
 panel `sendinblue` significa inequívocamente *ese* correo. El problema aparece con el segundo.

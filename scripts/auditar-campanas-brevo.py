@@ -13,6 +13,7 @@ Se corre ANTES de dar por buena cualquier campana:
 """
 import json
 import os
+import re
 import sys
 
 # La consola de Windows va en cp1252 y revienta con los emojis del informe.
@@ -54,6 +55,24 @@ def revisar(c):
         fallos.append("no lleva preview: Gmail cogera la primera linea del cuerpo")
     if not c.get("recipients", {}).get("lists"):
         fallos.append("no tiene ninguna lista de destinatarios")
+    # 🔴 LUMA: solo lee `utm_source`, asi que la identidad va AHI y escrita a
+    # mano. Si Brevo se cuela con `sendinblue`, los registros del evento caen
+    # todos juntos y no se sabe que correo los trajo. Pasa de forma
+    # intermitente (2026-08-28) y por eso se comprueba SIEMPRE antes de enviar.
+    html = c.get("htmlContent") or ""
+    for enlace in re.findall(r'href="([^"]+)"', html):
+        if "luma.com" not in enlace and "forward.neety.com" not in enlace:
+            continue
+        fuente = re.search(r"utm_source=([^&\"]*)", enlace)
+        if not fuente:
+            fallos.append(f"el enlace del EVENTO no lleva utm_source: {enlace[:60]}")
+        elif fuente.group(1) in ("sendinblue", "brevo", ""):
+            fallos.append(
+                f"el enlace del EVENTO lleva utm_source={fuente.group(1)!r}: Luma solo lee "
+                f"ese campo, asi que la atribucion se pierde. Apaga Google Analytics en los "
+                f"ajustes de la campana y vuelve a escribir el enlace a mano"
+            )
+
     remitente = (c.get("sender") or {}).get("name") or ""
     if remitente.startswith("[DEFAULT"):
         fallos.append("el REMITENTE se ha reseteado al generico")
