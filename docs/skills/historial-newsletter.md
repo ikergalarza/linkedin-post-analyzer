@@ -872,3 +872,80 @@ hay que pedirle a Iker que limpie borradores a mano.**
 
 **La prueba interna lleva su propio `utm_campaign`** (`iker-02-feria-prueba-interna`): con el de la
 variante B, los clics internos habrían ensuciado las métricas del A/B de verdad.
+
+---
+
+## 🔴🔴 EL DÍA QUE BREVO BLOQUEÓ LA CUENTA (2026-08-28) — y todo lo que cambia
+
+**La cuenta está `under validation`** (la API devuelve `402 account_under_validation` al editar) y **la tanda 6 figura como `rejected`**. La tanda 6 **sí salió** antes del bloqueo: 349 enviados, 327 entregados, 58 aperturas, 9 rebotes (2,58%, el mejor de las seis), **0 quejas de spam** y **6 bajas (1,83%, casi 4x la norma)**. Unai apela.
+
+**⛔ Y el pendiente que probablemente lo causó lleva escrito desde el 2026-08-18 en `email-marketing §0c` punto 6:** *"Escribirle a soporte de Brevo ANTES del primer envío real, presentando la cuenta, el origen de la lista y el volumen esperado"*. **Nunca se hizo.** Era la lección nº 6 del post-mortem de MailerLite y se repitió el mismo fallo.
+
+### ⛔⛔ A PARTIR DE AHORA SOLO SE ESCRIBE A QUIEN DIO CONSENTIMIENTO EXPLÍCITO (Iker, 2026-08-28) — CANÓNICO
+
+**El segmento único de envío: `📥 Recursos · Todos` (audiencia CRM 3 → lista Brevo 15).** Su fuente es
+`all`, que en `resources_leads.js` es literalmente `SELECT ... FROM leads WHERE consent_comms = TRUE`.
+**40 contactos.** `consent_comms` es una casilla **aparte y desmarcada por defecto**: descargar un
+recurso NO cuenta como permiso.
+
+- **La sincronía es HORARIA, no en tiempo real, y hay que decirlo así.** Son dos saltos encadenados:
+  leads → audiencia del CRM (worker cada 60 min) y audiencia → lista de Brevo (otro cada 60 min). **Un
+  alta nueva tarda hasta 2 horas** en poder recibir. **Las bajas sí van cada 5 min**, que es lo que
+  importa para no escribirle a quien dijo que no.
+- La audiencia `⛔ Recursos · Sin opt-in` (17 personas) tiene el envío **bloqueado por código**
+  (`assertSyncable`), no por acuerdo.
+
+### 🔴 LO QUE SE DESCARTÓ, Y ES LA DECISIÓN MÁS IMPORTANTE DEL DÍA
+
+Iker propuso **rescatar de las 6 tandas a los que hicieron CLIC** en el enlace, como señal de interés,
+para no quedarse en 40. Se midió antes de opinar:
+
+| tandas | entregados | clics a `/agendar/` |
+|---|---|---|
+| 1 a 5 | 682 | **2** |
+| **6** | 327 | **6** |
+| **total** | **1.009** | **8** |
+
+**Serían 8 personas, no las ~20 que él estimaba.** Y se descarta por tres motivos, en este orden:
+1. **Un clic no es consentimiento.** El RGPD pide un **acto afirmativo claro** para recibir
+   comunicaciones comerciales; abrir o pulsar dentro de un correo que ya recibiste es interacción con
+   un mensaje, no un alta. La excepción de la **LSSI 21.2** (cliente con relación previa) no aplica:
+   no son clientes.
+2. **El momento lo empeora:** sacar un segmento **de la misma lista que provocó el bloqueo** mientras
+   se apela le da la razón a Brevo justo cuando le pides que te la quite.
+3. **Es el fallo de MailerLite otra vez** (`§0b`, señal nº 2: contactos con `opted_in_at: null`).
+
+**⭐ PERO ESOS 8 NO SE TIRAN, CAMBIAN DE SITIO: son LEADS COMERCIALES, no suscriptores.** Levantaron la
+mano pulsando agendar. **Que Iker les escriba uno a uno desde su bandeja** — eso es prospección, no
+marketing masivo, y es otra situación legal distinta.
+
+### 🟢🟢 Y EL DATO BUENO DEL DÍA: SUBIR EL NINJA AL CUERPO MULTIPLICA LOS CLICS POR 12
+
+| | posición del ninja | entregados | clics | CTR |
+|---|---|---|---|---|
+| Tandas 1-5 | al final, dentro de la PPD | 682 | 2 | 0,29‰ |
+| **Tanda 6** | **subido al cuerpo** | 327 | **6** | **18,3‰** |
+
+**Fue el único cambio entre unas y otra**, y respalda `§5-NINJA-POSICION` **antes** de que salga el
+correo 2. ⚠️ n pequeño: apunta fuerte, no prueba nada todavía. Se confirma con el correo 2.
+
+### Estado de las campañas al cerrar el 28/08
+
+| id | qué es | remitente | destinatarios | estado |
+|---|---|---|---|---|
+| 11 | Kaixito 01 · Tanda 6 | Kaixito de Neety | 349 | **enviada, luego `rejected`** |
+| **15** | Correo 2 · Iker · la feria | `Iker de Neety` | **40** (lista 15) | **programada 02/09 09:05** |
+| **18** | Correo 3 · Unai · evento | `Unai de Neety` | **40** (lista 15) | **borrador, sin fecha** |
+
+**⛔ El A/B del correo 3 se MATÓ, y el motivo vale para cualquier test futuro:** con 40 personas el
+reparto da 20 y 20, o sea **~6 aperturas por brazo**, con un margen de error de ±20 puntos. **No es que
+mida poco: es que no mide.** Se quedó la variante de **psicología emocional**
+(`en euskadi nos juntamos sin ti`) y no la de afirmación, por dos razones: es la única familia con
+evidencia propia (20-43% de apertura en 6 envíos) y **el dolor del evento es FOMO** (`global §4.4b`),
+que es exactamente lo que esa palanca activa.
+
+**Listas 13 y 14** (el reparto 512/513 del A/B) **quedan huérfanas** y se pueden borrar.
+
+**PENDIENTE y es lo único que desbloquea el resto:** la apelación. Y después, hacer crecer el segmento
+limpio por las dos vías que no dependen de rescatar nada — **los registros del evento** (consentimiento
+fresco) y **la casilla de recursos**.
