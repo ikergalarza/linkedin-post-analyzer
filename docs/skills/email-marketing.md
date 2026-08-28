@@ -183,6 +183,29 @@ Luma lee     : utm_source = "unai-03-evento"
 va SIEMPRE en `utm_source`, escrita a mano.** No se vuelve a dejar en `utm_campaign`, porque Luma no lo
 lee y perdemos la atribución de los asistentes al evento.
 
+#### ⚠️ EN BREVO, UN CAMPO VACÍO NO SIGNIFICA QUE ESTÉ VACÍO (2026-08-28)
+
+**Dos falsas alarmas seguidas el mismo día, comprobando las campañas ya programadas:**
+
+| Lo que leí | Lo que parecía | Lo que era |
+|---|---|---|
+| `recipients.listIds` → vacío | la campaña no tiene destinatarios | **el campo se llama `lists`.** `listIds` no existe, y pedir una clave inexistente devuelve vacío sin error |
+| `totalSubscribers` → `0` en `/contacts/lists` | las listas se han quedado sin nadie | **ese campo solo se rellena en `/contacts/lists/{id}`**, el detalle. En el listado viene a 0 siempre |
+
+**LA REGLA:** un `0`, un `None` o una lista vacía en la API de Brevo **no son un dato, son una pregunta**.
+Antes de dar la alarma —o peor, antes de "arreglarlo"— se confirma **por un segundo endpoint**:
+```
+listas de una campaña : /emailCampaigns/{id}       -> recipients.lists
+cuántos hay en cada una: /contacts/lists/{id}      -> totalSubscribers
+    y el contraste     : /contacts/lists/{id}/contacts?limit=3  -> count + los emails
+```
+**El contraste es lo que cierra la duda**, porque devuelve contactos de verdad con su email y su estado
+de baja. Si los tres coinciden, el dato es real.
+
+**Y aplica igual a los checks automáticos:** un validador que mira una clave mal escrita **pasa siempre
+en verde** y no protege de nada. Todo check nuevo se prueba rompiendo el dato a propósito y viéndolo
+fallar. Enlaza con lo mismo que ya pasó con el HTML del auditor.
+
 #### 🔴🔴 NUNCA PARCHEAR EL HTML DE UNA CAMPAÑA CON UNA EXPRESIÓN REGULAR (2026-08-28)
 
 **El fallo, y lo cazó Iker en un correo de prueba:** para cambiar el enlace usé
