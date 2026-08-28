@@ -217,6 +217,21 @@ Publicamos en **tres cuentas de founder**, todas sobre **ventas B2B**. Desde jul
 
 > ⚠️ **Arranque de la cuenta de Asier:** empezó en jul 2026 sin histórico → **el outlier ratio aún NO significa nada** en su cuenta (necesita ~4-6 semanas de posts para que LinkedIn fije una baseline). Durante ese periodo, júzgalo por **consistencia y engagement absoluto**, no por el ratio (que puede salir ~1x aunque el post sea bueno). No descartes un formato en su cuenta por un ratio bajo temprano.
 
+#### ⛔⛔⛔ 2-ASIER-VETOS · LO QUE NO ENTRA NUNCA EN LA CUENTA DEL TERCER JEFE (Iker, 2026-08-26 y 2026-08-27) — CANÓNICO
+
+**No son preferencias, son vetos, y ya nos ha costado un post borrado por él mismo.**
+
+| ⛔ veto | por qué |
+|---|---|
+| **Fútbol, en cualquier forma** | Iker, 26/08: el meme del Mundial de los calvos *"al ser de fútbol a él no le hubiese gustado"*. Se subió en otra cuenta por eso |
+| **Política** | — |
+| **Cualquier cosa malinterpretable** | *"cosas peligrosas que puedan malinterpretarse en humor. Intentar no facilitar el malinterpretamiento, porque al final la gente lo hará igual"* |
+| **⭐ Hablar de una mujer en clave romántica, o que se pueda leer que tiene pareja** | 🔴 **El caso, y es el más caro: Asier BORRÓ una publicación suya porque la frase `soñé con ella` se leyó como que hablaba de una mujer.** No hizo falta que nadie se quejara: la borró él |
+
+**LO QUE ESTO PROHÍBE EN LA PRÁCTICA, y es más ancho que la frase:** ningún **nombre de mujer** dentro de una imagen suya si el papel puede leerse como pareja (el contacto de un chat, quien manda un mensaje, quien aparece en una captura), ningún corazón ni emoji de afecto, y ninguna escena doméstica compartida. **Si el remix necesita una pareja, la referencia se le da a otra cuenta.**
+- **El caso que lo disparó (27/08):** el meme de la factura remixa una captura donde el contacto original es `Amoor ❤️`, o sea la pareja del autor. Con nombre de mujer, aunque quitáramos el corazón, el papel sigue siendo el mismo. **Se cambia a nombre de hombre y a registro de compañero de trabajo**, y con eso la lectura de pareja desaparece.
+- **⚠️ Y ojo con `images §0a-septima-NOMBRES`**, que pide calcar el sexo del original: **en Asier este veto manda por encima**. Si el original lo firma una mujer y el papel es de pareja, o se cambia el papel o se cambia de cuenta.
+
 ### 👤 Mario Carrillo Ramírez — Growth & Marketing (4ª cuenta, DISTINTA a las 3 de founder)
 - Rol: **responsable de Growth y Marketing** de Neety — la persona que lleva la estrategia DETRÁS de las 3 cuentas de founder (es quien escribe/planifica todo esto). Headline: *Growth & Content Marketing @ Neety | Traduzco atención en clientes B2B con contenido e IA*. LinkedIn: `in/mario-carrillo-ramirez`.
 - **Por qué existe (Mario/Iker, 2026-07-22):** (a) darle **reconocimiento público** a Mario como estratega, y (b) un **empleado que habla bien de la empresa y la pelotea** es advocacy auténtico que beneficia a Neety. Doble win.
