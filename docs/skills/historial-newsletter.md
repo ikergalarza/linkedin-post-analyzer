@@ -934,8 +934,17 @@ correo 2. ⚠️ n pequeño: apunta fuerte, no prueba nada todavía. Se confirma
 | id | qué es | remitente | destinatarios | estado |
 |---|---|---|---|---|
 | 11 | Kaixito 01 · Tanda 6 | Kaixito de Neety | 349 | **enviada, luego `rejected`** |
-| **15** | Correo 2 · Iker · la feria | `Iker de Neety` | **40** (lista 15) | **programada 02/09 09:05** |
-| **18** | Correo 3 · Unai · evento | `Unai de Neety` | **40** (lista 15) | **borrador, sin fecha** |
+| **15** | Correo 2 · Iker · la feria | `Iker de Neety` | **45** (listas 15+4) | **programada 02/09 09:05 · test validado por Iker el 28/08** |
+| **18** | Correo 3 · Unai · evento | `Unai de Neety` | **45** (listas 15+4) | **programada 09/09 09:05 · test validado por Iker el 28/08** |
+
+**✅ ESTADO CERRADO EL 2026-08-28.** Iker revisó los dos correos de prueba en el buzón de Mario y dio
+las dos por buenas: remitente, asunto y texto de preview correctos en la bandeja; dentro, el cuerpo, el
+ninja y el **pie personalizado**; y el enlace del correo 2 llega a `/agendar/` con sus tres UTMs.
+Verificado además por API contra un segundo endpoint: **40 en `📥 Recursos · Todos` + 5 en `Testers`,
+ninguno de baja.**
+
+**Lo único que queda es una comprobación que no depende de nosotros:** que el correo 2 **salga de verdad
+el 02/09**. Es la prueba definitiva de que Brevo levantó el bloqueo — ningún `queued` la sustituye.
 
 **⛔ El A/B del correo 3 se MATÓ, y el motivo vale para cualquier test futuro:** con 40 personas el
 reparto da 20 y 20, o sea **~6 aperturas por brazo**, con un margen de error de ±20 puntos. **No es que
