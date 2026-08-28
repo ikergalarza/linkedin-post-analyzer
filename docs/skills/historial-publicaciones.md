@@ -187,6 +187,11 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 4. **Ninguna cuenta publica dos días seguidos, ningún día repite categoría y los dos memes de cada semana caen en días distintos** (`§8.2`).
 5. **Ritmos de día distintos entre semanas** (2·1·1·2 contra 1·2·1·2) para que la parrilla no se lea igual dos semanas seguidas.
 
+**🤖 EL AVISO DE LA MAÑANA AL GOOGLE CHAT YA NO ES MANUAL (activado el 2026-08-28).** `services/anuncioChat.ts` hace solo lo que se hacía a mano cada día: refresca las tres cuentas, busca el post publicado ese día y lo manda al Chat del equipo con sus 5 comentarios de apoyo. **Tres pases: 10:05, 10:20 y 10:40 hora de Madrid**, porque la cola de revisión de LinkedIn medida el 26/08 es de ~20 minutos y con un solo pase los días de retraso se quedarían sin aviso. Un post no se anuncia dos veces. Se enciende con `AUTO_CHAT_ANNOUNCE=1` en Railway y en el arranque escribe `[anuncioChat] activo`.
+- **Publicación a las 10:01, aviso a las 10:05**, que son los 4 minutos de margen para que LinkedIn la haya soltado.
+- **Lo que el bot NO hace, y es la mitad del trabajo:** comentar, reaccionar, compartir y responder. Eso son las 3 fases que van en la descripción de cada evento de Google Calendar, con los tres jefes invitados.
+- ⚠️ **El primer disparo real fue el 01/09 y nadie lo estaba mirando.** Un OK de la API de Google Chat no prueba que el mensaje se vea: al volver, lo primero es comprobar en el Chat que salieron los 12.
+
 **LO QUE QUEDA POR ESCRIBIR: 4 historias + 2 memes. CERO peloteos nuevos**, y eso es lo que hace el plan ejecutable con un día de margen. El reparto anterior pedía 3 peloteos más para la semana 2, que es el pilar más caro que tenemos (12 empresas verificadas una a una, personas con actividad comprobada, CSV e imagen montada).
 
 **LAS 4 HISTORIAS, con lo que las hace distintas entre sí:** Unai ×2 (**rama B obligatoria**, `§4.6-TESTIGO`: no lleva autobiografía inventada) · Iker ×1 (rama A) · Asier ×1 (rama A, **foto de GRUPO**, `§4.6-FOTO-GRUPO`). Vehículo distinto en cada una y **ninguno puede ser la infancia, el instituto ni el comercial veterano de copiloto**, que están gastados (`§4.6-VEHICULO`). Dolor distinto en cada una, sacado de `global §4.4b-MUNICIÓN`. **Como máximo UNA lleva el acabado regional** (`§4.6-RAMAS`: la variante regional es puntual, no el default).
