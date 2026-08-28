@@ -579,6 +579,15 @@ El original es `WAITING ON DESIGN / WAITING ON DEV / WAITING ON OPS`: **anáfora
 
 **Y en el prompt se dice de dónde sale el ancho** (`§0c-TAMAÑO`, la orden de tamaño va con la del espacio que sobra): *"ensánchale el rectángulo hacia la derecha hasta que el texto entre en una fila, aprovechando el espacio libre que tiene a ese lado"*.
 
+### ⛔⛔ 0b-ETIQUETA-ANCHO-BIS · CADA CAJA SE AJUSTA A SU TEXTO. LO QUE COMPARTEN ES LA ALTURA Y EL MARGEN, NUNCA EL ANCHO (Iker, 2026-08-27)
+
+> **Iker, sobre la v3:** *"los cuadrados los está estimando, no está midiendo bien ni aprovechando bien el espacio. Me he dado cuenta de que ha hecho coherencia de diseño de que todos los cuadrados sean con la misma anchura, pero es que eso no tiene sentido: cada uno se debería adaptar a la palabra o al conjunto de palabras que tenga"*.
+
+**El generador, si le pides "ensancha", iguala TODOS los anchos por su cuenta**, porque su idea de coherencia es que la serie mida lo mismo. Resultado: `CEO` con el mismo rectángulo que `Director comercial` y un desierto de berenjena dentro.
+
+- **LA REGLA: la caja abraza su texto.** Se comparten la **altura** y el **margen interior**; el **ancho lo pone cada rótulo**.
+- **Y se dice en negativo, que es lo que lo caza:** *"no pueden medir todos lo mismo de ancho, cada uno se ajusta al ancho de SU propio texto, sin espacio sobrante dentro de ninguno"*. Sin esa frase lo vuelve a igualar.
+
 ## 🖼️🖼️ 0b-DENTRO-DEL-MARCO · AL COMPRIMIR DE VERTICAL A 1:1, EL ÚLTIMO DE LA DIAGONAL SE SALE DEL CUADRO (Iker, 2026-08-27)
 
 > **Iker, en la misma v2:** *"el quinto personaje, el que va al lado del cuadrado de CEO, sus pies están cortados y se sale de la gráfica, cosa que no es realista. Todos los personajes con sus cajas y textos deberían estar dentro de los ejes"*.
@@ -588,6 +597,22 @@ El original es `WAITING ON DESIGN / WAITING ON DEV / WAITING ON OPS`: **anáfora
 - **LA REGLA: en cualquier imagen con marco, ejes o recuadro, se dice explícitamente que NADA los cruza** — ni una figura, ni una caja, ni un rótulo.
 - **Y se dice de dónde sale el espacio, que si no lo inventa** (`§0c-TAMAÑO`): *"reduce un poco el conjunto y súbelo, aprovechando el aire que queda entre el título y la primera figura, hasta que el último apoye los pies encima del eje"*.
 - **El síntoma a buscar al revisar:** mira **el último elemento de la diagonal**, que es donde se acumula el recorte. Si sus pies tocan o pasan el eje, la imagen vuelve.
+
+### 📐📐 0b-DENTRO-DEL-MARCO-BIS · NO SE DICE "SÚBELO UN POCO": SE DA LA IGUALDAD DE LOS DOS HUECOS (Iker, 2026-08-27)
+
+> **Iker, después de que la v3 siguiera rozando el eje:** *"para que lo entienda, todos los personajes tienen que estar como conjunto a la misma distancia del punto más alto arriba a la izquierda de la línea diagonal y de la flecha de abajo a la derecha. Si te das cuenta, ahora todos están más cerca de la flecha de abajo"*.
+
+**Mi orden anterior era un juicio disfrazado de medida:** *"reduce un poco el conjunto y súbelo"*. Es exactamente lo que `§0c` prohíbe con `céntralo` — **la herramienta no mide, mueve**, así que estima y se queda corta. La versión que sí funciona **no habla de tamaño, habla de dos huecos que tienen que ser iguales**.
+
+```
+⛔ reduce un poco el conjunto y súbelo hasta que quepa
+✅ mueve el conjunto arriba y a la izquierda siguiendo la diagonal, hasta que el hueco
+   entre la primera figura y el arranque de la diagonal sea IGUAL al hueco entre la
+   última figura y la punta de la flecha
+```
+
+- **Vale para cualquier serie apoyada en un eje, una diagonal o una guía:** la colocación se pide como **igualdad entre dos distancias que se ven**, nunca como una cantidad.
+- **Es la misma familia que `§0c-TAMAÑO`:** una orden de colocación sin decir de dónde sale el espacio la resuelve el generador como quiere. Aquí el espacio sale del hueco sobrante de arriba, y la igualdad lo dice sin tener que nombrarlo.
 
 ## ⛔⛔ 0b-REF · NINGUNA PROPUESTA DE IMAGEN SIN ENLACE A UNA REFERENCIA REAL (Iker, 2026-08-06)
 
