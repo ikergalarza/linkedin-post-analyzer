@@ -162,7 +162,7 @@ Iker pidió expresamente que se lo recuerde al arrancar la semana que viene. **E
 
 | Día | Cuenta | Pilar | Puerta | Estado |
 |---|---|---|---|---|
-| Mar 01/09 | **Asier** | Peloteo · **MAPA** Cantabria | `recursos.neety.com/mapas/cantabria/` | ✅ escrito, 69/69 |
+| Mar 01/09 | **Asier** | Peloteo · **MAPA** Cantabria | `recursos.neety.com/mapas/cantabria/` | ✅ **PROGRAMADO por Iker el 28/08** · retocado tras programar: el ninja sube a justo después de las menciones (Paso 5, lo pidió Iker: "lo veo muy atrás"), del 87% al 60% del texto, y el ritmo se reequilibró comprimiendo 3 beats sin perder ningún cliché · 70/70 |
 | Mar 01/09 | **Iker** | Meme | `/correo/` | ✅ escrito |
 | Mié 02/09 | **Unai** | **Historia** · rama B (testigo) | **Luma** | ✅ escrito 27/08, 57/57 |
 | Jue 03/09 | **Asier** | Meme | **Luma** | ✅ escrito |
