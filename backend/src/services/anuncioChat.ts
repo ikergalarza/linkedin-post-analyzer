@@ -210,6 +210,31 @@ export async function anunciarPostsDeHoy(): Promise<ResultadoAnuncio> {
 const PASES = ['10:05', '10:20', '10:40'];
 const UN_MINUTO = 60 * 1000;
 
+// ⛔ FECHA DE CADUCIDAD, Y NO ES UN DETALLE (Iker, 2026-08-28).
+// Esto existe para las dos semanas de vacaciones y NO debe seguir corriendo
+// despues. El motivo lo da Iker y es de criterio, no de comodidad: cuando el
+// esta, los posts no salen a una hora fija y ademas quiere COMPROBAR EL a mano
+// que LinkedIn no ha capado la publicacion antes de mandar a doce personas a
+// mirarla. El bot no sabe distinguir un post sano de uno en revision: avisa de
+// lo que encuentra publicado, y si esta capado manda al equipo a un post que
+// se va a morir.
+// Se apaga solo el 11/09 en vez de depender de que alguien se acuerde de
+// quitar la variable. Para reabrir la ventana (otras vacaciones, una baja),
+// se pone AUTO_CHAT_ANNOUNCE_HASTA con la fecha nueva en YYYY-MM-DD.
+const ULTIMO_DIA_POR_DEFECTO = '2026-09-11';
+
+function fechaMadrid(): string {
+  // en-CA da directamente YYYY-MM-DD, que es lo que se compara como cadena.
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+}
+
+function ventanaAbierta(): boolean {
+  const hasta = (process.env.AUTO_CHAT_ANNOUNCE_HASTA || ULTIMO_DIA_POR_DEFECTO).trim();
+  return fechaMadrid() <= hasta;
+}
+
 function horaMadrid(): string {
   // Intl resuelve el horario de verano solo. Formatear y comparar cadenas
   // "HH:MM" es mas simple que hacer cuentas con offsets, y esto corre una vez
@@ -222,7 +247,21 @@ function horaMadrid(): string {
 let ultimoPaseEjecutado: string | null = null;
 let enVuelo = false;
 
+let caducidadAvisada = false;
+
 async function tickAnuncio(): Promise<void> {
+  if (!ventanaAbierta()) {
+    // Se dice UNA vez y no en cada tick: si no, son 1.440 lineas de log al dia
+    // diciendo lo mismo.
+    if (!caducidadAvisada) {
+      caducidadAvisada = true;
+      console.log(
+        `[anuncioChat] ventana cerrada (hasta ${process.env.AUTO_CHAT_ANNOUNCE_HASTA || ULTIMO_DIA_POR_DEFECTO}) — ` +
+        `el aviso vuelve a ser manual. Para reabrirla, AUTO_CHAT_ANNOUNCE_HASTA=YYYY-MM-DD`
+      );
+    }
+    return;
+  }
   const ahora = horaMadrid();
   if (!PASES.includes(ahora)) return;
   // Marca por dia+hora: si el proceso se recicla o el intervalo deriva y el
@@ -250,6 +289,11 @@ export function startAnuncioChat(): void {
     console.log('[anuncioChat] desactivado (AUTO_CHAT_ANNOUNCE != 1)');
     return;
   }
-  console.log(`[anuncioChat] activo — pases a las ${PASES.join(', ')} (Europe/Madrid)`);
+  const hasta = (process.env.AUTO_CHAT_ANNOUNCE_HASTA || ULTIMO_DIA_POR_DEFECTO).trim();
+  if (!ventanaAbierta()) {
+    console.log(`[anuncioChat] encendido pero FUERA DE VENTANA (acabo el ${hasta}) — no va a mandar nada`);
+    return;
+  }
+  console.log(`[anuncioChat] activo hasta el ${hasta} — pases a las ${PASES.join(', ')} (Europe/Madrid)`);
   setInterval(() => { void tickAnuncio(); }, UN_MINUTO);
 }
