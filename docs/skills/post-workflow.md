@@ -597,7 +597,7 @@ Lo vigila `validar-post.py --pilar los10` (`BEAT_EQUIPO`). **Riesgo asumido:** u
 
 **Paso 6b — LA ORLA: la monta un SCRIPT, no el robot de diseño (2026-07-16).**
 ```
-python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/LOS 10/LOS 10 PLANTILLA v2.psd"   --fotos "C:/Users/LENOVO/Desktop/los10-<region>"   --fuente "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/Bricolage_Grotesque/static/BricolageGrotesque-ExtraBold.ttf"   --nombres "Nombre 1 | Nombre 2 | … | Nombre 10"   --salida "C:/Users/LENOVO/Desktop/orla-<region>.png"
+python scripts/montar-orla.py   --plantilla "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/PELOTEO REGIONAL/LOS 10/LOS 10 PLANTILLA.psd"   --fotos "C:/Users/LENOVO/Desktop/los10-<region>"   --fuente "C:/Users/LENOVO/Documents/Mario/LINKEDIN GROWTH/Bricolage_Grotesque/static/BricolageGrotesque-ExtraBold.ttf"   --nombres "Nombre 1 | Nombre 2 | … | Nombre 10"   --salida "C:/Users/LENOVO/Desktop/orla-<region>.png"
 ```
 **Por qué se cambió, que es lo que no hay que olvidar:** los 2 prompts de imagen que había aquí **NO se podían arreglar escribiéndolos mejor**. Un modelo generativo no pega una foto, la **REDIBUJA**: sintetiza píxeles nuevos en todo el lienzo. Por eso devolvía caras que no eran de esas personas, cambiaba el color de los ojos, convertía las fotos malas en fotos de modelo, metía ruido en el azul del header y lo descentraba. **No era un fallo de prompt: era lo único que sabe hacer.** Cada "no toques" que le añadías alargaba el prompt y le hacía menos caso a todo.
 - El script detecta **solo** los huecos transparentes, escala con Lanczos (que reduce información, no la inventa), recorta centrado y pone la foto **DEBAJO** con la plantilla encima: la máscara del círculo es la que dibujó el diseñador. Los nombres, la fuente, el cuerpo y el color se **leen del propio PSD**, así que si el diseñador cambia el estilo, el script le sigue.
@@ -2228,7 +2228,7 @@ Acceso libre.
 7. **REPITE lo que funciona.** Si un tema+hook peta, se vuelve a hacer a las 1-2 semanas con cambios mínimos. No hace falta reinventar cada vez.
 
 > ### 🎨 4.3-PLANTILLA · LA PLANTILLA DE "LOS 10" Y SUS COLORES (Iker, 2026-07-30)
-> **Fichero:** `Documents/Mario/LINKEDIN GROWTH/LOS 10/LOS 10 PLANTILLA.psd` (1254x1254). **La edita Iker, no yo.** Verificada el 30/07: 10 placeholders de texto con el literal `Nombre`, 378.240 px de huecos transparentes y el titulo en capa editable a 81,8 px.
+> **Fichero:** `Documents/Mario/LINKEDIN GROWTH/PELOTEO REGIONAL/LOS 10/LOS 10 PLANTILLA.psd` (1254x1254). **La edita Iker, no yo.** Verificada el 30/07: 10 placeholders de texto con el literal `Nombre`, 378.240 px de huecos transparentes y el titulo en capa editable a 81,8 px.
 >
 > **⭐ El titulo lleva `XXX` como marcador de region**, igual que el del despiece. Antes tenia `LA INDUSTRIA ASTURIANA` escrito a fuego **y por eso la orla de Andalucia salio diciendo ASTURIANA** y hubo que rehacerla. `montar-orla.py --region ANDALUZA` lo sustituye solo.
 >
@@ -2275,9 +2275,10 @@ Acceso libre.
 - ⚠️ **NO importes la comparación con otro país.** Es la firma del mapa, igual que ya se decidió en "Los 10".
 
 **Paso 4 — LA IMAGEN: plantilla de silueta + script.**
+- 🔧 **RUTAS ACTUALIZADAS EL 2026-08-27:** la carpeta `LINKEDIN GROWTH/LOS 10/` ya no existe; los tres formatos viven ahora en **`LINKEDIN GROWTH/PELOTEO REGIONAL/`**, en `DESPIECE/`, `LOS 10/` y `MAPAS/`. Y la plantilla de la llanta se llama **`PLANTILLA AUTOMOCION.psd`**, no `PLANTILLA OBJETO.psd`. Con las rutas viejas el script aborta.
 - **Idea de Iker:** la silueta del objeto más representativo del sector, con los **logos** repartidos por ella. En automoción, una **llanta** con los logos en la corona. Logos y no caras, porque este pilar prioriza la empresa.
 - **La compone `scripts/montar-llanta.py`, no un generador.** Un modelo generativo rechaza logos de terceros por copyright y, si los acepta, los redibuja (`images §0i-2`).
-- **Plantilla:** `Documents/Mario/LINKEDIN GROWTH/LOS 10/PLANTILLA OBJETO.psd` (1254x1254). Franja berenjena con el título en capa de texto editable donde `XXX` es el marcador de región, fondo menta, llanta en línea berenjena y los huecos de logo **transparentes**.
+- **Plantilla:** `Documents/Mario/LINKEDIN GROWTH/PELOTEO REGIONAL/DESPIECE/PLANTILLA AUTOMOCION.psd` (1254x1254). Franja berenjena con el título en capa de texto editable donde `XXX` es el marcador de región, fondo menta, llanta en línea berenjena y los huecos de logo **transparentes**.
 - **Los logos se bajan de Unipile** (`logo_large`) numerados en el orden del post: `01-acero.jpg`, `02-tubos.jpg`. Mismo procedimiento que el CSV del mapa, pero **aquí NO hay CSV**.
 - **Una plantilla por SECTOR.** La llanta vale para automoción y se reutiliza en toda España y en las tres cuentas: solo cambia el título. Otro sector pide otra silueta.
 - **El script ordena los huecos por ÁNGULO, como un reloj**, empezando arriba. Una orla se lee por filas, una rueda se lee como un reloj.
@@ -2287,7 +2288,7 @@ Acceso libre.
 **OUTPUT FINAL de este pilar (SOLO esto, Iker, 2026-07-30):**
 1. **El TEXTO** del post en bloque cercado, para copiarlo con el botón.
 2. **La GUÍA DE MENCIONES** en tabla de 4 columnas con enlaces azules pulsables, empresa y persona.
-3. **La IMAGEN** ya montada, **MOSTRADA en el chat** y **guardada en `Documents/Mario/LINKEDIN GROWTH/LOS 10/`** con la convencion de esa carpeta: minusculas, espacios y sin acentos, con el SECTOR delante (`automocion euskadi.png`, `alimentacion galicia.png`). El sector y no la palabra "objeto", que es jerga interna y no dice nada al abrir la carpeta (Iker, 2026-07-30).
+3. **La IMAGEN** ya montada, **MOSTRADA en el chat** y **guardada en `Documents/Mario/LINKEDIN GROWTH/PELOTEO REGIONAL/DESPIECE/`** con la convencion de esa carpeta: minusculas, espacios y sin acentos, con el SECTOR delante (`automocion euskadi.png`, `alimentacion galicia.png`). El sector y no la palabra "objeto", que es jerga interna y no dice nada al abrir la carpeta (Iker, 2026-07-30).
 4. **NADA MAS. Sin ZIP ni carpeta de logos** (Iker, 2026-07-30): los logos me los bajo yo para montar la imagen, asi que entregarlos es ruido. **Vale igual para "Los 10" con las fotos de las personas.** Lo unico que se entrega es la imagen final. La ruta se da igual, porque la necesita para subirla, pero la imagen se ensena. Vale lo mismo para "Los 10": si la compongo yo con un script, se ve aqui.
 
 **Sin CSV, sin fotos de personas y sin Excel.** El mapa necesita CSV porque se dibuja un mapa; aquí no hay nada que importar.
