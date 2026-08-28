@@ -521,7 +521,15 @@ Cierra el pendiente que este fichero abrió el 25/08 (*"dos correos NUEVOS, sin 
 - **El correo 3 prueba un dolor de 2 empresas**, que por la regla de entrada de `§4.4b-MUNICIÓN` es hipótesis y no patrón. **Entra porque `§5-ECO` lo autoriza expresamente** (probar en un correo y anotar el resultado aquí).
 
 ### 🔴 LO QUE FALTA DECIDIR, Y ES DE IKER
-1. **Qué pasa con la tanda 6 de Kaixito 01** (los ~380 que quedan). Si no sale, esas personas reciben el correo 2 sin haber recibido nunca el 0. Recomendación: **sacarla el lunes 31/08**, que evita el viernes y cierra el correo 0 para toda la base.
+1. ~~**Qué pasa con la tanda 6 de Kaixito 01** (los ~380 que quedan).~~ **RESUELTO SOLO, 2026-08-28.**
+   La campaña estaba programada para hoy 28/08 a las 09:05 y **Brevo la dejó en `rejected`**: el bloqueo
+   de la cuenta la tumbó. Y ya no se puede reactivar, porque **su lista (la 10) se borró en la limpieza
+   de consentimiento**. O sea que esos ~380 **no recibieron el correo 0 y no lo van a recibir nunca**, y
+   está bien que así sea: **no tenían el `consent_comms` marcado**, que es justo por lo que se borraron.
+   **Consecuencia para la secuencia:** nadie de esos 380 recibe tampoco el correo 2 ni el 3, porque no
+   están en `📥 Recursos · Todos`. La base viva son los 40 con consentimiento. Enlaza con
+   [[feedback_un_clic_no_es_consentimiento]]: la tanda 6 era exactamente la gente que un clic no
+   convierte en suscriptor.
 2. **El reparto de las 2 tandas del correo 2.** Lo más barato es reutilizar las listas que ya existen en Brevo: **tanda A = listas 5+6+7+8** (los de las tandas 1-4, ~336 vivos) y **tanda B = lista 9** (los 370 de la tanda 5). Cero listas nuevas, cero cálculo a mano.
 3. **La firma-mantra de la casa** sigue sin decidirse (`email-marketing §10`). De momento los correos cierran en plano.
 
